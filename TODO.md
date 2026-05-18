@@ -1,0 +1,1269 @@
+# TODO
+
+本文件按 `docs/warpx-full-code-reading-book-plan.md` 维护。早期 `manuscript/` v0.1 只保留为粗草稿，不再作为正式书稿质量标准；后续目标是从物理过程、完整推导、数值算法到 WarpX 全源码逐行/逐块精读。
+
+## 当前基线
+
+- 仓库状态：2026-05-18 已初始化本地 git 仓库，默认分支 `main`，并补最小 `.gitignore`
+- WarpX 路径：`../warpx`
+- WarpX 分支：`pkuHEDPbranch`
+- WarpX commit：`063f8b586f04321e13150ae3e730e0794ca75cb1`
+- 最高优先级计划：`docs/warpx-full-code-reading-book-plan.md`
+- 当前执行框架：`docs/warpx-source-reading-framework.md`
+- 当前阶段：阶段 5 Boundary / AMR 已启动，已完成 field / particle 边界参数解析与 periodic 一致性约束精读、`WarpXFieldBoundaries.cpp` 第一轮顶层分派梳理、PML `SigmaBox` / BoxArray / split-field / PML current 数据流精读、PEC/PMC/PECInsulator 的 E/B 与 rho/J 镜像规则精读、boundary 参数总表整理、Silver-Mueller 内部 guard-cell 递推精读，以及 `EmbeddedBoundary` 运行时开关、AMReX EB2 初始化、signed-distance 场、reduced-shape / stair-case / ECT 更新标记初始化、face extension、`FaceInfoBox` 借用关系、BCK fallback、粒子 scraping、`DistanceToEB` 法向重建与 scraped particle buffer 精读；并已启动 `Parallelization`，完成 `GuardCellManager` 的 guard-cell 分配模型、`FillBoundary`/`SumBoundary` 语义、`SyncCurrent()` / `SyncRho()` 的 finest-to-coarsest 与 owner-mask 去重、current/rho coarse-fine source 路径、`CheckLoadBalance()` / `LoadBalance()` / `RemakeLevel()` 的 level 重映射与 costs 模型、`UpdateAuxilaryData*()` / buffer masks / `PartitionParticlesInBuffers()` 所构成的 AMR coarse-fine substitution strategy、`WarpXComm_K.H` / `MFIter` / `ParallelFor` / `FillBoundary` 分支所构成的执行模型第一轮精读，以及粒子层 `PushPX()` / `DepositCurrent()` / `DepositCharge()` 如何真正消费 `aux`、`cax`、`current_buf`、`rho_buf` 的 coarse-fine buffer 路径；同时已回到 `Particles/` 顶层补完容器层次与 runtime attribute 地图，并继续把它接到 `Particles/Pusher` 的非标准路径上，完成 classical radiation reaction、implicit fixed-point / suborbit fallback、photon push、`current_fp_non_suborbit` / `MassMatrices_PC` / JFNK linear-stage 分工的第一轮精读、`ImplicitSolver::PreLinearSolve()` / `ComputeJfromMassMatrices()` / `SetMassMatricesForPC()` 与 `MatrixPC/JacobiPC/CurlCurlMLMGPC` 的场求解器耦合层精读、`F(U)=U-b-R(U)` / `JacobianFunctionMF::apply()` / PETSc shell operator / native preconditioner 的完整消费链精读，以及 `StrangImplicitSpectralEM::ComputeRHS()`、SNES Jacobian callback、`assemblePCMatrix()`、`KSPSetOperators(A,P)`、`WarpXSolverDOF` 的 `{local,global}` 编号契约和 `MatrixPC::Assemble()` 在 1D / XZ / RZ / 3D / RCYLINDER 下的 `pc_petsc` 稀疏矩阵装配细节精读，并分别回填第 4/6 章；当前已开始补最小运行级验证记录，`Langmuir` 与 `uniform_plasma` 的第一条本地 run note 已落地。
+
+## 已完成记录
+
+### 2026-05-13 初始项目建立
+
+- [x] 检查 `PIC-tutor` 当前状态：目录为空，且不是 git 仓库。
+- [x] 确认同级 `../warpx` 存在。
+- [x] 只读扫描 WarpX 的核心资料入口：`Docs/source/`、`Source/`、`Examples/`、`Regression/`、`Tools/`、`Docs/source/refs.bib`。
+- [x] 确认本地 WarpX 文献池第一批规模：`Docs/source/refs.bib` 有 251 条 BibTeX 入口。
+- [x] 对照 DeepWiki 和 Zread 的解读结构，确定其只适合作为模块索引，不能替代源码/官方文档/论文。
+- [x] 建立项目控制文件：`AGENTS.md`、`README.md`、`TODO.md`。
+- [x] 建立初版总计划：`docs/master-plan.md`。
+- [x] 建立论文阅读流程：`docs/paper-reading-workflow.md`。
+- [x] 生成 `bibliography/warpx-refs.bib`。
+- [x] 扩展 `references/` 开放 PDF 文献库第一批，并建立分类目录、下载脚本和书籍合法获取清单。
+
+### 2026-05-14 粗草稿与计划升级
+
+- [x] 建立 `docs/source-map.md`，记录第一批源码行号证据。
+- [x] 建立 `docs/chapter-template.md`。
+- [x] 建立 `manuscript/README.md` 和 10 个章节粗草稿，形成 Markdown-first v0.1。
+- [x] 根据反馈确认 v0.1 太草率，只能作为粗目录草稿，不能作为正式书稿。
+- [x] 建立新的最高优先级计划：`docs/warpx-full-code-reading-book-plan.md`。
+- [x] 更新 `README.md`，说明后续以全源码精读计划为准。
+- [x] 重写本 `TODO.md`，使其与新计划对齐。
+
+### 2026-05-14 阶段 A 自动索引
+
+- [x] 创建 `scripts/generate_stage_a_maps.py`，用于生成阶段 A 的四张索引表。
+- [x] 生成 `docs/module-inventory.md`：覆盖 `Source/` 下 707 个目标源码/构建文件。
+- [x] 生成 `docs/parameter-map.md`：覆盖 `Docs/source/usage/parameters.rst` 中 352 个 `pp:param` 参数。
+- [x] 生成 `docs/example-regression-map.md`：覆盖 657 个 Examples 输入/脚本和 356 个 checksum benchmark。
+- [x] 生成 `docs/literature-map.md`：覆盖 251 条 BibTeX 和 35 个本地 PDF。
+- [x] 更新 `docs/source-map.md`，加入阶段 A 索引产物说明。
+
+### 2026-05-14 阶段 C 主循环样章重写
+
+- [x] 重新读取并记录主生命周期源码：`../warpx/Source/main.cpp`、`../warpx/Source/WarpX.H`、`../warpx/Source/WarpX.cpp`、`../warpx/Source/Initialization/WarpXInitData.cpp`、`../warpx/Source/Evolve/WarpXComputeDt.cpp`、`../warpx/Source/Evolve/WarpXEvolve.cpp`。
+- [x] 建立 `notes/code-reading/evolve/`，保存主生命周期、PIC 时间层和 `Evolve` 源码证据表。
+- [x] 重写 `manuscript/chapters/02-pic-loop.md`：从 Vlasov-Maxwell、宏粒子、形函数、离散连续性、leapfrog 时间层推到 WarpX 主循环结构。
+- [x] 重写 `manuscript/chapters/03-warpx-evolve.md`：从 `main.cpp`、`WarpX` 单例、`ReadParameters()`、`InitData()`、`ComputeDt()` 讲到 `Evolve()`、`OneStep()`、`OneStep_nosub()`、`SyncCurrentAndRho()`、`PushParticlesandDeposit()`。
+- [x] 明确下一层源码入口：`MultiParticleContainer::Evolve()`、`EvolveE/B/F/G`、`SyncCurrent()`、`SyncRho()`、PSATD 与 subcycling 路径。
+
+### 2026-05-14 粒子推进与沉积样章重写
+
+- [x] 重新读取并记录粒子主链源码：`../warpx/Source/Particles/MultiParticleContainer.cpp`、`../warpx/Source/Particles/PhysicalParticleContainer.cpp`、`../warpx/Source/Particles/WarpXParticleContainer.cpp`、`../warpx/Source/Particles/Pusher/PushSelector.H`、`../warpx/Source/Particles/Pusher/UpdateMomentumBoris.H`、`../warpx/Source/Particles/Pusher/UpdatePosition.H`。
+- [x] 建立 `notes/code-reading/particles/`，保存粒子推进主链、pusher 分派和沉积入口证据表。
+- [x] 重写 `manuscript/chapters/04-particle-pushers.md`：从 Lorentz 方程、Boris 公式、pusher 分派讲到 `MultiParticleContainer::Evolve()`、`PhysicalParticleContainer::Evolve()` 和 `PushPX()`。
+- [x] 重写 `manuscript/chapters/05-deposition-shapes.md`：从电荷/电流沉积和离散连续性讲到旧/新电荷、半步电流、`DepositCurrent()` / `DepositCharge()` 分派和 `SyncCurrentAndRho()`。
+- [x] 精读并记录 `FieldGather.H`、`ShapeFactors.H`、`ChargeDeposition.H`、`CurrentDeposition.H` 的第一批 kernel 级源码证据。
+- [x] 扩写 `manuscript/chapters/04-particle-pushers.md`：补入 `doGatherShapeN()` 运行时分派、模板 shape 选择、XZ/RZ gather 累加和坐标转换源码原文。
+- [x] 扩写 `manuscript/chapters/05-deposition-shapes.md`：补入 0 到 4 阶 shape factor、电荷沉积、direct current、Esirkepov current 的源码原文和公式解释。
+- [x] 精读 `UpdateMomentumVay.H` 与 `UpdateMomentumHigueraCary.H`，并回填第 4 章的源码原文和公式解释。
+
+### 2026-05-14 源码原文讲解规范
+
+- [x] 明确新增写作规则：讲解源码时必须把真实源码原文放入正文，不能只给路径和行号。
+- [x] 更新 `docs/chapter-template.md`、`docs/warpx-full-code-reading-book-plan.md`、`README.md`，要求“源码块 + 行号 + 逐行/逐块解释”。
+- [x] 回补已重写样章中的源码原文块：`02-pic-loop.md`、`03-warpx-evolve.md`、`04-particle-pushers.md`、`05-deposition-shapes.md`。
+
+### 2026-05-14 全局源码精读框架
+
+- [x] 重新盘点 `../warpx/Source` 顶层目录、二级/三级模块、构建边界和主要文件规模。
+- [x] 确认 `Source` 约 712 个文件，`.H/.cpp` 主体约 562 个文件，最大模块为 `Particles`、`FieldSolver`、`Diagnostics`、`ablastr`。
+- [x] 检查 `Source/Make.package`、`Particles/CMakeLists.txt`、`FieldSolver/CMakeLists.txt`，确认根层、粒子模块和场求解模块的构建入口。
+- [x] 新建 `docs/warpx-source-reading-framework.md`，把全源码精读拆成 15 个阶段。
+- [x] 更新 `README.md`、`TODO.md`、`docs/source-map.md`，把后续执行重心从局部模块扩写改为按全局框架推进。
+- [x] 新建 `notes/code-reading/README.md` 总索引。
+- [x] 为全部顶层模块建立 `notes/code-reading/<module>/README.md` 精读入口：root、initialization、evolve、particles、fieldsolver、boundary、parallelization、diagnostics、embedded-boundary、filter、laser、fluids、nonlinear-solvers、accelerator-lattice、python、utils、ablastr。
+- [x] 统一 `evolve/README.md` 和 `particles/README.md` 的模块边界、核心问题、精读顺序和输出目标格式。
+
+### 2026-05-14 阶段 1 Root / WarpX 主类状态启动
+
+- [x] 继续人工阅读 `../warpx/Source/WarpX.H`：确认 `WarpX : public amrex::AmrCore`、单例接口、算法选择状态、边界状态、时间层、粒子/诊断/流体/PML/EB/solver 成员。
+- [x] 继续人工阅读 `../warpx/Source/WarpX.cpp`：确认 `ReadParameters()` 的 solver、PML、filter、grid type、current centering、deposition/gather/pusher、PSATD/JRhom、load balance 和 particle shape 解析逻辑。
+- [x] 继续人工阅读 `../warpx/Source/WarpX.cpp` 的 AMReX level 生命周期：`MakeNewLevelFromScratch()`、`ClearLevel()`、`AllocLevelData()` 和 `AllocInitMultiFab()`。
+- [x] 继续人工阅读 `../warpx/Source/Fields.H`：确认 `FieldType` 命名体系、标量/矢量场分类和 `ArrayFieldTypes`。
+- [x] 新建 `notes/code-reading/root/01-warpx-state-map.md`，形成主类状态图、参数解析图和 field registry 第一轮精读。
+- [x] 新建 `notes/code-reading/root/02-construction-and-level-allocation.md`，解释 `MakeWarpX()`、`WarpX::WarpX()`、`AllocLevelData()`、`AllocLevelMFs()` 和 PSATD solver 分配的构造/level 生命周期差异。
+
+### 2026-05-14 阶段 2 Initialization 启动
+
+- [x] 人工阅读 `../warpx/Source/Initialization/WarpXInitData.cpp` 的 `InitData()`、`InitFromScratch()`、`InitPML()`、`PostRestart()`、`InitLevelData()`、`ComputeExternalFieldOnGridUsingParser_template()`、`CheckGuardCells()`。
+- [x] 人工阅读 `../warpx/Source/Diagnostics/WarpXIO.cpp` 的 `InitFromCheckpoint()` header 恢复入口。
+- [x] 新建 `notes/code-reading/initialization/00-init-callgraph.md`，记录 fresh run / restart 分叉、AMReX level 初始化、PML、外场、自洽初始场和 guard cell 检查。
+- [x] 人工阅读 `../warpx/Source/Initialization/ExternalField.H/.cpp` 和 `WarpXInitData.cpp` 中 `LoadExternalFields()`、`ReadExternalFieldFromFile()`。
+- [x] 新建 `notes/code-reading/initialization/01-external-fields.md`，区分 grid external field、particle external field、constant/parser/openPMD/Python 外场路径。
+- [x] 人工阅读 `../warpx/Source/Initialization/PlasmaInjector.H/.cpp`、`InjectorPosition.H`、`InjectorDensity.H` 和 `Particles/ParticleCreation/DefaultInitialization.H`。
+- [x] 新建 `notes/code-reading/initialization/02-plasma-injector.md`，建立 species 初始化、position/density/momentum/flux functor 和 runtime attribute 默认初始化总图。
+- [x] 人工阅读 `../warpx/Source/Utils/SpeciesUtils.H/.cpp` 和 `../warpx/Source/Initialization/InjectorMomentum.H`。
+- [x] 新建 `notes/code-reading/initialization/03-density-momentum-dispatch.md`，解释 species 质量/电荷、密度 profile、动量分布、Boltzmann/Juttner/parser 和 tagged union 分派。
+- [x] 人工阅读 `../warpx/Source/Particles/ParticleCreation/AddParticles.cpp`、`AddPlasmaUtilities.H/.cpp`、`SmartCreate.H`、`DefaultInitialization.H` 和 `WarpXParticleContainer::AddNParticles()`。
+- [x] 新建 `notes/code-reading/initialization/04-particle-creation-kernels.md`，解释 `AddParticles()`、`AddPlasma()`、`AddPlasmaFlux()`、体/面权重、boosted-frame 修正、RZ/RSPHERE 权重和 runtime 属性初始化。
+- [x] 人工阅读 `../warpx/Source/Initialization/DivCleaner/ProjectionDivCleaner.H/.cpp`、`ExternalVectorPotential.cpp` 清理入口和官方 projection div cleaner 参数文档。
+- [x] 新建 `notes/code-reading/initialization/05-projection-div-cleaner.md`，推导 projection cleaner 的 `∇²φ=-∇·F`、`F<-F+∇φ`，并区分初始化 projection cleaning 与演化阶段 `do_dive_cleaning/do_divb_cleaning`。
+- [x] 人工阅读 `PlasmaInjector::setupGaussianBeam()`、`setupExternalFile()`、`PhysicalParticleContainer::AddGaussianBeam()`、`AddPlasmaFromFile()` 和官方 `gaussian_beam`/`external_file` 参数文档。
+- [x] 新建 `notes/code-reading/initialization/06-gaussian-beam-openpmd-injection.md`，解释 Gaussian beam 的权重、cut、focusing、rotation、symmetrization，以及 openPMD 粒子文件的位置/动量/权重/质量/电荷读取和单位换算。
+- [x] 新建正式书稿章节 `manuscript/chapters/03a-warpx-initialization.md`，把阶段 2 初始化精读主链回填到 manuscript 层。
+- [x] 人工阅读 `TemperatureProperties.*`、`GetTemperature.*`、`VelocityProperties.*`、`GetVelocity.*` 和官方 Maxwell-Boltzmann/Juttner 参数文档。
+- [x] 新建 `notes/code-reading/initialization/07-temperature-velocity-properties.md`，解释 `theta_distribution_type`、`beta_distribution_type`、`bulk_vel_dir` 和 Maxwellian/Juttner 初始化中的局域温度与漂移速度。
+
+## 近期执行顺序
+
+### 阶段 A：全源码索引与映射
+
+- [x] 创建 `docs/module-inventory.md`，列出 `Source/` 下每个 `.H`、`.cpp`、`.py`、`CMakeLists.txt`、`Make.package` 文件。
+- [x] 在 `docs/module-inventory.md` 中为每个文件标注：所属模块、物理主题、关键类/函数、是否需要逐行解读、对应章节、阅读状态。
+- [x] 创建 `docs/parameter-map.md`，从 `Docs/source/usage/parameters.rst` 抽取参数名、说明、官方文档位置、源码解析位置、对应书稿章节。
+- [x] 创建 `docs/example-regression-map.md`，把 `Examples/` 和 `Regression/Checksum/benchmarks_json/` 映射到物理模型、算法章节和验证用途。
+- [x] 创建 `docs/literature-map.md`，把 `bibliography/warpx-refs.bib`、`references/` PDF 和后续 MinerU 笔记映射到章节。
+- [x] 扩展 `docs/source-map.md`，从当前少量函数扩展为全模块源码地图的导航入口。
+- [x] 人工复核 `docs/module-inventory.md` 中 `其他源码`、`待定` 和关键模块的章节归属。
+  - 已清掉 `module-inventory` 中最后 3 个悬空条目：
+    - `Source/Fields.H` 归并到 `WarpX 主类`
+    - `Source/Make.WarpX`
+    - `Source/Make.package`
+    归并到 `构建系统`
+  - `其他源码` 模块已清到 `0`，文件行中的 `待定` 章节归属也清到 `0`
+  - 同时补入了“自动模块名 -> 15 个精读阶段”的人工合并总表，避免后续继续在自动模块名和框架阶段之间来回跳转
+- [ ] 人工复核 `docs/parameter-map.md` 的全部初步源码命中，定位真实 `ParmParse` 解析函数并逐步清掉剩余旧计划编号尾项。
+  - 本轮已先清理一批最上游高频族：
+    - 无前缀运行控制
+    - boost / startup
+    - electrostatic / Poisson / self-fields / magnetostatic
+    - boundary / PML / `eb_potential`
+    - restart / verbosity / warning / AMReX debug-safe 输入
+  - 随后又继续清理 `species / laser / diagnostics / collision-QED` 这层高频家族：
+    - `particles.species_names`
+    - `rigid_injected_species`
+    - species 注入/分布/自场初始化
+    - resampling / `do_temperature_deposition`
+    - virtual photons / QED / Schwinger product species
+    - `fluids.species_names`
+    - `lasers.deposit_on_main_grid`
+    - particle diagnostics species 过滤项
+  - 本轮又继续清理 `load_balance + writer/diagnostics` 尾项：
+    - `warpx.numprocs`
+    - `algo.load_balance_*`
+    - `costs_heuristic_*`
+    - `split_high_density_boxes*`
+    - diagnostics 顶层注册 / writer backend / particle-output filters
+    - BTD / reduced diagnostics / async-I/O
+  - 本轮继续把剩余旧式章节编号整批迁到当前书稿语义，覆盖：
+    - runtime / startup
+    - AMR / boundary
+    - filter / deposition / pusher / solver
+    - PSATD / hybrid / macroscopic
+    - collision / QED
+    - diagnostics 零散尾项
+  - 当前 `parameter-map` 表内旧编号残留数已从 `314` 压到 `0`
+  - 本轮开始把“初步源码命中”继续压到真实解析链，已细化一批 `WarpX::ReadParameters()` / `WarpXComputeDt()` 主控参数：
+    - `warpx.random_seed`
+    - `algo.evolve_scheme`
+    - `warpx.break_signals` / `warpx.checkpoint_signals`
+    - `warpx.cfl` / `warpx.const_dt` / `warpx.max_dt`
+    - `warpx.use_filter`
+    - `algo.current_deposition` / `algo.field_gathering` / `algo.particle_pusher` / `algo.maxwell_solver`
+    - `psatd.nox/noy/noz` / `psatd.current_correction` / `psatd.JRhom`
+    - `warpx.do_subcycling` / `warpx.override_sync_intervals`
+    - `warpx.do_device_synchronize`
+    - `warpx.sort_intervals`
+    - `warpx.do_shared_mem_charge_deposition`
+  - 本轮继续细化下一批 sub-parser / consumer 条目：
+    - `hybrid_pic_model.elec_temp / n0_ref / gamma / n_floor / substeps`
+    - `hybrid_pic_model.plasma_resistivity / plasma_hyper_resistivity`
+    - `hybrid_pic_model.J[x/y/z]_external_grid_function`
+    - `hybrid_pic_model.add_external_fields`
+    - `external_vector_potential.fields / <field>.read_from_file / path / A*_external_grid_function / A_time_external_function`
+    - `interpolation.galerkin_scheme`
+    - `warpx.field_centering_* / current_centering_* / do_current_centering`
+    - `warpx.do_dive_cleaning / do_initial_div_cleaning`
+    - `warpx.projection_div_cleaner.rtol / atol`
+    - `warpx.use_hybrid_QED / quantum_xi`
+  - 本轮继续把 `Hybrid-QED` 相邻 mixed-consumer 条目压到真实 field-push 链：
+    - `warpx.use_hybrid_QED`
+    - `warpx.quantum_xi`
+    - 已明确 `WarpX::ReadParameters()` 入口、`WarpXEvolve.cpp` 中 `Hybrid_QED_Push(dt)` 的插入 gate，以及 `m_quantum_xi_c2 -> WarpX_QED_Field_Pushers.cpp -> warpx_hybrid_QED_push(...)` 的系数传递链
+  - 本轮继续把两条 `AMReX-owned pass-through` 邻接输入压到真实 startup/local-consumer 链：
+    - `amr.n_cell`
+    - `amr.max_grid_size`
+    - 已明确 `WarpXAMReXInit.cpp` 的 `preparse_amrex_input_int_array(...)` 启动期整数预解析、`WarpXUtil.cpp` 的 RZ spectral 分块修正，以及 `WarpXInitData.cpp` 的 coarse-box / MPI 规模性能 warning 链
+  - 本轮继续把 `amr.ref_ratio / ref_ratio_vect` 压到更具体的本地 consumer 链：
+    - `amr.ref_ratio`
+    - `amr.ref_ratio_vect`
+    - 已补清 `GuardCellManager.cpp` 的 moving-window grow-cell 下界，以及 `PML.cpp` 中 `coarsen(ref_ratio)`、`ncell/ref_ratio[idim]` 与 `IntVect(...)/ref_ratio` 的 coarse/fine PML 缩并链
+  - 本轮继续把 `amr.max_level` 压到更具体的本地 consumer 链：
+    - `amr.max_level`
+    - 已补清 `WarpXUtil.cpp` 里 `max_level > 0` 才进入 `fine_tag_lo/hi` refined-patch 几何链的条件分支，以及 `FieldEnergy / FieldMaximum / FieldMomentum / FieldProbe` 构造期用 `max_level + 1` 展开多层 reduced-diag 数据与 header 布局的 consumer 链
+  - 本轮继续把两条 `amrex.*` startup 输入压到真实初始化链：
+    - `amrex.the_arena_is_managed`
+    - `amrex.omp_threads`
+    - 已补清 `WarpXAMReXInit.cpp` 的 `overwrite_amrex_parser_defaults()` 覆写链，以及 `omp_threads` 在 `Source/Python/WarpX.cpp` 中通过 `amrex::OpenMP::set_num_threads(...)` 的 runtime setter
+  - 本轮继续把 `moving_window_dir / moving_window_v` 压到更完整的运行链：
+    - `warpx.moving_window_dir`
+    - `warpx.moving_window_v`
+    - 已补清 `WarpX.cpp` 的连续注入边界选择、`WarpXMovingWindow.cpp` 的窗口/注入位置更新、`WarpXUtil.cpp` 的 boost-frame 域换算，以及 `BTDiagnostics.cpp` 的 `z` 方向约束与 `dz_snapshots_lab -> dt_snapshots_lab` consumer 链
+  - 本轮继续把 `warpx.numprocs` 压到真实 startup/runtime 链：
+    - `warpx.numprocs`
+    - 已补清 `WarpX.cpp` 的维数/MPI 乘积与 `RZ+PSATD` 输入约束、`WarpXAMReXInit.cpp` 的 `blocking_factor=1` workaround、`WarpX::PostProcessBaseGrids()` 的最粗层手工切块，以及 `FullDiagnostics.cpp` 对 `coarsening_ratio * numprocs` 的专门断言分支
+  - 本轮继续把 `diagnostics.enable / diagnostics.diags_names` 压到真实 diagnostics 工厂链：
+    - `diagnostics.enable`
+    - `diagnostics.diags_names`
+    - 已补清 `MultiDiagnostics::ReadParameters()` 的 `enable -> ndiags` gate、`MultiDiagnostics` 构造函数按 `diag_type` 的对象分派、`WarpX::InitData()/InitDiagnostics()` 的初始化与首步 flush 遍历，以及 `WarpX.cpp` 为 `checkpoint_signals` 兼容性检查重新扫描 `diags_names` 的邻接 consumer
+  - 本轮继续把 `<diag_name>.diag_type` 压到真实 diagnostics 分派链：
+    - `<diag_name>.diag_type`
+    - 已补清 `MultiDiagnostics` 工厂在 `Full / TimeAveraged / BackTransformed / BoundaryScraping` 间的对象分派、`TimeAveraged` 仍落到 `FullDiagnostics` 的分支语义、`BoundaryScraping -> format=openpmd` 与 `BackTransformed` 的邻接约束，以及 `ParticleIO.cpp` 中“粒子附加 `phi/E/B` 只允许 Full” 的能力边界
+  - 本轮继续把 `<diag_name>.format` 压到真实 writer/backend 分派链：
+    - `<diag_name>.format`
+    - 已补清 `BaseReadParameters()` 的 `m_format` 入口、`Full / BTD / BoundaryScraping` 三类 diagnostics 的允许集合差异、`checkpoint` 的全量转储兼容性合同，以及 `InitBaseData()` 中 `plotfile / checkpoint / ascent / catalyst / sensei / openpmd` 的实际 flush-backend 构造与 `sensei/ascent` 邻接 `FillBoundary` 路径
+  - 本轮继续把 `<diag_name>.intervals` 压到真实 diagnostics 调度链：
+    - `<diag_name>.intervals`
+    - 已补清 `FullDiagnostics` 的强制 `getarr + IntervalsParser`、`BoundaryScraping` 的 `queryarr + {"0"}` 默认回退、`BTDiagnostics` 中 `intervals` 与 `num_snapshots_lab` 的二选一改写到 `BTDIntervalsParser`，以及 time-averaged diagnostics 通过 `nextContains()/previousContains()` 反推 averaging window 的 consumer 链
+  - 本轮继续把 `<diag_name>.dump_last_timestep` 压到真实末步 flush 链：
+    - `<diag_name>.dump_last_timestep`
+    - 已补清 `Diagnostics::BaseReadParameters()` 的布尔入口与默认值、`MultiDiagnostics::FilterComputePackFlushLastTimestep()` 的 `force_flush=true` 分派，以及 `WarpXEvolve.cpp` 在最终步/中断退出时、`WarpX::HandleSignals()` 在 checkpoint signal 时复用这条尾部 flush 路径的触发关系
+  - 本轮继续对 diagnostics 段做去重收口：
+    - 删除与总表 `<diag_name>.intervals` 重复的 BTD 同名行
+    - 保留“总表统一入口 + `num_snapshots_lab / dt_snapshots_lab / dz_snapshots_lab / buffer_size` 等 BTD 特化补充”的结构
+  - 本轮继续把 `<diag_name>.openpmd_backend / openpmd_encoding` 压到真实 writer/backend 链：
+    - `<diag_name>.openpmd_backend`
+    - `<diag_name>.openpmd_encoding`
+    - 已补清 `FlushFormatOpenPMD` 的 backend 默认值选择与 `pp_diag_name.add(...)` 回写、`WarpXOpenPMDPlot::GetFileName()` 的 `openpmd[_%0NT].<backend>` 文件模板、`Init()` 里的 `openPMD::Series(...)` 后端创建链，以及 `openpmd_encoding` 对 `fileBased/groupBased/variableBased` 文件布局、BTD 兼容性和 `m_Series->setIterationEncoding(...)` 的真实影响
+  - 本轮继续把 `<diag_name>.adios2_operator.* / adios2_engine.*` 压到真实 openPMD backend-options 链：
+    - `<diag_name>.adios2_operator.type / adios2_operator.parameters.*`
+    - `<diag_name>.adios2_engine.type / adios2_engine.parameters.*`
+    - 已补清 `FlushFormatOpenPMD` 对两组前缀 entries 的整体收集、`WarpXOpenPMD.cpp::getSeriesOptions()` 中 `"adios2" -> "dataset" -> "operators"` 与 `"engine"` JSON 子块的生成条件，以及这些 JSON 经 `m_OpenPMDoptions` 进入 `openPMD::Series(...)` 的真实落点
+  - 本轮继续细化 diagnostics instance-local 的 still-coarse 条目：
+    - `<diag_name>.particle_fields_to_plot / particle_fields_species`
+    - `<diag_name>.particle_fields.<field_name>.do_average / (x,y,z,ux,uy,uz) / filter(...)`
+    - `<diag_name>.plot_raw_fields / plot_raw_fields_guards / coarsening_ratio`
+    - 已补清 `BaseReadParameters()` 对 particle-field parser/species/filter 的展开规则、`FullDiagnostics` 按 `field × species × level` 实例化 `ParticleReductionFunctor` 的路径、`ParticleReductionFunctor` 中加权求和/平均/过滤的真实沉积链，以及 raw-plotfile 支路和 BTD 禁止 coarsening 的格式边界
+  - 本轮继续细化 diagnostics 输出路径与几何裁剪的相邻尾项：
+    - `<diag_name>.file_prefix`
+    - `<diag_name>.diag_lo / diag_hi`
+    - 已补清 `BaseReadParameters()` 的默认前缀、`BTDiagnostics` 的重复读取、full/boundary-scraping/BTD 在 flush 时对 `m_file_prefix` 的不同派生方式，以及 `diag_lo/hi` 在 boosted moving-window 下的坐标换算、`InitBaseData()` restart 平移、`FullDiagnostics/BTDiagnostics` 的裁剪 box 链和 reduced-domain particle I/O 禁用边界
+  - 本轮继续细化 diagnostics 命名合同与粒子输出 gate 的相邻尾项：
+    - `<diag_name>.file_min_digits`
+    - `<diag_name>.write_species`
+    - 已补清 `BaseReadParameters()` 对 `file_min_digits` 的统一读取、各 flush backend 与 openPMD `SetStep()/GetFileName()` 对编号宽度的共同消费、BTD 用它派生 snapshot/buffer 子路径的链路，以及 `write_species` 在 `InitData()/InitDataAfterRestart()`、`FullDiagnostics::InitializeParticleBuffer()` 与 `BTDiagnostics::DerivedInitData()` 中对 species 回退、particle buffer 初始化和 checkpoint 例外的真实分支
+  - 本轮继续细化 diagnostics 粒子对象构造与变量筛选的相邻尾项：
+    - `<diag_name>.species`
+    - `<diag_name>.<species_name>.variables`
+    - 已补清 `FullDiagnostics / BTDiagnostics / BoundaryScrapingDiagnostics` 三条 species 默认回退与 `ParticleDiag` 构造分流、BTD 的 pinned `make_alike<>` buffer 绑定链，以及 `ParticleDiag` 中 `m_plot_flags` 与 `m_plot_phi/E/B` 的双路分派、RZ/RSPHERE 坐标重写和位置变量缺失 warning 的真实语义
+  - 本轮继续细化 particle writer-side filter / extra-field 的相邻尾项：
+    - `<diag_name>.<species_name>.additional_variables`
+    - `<diag_name>.<species_name>.random_fraction / uniform_stride`
+    - `<diag_name>.<species_name>.plot_filter_function(t,x,y,z,ux,uy,uz)`
+    - 已补清 `additional_variables` 最终落到 `storePhiOnParticles()` / `storeFieldOnParticles()`、且只作用于通过筛选后的临时输出副本 `tmp`，`random_fraction / uniform_stride` 在 plotfile/openPMD 的 `copyParticles(...)` 里同时覆盖普通 `pc` 与 pinned/BTD `pinned_pc` 路径，以及 `plot_filter_function(...)` 在 writer 侧经 `compileParser<ParticleDiag::m_nvars>(...) -> ParserFilter`、按 `InputUnits::SI` 参与同一条筛选链，并发生在附加 `phi/E/B` 字段之前
+  - 本轮继续细化 diagnostics/openPMD 相邻分流条目：
+    - `<diag_name>.buffer_flush_limit_btd`
+    - `<diag_name>.dump_rz_modes`
+    - 已补清 `buffer_flush_limit_btd` 的默认值来自 `FlushFormatOpenPMD::m_NumAggBTDBufferToFlush = 5`、`WriteToFile()` 中按 `bufferID % threshold` 触发 `FlushBTDToDisk()` 的 writer-side durability/restart 路径，以及 `dump_rz_modes` 只作用于普通 full diagnostics 的 `AddRZModesToDiags(...)`，而 RZ + openPMD 会提前分流到 `InitializeFieldFunctorsRZopenPMD(...)` 的全-mode 初始化分支
+  - 本轮继续细化 diagnostics 字段变量表与 particle-reduction 相邻条目：
+    - `<diag_name>.fields_to_plot`
+    - `<diag_name>.particle_fields_to_plot`
+    - 已补清 `BaseReadParameters()` 中 `phi/A/F/G/proc_number/none` 的约束与重写、`m_varnames_fields -> m_varnames` 的统一变量表写入、`FullDiagnostics` 对 `CellCenterFunctor/RhoFunctor/TemperatureFunctor/JFunctor/...` 的实际分派，以及 `particle_fields_to_plot` 先展开 `<field>_<species>` 变量名再实例化 `ParticleReductionFunctor`、而 `BTDiagnostics` 对它是显式 `queryarr(...)` 后立刻 abort 的硬禁止边界
+  - 本轮继续细化 particle-field companion 条目：
+    - `<diag_name>.particle_fields_species`
+    - `<diag_name>.particle_fields.<field_name>.do_average`
+    - `<diag_name>.particle_fields.<field_name>(x,y,z,ux,uy,uz)`
+    - `<diag_name>.particle_fields.<field_name>.filter(x,y,z,ux,uy,uz)`
+    - 已补清 `particle_fields_species` 对 `m_pfield_species_index`、`m_varnames` 展开顺序和 `ParticleReductionFunctor::m_ispec` 的真实绑定关系，以及 map/filter parser 在 `ParticleReductionFunctor` 中被编译成 `ParserExecutor<6>` 后如何通过 `get_particle_position(...)`、`ux,uy,uz /= c`、`ParticleToMesh(...)` 与 `Coarsen(...)` 进入 cell-centered reduction 链，同时 `do_average` 决定是否额外构造 `ppc_mf` 作为归一化分母
+  - 本轮继续细化 raw-field 输出相邻条目：
+    - `<diag_name>.plot_raw_fields`
+    - `<diag_name>.plot_raw_fields_guards`
+    - 已补清它们真正只在 `FullDiagnostics::ReadParameters()` 中解析、BTD 只是 flush 时原样转发成员值；plotfile 路径会在 `plotfilename/raw_fields` 下写出 `aux/fp/cp`、`rho_fp`、`phi_fp`、时均场和 coarse-path 原始 MultiFab，而 openPMD 路径则对 raw 输出直接断言禁止
+  - 本轮继续细化 reduced-diag 输出根目录条目：
+    - `reduced_diags.path`
+    - 已补清它在 `ReducedDiags` 基类里不仅控制目录创建、restart 续写判断和默认文本文件落点，还会被 `ParticleHistogram2D / DifferentialLuminosity2D` 等 openPMD reduced-diag 继续当作上游根目录，派生成 `m_path + m_rd_name + "/" + filename` 的实例级子目录布局
+  - 本轮继续细化 reduced-diag 文本输出合同条目：
+    - `reduced_diags.separator`
+    - `reduced_diags.precision`
+    - 已补清 `separator` 不仅控制基类与多种派生类的列拼接，还会被 `LoadBalanceCosts` 用来重新拆列既有文件；同时补清 `precision` 的实例级覆盖主要只稳定作用于走基类 `WriteToFile()` 的 reduced-diag，而 `FieldProbe / LoadBalanceCosts` 这类自定义 writer 目前仍部分绕开 `m_precision`
+  - 本轮继续细化 reduced-diag histogram/species 相邻条目：
+    - `<reduced_diags_name>.species`
+    - `<reduced_diags_name>.bin_number / bin_min / bin_max`
+    - `<reduced_diags_name>.histogram_function(t,x,y,z,ux,uy,uz)`
+    - `<reduced_diags_name>.normalization`
+    - 已补清 `species` 在 `ParticleHistogram / ParticleHistogram2D / BeamRelevant / DifferentialLuminosity` 四类 reduced-diag 中各自如何绑定真实粒子容器；同时补清 `bin_number/bin_min/bin_max` 如何共同决定 header bin center 与 `ComputeDiags()` 的实际分箱网格，以及 `histogram_function(...)` 和 `normalization` 如何进入逐粒子 parser 求值、原子累加与 MPI 归约后的归一化分支
+  - 本轮继续细化 reduced-diag parser companion 条目：
+    - `<reduced_diags_name>.filter_function(t,x,y,z,ux,uy,uz)`
+    - `<reduced_diags_name>.histogram_function_abs/ord(t,x,y,z,ux,uy,uz,w)`
+    - `<reduced_diags_name>.value_function/filter_function(t,x,y,z,ux,uy,uz,w)`
+    - 已补清 `ParticleHistogram` 的 filter 如何在与主 histogram 相同的 `(t,x,y,z,ux/c,uy/c,uz/c)` 约定下先裁剪样本，再阻断后续 parser 求值与一维分箱；同时补清 `ParticleHistogram2D` 的 abs/ord axis parser 与 value/filter parser 如何进入 `GetPosition(...)`、`ux,uy,uz /= c`、二维落 bin 和 `Atomic::Add` 的 kernel 累加链
+  - 本轮继续细化二维 reduced-diag 的 openPMD 输出合同：
+    - `<reduced_diags_name>.openpmd_backend / file_min_digits`（`ParticleHistogram2D`）
+    - `<reduced_diags_name>.openpmd_backend / file_min_digits`（`DifferentialLuminosity2D`）
+    - 已补清两者都在实例构造函数中自行解析并回写默认 backend，而 `WriteToFile()` 会把输出组织到 `openpmd_%0NT.<backend>` 和 `series.iterations[step+1]`；同时补清 `ParticleHistogram2D` 会写入 `function_string_abs/ord` 轴信息，`DifferentialLuminosity2D` 会写入 `d2L_dE1_dE2`、`E1/E2` 轴和二维能量网格元数据
+  - 本轮继续细化一批 Quantum Sync still-coarse 条目：
+    - `qed_qs.photon_creation_energy_threshold`
+    - `<species_name>.do_qed_quantum_sync`
+    - 已补清前者默认值来自 `MultiParticleContainer.H` 的 `2*m_e*c^2`，并在 `doQedQuantumSync()` 里通过 `cleanLowEnergyPhotons(...)` 直接充当低能 photon 保留门槛；同时补清后者不仅在 species 构造期添加 `opticalDepthQSR`，还会驱动共享 `QuantumSynchrotronEngine` 绑定、`opticalDepthQSR` 默认初始化，以及普通 push / `ImplicitPushPX` / `doQedQuantumSync()` 三条运行链
+  - 本轮继续细化 Quantum Sync product-species 与 classical RR 邻接条目：
+    - `<species_name>.qed_quantum_sync_phot_product_species`
+    - `<species_name>.do_classical_radiation_reaction`
+    - 已补清前者会先经 `getSpeciesID(...)` 解析成 `m_qed_quantum_sync_phot_product`，再在 `doQedQuantumSync()` 中通过 `allcontainers[...]` 取到真实 photon product container；同时补清后者除 `PhysicalParticleContainer` 常规 push 外，还会切到 `RigidInjectedParticleContainer` 和 `PushSelector.H` 中的 `UpdateMomentumBorisWithRadiationReaction(...)` 分支
+  - 本轮继续细化 QED lookup-table mode 条目：
+    - `qed_qs.lookup_table_mode`
+    - `qed_bw.lookup_table_mode`
+    - 已补清两者在 `InitQuantumSync()` / `InitBreitWheeler()` 中都会分流到 `generate / load / builtin` 三条路径；其中 `generate` 会继续落到 `save_table_in`、`compute_lookup_tables()`、写盘和 `ReadAndBcastFile(...)` 广播，`load` 则走 `load_table_from` + 原始表广播，`builtin` 走 wrapper 内置低分辨率表初始化，最终都以 `are_lookup_tables_initialized()` 断言成功
+  - 本轮继续细化 QED `chi_min` 门槛条目：
+    - `qed_qs.chi_min`
+    - `qed_bw.chi_min`
+    - 已补清两者不仅进入 `init_lookup_tables_from_raw_data(...)` / `init_builtin_tables(...)` 和表生成路径，还会分别写入 `QuantumSyncEngineWrapper` / `BreitWheelerEngineWrapper` 的内部最小 `chi` 状态，并由运行期 `build_evolve_functor()` 直接消费，因此 `chi < chi_min` 时会在 optical-depth 推进阶段提前返回
+  - 本轮继续细化 Schwinger gate 与 product-species 条目：
+    - `warpx.do_qed_schwinger`
+    - `qed_schwinger.ele_product_species`
+    - `qed_schwinger.pos_product_species`
+    - 已补清 `do_qed_schwinger` 会继续把电子/正电子产物 species 名映射成整数索引，并在 `doQEDSchwinger()` 中通过 `allcontainers[...]` 取到真实目标 container，再调用 `filterCreateTransformFromFAB(...)` 真正注入粒子对；同时补清 `ele/pos_product_species` 各自如何完成“名字 -> 索引 -> 容器落点”的 wiring
+  - 本轮继续细化 Schwinger companion 条目：
+    - `qed_schwinger.y_size`
+    - `qed_schwinger.xmin/ymin/zmin/xmax/ymax/zmax`
+    - `qed_schwinger.threshold_poisson_gaussian`
+    - 已补清 `y_size` 不只进入 `doQEDSchwinger()` 的 `dx*dz*y_size` 体积计算，还会继续传进 `SchwingerTransformFunc{..., PIdx::w}`，把 2D 新生成电子/正电子权重写成 `total_weight/N/y_size`；同时补清 `xmin...xmax...` 会在 `ComputeSchwingerGlobalBox()` 中被转换成带 `lowest()/max()` 哨兵与 `ceil/floor` 边界规则的 level-0 全局掩膜 box，并在每个 tile 上与 cell-centered `box` 做相交裁剪；`threshold_poisson_gaussian` 则会经 `SchwingerFilterFunc` 继续传给 `getSchwingerProductionNumber(...)`，决定 Schwinger pair 采样走 Poisson 还是 Gaussian 分支
+  - 本轮继续把 `start_moving_window_step / end_moving_window_step` 压到真实 runtime gate：
+    - `warpx.start_moving_window_step`
+    - `warpx.end_moving_window_step`
+    - 已补清 `WarpX.H` 的 `moving_window_active(step)` 区间判定、`WarpXMovingWindow.cpp` 的启动/停止日志与位置更新链，以及 `BTDiagnostics.cpp` / `FieldProbe.cpp` 对窗口活动区间边界的 consumer
+  - 本轮继续把 `fine_tag_lo/hi` 压到真实 refined-patch 链：
+    - `warpx.fine_tag_lo/hi`
+    - 已补清 `WarpX.cpp` 中与 `ref_patch_function(x,y,z)` 的互斥/覆盖规则、`WarpXUtil.cpp` 的 boosted-frame 坐标改写、`WarpX::ErrorEst()` 的静态打标 consumer，以及 `WarpXInitData.cpp` 在 RZ 下对 `fine_tag_lo[0] == 0` 的 PML 特例
+  - 本轮继续细化一批 `AMReX-owned pass-through + diagnostics` 顶层 gate：
+    - `amr.ref_ratio / ref_ratio_vect`
+    - `diagnostics.enable / diagnostics.diags_names`
+    - `<diag_name>.diag_type / format`
+    - `<diag_name>.openpmd_backend / openpmd_encoding`
+  - 本轮继续细化一批仍停留在手册原句的 QED / Schwinger 条目：
+    - `qed_qs.photon_creation_energy_threshold`
+    - `<species>.do_qed_quantum_sync / qed_quantum_sync_phot_product_species`
+    - `<species>.do_qed_breit_wheeler / qed_breit_wheeler_{ele,pos}_product_species`
+    - `qed_qs.lookup_table_mode / qed_bw.lookup_table_mode`
+    - `qed_qs.chi_min / qed_bw.chi_min`
+    - `warpx.do_qed_schwinger`
+    - `qed_schwinger.{ele,pos}_product_species`
+    - `qed_schwinger.threshold_poisson_gaussian`
+  - 本轮继续细化同一簇剩余 still-coarse 条目：
+    - `<species>.do_qed_virtual_photons`
+    - `<species>.qed_virtual_photons_do_beam_size_effect`
+    - `<species>.do_classical_radiation_reaction`
+    - `qed_schwinger.y_size`
+    - `qed_schwinger.xmin/ymin/zmin/xmax/ymax/zmax`
+  - 本轮继续细化一批边界 / PML still-coarse 条目：
+    - `boundary.reflect_all_velocities`
+    - `boundary.verboncoeur_axis_correction`
+    - `warpx.pml_ncell / pml_delta`
+    - `do_similar_dm_pml`
+    - `warpx.do_pml_in_domain / pml_has_particles / do_pml_j_damping`
+    - `warpx.v_particle_pml`
+    - `warpx.do_pml_dive_cleaning / do_pml_divb_cleaning`
+    - `amrex.async_out / async_out_nfiles`
+    - `amrex.abort_on_unused_inputs / use_profiler_syncs`
+  - 本轮继续细化 diagnostics instance-local 条目：
+    - `<diag_name>.<species_name>.additional_variables`
+    - `<diag_name>.<species_name>.random_fraction / uniform_stride`
+    - `<diag_name>.<species_name>.plot_filter_function(t,x,y,z,ux,uy,uz)`
+    - `warpx.field_io_nfiles / particle_io_nfiles`
+    - `warpx.reduced_diags_names`
+    - `<reduced_diags_name>.type`
+  - 本轮继续细化 time-averaged / BTD / reduced-diags 覆盖参数：
+    - `<diag_name>.time_average_mode / average_period_steps / average_period_time / average_start_step`
+    - `<diag_name>.num_snapshots_lab / dt_snapshots_lab / dz_snapshots_lab / buffer_size`
+    - `<diag_name>.do_back_transformed_fields / do_back_transformed_particles`
+    - `reduced_diags.path / extension / separator / precision`
+  - 本轮继续细化 diagnostics instance-local 的 still-coarse 条目：
+    - `<diag_name>.plot_raw_fields / plot_raw_fields_guards`
+    - `<diag_name>.coarsening_ratio`
+    - `<diag_name>.file_prefix / file_min_digits`
+    - `<diag_name>.diag_lo / diag_hi`
+    - `<diag_name>.write_species / species`
+    - `<diag_name>.<species_name>.variables`
+  - 本轮继续细化 particle-field / reduced-diags 的 still-coarse 条目：
+    - `<diag_name>.particle_fields_to_plot / particle_fields_species`
+    - `<diag_name>.particle_fields.<field_name>.do_average`
+    - `<diag_name>.particle_fields.<field_name>(x,y,z,ux,uy,uz)`
+    - `<diag_name>.particle_fields.<field_name>.filter(x,y,z,ux,uy,uz)`
+    - `reduced_diags.intervals`
+  - 本轮继续细化 openPMD / I/O 邻接尾项：
+    - `<diag_name>.adios2_operator.parameters.*`
+    - `<diag_name>.adios2_engine.type / adios2_engine.parameters.*`
+    - `<diag_name>.dump_rz_modes`
+    - `warpx.mffile_nstreams`
+  - 本轮继续细化 diagnostics 调度与 SENSEI 邻接尾项：
+    - `<diag_name>.intervals`
+    - `<diag_name>.dump_last_timestep`
+    - `<diag_name>.sensei_config`
+    - `<diag_name>.sensei_pin_mesh`
+  - 本轮继续细化 diagnostics 邻接运行时开关：
+    - `warpx.synchronize_velocity_for_diagnostics`
+    - `warpx.write_diagnostics_on_restart`
+  - 本轮继续细化 BTD snapshot / buffer 相邻条目：
+    - `<diag_name>.dt_snapshots_lab`
+    - `<diag_name>.dz_snapshots_lab`
+    - `<diag_name>.buffer_size`
+    - `<diag_name>.do_back_transformed_particles`
+  - 本轮继续细化 reduced-diags 文本输出合同：
+    - `reduced_diags.path`
+    - `reduced_diags.extension`
+    - `reduced_diags.separator`
+    - `reduced_diags.precision`
+  - 本轮继续细化 startup / verbosity 邻接条目：
+    - `warpx.limit_verbose_step`
+    - `warpx.always_warn_immediately`
+    - `warpx.abort_on_warning_threshold`
+    - `warpx.serialize_initial_conditions`
+  - 本轮继续细化 parallelization 邻接调试开关：
+    - `warpx.safe_guard_cells`
+    - `ablastr.fillboundary_always_sync`
+  - 本轮继续细化 diagnostics 尾项：
+    - `<diag_name>.buffer_flush_limit_btd`
+    - `<diag_name>.adios2_operator.type`
+    - `<diag_name>.fields_to_plot`
+  - 本轮继续细化 species/runtime 与 load-balance / mirror / 外场初始化条目：
+    - `particles.species_names`
+    - `particles.use_fdtd_nci_corr`
+    - `particles.rigid_injected_species`
+    - `<species>.injection_style / do_continuous_injection`
+    - `<species>.density_min / density_max`
+    - `<species>.do_not_deposit / do_not_gather / do_not_push`
+    - `algo.load_balance_intervals / load_balance_efficiency_ratio_threshold`
+    - `algo.load_balance_with_sfc / load_balance_knapsack_factor`
+    - `algo.load_balance_costs_update / costs_heuristic_particles_wt / costs_heuristic_cells_wt`
+    - `warpx.do_dynamic_scheduling`
+    - `warpx.roundrobin_sfc`
+    - `warpx.split_high_density_boxes / threshold / min_box_size`
+    - `warpx.num_mirrors / mirror_z / mirror_z_width / mirror_z_npoints`
+    - `warpx.B_ext_grid_init_style`
+  - 本轮继续细化粒子初始化 still-coarse 条目：
+    - `particle_thermalizer.species`
+    - `particles.do_tiling`
+    - `<species>.species_type / charge / mass`
+    - `<species>.profile / flux_profile`
+    - `particles.E/B_ext_particle_init_style`
+  - 本轮继续细化 AMReX-owned / fluid / laser / external-grid still-coarse 条目：
+    - `amr.max_grid_size`
+    - `fluids.species_names`
+    - `lasers.deposit_on_main_grid`
+    - `warpx.E_ext_grid_init_style`
+    - `warpx.E/B_external_grid`
+  - 本轮继续细化 external-field / fluid 邻接 still-coarse 条目：
+    - `warpx.maxlevel_extEMfield_init`
+    - `<fluid_species_name>.E/B_ext_init_style`
+  - 本轮继续细化 lattice / collision still-coarse 条目：
+    - `lattice.elements / lattice.reverse / <element_name>.type`
+    - `collisions.collision_names`
+    - `<collision_name>.type / species / product_species`
+    - `<collision_name>.ndt_supercycle / ndt_subcycle`
+  - 本轮继续细化 pairwise-Coulomb 邻接条目：
+    - `<collision_name>.CoulombLog`
+    - `<collision_name>.use_global_debye_length`
+  - 本轮继续细化 binary-event / background-collision still-coarse 条目：
+    - `<collision_name>.event_multiplier`
+    - `<collision_name>.probability_threshold / probability_target_value`
+    - `<collision_name>.background_density / background_temperature`
+    - `<collision_name>.background_mass / background_charge_state / background_type`
+  - 本轮继续细化 background_mcc / dsmc still-coarse 条目：
+    - `<collision_name>.scattering_processes`
+    - `<collision_name>.<scattering_process>_cross_section`
+    - `<collision_name>.<scattering_process>_energy`
+    - `<collision_name>.ionization_species`
+    - `<collision_name>.ionization_target_species`
+  - 本轮继续细化 nuclearfusion / pairwise-Coulomb correction still-coarse 条目：
+    - `<collision_name>.scattering_angle_model`
+    - `collisions.correct_energy_momentum`
+    - `collisions.energy_fraction / energy_fraction_max`
+    - `collisions.beta_weight_exponent`
+    - `collisions.energy_correction_sort_by_weight`
+  - 本轮继续细化 pulsed_decay / bremsstrahlung still-coarse 条目：
+    - `<collision_name>.decay_rate(x,y,z,t)`
+    - `<collision_name>.fixed_product_weight`
+    - `<collision_name>.productA_temperature_eV / productB_temperature_eV`
+    - `<collision_name>.Z / multiplier / create_photons / koT1_cut`
+  - 本轮继续细化 collision placement / filter / particle-shape / implicit-crossing / EM-medium still-coarse 条目：
+    - `collisions.split_momentum_push`
+    - `warpx.filter_npass_each_dir / use_filter_compensation`
+    - `algo.charge_deposition`
+    - `algo.particle_shape`
+    - `particles.max_grid_crossings`
+    - `algo.em_solver_medium`
+  - 本轮继续细化 psatd runtime-mode still-coarse 条目：
+    - `psatd.periodic_single_box_fft`
+    - `psatd.update_with_rho`
+    - `psatd.v_galilean / use_default_v_galilean`
+    - `psatd.v_comoving`
+    - `psatd.do_time_averaging`
+  - 本轮继续细化 sorting / shared-memory deposition still-coarse 条目：
+    - `warpx.sort_particles_for_deposition`
+    - `warpx.sort_idx_type`
+    - `warpx.sort_bin_size`
+    - `warpx.do_shared_mem_current_deposition`
+    - `warpx.shared_tilesize`
+    - `warpx.shared_mem_current_tpb`
+  - 本轮继续细化 `grid_type + field/pusher/solver + psatd guard` mixed-consumer 条目：
+    - `warpx.grid_type`
+    - `algo.field_gathering`
+    - `algo.particle_pusher`
+    - `algo.maxwell_solver`
+    - `psatd.nx/ny/nz_guard`
+  - 本轮继续细化 `boundary potential + injection bounds + field ionization` still-coarse 条目：
+    - `boundary.potential_lo/hi_x/y/z`
+    - `<species>.xmin/ymin/zmin/xmax/ymax/zmax`
+    - `<species>.do_field_ionization`
+  - 本轮继续细化 `rigid injection + backward propagation + splitting + boundary buffer` still-coarse 条目：
+    - `<species>.zinject_plane`
+    - `<species>.rigid_advance`
+    - `<species>.do_backward_propagation`
+    - `<species>.split_type`
+    - `<species>.save_particles_at_xlo/ylo/zlo/xhi/yhi/zhi/eb`
+  - 本轮继续细化 `user attributes + ionization companion parameters` still-coarse 条目：
+    - `<species>.addIntegerAttributes`
+    - `<species>.addRealAttributes`
+    - `<species>.do_adk_correction`
+    - `<species>.physical_element`
+    - `<species>.ionization_product_species`
+    - `<species>.ionization_initial_level`
+    - 已补清 `addIntegerAttributes / addRealAttributes` 不只在 `PhysicalParticleContainer` 构造期安装 parser 并扩展 SoA runtime components，还会在 `DefaultInitialization.H` 中经 `getUser{Int,Real}Attribs()`、`getUser{Int,Real}AttribParser()` 与 `compile<7>()` 重新求值并写入新粒子；同时补清 `do_adk_correction` 会加载 Hydrogen correction factors 并一路传进 `IonizationFilterFunc`，`physical_element` 会驱动 atomic-number / ionization-energy / ADK-prefactor 表装载并约束修正边界，`ionization_product_species` 会经 `mapSpeciesProduct() -> CheckIonizationProductSpecies() -> doFieldIonization()` 绑定到真实 product container，而 `ionization_initial_level` 会先建立 `ionizationLevel` runtime int component，再在初始化与 ADK 事件链中持续充当 charge-state 状态
+  - 本轮继续细化 `momentum-distribution companion` still-coarse 条目：
+    - `<species>.theta_distribution_type`
+    - `<species>.beta_distribution_type`
+    - `<species>.radial_numpercell_power`
+    - 已补清 `theta_distribution_type / beta_distribution_type` 并不是孤立 parser 项，而是只在 `SpeciesUtils::parseMomentum()` 进入 `maxwell_boltzmann / maxwell_juttner` 分支时才通过 `TemperatureProperties / VelocityProperties` 进入真实解析链；随后它们会分别经 `GetTemperature / GetVelocity` 交给 `InjectorMomentumBoltzmann / InjectorMomentumJuttner`，从而定义热平衡注入链里的温度与 bulk drift 取值模式
+  - 本轮继续细化 `momentum-distribution main entry + resampling` still-coarse 条目：
+    - `<species>.momentum_distribution_type`
+    - `<species>.do_resampling`
+    - `<species>.resampling_algorithm`
+    - `<species>.resampling_trigger_intervals`
+    - 已补清 `momentum_distribution_type` 的真正上游调用者是 `PlasmaInjector` 在 `gaussian_beam / nrandompercell / nfluxpercell / nuniformpercell` 构造期对 `SpeciesUtils::parseMomentum(...)` 的统一调用；同时明确其会继续分派到 `InjectorMomentumConstant/Gaussian/GaussianFlux/Uniform/Parser/Boltzmann/Juttner` 等对象，其中 `gaussianflux` 额外绑定 `flux_normal_axis / flux_direction`
+    - 已补清 `do_resampling` 会继续走 `WarpXEvolve -> MultiParticleContainer::doResampling() -> PhysicalParticleContainer::resample()` 的全局同步与 tile-level 执行链，`resampling_algorithm` 会分叉到 `LevelingThinning` 与 `VelocityCoincidenceThinning` 两种完全不同的 cell kernel，而 `resampling_trigger_intervals` 则会与 `resampling_trigger_max_avg_ppc` 和由 `boxArray.numPts()` 汇总得到的全局 `avg_ppc` 条件共同组成 trigger 判定
+  - 本轮继续细化 `resampling thresholds` still-coarse 条目：
+    - `<species>.resampling_min_ppc`
+    - `<species>.resampling_trigger_max_avg_ppc`
+    - `<species>.resampling_trigger_intervals`
+    - 已补清 `resampling_min_ppc` 在 `LevelingThinning / VelocityCoincidenceThinning` 两个算法里都会先裁掉 `cell_numparts < min_ppc` 的 cell，因此它是共享的 per-cell early-return gate
+    - 已补清 `resampling_trigger_max_avg_ppc` 不是孤立阈值，而是经 `PhysicalParticleContainer::resample()` 的全局粒子数同步后，与 `boxArray.numPts()` 汇总出的 `avg_ppc` 一起进入 `ResamplingTrigger::triggered(...)` 的 step-loop 激活条件
+  - 本轮继续细化 `resampling algorithm-specific companions`：
+    - `<species>.resampling_algorithm_target_ratio`
+    - `<species>.resampling_algorithm_target_weight`
+    - `<species>.resampling_algorithm_velocity_grid_type`
+    - `<species>.resampling_algorithm_delta_ur / n_theta / n_phi / delta_u`
+    - 已补清 `LevelingThinning` 中 `target_ratio` 会直接定义 `level_weight = average_weight * target_ratio` 的 thinning 门槛；`VelocityCoincidenceThinning` 中 `target_weight` 会映射成 `cluster_weight` 上界，而 `velocity_grid_type` 与 `delta_ur / n_theta / n_phi / delta_u` 会继续决定 momentum-bin 的 spherical/cartesian 离散方式、bin 尺度和 cluster 语义
+  - 本轮继续细化 `temperature-deposition + diagnostics/openPMD` still-coarse 条目：
+    - `<species>.do_temperature_deposition`
+    - 已补清 `do_temperature_deposition` 不只是在 `PhysicalParticleContainer` 构造期挂上 `T_<species>` 三方向场和 `VarianceAccumulationBuffer`，还会继续进入 `MultiParticleContainer::DepositTemperatures() -> AccumulateVelocitiesAndComputeTemperature()` 的双遍 variance deposition 链：第一遍沉积后先对 `n/w/vbar` 做 boundary sum，默认 `DOUBLE_PASS` 下再清空 `w2` 做第二遍沉积并继续对 `w2` 做 guard-cell 求和，最后按 cell 归一化方差、乘 `mass/k_B` 换算成 Kelvin，并经 `ConvertVarianceToTemperatureAndFilter(..., WarpX::use_filter)` 收口；同时补清 diagnostics 侧不是直接写出原始 `T_<species>` MultiFab，而是通过 `TemperatureFunctor -> pc.GetAverageNGPTemperature(m_lev)` 二次取值后再 coarsen 到输出网格
+    - `buffer_flush_limit_btd / adios2_operator.type / fields_to_plot` 已在更早的 diagnostics/openPMD 批次压实，本处不再重复保留为同轮 still-coarse 子项
+  - 本轮继续细化 `laser common-entry` still-coarse 条目：
+    - `lasers.names`
+    - `<laser>.e_max / a0 / wavelength / profile`
+    - 已补清 `lasers.names` 会在 `WarpX::ReadParameters()` 中触发 laser 相关全局路径，并在 `MultiParticleContainer` 中扩展 `allcontainers`、逐个实例化 `LaserParticleContainer`、回绑 `deposit_on_main_grid`；同时补清 `<laser>.e_max / a0 / wavelength / profile` 会在 `LaserParticleContainer` 构造期汇合到 `CommonLaserParameters` 与 `laser_profiles_dictionary` 工厂，施加 `e_max xor a0`、正波长与零振幅禁用边界，再统一进入 `ILaserProfile::init(...)` 和运行期 `update() -> fill_amplitude() -> update_laser_particle()` 主链
+  - 本轮继续细化 `laser plane-geometry` still-coarse 条目：
+    - `<laser>.position / polarization / direction`
+    - 已补清这组三维平面几何参数不只在 `LaserParticleContainer` 构造期完成长度检查、归一化和正交约束，还会继续进入 `InitData()` 的 `Transform/InverseTransform`、注入盒与激光平面的相交裁剪、天线宏粒子平面铺设，以及“整片天线完全在 simulation box 外时记录 warning 并禁用该 laser”的分支
+  - 本轮继续细化 `gaussian laser profile` still-coarse 条目：
+    - `<laser>.profile_t_peak / profile_duration / profile_waist / profile_focal_distance`
+    - `<laser>.phi0 / zeta / beta / phi2`
+    - 已补清这组 Gaussian 主参数并不只停留在 `GaussianLaserProfile::init(...)`：`profile_t_peak / phi0` 会直接进入 `oscillation_phase`，`duration` 进入 `inv_tau2 -> stretch_factor / stc_exponent`，`waist / focal_distance` 进入 `diffract_factor / inv_complex_waist_2 / exp_argument`，`stc_direction` 则通过 `theta_stc` 把 `(Xp,Yp)` 投影到时空耦合方向；因此它们共同定义的是逐粒子 `fill_amplitude()` kernel，而不是孤立 profile 元数据
+  - 本轮继续细化 `gaussian STC + continuous-injection` still-coarse 条目：
+    - `<laser>.stc_direction`
+    - `<laser>.do_continuous_injection / min_particles_per_mode`
+    - 已补清 `zeta / beta / phi2` 会继续进入 `GaussianLaserProfile::fill_amplitude()` 的 `stretch_factor`、逐粒子 `stc_exponent` 和 chirp 虚部修正，而不是只停留在 init 阶段；同时补清 `do_continuous_injection` 会打开 `m_updated_position` 的 boosted-frame 回推与“首次入域才调用一次 InitData()”的 gate，`min_particles_per_mode` 则直接控制 RZ 下 `n_spokes = (n_modes-1) * min_particles_per_mode` 的 spoke 数和权重归一化
+  - 本轮继续细化 `from_file + parse_field_function` still-coarse 条目：
+    - `<laser>.field_function(X,Y,t)`
+    - `<laser>.binary_file_name / lasy_file_name`
+    - `<laser>.time_chunk_size / delay`
+    - 已补清 `field_function(X,Y,t)` 的 profile 运行期几乎完全由 `fill_amplitude()` 决定，`update()` 本身是 no-op；同时补清 `binary/lasy` 两条 backend 不只在 init 期选源并预读首块，还会继续进入 `FromFileLaserProfile::update()` 的时间块滑窗加载，以及 `fill_amplitude()` 的“越界直接清零、有效时再分流到 binary/cartesian/cylindrical 插值”链，`time_chunk_size / delay` 则分别控制缓存窗口大小和有效发射时间平移
+  - 本轮继续细化 `self_fields + magnetostatic solver` still-coarse 条目：
+    - `warpx.self_fields_required_precision / absolute_tolerance / max_iters / verbosity`
+    - `warpx.magnetostatic_solver_required_precision / absolute_tolerance / max_iters / verbosity`
+  - 本轮继续细化 `species initial self-fields` still-coarse 条目：
+    - `<species>.initialize_self_fields`
+    - `<species>.self_fields_required_precision / self_fields_absolute_tolerance / self_fields_max_iters / self_fields_verbosity`
+    - 已补清这组参数不只落在 `PhysicalParticleContainer` 构造函数的 species 私有状态入口，还会先参与 `WarpXInitData.cpp` 里的 electrostatic 初始化触发判断；并明确 species 级 `self_fields_*` override 只进入 `RelativisticExplicitES::AddSpaceChargeField(...)` 的 per-species `computePhi(...)` 链，`AddBoundaryField(...)` 仍使用 solver 级默认值，其中 `self_fields_verbosity` 只覆盖该 species 初始 Poisson 求解的底层日志级别
+  - 本轮继续细化 `random-theta + AMR splitting gate` still-coarse 条目：
+    - `<species>.random_theta`
+    - `<species>.do_splitting`
+  - 本轮继续细化 `NUniformPerCell` 入口条目：
+    - `<species>.num_particles_per_cell_each_dim`
+  - 本轮继续细化 `AMR coarse-fine current buffer` 条目：
+    - `warpx.n_current_deposition_buffer`
+  - 本轮继续细化 `AMR/moving-window` 相邻条目：
+    - `warpx.refine_plasma`
+    - `warpx.n_field_gather_buffer`
+  - 本轮继续细化 `AMR communication + coarse-grid gather` 相邻条目：
+    - `warpx.do_single_precision_comms`
+    - `particles.gather_from_main_grid`
+  - 本轮继续细化 `boundary` 相邻条目：
+    - `boundary.field_lo/hi`
+    - `boundary.particle_lo/hi`
+    - 已补清 `geometry.is_periodic` 回写，以及 `WarpX.cpp / WarpXInitData.cpp / WarpX_PEC.cpp` 的 runtime consumer
+  - 本轮继续细化 `thermal boundary + EB potential` 相邻条目：
+    - `boundary.<species_name>.u_th`
+    - `warpx.eb_potential(x,y,z,t)`
+    - 已补清 `PhysicalParticleContainer -> ParticleBoundaries_K.H` 的 thermal 重采样链，以及 `PoissonBoundaryHandler -> PoissonSolver/EffectivePotentialPoissonSolver` 的 EB Dirichlet consumer
+  - 本轮继续细化 `multi-source injection + diagnostics species` 相邻条目：
+    - `<species>.injection_sources`
+    - `<diag>.species`
+    - 已补清 `PhysicalParticleContainer -> PlasmaInjector(source_name)` 的多注入源工厂链，以及 `Full/BTD/BoundaryScraping` 三套 species 默认回退与粒子输出初始化链
+  - 本轮继续细化 `particle diagnostics species-local filter` 条目：
+    - `<diag>.<species>.additional_variables`
+    - `<diag>.<species>.random_fraction / uniform_stride / plot_filter_function(...)`
+    - 已补清 `ParticleDiag` 构造期安装链，以及 `FlushFormatPlotfile / WarpXOpenPMD` 中 `compileParser(...) + ParserFilter(InputUnits::SI)` 驱动的 writer-side `copyParticles(...)` 过滤链，并确认它同时覆盖普通 `pc` 与 pinned/BTD `pinned_pc` 路径
+  - 本轮继续细化 `time-averaged diagnostics` 条目：
+    - `<diag>.time_average_mode`
+    - `<diag>.average_period_steps / average_period_time / average_start_step`
+    - 已补清 `FullDiagnostics::DerivedInitData / DoComputeAndPack / Flush` 的 averaging window 与归一化写出链
+  - 本轮继续细化 `reduced-diags` 基类/工厂条目：
+    - `warpx.reduced_diags_names`
+    - `<reduced>.type`
+    - `reduced_diags.intervals / path`
+    - 已补清 `MultiReducedDiags` 的实例注册/多态调度链，以及 `ReducedDiags` 的目录建立、restart 续写判断和 `WriteToFile(step)` 文件合同
+  - 本轮继续细化 `reduced-diags` 输出文件格式条目：
+    - `reduced_diags.extension / separator / precision`
+    - 已补清 `ReducedDiags` 的文件名合同、restart/header 预处理和 `WriteToFile()` 列格式链
+    - 已补清 `LoadBalanceCosts / FieldProbe` 对 `precision` 的自定义 writer 例外
+  - 本轮继续细化 `reduced-diags` instance-local histogram/species 条目：
+    - `<reduced>.species`
+    - `<reduced>.bin_number / bin_min / bin_max`
+    - `<reduced>.histogram_function(...)`
+    - `<reduced>.normalization`
+    - `<reduced>.filter_function(...)`
+    - 已补清 `ParticleHistogram / BeamRelevant / DifferentialLuminosity / ParticleHistogram2D` 的 species-container 绑定链、分箱几何构造链，以及 `ParticleHistogram::ComputeDiags()` 的 parser/filter/归一化分支
+  - 本轮继续细化 `FieldProbe + ParticleHistogram2D` 专有 reduced-diags 条目：
+    - `<reduced>.probe_geometry / resolution / interp_order / raw_fields`
+    - `<reduced>.bin_number_abs/ord / bin_min_abs/ord / bin_max_abs/ord`
+    - `<reduced>.histogram_function_abs/ord(...)`
+    - `<reduced>.value_function / filter_function(...,w)`
+    - 已补清 `FieldProbe` 的探测器几何分派、探针粒子铺设与场插值 gate，其中 `resolution` 继续决定 probe 粒子总数和输出行数，`interp_order` 直接进入 `doGatherShapeN(...)` 的运行期插值链，废弃的 `raw_fields` 则只保留“改用 interp_order = 0”这一兼容迁移提示；同时补清 `ParticleHistogram2D::ComputeDiags()` 的二维分箱、parser 筛选和值累加链
+  - 本轮继续细化 `FieldProbe + DifferentialLuminosity2D` 专有 reduced-diags 条目：
+    - `<reduced>.integrate / do_moving_window_FP`
+    - `<reduced>.bin_number_1/2 / bin_min_1/2 / bin_max_1/2`
+    - `<reduced>.openpmd_backend / file_min_digits`
+    - 已补清 `FieldProbe::ComputeDiags()` 的积分语义与 moving-window 探针平移链，以及 `DifferentialLuminosity2D` 的二维碰撞能量网格与专有 openPMD 输出文件合同
+  - 本轮继续细化 `FieldProbe` 几何铺设条目：
+    - `<reduced>.x/y/z_probe`
+    - `<reduced>.x1/y1/z1_probe`
+    - `<reduced>.target_normal_* / target_up_* / detector_radius`
+    - 已补清这组参数不只定义几何输入，还会继续进入 `FieldProbe::InitData()` 的 point/line/plane 点集生成、`m_probe.AddNParticles(...)` 的 probe 宏粒子落点，以及 `ComputeDiags()` 的 moving-window 平移和 `ProbeInDomain()` 入域判定链
+    - 已补清 `FieldProbe::InitData()` 的点/线/平面三条探针粒子铺设路径，以及平面探针的归一化、叉乘构型、四角求解和二维网格生成链
+    - 已补清 `integrate / do_moving_window_FP` 的更细运行语义：`integrate` 同时控制 header 单位、`ComputeDiags()` 的“每步累加/按 interval 写出”调度分离和 `E/B/S += instantaneous * dt` 存储语义；`do_moving_window_FP` 则按 `step - m_last_compute_step` 累积位移，再进入 probe 粒子位置更新和后续场采样链
+  - 本轮继续细化 `ParticleHistogram2D` openPMD 输出合同条目：
+    - `<reduced>.openpmd_backend / file_min_digits`
+    - 已补清构造期 backend 选择与回写链，以及 `WriteToFile()` 的 `openpmd_%0NT.<backend>` 文件模板、`io::Series` 创建和 axis-label 元数据链
+  - 这条 open item 现在剩余的真实工作已收缩为：
+    - 继续把“初步源码命中”从字符串命中压到真实 `ParmParse` / consumer 解析链
+    - 清理少量仍偏粗的 grouped alias / pass-through / mixed-consumer 摘要说明
+  - 当前新的优先尾项已收缩为：
+    - 其余 still-coarse 的 grouped alias / pass-through / mixed-consumer 条目
+    - diagnostics / particle-output / reduced-diags 里剩余少量 still-coarse 的 instance-local 条目
+    - 少量 startup / AMReX-owned 邻接参数的 parser/consumer 精修
+    - 已补清 `amrex.async_out / amrex.async_out_nfiles` 在 WarpX 本地只邻接 `FlushFormatPlotfile::WriteToFile()` 的 `WriteMultiLevelPlotfile(...)` 路径，而不会作用到 `FlushFormatCheckpoint` 的 `VisMF::Write(...)` checkpoint 链
+    - 已补清 `amrex.abort_on_unused_inputs / amrex.use_profiler_syncs` 在 WarpX 本地只邻接 `amrex_init() -> amrex::Initialize(..., overwrite_amrex_parser_defaults)`，且 `overwrite_amrex_parser_defaults()` 本身并不读取/覆写它们；WarpX 真正协调的 profiler 同步项仍是 `tiny_profiler.device_synchronize_around_region`
+    - 已补清 `warpx.serialize_initial_conditions / safe_guard_cells / ablastr.fillboundary_always_sync` 的更细 runtime 分支：前者现在包含旧别名 `serialize_ics` 的拒绝边界和 `AddParticles.cpp` 的 OpenMP gate，后两者则分别压实到 `WarpXEvolve.cpp` 的额外 `FillBoundary*` 补同步点，以及 `ablastr::utils::communication::FillBoundary(...)` 中普通/单精度临时副本两条 `FillBoundary(...)` vs `FillBoundaryAndSync(...)` 切换链
+    - 已补清 `particles.deposit_on_main_grid / gather_from_main_grid` 的更细 runtime 分支：前者现在从 `MultiParticleContainer` 的 species side-list 回绑，继续压实到 `WarpX.cpp` 对 `n_current_deposition_buffer`、`current_buf/rho_buf` 和 `current_buffer_masks` 的强制启用、`Partition.cpp` 的 `nfine_current=0` 分区边界，以及 `PhysicalParticleContainer.cpp` / `WarpXEvolve.cpp` 中 `rho_buf/current_buf -> (lev-1)` 的 coarse-buffer 沉积与后续 coarse-level sync；后者则继续压实到 `Efield_cax/Bfield_cax` 分配、`nfine_gather=0` 分区边界，以及 `PhysicalParticleContainer.cpp` 中按 `np_gather` 把后段粒子改走 `gather_lev = lev-1` 的 coarse-gather 运行链
+    - 已补清 `particle_thermalizer.normal / species / start / end / momentum_threshold / theta` 的更细 runtime 分支：从 `ParticleThermalizer` 构造期的几何合法性与参数断言，继续压实到 `WarpXEvolve.cpp` 的每步 hook、per-species/per-level/per-tile 的 `applyThermalizer()` 链、`find_overlap(...)` 的 tile 级早退、沿法向的位置概率筛选，以及“仅对超过阈值的动量分量按 `RandomNormal` 重采样并保留原符号”的逐粒子热化 kernel
+    - 已补清 `particles.do_tiling` 的更细 runtime 分支：从 `WarpXAMReXInit.cpp` 的启动期默认值覆写和 `WarpXParticleContainer::ReadParameters()` 的静态读取，继续压实到 `AddParticles.cpp` / `MultiParticleContainer.H` 中 `MFItInfo::EnableTiling(tile_size)` 的粒子创建路径、多 species helper 的一致性断言，以及“仅在 `Gpu::notInLaunchRegion()` 的 CPU 路径下真正启用 tiling”的运行边界
+    - 已补清 `particles.use_fdtd_nci_corr` 的更细 runtime 分支：从 `MultiParticleContainer` 的 parser 入口和 `WarpX.cpp` 对 `PSATD / Esirkepov / implicit` 的兼容性约束，继续压实到 `WarpX::InitNCICorrector()` 中按 level 的 `c*dt/dz` 与 `nodal_gather` 构造两套 `NCIGodfreyFilter` 并 `ComputeStencils()`，以及 `PhysicalParticleContainer::Evolve()` 在 fine/coarse gather 两条路径里先对 tile 级 `E/B` 分量 `ApplyStencil(...)` 到临时 `filtered_*` `FArrayBox`、再把 `PushPX(..., lev, gather_lev)` 的 gather 指针改绑到这些过滤后场的运行链
+    - 已补清 `particles.rigid_injected_species / <species>.species_type` 的更细 runtime 分支：前者现在从 `MultiParticleContainer` 的 `PCTypes::RigidInjected` 工厂分派，继续压实到 `RigidInjectedParticleContainer` 的 `zinject_plane / rigid_advance` 解析、`InitData() -> AddParticles(0) -> RemapParticles() -> Redistribute()` 初始化链，以及后续每步 `Evolve()` 对 `zinject_plane_levels` 和 `done_injecting_lev` 的更新；后者则从 `PhysicalParticleContainer` 的默认 `charge/mass` 与必填检查，继续压实到 `MultiParticleContainer` 按 `PhysicalSpecies::photon` 切到 `PhotonParticleContainer` 的运行分派，以及 injector/external-file 路径上对同一优先级规则的复用
+    - 已补清 `warpx.num_mirrors / mirror_z / mirror_z_width / mirror_z_npoints` 的更细 mirror runtime 分支：`ApplyMirrors()` 现在明确压实到 boosted-frame 下的 `z_min/z_max_tmp` 平移、`mirror_z_npoints * dz` 的逐 level 最小厚度约束，以及 fine/coarse patch 上 `E/B/F/G` 的 `NullifyMF(...)` 全链路清零
+    - 已补清 `algo.load_balance_* / costs_heuristic_* / roundrobin_sfc / split_high_density_boxes*` 的更细 runtime 分支：包括旧 `warpx.*` 别名拒绝边界、`LoadBalanceCosts` reduced diagnostic 对 `load_balance_intervals` 和 heuristic costs 的并行 consumer，以及 `PostProcessBaseGrids()` 与 `MakeDistributionMap()` 在高密度预切分和初始分发策略上的联动
+    - 已补清 `warpx.E/B_external_grid / maxlevel_extEMfield_init` 的更细 external-grid runtime 分支：包括 constant branch 对 `*_aux/*_cp/*_avg_*` 的初始化写入、moving-window `shiftMF(...)` 对同一常量数组的复用，以及 `maxlevel_extEMfield_init` 对 constant/parser 两支的 level gate 与 `E/B` parser 非对称边界
+    - 已补清 `particles.E/B_ext_particle_init_style` 的更细 external-particle-field runtime 分支：从 `MultiParticleContainer::ReadParameters()` 的 `parser / repeated_plasma_lens / read_from_file` 分派，继续压实到 `ExternalParticleFields::ReadParameters()` 的 named-field/单字段 fallback 与 `read_fields_[EB]_dependency(t)` parser、`WarpX.cpp` 的多分量 `E/B_external_particle_field` 分配、`WarpXInitData.cpp` 的按-component 文件读场，以及 `WarpXComm.cpp::UpdateAuxilaryData()` 按 `time_executor(t_new[lev])` 做 `Saxpy` 叠加到 `Efield_aux/Bfield_aux`
+    - 已补清 `fluids.species_names / <fluid>.E/B_ext_init_style` 的更细 fluid runtime 分支：前者现在明确连到 `do_fluid_species` 对 `AllocateLevelMFs / InitData / DepositCharge / DepositCurrent / Evolve` 的全局 gate，后者则压实到 `GatherAndPush()` 中 parser runtime flag、lab-frame 求值和 boosted-frame Lorentz 回变换的两段外场叠加链
+    - 已补清 `lasers.deposit_on_main_grid` 的更细 runtime 分支：从 `MultiParticleContainer` 的 laser side-list 回绑，继续压实到 `Partition.cpp` 的 `nfine_current=0` 分区边界，以及 `LaserParticleContainer::Evolve()` 中 `np_to_deposit=0` 后把高层粒子改走 `rho_buf/current_buf -> lev-1` 的 coarse-buffer 沉积分支
+- [x] 建立参数系统第一版人工骨架：新增 `notes/code-reading/utils/01-parser-system.md` 与 `docs/parameter-chapter-index.md`，先把 `ParmParse` 前缀、parser helper、interval 语法、算法枚举入口和一批高频 `待定` 参数的章节归属压实。
+- [x] 继续人工校正 `docs/parameter-map.md` 的第二批高频参数：无前缀运行控制、startup debug 参数、`algo.*`、`diagnostics.*`、`warpx.reduced_diags_names` / `reduced_diags.*`。
+- [x] 完成 `docs/parameter-map.md` 第三批人工校正：self-fields / magnetostatic、boundary / PML / EB、mirrors / lattice、collision / QED、PSATD、sorting / shared-memory deposition，以及 full diagnostics / BTD / particle-output / restart 参数族。
+- [x] 把 `docs/parameter-chapter-index.md` 从批次式人工校正提升为对象前缀导航，补出 `species / laser / diagnostics / collision` 四组子族入口。
+- [x] 新增 `notes/code-reading/utils/02-parameter-family-entrypoints.md`，把 `species / laser / diagnostics / reduced diagnostics / collision` 五组参数族的 `global gate / factory dispatch / instance-local parse` 入口压成源码图。
+- [x] 扩写 `notes/code-reading/utils/02-parameter-family-entrypoints.md`，补 `boundary / solver / psatd / implicit` 四组参数族的真实入口，把参数索引从容器工厂层推进到 root solver / boundary parse 层。
+- [x] 新增 `notes/code-reading/utils/05-deep-solver-object-parameter-families.md`，把 `fluids / hybrid_pic_model / macroscopic / effective potential` 四组参数继续拆到 `object creation / instance-local parse / runtime materialization`。
+- [x] 新增 `notes/code-reading/utils/06-external-vector-potential-and-poisson-boundary-parameters.md`，把 `external_vector_potential.*`、`boundary.potential_*` 和 `warpx.eb_potential(x,y,z,t)` 继续拆到 `parent gate / subobject parse / parser build / runtime apply`，并记录 Python 对 `PoissonBoundaryHandler` 的覆盖入口。
+- [x] 新增 `notes/code-reading/utils/07-parameter-validation-links-for-boundary-and-external-fields.md`，把 `boundary.potential_*`、open-boundary Poisson、effective-potential 和 `warpx.eb_potential(x,y,z,t)` 接回 `electrostatic_dirichlet_bc`、`open_bc_poisson_solver`、`effective_potential_electrostatic`、`ion_beam_extraction` 四条最稳定 validation 链，并同步清理 `docs/example-regression-map.md` 中 `ion_beam_extraction` 的粗分类条目。
+- [x] 继续细化 `docs/parameter-chapter-index.md` 的对象前缀导航：在 `species / laser / diagnostics / collision` 之外，补出 `Collision/QED` 子族、`boundary / solver / psatd / implicit`、`fluids / hybrid / macroscopic / effective potential` 三组更窄入口，形成更稳定的参数跳转层。
+- [x] 回到 `docs/parameter-map.md` 做尾项清理，先补一批高置信空源码命中：species 初始化/space-charge/field-ionization/resampling、virtual photons、collision product species、`external_vector_potential.<field_name>.*`、以及 diagnostics / BTD 主参数。
+- [x] 新增 `notes/code-reading/utils/08-low-frequency-parameter-families-and-pass-throughs.md`，把 `parameter-map` 最后一批低频空项压成正式源码结论，区分 grouped alias、AMReX-owned pass-through 输入、外场聚合开关、PSATD/centering grouped key、macroscopic/hybrid parser 参数和 Schwinger 区域边界框，并把整张表的空“初步源码命中”列清到 0。
+- [x] 人工复核 `docs/example-regression-map.md` 中 `general / to classify` 条目；当前这类顶层粗分类已清到 0，并开始转入成批清理仍写成“checksum 基线；需反查对应 inputs 和分析脚本”的家族条目。
+- [ ] 人工复核 `docs/literature-map.md` 中 `待分类` 条目，并标出必须 MinerU 处理的优先级。
+
+### 阶段 0：全源码精读框架落地
+
+- [x] 建立 `docs/warpx-source-reading-framework.md`。
+- [x] 为每个顶层模块建立 `notes/code-reading/<module>/README.md`：root、initialization、evolve、particles、fieldsolver、boundary、parallelization、diagnostics、embedded-boundary、filter、laser、fluids、nonlinear-solvers、accelerator-lattice、python、utils、ablastr。
+- [x] 在每个模块 README 中记录：构建入口、核心文件、物理/算法主题、精读顺序、正文目标、验证示例。
+- [x] 把 `docs/module-inventory.md` 的自动模块名人工合并成框架中的 15 个阶段。
+  - 已新增 `框架阶段合并` 总表，给出阶段 `0-14` 的模块归并和文件数
+  - 当前 `module-inventory` 已可直接按阶段 0-14 浏览，而不必先手动把自动模块名再翻译一次
+- [ ] 为阶段 1-3 建立下一批具体阅读笔记文件。
+
+### 阶段 1：Root / WarpX 主类状态
+
+- [x] 精读 `../warpx/Source/WarpX.H`，按成员类别建立主类状态表。
+- [x] 精读 `../warpx/Source/WarpX.cpp`，记录构造、析构、单例、参数读取和全局状态初始化的第一轮证据。
+- [x] 精读 `../warpx/Source/Fields.H`，解释 field registry 的类型和命名体系。
+- [x] 新建 `notes/code-reading/root/01-warpx-state-map.md`。
+- [x] 继续细读 `WarpX::WarpX()` 构造函数，按子系统创建顺序建立第二张状态表。
+- [x] 继续细读 `AllocLevelData()` 中 EB、fluid、macroscopic、spectral/coarse solver、buffer 和 level 分配分支的第一轮证据。
+- [x] 继续细读 `AllocLevelData()` 中 PML、hybrid、implicit mass matrix、effective potential 的深层分支。
+- [x] 回填 `manuscript/chapters/03-warpx-evolve.md` 的 WarpX 主类状态图。
+  - [x] 已把构造函数只建跨-level 外壳、`AllocLevelMFs()` 中 `effective potential / hybrid / implicit` 的不同落点，以及 `InitPML()` 作为初始化末段附加边界子系统的顺序，回填到第 3 章。
+  - [x] 已继续把这些关系压成更显式的主类状态图/表，而不是只停在文字回填。
+- [x] 进入 `Initialization/WarpXInitData.cpp`，把 `InitData()`、`InitFromScratch()`、`InitLevelData()`、`PostRestart()` 和 `CheckGuardCells()` 串成初始化链。
+
+### 阶段 2：Initialization / 初始化链
+
+- [x] 新建 `notes/code-reading/initialization/00-init-callgraph.md`。
+- [x] 精读 `WarpX::InitData()` 的 fresh run / restart 分叉和共同后处理。
+- [x] 精读 `WarpX::InitFromScratch()` 与 AMReX `MakeNewLevelFromScratch()` 的衔接。
+- [x] 精读 `WarpX::InitLevelData()` 中常量/parser/read-from-file 外场初始化的第一轮主链。
+- [x] 精读 `WarpX::InitPML()` 和 `CheckGuardCells()` 的第一轮主链。
+- [x] 精读 `ExternalField.*`、`LoadExternalFields()` 和 `ReadExternalFieldFromFile()`。
+- [x] 精读 `PlasmaInjector.*` 与 `InjectorPosition.H`、`InjectorDensity.H`，建立 species 初始分布源码图谱第一版。
+- [x] 精读 `SpeciesUtils::parseDensity()` 和 `SpeciesUtils::parseMomentum()`。
+- [x] 精读 `InjectorMomentum.H` 中 constant、gaussian、uniform、Boltzmann、Juttner、parser 的公式和代码。
+- [x] 精读 `Particles/ParticleCreation/AddParticles.cpp` 与 `AddPlasmaUtilities.*`。
+- [x] 精读 `DivCleaner/ProjectionDivCleaner.*`，推导 projection div cleaner 的离散方程。
+- [x] 回填 `manuscript/chapters/03-warpx-evolve.md` 或新初始化章节中的源码块。
+- [x] 补读 Gaussian beam 与 openPMD 粒子文件路径的边缘细节，把 `AddGaussianBeam()` 和 `AddPlasmaFromFile()` 从当前主链说明扩展为逐块精读。
+- [x] 精读 `TemperatureProperties.*`、`VelocityProperties.*`、`GetTemperature.*`、`GetVelocity.*`。
+
+### 阶段 3：全局时间推进
+
+- [x] 精读 `Evolve/WarpXComputeDt.cpp`，补完 CFL、固定步长、粒子速度、boosted frame 和 solver 限制。
+- [x] 新建 `notes/code-reading/evolve/04-compute-dt-and-adaptive-timestep.md`，解释 `ComputeDt()`、`UpdateDtFromParticleSpeeds()`、subcycling 和 `dt_update_interval`。
+- [x] 精读 `Evolve/WarpXEvolve.cpp` 中 `OneStep_sub1()` 与 `OneStep_JRhom()`。
+- [x] 新建 `notes/code-reading/evolve/03-subcycling-and-jrhom.md`，解释 AMR subcycling 的 fine/coarse 双时间层、current/rho restriction 与 PSATD-JRhom 的多次 `J/rho` 沉积循环。
+- [x] 精读 `Utils/WarpXMovingWindow.cpp`，解释 moving window 位置更新、连续注入和 boosted-frame 速度变换。
+- [x] 新建 `notes/code-reading/evolve/05-moving-window.md`，解释 `shiftMF()`、`UpdateInjectionPosition()`、`MoveWindow()`、`ShiftGalileanBoundary()`、连续粒子/流体注入和 PML/subcycling 调用点。
+- [x] 回填 `manuscript/chapters/03-warpx-evolve.md` 的更完整 `ComputeDt()`、subcycling、JRhom 和 moving window 细节。
+  - [x] 已把 `ComputeDt()` 的 solver/geometry 决策表、`const_dt` 与 `dt_update_interval` 互斥边界、moving-window 的 active 区间与 continuous-injection/flux-injection 区分、subcycling 的 coarse/fine current 保存-恢复语义，以及 JRhom 的输入字符串语义与 `current_correction/Vay deposition` 不兼容边界回填到第 3 章。
+
+### 阶段 B：物理和数学基础重写
+
+- [x] 重写 Vlasov 方程章节：相空间守恒、Liouville 图像、碰撞项边界。
+- [x] 重写 Vlasov-Maxwell 章节：源项、约束方程、能量/动量守恒。
+- [x] 重写 Vlasov-Poisson / electrostatic 极限章节。
+- [x] 重写宏粒子、权重、shape factor、噪声和采样误差章节。
+  - [x] 已在 `manuscript/chapters/01-kinetic-models.md` 中重写并分层压实：
+    - Vlasov 作为相空间守恒律与 Liouville 图像；
+    - `C[f] + S - L` 碰撞/源汇边界；
+    - `Vlasov-Maxwell` 的源项、约束方程与总能量守恒边界；
+    - `Vlasov-Poisson` 作为自洽场闭合的 electrostatic 极限；
+    - 宏粒子、非等权粒子、shape factor、采样噪声、Debye/统计时间尺度的文献边界。
+- [x] 重写 leapfrog、CFL、Debye 长度、等离子体频率、数值色散章节。
+  - [x] 已在 `manuscript/chapters/02-pic-loop.md` 中继续压实：
+    - leapfrog 时间层与 `x^n / p^{n+1/2} / J^{n+1/2}` 的最小 runtime contract；
+    - `\omega_p` 作为最快 plasma timescale、`\lambda_D` 作为最小 shielding length 的时间/空间分辨率边界；
+    - `ComputeDt()` 与 `CartesianYee/Nodal/CKC::ComputeMaxDt()` 所对应的 CFL 决策层；
+    - Yee / Nodal / CKC 从差分算子开始改写数值色散合同这一层。
+- [x] 为基础章节建立文献清单，优先处理 Birdsall-Langdon、Hockney-Eastwood、Dawson、Yee。
+  - [x] 已新增 `docs/foundations-literature-list.md`，把第 1 / 2 章当前真正依托的基础来源压成独立清单，并明确区分：
+    - `Birdsall 1985`、`Dawson 1983` 已有本地 PDF / MinerU / 中文精读，可直接作为正文证据；
+    - `Hockney-Eastwood` 与 `Yee 1966` 当前仍停留在 acquisition / metadata / abstract-level 边界，不能冒充为已核实一手来源。
+  - [x] 已把该清单回链到：
+    - `manuscript/chapters/01-kinetic-models.md`
+    - `manuscript/chapters/02-pic-loop.md`
+    - `docs/literature-map.md`
+
+### 阶段 C：真正样章，PIC loop 与 WarpX 主演化路径
+
+- [x] 重新读取并记录 `../warpx/Source/main.cpp`、`WarpX.H`、`WarpX.cpp`、`Evolve/WarpXEvolve.cpp` 的当日行号。
+- [x] 画出完整调用图：`main -> WarpX::GetInstance -> InitData -> Evolve -> OneStep -> Particles/Fields/Diagnostics`。
+- [x] 重写 `manuscript/chapters/02-pic-loop.md`，从物理 loop、时间层、离散守恒推到 WarpX 伪代码。
+- [x] 重写 `manuscript/chapters/03-warpx-evolve.md`，逐段讲解 `WarpX::Evolve`、`OneStep`、`OneStep_nosub`，并定位 `OneStep_sub1` 与 `OneStep_JRhom` 的后续精读入口。
+- [x] 建立 `notes/code-reading/evolve/`，保存逐文件源码阅读笔记。
+- [x] 继续把 `manuscript/chapters/03-warpx-evolve.md` 中 `OneStep_sub1()` 和 `OneStep_JRhom()` 从定位说明扩展为逐段精读第一版。
+- [x] 从 `PushParticlesandDeposit()` 进入 `MultiParticleContainer::Evolve()`，重写粒子推进和沉积样章的第一版。
+- [x] 用 Langmuir 和 uniform plasma 做最小验证记录：命令、环境、输出、物理检查量、源码路径。
+  - [x] `Langmuir`：已在 `runs/stage-c-validation/langmuir_1d` 用无沙箱 MPI 实跑 `inputs_test_1d_langmuir_multi`，输出 `diags/diag1000080`；官方 `analysis_1d.py` 因本机缺 `matplotlib/yt` 未原样执行，但其核心物理断言已按同一公式手工复现，得到解析场相对误差 `1.7027848999745115e-3 < 5e-2`、电荷守恒误差 `8.34503170903001e-12 < 1e-11`。
+  - [x] `uniform_plasma`：已在 `runs/stage-c-validation/uniform_plasma_2d` 用无沙箱 MPI 实跑 `inputs_test_2d_uniform_plasma`，输出 `diags/diag1000010`；当前本机缺 `yt/openpmd_viewer`，因此这轮没有复跑 `analysis_default_regression.py` 的 checksum，但已确认它本来就是 `analysis=OFF + checksum-only` baseline，应与 `Langmuir` 的强解析断言分级处理。
+- [x] 对样章做严格审查：公式、源码行号、参数、示例、文献是否闭环。
+  - [x] 本轮先按计划文档锁定样章对象为：
+    - `manuscript/chapters/02-pic-loop.md`
+    - `manuscript/chapters/03-warpx-evolve.md`
+  - [x] 已新增正式审查记录：
+    - `docs/sample-chapter-audit-2026-05-18.md`
+  - [x] 已按审查结果补入：
+    - 源码版本声明
+    - 参数示例
+    - 最小运行案例
+    - 进一步阅读
+    - 练习题
+  - [x] 当前结论：第 2/3 章已达到计划文档定义的样章可审阅状态；未完成项已前移到更高层的章节扩展审校，而不是继续补样章骨架。
+
+## 后续模块任务
+
+### 粒子系统
+
+- [x] 精读 `MultiParticleContainer`、`PhysicalParticleContainer`、`WarpXParticleContainer` 的显式主链入口。
+- [x] 精读 `Particles/Pusher/` 中 Boris、pusher selector 和 position update 的主路径。
+- [x] 精读 `Particles/Pusher/UpdateMomentumVay.H` 和 `UpdateMomentumHigueraCary.H`。
+- [x] 精读 `Particles/Pusher/` 中 radiation reaction、implicit pusher 和无质量 photon pusher 相关路径。
+- [x] 精读 `Particles/Gather/FieldGather.H` 的 `doGatherShapeN()` 主分派、shape 选择和 Cartesian/RZ 主 gather 路径。
+- [x] 精读 `Particles/ShapeFactors.H` 的 `Compute_shape_factor` 与 `Compute_shifted_shape_factor`。
+- [x] 精读 `Particles/Gather/` 其余维度分支、energy-conserving gather、external particle fields 和 Galerkin/PSATD 组合细节。
+- [x] 精读 particle boundaries、boundary buffer、scraping、sorting、resampling、thermalizer。
+- [x] 验证：`Examples/Tests/particle_pusher`、`single_particle`、`larmor`、`photon_pusher`。
+
+### 沉积、形函数和守恒
+
+- [x] 推导 charge/current deposition 的离散连续性方程。
+- [x] 定位 `WarpXParticleContainer::DepositCharge()` 和 `DepositCurrent()` 的 tile 级入口与算法分派。
+- [x] 精读 `Particles/Deposition/ChargeDeposition.H` 的主 shape kernel。
+- [x] 精读 `Particles/Deposition/CurrentDeposition.H` 的 direct current kernel。
+- [x] 精读 `Particles/Deposition/CurrentDeposition.H` 的 Esirkepov 主 3D old/new shape 差分 kernel。
+- [x] 精读 `Particles/Deposition/CurrentDeposition.H` 的 Villasenor、Vay、implicit charge-conserving、RZ/1D/RCYLINDER/RSPHERE 细分路径。
+- [x] 精读 mass matrices、temperature deposition、variance accumulation。
+- [x] 精读 `SyncCurrentAndRho`、guard/current/rho 同步路径。
+- [x] 验证：Langmuir PSATD current correction、Vay deposition tests。
+
+### 场求解器
+
+- [x] 推导 Yee/FDTD 主更新公式，并对照 `EvolveE/B/F/G` 第一轮源码。
+- [x] 精读 `WarpXPushFieldsEM.cpp` 顶层 field push 分派。
+- [x] 新建 `notes/code-reading/fieldsolver/00-fieldsolver-dispatch.md`。
+- [x] 精读 `FiniteDifferenceSolver/EvolveB.cpp` 的 Cartesian 主 kernel 和 algorithm 分派第一轮。
+- [x] 精读 `FiniteDifferenceSolver/EvolveE.cpp` 的 Cartesian 主 kernel 和 `F` 修正第一轮。
+- [x] 精读 `FiniteDifferenceSolver/EvolveF.cpp` 与 `EvolveG.cpp` 的 divergence-cleaning 标量主 kernel 第一轮。
+- [x] 新建 `notes/code-reading/fieldsolver/01-fdtd-evolve-e-b.md`，解释 `CartesianYeeAlgorithm.H`、`CartesianNodalAlgorithm.H`、`CartesianCKCAlgorithm.H` 的 `Upward/Downward` 差分算子、CFL 和 guard cell。
+- [x] 推导 CKC/nodal 更新公式第一版。
+- [x] 推导 RZ/spherical 更新公式第一版。
+- [x] 新建 `notes/code-reading/fieldsolver/04-noncartesian-fdtd.md`，解释 `CylindricalYeeAlgorithm.H`、`SphericalYeeAlgorithm.H`、RZ mode decomposition、轴上正则化、RCYLINDER/RSPHERE 简化和 `EvolveB/E/F`、`ComputeDivE` 的非 Cartesian 分支。
+- [x] 精读 FDTD PML 更新第一轮。
+- [x] 新建 `notes/code-reading/fieldsolver/02-fdtd-pml.md`，解释 `EvolveBPML.cpp`、`EvolveEPML.cpp`、`EvolveFPML.cpp`、`PMLComponent.H`、PML 参数入口、split-field 存储、`pml_has_particles` 电流项和 Cartesian-only 边界。
+- [x] 精读 `BoundaryConditions/PML.cpp`、`PML_current.H` 与 PML damping/sigma profile/current helper 第一轮。
+- [x] 新建 `notes/code-reading/fieldsolver/03-pml-damping-current.md`，解释 `SigmaBox`、`ComputePMLFactorsE/B()`、`DampPML()`、`DampJPML()`、`PML_current.H` 和 `PML::Exchange()`。
+- [x] 推导 PSATD 和 Galilean PSATD 第一版。
+- [x] 新建 `notes/code-reading/fieldsolver/05-psatd-spectral-flow.md`，解释 `WarpX::PushPSATD()` 主流程、`SpectralSolver` 算法分派、`SpectralFieldData` FFT 容器、`SpectralKSpace` k 向量和 staggered shift 第一轮。
+- [x] 精读 `PsatdAlgorithmGalilean.cpp` 系数初始化、current correction、Vay deposition 第一轮。
+- [x] 新建 `notes/code-reading/fieldsolver/06-psatd-galilean-current-correction.md`，解释 `C/S_ck/T2/X1-X4`、零模极限、current correction、`update_with_rho` 和 Vay spectral deposition。
+- [x] 精读 `PsatdAlgorithmJRhomFirstOrder/SecondOrder` 与 `OneStep_JRhom()` 的源码对应。
+- [x] 新建 `notes/code-reading/fieldsolver/07-psatd-jrhom.md`，解释 `psatd.JRhom` 参数、`OneStep_JRhom()` 多次 `J/rho` 沉积、谱数组 `old/mid/new` 时间层、一阶/二阶 JRhom 更新式、`Y1-Y8` 系数和 unsupported 组合。
+- [x] 读取 `Tools/Algorithms/psatd.ipynb`，对照解析推导补充系数来源。
+- [x] 精读 `SpectralSolverRZ`、Hankel transform 和 RZ PSATD/PML 第一轮。
+- [x] 新建 `notes/code-reading/fieldsolver/08-psatd-rz-hankel.md`，解释 `n_rz_azimuthal_modes`、`SpectralFieldDataRZ` 的 Hankel+FFT 流、`SpectralHankelTransformer` 的 scalar/vector 变换、`HankelTransform` 的 Bessel roots/SVD/GEMM、`PsatdAlgorithmRZ` 更新式、RZ current correction、Galilean RZ 和 RZ PML。
+- [x] 精读 `ElectrostaticSolvers/` 与 `MagnetostaticSolver/` 第一轮。
+- [x] 新建 `notes/code-reading/fieldsolver/09-electrostatic-magnetostatic.md`，解释 `WarpXSolveFieldsES.cpp`、Poisson 边界处理、`LabFrameExplicitES`、`RelativisticExplicitES`、`EffectivePotentialES`、`MagnetostaticSolver`、vector potential 边界条件和 `B=curl A` post callback。
+- [x] 回填 `manuscript/chapters/06-field-solvers.md` 的 6.9 静电/静磁小节。
+- [x] 精读 `ImplicitSolvers/` 与 `HybridPICModel/` 第一轮。
+- [x] 新建 `notes/code-reading/fieldsolver/10-implicit-and-hybrid.md`，解释 `ImplicitSolver`、`WarpXSolverVec`、`ThetaImplicitEM`、`SemiImplicitEM`、`StrangImplicitSpectralEM`、`WarpXPushFieldsHybridPIC.cpp` 和 `HybridPICModel/*`。
+- [x] 新建 `notes/code-reading/fieldsolver/11-psatd-coefficient-derivation.md`，解释 `Tools/Algorithms/psatd.ipynb` 的线性系统、齐次/非齐次解、源项多项式和系数表抽取。
+- [x] 新建 `notes/code-reading/nonlinear-solvers/00-solver-abstractions.md`，解释 `NonlinearSolver`、`LinearSolver`、`Preconditioner`、`PicardSolver`、`NewtonSolver`、`WarpX_PETSc.cpp`、`MatrixPC.H` 和 `CurlCurlMLMGPC.H`。
+- [x] 新建 `notes/code-reading/nonlinear-solvers/01-newton-picard.md`，解释 Picard 固定点迭代、Newton 残差线性化、`ComputeRHS()` 契约和 PETSc SNES / KSP 残差回调。
+- [x] 新建 `notes/code-reading/nonlinear-solvers/02-preconditioners-and-petsc.md`，解释 `MatrixPC`、`CurlCurlMLMGPC`、PETSc 向量/矩阵桥接和隐式电磁预条件器结构。
+- [x] 新建 `notes/code-reading/fieldsolver/12-hybrid-pic-model-deep-dive.md`，解释 hybrid PIC 的广义 Ohm 定律、离子/电子电流分裂、B 场 RK 子步、电子压力闭合和外部矢势分裂场。
+- [x] 回填 `manuscript/chapters/06-field-solvers.md` 的 6.10 Hybrid PIC 小节。
+- [x] 新建 `notes/code-reading/fieldsolver/13-fieldsolver-verification-map.md`，索引 `nci_fdtd_stability`、`nci_psatd_stability`、`electrostatic_sphere`、`implicit` 和 `ohm_solver_*` 的 CMake 注册、输入文件、分析脚本与 checksum 路径。
+- [x] 新建 `notes/code-reading/fieldsolver/14-fieldsolver-analysis-criteria.md`，精读 NCI FDTD/PSATD、electrostatic sphere、implicit EM 和 hybrid Ohm solver 的 analysis 判据、容差、源码覆盖和 assert/checksum/可视化分层；按用户要求未运行本地 WarpX 二进制测试。
+- [x] 验证：`nci_fdtd_stability`、`nci_psatd_stability`、`electrostatic_sphere`、`implicit`、`ohm_solver_*`。
+  - [x] 已把 `13-fieldsolver-verification-map.md`、`14-fieldsolver-analysis-criteria.md` 与第 6 章 `6.11` 收口成统一验证树，明确区分：
+    - `FDTD/PSATD NCI` 的场能/`divE-rho` 断言；
+    - `electrostatic_sphere` 的解析场 L2 与能量账本；
+    - `implicit` 的总能量、Gauss-law RMS、Newton/GMRES 迭代数；
+    - `ohm_solver_*` 中脚本级强断言与 checksum/可视化回归的边界。
+  - [x] 这一项当前按源码与 analysis 脚本精读完成；仍未运行本地 WarpX 二进制。
+
+### 边界、嵌入边界、AMR 和并行
+
+- [x] 建立 `notes/code-reading/boundary/00-field-boundary-parameters.md`，解释 `FieldBoundaries.*`、`ParticleBoundaries.cpp`、`WarpX.cpp` 的解析顺序、periodic 一致性约束、默认 periodic 继承和 `WarpXFieldBoundaries.cpp` 的第一层边界分派。
+- [x] 建立 `notes/code-reading/boundary/01-pml-data-and-update.md`，解释 `PML.H`、`PML.cpp`、`WarpXEvolvePML.cpp`、`PML_current.H`、`WarpX_PML_kernels.H` 中的 PML BoxArray、`SigmaBox`、split-field 阻尼和 PML current 更新。
+- [x] 建立 `notes/code-reading/boundary/02-pec-insulator-silver-mueller.md`，解释 `WarpX_PEC.cpp`、`PEC_Insulator.cpp`、`WarpXFieldBoundaries.cpp` 中 PEC/PMC 的 E/B 奇偶规则、rho/J 镜像沉积、PECInsulator parser 边界和值以及 `crop_on_PEC_boundary` / Silver-Mueller 的实现边界。
+- [x] 建立 `notes/code-reading/boundary/03-boundary-parameter-table.md`，汇总 `boundary.field_*`、`boundary.particle_*`、`boundary.potential_*`、PECInsulator parser、`particles.crop_on_PEC_boundary` 与 PML 参数的默认值、适用范围、联动约束和源码入口。
+- [x] 建立 `notes/code-reading/boundary/04-silver-mueller-internal-stencil.md`，解释 `ApplySilverMuellerBoundary.cpp` 中 Yee-only 限制、最内侧 guard cell 更新、Cartesian 边界递推系数，以及 RZ / cylindrical 分支的 `dz` 与 `1/r` 几何项。
+- [x] 建立 `notes/code-reading/embedded-boundary/00-eb-initialization.md`，解释 `Enabled.*` 的运行时 EB 开关、`WarpX::InitEB()` 的 AMReX EB2 构建路径、`ComputeDistanceToEB()` 的 signed-distance 场，以及 `EmbeddedBoundaryInit.*` 中 reduced particle shape、stair-case update 与 ECT edge/face update 标记初始化。
+- [x] 建立 `notes/code-reading/embedded-boundary/01-face-extensions.md`，解释 `S_stab` 最小稳定面积、`flag_info_face/flag_ext_face` 语义、one-way / eight-ways extension、BCK fallback，以及 `FaceInfoBox` / `area_mod` / `m_borrowing` 如何进入 ECT `B` 更新。
+- [x] 建立 `notes/code-reading/embedded-boundary/02-particle-scraping-and-deposition-near-eb.md`，解释 `scrapeParticlesAtEB()` 的 nodal signed-distance 判定、`DistanceToEB` 法向重建、`ParticleBoundaryProcess::Absorb()` 的 invalid-id 语义，以及 `save_particles_at_eb` / `ParticleBoundaryBuffer` 的交点回溯、时间戳和法向记录。
+- [x] 建立 `notes/code-reading/parallelization/00-guard-cell-model.md`，解释 `GuardCellManager` 中 `ng_alloc_*` 与 `ng_Field*` / `ng_UpdateAux` / `ng_MovingWindow` 的分工、粒子 shape / subcycling / moving window / PSATD / filter 对 guard-cell 配额的影响、`FillBoundaryE/B/F/G/Aux` 的 copy/sync 语义、`WarpXSumGuardCells` 的 accumulation 语义，以及 `SyncCurrent()` / `SyncRho()` 的 finest-to-coarsest 与 owner-mask 去重结构。
+- [x] 建立 `notes/code-reading/parallelization/01-current-rho-sync-paths.md`，解释 `SyncCurrent()` / `SyncRho()` 的 finest-to-coarsest 级联、`mf_comm`、`OwnerMask` 去重、`RestrictCurrentFromFineToCoarsePatch` / `AddCurrentFromFineLevelandSumBoundary`、`ApplyFilterandSumBoundaryRho` 与对应 coarse-patch / buffer-patch 源项路径。
+- [x] 建立 `notes/code-reading/parallelization/02-regrid-and-load-balance.md`，解释 `CheckLoadBalance()` 的触发条件、SFC/knapsack 候选映射、`load_balance_efficiency_ratio_threshold` 的采纳逻辑、`RemakeLevel()` 当前只支持同 `BoxArray` 的 `DistributionMapping` 重映射、fields/EB/PSATD/buffer masks/particle boundary buffer/diagnostics 的整体重建，以及 heuristic / timer 两类 costs 更新模型。
+- [x] 建立 `notes/code-reading/parallelization/03-amr-coarse-fine-substitution.md`，解释 `amr.rst` 的 substitution 公式、`UpdateAuxilaryData*()` 的 `aux = fp + I(parent_aux-cp)` 主链、`E/Bfield_cax` 的 coarse-aux 副本角色、`gather/current buffer masks` 的 transition-zone 语义，以及 `PartitionParticlesInBuffers()` 如何把粒子按 fine / lower-level gather-deposit 路径稳定分区。
+- [x] 建立 `notes/code-reading/parallelization/04-warpxcomm-kernel-execution-model.md`，解释 `WarpXComm_K.H` 中 coarse-fine / centering kernel 的分层、`MFIter + Array4 + ParallelFor` 的统一执行壳、`TilingIfNotGPU()` / `Gpu::notInLaunchRegion()` / OpenMP 条件并行的 CPU-GPU 双栈写法，以及 `FillBoundary` 的 `do_single_precision_comms` / `nodal_sync` / `m_safe_guard_cells` 通信策略分支。
+- [x] 回到 `Particles/Gather` 与 `Particles/Deposition`，把 `aux` / buffer masks / `PartitionParticlesInBuffers()` 如何进入具体粒子 kernel 再向下打穿。
+- [x] 继续细读 `Particles/Deposition/CurrentDeposition.H` 中 Villasenor、Vay、implicit charge-conserving 路径在 AMR coarse-fine buffer 下的具体差异。
+- [x] 继续逐段拆解 `CurrentDeposition.H` 中 Villasenor / Esirkepov 的 cell-crossing、old/new shape arrays 与 tighter stencil 本体实现。
+- [x] 继续精读 `CurrentDeposition.H` 中 Vay deposition 的 `D`-field / temporary-array 路径，解释它与 Direct / Esirkepov / Villasenor 的根本区别。
+- [x] 回到 `Particles/` 上层，补 `particle class / attribute map`，系统梳理 `x_n`、`ux_n`、`prev_x`、`opticalDepthQSR`、runtime attrib 与 species 容器层次。
+- [x] 继续精读 `Particles/Pusher/` 中 radiation reaction、implicit pusher 和 photon pusher 的更深层细节，把 `x_n/ux_n/nsuborbits` 属性图继续接到实际 kernel。
+- [x] 继续精读 `Particles/Pusher/ImplicitPushPX.cpp` 的 mass-matrices、linear-stage-of-JFNK、suborbit deposition 与 unconverged-particle 电流处理细节。
+- [x] 继续精读 `ImplicitSolver::ComputeJfromMassMatrices()`、`PrepareForLinearSolve()`、`ScaleMassMatricesForPC()`，把 implicit 粒子响应如何进入场方程矩阵/预条件器再向下打穿。
+- [x] 继续精读 `JacobianFunctionMF`、`ThetaImplicitEM::ComputeRHS()` / `SemiImplicitEM::ComputeRHS()` 与 `MatrixPC/CurlCurlMLMGPC` 的 operator apply，把 residual -> linear operator -> preconditioner 的完整消费链闭合起来。
+- [x] 继续精读 `StrangImplicitSpectralEM::ComputeRHS()`、`WarpX_PETSc.cpp` 中 `assemblePCMatrix()` / SNES Jacobian callback、以及 `MatrixPC::Assemble()` 的稀疏矩阵写入细节，把 `pc_petsc` 路径再向下打穿。
+- [x] 继续精读 `WarpXSolverDOF` 的 local/global 编号规则，以及 `MatrixPC::Assemble()` 在 3D / RZ / RCYLINDER 下的 curl-curl 与 mixed-derivative 具体行写入模式，把 PETSc 稀疏矩阵装配链再细化一层。
+- [x] 继续精读 `GetCurl2BCmask()` 的边界 mask 生成规则、`GetMassMatricesPCnComp()`/`sigma_ii` 的窗口宽度来源，以及 `assemblePCMatrix()` 到 `MatSetValues()` 的 row ownership / host-device 搬运细节，把 `pc_petsc` 的矩阵条目生成与提交链完全闭合。
+- [x] 继续把 `pc_petsc` 支线接回验证层：精读 `Examples/Tests/implicit/` 里的 `petsc_matrix`、`planar_pinch` 等 analysis 脚本，明确哪些硬断言在验证 DOF 映射、矩阵装配、预条件器和能量守恒。
+- [x] 继续精读 `analysis_vandb_jfnk_2d.py`、`analysis_vandb_jfnk_2d_cropping.py` 与对应输入，把 `JFNK + Villasenor + cropping/filtering` 这条验证支线也映射到 `CurrentDeposition`、suborbit 和 charge-conservation 源码链。
+- [x] 继续回到 `Particles/` 与 `Boundary/` 源码层，把 `particles.crop_on_PEC_boundary`、absorbing particle boundaries、sorting/buffer 与 Villasenor / suborbit 的交界细节写成正式笔记，并与这批 regression 互相链接。
+- [x] 继续沿 `ParticleBoundaryBuffer` 与 diagnostics 的消费侧推进，精读 `BoundaryScrapingDiagnostic`、Python particle-boundary buffer 接口与 scraped particle 输出链。
+- [x] 建立 `notes/code-reading/diagnostics/00-boundary-scraping-diagnostics-python.md`，梳理 `BoundaryScrapingDiagnostics`、`ParticleBoundaryBuffer`、Python wrapper 与 PICMI `ParticleBoundaryScrapingDiagnostic` 的统一消费链，并回填第 8 章。
+- [x] 继续进入 `Diagnostics/` 主线第一层，精读 `MultiDiagnostics` / `Diagnostics` 基类调度、`FullDiagnostics` / `ParticleDiag`，建立普通 diagnostics 的 init/compute/flush 骨架，并澄清 full diagnostics 的粒子输出默认不是独立 particle buffer。
+- [x] 继续精读 `ComputeDiagFunctors/`、`ParticleReductionFunctor`、`JFunctor/RhoFunctor/PhiFunctor` 与 `ParticleIO` / `WarpXOpenPMD`，把字段计算、粒子过滤与 writer 落盘三层真正拆开。
+- [x] 继续进入 `ReducedDiags/`、checkpoint/restart、`FlushFormats/` 与 `BTDiagnostics`，补全 diagnostics 模块剩余分支并与第 8 章案例部分对齐。
+- [x] 继续精读 `FieldProbe`、`ParticleHistogram(2D)`、`LoadBalanceCosts/LoadBalanceEfficiency` 与相关 examples/regressions，把 diagnostics 模块从框架层推进到代表性案例层。
+- [x] 继续把 `Diagnostics/` 里的 `openPMD` / plotfile / checkpoint 三类 writer 做最小输入-输出对照，并补 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的可运行案例说明。
+- [x] 继续补一组真正并排的 writer 落盘目录树与读取方式示意，把 `plotfile/openPMD/checkpoint` 的文件层级、典型读取工具和适用场景压缩成书稿中的一页对照。
+- [x] 继续把 diagnostics 模块补成固定模板化案例页：每类输出给出“最小输入片段 + 目录树 + 读取入口 + 适用场景”的统一排版，并补一个 `BoundaryScraping/openPMD` 例子。
+- [x] 继续补一个最小 Python callback / `get_particle_boundary_buffer()` 边界消费案例，把 `BoundaryScrapingDiagnostics` 的文件化路径和 Python 即时消费路径并排收尾。
+- [x] diagnostics 模块阶段性收尾后，切回 `Initialization/`，补 AMReX init / WarpX init / species-profile-temperature-velocity 的源码精读回合。
+- [x] 继续沿 `Initialization/` 启动层往下，把 `WarpXAMReXInit.*` / `WarpXInit.*` 与 `WarpX::ReadParameters()`、boosted-frame 参数转换、RZ spectral gridding 约束之间的交界再细化一层。
+- [x] 继续把 `Initialization` 启动层接回 `ReadParameters()` 主体，补 solver/grid/boost/moving-window 参数是怎样真正落到 `WarpX` 成员和后续容器创建条件上的。
+- [x] 继续沿 `ReadParameters()` 主体细化 particle/grid/filter/current-centering/implicit 组合约束，把它们和 `MultiParticleContainer`、`ProjectionDivCleaner`、field allocation 前置条件进一步接起来。
+- [x] 继续把这组组合约束向后追到 `AllocLevelMFs()` 的更细分支：external particle fields、`rho/F/G` 分配条件、`HybridPICModel` / fluid / macroscopic / EB 特例，以及它们与第 3A 章后半初始化主链的接缝。
+- [x] 继续把 `Initialization` 启动层和后半主链彻底闭合：补 `InitData()` 后半的 `ComputeSpaceChargeField()`、`AddExternalFields()`、`m_electrostatic_solver->InitData()`、`m_hybrid_pic_model->InitData()`、callback 与 diagnostics 初始输出之间的顺序和责任边界。
+- [x] 回头系统整理 `Initialization` 章节的验证入口：`langmuir`、external field、Gaussian beam、openPMD 粒子注入、projection div cleaner 等例子的源码-输入-分析脚本映射，并决定先继续 initialization 验证层。
+- [x] 继续补 `Initialization` 验证层里尚未压入正式笔记的入口：`load_external_field`、`relativistic_space_charge_initialization`、`open_bc_poisson_solver`，并同步清理 `docs/example-regression-map.md` 中 initialization 相关的 `general / to classify` 条目。
+- [x] 继续把 initialization 相关的 examples/regressions 分类补完到 `docs/example-regression-map.md`：`load_density`、`magnetostatic_eb`、`nodal_electrostatic`，并判断它们是否也应并入第 3A 章验证地图。
+- [x] 判断 `Initialization` 验证层是否已经阶段性收口；若可以收口，则切回下一未完成模块，并在 `README.md` / `TODO.md` 中明确新的主推进方向。
+- [x] 启动 `Laser/` 第一轮源码精读：补 `LaserProfiles.H`、三类 profile 字典和 `LaserParticleContainer` 构造期分派，形成第一篇正式笔记并把关键参数同步到 `docs/parameter-map.md`。
+- [x] 继续精读 `LaserProfileGaussian.cpp`、`LaserProfileFromFile.cpp` 和 `LaserParticleContainer::InitData()/Evolve()/ContinuousInjection()`，补第二篇 laser 笔记并扩写书稿中的 laser 初始化正文。
+- [x] 继续下钻 `LaserProfileFieldFunction.cpp`、`update_laser_particle(...)`、`ComputeWeightMobility(...)` 和 `calculate_laser_plane_coordinates(...)`，把 parser profile 与人工天线粒子更新 kernel 的最后一层补齐，并继续细化 laser regression 映射。
+- [x] 继续细化 `Laser` 的验证层：补 `laser_acceleration`、implicit laser injection、boosted / MR 相关 inputs/analysis/checksum 映射，并判断哪些条目有真实物理断言、哪些仍主要依赖 checksum。
+- [x] 继续沿 `Laser` 与全局几何/外场交界推进，精读 `ExternalField.*`、`Utils/WarpXMovingWindow.cpp` 与 laser continuous injection / boosted-frame / AMR 的另一侧耦合，并把对应 examples/regressions 接回 `docs/example-regression-map.md`。
+- [x] 继续沿 `Laser` 应用层推进，精读 `Examples/Physics_applications/laser_ion/`、`free_electron_laser/` 或 `laser_on_fine`，把 laser 注入主链如何进入具体应用/diagnostics 场景压成下一篇笔记，并继续细化 `docs/example-regression-map.md`。
+- [x] 从 `Laser` 切向多物理/束流分叉：优先沿 `laser_ion -> field_ionization / collisions / QED`，或沿 `free_electron_laser -> rigid injection / BTD / external particle field` 继续展开下一篇正式笔记。
+- [x] 继续从 `Laser` 切向多物理/束流分叉：优先沿 `laser_ion -> field_ionization / collisions / QED`，把 laser 驱动 target 的另一条链压成正式笔记，并继续细化相关 regression。
+- [x] 继续从 `Laser` 切向多物理/束流分叉：在 `laser_ion` 之后优先进入 `Particles/Collision`、`field_ionization` 或 `QED` 主模块，把目前这篇“应用入口级”分叉继续打到源码实现和验证细节层。
+- [x] 继续沿 `Particles/` 多物理主线推进：优先进入 `Particles/Collision` 或 `QED`，把 `field_ionization` 之外的入口也补成正式笔记，并继续清理相关 regressions 索引。
+- [x] 继续沿 `Particles/` 多物理主线推进：在 collision 入口之后优先进入 `QED`，或继续下钻 `BinaryCollision` / `BackgroundMCC` / `PulsedDecay` 的实现细节，并继续清理相关 regressions 索引。
+- [x] 继续沿 `Particles/` 多物理主线推进：在 QED 入口之后继续下钻 `QEDPhotonEmission.H` / `QEDPairGeneration.H` / `QEDInternals/*`，或回到 `BinaryCollision` / `BackgroundMCC` / `PulsedDecay` 的实现细节，并继续清理相关 regressions 索引。
+- [x] 继续沿 `Particles/` 多物理主线推进：在 QED kernel/wrapper 入口之后，继续下钻 `QEDInternals/*.cpp` 的 builtin/load/generate table 生成与序列化，或切回 `BinaryCollision` / `BackgroundMCC` / `PulsedDecay` 的实现细节，并继续清理相关 regressions 索引。
+- [x] 继续沿 `Particles/` 多物理主线推进：在 QED table 生命周期之后，继续下钻 `QedChiFunctions.H`、virtual photons、`linear_breit_wheeler` 与 `ElementaryProcess` QED 主链的交界，或切回 `BinaryCollision` / `BackgroundMCC` / `PulsedDecay` 的实现细节，并继续清理相关 regressions 索引。
+- [x] 继续沿 `Particles/` 多物理主线推进：在明确 QED / virtual-photon / binary-collision 分叉之后，继续下钻 `BinaryCollision` / `BackgroundMCC` / `PulsedDecay` 的具体实现，或继续追 `linear_compton`、`ParticleCreationFunc` 与 product-species 动量初始化细节，并继续清理相关 regressions 索引。
+- [x] 继续沿 `Particles/` 多物理主线推进：在 `BinaryCollision -> ParticleCreationFunc` 主链已经打通后，继续下钻 `BackgroundMCC` / `PulsedDecay` / DSMC `SplitAndScatterFunc` 的实现细节，并继续清理相关 regressions 索引。
+- [x] 继续沿 `Particles/` 多物理主线推进：在 `BackgroundMCC` / `PulsedDecay` / DSMC 三条分叉已经打通后，继续下钻 pairwise Coulomb / bremsstrahlung / `background_stopping` / `nuclearfusion` 等尚未成文的碰撞实现，并继续清理相关 regressions 索引。
+- [x] 继续沿 `Particles/` 多物理主线推进：在 collision 主分叉基本成文后，继续下钻 resampling / thermalizer / sorting 性能层，并继续清理相关 regressions 索引。
+- [x] 继续沿 `Particles/` 多物理主线推进：在 resampling / thermalizer / sorting 已成文后，继续补 `particle_thermalizer` 缺失的 example-level 验证入口，并清理 `capacitive_discharge`、`resampling/*` 和通用 checksum helper 的剩余粗分类条目。
+- [x] 继续沿 `Particles/` 主线推进：回到 `Particles/Gather/`，补 `FieldGather.H` 的其余维度分支、energy-conserving gather、external particle fields 和 Galerkin/PSATD 组合细节，并同步继续清理对应 example/regression 粗分类条目。
+- [x] 继续沿 `Particles/` 主线推进：补 `Examples/Tests/particle_pusher`、`single_particle`、`larmor`、`photon_pusher` 这一组验证入口，并继续清理 `example-regression-map.md` 里对应的粗分类条目。
+- [x] 继续沿 `Particles/` 主线推进：补 `particle_fields_diags`、`plasma_lens`、`pass_mpi_communicator` 等仍停留在粗分类的粒子相关 validation 条目，并判断哪些应回填第 4 章。
+- [x] 继续沿 `Particles/` 主线推进：补 `particle_boundary_scrape`、`particle_data_python`、`particle_fields_diags` single-precision FIXME 等仍未压实的粒子 diagnostics / Python 接口 validation 条目。
+- [x] 继续沿 `Particles/` 主线推进：补 `particle_boundary_interaction`、`particle_boundary_process`、`particle_thermal_boundary`、`plasma_lens_python` 等仍停留在粗分类的粒子边界 / Python-interface validation 条目，并继续清理 `particle_data_python` unique 变体这类“测试名存在但输入未真正分叉”的验证缺口。
+- [x] 继续沿 `Particles/` 主线推进：补 `particle_absorbing_boundary` 辅助绘图脚本、`point_of_contact_eb`、`particle_boundary_process` 的 remaining checksum 边界，以及 `particles_in_pml` / `subcycling` / `MR` 相关粒子验证条目，继续压缩 `example-regression-map.md` 里的粗分类残留。
+- [x] 继续沿 `Particles/` 主线推进：补 `particle_absorbing_boundary` 的辅助绘图脚本、`point_of_contact_eb` 的 RZ/3D checksum 对照尾项，以及 `point_of_contact_eb` 之外剩余 `embedded_boundary` / `particles_in_pml` / `Langmuir MR` 相关粗分类条目，作为 `Particles` validation 这阶段的最后清扫。
+- [x] 验证：boundaries、PML、particles_in_pml、embedded_boundary、subcycling、MR Langmuir tests。
+
+### 初始化、参数、激光和外场
+
+- [x] 继续沿项目主线推进：从 `Particles` validation 阶段性收口后切回 `Initialization/`，补 `electrostatic_sphere`、`embedded_boundary` 初始化相关 remaining validation 条目，或继续深化 AMReX init、WarpX init、species/profile/temperature/velocity 与参数索引。
+- [x] 继续沿 `Initialization/` validation 推进：补 `electrostatic_dirichlet_bc`、`effective_potential_electrostatic`、`electrostatic_sphere` 其余 checksum / helper 条目，继续清理 `example-regression-map.md` 中仍停留在 `electrostatic / Poisson` 粗分类的初始化回归项。
+- [x] 继续沿 `Initialization/` validation 推进：补 `electrostatic_sphere` / `electrostatic_dirichlet_bc` / `effective_potential_electrostatic` 之外剩余 `electrostatic / Poisson` 粗分类条目，压实 `nodal_electrostatic`、`open_bc_poisson_solver` 与 `relativistic_space_charge_initialization`，把 collocated zero-trigger baseline、open-boundary FFT/sliced-FFT Poisson 初始化和 relativistic Gaussian-beam self-field 从过粗分类里拆开。
+- [x] 建立所有高频 `ParmParse` 参数到章节的稳定索引，并把人工章节索引推进到 `species / laser / diagnostics / collision / boundary / solver / psatd / implicit / fluids / hybrid / macroscopic / effective potential` 这一层可稳定跳转，同时把 grouped alias / pass-through 参数的边界写回源码笔记与第 3A 章。
+- [x] 继续把 `docs/parameter-map.md` 从早期计划编号迁到真实书稿章节；本轮已补完先前收束的 `collision` 细项、writer backend / particle-output 细项，以及一批 `species` runtime 标志，并把 `species / laser / diagnostics / reduced_diags / collision / external_vector_potential / load_balance` 这一组高频参数族的空源码入口清到 0。
+- [x] 继续沿参数系统主线收尾：当前 `parameter-map` 空源码入口已清到 0；本轮已把 `external_vector_potential.*` 的验证边界继续压实到 `ohm_solver_cylinder_compression` 这组 hybrid PIC PICMI tests，明确它们提供最近的 runtime coverage，但 `analysis=OFF`、仍只有 checksum baseline，因此不能冒充独立强 regression。
+- [x] 继续沿参数系统主线收尾：已把 `hybrid PIC / Ohm solver` 这组回归索引进一步拆细，明确区分 `ohm_solver_em_modes`、`ion_beam_instability`、`ion_Landau_damping`、`magnetic_reconnection`、`cylinder_compression` 之间的 assert/checksum/可视化分层。
+- [x] 继续沿参数系统主线收尾：已把 `pierce_diode`、`spacecraft_charging`、`particle_boundaries`、`field_probe` 四组从 `general / to classify` 中拆出，分别压实为 Child-Langmuir diode、spacecraft charging、domain particle boundary semantics 与 reduced-diagnostic FieldProbe diffraction regression。
+- [x] 继续沿参数系统主线收尾：已把 `flux_injection`、`gaussian_beam`、`projection_div_cleaner`、`space_charge_initialization` 四组从 `general / to classify` 中拆出，并把 `NFluxPerCell`、Gaussian-beam photon/PICMI 变体、projection-cleaner script-local assert、lab-frame self-field 这几条更细的初始化合同回填到第 3A 章和 `initialization/14`。
+- [x] 继续沿参数系统主线收尾：已把 `btd_rz`、`collider_relevant_diags`、`diff_lumi_diag` 三组从 `general / to classify` 中拆出，分别压实为 `RZ BackTransformed diagnostics`、`ColliderRelevant` 和 `DifferentialLuminosity(2D)`，并把 reduced diagnostics / BTD 的强 analysis 合同回填到 diagnostics 笔记与第 8 章。
+- [x] 继续沿参数系统主线收尾：已把 `divb_cleaning`、`dive_cleaning`、`initial_distribution`、`initial_plasma_profile` 四组从 `general / to classify` 中拆出，分别压实为 `div(B) cleaning`、`div(E) cleaning / PML`、`particle distributions` 和 `parabolic-channel plasma profile`，并把对应初始化/field-solver 合同回填到 `initialization/14`、`fieldsolver/13` 与第 3A 章。
+- [x] 继续沿参数系统主线收尾：已把 `radiation_reaction`、`repelling_particles`、`secondary_ion_emission` 三组从 `general / to classify` 中拆出，分别压实为 `classical radiation reaction`、`two-particle electrostatic self-field repulsion` 和 `embedded-boundary secondary ion emission / Python callback`，并把对应粒子/初始化/边界 callback 合同回填到 `particles/09`、`diagnostics/09`、`initialization/14` 与第 3A / 第 4 章。
+- [x] 继续沿参数系统主线收尾：已把 `test_1d_fel`、`test_2d_bilinear_filter`、`test_2d/rcylinder/rz_curl_curl_petsc_pc` 这组剩余粗分类条目压实为 boosted-frame FEL diagnostics、single-particle current filtering 与 PETSc curl-curl preconditioner 结构断言，并把对应 FEL / PETSc 判据回填到 `laser/06` 与 `fieldsolver/13`。
+- [x] 继续沿参数系统主线收尾：已把 `test_2d_energy_conserving_thermal_plasma`、`test_2d_id_cpu_read_picmi`、`test_2d_runtime_components_picmi` 这组剩余粗分类条目压实为 energy-conserving gather、`idcpu` Python 读取合同与 runtime-components/checkpoint scaffold，并把对应 Python-interface / restart 结论回填到 `particles/28` 与 `diagnostics/04`。
+- [x] 继续沿参数系统主线收尾：已把 `test_3d_acceleration`、`test_3d_beamsize_effect`、`test_3d_eb_picmi` 这组剩余粗分类条目压实为 acceleration restart baseline、virtual-photon beam-size effect 与 EB PICMI checkpoint scaffold，并把对应 restart/QED 边界回填到 `diagnostics/04`、`particles/17` 与第 8 章。
+- [x] 继续沿参数系统主线收尾：已把顶层 `Examples/analysis_default_regression.py`、`test_3d_hard_edged_quadrupoles*` 与 `test_3d_pmc_field` 这组剩余粗分类条目压实为通用 checksum helper、accelerator-lattice hard-edged quadrupole 解析轨道对照，以及 PMC standing-wave 边界基准；并新增 `accelerator-lattice/03-validation-map.md`，把对应验证边界回填到第 4/7 章。
+- [ ] 继续沿参数系统主线收尾：优先清理 `docs/example-regression-map.md` 中剩余“checksum 基线；需反查对应 inputs 和分析脚本”的家族条目，并对整张 `parameter-map` 的“初步源码命中”做更严格的二次人工复核。
+- [x] 继续清理 `docs/example-regression-map.md` 的 Langmuir 家族：已把 `langmuir` / `langmuir_fluids` 的 1D/2D/3D/RZ、MR、PSATD、JRhom、current-correction、Vay、PICMI 与 cold-fluid 变体统一接回 `analysis_1d/2d/3d/rz/r1d.py` 和 `analysis_utils.py` 的共享合同，并把主结论回填到 `initialization/14`、`particles/30` 与第 8 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `uniform_plasma` 家族：已把 `Examples/Physics_applications/uniform_plasma/` 的 2D/3D checksum 基线、3D restart 强对照，以及 `nci_psatd_stability` 里名字带 `uniform_plasma` 的 `JRhom_CC1` PSATD/NCI 稳定性回归明确拆开，并把 writer/checkpoint/PSATD 的真实边界回填到 `diagnostics/06`、`fieldsolver/13` 与第 8 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `implicit` 家族：已把 `Examples/Tests/implicit/` 从笼统 “implicit solver” 桶拆成 1D Picard、exactly energy-conserving symmetry、Strang implicit spectral EM、planar pinch，以及 JFNK + Villasenor / PEC cropping 五条验证线，并把对应结论回填到 `nonlinear-solvers/07` 与第 6 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `silver_mueller` 家族：已把 `Examples/Tests/silver_mueller/` 压实为“残余反射幅值必须远小于入射激光峰值”的开放边界强回归，并区分 1D 轴向、2D `x` 向、2D `z` 向与 RZ `z` 向四条最小基准；同时把这一层回填到 `boundary/02` 与第 7 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `pec` 家族：已把 `Examples/Tests/pec/` 压实为 PEC standing-wave、PEC standing-wave / MR、PECInsulator implicit energy accounting、PECInsulator implicit restart continuation，以及粒子侧 PEC checksum baseline 五条边界；并把对应结论回填到 `boundary/02` 与第 7 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `pml` 家族：已把 `Examples/Tests/pml/` 压实为 Yee/CKC 理论反射率、PSATD/Galilean 低反射率、RZ residual-field decay，以及 Yee/PSATD restart reproducibility 四层合同；并把对应结论回填到 `boundary/01` 与第 7 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `reduced_diags` 家族：已把 `Examples/Tests/reduced_diags/` 压实为 compact-observable cross-check 与 `LoadBalanceCosts` efficiency 两棵验证树，并把 `timers_psatd` / `single_precision` 的当前源码树边界回填到 `diagnostics/05` 与第 8 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `vay_deposition` 家族：已把 `Examples/Tests/vay_deposition/` 压实为 2D/3D `vay + psatd + collocated` 下的离散 Gauss-law 强断言，并把对应结论回填到 `particles/07` 与第 5 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `nci_fdtd_stability` 家族：已把 `Examples/Tests/nci_fdtd_stability/` 压实为 2D drifting-plasma + `use_fdtd_nci_corr=1` 的 FDTD NCI 抑制基准，明确 non-MR 的 `1e24` 场能代理阈值、MR 变体的 full-domain fine-tag 目标，以及 `analysis_ncicorr.py` 当前 MR 路径区分仅在脚本层预留、未从活跃 `CMakeLists.txt` 参数层显式选通的源码树边界；并把对应结论回填到 `fieldsolver/13` 与第 6 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `maxwell_hybrid_qed` 家族：已把 `Examples/Tests/maxwell_hybrid_qed/` 压实为 2D collocated + PSATD + `use_hybrid_QED=1` 的真空色散基准，明确 `analysis.py` 实际检查的是脉冲相速度与 hybrid-QED 理论值的 `1.25%` 误差，而不是粒子 QED 事件；并把对应结论回填到 `fieldsolver/13` 与第 6 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `python_wrappers` 家族：已把 `Examples/Tests/python_wrappers/` 压实为 2D PICMI + PSATD + PML + div-cleaning 下的 Python field-wrapper 强接口自检，明确 `sim.fields.get(...)` 对 `E/B/F/G` 与 `pml_E/B/F/G` 的逐分量 benchmark 断言；并新增 `python/03-field-wrapper-validation-map.md`，把这条 validation 接回 `pywarpx/fields.py`、`MultiFabRegister.py`、`Source/Python/MultiFabRegister.cpp` 与第 8 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `plasma_acceleration` 家族：已把 `Examples/Physics_applications/plasma_acceleration/` 压实为 PWFA application workflow matrix，明确 active tests 全部 `analysis=OFF`、目录内 helper 只提供 checksum、真正覆盖的是 moving window、boosted frame、rigid bunch、NCI correction、mesh refinement、hybrid grid 与 PICMI front-end；并把“3D PICMI 版当前仍不是 boosted-frame 等价前端”的 README 边界回填到 `laser/05` 与第 8 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `beam_beam_collision` 家族：已把 `Examples/Physics_applications/beam_beam_collision/` 压实为 collider-QED application baseline，明确 active regression 只有 checksum helper、输入真正覆盖的是 relativistic electrostatic self-field、Quantum Synchrotron、Breit-Wheeler 与 `ColliderRelevant/ParticleNumber` reduced diagnostics 的联合路径，而 `plot_fields.py` / `plot_reduced.py` 只是可视化 helper；并把对应边界回填到 `diagnostics/05` 与第 8 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `plasma_mirror` 家族：已把 `Examples/Physics_applications/plasma_mirror/` 压实为 2D laser-solid surface-plasma checksum baseline，明确 active regression 只有 checksum helper、输入真正覆盖的是 Gaussian laser、前后指数梯度 + 过密 plateau 固体靶、PML、field filter 与 full diagnostics 的联合骨架，当前没有独立 analysis 也没有 PICMI；并把对应边界回填到 `laser/05` 与第 3A 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `thomson_parabola_spectrometer` 家族：已把 `Examples/Physics_applications/thomson_parabola_spectrometer/` 压实为 `BoundaryScraping/openPMD + prescribed-field test-particle optics` 强基准，明确 active `analysis.py` 会从 `particles_at_zhi` 和 `diag0` 按 `id` 回连出 detector screen 上的 species/energy 分离图，而不是普通 `PEC / conducting boundary` test；并把对应边界回填到 `diagnostics/08` 与第 8 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `capacitive_discharge` 家族：已把 `Examples/Physics_applications/capacitive_discharge/` 压实为两层结构，明确 1D PICMI `background_mcc` / `dsmc` 入口通过 `analysis_1d.py` / `analysis_dsmc.py` 对 Turner case-1 离子密度 profile 做强对照，而 2D native / PICMI 入口仍主要是 workflow checksum baseline；同时把 `test_2d_background_mcc_dp_psp` 明确标成当前 `CMakeLists.txt` 中被注释掉的遗留 benchmark 名，并把对应边界回填到 `particles/22` 与第 4 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `laser_acceleration` 家族：已把 `Examples/Physics_applications/laser_acceleration/` 压实为 LWFA runtime matrix，明确 `README.rst` 的 `Analyze` 仍是 `TODO`、大多数 active tests 都是 `analysis=OFF`，而现有强断言只局限于 1D boosted fluid ODE 对照、`refine_plasma=1` 连续注入一致性，以及 RZ openPMD diagnostics 合同；同时把 `inputs_base_1d/2d/3d/rz` 的 moving-window / continuous-injection / diagnostics 骨架语义回填到 `laser/05` 与第 3A 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `embedded_circle` 条目：已把 `Examples/Tests/embedded_circle/` 压实为 2D circular embedded-boundary electrostatic + PIC-MCC + BoundaryScraping workflow baseline，明确它通过 `eb_implicit_function`、`eb_potential`、`initialize_self_fields`、双物种 `background_mcc`、`save_particles_at_eb` 与 timer-based load balance 把 EB 多物理工作流接在一起，但当前 `analysis=OFF`、只有 checksum helper；并把对应边界回填到 `embedded-boundary/02` 与第 7 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `load_external_field` restart 尾项：已把 `analysis_default_restart.py` 与 `test_3d_load_external_field_particle_time_restart`、`test_rz_load_external_field_grid_restart`、`test_rz_load_external_field_particles_restart` 压实为 external-field state reproducibility，明确它们不是新 physics benchmark，而是用逐字段 restart 对照验证 `read_from_file` / dependency parser 构造出的 grid external field 与 particle external field 状态在恢复后不漂移；并把对应边界回填到 `initialization/15`、`diagnostics/04` 与第 3A 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `restart` 尾项：已把 `analysis_default_restart.py`、`inputs_base_3d` 与 `test_3d_acceleration_psatd*` 这一串压实为 field-level restart reproducibility 与 PSATD/time-averaged acceleration restart reproducibility，明确它们不是新的谱色散 benchmark，而是在 3D boosted acceleration workflow 上验证 `psatd`、Galilean 和 `psatd.do_time_averaging=1` 这些 solver path 的 checkpoint/restart 不漂移；并把对应边界回填到 `diagnostics/04` 与第 8 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `restart_eb` 尾项：已把目录内 `analysis_default_regression.py` / `analysis_default_restart.py` 与 `inputs_test_3d_eb_picmi.py` 一起压实为 EB + PICMI + checkpoint scaffold，明确 active test 仍只有 checksum baseline，而逐字段 restart 对照仍停留在 `CMakeLists.txt` 里被注释掉的 `test_3d_eb_picmi_restart`；并把这层“helper 已在、注册未开”的边界回填到 `diagnostics/04` 与第 8 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 `laser_injection` / `laser_injection_from_file` helper 尾项：已把两个目录的 `analysis_default_regression.py` 压实为 checksum helper，并把 `laser_injection_from_file` 里 1D/2D/3D/RZ/binary 的 `*_prepare.py` 全部改写成外部 laser 文件生成阶段，明确它们在 `CMakeLists.txt` 中都是 `analysis=OFF`、`checksum=OFF` 的 dependency，整体构成 `prepare -> inject -> analysis` 三段回归链；并把这层边界回填到 `laser/03` 与第 3A 章。
+- [x] 继续清理 `docs/example-regression-map.md` 的 helper 尾项：已把 `Examples/Tests/subcycling/analysis_default_regression.py` 与 `Examples/Tests/pec/analysis_default_regression.py` 压实为目录内 checksum helper，明确它们分别服务于 `subcycling_mr` 的 AMR + subcycling 组合稳定性基线，以及 PEC family 的 standing-wave / PECInsulator / 粒子侧输出基线，而不替代现有强 analysis；并把对应边界回填到 `particles/30` 与 `boundary/02`。
+- [x] 切回 `docs/parameter-map.md` 做第二轮人工复核，先修正 `particle_thermalizer.species` 与 `particle_thermalizer.theta` 的误命中源码入口：两者真实都由 `Source/Particles/ParticleThermalizer/ParticleThermalizer.cpp` 解析，且 `theta` 在运行时进入 `sqrt(theta)` 热速度重采样，而不是 diagnostics/flush 路径。
+- [x] 继续做 `docs/parameter-map.md` 的第二轮人工复核，再修正两条运行控制参数的“消费点误命中”：`warpx.numprocs` 的真实读取链是 `WarpX.cpp -> WarpXAMReXInit.cpp -> WarpXInitData.cpp`，`warpx.dt_update_interval` 的真实读取链是 `WarpX.cpp -> WarpXComputeDt.cpp -> WarpXEvolve.cpp`，不应把 `FullDiagnostics.cpp` 记成主解析入口。
+- [x] 继续做 `docs/parameter-map.md` 的第二轮人工复核，再修正 `max_step` / `stop_time` / `geometry.dims` / `reduced_diags.intervals` 这批易误命中条目：前两者真实都在 `WarpX::ReadParameters()` 的无前缀 `ParmParse` 中读取，`geometry.dims` 的主入口是 `WarpXInit.cpp` 的编译维度一致性检查，而 `reduced_diags.intervals` 只应归到 `ReducedDiags.cpp`，不应把 `FullDiagnostics` / `BoundaryScrapingDiagnostics` 的独立 `intervals` 参数混进来。
+- [x] 继续做 `docs/parameter-map.md` 的第二轮人工复核，再修正 `authors` / `amr.max_level` / `amr.restart` / `warpx.verbose`：其中 `authors`、`amr.restart`、`warpx.verbose` 已回到 `WarpX.cpp` 主解析入口和真实消费链，`amr.max_level` 则明确记录为 `AMReX/AmrCore-owned input`，WarpX 侧只保留本地消费者，不再伪造统一解析入口。
+- [x] 继续做 `docs/parameter-map.md` 的第二轮人工复核，再修正 `warpx.used_inputs_file` / `warpx.boost_direction` / `warpx.do_electrostatic` / `amr.n_cell`：分别回到 `WriteUsedInputsFile()` 的 `queryAdd + write_used_inputs_file` 链、`ReadBoostedFrameParameters()` 的真正读取入口、`WarpX.cpp` 的 electrostatic enum 解析，以及 `WarpXAMReXInit.cpp` 对 `amr.n_cell` 的启动期预解析与 AMReX-owned 边界。
+- [x] 继续做 `docs/parameter-map.md` 的第二轮人工复核，再修正 `warpx.gamma_boost` / `warpx.n_rz_azimuthal_modes` / `geometry.prob_lo/hi` / `warpx.poisson_solver`：分别压实为 `ReadBoostedFrameParameters()` 的 boosted-frame 主入口、`WarpX.cpp` 中 RZ 方位模数的真实解析位置、`WarpXAMReXInit.cpp` 启动期预解析加 `WarpXUtil.cpp` boost 改写的域边界链路，以及 `WarpX.cpp` 主解析加 `PoissonBoundaryHandler.cpp` 分派消费的真实边界。
+- [x] 继续做 `docs/parameter-map.md` 的第二轮人工复核，再修正 `warpx.zmax_plasma_to_compute_max_step` / `warpx.compute_max_step_from_btd` / `warpx.do_moving_window` / `warpx.moving_window_*` / `warpx.fine_tag_lo/hi`：分别压实为 boosted wakefield 自动 `max_step` 计算链、BTD 驱动的运行上界自动补足链、`WarpXInit.cpp` 中 moving-window 参数的统一读取入口，以及静态 refined patch bbox 与 boosted-frame 坐标改写的两段链路。
+- [x] 继续做 `docs/parameter-map.md` 的第二轮人工复核，再修正 `boundary.field_lo/hi` / `boundary.particle_lo/hi` / `warpx.ref_patch_function(x,y,z)`：分别压实为 `parse_field_boundaries()` 加 `geometry.is_periodic` 反推与 PML/solver 约束、`parse_particle_boundaries()` 中 periodic 继承与一致性检查，以及静态 refined patch parser 入口与 `fine_tag_lo/hi` 覆盖关系。
+- [x] 精读 `Laser/`：已用 `notes/code-reading/laser/00-07` 覆盖 `Source/Laser/LaserProfiles.H`、三类 `LaserProfilesImpl/*`、`Particles/LaserParticleContainer.*`，并把验证层、moving-window / external-field 耦合和应用层分叉一并回填到第 3A 章、回归索引与参数索引。
+- [x] 精读 `ExternalField.*`、`WarpXMovingWindow.cpp`：这条主线已在 `initialization/01`、`laser/04`、`evolve/05` 与 `initialization/13/15/16` 中成文，当前再保留为未完成项会与现有工作树证据冲突。
+- [x] 验证：`laser injection`。`laser/03-laser-validation-map.md` 已把 `laser_injection`、implicit laser injection、`laser_injection_from_file` 的强 analysis、checksum helper 和 `prepare -> inject -> analysis` 链条压实，第 3A 章也已回填这些边界。
+- [x] 验证：`load density`。`initialization/16-initialization-validation-map-density-magnetostatic-nodal.md` 已把 `read_density_from_path`、openPMD density mesh prepare 阶段、moving-window 连续注入和 `rho` 重建断言压实，第 3A 章已同步回填。
+- [x] 验证：`initial distribution / gaussian_beam`。`initialization/06-gaussian-beam-openpmd-injection.md`、`initialization/14-initialization-validation-map.md` 与第 3A 章已经把 `focusing_gaussian_beam`、`rotated_gaussian_beam`、Gaussian-beam photon/PICMI 变体的几何、旋转和束斑统计断言压实。
+- [x] 验证：`initial distribution / external_file / PICMI openPMD variant`。`test_3d_focusing_gaussian_beam_from_openpmd_picmi` 明确复用 `analysis_focusing_beam.py`，当前足以支撑 PICMI 版 openPMD 粒子注入的束斑统计合同已经闭环。
+- [x] 验证：`initial distribution / external_file / native openPMD workflow baseline`。当前本地 checkout 里 `test_3d_focusing_gaussian_beam_from_openpmd` 的 `prepare.py -> external_file inputs -> checksum` 链已闭环，足以证明 native openPMD 粒子注入路径与历史输出基线处于 active coverage。
+- [ ] 验证：`initial distribution / external_file / native openPMD strong analysis`。`gaussian_beam/CMakeLists.txt` 仍指向名义上的 `analysis.py`，但当前 checkout 里该脚本缺失，因此这条 native variant 还不能宣称已具备与 PICMI 版同等级的束斑统计物理断言。
+- [x] 验证：`moving-window / boosted examples`。`evolve/05-moving-window.md`、`laser/04-moving-window-external-field-coupling.md`、`laser/03-laser-validation-map.md` 与第 3A 章已经把窗口推进、boosted-frame、continuous injection、BTD 和相关 examples 的验证边界压实。
+
+### 多物理扩展
+
+- [x] 继续精读 `Particles/Collision/`：`ElasticCollisionPerez`、Bremsstrahlung photon momentum 初始化尾部、fusion product momentum initializer，以及 remaining `collision/*` analysis/checksum 粗分类条目。
+- [x] 继续精读 `Particles/Collision/`：`UpdateMomentumPerezElastic.H`、`BremsstrahlungEvent(...)` 的截面/能谱采样、`SingleNuclearFusionEvent.H` 的概率裁剪与 multiplier 缩放，以及剩余 `collision/*` 2D/3D/isotropization/RZ 条目。
+- [x] 继续精读 `Particles/` 性能与数值后处理层：`Resampling/`、`ParticleThermalizer/`、`Sorting/`，并继续清理 `capacitive_discharge/background_mcc` 与剩余 `collision/*` checksum 粗分类条目。
+- [x] 精读 `Particles/ElementaryProcess/Ionization.*`：已把当前工作树里的 ADK 主链、内建电离能表、`ionization_initial_level` 初始化传播、`ionizationLevel -> w q_e * level` 的沉积计价，以及“当前无独立 OTB 路径”这一源码边界回填到 `particles/12` 与第 4 章。
+- [x] 精读 QED internals、quantum synchrotron、Breit-Wheeler、Schwinger process：已用 `particles/14-17` 打通 runtime attributes / product-species / `InitQED()` 入口、QED kernels 与 wrapper/table 生命周期、`QedChiFunctions` 与 virtual photons / `linear_breit_wheeler` 的分叉，并在第 4 章明确区分了 Quantum Synchrotron、强场 Breit-Wheeler 和 Schwinger 三条事件链；当前再保留为未完成项会与现有工作树证据冲突。
+- [x] 精读 `Fluids/`：已用 `fluids/00-fluid-container-map.md`、`01-muscl-hancock-update.md`、`02-fluid-pic-coupling.md` 打通 `fluids.species_names -> MultiFluidContainer -> WarpXFluidContainer` 对象图、nodal `N/NU` 状态、MUSCL-Hancock + Rusanov + positivity limiter 更新，以及 fluid species 如何 gather `Efield_aux/Bfield_aux`、复用 Higuera-Cary source-step、把 `rho/J` 沉积回普通场寄存器并与 `HybridPICModel` 电子闭合区分开来。
+- [x] 精读 `AcceleratorLattice/`：已用 `accelerator-lattice/00-lattice-data-model.md`、`01-lattice-elements.md`、`02-element-finder-device-path.md`、`03-validation-map.md` 打通递归 `lattice.elements/line/reverse` 输入树、`z_location -> zs/ze` 几何账本、`drift/quad/plasmalens` 的 hard-edged 元件语义、`hard_edged_fraction()` residence correction、per-tile `LatticeElementFinder` lookup table，以及 boosted-frame 下 lab-frame 取场再反变换回粒子推进的运行链。
+- [x] 验证：collision、ionization_dsmc、field_ionization、qed、linear_breit_wheeler、linear_compton、ohm_solver、accelerator_lattice。当前工作树里，`particles/12-19,21-23` 已分别把 `field_ionization`、QED、`linear_breit_wheeler` / `linear_compton`、`BackgroundMCC` / `PulsedDecay` / DSMC 与 `collision/*` 的 analysis-vs-checksum 边界压实，`accelerator-lattice/03-validation-map.md` 已把 hard-edged quadrupole 的 lab/boosted/moving-window 强 regression 压实，而 `fieldsolver/13-14` 已把 `ohm_solver_*` 明确分成有显式 assert 的 RZ EM modes / ion-beam-instability 与主要依赖谱图或 checksum 的 Cartesian EM modes / Landau damping / reconnection / cylinder-compression；继续保留整条为未完成会与当前 worktree 证据冲突。
+
+### 诊断、Python、工具和构建
+
+- [x] 精读 `Diagnostics/`：已用 `diagnostics/00-boundary-scraping-diagnostics-python.md`、`01-diagnostics-dispatch.md`、`02-field-and-particle-functors.md`、`03-reduced-diagnostics.md`、`04-io-formats-and-restart.md`、`05-reduced-diagnostic-case-studies.md`、`06-writer-comparison-and-minimal-cases.md`、`07-output-layouts-and-reading-tools.md`、`08-template-cases-and-boundaryscraping-example.md`、`09-python-boundary-buffer-callback-case.md` 打通 full diagnostics、reduced diagnostics、field/particle I/O、openPMD、BTD、restart、BoundaryScraping 与 Python buffer 消费链。
+- [x] 精读 `Python/`：已用 `python/00-python-module-init.md`、`01-callbacks.md`、`02-field-particle-access.md`、`03-field-wrapper-validation-map.md` 打通维度专用 pybind module、`_libwarpx.py` 的 geometry-aware lazy load、Python callback 聚合桥、`multifab_register` / `multi_particle_container` / `particle_boundary_buffer` 三条访问面，以及 PICMI `sim.fields` / `sim.particles` / `Simulation.step()` 到 C++ runtime 的真实映射。
+- [x] 精读 `Tools/Parser`、`Tools/PostProcessing`、`Tools/Algorithms`、`Tools/QedTablesUtils`：已用 `tools/00-parser-postprocessing-algorithms-boundary.md` 和 `01-qed-tables-utils.md` 把 top-level `Tools/*` 的真实边界压实为轻量 parser helper、reader/log-side post-processing、推导/估计 notebook/script，以及 `qed_table_generator` / `qed_table_reader` 这两个离线 QED lookup-table 工具；其中 `psatd.ipynb` 与常用 reader-side 脚本已分别接回 `fieldsolver/11` 与 `diagnostics/07` 的现有主线。
+- [x] 精读 CMake/GNUmake 构建系统、维度变体、HPC machine scripts：已用 `build/00-cmake-superbuild-and-module-aggregation.md`、`01-gnu-make-and-dimension-variants.md`、`02-hpc-machine-profiles.md` 压实顶层 `CMakeLists.txt` 的 option/variant 矩阵、依赖 superbuild、`lib_${SD}` / `pyWarpX_${SD}` 聚合链，`Source/Make.WarpX` 的 legacy feature 宏与 `DIM/USE_RZ/USERSuffix` 维度编码，以及 `Tools/machines/*` 的 `warpx.profile -> install_dependencies.sh -> submit template` machine-specialized 构建/部署层。
+- [x] 验证：reduced_diags、restart、particle_data_python、python_wrappers、openPMD examples。`reduced_diags` 已在 `diagnostics/05` 压成 compact-observable 与 `LoadBalanceCosts` 两棵验证树，`restart` 已在 `diagnostics/04` 和 `example-regression-map` 压成 field-level reproducibility / scaffold 边界，`particle_data_python` 已在 `particles/28` 压成 Python runtime-attribute / 手动沉积合同，`python_wrappers` 已在 `python/03` 压成 `sim.fields.get(...)` 的强接口自检，而 openPMD examples 的 writer/layout/reader-side 边界已由 `diagnostics/07-09` 与相关章节模板固定下来。
+
+### 应用案例综合章
+
+- [x] Langmuir wave：从解析色散关系到源码路径。已新增 `notes/code-reading/applications/00-langmuir-wave.md`，把 `Examples/Tests/langmuir/*` 与 `langmuir_fluids/*` 从冷等离子体解析振荡、输入骨架、源码调用链、analysis/checksum/PICMI 分层一路收束成应用级主线，并同步扩展第 8 章与 `source-map`。
+- [x] Uniform plasma：噪声、能量、性能和诊断。已新增 `notes/code-reading/applications/01-uniform-plasma.md`，把 `Examples/Physics_applications/uniform_plasma/*` 从均匀热等离子体背景、噪声/性能/workflow 基线，到 full diagnostics / checkpoint / restart 强对照整理成应用级主线，并把“能量强断言主要来自相邻 `energy_conserving_thermal_plasma`、PSATD/JRhom 强稳定性断言主要来自 `nci_psatd_stability`”这层边界同步写回第 8 章与 `source-map`。
+- [x] LWFA/PWFA：laser、plasma、moving window、boosted frame、diagnostics。已新增 `notes/code-reading/applications/02-lwfa-pwfa.md`，把 `Examples/Physics_applications/laser_acceleration/*` 与 `plasma_acceleration/*` 从 `laser/05`、第 8 章和现有 regression 索引重新收束成 wakefield acceleration 应用主线，并明确保留当前 worktree 的真实边界：`laser_acceleration` 是 `LWFA runtime matrix`、只有少量局部强 analysis；`plasma_acceleration` 是 `PWFA workflow matrix`、active tree 目前仍是 checksum-only，且 3D PICMI 版本还没有做到 native boosted 等价覆盖。
+- [x] Laser ion / plasma mirror / RPA/TNSA：边界、靶、强场、多物理。已新增 `notes/code-reading/applications/03-laser-targets-rpa-tnsa.md`，把 `laser_ion` 收束成当前最强的 laser-target application entry、把 `plasma_mirror` 收束成 laser-solid surface-plasma workflow baseline，并明确保留当前 worktree 的真实边界：`RPA/TNSA` 目前只在 `laser_ion` 文献语境和 glossary 里作为机制标签出现，当前没有独立 `rpa_*` / `tnsa_*` 本地 application tree。
+- [x] Capacitive discharge：PIC-MCC 低温等离子体。已新增 `notes/code-reading/applications/04-capacitive-discharge.md`，把 `Examples/Physics_applications/capacitive_discharge/*` 收束成一条 PIC-MCC 低温等离子体应用主线，并明确保留当前 worktree 的真实边界：1D PICMI `background_mcc` / `dsmc` 入口通过 `analysis_1d.py` / `analysis_dsmc.py` 对 Turner case-1 离子密度 profile 做强对照，Python callback Poisson solver 是这条应用树的重要工程边界，而 2D native / PICMI 入口当前仍主要是 workflow checksum baseline，`dp_psp` 仍是被注释掉的遗留分支。
+- [x] Magnetic reconnection：hybrid model 和 fluid/PIC 耦合。已新增 `notes/code-reading/applications/05-magnetic-reconnection.md`，把 `Examples/Tests/ohm_solver_magnetic_reconnection/*` 收束成一条 hybrid-PIC space-plasma 应用主线，并明确保留当前 worktree 的真实边界：它依赖的是 `HybridPICModel` 的 electron-fluid Ohm closure，不是 `Fluids/` 的 cold-fluid runtime layer；当前 active coverage 是 `analysis.py` 的重联率提取/可视化加 `analysis_default_regression.py` 的 checksum 分层，而不是带显式容差 `assert` 的强 benchmark。
+- [x] Beam-beam / luminosity / FEL / ion extraction：束流和加速器模块。已新增 `notes/code-reading/applications/06-beam-collider-fel-extraction.md`，把 `diff_lumi_diag`、`beam_beam_collision`、`free_electron_laser`、`ion_beam_extraction` 与 `accelerator_lattice` 收束成一条束流与加速器应用主线，并明确保留当前 worktree 的真实分层：`DifferentialLuminosity` 是 reduced-diagnostic 强谱基准，`beam_beam_collision` 只是 collider-QED 应用骨架，`free_electron_laser` 是 boosted rigid-beam + undulator + BTD 的强 benchmark，`ion_beam_extraction` 是 EB electrostatic extraction 的强应用入口，而 `accelerator_lattice` 则提供 beamline optics 的强回归层。
+
+## 文献处理任务
+
+- [x] 用 MinerU 处理 `references/02_books_lecture_notes/` 下两份开源讲义，并为每份资料建立论文专属目录、Markdown、`images/`、中文讲解笔记骨架与 `reading-log.md`。当前已完成：
+  - `no-year_PICSimulationNotesYoujunHu2019_Particle_In_Cell_PIC_simulation`
+  - `no-year_ComputationalMethodsPlasmaPhysicsNotes_Computational_Methods_in_Plasma_Physics_lecture_notes`
+- [x] 核对 `Birdsall-Langdon / Hockney-Eastwood / Dawson` 在当前工作树中的真实可用状态，并把“book-level missing”与“article-level not yet materialized”边界写回文献索引。当前结论：
+  - `Birdsall-Langdon`：当前已发现本机现成 PDF，并已 materialize 到 `references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/`。
+  - `Hockney-Eastwood`：已有 BibTeX，无本地合法 PDF。
+  - `Dawson`：`Tajimaprl79` 与 `DawsonRMP83` 当前已基于本机现成 PDF 完成 materialize；`TajimaDawson1982` 仍只有 BibTeX，未发现本地 PDF。
+- [x] 用 MinerU 处理 `Birdsall 1985`、`Tajima 1979`、`Dawson 1983` 本机现成 PDF，并建立论文专属目录、Markdown、`images/`、中文讲解笔记与 `reading-log.md`。其中 `Birdsall 1985` 已按 `scripts/split_pdf_pypdf.py` 拆成三段后完成转换。
+- [x] 追加扫描本机 `Zoteropaper`、`llm-for-zotero-mineru` 与更宽的 `Documents/`，确认剩余核心缺口是否已有现成资产。当前结论：
+  - `Hockney-Eastwood`：当前本机仍无现成 PDF。
+  - `TajimaDawson1982`：当前本机仍无现成 PDF 或 MinerU 产物。
+- [x] 启动 `Birdsall 1985` 第一分卷的正式精读，并按 `research-paper-explainer` 顺序化写入中文讲解笔记。当前已覆盖：
+  - `Foreword`
+  - `Preface`
+  - Part One 入口
+  - Chapter 1
+  - Chapter 2 的 `2-1` 到 `2-4`
+- [x] 继续推进 `Birdsall 1985` 第一分卷精读，补入 Chapter 2 的 `2-5`、`2-6` 与 Chapter 3A 的 `3-1` 到 `3-6`。当前已明确写清：
+  - 静电 `FFT` 场求解与离散算子 `kappa/K^2`
+  - NGP / CIC weighting 与等效粒子形状
+  - `ES1` 的最小程序骨架 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY`
+  - `3-3` 到 `3-6` 的输入归一化与初始化链
+- [x] 继续推进 `Birdsall 1985` 第一分卷精读，补入 `3-7` 到 `3-12` 与 `4-6` 到 `4-10`，并做最小正文回填。当前已明确写清：
+  - `SETRHO` 是 `t=0` 的第一次真实 charge deposition
+  - `FIELDS` 是 `rho -> FFT -> phi -> E -> field energy` 的完整离散合同
+  - `SETV/ACCEL/MOVE` 是最小 leapfrog runtime contract
+  - `S(x)/S(k)`、finite-size particles、grid force、aliasing 的理论边界
+  - Poisson 系统误差与 `rho_k phi_k^*` 场能量账本
+  - 第 5 / 6 章已做最小文献回填
+- [x] 继续推进 `Birdsall 1985` 第一分卷精读，补入 Chapter 4 的 `4-3` 到 `4-5`，并做最小正文回填。当前已明确写清：
+  - electric impulse 与 magnetic rotation 的几何分裂
+  - `tan(theta/2)` 与 `t/s/c` 半角变量的实现意义
+  - 向量 Boris 形式作为现代 Boris kernel 的直接祖先
+  - `1d2v/1d3v` 的建模边界与 guiding-center 结构量
+  - 第 4 章已做最小文献回填
+- [x] 继续精读 `Birdsall 1985` 第一分卷 Chapter 8 的 `8-1` 到 `8-7` 与 `8-10` 到 `8-13`，并做最小正文回填。当前已明确写清：
+  - spatial-grid theory 与 coherent grid-plasma interaction 的问题设置
+  - sampled density 中 aliasing 的精确来源 `rho(k)=q sum_p S(k_p)n(k_p)`
+  - 共用同一 `S` 时的 momentum conservation 条件
+  - `K(k)`、`kappa(k)`、`S(k)` 与 alias sum 如何进入 dielectric function / dispersion relation
+  - cold beam / warm plasma 的 nonphysical instability 与 `lambda_D / Delta x` 数值边界
+  - 第 5 / 6 章已做最小文献回填
+- [ ] 用 MinerU 处理 Hockney-Eastwood 可合法获取资料或已有 PDF。
+- [ ] 若 `Hockney-Eastwood` 原书仍不可得，则按 article-level fallback targets 逐项补证据：
+  - `Hockney (1971)`：`tau_s / tau_H / N_C / optimum path`
+    - 已确认正式题名、DOI path 与 abstract-level 定量关系；下一步仍是 materialize full-text PDF
+  - `Hockney et al. (1974)`：`K_4 / QPM / potential correction`
+    - 已确认正式题名与 DOI；ScienceDirect `.../pdf` 端点在当前环境仍只返回 download-preparation / browser-compatibility 页面，下一步仍是 materialize full-text PDF
+  - `Eastwood and Hockney (1974)`：force anisotropy / particle-shape 图
+    - 已确认正式题名与 DOI；下一步仍是 materialize full-text PDF
+  - `Abe et al. (1975)`：`delta F` heuristic heating estimate
+  - `Peiravi and Birdsall (1978)`：smoothing cutoff / weighting-order heating scaling
+- [ ] 为 `TajimaDawson1982` 建立论文专属目录、PDF、Markdown、`images/` 与中文讲解笔记。
+- [ ] `TajimaDawson1982` 当前已确认：
+  - 正式出版信息：*AIP Conference Proceedings* `91(1):69-93`，`Sep 1982`
+  - DOI：`10.1063/1.33805`
+  - 当前本机仍无现成 PDF / MinerU 产物
+  - 已确认 related-but-not-identical 的公开 conference note：FNAL `p169.pdf` *Laser accelerator by plasma waves for ultra-high energies*（`T. Tajima` 单作者）；这不能替代 `TajimaDawson1982`
+  - 当前公开 web 证据仍停在 DOI 引用和相关 note，尚未定位到可直接落地本地目录的 full-text PDF
+  - 下一步：materialize `TajimaDawson1982` 正文 PDF 后再建论文专属目录与中文讲解笔记
+- [x] 继续评估并精读 `Birdsall 1985` 中与 energy-conserving、numerical heating、alias branch 饱和和系统能量账本最直接相关的后续段落。当前已补入 Chapter 9 的 `9-4`、`9-7` 与 Chapter 10 的 `10-2` 到 `10-4`、`10-9` 到 `10-10`，并已明确写清：
+  - finite `\Delta t` 的 time alias 与新的 branch-coupling resonance
+  - `\omega_p \Delta t`、`v_t \Delta t/\Delta x` 与高噪声 / rapid nonphysical heating 的关系
+  - `subcycling / orbit-averaging / implicit methods` 作为快时间尺度病灶的数值应对
+  - momentum-conserving 路线下一般不存在严格守恒的总能量
+  - energy-conserving 路线把 `W_E=(V_c/2)\sum \rho_j\phi_j` 和 `-\partial W_E/\partial x_i` 当成第一性对象
+  - reciprocity / Green's reciprocation theorem 是 exact energy conservation 的真正条件
+  - 第 5 / 6 章已做最小文献回填
+- [ ] 继续把 `Birdsall 1985` 这几轮读书结论更系统回填到第 3A / 4 / 5 / 6 章。当前已新增：
+  - 第 4 章已补入 `energy-conserving` / `momentum-conserving` 不是单纯 gather wrapper 差异，而是两套离散守恒合同的理论边界
+  - 第 5 / 6 章已补入 sampled density aliasing、`\sum \rho_j\phi_j` 场能量账本、time alias 与 reciprocity 的最小文献回填
+- [x] 评估并精读 `12-3` 到 `12-7` 的 fluctuation / collision / numerical heating kinetic 解释。当前已明确写清：
+  - `(\rho^2)_{k,\omega}` 如何同时编码 `S(k_p)`、`\epsilon(k,\omega)` 与时间 alias comb `\omega_g`
+  - `1/2\,\rho\phi` 不只是 energy-accounting 变量，也是 fluctuation spectrum 的自然场能量密度
+  - `grid collisions` 的 kinetic equation 与 `H`-theorem 如何把 nonphysical heating 压成统计层硬结论
+  - drifting plasma 下的数值病灶更准确地应理解为 drag + diffusion + entropy production
+  - 第 6 章已做最小文献回填
+- [x] 继续把 `Birdsall 1985` 这几轮读书结论和 WarpX 现有 validation 更明确配对。当前已完成：
+  - `energy_conserving_thermal_plasma`
+    - 对应 Chapter 10 的局部能量账本探针：直接检查总能量漂移是否受控
+  - `langmuir*`
+    - 对应 Chapter 8/10/12 的解析模与离散守恒探针：解析场解、`divE-rho/\epsilon_0`、solver/deposition/gather 组合边界
+  - `uniform_plasma`
+    - 对应 Chapter 12 的 noise / writer / checkpoint / restart baseline，而不是独立 physics hard assert
+  - `nci_psatd_stability`
+    - 对应 Chapter 8/9/12 的 alias-branch / fluctuation-energy suppression probe
+- [x] 已决定下一条文献主线：先继续 `Birdsall 1985` Chapter 13，而不是先转回缺口文献 `Hockney-Eastwood` / `TajimaDawson1982`。当前已完成：
+  - `13-2`
+    - 一维 sheet model、Maxwellian、Debye shielding、wake、drag、diffusion、`\tau = 2N_D/\omega_p`
+  - `13-3` 已核实部分
+    - 区分 `N_D` 级 randomization/correlation time 与更慢的 `N_D^2` 级 whole-distribution thermalization
+- [x] 已继续推进 `Birdsall 1985` Chapter 13。当前已完成：
+  - `13-4`
+    - `tau_H` 对 `lambda_D/Delta x`、shape order、`v_t Delta t / Delta x` 的依赖
+    - damped mover 的 phase error 如何制造 nonphysical cooling
+    - 仅靠 `delta F` 的 heuristic estimate 不足以可靠给出 heating/cooling rate
+  - `13-5` 已核实部分
+    - `tau_s`、`tau_H`、`N_C`、field fluctuation level
+    - `tau_H/tau_s` 与 optimum path 的工程意义
+- [ ] 继续核实 `Birdsall 1985` Chapter 13 的剩余经验缩放，优先：
+  - `13-5`
+    - 与 `Hockney-Eastwood` 原书逐项核对：
+      - `K_4`
+      - QPM
+      - `E_x^2` fluctuation 的 `1/N_C` 缩放
+      - linear-in-time stochastic heating
+      - optimum-path 的设计图和边界条件
+- [x] 开始精读 `Tajima and Dawson 1979`。当前已完成：
+  - 摘要、引言与最小解析模型的第一轮中文精读
+  - `driver -> wake -> trapping -> acceleration` 最小闭环
+  - `v_p = v_g^{EM}`、`L_t = \lambda_w/2`
+  - `eE_L \cong mc\omega_p`
+  - `\gamma_{\max} \simeq 2\omega^2/\omega_p^2`
+  - `l_a \cong 2\omega^2 c/\omega_p^3`
+  - 已最小回填到 `notes/code-reading/applications/02-lwfa-pwfa.md` 与第 8 章
+- [ ] 继续精读 `Tajima and Dawson 1979`，优先：
+  - 这篇的第一轮精读主线已基本收口；若再补，优先做图 1 / 图 2 的最终图注级整理
+- [x] 开始精读 `Dawson 1983`。当前已完成：
+  - 引言、particle models 总述与 electrostatic particle models 的第一轮中文精读
+  - 把 computer simulation 明确写成 experiment / analytic theory 之外的第三种研究手段
+  - 把 PIC 的最小定义压回“跟踪大量带电粒子在自洽电磁场中的运动”
+  - 把 `superparticle` 写成 practical necessity，而不是附属术语
+  - 把 finite-size particles 的第一性动机、grid coarse graining，以及 `shape factor -> charge sharing -> FFT Poisson -> gather back` 的标准合同最小回填到第 1 / 5 / 6 章
+- [x] 继续精读 `Dawson 1983`。当前已完成：
+  - `electromagnetic particle models`
+  - `fractional dimensional models`
+  - `Darwin` 与 low-frequency magnetic route 的第一轮边界梳理
+  - diagnostics / visualization 哲学的第一轮中文精读
+  - 已把 `1 1/2-D / 1 2/2-D / 2 1/2-D` reduced-dimension fully electromagnetic models、full EM 的 CFL/light-mode 限制、Darwin 的 radiation-free 低频目标、以及 diagnostics 的 `physics essence` 判断最小回填到第 4 / 6 / 8 章
+- [x] 继续精读 `Dawson 1983`。当前已完成：
+  - `numerical stability`
+  - diagnostics 细分量：
+    - distribution function
+    - drag
+    - diffusion
+    - field fluctuations
+    - time correlations
+    - normal modes
+  - `quiet starts` 的第一轮边界梳理
+  - 已把 spatial/time aliasing 两类 stroboscopic errors、diagnostics 的 particle-motion / wave 双分法，以及 noisy start / quiet start 的 tradeoff 最小回填到第 6 / 8 章和 `uniform_plasma` 应用笔记
+- [x] 继续精读 `Dawson 1983`。当前已完成：
+  - weighted particles / electrons of many sizes, charges, and masses
+  - quiet-start instabilities 的后续工程边界
+  - `free-electron laser` 作为 relativistic EM-PIC 历史例子的第一轮梳理
+  - 已把非等权宏粒子的 kinetic-model 边界最小回填到第 1 章，并把 FEL 历史谱系最小回填到第 8 章和束流-FEL 应用笔记
+- [x] 继续精读 `Dawson 1983`。当前已完成：
+  - `free-electron laser` 图 54-57 与效率估计的图文整理
+  - 已把 mechanism verification -> nonlinear saturation -> rough efficiency scaling 这条 FEL 历史论证链最小回填到第 8 章和束流-FEL 应用笔记
+- [ ] 继续精读 `Dawson 1983`，优先：
+  - 已开始：
+    - `Tests of the statistical theory of plasmas`
+    - `Kinetics of a one-dimensional plasma`
+  - 当前已明确：
+    - 一维 electrostatic sheet model 的 benchmark 角色
+    - drag / diffusion / field-fluctuation measurements 的统计理论语境
+  - 下一步：
+    - 已完成：
+      - drag 的 velocity-shell ensemble 测量合同
+      - velocity diffusion 的 `\tau^2 -> \tau` 双阶段
+      - thermal field fluctuation 的 `KT/2` 型 modal-energy 合同与 finite-size 修正
+    - 继续补：
+      - 已完成：
+        - power spectrum / time correlations
+        - magnetized fluctuation peaks
+        - nonuniform-plasma normal-mode reconstruction
+        - continuous-spectrum localization 与 `\delta v(\mathbf v,x,\omega)` 的 kinetic diagnostics 边界
+        - random-start 对 weak-instability growth-rate measurement 的限制
+        - quiet-start phase-space cell construction 的更细实现边界
+        - thermal/noisy starts 与 quiet starts 在弱效应测量中的取舍总结
+        - 已评估：`Dawson 1983` 统计理论 / quiet-start 主线已到自然收口点
+      - 继续补：
+        - 转入下一组基础文献，优先 `Yee 1966`
+        - 已完成：`Documents/Desktop/Downloads` 与 `1138693/01138693` 级本机搜索，仍无现成正文
+        - 已完成：CiNii / ScienceOpen / 历史 IEEE PDF 端点模式核对，仍无可合法全文
+        - 若后续仍无可合法全文，则继续只做 acquisition 边界收口，不进入 MinerU
+- [ ] 用 MinerU 处理 Yee 1966、Boris pusher 资料、Vay pusher、Higuera-Cary。
+  - [x] 已继续核对 `Boris` 原始资料 acquisition 边界：
+    - 已确认项目内已登记的 primary-source metadata 为：
+      - `Borisjcp73`
+      - `BorisICNSP70`
+      - `Habericnsp73`
+    - 已确认 `Documents/Desktop/Downloads` 与常用文献目录里没有可直接进入 MinerU 的 primary-source PDF / MinerU 产物
+    - 当前本机命中的只有导出代码、讲义和源码副本，不是原始论文正文
+  - [x] `Vay 2008` 已 materialize 并复用现成本机 MinerU 产物。
+  - [x] `Higuera 2017` 已在项目内完成 MinerU 转换并建立论文目录。
+  - [x] `Vay 2008` 第一轮中文精读已启动：
+    - 已完成摘要、引言、`II.A/II.B` 最小逻辑
+  - [x] `Vay 2008` 主文第一轮精读已基本完成：
+    - 已完成单粒子 moving-frame tests
+    - 已完成 bounded Darwin-lite field solver 边界
+    - 已完成 ultrarelativistic beam / background-electron 应用例子
+    - 已回填 `manuscript/chapters/04-particle-pushers.md`
+  - [ ] 若继续深挖 `Vay 2008`：
+    - Appendix A 的显式解推导
+    - Appendix B 的 gyroradius / effective-velocity 边界
+  - [x] `Higuera 2017` 第一轮中文精读已启动并完成主文第一轮收口：
+    - 已完成摘要、引言、`II-VII`
+    - 已明确 `volume-preserving + E×B drift` 的双保持目标
+    - 已明确 practical timestep 下 Vay resonance island / topology failure 的证据边界
+    - 已回填 `manuscript/chapters/04-particle-pushers.md`
+  - [x] 已继续深挖 `Higuera 2017`：
+    - 已补 Jacobian / volume-preservation 关键推导
+    - 已补与 WarpX `UpdateMomentumHigueraCary.H` 的逐式对位
+    - 已补与 `particle_pusher` / `larmor` validation 的真实覆盖边界
+  - [ ] 若继续延伸 `Higuera 2017`：
+    - 把 Jacobian 证明再压成更完整的逐行符号推导
+    - 继续核对 practical-timestep topology 结论与 WarpX 现有 regression 的对应关系
+    - 如需再继续，只剩更细的 `J_i/J_f` 逐行代数展开，不再是主线边界缺口
+  - [ ] 当前 acquisition 前沿：
+    - `Yee 1966` 仍缺可合法全文 PDF
+    - `Borisjcp73` 也仍缺可合法全文 PDF
+    - 在拿到 primary-source 正文前，不进入这两条线的 MinerU / 中文精读阶段
+- [ ] 用 MinerU 处理 Villasenor-Buneman、Esirkepov、Vay deposition。
+- [ ] 用 MinerU 处理 Berenger PML、PSATD/Galilean PSATD/NCI 文献。
+- [ ] 用 MinerU 处理 WarpX、AMReX、PICSAR/PICSAR-QED、openPMD、PICMI 相关论文。
+- [ ] 为每篇深入使用的论文建立论文专属目录、Markdown、`images/`、中文讲解笔记和章节用途记录。
+
+## 每章完成前检查
+
+- [ ] 记录本章依据的 WarpX commit。
+- [ ] 公式变量全部定义。
+- [ ] 源码路径和行号来自当日重新读取。
+- [ ] 所有讲解到的关键源码段都放入了源码原文块。
+- [ ] 参数说明回到官方文档或源码解析。
+- [ ] 至少一个 Example 或 Regression 对应本章。
+- [ ] 关键物理结论有文献或本地运行验证。
+- [ ] 未解决问题显式列出，不把猜测写成结论。
+
+## 阻塞点与约束
+
+- [ ] 当前 `PIC-tutor` 不是 git 仓库；如后续需要版本化，应先询问是否初始化 git。
+- [ ] 书稿最终形态未定：先按中文 Markdown 长书推进，样章稳定后再决定 Quarto/Pandoc/LaTeX。
+- [ ] 本机短 WarpX 运行如遇 MPI/OFI 问题，优先设置 `FI_PROVIDER=tcp` 再复现实验。
+- [ ] DeepWiki、Zread 等 AI 解读只作索引线索；最终论断必须回到 WarpX 官方文档、本地源码、测试示例和可检索文献。

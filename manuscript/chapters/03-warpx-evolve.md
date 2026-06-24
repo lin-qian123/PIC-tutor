@@ -7,7 +7,10 @@
 本章当前依据的 WarpX 源码版本是：
 
 - `../warpx`
-- commit：`063f8b586f04321e13150ae3e730e0794ca75cb1`
+- 分支：`pkuHEDPbranch`
+- commit：`8c488b1a9`
+
+v0.2 校准说明：本章已按当前 checkout 复核 `main.cpp`、`WarpX.H`、`WarpX.cpp`、`Source/Evolve/WarpXEvolve.cpp` 与 `Source/Initialization/WarpXInitData.cpp` 的主链行号。仍未在本章完全展开的内容包括 `OneStep_sub1()` 的两层 subcycling 细节、PSATD-JRhom 谱空间源项公式，以及 implicit solver 的非线性迭代；这些保留到后续专章，不在 v0.2 中硬塞成摘要。
 
 ## 3.1 顶层入口：`main.cpp`
 
@@ -74,7 +77,7 @@ warpx::initialization::finalize_external_libraries();
 | `Source/WarpX.H:97` | `static void Finalize();` | 删除单例。 |
 | `Source/WarpX.H:130` | `void InitData();` | 初始化模拟数据。 |
 | `Source/WarpX.H:132` | `void Evolve(int numsteps=-1);` | 外层时间推进。 |
-| `Source/WarpX.H:1038-1055` | `OneStep`、`OneStep_nosub`、`OneStep_sub1`、`OneStep_JRhom` | 主循环内部的单步推进路径。 |
+| `Source/WarpX.H:1041-1062` | `OneStep`、`OneStep_nosub`、`OneStep_sub1`、`OneStep_JRhom` | 主循环内部的单步推进路径。 |
 
 单例实现位于 `../warpx/Source/WarpX.cpp`：
 
@@ -342,7 +345,7 @@ $$
 
 ## 3.6 `Evolve()` 外层时间步
 
-`WarpX::Evolve()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:146-387`。它不是单纯调用 `OneStep()`，而是在每个 step 前后管理大量状态。
+`WarpX::Evolve()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390`。它不是单纯调用 `OneStep()`，而是在每个 step 前后管理大量状态。
 
 外层结构是：
 
@@ -371,24 +374,24 @@ for step in range while cur_time < stop_time:
 
 | 行号 | 操作 | 读法 |
 |---|---|---|
-| `154-165` | 初始化 `cur_time` 和循环边界 | `numsteps=-1` 时使用全局 `max_step`。 |
-| `170-173` | 信号检查、诊断新迭代 | 支持运行中断、checkpoint 和诊断状态更新。 |
-| `191-203` | callback、负载均衡、可选步长更新 | 更新步长前需要同步粒子速度时间层。 |
-| `205-209` | `ExplicitFillBoundaryEBUpdateAux()` | 显式 scheme 为后续 field gather 准备场。 |
-| `219-229` | field ionization、QED、particle injection | 多物理事件在 `OneStep()` 前改变粒子集合。 |
-| `231-233` | `OneStep(cur_time, dt[0], step)` | 进入单步推进分派。 |
-| `245-257` | 更新 `istep` 和 `t_old/t_new` | 单步推进后更新时间状态。 |
-| `258-273` | 诊断预处理、moving window、粒子边界 | `OneStep()` 后的工程处理同样影响物理结果。 |
-| `286-321` | 静电或 HybridPIC 的场解 | 非标准电磁路径的场更新位置不同。 |
-| `323-331` | 诊断需要时同步粒子速度 | 为输出把 \(\mathbf{p}\) 与 \(\mathbf{x}\) 放到同步时间层。 |
-| `337-347` | reduced/full diagnostics 和 callback | 诊断写出发生在本步状态更新之后。 |
-| `349-371` | 未使用输入检查、计时、信号、停止 | 第一步后检查输入 typo，最后判断是否退出。 |
+| `155-166` | 初始化 `cur_time` 和循环边界 | `numsteps=-1` 时使用全局 `max_step`。 |
+| `171-175` | 信号检查、诊断新迭代 | 支持运行中断、checkpoint 和诊断状态更新。 |
+| `192-205` | callback、负载均衡、可选步长更新 | 更新步长前需要同步粒子速度时间层。 |
+| `208-212` | `ExplicitFillBoundaryEBUpdateAux()` | 显式 scheme 为后续 field gather 准备场。 |
+| `222-232` | field ionization、QED、particle injection | 多物理事件在 `OneStep()` 前改变粒子集合。 |
+| `234-235` | `OneStep(cur_time, dt[0], step)` | 进入单步推进分派。 |
+| `248-259` | 更新 `istep` 和 `t_old/t_new` | 单步推进后更新时间状态。 |
+| `261-276` | 诊断预处理、moving window、粒子边界 | `OneStep()` 后的工程处理同样影响物理结果。 |
+| `289-323` | 静电或 HybridPIC 的场解 | 非标准电磁路径的场更新位置不同。 |
+| `326-333` | 诊断需要时同步粒子速度 | 为输出把 \(\mathbf{p}\) 与 \(\mathbf{x}\) 放到同步时间层。 |
+| `336-350` | reduced/full diagnostics 和 callback | 诊断写出发生在本步状态更新之后。 |
+| `352-372` | 未使用输入检查、计时、信号、停止 | 第一步后检查输入 typo，最后判断是否退出。 |
 
 注意 `Evolve()` 中多物理和诊断并不都在 `OneStep()` 内部。比如 field ionization、QED 和 particle injection 在 `OneStep()` 之前，resampling、moving window、粒子边界和某些 electrostatic/hybrid 场解在 `OneStep()` 之后。
 
 ### 3.6.1 步末 moving window：连续坐标与整数网格平移
 
-moving window 的完整精读见 `notes/code-reading/evolve/05-moving-window.md`。这里先把它放回 `Evolve()` 主循环中：`MoveWindow(step+1, move_j)` 发生在 `OneStep()` 完成、`cur_time` 和 `t_new` 更新之后，粒子边界处理之前。对应源码为 `../warpx/Source/Evolve/WarpXEvolve.cpp:245-270`：
+moving window 的完整精读见 `notes/code-reading/evolve/05-moving-window.md`。这里先把它放回 `Evolve()` 主循环中：`MoveWindow(step+1, move_j)` 发生在 `OneStep()` 完成、`cur_time` 和 `t_new` 更新之后，粒子边界处理之前。对应源码为 `../warpx/Source/Evolve/WarpXEvolve.cpp:252-276`：
 
 ```cpp
 cur_time += dt[0];
@@ -484,7 +487,7 @@ $$
 
 ## 3.7 `OneStep()`：求解器分派器
 
-`WarpX::OneStep()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:389-496`。它按 solver 和 AMR 情况分派：
+`WarpX::OneStep()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:392-495`。它按 solver 和 AMR 情况分派：
 
 ```text
 if m_implicit_solver:
@@ -503,8 +506,8 @@ else:
 
 | 分支 | 源码位置 | 含义 |
 |---|---|---|
-| implicit solver | `Source/Evolve/WarpXEvolve.cpp:397-401` | 交给隐式 solver 自己推进一整步。 |
-| electrostatic / HybridPIC | `:404-445` | 粒子推进但跳过标准电磁沉积路径，场解在外层后处理。 |
+| implicit solver | `Source/Evolve/WarpXEvolve.cpp:398-402` | 交给隐式 solver 自己推进一整步。 |
+| electrostatic / HybridPIC | `:405-445` | 粒子推进但跳过标准电磁沉积路径，场解在外层后处理。 |
 | 标准电磁无 MR | `:448-467` | 进入 `OneStep_nosub()` 或 PSATD-JRhom。 |
 | 有 MR 无 subcycling | `:469-474` | 仍进入 `OneStep_nosub()`，所有 level 使用同一步长推进。 |
 | 有 MR 且 subcycling | `:475-492` | 进入 `OneStep_sub1()`，当前限制最多两个 level。 |
@@ -527,11 +530,11 @@ else:
 
 ## 3.8 `OneStep_nosub()`：显式电磁标准路径
 
-`WarpX::OneStep_nosub()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:503-643`。这是本书第一个需要逐行读懂的核心函数。
+`WarpX::OneStep_nosub()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:507-646`。这是本书第一个需要逐行读懂的核心函数。
 
 它的结构分为四段。
 
-第一段：粒子推进、碰撞与沉积，见 `:512-556`。
+第一段：粒子推进、碰撞与沉积，见 `:515-557`。
 
 源码原文：
 
@@ -585,7 +588,7 @@ ExecutePythonCallback("afterdeposition");
 - 如果 `m_collisions_split_momentum_push` 为真，先做半个动量 push，再碰撞，再做位置 push 和后半动量 push。
 - 否则先做碰撞，再调用 `PushParticlesandDeposit()` 完整推进粒子并沉积。
 
-第二段：源项同步，见 `:558-569`。
+第二段：源项同步，见 `:559-572`。
 
 源码原文：
 
@@ -607,9 +610,9 @@ if (do_pml && do_pml_j_damping) { DampJPML(); }
 - `SyncCurrentAndRho()` 会处理滤波、guard cells、AMR 跨层插值/加和和边界。
 - PML 若含粒子或需要电流阻尼，会复制和阻尼 PML 中的电流。
 
-第三段：PSATD 或 FDTD 场推进，见 `:571-640`。
+第三段：PSATD 或 FDTD 场推进，见 `:574-642`。
 
-FDTD 分支的核心源码原文如下，位置为 `../warpx/Source/Evolve/WarpXEvolve.cpp:603-625`：
+FDTD 分支的核心源码原文如下，位置为 `../warpx/Source/Evolve/WarpXEvolve.cpp:606-628`：
 
 ```cpp
 } else {

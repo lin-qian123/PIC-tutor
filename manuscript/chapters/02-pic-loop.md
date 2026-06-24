@@ -7,7 +7,10 @@
 本章当前依据的 WarpX 源码版本是：
 
 - `../warpx`
-- commit：`063f8b586f04321e13150ae3e730e0794ca75cb1`
+- 分支：`pkuHEDPbranch`
+- commit：`8c488b1a9`
+
+v0.2 校准说明：本章已把主循环相关源码路径同步到当前 WarpX 目录结构 `Source/Evolve/`，并重核 `Evolve()`、`OneStep_nosub()` 与 FDTD/PSATD 分支的关键行号。章节仍保留基础文献缺口；Hockney-Eastwood、Yee 1966 等一手材料的 MinerU 笔记尚未完成，暂不把这些缺口伪装成已闭环引用。
 
 ## 2.1 连续模型：Vlasov-Maxwell 系统
 
@@ -131,7 +134,7 @@ $$
 
 其中 \(\bar{\mathbf{v}}\) 的具体定义取决于 pusher。Boris、Vay、Higuera-Cary 等 pusher 的差别留到粒子推进章节逐行讲解。本章只强调主循环必须给 pusher 提供正确时间层的 \(\mathbf{x}\)、\(\mathbf{p}\)、\(\mathbf{E}\)、\(\mathbf{B}\)。
 
-WarpX 的显式无 subcycling 路径在 `../warpx/Source/Evolve/WarpXEvolve.cpp:512-515` 直接把这个时间层写进注释：
+WarpX 的显式无 subcycling 路径在 `../warpx/Source/Evolve/WarpXEvolve.cpp:515-518` 直接把这个时间层写进注释：
 
 ```text
 Push particle from x^{n} to x^{n+1}
@@ -229,7 +232,7 @@ $$
 
 这说明一个电磁 PIC step 的顺序不能随意交换。电场更新需要本步沉积出来的 \(\mathbf{J}^{n+1/2}\)，所以粒子推进与电流沉积必须在 `EvolveE(dt)` 之前完成。WarpX 的 FDTD 路径正是这样组织的：
 
-对应的核心源码节选来自 `../warpx/Source/Evolve/WarpXEvolve.cpp:558-625`，这里保留源项同步和 FDTD 场推进部分；PSATD 分支和 PML 后处理在第 3 章继续展开：
+对应的核心源码节选来自 `../warpx/Source/Evolve/WarpXEvolve.cpp:559-628`，这里保留源项同步和 FDTD 场推进部分；PSATD 分支和 PML 后处理在第 3 章继续展开：
 
 ```cpp
 // Synchronize J and rho:
@@ -269,12 +272,12 @@ EvolveB(0.5_rt * dt[0], SubcyclingHalf::SecondHalf, a_cur_time + 0.5_rt * dt[0])
 
 | 数学动作 | WarpX 源码位置 |
 |---|---|
-| 粒子从 \(\mathbf{x}^n,\mathbf{p}^{n-1/2}\) 推到 \(\mathbf{x}^{n+1},\mathbf{p}^{n+1/2}\)，并沉积源项 | `../warpx/Source/Evolve/WarpXEvolve.cpp:517-556` |
-| 同步 \(\rho,\mathbf{J}\)：滤波、guard cells、AMR、边界 | `../warpx/Source/Evolve/WarpXEvolve.cpp:558-561` 与 `:768-837` |
-| \(F,G\) 半步、\(\mathbf{B}\) 半步 | `../warpx/Source/Evolve/WarpXEvolve.cpp:604-610` |
-| \(\mathbf{E}\) 整步 | `../warpx/Source/Evolve/WarpXEvolve.cpp:612-621` |
-| \(F,G\) 半步、\(\mathbf{B}\) 半步 | `../warpx/Source/Evolve/WarpXEvolve.cpp:623-625` |
-| PML 与 guard cell 处理 | `../warpx/Source/Evolve/WarpXEvolve.cpp:627-640` |
+| 粒子从 \(\mathbf{x}^n,\mathbf{p}^{n-1/2}\) 推到 \(\mathbf{x}^{n+1},\mathbf{p}^{n+1/2}\)，并沉积源项 | `../warpx/Source/Evolve/WarpXEvolve.cpp:520-557` |
+| 同步 \(\rho,\mathbf{J}\)：滤波、guard cells、AMR、边界 | `../warpx/Source/Evolve/WarpXEvolve.cpp:559-564` 与 `SyncCurrentAndRho()` |
+| \(F,G\) 半步、\(\mathbf{B}\) 半步 | `../warpx/Source/Evolve/WarpXEvolve.cpp:607-613` |
+| \(\mathbf{E}\) 整步 | `../warpx/Source/Evolve/WarpXEvolve.cpp:615-623` |
+| \(F,G\) 半步、\(\mathbf{B}\) 半步 | `../warpx/Source/Evolve/WarpXEvolve.cpp:626-628` |
+| PML 与 guard cell 处理 | `../warpx/Source/Evolve/WarpXEvolve.cpp:630-642` |
 
 这里的 \(F,G\) 是 divergence cleaning 相关辅助场，不是最小 Maxwell 更新必需项。WarpX 把它们插在场推进两侧，是为了在实际模拟中控制 \(\nabla\cdot\mathbf{E}\) 或 \(\nabla\cdot\mathbf{B}\) 误差及 PML 相关处理。
 
@@ -471,8 +474,8 @@ $$
 
 WarpX 在 `OneStep_nosub()` 内部把两者清楚分开：
 
-- PSATD 分支在 `../warpx/Source/Evolve/WarpXEvolve.cpp:575-603`，核心是 `PushPSATD(a_cur_time)`。
-- FDTD 分支在 `../warpx/Source/Evolve/WarpXEvolve.cpp:603-640`，核心是 `EvolveB/EvolveE/EvolveB`。
+- PSATD 分支在 `../warpx/Source/Evolve/WarpXEvolve.cpp:576-605`，核心是 `PushPSATD(a_cur_time)`。
+- FDTD 分支在 `../warpx/Source/Evolve/WarpXEvolve.cpp:606-642`，核心是 `EvolveB/EvolveE/EvolveB`。
 
 这意味着本书后续讲 field solver 时不能把“Maxwell solver”写成单一算法。`algo.maxwell_solver` 的选择会改变主循环内的场推进、同步、边界和可用功能。
 
@@ -489,7 +492,7 @@ WarpX 在 `OneStep_nosub()` 内部把两者清楚分开：
 7. PML、moving window、粒子边界、重分布、排序。
 8. 诊断写出和终止条件检查。
 
-WarpX 的 `../warpx/Source/Evolve/WarpXEvolve.cpp:146-387` 正是围绕这些层次组织外层 `Evolve()` 循环。真正的主循环不是教科书五行伪代码，而是把守恒离散化、时间层一致性和大规模并行工程组合起来的控制流。
+WarpX 的 `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` 正是围绕这些层次组织外层 `Evolve()` 循环。真正的主循环不是教科书五行伪代码，而是把守恒离散化、时间层一致性和大规模并行工程组合起来的控制流。
 
 ## 2.7 本章后的源码阅读入口
 
@@ -497,8 +500,8 @@ WarpX 的 `../warpx/Source/Evolve/WarpXEvolve.cpp:146-387` 正是围绕这些层
 
 | 目标 | 入口 |
 |---|---|
-| 看外层时间步如何组织 | `../warpx/Source/Evolve/WarpXEvolve.cpp:146-387` |
-| 看显式电磁无 subcycling 的标准 step | `../warpx/Source/Evolve/WarpXEvolve.cpp:503-643` |
+| 看外层时间步如何组织 | `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` |
+| 看显式电磁无 subcycling 的标准 step | `../warpx/Source/Evolve/WarpXEvolve.cpp:507-646` |
 | 看主循环如何进入粒子容器 | `../warpx/Source/Evolve/WarpXEvolve.cpp:1311-1415` |
 
 ## 2.8 参数示例与最小运行案例

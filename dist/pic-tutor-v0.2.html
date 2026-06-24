@@ -243,21 +243,23 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">PIC 程序详解：从物理模型到 WarpX 源码</h1>
-<p class="subtitle">v0.1 第一卷草稿</p>
+<p class="subtitle">v0.2 可审校草稿</p>
 <p class="author">PIC-tutor</p>
 <p class="date">2026-06-25</p>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#pic-tutor-v0.1" id="toc-pic-tutor-v0.1">PIC-tutor v0.1</a>
+<li><a href="#pic-tutor-v0.2" id="toc-pic-tutor-v0.2">PIC-tutor v0.2</a>
 <ul>
 <li><a href="#定位" id="toc-定位">定位</a></li>
 <li><a href="#源码基线" id="toc-源码基线">源码基线</a></li>
-<li><a href="#v0.1-章节范围" id="toc-v0.1-章节范围">v0.1
+<li><a href="#v0.2-章节范围" id="toc-v0.2-章节范围">v0.2
 章节范围</a></li>
+<li><a href="#v0.2-已完成的增量" id="toc-v0.2-已完成的增量">v0.2
+已完成的增量</a></li>
 <li><a href="#成书前必须补齐"
 id="toc-成书前必须补齐">成书前必须补齐</a></li>
-<li><a href="#v0.1-构建方式" id="toc-v0.1-构建方式">v0.1
+<li><a href="#v0.2-构建方式" id="toc-v0.2-构建方式">v0.2
 构建方式</a></li>
 </ul></li>
 <li><a href="#写作说明" id="toc-写作说明">0. 写作说明</a></li>
@@ -947,21 +949,27 @@ id="toc-python-field-wrapper-的最小强回归">Python field wrapper
 A：符号表草稿</a></li>
 </ul>
 </nav>
-<!-- source: manuscript/VERSION-v0.1.md -->
-<h1 id="pic-tutor-v0.1">PIC-tutor v0.1</h1>
+<!-- source: manuscript/VERSION.md -->
+<h1 id="pic-tutor-v0.2">PIC-tutor v0.2</h1>
 <p>版本日期：2026-06-25</p>
 <h2 id="定位">定位</h2>
-<p><code>v0.1</code> 是 <code>PIC-tutor</code>
-的第一卷草稿版。它不追求覆盖完整 38
-章规划，而是先把现有材料收束成一条可阅读主线：</p>
+<p><code>v0.2</code> 是 <code>PIC-tutor</code> 的可审校草稿版。它继承
+<code>v0.1</code>
+的第一卷范围，但不再只做合订，而是先把最核心的主循环与初始化章节推进到可复查状态：</p>
 <ol type="1">
-<li>PIC 的动理学模型和宏粒子思想。</li>
-<li>PIC 总循环和 WarpX 主演化路径。</li>
-<li>WarpX 初始化链、粒子推进、沉积和场求解。</li>
-<li>边界、PML、AMR、诊断和第一批验证案例。</li>
-<li>文献路线和后续扩写计划。</li>
+<li>第 2 章 <code>PIC 总循环</code>：同步当前 WarpX
+源码基线，重核显式电磁无 subcycling 路径、PSATD/FDTD 分支和最小 Langmuir
+运行闭环。</li>
+<li>第 3 章 <code>WarpX 主演化路径</code>：同步
+<code>main.cpp -&gt; WarpX::GetInstance() -&gt; InitData() -&gt; Evolve() -&gt; OneStep()</code>
+的调用图和关键行号。</li>
+<li>第 3A 章
+<code>WarpX 初始化链</code>：把长材料稿收束为可审校长草稿，明确构造期、<code>InitData()</code>
+分叉、fresh run/restart、外场、粒子初始化和初始 diagnostics
+的边界。</li>
 </ol>
-<p>本版适合用来审查全书写法、术语、证据链和章节节奏；它还不是可出版终稿。</p>
+<p>本版仍不是出版终稿。它的目标是给后续 v0.3/v0.4
+打好“源码证据可信、章节能读、构建可复现”的基础。</p>
 <h2 id="源码基线">源码基线</h2>
 <ul>
 <li>本书项目仓库：<code>/Volumes/PHILIPS/programs/PIC/PIC-tutor</code></li>
@@ -969,10 +977,10 @@ A：符号表草稿</a></li>
 <li>当前 WarpX 分支：<code>pkuHEDPbranch</code></li>
 <li>当前 WarpX commit：<code>8c488b1a9</code></li>
 </ul>
-<p>成书前仍需逐章重读源码并记录当天
-commit。本版会保留旧章节中已经写入的历史 commit 作为“当时阅读基线”，但
-<code>v0.1</code> 总说明以这里的当前 checkout 为准。</p>
-<h2 id="v0.1-章节范围">v0.1 章节范围</h2>
+<p>v0.2 只修改 <code>PIC-tutor</code> 书稿项目，不修改
+<code>../warpx</code> 原仓库。章节里的源码行号按上述 checkout
+复核；后续若 WarpX 更新，必须重新校准行号后再发布新版。</p>
+<h2 id="v0.2-章节范围">v0.2 章节范围</h2>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -984,88 +992,104 @@ commit。本版会保留旧章节中已经写入的历史 commit 作为“当时
 <tr>
 <th>章节</th>
 <th>文件</th>
-<th>v0.1 状态</th>
-<th>主要缺口</th>
+<th>v0.2 状态</th>
+<th>下一步缺口</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>写作说明</td>
 <td><code>chapters/00-preface.md</code></td>
-<td>可读草稿</td>
+<td>沿用 v0.1</td>
 <td>需同步最终出版路线</td>
 </tr>
 <tr>
 <td>动理学模型</td>
 <td><code>chapters/01-kinetic-models.md</code></td>
-<td>可读草稿</td>
-<td>Hockney-Eastwood、Yee 等文献闭环未完成</td>
+<td>沿用 v0.1</td>
+<td>Hockney-Eastwood、Yee 等一手文献闭环未完成</td>
 </tr>
 <tr>
 <td>PIC 总循环</td>
 <td><code>chapters/02-pic-loop.md</code></td>
-<td>可审阅草稿</td>
-<td>需要按当前 WarpX commit 重核行号</td>
+<td>已做 v0.2 源码校准</td>
+<td>仍需把基础文献和公式变量定义做出版级补齐</td>
 </tr>
 <tr>
 <td>WarpX 主演化路径</td>
 <td><code>chapters/03-warpx-evolve.md</code></td>
-<td>可审阅草稿</td>
-<td><code>OneStep_*</code> 分支和 callbacks 还需终审</td>
+<td>已做 v0.2 源码校准</td>
+<td><code>OneStep_sub1()</code>、JRhom、implicit 分支还需专章级精读</td>
 </tr>
 <tr>
 <td>WarpX 初始化链</td>
 <td><code>chapters/03a-warpx-initialization.md</code></td>
-<td>材料充分的长草稿</td>
-<td>需要压缩、分节、同步验证表</td>
+<td>已做 v0.2 长草稿收束</td>
+<td>需要拆短小节、补流程图、压缩过长审计段落</td>
 </tr>
 <tr>
 <td>粒子推进器</td>
 <td><code>chapters/04-particle-pushers.md</code></td>
-<td>材料充分的长草稿</td>
-<td>多物理粒子过程需拆到后续卷或单章</td>
+<td>沿用 v0.1 长草稿</td>
+<td>多物理粒子过程需拆分</td>
 </tr>
 <tr>
 <td>沉积与形函数</td>
 <td><code>chapters/05-deposition-shapes.md</code></td>
-<td>材料充分的长草稿</td>
+<td>沿用 v0.1 长草稿</td>
 <td>Esirkepov、Villasenor-Buneman 论文仍需 MinerU 闭环</td>
 </tr>
 <tr>
 <td>场求解器</td>
 <td><code>chapters/06-field-solvers.md</code></td>
-<td>材料充分的长草稿</td>
-<td>PSATD、PML、implicit/hybrid 验证小节需再回填</td>
+<td>沿用 v0.1 长草稿</td>
+<td>PSATD、PML、implicit/hybrid 验证小节需回填</td>
 </tr>
 <tr>
 <td>边界、PML 与 AMR</td>
 <td><code>chapters/07-boundaries-amr.md</code></td>
-<td>可读草稿</td>
+<td>沿用 v0.1</td>
 <td>需要把 boundary/EB/parallelization 笔记进一步合并</td>
 </tr>
 <tr>
 <td>诊断、验证与案例</td>
 <td><code>chapters/08-diagnostics-cases.md</code></td>
-<td>可读草稿</td>
+<td>沿用 v0.1</td>
 <td>需要更多本地运行图表和 reader-side analysis</td>
 </tr>
 <tr>
 <td>文献路线</td>
 <td><code>chapters/09-literature-roadmap.md</code></td>
-<td>提纲草稿</td>
+<td>沿用 v0.1 提纲</td>
 <td>需要和 <code>docs/literature-map.md</code> 去重并完成优先级</td>
 </tr>
 <tr>
 <td>符号表</td>
 <td><code>appendices/A-symbols.md</code></td>
-<td>最小草稿</td>
+<td>沿用 v0.1 最小草稿</td>
 <td>需要单位、参数、常用缩写和索引</td>
 </tr>
 </tbody>
 </table>
+<h2 id="v0.2-已完成的增量">v0.2 已完成的增量</h2>
+<ul>
+<li>冻结 <code>manuscript/VERSION-v0.1.md</code>，避免重建 v0.1 时误用
+v0.2 版本说明。</li>
+<li>新增 v0.2 当前版本说明，并把构建输出切到
+<code>dist/pic-tutor-v0.2.md</code> 与
+<code>dist/pic-tutor-v0.2.html</code>。</li>
+<li>把第 2、3、3A 章的旧源码基线 <code>063f8b586f...</code> 更新到
+<code>8c488b1a9</code>。</li>
+<li>复核并更新
+<code>Source/Evolve/WarpXEvolve.cpp</code>、<code>Source/Initialization/WarpXInitData.cpp</code>
+相关关键行号。</li>
+<li>给第 2、3、3A 章补上 v0.2
+校准说明，明确哪些分支已核，哪些分支仍是后续工作。</li>
+</ul>
 <h2 id="成书前必须补齐">成书前必须补齐</h2>
 <ul>
-<li>每章记录最终采用的 WarpX commit。</li>
+<li>每章记录最终采用的 WarpX
+commit，并避免同章混用未说明的历史行号。</li>
 <li>每章补齐公式变量定义、参数入口、源码路径、行号和真实源码块。</li>
 <li>至少为核心章节绑定一个 Example 或 Regression。</li>
 <li>把 <code>docs/parameter-map.md</code> 和
@@ -1073,17 +1097,18 @@ commit。本版会保留旧章节中已经写入的历史 commit 作为“当时
 中的资料条目回填为正文叙述。</li>
 <li>按 <code>docs/paper-reading-workflow.md</code> 完成核心论文 MinerU
 转换和中文讲解笔记。</li>
-<li>建立稳定的 Markdown/HTML/PDF 构建流程。</li>
+<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.2 仍只保证
+Markdown/HTML。</li>
 <li>对 public GitHub 仓库中的 PDF 和运行产物做版权与体积审计。</li>
 </ul>
-<h2 id="v0.1-构建方式">v0.1 构建方式</h2>
-<p>生成合订 Markdown：</p>
+<h2 id="v0.2-构建方式">v0.2 构建方式</h2>
+<p>生成合订 Markdown 和 HTML 预览：</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v01.py</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v02.py</span></code></pre></div>
 <p>生成的文件：</p>
 <ul>
-<li><code>dist/pic-tutor-v0.1.md</code></li>
-<li><code>dist/pic-tutor-v0.1.html</code>（若本机存在
+<li><code>dist/pic-tutor-v0.2.md</code></li>
+<li><code>dist/pic-tutor-v0.2.html</code>（若本机存在
 <code>pandoc</code>）</li>
 </ul>
 <!-- source: manuscript/chapters/00-preface.md -->

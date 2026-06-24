@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-06-25：开始收束 `v0.1` 第一卷草稿，新增 `manuscript/VERSION.md` 和 `scripts/build_v01.py`，把现有 11 章与附录 A 合订为 `dist/pic-tutor-v0.1.md`，并在本机存在 `pandoc` 时生成 HTML 预览；本版范围限定为 PIC 主线、WarpX 主循环、初始化、推进、沉积、场求解、边界/AMR、诊断和第一批案例，尚不是完整 38 章终稿。
 - [x] 2026-06-23：完成阶段性收口：复核当前工作区仍只包含 `README.md`、`TODO.md`、`docs/example-regression-map.md`、`docs/parameter-map.md` 四个文档改动；确认 `PIC-tutor` 已是 git 仓库并修正旧阻塞项；记录当前相邻 `../warpx` checkout 为 `pkuHEDPbranch / 8c488b1a9`，后续章节源码行号和实现论断仍需按写作当天重新读取本地源码。
 - [x] 2026-06-14：继续收尾 `docs/example-regression-map.md` 里的 `qed` family：已把剩余 `2D openPMD / 3D Breit-Wheeler / 3D Quantum Sync / 4x Schwinger` active baseline 全部压到和 umbrella/helper/input 同级的 source-grounded 粒度，完成 `10 active baselines` 的 baseline-level closure。
 - [x] 2026-05-31：继续回补 `docs/example-regression-map.md` 里的 `qed` active baseline：已把 `test_2d_qed_breit_wheeler.json` 再压成和 umbrella/helper/input 对称的粒度，明确写清它当前是 `same-final-plotfile particle-contract main consumer + additive checksum sibling`，并把四组 `p1..p4 -> ele*/pos*` producer 与 core analysis 的六层粒子合同重新闭合。
@@ -4268,6 +4269,15 @@
 - [ ] 至少一个 Example 或 Regression 对应本章。
 - [ ] 关键物理结论有文献或本地运行验证。
 - [ ] 未解决问题显式列出，不把猜测写成结论。
+
+## v0.1 后续收口队列
+
+- [ ] 逐章同步 `8c488b1a9` 源码基线，修正旧 commit 和源码行号。
+- [ ] 将 `manuscript/VERSION.md` 的章节状态表转成每章文件头状态块。
+- [ ] 为第 1-8 章各补至少一个“练习 / 复现实验 / 源码定位题”小节。
+- [ ] 为 `dist/pic-tutor-v0.1.html` 做一次人工阅读审校，清理重复段落、长表格和过长日志。
+- [ ] 审计 public GitHub 仓库中的 PDF、图片和运行产物，区分可公开再分发、仅本地保留和需要改成 DOI/metadata 的材料。
+- [ ] 为 `v0.1` 准备 GitHub release notes，明确它是第一卷草稿而非终稿。
 
 ## 阻塞点与约束
 

@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-06-29：完成 `v0.23` LeeCPC2015 获取审计与公式映射准备版：冻结 `manuscript/VERSION-v0.22.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.23，新增 `scripts/build_v23.py`，生成 `dist/pic-tutor-v0.23.md` 与 `dist/pic-tutor-v0.23.html`；第 7 章新增 `7.5.5 v0.23 LeeCPC2015 获取审计与公式映射准备`，新增 CPC 主引用目录、获取审计、公式映射准备笔记和 manifest `metadata_only` 记录。OpenAlex/Crossref/OSTI 已证明 accepted-manuscript 线索存在，但当前未取得可转换 PDF，不能声称已完成 MinerU 或逐段中文讲解。
 - [x] 2026-06-29：完成 `v0.22` PML 理论文献闭环版：冻结 `manuscript/VERSION-v0.21.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.22，新增 `scripts/build_v22.py`，生成 `dist/pic-tutor-v0.22.md` 与 `dist/pic-tutor-v0.22.html`；第 7 章新增 `7.5.4 v0.22 PML 理论文献闭环：从 Berenger/APML 到 PSATD split-field 系数`，把 WarpX 官方 PML 理论、`refs.bib` 中 Berenger/Vay/Lee 书目线索、Lee/Vay AIP 取证目录，以及 `PsatdAlgorithmPml.cpp` 中 `C1-C9`、`C10-C22`、`C23-C25` 的谱推进层级分开说明。AIP 官方 PDF 当前本机下载返回 HTTP 403，已记录为待授权 PDF/MinerU 补齐项。
 - [x] 2026-06-29：完成 `v0.21` PSATD PML 源码闭环版：冻结 `manuscript/VERSION-v0.20.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.21，新增 `scripts/build_v21.py`，生成 `dist/pic-tutor-v0.21.md` 与 `dist/pic-tutor-v0.21.html`；第 7 章新增 `7.5.3 v0.21 PSATD PML 源码闭环：普通 PML、RZ PML 与 regression 边界`，把 `WarpX::PushPSATD()` 主域/RZ PML/普通 PML 调用顺序、普通 PML `in_pml=true` spectral solver、RZ `PML_RZ::PushPSATD()`、`PsatdAlgorithmPml/PmlRZ` 系数结构和 PML PSATD regression 证据等级拆成源码-公式-analysis 对照。
 - [x] 2026-06-29：完成 `v0.20` WarpX PSATD/NCI 源码对照版：冻结 `manuscript/VERSION-v0.19.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.20，新增 `scripts/build_v20.py`，生成 `dist/pic-tutor-v0.20.md` 与 `dist/pic-tutor-v0.20.html`；第 6 章新增 `6.6.4 v0.20 源码闭环：WarpX PSATD/NCI 机制对照表`，把 `warpx.use_filter` 的实空间 bilinear filter、RZ PSATD k-space binomial filter、FDTD `NCIGodfreyFilter`、`psatd.current_correction` 投影公式、finite-order PSATD 参数和 `analysis_galilean.py` / `analysis_psatd_CC1.py` 的判据边界拆成源码证据表。
@@ -16,7 +17,7 @@
 - [x] 2026-06-29：完成 `v0.9` 边界 regression 判据索引草稿：冻结 `manuscript/VERSION-v0.8.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.9，新增 `scripts/build_v09.py`，生成 `dist/pic-tutor-v0.9.md` 与 `dist/pic-tutor-v0.9.html`；第 7 章已按当前 `../warpx` 的 `Examples/Tests/*/CMakeLists.txt`、输入卡和 `analysis*.py` 新增统一 regression 入口索引表，明确区分强 analysis、restart 一致性和 checksum-only 证据。
 - [x] 2026-06-29：完成 `v0.8` 边界与 AMR 源码入口校准草稿：冻结 `manuscript/VERSION-v0.7.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.8，新增 `scripts/build_v08.py`，生成 `dist/pic-tutor-v0.8.md` 与 `dist/pic-tutor-v0.8.html`；第 7 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 增补边界/PML/guard-cell/AMR 源码入口地图，串联 `WarpX::MakeWarpX()`、`FieldBoundaries`、`ParticleBoundaries`、`WarpXFieldBoundaries`、`WarpXComm`、`GuardCellManager`、`WarpXRegrid` 和 boundary scraping 入口。
 
-## v0.22 后续收口队列
+## v0.23 后续收口队列
 
 - [x] 人工审读并修正 `dist/pic-tutor-v0.12.html` 暴露出的第 7 章 HTML 排版风险：宽表格、Mermaid 图、公式、inline code 和长源码路径需要项目级样式兜底。
 - [x] 继续细核 `GuardCellManager.cpp`、`WarpXComm.cpp`、`WarpXRegrid.cpp` 的 AMR/regrid/guard-cell 路径，把 v0.8 入口地图扩成可讲解的正文段落。
@@ -36,7 +37,8 @@
 - [x] 为 v0.20 继续核第 6 章 PSATD/NCI 的 WarpX 实现细节：从 `warpx.use_filter` 的实际 filter profile、`psatd.current_correction` 源码公式、finite-order PSATD 参数和 `analysis_galilean.py` / `analysis_psatd_CC1.py` 的判据边界开始，把 Godfrey 2014 的策略分类进一步落到源码对照表。
 - [x] 为 v0.21 继续推进第 6/7 章 PML PSATD 闭环：从 `PML::PushPSATD()`、RZ spectral PML、`analysis_pml_psatd.py` / `analysis_pml_psatd_rz.py` 的反射率判据和相关 PSATD-PML 文献开始，补一节 PML PSATD 源码-公式-regression 对照。
 - [x] 为 v0.22 继续补 PML 理论文献闭环：优先查 WarpX 官方文档和 PML/PSATD 相关论文，按项目论文工作流补取证目录和中文讲解骨架，并把 `PsatdAlgorithmPml.cpp` 的 `C1-C25` 系数先按源码层级解释清楚。
-- [ ] 为 v0.23 继续完成 PML/PSATD 论文资产闭环：取得 Lee/Vay CPC 或 AIP 论文授权 PDF，执行 MinerU 转换，补逐段中文讲解和图片，并把 pseudo-spectral PML 反射率/效率公式与 WarpX 当前 `PsatdAlgorithmPml.cpp` 做逐项对应。
+- [x] 为 v0.23 继续完成 PML/PSATD 论文资产闭环：先核查 Lee/Vay CPC/AIP 的授权全文路径，新增 CPC 主引用目录、获取审计和公式映射准备，并把当前无法取得可转换 PDF 的状态写清楚。
+- [ ] 为 v0.24 继续完成 LeeCPC2015 全文闭环：通过机构访问、OSTI 可用全文或 AIP 可访问 PDF 取得授权 PDF，执行 MinerU 转换，补逐段中文讲解和图片，并把 pseudo-spectral PML 反射率/效率公式与 WarpX 当前 `PsatdAlgorithmPml.cpp` 做逐项对应。
 
 - [x] 2026-06-29：完成 `v0.4` 沉积与形函数校准草稿：冻结 `manuscript/VERSION-v0.3.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.4，新增 `scripts/build_v04.py`，生成 `dist/pic-tutor-v0.4.md` 与 `dist/pic-tutor-v0.4.html`；第 5 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `ShapeFactors`、`DepositCurrent/DepositCharge`、Esirkepov/Villasenor/Vay 分派和 Langmuir / `vay_deposition` 验证入口。
 - [x] 2026-06-29：完成 `v0.3` 粒子推进器校准草稿：冻结 `manuscript/VERSION-v0.2.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.3，新增 `scripts/build_v03.py`，生成 `dist/pic-tutor-v0.3.md` 与 `dist/pic-tutor-v0.3.html`；第 4 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `UpdateMomentumBoris/Vay/HigueraCary`、`PushSelector`、`PushPX` 和 `particle_pusher` 强验证入口。

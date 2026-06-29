@@ -471,6 +471,39 @@ $$
 
 这也给下一轮工作定了一个更具体的边界：要完成真正的 PSATD PML 文献闭环，不是再读一遍 `PML.cpp`，而是取得 Lee/Vay 论文 PDF 后，把高阶有限差分与 pseudo-spectral solver 的 PML 反射率/效率公式和 `PsatdAlgorithmPml.cpp` 的 split-field propagator 一一对照；若论文公式和当前 WarpX 源码已有偏离，还要标明这是实现演化、符号约定差异，还是本书理解仍不完整。
 
+### 7.5.5 v0.23 LeeCPC2015 获取审计与公式映射准备
+
+v0.23 先处理一个出版级写作问题：计划里写“取得 Lee/Vay CPC 或 AIP 论文授权 PDF，执行 MinerU 转换”，但当前环境不能把这一步伪装成已经完成。对技术书稿来说，这不是小问题。如果正文声称“根据论文逐段推导”，而项目里只有 DOI、摘要页或元数据，那么后续审校会无法复查公式来源。
+
+本轮把 Lee/Vay 主引用从 v0.22 的 AIP 会议版线索中拆出来，单独建立 `references/08_boundaries_pml_geometry/2015_LeeCPC2015_Efficiency_of_the_PML_with_high-order_FD_and_pseudo-spectral_Maxwell_solvers/`。理由很简单：WarpX `Docs/source/refs.bib` 真正引用的是 CPC 2015 论文 `LeeCPC2015`，DOI 为 `10.1016/j.cpc.2015.04.004`；AIP Conference Proceedings 2016 版本 DOI `10.1063/1.4965625` 是相关会议版，但不是 WarpX `refs.bib` 里的主键。
+
+获取审计的结果如下：
+
+| 来源 | v0.23 检查结果 | 写作结论 |
+|---|---|---|
+| WarpX `Docs/source/refs.bib` | `LeeCPC2015` 指向 Computer Physics Communications 194, 1-9，DOI `10.1016/j.cpc.2015.04.004` | 这是本书应优先采用的主引用 |
+| OpenAlex | 标记 CPC 文章为 `green OA`，OA URL 指向 OSTI `1246488` | 说明理论上存在 accepted-manuscript 线索，但还不等于项目已拿到 PDF |
+| Crossref | 记录 Elsevier TDM 链接，并显示 accepted-manuscript license 在 2016-05-21 后生效 | 可作为授权状态线索，但不是可直接转换的全文 |
+| OSTI 页面/API | `https://www.osti.gov/pages/biblio/1246488` 和 API 返回书目信息、`Publisher's Accepted Manuscript` 类型、citation links | 当前没有直接暴露 PDF/full text 文件 |
+| OSTI purl 猜测 | `servlets/purl/1246488` 及 `.pdf` 变体返回 HTTP 404 | 不能把 OSTI 记录当成已下载全文 |
+| ScienceDirect PDF | 本机 `curl` PDF 端点返回 HTTP 403 | 需要机构访问或浏览器授权会话 |
+| Elsevier API PDF | 无授权请求返回 406/最小元数据 | 不能绕过授权取全文 |
+| AIP 会议版 PDF | AIP PDF 端点本机仍返回 HTTP 403 | 只能作为官方元数据线索，暂不能作为 MinerU 输入 |
+
+因此，v0.23 对 LeeCPC2015 的状态定义为：书目已核实、开放获取线索已定位、全文尚未取得。项目 manifest 中对应记录使用 `metadata_only`，而不是 `downloaded`。这条边界要保持到后续真的有 PDF、MinerU Markdown、图片和逐段中文讲解为止。
+
+在全文未到位前，本书仍可以先做“公式映射准备”。映射准备不是替代论文阅读，而是定义拿到全文后要验证什么：
+
+| 后续论文段落应核查的主题 | 当前 WarpX 源码锚点 | 需要回答的问题 |
+|---|---|---|
+| 高阶 finite-difference Maxwell solver 与 PML 反射率 | `EvolveBPML.cpp`、`EvolveEPML.cpp`、`PML.cpp` | 论文中的 FDTD/高阶 FD 结论是否对应 WarpX Yee/CKC/nodal PML regression |
+| pseudo-spectral Maxwell solver 的 PML 处理 | `PML::PushPSATD()`、`PsatdAlgorithmPml.cpp` | 论文是否给出和当前 `C1-C25` 同构的 split-field spectral propagator |
+| PML 厚度、profile、入射角和反射率 | `Examples/Tests/pml/analysis_pml_*.py` | WarpX regression 的 final reflectivity gate 是否覆盖论文关心的参数空间 |
+| Galilean / moving-frame 情况 | `PsatdAlgorithmPml.cpp` 的 `T2=exp(i w_c dt)` | 论文若未覆盖 Galilean PML，本书不能把 Galilean 分支归因给 LeeCPC2015 |
+| divergence cleaning 进入 PML spectral update | `C23-C25` 与 `F/G` split components | 论文是否讨论 cleaning；若没有，应明确这是 WarpX 实现扩展而非论文公式 |
+
+这让 v0.23 的下一步变得很具体。拿到 PDF 后，不能只做“论文已下载”的资产提交，而要核对四件事：第一，论文是否真的推导 pseudo-spectral PML 更新式；第二，论文使用的符号和当前 WarpX `C1-C25` 是否同构；第三，论文效率/反射率实验是否能解释 WarpX `analysis_pml_psatd.py` 的 `< 1e-6` gate；第四，论文没有覆盖的 WarpX 分支，例如 Galilean 相位和 divergence-cleaning `F/G`，要在正文里单独标成实现侧扩展。
+
 ## 7.6 Embedded boundary 先是几何初始化和辅助标记系统
 
 前面讨论的 PML、PEC、PMC、Silver-Mueller 都作用在计算域外边界上，而 embedded boundary 的第一步不是“给某个边界类型分派更新公式”，而是先把几何对象嵌入到 AMReX cut-cell 数据结构。

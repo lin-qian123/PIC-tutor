@@ -8038,9 +8038,9 @@ flowchart TD
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.5 校准说明：本章已把场推进主入口、FDTD stencil、PSATD/JRhom 谱推进、PML damping 和 regression 入口重新核到上述 checkout。旧版草稿里仍保留较长的理论和代码精读段落；若后续 WarpX 更新，优先重核下表中的入口，再更新小节中的源码块。
+v0.6 校准说明：本章已把场推进主入口、FDTD stencil、PSATD/JRhom 谱推进、PML damping 和 regression 入口重新核到上述 checkout，并补入读者侧分派图和求解器对照表。旧版草稿里仍保留较长的理论和代码精读段落；若后续 WarpX 更新，优先重核下表中的入口，再更新小节中的源码块。
 
-| 主题 | 当前入口 | v0.5 证据边界 |
+| 主题 | 当前入口 | v0.6 证据边界 |
 |---|---|---|
 | 主时间步分支 | `../warpx/Source/Evolve/WarpXEvolve.cpp:564-641` | `SyncCurrentAndRho()` 后，PSATD 走 `PushPSATD()`，FDTD 走 `EvolveB(dt/2) -> EvolveE(dt) -> EvolveB(dt/2)` |
 | PSATD 推进 | `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:771-943` | current correction、Vay deposition、J/rho 谱变换、`PSATDPushSpectralFields()`、PML push 和边界回填 |
@@ -8050,6 +8050,44 @@ v0.5 校准说明：本章已把场推进主入口、FDTD stencil、PSATD/JRhom 
 | JRhom 外层循环 | `../warpx/Source/Evolve/WarpXEvolve.cpp:843-1008` | 粒子先完整推进，再按子区间多次沉积 J/rho、谱推进并回填平均场 |
 | PML split fields | `../warpx/Source/BoundaryConditions/PMLComponent.H:10-19`、`WarpXEvolvePML.cpp:46-365`、`PML.cpp:582-1197` | split component 编号、damping 因子、电流 damping、常规场与 PML 场交换 |
 | 验证入口 | `../warpx/Examples/Tests/pml/` | Yee、CKC、PSATD、Galilean PSATD、RZ PSATD 和 restart PML regression |
+
+```mermaid
+flowchart TD
+    A["OneStep_nosub: particles pushed and J/rho synchronized"] --> B{"algo.maxwell_solver"}
+    B -->|"Yee / CKC / HybridPIC / ECT"| C["FDTD branch"]
+    C --> D["EvolveF/G half step"]
+    D --> E["EvolveB(dt/2)"]
+    E --> F["FillBoundaryB"]
+    F --> G["EvolveE(dt) or MacroscopicEvolveE(dt)"]
+    G --> H["FillBoundaryE"]
+    H --> I["EvolveF/G half step"]
+    I --> J["EvolveB(dt/2)"]
+    J --> K{"do_pml"}
+    K -->|"yes"| L["DampPML and fill moving-window guards"]
+    K -->|"no"| M["safe guard-cell fill if requested"]
+    B -->|"PSATD"| N["PushPSATD"]
+    N --> O["Correct/Vay-transform J and rho"]
+    O --> P["FFT E/B and optional F/G"]
+    P --> Q["SpectralSolver::pushSpectralFields"]
+    Q --> R["Inverse FFT and optional averaged fields"]
+    R --> S{"PML enabled"}
+    S -->|"yes"| T["PML::PushPSATD or PML_RZ::PushPSATD"]
+    S -->|"no"| U["Apply field boundaries"]
+    A --> V{"psatd.JRhom"}
+    V -->|"enabled"| W["OneStep_JRhom: skip normal deposition, redeposit J/rho over subintervals"]
+    W --> Q
+```
+
+| 求解器路径 | 输入/开关 | 主源码入口 | 数值含义 | 读者检查点 |
+|---|---|---|---|---|
+| Yee FDTD | `algo.maxwell_solver = yee`，staggered grid | `FiniteDifferenceSolver/EvolveB.cpp`、`EvolveE.cpp`、`CartesianYeeAlgorithm.H` | 交错网格上的 curl 更新，受 CFL 限制 | `EvolveB(dt/2) -> EvolveE(dt) -> EvolveB(dt/2)` 是否和主循环顺序一致 |
+| CKC FDTD | `algo.maxwell_solver = ckc` | `CartesianCKCAlgorithm.H` 经同一 `EvolveB/E` 模板实例化 | 扩展 stencil 降低数值色散 | B 更新是否走 CKC 的横向加权 `Upward` 算子 |
+| Nodal FDTD | collocated/nodal grid | `CartesianNodalAlgorithm.H` 经同一 `EvolveB/E` 模板实例化 | E/B 无 Yee 交错，差分算子变为中心形式 | `UpwardDx` 与 `DownwardDx` 是否退化为同一中心差分 |
+| 标准 PSATD | `algo.maxwell_solver = psatd`，`v_galilean = 0` | `WarpX::PushPSATD()`、`SpectralSolver.cpp`、`PsatdAlgorithmGalilean.cpp` | Fourier 空间解析推进 Maxwell 线性部分 | J/rho 是否先完成 current correction 或 Vay deposition |
+| Galilean PSATD | `psatd.v_galilean` 非零 | `SpectralSolver.cpp:75-82`，`PsatdAlgorithmGalilean.cpp` | 在 Galilean 坐标中降低 boosted-frame NCI | current correction 是否使用 Galilean 连续性公式 |
+| PML FDTD | field boundary 为 PML 且非 PSATD 路径 | `EvolveBPML.cpp`、`EvolveEPML.cpp`、`WarpXEvolvePML.cpp` | split-field curl 更新加 sigma damping | split components 是否经 `PML::Exchange()` 回填常规场 |
+| PML PSATD | PSATD 与 PML 同时打开 | `PML::PushPSATD()`、`PsatdAlgorithmPml.cpp`、`PML_RZ.cpp` | PML 区域单独谱推进或 RZ PML 谱推进 | PML push 是否发生在主域 `PSATDPushSpectralFields()` 之后 |
+| JRhom PSATD | `psatd.JRhom = CL1/LQ4/...` | `WarpX::OneStep_JRhom()`、`PsatdAlgorithmJRhom*` | 一个 PIC 步内多次沉积 J/rho 并用多项式源项推进 | 是否禁用 Vay/Galilean/current correction，并按子区间重沉积 |
 
 电磁 PIC 的场求解器离散 Maxwell 方程。显式 FDTD 的经典代表是 Yee 算法：电场和磁场在空间上交错，在时间上也交错。抽象地写，
 

@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.5` 场求解器校准草稿，目标是先形成一条可复查的主线，再逐章加深公式推导、源码逐行讲解、图表和可复现实验。
+这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.6` 场求解器读者侧图表草稿，目标是先形成一条可复查的主线，再逐章加深公式推导、源码逐行讲解、图表和可复现实验。
 
 ## 版本边界
 
@@ -32,15 +32,16 @@
 - 文献库：`../bibliography/warpx-refs.bib`
 - PDF 文献索引：`../references/00_index/current_inventory.md`
 
-## v0.5 构建
+## v0.6 构建
 
 详见 [VERSION.md](VERSION.md)。生成合订 Markdown 和 HTML 预览：
 
 ```bash
-python ../scripts/build_v05.py
+python ../scripts/build_v06.py
 ```
 
 历史 v0.1 版本说明冻结在 [VERSION-v0.1.md](VERSION-v0.1.md)，可用 `python ../scripts/build_v01.py` 重建 v0.1 合订稿。
 历史 v0.2 版本说明冻结在 [VERSION-v0.2.md](VERSION-v0.2.md)，可用 `python ../scripts/build_v02.py` 重建 v0.2 合订稿。
 历史 v0.3 版本说明冻结在 [VERSION-v0.3.md](VERSION-v0.3.md)，可用 `python ../scripts/build_v03.py` 重建 v0.3 合订稿。
 历史 v0.4 版本说明冻结在 [VERSION-v0.4.md](VERSION-v0.4.md)，可用 `python ../scripts/build_v04.py` 重建 v0.4 合订稿。
+历史 v0.5 版本说明冻结在 [VERSION-v0.5.md](VERSION-v0.5.md)，可用 `python ../scripts/build_v05.py` 重建 v0.5 合订稿。

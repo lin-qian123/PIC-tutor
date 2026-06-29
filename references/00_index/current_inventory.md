@@ -2,7 +2,7 @@
 
 This inventory is generated from the current files on disk.
 
-- Total PDF files: 42
+- Total PDF files: 45
 
 ## Counts By Category
 
@@ -10,7 +10,7 @@ This inventory is generated from the current files on disk.
 - `02_books_lecture_notes`: 6
 - `03_pic_foundations`: 8
 - `04_particle_pushers_deposition_shapes`: 2
-- `06_stability_filtering_nci`: 2
+- `06_stability_filtering_nci`: 5
 - `07_amr_parallel_hpc_gpu`: 2
 - `08_boundaries_pml_geometry`: 1
 - `09_multiphysics_collisions_ionization_qed`: 4
@@ -59,6 +59,9 @@ This inventory is generated from the current files on disk.
 
 ### `06_stability_filtering_nci`
 
+- [2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm](../06_stability_filtering_nci/2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm/2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm.pdf)
+- [2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas](../06_stability_filtering_nci/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas.pdf)
+- [2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates](../06_stability_filtering_nci/2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates/2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates.pdf)
 - [no-year_FiniteGridEnergyConservingPIC2019_Finite_spatial-grid_effects_in_energy-conserving_particle-in-cell_algorithms](../06_stability_filtering_nci/no-year_FiniteGridEnergyConservingPIC2019_Finite_spatial-grid_effects_in_energy-conserving_particle-in-cell_algorithms.pdf)
 - [no-year_MLAcceleratedPIC2021_Machine_learning_accelerated_particle-in-cell_plasma_simulations](../06_stability_filtering_nci/no-year_MLAcceleratedPIC2021_Machine_learning_accelerated_particle-in-cell_plasma_simulations.pdf)
 

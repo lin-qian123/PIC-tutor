@@ -399,24 +399,24 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">PIC 程序详解：从物理模型到 WarpX 源码</h1>
-<p class="subtitle">v0.21 PSATD PML 源码闭环版</p>
+<p class="subtitle">v0.22 PML 理论文献闭环版</p>
 <p class="author">PIC-tutor</p>
 <p class="date">2026-06-29</p>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#pic-tutor-v0.21" id="toc-pic-tutor-v0.21">PIC-tutor
-v0.21</a>
+<li><a href="#pic-tutor-v0.22" id="toc-pic-tutor-v0.22">PIC-tutor
+v0.22</a>
 <ul>
 <li><a href="#定位" id="toc-定位">定位</a></li>
 <li><a href="#源码基线" id="toc-源码基线">源码基线</a></li>
-<li><a href="#v0.21-章节范围" id="toc-v0.21-章节范围">v0.21
+<li><a href="#v0.22-章节范围" id="toc-v0.22-章节范围">v0.22
 章节范围</a></li>
-<li><a href="#v0.21-已完成的增量" id="toc-v0.21-已完成的增量">v0.21
+<li><a href="#v0.22-已完成的增量" id="toc-v0.22-已完成的增量">v0.22
 已完成的增量</a></li>
 <li><a href="#成书前必须补齐"
 id="toc-成书前必须补齐">成书前必须补齐</a></li>
-<li><a href="#v0.21-构建方式" id="toc-v0.21-构建方式">v0.21
+<li><a href="#v0.22-构建方式" id="toc-v0.22-构建方式">v0.22
 构建方式</a></li>
 </ul></li>
 <li><a href="#写作说明" id="toc-写作说明">0. 写作说明</a></li>
@@ -1159,31 +1159,27 @@ id="toc-python-field-wrapper-的最小强回归">Python field wrapper
 A：符号表草稿</a></li>
 </ul>
 </nav>
-<!-- source: manuscript/VERSION-v0.21.md -->
-<h1 id="pic-tutor-v0.21">PIC-tutor v0.21</h1>
+<!-- source: manuscript/VERSION.md -->
+<h1 id="pic-tutor-v0.22">PIC-tutor v0.22</h1>
 <p>版本日期：2026-06-29</p>
 <h2 id="定位">定位</h2>
-<p><code>v0.21</code> 是 <code>PIC-tutor</code> 的 PSATD PML
-源码闭环版。它继承 <code>v0.20</code> 对 PSATD/NCI
-机制边界的拆分，继续推进第 6/7 章交界处的 PML PSATD 短板：从
-<code>WarpX::PushPSATD()</code> 的主域/普通 PML/RZ PML
-调用顺序、<code>PML::PushPSATD()</code> 的 split-component spectral
-push、<code>PML_RZ::PushPSATD()</code> 的 RZ spectral
-push、<code>PsatdAlgorithmPml</code> 和 <code>PsatdAlgorithmPmlRZ</code>
-的公式结构，以及 <code>analysis_pml_psatd.py</code> /
-<code>analysis_pml_psatd_rz.py</code> / checksum-only 3D cleaning test
-的证据等级开始，补成一条可复查的源码-公式-regression 对照。</p>
+<p><code>v0.22</code> 是 <code>PIC-tutor</code> 的 PML
+理论文献闭环版。它继承 <code>v0.21</code> 的 PSATD PML
+源码闭环，继续把第 7 章的 PML 论证从“源码和 regression
+对照”推进到“官方理论文档、WarpX 书目、PML/PSATD 论文线索和
+<code>PsatdAlgorithmPml.cpp</code> 系数分层”的版本。</p>
 <p>本版仍不修改 <code>../warpx</code>。第 7 章新增
-<code>7.5.3 v0.21 PSATD PML 源码闭环：普通 PML、RZ PML 与 regression 边界</code>。本版的核心写作边界是：PSATD
-PML 不是普通 FDTD PML damping 的同义词；普通 Cartesian PML 在主域 PSATD
-反变换后单独推进 split fields，RZ PML 则在主域 spectral field push
-前进入 <code>PML_RZ::PushPSATD()</code>；2D PSATD/Galilean PML
-有反射率强 analysis，RZ PSATD PML 有残余场强 analysis，而 3D
-PSATD+PML+div-cleaning 目前只是 checksum/output baseline。</p>
-<p>本版仍不是出版终稿。它完成了 PSATD PML 的源码层闭环，但尚未补一手
-PSATD-PML 理论文献的 MinerU 中文讲解，也没有推导普通 Cartesian
-<code>PsatdAlgorithmPml</code> 中全部 <code>C1-C25</code>
-系数。后续应继续做 PML 论文闭环、PDF 出版流程和版权/体积审计。</p>
+<code>7.5.4 v0.22 PML 理论文献闭环：从 Berenger/APML 到 PSATD split-field 系数</code>。本版的核心写作边界是：Berenger/APML
+解释的是连续匹配和 split-field 理论，<code>PML.cpp</code> /
+<code>SigmaBox</code> 解释的是实空间 sigma profile 和
+damping，<code>PsatdAlgorithmPml.cpp</code> 的 <code>C1-C25</code>
+解释的是 PML 子域 split components 的 pseudo-spectral Maxwell
+propagator；三者相关但不能混写成同一套“PML 系数”。</p>
+<p>本版仍不是出版终稿。它新增 Lee/Vay PML 论文取证目录，并记录了 AIP
+官方 PDF 在本机下载时返回 HTTP 403，因此尚未完成
+PDF/MinerU/逐段中文讲解。后续应取得授权 PDF 后继续补完整论文笔记，并把
+Lee/Vay 文中的 pseudo-spectral PML 反射率/效率公式逐项对应到 WarpX 当前
+<code>PsatdAlgorithmPml.cpp</code>。</p>
 <h2 id="源码基线">源码基线</h2>
 <ul>
 <li>本书项目仓库：<code>/Volumes/PHILIPS/programs/PIC/PIC-tutor</code></li>
@@ -1191,14 +1187,12 @@ PSATD-PML 理论文献的 MinerU 中文讲解，也没有推导普通 Cartesian
 <li>当前 WarpX 分支：<code>pkuHEDPbranch</code></li>
 <li>当前 WarpX commit：<code>8c488b1a9</code></li>
 </ul>
-<p>v0.21 只修改 <code>PIC-tutor</code> 书稿项目，不修改
-<code>../warpx</code> 原仓库。本版按当前 checkout 重新核对了
-<code>WarpXPushFieldsEM.cpp</code>、<code>PML.cpp</code>、<code>PML_RZ.cpp</code>、<code>SpectralSolver.cpp</code>、<code>PsatdAlgorithmPml.cpp</code>、<code>PsatdAlgorithmPmlRZ.cpp</code>，以及
-<code>Examples/Tests/pml</code> 的 CMake wiring、2D PSATD/Galilean
-输入卡、RZ PSATD 输入卡、3D cleaning checksum 输入卡和 analysis
-脚本。后续若 WarpX
-更新，必须重新校准源码行号和测试入口后再发布新版。</p>
-<h2 id="v0.21-章节范围">v0.21 章节范围</h2>
+<p>v0.22 只修改 <code>PIC-tutor</code> 书稿项目，不修改
+<code>../warpx</code> 原仓库。本版继续按当前 checkout 核对
+<code>Docs/source/theory/boundary_conditions.rst</code>、<code>Docs/source/refs.bib</code>、<code>PML.cpp</code>、<code>PsatdAlgorithmPml.cpp</code>
+和 <code>PsatdAlgorithmPmlRZ.cpp</code>。后续若 WarpX
+更新，必须重新校准源码行号、文档段落和测试入口后再发布新版。</p>
+<h2 id="v0.22-章节范围">v0.22 章节范围</h2>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -1210,7 +1204,7 @@ PSATD-PML 理论文献的 MinerU 中文讲解，也没有推导普通 Cartesian
 <tr>
 <th>章节</th>
 <th>文件</th>
-<th>v0.21 状态</th>
+<th>v0.22 状态</th>
 <th>下一步缺口</th>
 </tr>
 </thead>
@@ -1268,9 +1262,10 @@ PSATD-PML 理论文献的 MinerU 中文讲解，也没有推导普通 Cartesian
 <tr>
 <td>边界、PML 与 AMR</td>
 <td><code>chapters/07-boundaries-amr.md</code></td>
-<td>已在 v0.21 增补 PSATD PML 源码/公式/regression 边界</td>
-<td>仍需 PML 理论文献 MinerU 闭环和 dedicated transition-zone regression
-实现</td>
+<td>已在 v0.22 增补 Berenger/APML、WarpX <code>refs.bib</code>、Lee/Vay
+文献线索和 <code>C1-C25</code> 分层说明</td>
+<td>仍需取得 Lee/Vay 授权 PDF、完成 MinerU 逐段讲解，并实现 dedicated
+transition-zone regression</td>
 </tr>
 <tr>
 <td>诊断、验证与案例</td>
@@ -1292,36 +1287,32 @@ PSATD-PML 理论文献的 MinerU 中文讲解，也没有推导普通 Cartesian
 </tr>
 </tbody>
 </table>
-<h2 id="v0.21-已完成的增量">v0.21 已完成的增量</h2>
+<h2 id="v0.22-已完成的增量">v0.22 已完成的增量</h2>
 <ul>
-<li>冻结 <code>manuscript/VERSION-v0.20.md</code>，避免重建 v0.20 时误用
-v0.21 版本说明。</li>
-<li>新增 <code>scripts/build_v21.py</code>，生成
-<code>dist/pic-tutor-v0.21.md</code> 与
-<code>dist/pic-tutor-v0.21.html</code>。</li>
-<li>把 <code>scripts/build_v20.py</code> 改为读取冻结的
-<code>manuscript/VERSION-v0.20.md</code>，保持 v0.20
+<li>冻结 <code>manuscript/VERSION-v0.21.md</code>，避免重建 v0.21 时误用
+v0.22 版本说明。</li>
+<li>新增 <code>scripts/build_v22.py</code>，生成
+<code>dist/pic-tutor-v0.22.md</code> 与
+<code>dist/pic-tutor-v0.22.html</code>。</li>
+<li>把 <code>scripts/build_v21.py</code> 改为读取冻结的
+<code>manuscript/VERSION-v0.21.md</code>，保持 v0.21
 版本说明可复现。</li>
 <li>在第 7 章新增
-<code>7.5.3 v0.21 PSATD PML 源码闭环：普通 PML、RZ PML 与 regression 边界</code>。</li>
-<li>明确 <code>WarpX::PushPSATD()</code> 中主域 PSATD、RZ PML spectral
-push、普通 PML spectral push 和物理边界条件的先后顺序。</li>
-<li>明确普通 PML 构造时会为 PML 子域单独创建
-<code>in_pml=true</code>、<code>periodic_single_box=false</code>、<code>update_with_rho=false</code>、<code>fft_do_time_averaging=false</code>
-的 <code>SpectralSolver</code>，并在 <code>SpectralSolver.cpp</code>
-中优先分派到 <code>PsatdAlgorithmPml</code>。</li>
-<li>明确 <code>PML::PushPSATD()</code> 对 fine/coarse PML patch 的 split
-<code>E/B/F/G</code> components 做 forward transform、spectral update 和
-backward transform；RZ <code>PML_RZ::PushPSATD()</code> 只推进
-<code>Er/Et/Br/Bt</code> 的 PML spectral fields。</li>
-<li>明确 <code>analysis_pml_psatd.py</code> 是 2D PSATD/Galilean PML
-的强反射率 gate：第 50 步能量 oracle 相对误差
-<code>&lt; 1e-14</code>，末态反射率 <code>&lt; 1e-6</code>。</li>
-<li>明确 <code>analysis_pml_psatd_rz.py</code> 是 RZ radial PML
-的末态残余场 gate：<code>max(|Er|, |Ez|) &lt; 2.0</code>。</li>
-<li>明确 <code>test_3d_pml_psatd_dive_divb_cleaning</code> 当前
-<code>analysis=OFF</code>，只能写成 3D PSATD+PML+div-cleaning 的
-checksum/workflow baseline。</li>
+<code>7.5.4 v0.22 PML 理论文献闭环：从 Berenger/APML 到 PSATD split-field 系数</code>。</li>
+<li>从 WarpX 官方文档梳理 Berenger split-field、APML
+阻抗匹配条件和离散指数阻尼更新的层级。</li>
+<li>从 WarpX <code>Docs/source/refs.bib</code> 梳理
+<code>Berengerjcp94</code>、<code>Vay2002</code>、<code>Vaycpc04</code>、<code>LeeCPC2015</code>、<code>Vay2000</code>
+在本书中的角色。</li>
+<li>新增
+<code>references/08_boundaries_pml_geometry/2016_LeeVayACP2016_Efficiency_of_the_PML_with_high-order_FD_and_pseudo-spectral_Maxwell_solvers/</code>，记录
+AIP 官方 DOI 页面、PDF 下载失败原因和中文讲解骨架。</li>
+<li>明确 <code>PML.cpp</code> / <code>SigmaBox</code> 的实空间 sigma
+damping 与 <code>PsatdAlgorithmPml.cpp</code> 的 <code>C1-C25</code>
+谱推进系数属于不同层。</li>
+<li>把 <code>C1-C9</code>、<code>C10-C22</code>、<code>C23-C25</code>
+分别解释成投影/交叉耦合/cleaning 三组谱空间系数，而不是 FDTD PML 的
+damping profile。</li>
 </ul>
 <h2 id="成书前必须补齐">成书前必须补齐</h2>
 <ul>
@@ -1334,18 +1325,18 @@ commit，并避免同章混用未说明的历史行号。</li>
 中的资料条目回填为正文叙述。</li>
 <li>按 <code>docs/paper-reading-workflow.md</code> 完成核心论文 MinerU
 转换和中文讲解笔记。</li>
-<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.21 仍只保证
+<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.22 仍只保证
 Markdown/HTML。</li>
 <li>对 public GitHub 仓库中的 PDF 和运行产物做版权与体积审计。</li>
 </ul>
-<h2 id="v0.21-构建方式">v0.21 构建方式</h2>
+<h2 id="v0.22-构建方式">v0.22 构建方式</h2>
 <p>生成合订 Markdown 和 HTML 预览：</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v21.py</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v22.py</span></code></pre></div>
 <p>生成的文件：</p>
 <ul>
-<li><code>dist/pic-tutor-v0.21.md</code></li>
-<li><code>dist/pic-tutor-v0.21.html</code>（若本机存在
+<li><code>dist/pic-tutor-v0.22.md</code></li>
+<li><code>dist/pic-tutor-v0.22.html</code>（若本机存在
 <code>pandoc</code>）</li>
 </ul>
 <!-- source: manuscript/chapters/00-preface.md -->

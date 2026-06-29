@@ -405,6 +405,72 @@ $$
 
 这张表也解释了 v0.21 对第 7 章的修正：PML PSATD 的强证据目前主要来自 2D plain/Galilean 的低反射率 gate 和 RZ 的残余场 gate；3D cleaning 组合虽然覆盖了更复杂的开关组合，但自动消费者没有读取 `divE/divB/F/G`，因此不能支撑“divergence cleaning 在 3D PML 中已被物理强验证”的说法。后续若要把这条写成强结论，需要新增 analysis，至少输出并消费 `divE`、`divB` 或 `F/G`，并把最终残差和场能一起设成显式断言。
 
+### 7.5.4 v0.22 PML 理论文献闭环：从 Berenger/APML 到 PSATD split-field 系数
+
+v0.22 继续补 v0.21 留下的理论短板：PML 的“完全匹配”首先是连续介质和离散格式之间的合同，不是源码里某个 `PML` 类名自动保证的性质。WarpX 官方理论文档 `Docs/source/theory/boundary_conditions.rst` 的 PML 小节给出了这条合同的最小推导。它先从 Berenger 1994 的 2D TE split-field 写法开始：
+
+$$
+\epsilon_0 \frac{\partial E_x}{\partial t} + \sigma_y E_x =
+\frac{\partial H_z}{\partial y},\qquad
+\epsilon_0 \frac{\partial E_y}{\partial t} + \sigma_x E_y =
+-\frac{\partial H_z}{\partial x},
+$$
+
+$$
+\mu_0 \frac{\partial H_{zx}}{\partial t} + \sigma_x^* H_{zx} =
+-\frac{\partial E_y}{\partial x},\qquad
+\mu_0 \frac{\partial H_{zy}}{\partial t} + \sigma_y^* H_{zy} =
+\frac{\partial E_x}{\partial y},\qquad H_z=H_{zx}+H_{zy}.
+$$
+
+这组式子解释了 WarpX 代码里为什么有 `Exy/Exz`、`Eyx/Eyz`、`Bxy/Bxz` 这样的 split component：它们不是新的物理分量，而是把某个场分量按 curl 驱动方向拆开。普通场求解器只需要 `E_x/E_y/E_z` 和 `B_x/B_y/B_z`；PML 内部要记住“这个分量来自哪个方向的导数”，才能对入射方向相关的吸收剖面施加阻尼。
+
+WarpX 文档随后把 Berenger PML 推广成 APML 形式，引入 `c_x/c_y/c_x^*/c_y^*` 和广义电导。连续平面波分析的要点是：若
+
+$$
+c_x=c_x^*,\quad c_y=c_y^*,\quad
+\bar\sigma_x=\bar\sigma_x^*,\quad \bar\sigma_y=\bar\sigma_y^*,\quad
+\frac{\sigma_x}{\epsilon_0}=\frac{\sigma_x^*}{\mu_0},\quad
+\frac{\sigma_y}{\epsilon_0}=\frac{\sigma_y^*}{\mu_0},
+$$
+
+则 PML 介质的阻抗与真空阻抗匹配，连续极限下任意频率和入射角都不反射。这个条件对应的是“perfectly matched”四个字真正的含义：波进入一层各向异性的吸收介质，而不是在边界上被强行截断。文档也直接提醒，离散化后这种无反射性质不会自动保持，所以才需要后面的指数型 leapfrog 更新和 regression 反射率检查。
+
+WarpX `Docs/source/refs.bib` 为这条谱系提供了四个重要锚点：
+
+| key | 作用 | 对本书当前用途 |
+|---|---|---|
+| `Berengerjcp94` | 原始 PML 论文，给出电磁波吸收的 split-field 思路 | 解释 `PMLComp` 和 FDTD PML split-field 的理论起点 |
+| `Vay2002` / `Vaycpc04` | asymmetric PML 与 mesh refinement 中的 PML 应用 | 连接 APML、AMR 边界和 WarpX 文档中的 generalized PML 推导 |
+| `LeeCPC2015` | 高阶有限差分和 pseudo-spectral Maxwell solver 中的 PML 效率 | 连接第 6/7 章的 PSATD PML 和 `PsatdAlgorithmPml.cpp` |
+| `Vay2000` | 波方程吸收层边界条件 | 作为 PML/ABC 早期理论支线，辅助区分 open boundary 与 PML |
+
+本次还新增了 `references/08_boundaries_pml_geometry/2016_LeeVayACP2016_Efficiency_of_the_PML_with_high-order_FD_and_pseudo-spectral_Maxwell_solvers/` 作为 Lee/Vay PML 文献取证目录。AIP 官方页面给出题名、作者、DOI 和会议记录；但本机在 2026-06-29 访问官方 PDF 端点时返回 HTTP 403，所以该目录只保存 `README.md`、`download-log.md` 和中文讲解骨架，尚未保存 PDF 或 MinerU Markdown。这里的写作边界必须写清：v0.22 已经建立“应读哪篇文献”和“它应该解释哪段源码”的索引，但还没有完成 Lee/Vay 论文的逐段公式抽取。
+
+把理论放回当前源码，最容易混淆的是两套系数。FDTD PML 的阻尼系数来自 `Source/BoundaryConditions/PML.cpp` 的 `SigmaBox`。`pml_delta`、`pml_ncell`、`sigma/sigma_star`、`sigma_fac`、`sigma_cumsum_fac` 决定 split components 在实空间里如何按方向衰减。第 6 章已经把这条链写成 `SigmaBox -> ComputePMLFactors* -> DampPML_Cartesian() -> PML::Exchange()`。
+
+`PsatdAlgorithmPml.cpp` 中的 `C1-C25` 属于另一层：它们是 PML 子域内部的 pseudo-spectral Maxwell propagator。该文件的初始化函数先在谱空间为每个模式计算
+
+$$
+C=\cos(c|\mathbf{k}|\Delta t),\qquad
+S_{ck}=\frac{\sin(c|\mathbf{k}|\Delta t)}{c|\mathbf{k}|},\qquad
+K^{-2}=\frac{1}{|\mathbf{k}|^2}.
+$$
+
+在 `pushSpectralFields()` 内，`C1-C9` 由 `k_x^2`、`k_y^2`、`k_z^2` 和 `1-C` 组成，作用是把 split components 重新投影到 longitudinal/transverse 耦合结构中。例如 `C1=(k_x^2 C+k_y^2+k_z^2)/k^2`，`C4=k_x^2(C-1)/k^2`，`C9=k_x k_y(1-C)/k^2`。这些系数只告诉谱空间 Maxwell 解在一个时间步内如何旋转/投影，不包含 PML 的空间吸收剖面。
+
+`C10-C22` 继续把 `S_ck` 和 `dt-S_ck` 与磁场/电场交叉耦合项组合起来。例如 `C10` 含有 `i c^2 k_x k_y k_z (dt-S_ck)/k^2`，而 `C17-C22` 含有某一方向的 `k` 乘以“一个方向平方乘 `dt`、另外两个方向平方乘 `S_ck`”的组合。它们只在未开启 PML divergence cleaning 时用于 split `E/B` 更新。开启 `dive_cleaning && divb_cleaning` 后，源码改走 `C23=i c^2 k_x S_ck`、`C24=i c^2 k_y S_ck`、`C25=i c^2 k_z S_ck`，并把 `F/G` split components 纳入同一谱推进。
+
+因此 v0.22 的结论可以精确写成三层：
+
+| 层 | 主要文件 | 本层回答的问题 | 不应混写成 |
+|---|---|---|---|
+| 连续 PML 理论 | `Docs/source/theory/boundary_conditions.rst`、`refs.bib` 中 Berenger/Vay/Lee 条目 | 什么条件下 PML 与真空阻抗匹配，为什么需要 split fields | WarpX 当前具体输入参数的默认值 |
+| 实空间 PML profile/damping | `PML.cpp`、`SigmaBox`、`WarpXEvolvePML.cpp`、`PML_current.H` | PML 层数、sigma profile、场/电流阻尼如何在网格上生成和应用 | PSATD 谱推进中的 `C1-C25` |
+| PSATD PML 谱推进 | `PML::PushPSATD()`、`PsatdAlgorithmPml.cpp`、`PsatdAlgorithmPmlRZ.cpp` | PML split components 如何在 pseudo-spectral 子域中推进，Galilean 相位和 cleaning 分支如何进入 | FDTD PML 的 `sigma_fac` 或普通主域 `PsatdAlgorithmGalilean` |
+
+这也给下一轮工作定了一个更具体的边界：要完成真正的 PSATD PML 文献闭环，不是再读一遍 `PML.cpp`，而是取得 Lee/Vay 论文 PDF 后，把高阶有限差分与 pseudo-spectral solver 的 PML 反射率/效率公式和 `PsatdAlgorithmPml.cpp` 的 split-field propagator 一一对照；若论文公式和当前 WarpX 源码已有偏离，还要标明这是实现演化、符号约定差异，还是本书理解仍不完整。
+
 ## 7.6 Embedded boundary 先是几何初始化和辅助标记系统
 
 前面讨论的 PML、PEC、PMC、Silver-Mueller 都作用在计算域外边界上，而 embedded boundary 的第一步不是“给某个边界类型分派更新公式”，而是先把几何对象嵌入到 AMReX cut-cell 数据结构。

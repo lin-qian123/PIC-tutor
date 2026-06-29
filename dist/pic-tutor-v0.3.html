@@ -807,8 +807,12 @@ id="toc-pec-pmc-不只是场边界也是沉积对称性">7.3 PEC / PMC
 id="toc-pml-在-warpx-里是独立子域不是单个边界公式">7.4 PML 在 WarpX
 里是独立子域，不是单个边界公式</a></li>
 <li><a href="#pml-split-field-与-pml-电流"
-id="toc-pml-split-field-与-pml-电流">7.5 PML split field 与 PML
-电流</a></li>
+id="toc-pml-split-field-与-pml-电流">7.5 PML split field 与 PML 电流</a>
+<ul>
+<li><a href="#v0.9-边界-regression-入口索引"
+id="toc-v0.9-边界-regression-入口索引">7.5.1 v0.9 边界 regression
+入口索引</a></li>
+</ul></li>
 <li><a href="#embedded-boundary-先是几何初始化和辅助标记系统"
 id="toc-embedded-boundary-先是几何初始化和辅助标记系统">7.6 Embedded
 boundary 先是几何初始化和辅助标记系统</a></li>
@@ -13984,6 +13988,186 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb304-1"><a href="
 <code>psatd + pml + do_dive_cleaning + do_divb_cleaning + do_pml_dive/divb_cleaning</code>
 组合在一起，但目前只应诚实记录为 workflow/output checksum
 基线，不能写成与上面四条同等级的强吸收 benchmark。</p>
+<h3 id="v0.9-边界-regression-入口索引">7.5.1 v0.9 边界 regression
+入口索引</h3>
+<p>上面的讨论已经说明：同样叫“边界测试”，证据强度并不一样。<code>CMakeLists.txt</code>
+只能说明一个输入卡被注册成 regression；真正能说明物理合同的是
+<code>analysis*.py</code>。v0.9 先把第 7
+章需要回填的入口收成下表，后续再逐条扩写成正文。</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>family</th>
+<th>代表输入 / 测试名</th>
+<th>analysis 入口</th>
+<th>主要判据</th>
+<th>本章对应的源码风险</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>粒子 domain boundary</td>
+<td><code>boundaries/inputs_test_3d_particle_boundaries</code></td>
+<td><code>boundaries/analysis.py diags/diag1000008</code></td>
+<td>初末态 plotfile 排序后比较粒子轨道；absorbing
+分支最终只剩未越界保底粒子，reflecting
+分支速度反号且位置符合镜像，periodic
+分支速度不变且位置按盒长回绕；位置相对误差 <code>&lt; 1e-15</code></td>
+<td><code>parse_particle_boundaries()</code>、<code>ParticleBoundaries_K.H::apply_boundaries()</code>、domain
+boundary buffer 和粒子删除/重分布顺序</td>
+</tr>
+<tr>
+<td>PEC / PMC 场反射</td>
+<td><code>pec/inputs_test_3d_pec_field</code>、<code>inputs_test_3d_pmc_field</code></td>
+<td><code>pec/analysis_pec.py diags/diag1000125</code> 或
+<code>diag1000134</code></td>
+<td>反射后 <code>Ey_max/Ey_min</code> 相对理论 <code>±2E_in</code>
+的误差 <code>&lt; 1%</code>；PMC 复用同一站波振幅合同</td>
+<td><code>WarpXFieldBoundaries.cpp</code> 中 PEC/PMC 对 E/B
+的角色分派、guard-cell 镜像和 FDTD 半步相位</td>
+</tr>
+<tr>
+<td>PEC + MR</td>
+<td><code>pec/inputs_test_3d_pec_field_mr</code></td>
+<td><code>pec/analysis_pec_mr.py diags/diag1000125</code></td>
+<td>level-0 covering grid 上同样检查 <code>Ey</code>
+站波振幅，容差放宽到 <code>&lt; 5%</code></td>
+<td>coarse/fine 场同步、AMR patch 与 PEC
+物理边界同时存在时的反射合同</td>
+</tr>
+<tr>
+<td>PEC 粒子 gather/deposition</td>
+<td><code>pec/inputs_test_3d_pec_particle</code></td>
+<td><code>analysis=OFF</code> +
+<code>analysis_default_regression.py --path diags/diag1000020</code></td>
+<td>当前只有最终 plotfile checksum；不能写成强物理判据</td>
+<td>PEC 近边界粒子 gather/deposition 的输出回归线索，需要后续补强
+analysis</td>
+</tr>
+<tr>
+<td>PECInsulator 显式 baseline</td>
+<td><code>pec/inputs_test_2d_pec_field_insulator</code></td>
+<td><code>analysis=OFF</code> + checksum</td>
+<td>当前只有 <code>diag1000010</code> checksum；只证明输出面回归</td>
+<td><code>PEC_Insulator</code> parser 和显式场边界组合的 smoke/checksum
+入口</td>
+</tr>
+<tr>
+<td>PECInsulator implicit / restart</td>
+<td><code>pec/inputs_test_2d_pec_field_insulator_implicit</code>、<code>..._restart</code></td>
+<td><code>pec/analysis_pec_insulator_implicit.py diags/diag1000020</code></td>
+<td>把 <code>fieldenergy.txt</code> 与 <code>poyntingflux.txt</code>
+合成能量账本，要求相对误差 <code>&lt; 1e-13</code>；restart
+版本继承同一合同并依赖前置测试</td>
+<td><code>pec_insulator</code>、implicit EM、边界 Poynting flux reduced
+diagnostic 与 checkpoint 恢复的一致性</td>
+</tr>
+<tr>
+<td>PML FDTD</td>
+<td><code>pml/inputs_test_2d_pml_x_yee</code>、<code>inputs_test_2d_pml_x_ckc</code></td>
+<td><code>pml/analysis_pml_yee.py</code>、<code>analysis_pml_ckc.py diags/diag1000300</code></td>
+<td>末态电磁能量除以初始激光能量得到反射率；Yee 理论值
+<code>5.683000058954201e-07</code>，CKC 理论值
+<code>1.8015e-06</code>，相对误差均 <code>&lt; 5%</code></td>
+<td><code>PML</code> split fields、<code>DampPML()</code>、Yee/CKC
+stencil 与 <code>PML::Exchange()</code> 的组合</td>
+</tr>
+<tr>
+<td>PML PSATD / Galilean</td>
+<td><code>pml/inputs_test_2d_pml_x_psatd</code>、<code>inputs_test_2d_pml_x_galilean</code></td>
+<td><code>pml/analysis_pml_psatd.py diags/diag1000300</code></td>
+<td>先用 <code>diag1000050</code> 复算初始能量并要求相对误差
+<code>&lt; 1e-14</code>，再要求最终反射率 <code>&lt; 1e-6</code></td>
+<td><code>PushPSATD()</code> 后 PML push、谱场回填、Galilean 坐标和 PML
+交界</td>
+</tr>
+<tr>
+<td>PML restart</td>
+<td><code>pml/inputs_test_2d_pml_x_yee_restart</code>、<code>inputs_test_2d_pml_x_psatd_restart</code></td>
+<td><code>analysis_default_restart.py diags/diag1000300</code> +
+checksum</td>
+<td>restart 前后最终 plotfile 逐字段一致；不是新的吸收率判据</td>
+<td>PML split field、guard cells、checkpoint/restart 序列化</td>
+</tr>
+<tr>
+<td>RZ PML PSATD</td>
+<td><code>pml/inputs_test_rz_pml_psatd</code></td>
+<td><code>pml/analysis_pml_psatd_rz.py diags/diag1000500</code></td>
+<td>脉冲离开后要求 <code>max(|Er|, |Ez|) &lt; 2.0</code></td>
+<td><code>PML_RZ</code>、RZ spectral PML、径向 PML 与轴线
+<code>none</code> 边界的组合</td>
+</tr>
+<tr>
+<td>PML cleaning smoke</td>
+<td><code>pml/inputs_test_3d_pml_psatd_dive_divb_cleaning</code></td>
+<td><code>analysis=OFF</code> + checksum</td>
+<td>当前只提供 3D PSATD + PML + div cleaning 的输出回归线索</td>
+<td><code>do_pml_dive_cleaning/do_pml_divb_cleaning</code> 的 workflow
+覆盖，但缺少强物理断言</td>
+</tr>
+<tr>
+<td>particles in PML</td>
+<td><code>particles_in_pml/inputs_test_{2d,3d}_particles_in_pml*</code></td>
+<td><code>particles_in_pml/analysis_particles_in_pml.py</code></td>
+<td>粒子离域后在 finest level covering grid 上取
+<code>max(Ex,Ey,Ez)</code>；2D 单层 <code>&lt; 3e-4</code>、2D MR
+<code>&lt; 6e-4</code>、3D 单层 <code>&lt; 10</code>、3D MR
+<code>&lt; 110</code></td>
+<td><code>warpx.pml_has_particles=1</code>、in-domain PML、PML current
+damping、AMR fine patch 与粒子穿出后残余场</td>
+</tr>
+<tr>
+<td>3D EB particle scrape</td>
+<td><code>particle_boundary_scrape/inputs_test_3d_particle_scrape</code></td>
+<td><code>particle_boundary_scrape/analysis_scrape.py diags/diag1000060</code></td>
+<td>step 40 仍有 <code>612</code> 个电子，step 60 主容器中为
+<code>0</code>；说明粒子在撞到 EB 后被删除/记录</td>
+<td>EB
+<code>ParticleBoundaryBuffer</code>、<code>save_particles_at_eb</code>、embedded
+boundary 刮擦与主容器删除</td>
+</tr>
+<tr>
+<td>RZ EB scraping</td>
+<td><code>scraping/inputs_test_rz_scraping</code></td>
+<td><code>scraping/analysis_rz.py diags/diag1000037</code></td>
+<td>末态主容器剩 <code>512</code> 个粒子；每个输出 iteration 都满足
+<code>remaining + scraped = initial</code>，最终 scraped+remaining 的 id
+集合等于初始 id 集合</td>
+<td>RZ EB 刮擦、BoundaryScrapingDiagnostics openPMD 输出、scraped buffer
+flush 后的一致性</td>
+</tr>
+<tr>
+<td>RZ EB scraping filter</td>
+<td><code>scraping/inputs_test_rz_scraping_filter</code></td>
+<td><code>scraping/analysis_rz_filter.py diags/diag1000037</code></td>
+<td>末态仍剩 <code>512</code> 个粒子；由于只记录
+<code>z &gt; 0</code>，检查
+<code>2 * scraped + remaining = initial</code>，并要求 scraped 粒子中
+<code>z &lt;= 0</code> 数量为 <code>0</code></td>
+<td><code>BoundaryScrapingDiagnostics</code> 的 per-species
+<code>plot_filter_function</code>、scraped buffer 选择性输出</td>
+</tr>
+<tr>
+<td>Silver-Mueller open boundary</td>
+<td><code>silver_mueller/inputs_test_1d_silver_mueller</code>、<code>inputs_test_2d_silver_mueller_x/z</code>、<code>inputs_test_rz_silver_mueller_z</code></td>
+<td><code>silver_mueller/analysis.py diags/diag1000500</code></td>
+<td>脉冲离域后所有场分量都低于脚本阈值，检验反射场远小于入射场</td>
+<td><code>ApplySilverMuellerBoundary()</code> 只在 level 0
+<code>B</code> first half-push 生效的开放边界合同</td>
+</tr>
+</tbody>
+</table>
+<p>这个表的用途不是替代正文推导，而是给后续写作设定证据等级。强 analysis
+可以支撑“验证某个物理合同”；restart analysis
+支撑“恢复后状态一致”；checksum-only 只能支撑“当前输出没有漂移”。第 7
+章后续扩写时，必须在每条边界结论旁边标明它属于哪一类证据。</p>
 <p>粒子边界处理位于 <code>WarpXEvolve.cpp</code> 行
 713-766。主要步骤是连续通量注入、<code>particlescraper</code>
 callback、<code>mypc-&gt;ApplyBoundaryConditions()</code>、domain

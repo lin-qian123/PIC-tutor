@@ -10486,6 +10486,31 @@ PML 的 regression 入口也不能继续混成单一 checksum 桶。当前最稳
 
 相比之下，`test_3d_pml_psatd_dive_divb_cleaning` 当前 `analysis=OFF`。它把 `psatd + pml + do_dive_cleaning + do_divb_cleaning + do_pml_dive/divb_cleaning` 组合在一起，但目前只应诚实记录为 workflow/output checksum 基线，不能写成与上面四条同等级的强吸收 benchmark。
 
+### 7.5.1 v0.9 边界 regression 入口索引
+
+上面的讨论已经说明：同样叫“边界测试”，证据强度并不一样。`CMakeLists.txt` 只能说明一个输入卡被注册成 regression；真正能说明物理合同的是 `analysis*.py`。v0.9 先把第 7 章需要回填的入口收成下表，后续再逐条扩写成正文。
+
+| family | 代表输入 / 测试名 | analysis 入口 | 主要判据 | 本章对应的源码风险 |
+|---|---|---|---|---|
+| 粒子 domain boundary | `boundaries/inputs_test_3d_particle_boundaries` | `boundaries/analysis.py diags/diag1000008` | 初末态 plotfile 排序后比较粒子轨道；absorbing 分支最终只剩未越界保底粒子，reflecting 分支速度反号且位置符合镜像，periodic 分支速度不变且位置按盒长回绕；位置相对误差 `< 1e-15` | `parse_particle_boundaries()`、`ParticleBoundaries_K.H::apply_boundaries()`、domain boundary buffer 和粒子删除/重分布顺序 |
+| PEC / PMC 场反射 | `pec/inputs_test_3d_pec_field`、`inputs_test_3d_pmc_field` | `pec/analysis_pec.py diags/diag1000125` 或 `diag1000134` | 反射后 `Ey_max/Ey_min` 相对理论 `±2E_in` 的误差 `< 1%`；PMC 复用同一站波振幅合同 | `WarpXFieldBoundaries.cpp` 中 PEC/PMC 对 E/B 的角色分派、guard-cell 镜像和 FDTD 半步相位 |
+| PEC + MR | `pec/inputs_test_3d_pec_field_mr` | `pec/analysis_pec_mr.py diags/diag1000125` | level-0 covering grid 上同样检查 `Ey` 站波振幅，容差放宽到 `< 5%` | coarse/fine 场同步、AMR patch 与 PEC 物理边界同时存在时的反射合同 |
+| PEC 粒子 gather/deposition | `pec/inputs_test_3d_pec_particle` | `analysis=OFF` + `analysis_default_regression.py --path diags/diag1000020` | 当前只有最终 plotfile checksum；不能写成强物理判据 | PEC 近边界粒子 gather/deposition 的输出回归线索，需要后续补强 analysis |
+| PECInsulator 显式 baseline | `pec/inputs_test_2d_pec_field_insulator` | `analysis=OFF` + checksum | 当前只有 `diag1000010` checksum；只证明输出面回归 | `PEC_Insulator` parser 和显式场边界组合的 smoke/checksum 入口 |
+| PECInsulator implicit / restart | `pec/inputs_test_2d_pec_field_insulator_implicit`、`..._restart` | `pec/analysis_pec_insulator_implicit.py diags/diag1000020` | 把 `fieldenergy.txt` 与 `poyntingflux.txt` 合成能量账本，要求相对误差 `< 1e-13`；restart 版本继承同一合同并依赖前置测试 | `pec_insulator`、implicit EM、边界 Poynting flux reduced diagnostic 与 checkpoint 恢复的一致性 |
+| PML FDTD | `pml/inputs_test_2d_pml_x_yee`、`inputs_test_2d_pml_x_ckc` | `pml/analysis_pml_yee.py`、`analysis_pml_ckc.py diags/diag1000300` | 末态电磁能量除以初始激光能量得到反射率；Yee 理论值 `5.683000058954201e-07`，CKC 理论值 `1.8015e-06`，相对误差均 `< 5%` | `PML` split fields、`DampPML()`、Yee/CKC stencil 与 `PML::Exchange()` 的组合 |
+| PML PSATD / Galilean | `pml/inputs_test_2d_pml_x_psatd`、`inputs_test_2d_pml_x_galilean` | `pml/analysis_pml_psatd.py diags/diag1000300` | 先用 `diag1000050` 复算初始能量并要求相对误差 `< 1e-14`，再要求最终反射率 `< 1e-6` | `PushPSATD()` 后 PML push、谱场回填、Galilean 坐标和 PML 交界 |
+| PML restart | `pml/inputs_test_2d_pml_x_yee_restart`、`inputs_test_2d_pml_x_psatd_restart` | `analysis_default_restart.py diags/diag1000300` + checksum | restart 前后最终 plotfile 逐字段一致；不是新的吸收率判据 | PML split field、guard cells、checkpoint/restart 序列化 |
+| RZ PML PSATD | `pml/inputs_test_rz_pml_psatd` | `pml/analysis_pml_psatd_rz.py diags/diag1000500` | 脉冲离开后要求 `max(|Er|, |Ez|) < 2.0` | `PML_RZ`、RZ spectral PML、径向 PML 与轴线 `none` 边界的组合 |
+| PML cleaning smoke | `pml/inputs_test_3d_pml_psatd_dive_divb_cleaning` | `analysis=OFF` + checksum | 当前只提供 3D PSATD + PML + div cleaning 的输出回归线索 | `do_pml_dive_cleaning/do_pml_divb_cleaning` 的 workflow 覆盖，但缺少强物理断言 |
+| particles in PML | `particles_in_pml/inputs_test_{2d,3d}_particles_in_pml*` | `particles_in_pml/analysis_particles_in_pml.py` | 粒子离域后在 finest level covering grid 上取 `max(Ex,Ey,Ez)`；2D 单层 `< 3e-4`、2D MR `< 6e-4`、3D 单层 `< 10`、3D MR `< 110` | `warpx.pml_has_particles=1`、in-domain PML、PML current damping、AMR fine patch 与粒子穿出后残余场 |
+| 3D EB particle scrape | `particle_boundary_scrape/inputs_test_3d_particle_scrape` | `particle_boundary_scrape/analysis_scrape.py diags/diag1000060` | step 40 仍有 `612` 个电子，step 60 主容器中为 `0`；说明粒子在撞到 EB 后被删除/记录 | EB `ParticleBoundaryBuffer`、`save_particles_at_eb`、embedded boundary 刮擦与主容器删除 |
+| RZ EB scraping | `scraping/inputs_test_rz_scraping` | `scraping/analysis_rz.py diags/diag1000037` | 末态主容器剩 `512` 个粒子；每个输出 iteration 都满足 `remaining + scraped = initial`，最终 scraped+remaining 的 id 集合等于初始 id 集合 | RZ EB 刮擦、BoundaryScrapingDiagnostics openPMD 输出、scraped buffer flush 后的一致性 |
+| RZ EB scraping filter | `scraping/inputs_test_rz_scraping_filter` | `scraping/analysis_rz_filter.py diags/diag1000037` | 末态仍剩 `512` 个粒子；由于只记录 `z > 0`，检查 `2 * scraped + remaining = initial`，并要求 scraped 粒子中 `z <= 0` 数量为 `0` | `BoundaryScrapingDiagnostics` 的 per-species `plot_filter_function`、scraped buffer 选择性输出 |
+| Silver-Mueller open boundary | `silver_mueller/inputs_test_1d_silver_mueller`、`inputs_test_2d_silver_mueller_x/z`、`inputs_test_rz_silver_mueller_z` | `silver_mueller/analysis.py diags/diag1000500` | 脉冲离域后所有场分量都低于脚本阈值，检验反射场远小于入射场 | `ApplySilverMuellerBoundary()` 只在 level 0 `B` first half-push 生效的开放边界合同 |
+
+这个表的用途不是替代正文推导，而是给后续写作设定证据等级。强 analysis 可以支撑“验证某个物理合同”；restart analysis 支撑“恢复后状态一致”；checksum-only 只能支撑“当前输出没有漂移”。第 7 章后续扩写时，必须在每条边界结论旁边标明它属于哪一类证据。
+
 粒子边界处理位于 `WarpXEvolve.cpp` 行 713-766。主要步骤是连续通量注入、`particlescraper` callback、`mypc->ApplyBoundaryConditions()`、domain boundary buffer 收集、粒子重分布、嵌入边界刮擦和排序。对 laser-solid、TNSA/RPA、moving window、open boundary 等案例，这一段决定了粒子是否会在边界产生非物理堆积或丢失。
 
 这里还要特别区分两类“边界参数”。`boundary.particle_lo/hi` 控制的是粒子越界后是否 `Open/Absorbing/Reflecting/Thermal/Periodic`，真正执行在 `../warpx/Source/Particles/ParticleBoundaries_K.H` 的 `apply_boundaries()` 中；而 `particles.crop_on_PEC_boundary` 并不在这里直接删粒子，它只是在 `WarpXParticleContainer::DepositCurrent()`、`DepositCharge()` 和 `ImplicitPushPX.cpp` 里生成 `do_cropping` 标志，告诉 Villasenor / implicit suborbit 这些轨道恢复与沉积 kernel：当 field boundary 是 `PEC` 或 `PECInsulator` 时，边界外那段轨迹要不要在几何上截断。也就是说，一个参数决定“粒子是否还活着”，另一个参数决定“活着或刚越界的粒子，其轨迹是否还允许继续穿过 PEC 外侧参与沉积”。

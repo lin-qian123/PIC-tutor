@@ -1080,6 +1080,180 @@ if (m_JRhom)
 
 所以 JRhom 不是“普通 PSATD 上再加一个系数表”，而是重排了源项采样和谱推进：粒子先完整推进，源项在多个相对时刻沉积，谱场按 `old/mid/new` 保存源项时间层，最后在每个子区间用解析积分推进 `E/B/F/G`。
 
+### 6.7.1 v0.28 JRhom second-order Y1-Y8 系数的源码公式闭环
+
+v0.28 把 `notes/code-reading/fieldsolver/19-psatd-jrhom-y-coefficients.md` 补成独立图谱。这个图谱的第一条规则是防混写：`PsatdAlgorithmJRhomSecondOrder.cpp` 的 `Y1-Y8` 是实系数，属于 JRhom 多项式源项积分；它们不是上一节 Cartesian Galilean/standard PSATD average-field 分支里的 complex `Y1-Y4`。
+
+源码分配边界在 `PsatdAlgorithmJRhomSecondOrder.cpp:59-77`。`Y1-Y5` 总是分配，`Y6-Y8` 只在 `time_averaging` 打开时分配：
+
+```cpp
+Y1_coef = SpectralRealCoefficients(ba, dm, 1, 0);
+Y2_coef = SpectralRealCoefficients(ba, dm, 1, 0);
+Y3_coef = SpectralRealCoefficients(ba, dm, 1, 0);
+Y4_coef = SpectralRealCoefficients(ba, dm, 1, 0);
+Y5_coef = SpectralRealCoefficients(ba, dm, 1, 0);
+
+if (time_averaging)
+{
+    Y6_coef = SpectralRealCoefficients(ba, dm, 1, 0);
+    Y7_coef = SpectralRealCoefficients(ba, dm, 1, 0);
+    Y8_coef = SpectralRealCoefficients(ba, dm, 1, 0);
+}
+```
+
+第二条规则是时间步边界。`SpectralSolver.cpp` 在 JRhom 打开时把 `solver_dt` 除以 `m_JRhom_subintervals`，所以 `PsatdAlgorithmJRhomSecondOrder` 里看到的 $\Delta t$ 是每个 JRhom 子区间长度，而不是外层 PIC 大步长。
+
+二阶类先把 `old/mid/new` 源项写成局部多项式：
+
+$$
+\mathbf{J}(\tau)=\mathbf{a}_J\tau^2+\mathbf{b}_J\tau+\mathbf{c}_J,
+\qquad
+\rho(\tau)=a_\rho\tau^2+b_\rho\tau+c_\rho.
+$$
+
+源码对应为：
+
+```cpp
+const Complex a_jx = (J_quadratic) ? (Jx_new - 2._rt * Jx_mid + Jx_old) : 0._rt;
+const Complex b_jx = (J_linear || J_quadratic) ? (Jx_new - Jx_old) : 0._rt;
+const Complex c_jx = (J_linear) ? (Jx_new + Jx_old)/2._rt : Jx_mid;
+
+const Complex a_rho = (rho_quadratic) ? (rho_new - 2._rt * rho_mid + rho_old) : 0._rt;
+const Complex b_rho = (rho_linear || rho_quadratic) ? (rho_new - rho_old) : 0._rt;
+const Complex c_rho = (rho_linear) ? (rho_new + rho_old)/2._rt : rho_mid;
+```
+
+共享谱量仍是
+
+$$
+\omega_s=c|\mathbf{k}_s|,\qquad
+C=\cos(\omega_s\Delta t),\qquad
+S_{ck}=\frac{\sin(\omega_s\Delta t)}{\omega_s},
+$$
+
+并在 $\omega_s=0$ 时取 `S_ck = dt`。`Y1-Y5` 的非零模公式为：
+
+$$
+Y_1=
+\frac{
+(1-C)(8-\omega_s^2\Delta t^2)-4S_{ck}\omega_s^2\Delta t
+}{
+2\epsilon_0\Delta t^2\omega_s^4
+},
+$$
+
+$$
+Y_2=
+\frac{
+2(C-1)+S_{ck}\omega_s^2\Delta t
+}{
+2\epsilon_0\Delta t\,\omega_s^2
+},
+\qquad
+Y_3=
+\frac{
+S_{ck}\omega_s(8-\omega_s^2\Delta t^2)-4(1+C)\omega_s\Delta t
+}{
+2\epsilon_0\Delta t^2\omega_s^3
+},
+$$
+
+$$
+Y_4=\frac{1-C}{\epsilon_0\omega_s^2},
+\qquad
+Y_5=
+\frac{(1+C)\Delta t-2S_{ck}}
+{2\epsilon_0\Delta t\,\omega_s^2}.
+$$
+
+零模分支分别是：
+
+$$
+Y_1=-\frac{\Delta t^2}{12\epsilon_0},\quad
+Y_2=0,\quad
+Y_3=-\frac{\Delta t}{6\epsilon_0},\quad
+Y_4=\frac{\Delta t^2}{2\epsilon_0},\quad
+Y_5=-\frac{\Delta t^2}{12\epsilon_0}.
+$$
+
+这些系数在 ordinary field push 里分工如下。`Y3/Y2/S_ck` 分别积分二次、一次、常量电流对电场的贡献：
+
+```cpp
+fields(i,j,k,Idx.Ex) = C * Ex_old
+    + I * c2 * S_ck * (ky * Bz_old - kz * By_old)
+    + Y3 * a_jx + Y2 * b_jx - S_ck/ep0 * c_jx
+    + I * c2 * kx * sum_rho;
+```
+
+`Y1/Y5/Y4` 则进入磁场中的 `k x J` 多项式积分：
+
+```cpp
+fields(i,j,k,Idx.Bx) = C * Bx_old
+    - I * S_ck * (ky * Ez_old - kz * Ey_old)
+    - I * Y1 * (ky * a_jz - kz * a_jy)
+    + I * Y5 * (ky * b_jz - kz * b_jy)
+    + I * Y4 * (ky * c_jz - kz * c_jy );
+```
+
+同一组 `Y1/Y5/Y4` 还出现在电荷纵向组合里：
+
+```cpp
+const Complex sum_rho = Y1 * a_rho - Y5 * b_rho - Y4 * c_rho;
+```
+
+如果打开 `dive_cleaning`，`F` 也复用这组源项积分：
+
+```cpp
+fields(i,j,k,Idx.F) = C * F_old + S_ck * I * k_dot_E
+    + I * ( Y1 * k_dot_ddJ - Y5 * k_dot_dJ - Y4 * k_dot_J_mid )
+    +  Y3 * a_rho + Y2 * b_rho - S_ck/ep0 * c_rho;
+```
+
+`Y6-Y8` 只属于 time-averaged field 累计。非零模公式为：
+
+$$
+Y_6=
+\frac{
+\Delta t^3\omega_s^3
+-3\Delta t^2\omega_s^3S_{ck}
+-12\Delta t\omega_s(1+C)
++24\omega_sS_{ck}
+}{
+6\epsilon_0\Delta t^2\omega_s^5
+},
+$$
+
+$$
+Y_7=
+\frac{
+\Delta t\omega_s^2S_{ck}+2C-2
+}{
+2\epsilon_0\Delta t\omega_s^4
+},
+\qquad
+Y_8=
+\frac{\Delta t-S_{ck}}{\epsilon_0\omega_s^2}.
+$$
+
+零模分支为：
+
+$$
+Y_6=\frac{\Delta t^3}{30\epsilon_0},\quad
+Y_7=-\frac{\Delta t^3}{24\epsilon_0},\quad
+Y_8=\frac{\Delta t^3}{6\epsilon_0}.
+$$
+
+源码注释明确说 average-field 是累加形式，因为 JRhom 可配合 sub-cycling：
+
+```cpp
+fields(i,j,k,Idx.Ex_avg) += S_ck * Ex_old
+    + I * c2 * ep0 * Y4 * (ky * Bz_old - kz * By_old)
+    - I * c2 * kx * (Y6 * a_rho + Y7 * b_rho + Y8 * c_rho)
+    + ( Y1 * a_jx - Y5 * b_jx - Y4 * c_jx);
+```
+
+因此 v0.28 对第 6 章的写作边界是：`Y1-Y5` 是 JRhom ordinary field push 的源项积分，`Y6-Y8` 是 JRhom time averaging 的累计积分；二者都不应和 Cartesian Galilean average-field 的 `Y1-Y4` 合并。后续如果继续拆 RZ/Galilean RZ，也要按 algorithm class 和 field layout 单独建表。
+
 ## 6.8 RZ PSATD：Hankel transform、azimuthal modes 与 `Ep/Em`
 
 `notes/code-reading/fieldsolver/08-psatd-rz-hankel.md` 进入 RZ spectral solver。RZ PSATD 不能理解成“二维 PSATD”。它使用 azimuthal mode decomposition：

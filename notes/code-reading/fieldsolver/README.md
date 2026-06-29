@@ -35,7 +35,8 @@
 17. `16-psatd-pml-coefficient-atlas.md`：`PsatdAlgorithmPml.cpp` 中 `C1-C25`、Galilean `T2`、cleaning 分支和 PML regression 的源码系数图谱。
 18. `17-psatd-x-coefficients.md`：Cartesian `PsatdAlgorithmGalilean.cpp` 中 `X1-X4`、`T2`、standard/Galilean 极限和 update placement 的源码公式图谱。
 19. `18-psatd-time-averaging-coefficients.md`：Cartesian `PsatdAlgorithmGalilean.cpp` 中 time-averaged field 的 `Psi1/Psi2/Y1-Y4`、零模处理、average-field 更新式和实空间回填路径。
-20. implicit solver 的接口细化和正文持续回填。
+20. `19-psatd-jrhom-y-coefficients.md`：Cartesian `PsatdAlgorithmJRhomSecondOrder.cpp` 中 `Y1-Y8`、多项式源项积分、零模处理、ordinary field push 和 time-averaged field 累计路径。
+21. implicit solver 的接口细化和正文持续回填。
 
 ## 输出目标
 
@@ -58,6 +59,7 @@
 - `16-psatd-pml-coefficient-atlas.md`：已建立，覆盖 `PsatdAlgorithmPml.cpp` 的共享谱量、`C1-C9` 投影系数、`C10-C22` 无 cleaning 交叉耦合、`C23-C25` cleaning 耦合和 PML PSATD regression 映射。
 - `17-psatd-x-coefficients.md`：已建立，覆盖 Cartesian `PsatdAlgorithmGalilean.cpp` 的 `X1-X4` 源码公式、标准/Galilean 极限、零模处理和 E/B 更新式中的位置。
 - `18-psatd-time-averaging-coefficients.md`：已建立，覆盖 Cartesian `PsatdAlgorithmGalilean.cpp` 的 `Psi1/Psi2/Y1-Y4` 源码公式、零模处理、average-field 更新式、`update_with_rho` 前置条件和 `PSATDScaleAverageFields()/PSATDBackwardTransformEBavg()` 回填路径。
+- `19-psatd-jrhom-y-coefficients.md`：已建立，覆盖 Cartesian `PsatdAlgorithmJRhomSecondOrder.cpp` 的 `Y1-Y8` 源码公式、零模处理、`a/b/c` 多项式源项、ordinary `E/B/F` 推进、time-averaged field 累计和防混写边界。
 - 重写 `manuscript/chapters/06-field-solvers.md`。
 
 ## 验证线索

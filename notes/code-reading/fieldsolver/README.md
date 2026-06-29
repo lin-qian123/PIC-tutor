@@ -32,7 +32,8 @@
 14. `13-fieldsolver-verification-map.md`：FieldSolver 相关 regression tests 的输入文件、分析脚本、checksum 和覆盖关系索引。
 15. `14-fieldsolver-analysis-criteria.md`：FieldSolver 相关 regression analysis 脚本的实际物理判据、容差、源码覆盖和“assert / checksum / 可视化”分层。
 16. `15-implicit-jacobian-preconditioner-coupling.md`：`J0 + MM*(E-E0)`、`MassMatrices_PC`、`PreLinearSolve()` 和 `MatrixPC/JacobiPC/CurlCurlMLMGPC` 的消费链。
-17. implicit solver 的接口细化和正文持续回填。
+17. `16-psatd-pml-coefficient-atlas.md`：`PsatdAlgorithmPml.cpp` 中 `C1-C25`、Galilean `T2`、cleaning 分支和 PML regression 的源码系数图谱。
+18. implicit solver 的接口细化和正文持续回填。
 
 ## 输出目标
 
@@ -52,6 +53,7 @@
 - `13-fieldsolver-verification-map.md`：已建立，覆盖 `nci_fdtd_stability`、`nci_psatd_stability`、`electrostatic_sphere`、`implicit` 和 `ohm_solver_*` 的 CMake 注册、输入文件、分析脚本与 checksum 路径。
 - `14-fieldsolver-analysis-criteria.md`：已建立，覆盖 NCI FDTD/PSATD、electrostatic sphere、implicit EM 和 hybrid Ohm solver 的 analysis 判据；明确当前只读脚本与源码，未运行本地 regression。
 - `15-implicit-jacobian-preconditioner-coupling.md`：已建立，覆盖 `ImplicitSolver::InitializeMassMatrices()`、`PreLinearSolve()`、`ComputeJfromMassMatrices()`、`SyncMassMatricesPCAndApplyBCs()`、`SetMassMatricesForPC()` 以及 `MatrixPC`、`JacobiPC`、`CurlCurlMLMGPC` 对 `MassMatrices_PC` 的消费方式。
+- `16-psatd-pml-coefficient-atlas.md`：已建立，覆盖 `PsatdAlgorithmPml.cpp` 的共享谱量、`C1-C9` 投影系数、`C10-C22` 无 cleaning 交叉耦合、`C23-C25` cleaning 耦合和 PML PSATD regression 映射。
 - 重写 `manuscript/chapters/06-field-solvers.md`。
 
 ## 验证线索

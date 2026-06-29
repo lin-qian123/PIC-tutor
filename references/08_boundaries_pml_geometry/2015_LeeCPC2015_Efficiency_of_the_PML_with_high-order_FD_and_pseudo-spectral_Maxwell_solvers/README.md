@@ -18,6 +18,10 @@ OpenAlex reports the CPC article as green OA and points to the OSTI record `1246
 
 Therefore this directory intentionally does not contain a PDF, MinerU Markdown, or extracted images yet. Do not fabricate a paper extraction from abstracts or metadata. Add the PDF only after an authorized full-text copy is obtained.
 
+The v0.25 source-to-paper follow-up table is in:
+
+`2015_LeeCPC2015_Efficiency_of_the_PML_with_high-order_FD_and_pseudo-spectral_Maxwell_solvers-公式核对清单.md`
+
 ## Relation to the AIP conference version
 
 The related AIP Conference Proceedings article has DOI `10.1063/1.4965625` and is tracked separately under:
@@ -25,4 +29,3 @@ The related AIP Conference Proceedings article has DOI `10.1063/1.4965625` and i
 `references/08_boundaries_pml_geometry/2016_LeeVayACP2016_Efficiency_of_the_PML_with_high-order_FD_and_pseudo-spectral_Maxwell_solvers/`
 
 For PIC-tutor, the CPC article should remain the main citation because it is the reference used by WarpX. The AIP record is useful as a second official bibliographic endpoint and may become a practical full-text source if its bronze OA PDF endpoint becomes accessible.
-

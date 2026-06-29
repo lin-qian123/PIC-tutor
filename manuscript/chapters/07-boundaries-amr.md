@@ -564,6 +564,27 @@ $$
 
 这样一来，即使 LeeCPC2015 全文暂时不可得，第 7 章也已经具备一个可审校的源码判据：以后论文到位时，若论文给出 pseudo-spectral PML 更新公式，就逐项对照 `C1-C25`；若论文只给反射率和效率曲线，就把论文作为性能/精度证据，把 `C1-C25` 保持为 WarpX 实现公式，二者不能混为一谈。
 
+### 7.5.7 v0.25 LeeCPC2015 的论文-源码公式核对清单
+
+v0.25 继续尝试 Lee/Vay PML 论文的全文路径。CPC DOI、OSTI、eScholarship、ScienceDirect 和 AIP 直接 PDF 端点仍没有给出本机可下载的授权 PDF；AIP `pubs.aip.org` 的直接 PDF URL 在浏览器 UA 下也返回 Cloudflare HTTP 403。因此，本版仍不执行 MinerU，也不写逐段论文讲解。新增的价值在于把后续全文到位后的核对任务从“读论文”拆成具体、可验收的条目：
+
+| 核对层 | 论文到位后要找的内容 | 当前 WarpX/PIC-tutor 锚点 | 当前可写结论 |
+|---|---|---|---|
+| PML profile | `sigma` 剖面、PML 厚度、入射波和反射率测量方式 | `PML.cpp`、`SigmaBox.*`、`inputs_base_2d` | 只能说明 WarpX PML profile 的实现位置，不能假定论文参数完全同构 |
+| 高阶 FD PML | finite-difference 阶数、stencil 和 PML 离散处理 | `EvolveBPML.cpp`、`EvolveEPML.cpp`、Yee/CKC regression | 可写 WarpX 有 FDTD/CKC PML regression，论文参数空间仍待全文确认 |
+| PSATD PML 更新 | 是否推导 split-field spectral propagator | `PML::PushPSATD()`、`PsatdAlgorithmPml.cpp:195-370` | 若论文不给等价更新式，`C1-C25` 必须继续标为 WarpX 实现公式 |
+| `C1-C9` | longitudinal/transverse 投影或矩阵块 | `16-psatd-pml-coefficient-atlas.md` | 当前由源码证明，等待论文符号对照 |
+| `C10-C22` | no-cleaning split `E/B` cross coupling | plain PSATD PML 分支和 `test_2d_pml_x_psatd` | regression 证明组合低反射率，不证明逐系数 |
+| `C23-C25` | divergence-cleaning `F/G` 是否进入论文公式 | cleaning 分支和 `test_2d_pml_x_galilean` | 若论文未覆盖，应写为 WarpX 实现扩展 |
+| Galilean `T2` | moving/Galilean frame PML 是否在论文中出现 | `T2=exp(i k_c dot v_gal dt)` | 若论文未覆盖，不能归因给 LeeCPC2015 |
+| RZ PML | 是否讨论 cylindrical geometry | `PsatdAlgorithmPmlRZ.cpp`、`test_rz_pml_psatd` | RZ regression 不能证明 Cartesian `C1-C25` |
+
+这个清单已经落到论文专属目录：
+
+`references/08_boundaries_pml_geometry/2015_LeeCPC2015_Efficiency_of_the_PML_with_high-order_FD_and_pseudo-spectral_Maxwell_solvers/2015_LeeCPC2015_Efficiency_of_the_PML_with_high-order_FD_and_pseudo-spectral_Maxwell_solvers-公式核对清单.md`
+
+写作上要遵守一个很硬的边界：论文全文没到位时，最多只能写“WarpX 当前源码如何实现 PSATD PML，以及 regression 如何间接验证组合效果”；不能写“LeeCPC2015 推导了 `C1-C25`”。等 PDF 到位后，真正的完成标准不是把 PDF 放进目录，而是逐项填完上面的表：论文符号、源码变量、测试证据、正文结论四者必须同列出现。
+
 ## 7.6 Embedded boundary 先是几何初始化和辅助标记系统
 
 前面讨论的 PML、PEC、PMC、Silver-Mueller 都作用在计算域外边界上，而 embedded boundary 的第一步不是“给某个边界类型分派更新公式”，而是先把几何对象嵌入到 AMReX cut-cell 数据结构。

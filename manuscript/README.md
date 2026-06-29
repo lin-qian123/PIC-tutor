@@ -1,13 +1,13 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.24` PSATD PML 系数图谱版，目标是先形成一条可复查、可审读、可验证的主线，再逐章加深公式推导、源码逐行讲解、图表和可复现实验。
+这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.25` LeeCPC2015 公式核对清单版，目标是先形成一条可复查、可审读、可验证的主线，再逐章加深公式推导、源码逐行讲解、图表和可复现实验。
 
 ## 版本边界
 
 - WarpX 路径：`../warpx`
 - WarpX 分支：`pkuHEDPbranch`
 - 当前 WarpX commit：`8c488b1a9`
-- 第 2、3、3A、4、5、6 章已按当前 checkout 重新核对核心源码行号；第 6 章已在 v0.17/v0.18/v0.19 补入 Lehe et al. 2016、Kirchen et al. 2016 和 Godfrey et al. 2014 的 PSATD/Galilean/NCI 文献闭环，并在 v0.20 把 WarpX filter/current-correction/finite-order PSATD 和 NCI analysis 判据拆成源码对照表；第 7 章已完成 v0.12 AMR coarse-fine 图形化证据正文、v0.13 HTML 排版收口、v0.14 transition-zone validation 检查清单、v0.15 dedicated transition-zone 测试草案、v0.16 regression patch 计划、v0.21 PSATD PML 源码/公式/regression 边界、v0.22 Berenger/APML 和 `C1-C25` 系数分层、v0.23 LeeCPC2015 获取审计，并在 v0.24 补入 Cartesian PSATD PML 系数图谱；后续仍需真正实现 route-count reduced diagnostic 与 regression。
+- 第 2、3、3A、4、5、6 章已按当前 checkout 重新核对核心源码行号；第 6 章已在 v0.17/v0.18/v0.19 补入 Lehe et al. 2016、Kirchen et al. 2016 和 Godfrey et al. 2014 的 PSATD/Galilean/NCI 文献闭环，并在 v0.20 把 WarpX filter/current-correction/finite-order PSATD 和 NCI analysis 判据拆成源码对照表；第 7 章已完成 v0.12 AMR coarse-fine 图形化证据正文、v0.13 HTML 排版收口、v0.14 transition-zone validation 检查清单、v0.15 dedicated transition-zone 测试草案、v0.16 regression patch 计划、v0.21 PSATD PML 源码/公式/regression 边界、v0.22 Berenger/APML 和 `C1-C25` 系数分层、v0.23 LeeCPC2015 获取审计、v0.24 Cartesian PSATD PML 系数图谱，并在 v0.25 补入 LeeCPC2015 论文-源码公式核对清单；后续仍需真正实现 route-count reduced diagnostic 与 regression。
 - 本书稿不修改 WarpX 原仓库。
 - 本版优先覆盖显式电磁 PIC 主线：Vlasov-Maxwell、宏粒子、gather-push-deposit-field solve、WarpX 主循环、粒子推进、沉积、场求解、边界/AMR、诊断和案例。
 
@@ -32,12 +32,12 @@
 - 文献库：`../bibliography/warpx-refs.bib`
 - PDF 文献索引：`../references/00_index/current_inventory.md`
 
-## v0.24 构建
+## v0.25 构建
 
 详见 [VERSION.md](VERSION.md)。生成合订 Markdown 和 HTML 预览：
 
 ```bash
-python ../scripts/build_v24.py
+python ../scripts/build_v25.py
 ```
 
 历史 v0.1 版本说明冻结在 [VERSION-v0.1.md](VERSION-v0.1.md)，可用 `python ../scripts/build_v01.py` 重建 v0.1 合订稿。
@@ -63,3 +63,4 @@ python ../scripts/build_v24.py
 历史 v0.21 版本说明冻结在 [VERSION-v0.21.md](VERSION-v0.21.md)，可用 `python ../scripts/build_v21.py` 重建 v0.21 合订稿。
 历史 v0.22 版本说明冻结在 [VERSION-v0.22.md](VERSION-v0.22.md)，可用 `python ../scripts/build_v22.py` 重建 v0.22 合订稿。
 历史 v0.23 版本说明冻结在 [VERSION-v0.23.md](VERSION-v0.23.md)，可用 `python ../scripts/build_v23.py` 重建 v0.23 合订稿。
+历史 v0.24 版本说明冻结在 [VERSION-v0.24.md](VERSION-v0.24.md)，可用 `python ../scripts/build_v24.py` 重建 v0.24 合订稿。

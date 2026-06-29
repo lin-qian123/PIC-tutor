@@ -26,6 +26,7 @@ Date: 2026-06-29
 | ScienceDirect PDF endpoint | Returned HTTP 403 | local curl check on 2026-06-29 |
 | Elsevier content API PDF endpoint | Returned HTTP 406/minimized metadata without authorization | local curl check on 2026-06-29 |
 | AIP Scitation DOI PDF endpoint | `https://aip.scitation.org/doi/pdf/10.1063/1.4965625` returns a short HTML page, not a PDF; the AIP article PDF endpoint returns Cloudflare HTTP 403 | local curl checks on 2026-06-29 |
+| AIP `pubs.aip.org` direct PDF endpoint | `https://pubs.aip.org/aip/acp/article-pdf/doi/10.1063/1.4965625/13262029/050002_1_online.pdf` still returns Cloudflare HTTP 403 with browser-like user agent | local curl check on 2026-06-29 |
 
 ## Current decision
 

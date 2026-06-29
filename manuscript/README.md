@@ -1,13 +1,13 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.16` transition-zone regression patch 计划版，目标是先形成一条可复查、可审读、可验证的主线，再逐章加深公式推导、源码逐行讲解、图表和可复现实验。
+这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.17` Galilean PSATD 文献闭环版，目标是先形成一条可复查、可审读、可验证的主线，再逐章加深公式推导、源码逐行讲解、图表和可复现实验。
 
 ## 版本边界
 
 - WarpX 路径：`../warpx`
 - WarpX 分支：`pkuHEDPbranch`
 - 当前 WarpX commit：`8c488b1a9`
-- 第 2、3、3A、4、5、6 章已按当前 checkout 重新核对核心源码行号；第 7 章已完成 v0.12 AMR coarse-fine 图形化证据正文、v0.13 HTML 排版收口、v0.14 transition-zone validation 检查清单、v0.15 dedicated transition-zone 测试草案，并在 v0.16 拆成可实际实现的 regression patch 计划，后续仍需真正实现 route-count reduced diagnostic 与 regression。
+- 第 2、3、3A、4、5、6 章已按当前 checkout 重新核对核心源码行号；第 6 章已在 v0.17 补入 Lehe et al. 2016 Galilean PSATD/NCI 文献闭环；第 7 章已完成 v0.12 AMR coarse-fine 图形化证据正文、v0.13 HTML 排版收口、v0.14 transition-zone validation 检查清单、v0.15 dedicated transition-zone 测试草案，并在 v0.16 拆成可实际实现的 regression patch 计划，后续仍需真正实现 route-count reduced diagnostic 与 regression。
 - 本书稿不修改 WarpX 原仓库。
 - 本版优先覆盖显式电磁 PIC 主线：Vlasov-Maxwell、宏粒子、gather-push-deposit-field solve、WarpX 主循环、粒子推进、沉积、场求解、边界/AMR、诊断和案例。
 
@@ -32,12 +32,12 @@
 - 文献库：`../bibliography/warpx-refs.bib`
 - PDF 文献索引：`../references/00_index/current_inventory.md`
 
-## v0.16 构建
+## v0.17 构建
 
 详见 [VERSION.md](VERSION.md)。生成合订 Markdown 和 HTML 预览：
 
 ```bash
-python ../scripts/build_v16.py
+python ../scripts/build_v17.py
 ```
 
 历史 v0.1 版本说明冻结在 [VERSION-v0.1.md](VERSION-v0.1.md)，可用 `python ../scripts/build_v01.py` 重建 v0.1 合订稿。
@@ -55,3 +55,4 @@ python ../scripts/build_v16.py
 历史 v0.13 版本说明冻结在 [VERSION-v0.13.md](VERSION-v0.13.md)，可用 `python ../scripts/build_v13.py` 重建 v0.13 合订稿。
 历史 v0.14 版本说明冻结在 [VERSION-v0.14.md](VERSION-v0.14.md)，可用 `python ../scripts/build_v14.py` 重建 v0.14 合订稿。
 历史 v0.15 版本说明冻结在 [VERSION-v0.15.md](VERSION-v0.15.md)，可用 `python ../scripts/build_v15.py` 重建 v0.15 合订稿。
+历史 v0.16 版本说明冻结在 [VERSION-v0.16.md](VERSION-v0.16.md)，可用 `python ../scripts/build_v16.py` 重建 v0.16 合订稿。

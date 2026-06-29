@@ -565,6 +565,44 @@ fields(i,j,k,Idx.Jx_mid) = Jx - (k_dot_J - k_dot_vg * (rho_new - rho_old_mod) / 
 
 这里 `rho_old_mod` 是 $\rho^n\theta^2$，`den` 是 $1-\theta^2$。因此 current correction 的目的不是平滑电流，而是投影掉违反谱空间连续性方程的纵向误差，使修正后的电流与 `rho_old/rho_new` 相容。
 
+### 6.6.1 v0.17 文献闭环：Lehe et al. 2016 的 Galilean PSATD
+
+v0.17 为本节补入第一篇 PSATD/Galilean/NCI 核心论文闭环：`references/06_stability_filtering_nci/2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates/2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates-中文讲解.md`。该笔记基于本地 PDF、MinerU Markdown 和论文图片，按论文顺序记录 Galilean 坐标、离散连续性方程、PIC cycle、二维稳定性分析和准柱坐标扩展。
+
+这篇论文对本章最重要的判断是：Galilean PSATD 不是 moving window 的同义词。它首先把坐标改成
+
+$$
+\mathbf{x}'=\mathbf{x}-\mathbf{v}_{gal}t,
+$$
+
+于是 Maxwell 方程中的时间导数变成
+
+$$
+\left(\partial_t-\mathbf{v}_{gal}\cdot\nabla'\right),
+$$
+
+并且一个时间步内的电流近似也从“固定实验室网格点上常量”改为“固定 Galilean 网格点上常量”。这正是标准 PSATD 与 Galilean PSATD 在 NCI 行为上分开的根源。
+
+对应到 current correction，Galilean 离散连续性方程不再是简单的
+
+$$
+-i\frac{\widehat\rho^{n+1}-\widehat\rho^n}{\Delta t}
++i\mathbf{k}\cdot\widehat{\mathbf J}^{n+1/2}=0,
+$$
+
+而是带有移动网格相位：
+
+$$
+-i\frac{\widehat\rho^{n+1}-\theta^2\widehat\rho^n}{\Delta t}
++i\mathbf{k}\cdot\widehat{\mathbf J}^{n+1/2}=0,
+\qquad
+\theta=\exp(i\mathbf{k}\cdot\mathbf{v}_{gal}\Delta t/2).
+$$
+
+这可以直接解释上面的源码：`rho_old_mod = rho_old * exp(i*k_dot_vg*dt)` 不是任意相位技巧，而是离散连续性方程在 Galilean 网格上的旧时刻电荷项。WarpX 官方 boosted-frame 文档 `../warpx/Docs/source/theory/boosted_frame.rst` 引用的 `bf-LehePRE2016` 正是这个推导来源；`../warpx/Examples/Tests/nci_psatd_stability/analysis_galilean.py` 则把论文中的稳定性判断变成 regression gate，用最终电场能量相对不稳定参考值的比例检查 NCI 是否被压住，并在 current-correction 分支继续检查 Gauss law。
+
+因此，本书后面讲 `psatd.use_default_v_galilean` 时，不能把它写成经验开关。它的理论含义是：在 boosted-frame 或均匀流动等离子体问题中，让 Galilean 网格速度接近背景漂移速度 $\mathbf{v}_0$，使背景等离子体在数值网格中近似静止，从而移除主要 alias resonance。论文的二维稳定性分析和 Warp/FBPIC 数值实验都显示，最大增长率只在 $\mathbf{v}_{gal}\approx\mathbf{v}_0$ 附近降到零；取反方向的 Galilean 速度并不会自动稳定。
+
 ## 6.7 PSATD-JRhom：多次源项沉积与一阶/二阶谱更新
 
 `notes/code-reading/fieldsolver/07-psatd-jrhom.md` 把 PSATD-JRhom 从主循环到谱算法做了第一轮完整精读。物理上，JRhom 处理的是一个 PIC 时间步内 `J` 和 `rho` 不一定满足“电流常量、电荷线性”的假设。WarpX 使用 `psatd.JRhom` 字符串指定时间依赖：

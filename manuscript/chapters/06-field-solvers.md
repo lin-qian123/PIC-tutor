@@ -603,6 +603,28 @@ $$
 
 因此，本书后面讲 `psatd.use_default_v_galilean` 时，不能把它写成经验开关。它的理论含义是：在 boosted-frame 或均匀流动等离子体问题中，让 Galilean 网格速度接近背景漂移速度 $\mathbf{v}_0$，使背景等离子体在数值网格中近似静止，从而移除主要 alias resonance。论文的二维稳定性分析和 Warp/FBPIC 数值实验都显示，最大增长率只在 $\mathbf{v}_{gal}\approx\mathbf{v}_0$ 附近降到零；取反方向的 Galilean 速度并不会自动稳定。
 
+### 6.6.2 v0.18 文献闭环：Kirchen et al. 2016 的 boosted-frame 应用证据
+
+v0.18 继续补入 Kirchen et al. 2016：`references/06_stability_filtering_nci/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas-中文讲解.md`。这篇论文和 Lehe et al. 2016 的分工不同：Lehe 论文负责 Galilean PSATD 的推导、离散连续性方程和稳定性分析；Kirchen 论文负责说明该离散表示如何落到 Lorentz boosted-frame 等离子体加速 workflow。
+
+在 boosted frame 中，实验室系静止的背景等离子体会以
+
+$$
+\mathbf{v}_{plasma}=-\beta c\,\mathbf{e}_z
+$$
+
+穿过计算域。Kirchen et al. 的关键选择就是让 Galilean 网格速度取同一个漂移速度：
+
+$$
+\mathbf{v}_{gal}=\mathbf{v}_{plasma}=-\beta c\,\mathbf{e}_z.
+$$
+
+这样背景等离子体在 Galilean 网格上静止，而激光、电子束等 elongated quantities 相对网格以修正后的速度传播。这个表述能把 WarpX 官方 boosted-frame 文档中的 `bf-KirchenPOP2016` 引用落成一句实际操作原则：`psatd.use_default_v_galilean` 应理解为把 `warpx.gamma_boost` 推导出的背景漂移速度交给 Galilean PSATD，而不是打开一个无物理来源的稳定化滤波器。
+
+Kirchen 论文的应用图也给出一个读者侧验证顺序。第一，固定所有数值参数，只在 `v_gal=0` 和 `v_gal=-\beta c` 之间切换；标准 PSATD 出现强 NCI，Galilean PSATD 稳定。第二，把 boosted-frame 结果 back-transform 回实验室系，比较 $E_z$、$E_y$、激光腰斑、脉冲长度、电子束能量、能散和归一化发射度；结果在亚百分比量级内一致。也就是说，本节不能只写“Galilean PSATD 稳定”，还要写“稳定后仍保持加速器物理量”。
+
+这也解释了 `nci_psatd_stability` regression 和更高层 boosted-frame example 之间的关系：前者用均匀流动等离子体和电场能量比做最小稳定性 gate；Kirchen 论文提供的是应用层证据，说明同一 Galilean 表示在激光等离子体加速的 boosted-frame workflow 中既抑制 NCI，又保持实验室系物理可比性。
+
 ## 6.7 PSATD-JRhom：多次源项沉积与一阶/二阶谱更新
 
 `notes/code-reading/fieldsolver/07-psatd-jrhom.md` 把 PSATD-JRhom 从主循环到谱算法做了第一轮完整精读。物理上，JRhom 处理的是一个 PIC 时间步内 `J` 和 `rho` 不一定满足“电流常量、电荷线性”的假设。WarpX 使用 `psatd.JRhom` 字符串指定时间依赖：

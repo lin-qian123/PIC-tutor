@@ -1,5 +1,15 @@
 # TODO
 
+- [x] 2026-06-29：完成 `v0.8` 边界与 AMR 源码入口校准草稿：冻结 `manuscript/VERSION-v0.7.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.8，新增 `scripts/build_v08.py`，生成 `dist/pic-tutor-v0.8.md` 与 `dist/pic-tutor-v0.8.html`；第 7 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 增补边界/PML/guard-cell/AMR 源码入口地图，串联 `WarpX::MakeWarpX()`、`FieldBoundaries`、`ParticleBoundaries`、`WarpXFieldBoundaries`、`WarpXComm`、`GuardCellManager`、`WarpXRegrid` 和 boundary scraping 入口。
+
+## v0.8 后续收口队列
+
+- [ ] 人工审读 `dist/pic-tutor-v0.8.html`，重点检查第 7 章入口表和 Mermaid 图在 HTML 中的宽度、换行和链接可读性。
+- [ ] 继续细核 `GuardCellManager.cpp`、`WarpXComm.cpp`、`WarpXRegrid.cpp` 的 AMR/regrid/guard-cell 路径，把 v0.8 入口地图扩成可讲解的正文段落。
+- [ ] 把 `Examples/Tests/boundaries`、`pec`、`pml`、`particles_in_pml`、`particle_boundary_scrape` 和 RZ scraping 相关 regression 入口回填到第 7 章。
+- [ ] 继续完成 PSATD/Galilean/NCI/PML 论文 MinerU 笔记，补第 6-7 章的文献闭环。
+- [ ] 为 v0.9 规划第 7 章边界 regression 判据表，明确哪些是物理强断言、哪些只是 checksum 或 smoke。
+
 - [x] 2026-06-29：完成 `v0.4` 沉积与形函数校准草稿：冻结 `manuscript/VERSION-v0.3.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.4，新增 `scripts/build_v04.py`，生成 `dist/pic-tutor-v0.4.md` 与 `dist/pic-tutor-v0.4.html`；第 5 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `ShapeFactors`、`DepositCurrent/DepositCharge`、Esirkepov/Villasenor/Vay 分派和 Langmuir / `vay_deposition` 验证入口。
 - [x] 2026-06-29：完成 `v0.3` 粒子推进器校准草稿：冻结 `manuscript/VERSION-v0.2.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.3，新增 `scripts/build_v03.py`，生成 `dist/pic-tutor-v0.3.md` 与 `dist/pic-tutor-v0.3.html`；第 4 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `UpdateMomentumBoris/Vay/HigueraCary`、`PushSelector`、`PushPX` 和 `particle_pusher` 强验证入口。
 - [x] 2026-06-25：完成 `v0.2` 可审校草稿：冻结 `manuscript/VERSION-v0.1.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.2，新增 `scripts/build_v02.py`，生成 `dist/pic-tutor-v0.2.md` 与 `dist/pic-tutor-v0.2.html`；第 2、3、3A 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核源码基线、路径和关键行号。

@@ -812,6 +812,9 @@ id="toc-pml-split-field-与-pml-电流">7.5 PML split field 与 PML 电流</a>
 <li><a href="#v0.9-边界-regression-入口索引"
 id="toc-v0.9-边界-regression-入口索引">7.5.1 v0.9 边界 regression
 入口索引</a></li>
+<li><a href="#v0.10-四条强-analysis-路径的正文化"
+id="toc-v0.10-四条强-analysis-路径的正文化">7.5.2 v0.10 四条强 analysis
+路径的正文化</a></li>
 </ul></li>
 <li><a href="#embedded-boundary-先是几何初始化和辅助标记系统"
 id="toc-embedded-boundary-先是几何初始化和辅助标记系统">7.6 Embedded
@@ -958,7 +961,7 @@ id="toc-python-field-wrapper-的最小强回归">Python field wrapper
 A：符号表草稿</a></li>
 </ul>
 </nav>
-<!-- source: manuscript/VERSION.md -->
+<!-- source: manuscript/VERSION-v0.9.md -->
 <h1 id="pic-tutor-v0.9">PIC-tutor v0.9</h1>
 <p>版本日期：2026-06-29</p>
 <h2 id="定位">定位</h2>
@@ -14178,6 +14181,87 @@ flush 后的一致性</td>
 可以支撑“验证某个物理合同”；restart analysis
 支撑“恢复后状态一致”；checksum-only 只能支撑“当前输出没有漂移”。第 7
 章后续扩写时，必须在每条边界结论旁边标明它属于哪一类证据。</p>
+<h3 id="v0.10-四条强-analysis-路径的正文化">7.5.2 v0.10 四条强 analysis
+路径的正文化</h3>
+<p>第一条强路径是
+<code>boundaries/inputs_test_3d_particle_boundaries</code> 对粒子 domain
+boundary 的闭合检查。输入卡把几何盒设为
+<code>[-1,1]^3</code>，并故意把三类粒子边界拆到三个方向：<code>x</code>
+方向 reflecting，<code>y</code> 方向 absorbing，<code>z</code> 方向
+periodic。<code>analysis.py</code> 不是只看最终 plotfile
+checksum，而是同时读取初始 <code>diag1000000</code> 和最终
+<code>diag1000008</code>，先从初态粒子位置、动量和相对论速度外推自由飞行轨道，再分别套用镜像、删除和周期回绕规则。最终断言也对应三种语义：absorbing
+分支只剩一个没有越界的保底粒子；reflecting
+分支的速度符号反转并且位置满足</p>
+<p><span class="math display">\[
+x_{\mathrm{after}} = 2 x_{\min/\max} - x_{\mathrm{free}},
+\]</span></p>
+<p>periodic 分支的速度保持不变，位置按盒长回绕；两个位置误差都要求小于
+<code>1e-15</code>。这条 regression 因而直接覆盖
+<code>ParticleBoundaries_K.H::apply_boundary()</code> 中
+<code>Absorbing -&gt; particle_lost</code>、<code>Reflecting -&gt; mirror + change_sign_u</code>
+和周期边界由 AMReX geometry 处理后的最终轨道结果。写作时可以把它作为
+domain particle boundary
+的最小物理合同：不是“边界参数被解析了”，而是越界粒子的生死、镜像和回绕都被解析轨道重新计算过。</p>
+<p>第二条强路径是 <code>pec/analysis_pec.py</code> 和
+<code>pec/analysis_pec_mr.py</code> 对 PEC/PMC
+场反射的站波振幅检查。输入卡发射一个正弦波打到物理边界；脚本在反射后读取
+<code>Ey</code>，把理论阈值设为 <code>E_th = 2 E_in</code>，然后分别比较
+<code>Ey_max</code> 与 <code>+E_th</code>、<code>Ey_min</code> 与
+<code>-E_th</code>。单层 3D PEC/PMC 的容差是 <code>1%</code>，MR 版本在
+level-0 covering grid 上放宽到
+<code>5%</code>。这个判据的要点是，它并不把“边界类型字符串为
+pec/pmc”当作结论，而是要求反射波和入射波叠加出正确的站波振幅。源码上，<code>WarpXFieldBoundaries.cpp</code>
+会把 PEC/PMC 映射到 <code>PEC::ApplyPECtoEfield()</code> 与
+<code>PEC::ApplyPECtoBfield()</code> 的不同角色组合：PEC
+对切向电场施加导体边界，PMC 则通过 E/B 角色互换实现磁导体边界。MR
+路径额外说明同一物理合同在 coarse/fine patch
+和物理边界同时存在时仍能保持到较宽容差内。</p>
+<p>第三条强路径是
+<code>particles_in_pml/analysis_particles_in_pml.py</code>。这组输入卡打开
+<code>warpx.pml_has_particles=1</code>、<code>warpx.do_pml_in_domain=1</code>
+和
+<code>warpx.do_pml_j_damping=1</code>，让一对带相反电荷、相反动量的粒子从中心向两侧穿出。脚本不检查粒子本身是否存在于
+PML，而是在粒子离开后读取 finest level covering grid，取</p>
+<p><span class="math display">\[
+\max(|E_x|, |E_y|, |E_z|)
+\]</span></p>
+<p>作为残余场判据：2D 单层要求 <code>&lt; 3e-4</code>，2D MR 要求
+<code>&lt; 6e-4</code>，3D 单层要求 <code>&lt; 10</code>，3D MR 要求
+<code>&lt; 110</code>。这些阈值看起来不统一，但它们对应的是不同维度和
+refinement 下同一件事：粒子电流进入 in-domain PML 后，PML split-field
+电流注入和 <code>DampJPML()</code>
+必须把伪电荷留下的残余场压到可接受范围内。源码链条是
+<code>WarpX.cpp</code> 解析三个 PML
+粒子开关，<code>WarpXEvolve.cpp</code> 在有 PML 粒子的路径中执行
+<code>CopyJPML()</code> 和 <code>DampJPML()</code>，随后
+<code>DampPML()</code> 衰减 split fields；<code>PML_current.H</code>
+则把 <code>J_x/J_y/J_z</code> 分摊到对应 split components。因而这条 test
+应写成“粒子穿出 PML 后的残余场合同”，而不是普通 PML
+平面波吸收率合同。</p>
+<p>第四条强路径是 RZ embedded-boundary
+scraping。<code>scraping/inputs_test_rz_scraping</code> 在 RZ 几何中用
+<code>eb_implicit_function = "-(x**2-0.1**2)"</code> 构造半径
+<code>0.1</code> 的圆柱 EB，把电子初始化在
+<code>0.15 &lt; r &lt; 0.2</code> 并给负径向动量，同时打开
+<code>electron.save_particles_at_eb=1</code> 和
+<code>BoundaryScraping</code> openPMD 诊断。<code>analysis_rz.py</code>
+的主断言有两层：最终主容器必须剩 <code>512</code> 个粒子；每个输出
+iteration 都满足 <code>remaining + scraped = initial</code>，最终还要把
+scraped buffer 和主容器里的粒子 id 合并、排序，与初始 id
+集合完全一致。<code>analysis_rz_filter.py</code> 进一步打开
+<code>diag3.electron.plot_filter_function = "z &gt; 0"</code>，于是强合同变成
+<code>2 * scraped + remaining = initial</code>，并且 scraped
+输出里不能出现 <code>z &lt;= 0</code>
+的粒子。源码上，<code>ParticleBoundaryBuffer.cpp::gatherParticlesFromEmbeddedBoundaries()</code>
+负责把穿过 EB 的粒子转入边界 buffer 并附加
+<code>stepScraped/timeScraped/nx/ny/nz</code>
+等属性；<code>BoundaryScrapingDiagnostics.cpp</code> 负责按 interval
+写出 <code>particles_at_eb</code> 并 flush
+buffer；<code>ParticleDiag.cpp</code> 解析 per-species
+<code>plot_filter_function</code>。因此 RZ scraping
+的正文重点应是主容器删除、scraped buffer
+记录和诊断过滤三者的守恒关系。</p>
 <p>粒子边界处理位于 <code>WarpXEvolve.cpp</code> 行
 713-766。主要步骤是连续通量注入、<code>particlescraper</code>
 callback、<code>mypc-&gt;ApplyBoundaryConditions()</code>、domain

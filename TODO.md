@@ -4318,8 +4318,14 @@
 ## v0.6 后续收口队列
 
 - [ ] 手工通读 `dist/pic-tutor-v0.6.html`，重点检查 Mermaid 图、宽表格和第 6 章开头是否在 HTML 中可读。
-- [ ] 把第 6 章 validation 入口整理成表格，覆盖 `pml`、`nci_psatd_stability`、`langmuir` 和 RZ PSATD 相关 tests。
+- [x] 把第 6 章 validation 入口整理成表格，覆盖 `pml`、`nci_psatd_stability`、`langmuir` 和 RZ PSATD 相关 tests。
 - [ ] 完成 PSATD / Galilean PSATD / NCI / PML 核心论文 MinerU 笔记，把源码图表与文献公式闭环。
+- [ ] 继续把第 7 章边界、PML 与 AMR 同步到 `8c488b1a9`，优先核物理边界、field boundary、particle boundary、PML 与 AMR guard-cell 交界。
+
+## v0.7 后续收口队列
+
+- [ ] 手工通读 `dist/pic-tutor-v0.7.html`，重点检查第 6 章 regression 入口索引表的宽度和可读性。
+- [ ] 完成 PSATD / Galilean PSATD / NCI / PML 核心论文 MinerU 笔记，把源码图表、validation 入口和文献公式闭环。
 - [ ] 继续把第 7 章边界、PML 与 AMR 同步到 `8c488b1a9`，优先核物理边界、field boundary、particle boundary、PML 与 AMR guard-cell 交界。
 
 ## 阻塞点与约束

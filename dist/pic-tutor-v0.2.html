@@ -782,7 +782,10 @@ law 与求解器迭代数</a></li>
 <li><a href="#hybrid-ohm-solver哪些是强判据哪些只是输出回归"
 id="toc-hybrid-ohm-solver哪些是强判据哪些只是输出回归">6.11.6 Hybrid Ohm
 solver：哪些是强判据，哪些只是输出回归</a></li>
-<li><a href="#本章验证链的结论" id="toc-本章验证链的结论">6.11.7
+<li><a href="#具体-regression-入口索引"
+id="toc-具体-regression-入口索引">6.11.7 具体 regression
+入口索引</a></li>
+<li><a href="#本章验证链的结论" id="toc-本章验证链的结论">6.11.8
 本章验证链的结论</a></li>
 </ul></li>
 </ul></li>
@@ -13392,7 +13395,136 @@ parallel/perpendicular EM modes 做二维 FFT 谱图。</li>
 instability 有脚本级硬断言；Landau damping、magnetic
 reconnection、Cartesian EM modes 和 cylinder compression
 主要提供物理图像与输出回归线索。</p>
-<h3 id="本章验证链的结论">6.11.7 本章验证链的结论</h3>
+<h3 id="具体-regression-入口索引">6.11.7 具体 regression 入口索引</h3>
+<p>上面的验证讨论按物理检查量组织。实际维护时，还需要知道哪些 regression
+入口正在覆盖这些检查。下表按当前 <code>../warpx/Examples/Tests</code> 的
+CMake 与 analysis
+脚本整理，目的是让读者能从正文回到可运行测试，而不是只停留在抽象“有验证”的说法上。</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>family</th>
+<th>代表输入 / 测试名</th>
+<th>analysis 入口</th>
+<th>主要判据</th>
+<th>本章对应的源码风险</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PML FDTD Yee</td>
+<td><code>pml/inputs_test_2d_pml_x_yee</code></td>
+<td><code>pml/analysis_pml_yee.py diags/diag1000300</code></td>
+<td>末态场能量除以初始激光能量，反射率相对理论值误差
+<code>&lt; 5%</code></td>
+<td><code>EvolveBPML/EPML</code>、sigma
+damping、<code>PML::Exchange()</code> 是否能吸收而不反射</td>
+</tr>
+<tr>
+<td>PML FDTD CKC</td>
+<td><code>pml/inputs_test_2d_pml_x_ckc</code></td>
+<td><code>pml/analysis_pml_ckc.py diags/diag1000300</code></td>
+<td>同样检查反射率，理论参考值不同，误差 <code>&lt; 5%</code></td>
+<td>CKC stencil 与 split-field PML 是否组合正确</td>
+</tr>
+<tr>
+<td>PML PSATD / Galilean</td>
+<td><code>pml/inputs_test_2d_pml_x_psatd</code>、<code>inputs_test_2d_pml_x_galilean</code></td>
+<td><code>pml/analysis_pml_psatd.py diags/diag1000300</code></td>
+<td>先要求 iteration 50 的能量与脚本常量一致到
+<code>1e-14</code>，再要求最终反射率 <code>&lt; 1e-6</code></td>
+<td><code>PushPSATD()</code> 后的
+<code>PML::PushPSATD()</code>、谱场回填和 PML 边界是否正确</td>
+</tr>
+<tr>
+<td>PML restart</td>
+<td><code>pml/inputs_test_2d_pml_x_yee_restart</code>、<code>inputs_test_2d_pml_x_psatd_restart</code></td>
+<td><code>analysis_default_restart.py</code> + checksum</td>
+<td>重启前后最终 plotfile 一致</td>
+<td>PML split fields 和场 guard cells 是否可 checkpoint/restart</td>
+</tr>
+<tr>
+<td>RZ PML PSATD</td>
+<td><code>pml/inputs_test_rz_pml_psatd</code></td>
+<td><code>pml/analysis_pml_psatd_rz.py diags/diag1000500</code></td>
+<td>末态 <code>max(|Er|, |Ez|) &lt; 2.0</code></td>
+<td><code>PML_RZ::PushPSATD()</code>、RZ spectral PML
+和径向边界吸收</td>
+</tr>
+<tr>
+<td>Galilean PSATD NCI</td>
+<td><code>nci_psatd_stability/inputs_test_{2d,3d,rz}_galilean_psatd*</code></td>
+<td><code>nci_psatd_stability/analysis_galilean.py</code></td>
+<td>电场能量与不稳定参考能量之比小于维度/分支容差；current correction
+分支还检查 <code>max|divE-rho/eps0|</code> 相对误差</td>
+<td>Galilean <code>PsatdAlgorithm</code> 是否抑制 boosted-frame
+NCI，并保持 Gauss law</td>
+</tr>
+<tr>
+<td>Averaged Galilean PSATD</td>
+<td><code>inputs_test_2d_averaged_galilean_psatd*</code>、<code>inputs_test_3d_averaged_galilean_psatd*</code></td>
+<td><code>analysis_galilean.py</code></td>
+<td>同样用电场能量比检查稳定性，time averaging 分支容差更宽</td>
+<td><code>fft_do_time_averaging</code> 的平均场回填是否稳定</td>
+</tr>
+<tr>
+<td>PSATD-JRhom NCI</td>
+<td><code>inputs_test_3d_uniform_plasma_psatd_JRhom_CC1</code></td>
+<td><code>analysis_psatd_CC1.py diags/diag1000300</code></td>
+<td>电场能量除以 <code>66e6</code> 后 <code>&lt; 1e-8</code></td>
+<td><code>OneStep_JRhom()</code> 多次沉积与
+<code>PsatdAlgorithmJRhom*</code> 源项积分是否抑制 NCI</td>
+</tr>
+<tr>
+<td>RZ PSATD-JRhom smoke</td>
+<td><code>inputs_test_rz_psatd_JRhom_LL2</code></td>
+<td><code>analysis=OFF</code> + checksum</td>
+<td>只有最终 plotfile checksum</td>
+<td>RZ JRhom 当前是输出回归入口，不应写成物理强判据</td>
+</tr>
+<tr>
+<td>Langmuir FDTD / PSATD 2D</td>
+<td><code>langmuir/inputs_test_2d_langmuir_multi*</code></td>
+<td><code>langmuir/analysis_2d.py diags/diag1000080</code></td>
+<td><code>Ex/Ez</code> 与解析 Langmuir 场最大相对误差
+<code>&lt; 0.0503</code>；四阶形函数分支
+<code>&lt; 0.07</code>；部分分支追加 charge conservation</td>
+<td>场求解器、沉积、gather 和 guard-cell 同步在解析 plasma wave
+中是否闭合</td>
+</tr>
+<tr>
+<td>Langmuir 3D / div cleaning</td>
+<td><code>langmuir/inputs_test_3d_langmuir_multi*</code></td>
+<td><code>langmuir/analysis_3d.py diags/diag1000040</code></td>
+<td>网格场与粒子处场均与解析场比较，误差
+<code>&lt; 5e-2</code>；div-cleaning 分支还检查
+<code>dF/dt = divE-rho/eps0</code> 到 <code>1e-2</code></td>
+<td>3D PSATD/FDTD、粒子场诊断和 divergence cleaning 的一致性</td>
+</tr>
+<tr>
+<td>Langmuir RZ / RZ PSATD</td>
+<td><code>langmuir/inputs_test_rz_langmuir_multi*</code></td>
+<td><code>langmuir/analysis_rz.py diags/diag1000080</code></td>
+<td><code>Er/Ez</code> 与 RZ 解析 Langmuir 场误差
+<code>&lt; 0.12</code>，并检查 RZ 粒子过滤诊断</td>
+<td>RZ field solver、RZ PSATD/current correction/JRhom
+和诊断过滤是否共同正确</td>
+</tr>
+</tbody>
+</table>
+<p>这个索引表也暴露了一个写作边界：有些 regression 是物理强判据，例如
+Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum 或
+restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML
+restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum
+说成完整物理验证。</p>
+<h3 id="本章验证链的结论">6.11.8 本章验证链的结论</h3>
 <p>综合这些脚本，FieldSolver 的验证链可以这样归纳：</p>
 <table>
 <colgroup>

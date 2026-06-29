@@ -8,7 +8,7 @@ lang: zh-CN
 
 
 
-<!-- source: manuscript/VERSION.md -->
+<!-- source: manuscript/VERSION-v0.6.md -->
 
 # PIC-tutor v0.6
 
@@ -10148,7 +10148,28 @@ $$
 
 这给本章一个重要限制：Hybrid PIC 章节不能把所有 regression 都写成“物理判据已严格验证”。更准确的说法是：RZ normal modes 和 ion beam instability 有脚本级硬断言；Landau damping、magnetic reconnection、Cartesian EM modes 和 cylinder compression 主要提供物理图像与输出回归线索。
 
-### 6.11.7 本章验证链的结论
+### 6.11.7 具体 regression 入口索引
+
+上面的验证讨论按物理检查量组织。实际维护时，还需要知道哪些 regression 入口正在覆盖这些检查。下表按当前 `../warpx/Examples/Tests` 的 CMake 与 analysis 脚本整理，目的是让读者能从正文回到可运行测试，而不是只停留在抽象“有验证”的说法上。
+
+| family | 代表输入 / 测试名 | analysis 入口 | 主要判据 | 本章对应的源码风险 |
+|---|---|---|---|---|
+| PML FDTD Yee | `pml/inputs_test_2d_pml_x_yee` | `pml/analysis_pml_yee.py diags/diag1000300` | 末态场能量除以初始激光能量，反射率相对理论值误差 `< 5%` | `EvolveBPML/EPML`、sigma damping、`PML::Exchange()` 是否能吸收而不反射 |
+| PML FDTD CKC | `pml/inputs_test_2d_pml_x_ckc` | `pml/analysis_pml_ckc.py diags/diag1000300` | 同样检查反射率，理论参考值不同，误差 `< 5%` | CKC stencil 与 split-field PML 是否组合正确 |
+| PML PSATD / Galilean | `pml/inputs_test_2d_pml_x_psatd`、`inputs_test_2d_pml_x_galilean` | `pml/analysis_pml_psatd.py diags/diag1000300` | 先要求 iteration 50 的能量与脚本常量一致到 `1e-14`，再要求最终反射率 `< 1e-6` | `PushPSATD()` 后的 `PML::PushPSATD()`、谱场回填和 PML 边界是否正确 |
+| PML restart | `pml/inputs_test_2d_pml_x_yee_restart`、`inputs_test_2d_pml_x_psatd_restart` | `analysis_default_restart.py` + checksum | 重启前后最终 plotfile 一致 | PML split fields 和场 guard cells 是否可 checkpoint/restart |
+| RZ PML PSATD | `pml/inputs_test_rz_pml_psatd` | `pml/analysis_pml_psatd_rz.py diags/diag1000500` | 末态 `max(|Er|, |Ez|) < 2.0` | `PML_RZ::PushPSATD()`、RZ spectral PML 和径向边界吸收 |
+| Galilean PSATD NCI | `nci_psatd_stability/inputs_test_{2d,3d,rz}_galilean_psatd*` | `nci_psatd_stability/analysis_galilean.py` | 电场能量与不稳定参考能量之比小于维度/分支容差；current correction 分支还检查 `max|divE-rho/eps0|` 相对误差 | Galilean `PsatdAlgorithm` 是否抑制 boosted-frame NCI，并保持 Gauss law |
+| Averaged Galilean PSATD | `inputs_test_2d_averaged_galilean_psatd*`、`inputs_test_3d_averaged_galilean_psatd*` | `analysis_galilean.py` | 同样用电场能量比检查稳定性，time averaging 分支容差更宽 | `fft_do_time_averaging` 的平均场回填是否稳定 |
+| PSATD-JRhom NCI | `inputs_test_3d_uniform_plasma_psatd_JRhom_CC1` | `analysis_psatd_CC1.py diags/diag1000300` | 电场能量除以 `66e6` 后 `< 1e-8` | `OneStep_JRhom()` 多次沉积与 `PsatdAlgorithmJRhom*` 源项积分是否抑制 NCI |
+| RZ PSATD-JRhom smoke | `inputs_test_rz_psatd_JRhom_LL2` | `analysis=OFF` + checksum | 只有最终 plotfile checksum | RZ JRhom 当前是输出回归入口，不应写成物理强判据 |
+| Langmuir FDTD / PSATD 2D | `langmuir/inputs_test_2d_langmuir_multi*` | `langmuir/analysis_2d.py diags/diag1000080` | `Ex/Ez` 与解析 Langmuir 场最大相对误差 `< 0.0503`；四阶形函数分支 `< 0.07`；部分分支追加 charge conservation | 场求解器、沉积、gather 和 guard-cell 同步在解析 plasma wave 中是否闭合 |
+| Langmuir 3D / div cleaning | `langmuir/inputs_test_3d_langmuir_multi*` | `langmuir/analysis_3d.py diags/diag1000040` | 网格场与粒子处场均与解析场比较，误差 `< 5e-2`；div-cleaning 分支还检查 `dF/dt = divE-rho/eps0` 到 `1e-2` | 3D PSATD/FDTD、粒子场诊断和 divergence cleaning 的一致性 |
+| Langmuir RZ / RZ PSATD | `langmuir/inputs_test_rz_langmuir_multi*` | `langmuir/analysis_rz.py diags/diag1000080` | `Er/Ez` 与 RZ 解析 Langmuir 场误差 `< 0.12`，并检查 RZ 粒子过滤诊断 | RZ field solver、RZ PSATD/current correction/JRhom 和诊断过滤是否共同正确 |
+
+这个索引表也暴露了一个写作边界：有些 regression 是物理强判据，例如 Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum 或 restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum 说成完整物理验证。
+
+### 6.11.8 本章验证链的结论
 
 综合这些脚本，FieldSolver 的验证链可以这样归纳：
 

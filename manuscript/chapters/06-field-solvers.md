@@ -1409,6 +1409,158 @@ if (i < 0) {
 
 这说明 RZ PSATD 的“正确性”同时依赖三件事：Hankel/Bessel 谱基、`Ep/Em` 横向矢量代数、以及轴上/轴下 mode 对称性。把 Cartesian PSATD 的 `kx,ky,kz` 公式机械删去一个方向，得不到 WarpX 的 RZ 实现。
 
+### 6.8.1 v0.29 RZ/Galilean RZ PSATD 系数边界
+
+v0.29 把 `notes/code-reading/fieldsolver/20-psatd-rz-galilean-rz-coefficients.md` 补成 RZ 系数边界图谱。第一条结论先写清楚：RZ 标准 PSATD 的 `X1-X3/X5-X6` 和 Galilean RZ 的 `X1-X4/Theta2/T_rho` 不能和 Cartesian 同名系数直接合并，因为 RZ 的谱基、横向字段和 current correction 都不同。
+
+`PsatdAlgorithmRZ.cpp:43-55` 总是分配实系数 `C/S_ck/X1-X3`，只有 linear-J time averaging 才分配 `X5/X6`。standard RZ 的非零模公式为：
+
+$$
+C=\cos(ck\Delta t),\qquad
+S_{ck}=\frac{\sin(ck\Delta t)}{ck},
+$$
+
+$$
+X_1=\frac{1-C}{\epsilon_0c^2k^2},
+\qquad
+X_2=\frac{1-S_{ck}/\Delta t}{\epsilon_0k^2},
+\qquad
+X_3=\frac{C-S_{ck}/\Delta t}{\epsilon_0k^2},
+$$
+
+其中 $k=\sqrt{k_r^2+k_z^2}$。零模分支为：
+
+$$
+C=1,\quad
+S_{ck}=\Delta t,\quad
+X_1=\frac{\Delta t^2}{2\epsilon_0},\quad
+X_2=\frac{c^2\Delta t^2}{6\epsilon_0},\quad
+X_3=-\frac{c^2\Delta t^2}{3\epsilon_0}.
+$$
+
+这些系数进入 `Ep/Em/Ez` 更新时，径向符号并不是 Cartesian 向量式的简单投影：
+
+```cpp
+fields(i,j,k,Ep_m) = C*Ep_old
+            + S_ck*(-c2*I*kr/2._rt*Bz_old + c2*kz*Bp_old - inv_ep0*Jp)
+            + 0.5_rt*kr*rho_diff;
+fields(i,j,k,Em_m) = C*Em_old
+            + S_ck*(-c2*I*kr/2._rt*Bz_old - c2*kz*Bm_old - inv_ep0*Jm)
+            - 0.5_rt*kr*rho_diff;
+```
+
+standard RZ 的 time averaging 支持边界很窄：只允许 `psatd.time_dependency_J=linear`。若 time averaging 配合非线性 `J`，源码直接 abort。linear-J 分支中，`X5/X6` 的非零模公式为：
+
+$$
+X_5=\frac{c^2}{\epsilon_0}
+\left[
+\frac{S_{ck}}{\omega^2}
+-\frac{1-C}{\omega^4\Delta t}
+-\frac{\Delta t}{2\omega^2}
+\right],
+\qquad
+X_6=\frac{c^2}{\epsilon_0}
+\left[
+\frac{1-C}{\omega^4\Delta t}
+-\frac{\Delta t}{2\omega^2}
+\right],
+$$
+
+其中 $\omega=ck$。零模分支为
+
+$$
+X_5=-\frac{c^2\Delta t^3}{8\epsilon_0},
+\qquad
+X_6=-\frac{c^2\Delta t^3}{24\epsilon_0}.
+$$
+
+`X5/X6` 在 average-field 更新中分别乘 old/new `rho` 和 old/new `J`：
+
+```cpp
+fields(i,j,k,Ep_avg_m) += S_ck * Ep_old
+    + c2 * ep0 * X1 * (kz * Bp_old - I * kr * 0.5_rt * Bz_old)
+    - kr * 0.5_rt * (X5 * rho_old + X6 * rho_new) + X3/c2 * Jp - X2/c2 * Jp_new;
+```
+
+Galilean RZ 又是另一套边界。`PsatdAlgorithmGalileanRZ.cpp` 只使用 `m_v_galilean[2]`，也就是轴向速度：
+
+```cpp
+const amrex::Real vz = m_v_galilean[2];
+amrex::Real const kv = kz*vz;
+```
+
+它分配 `C/S_ck` 两个实系数，以及 complex `X1-X4/Theta2/T_rho`。令
+
+$$
+k_v=k_zv_z,\qquad
+\nu=\frac{k_v}{ck},\qquad
+\theta=e^{ik_v\Delta t/2},
+$$
+
+则源码中
+
+$$
+\Theta_2=\theta^2,\qquad
+T_\rho=
+\begin{cases}
+-\Delta t, & k_z=0,\\
+\dfrac{1-\theta^2}{ik_zv_z}, & k_z\ne0.
+\end{cases}
+$$
+
+一般分支 `nu != 1 && nu != 0` 先构造
+
+$$
+x_1=\frac{\theta^\ast-C\theta+ik_vS_{ck}\theta}{1-\nu^2},
+$$
+
+再定义
+
+$$
+X_1=\frac{\theta x_1}{\epsilon_0c^2k^2},
+\qquad
+X_2=\frac{x_1-\theta(1-C)}{(\theta^\ast-\theta)\epsilon_0k^2},
+\qquad
+X_3=\frac{x_1-\theta^\ast(1-C)}{(\theta^\ast-\theta)\epsilon_0k^2},
+$$
+
+$$
+X_4=ik_vX_1-\frac{\theta^2S_{ck}}{\epsilon_0}.
+$$
+
+当 `nu == 0`，Galilean RZ 回到 standard RZ 的 `X1-X3`，并取 `X4=-S_ck/epsilon0`。当 `nu == 1`，源码有专门极限分支，避免 $1-\nu^2$ 和 $\theta^\ast-\theta$ 分母退化。零模分支则取 `Theta2=1`、`X4=-dt/epsilon0`。
+
+Galilean RZ 的更新式与 standard RZ 使用相同 `Ep/Em` layout，但旧场和 curl 项乘 `T2=Theta2`，电流直接项用 `X4`：
+
+```cpp
+fields(i,j,k,Ep_m) = T2*C*Ep_old
+            + T2*S_ck*(-c2*I*kr/2._rt*Bz_old + c2*kz*Bp_old)
+            + X4*Jp + 0.5_rt*kr*rho_diff;
+```
+
+电荷项中旧时刻 `rho` 也带 Galilean 相位：
+
+```cpp
+if (update_with_rho) {
+    rho_diff = X2*rho_new - T2*X3*rho_old;
+} else {
+    rho_diff = T2*(X2 - X3)*myeps0*divE + T_rho*X2*divJ;
+}
+```
+
+RZ current correction 沿 `Ep/Em/Jp/Jm` 的谱梯度方向修正，而不是 Cartesian 的 `Jx/Jy/Jz` 投影。standard RZ 使用
+
+```cpp
+Complex const F = - ((rho_new - rho_old)/dt + I*kz*Jz + kr*(Jp - Jm))/k_norm2;
+fields(i,j,k,Jp_m) += +0.5_rt*kr*F;
+fields(i,j,k,Jm_m) += -0.5_rt*kr*F;
+fields(i,j,k,Jz_m) += -I*kz*F;
+```
+
+Galilean RZ 则把 `rho_old` 乘 `theta2`，并用 Galilean 连续性残差替换普通时间差分。两条 RZ 路径都显式不支持 Vay deposition。
+
+所以 v0.29 对第 6 章的边界补充是：RZ 标准 PSATD、RZ time averaging、Galilean RZ 和 Cartesian/Galilean/JRhom/PML 都应各自成表。它们可以共享 `C/S_ck` 这类基础三角函数，但不能共享同一组更新式语义。
+
 ## 6.9 静电与静磁求解器
 
 绑定精读笔记：`notes/code-reading/fieldsolver/09-electrostatic-magnetostatic.md`。

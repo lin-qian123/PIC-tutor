@@ -36,7 +36,8 @@
 18. `17-psatd-x-coefficients.md`：Cartesian `PsatdAlgorithmGalilean.cpp` 中 `X1-X4`、`T2`、standard/Galilean 极限和 update placement 的源码公式图谱。
 19. `18-psatd-time-averaging-coefficients.md`：Cartesian `PsatdAlgorithmGalilean.cpp` 中 time-averaged field 的 `Psi1/Psi2/Y1-Y4`、零模处理、average-field 更新式和实空间回填路径。
 20. `19-psatd-jrhom-y-coefficients.md`：Cartesian `PsatdAlgorithmJRhomSecondOrder.cpp` 中 `Y1-Y8`、多项式源项积分、零模处理、ordinary field push 和 time-averaged field 累计路径。
-21. implicit solver 的接口细化和正文持续回填。
+21. `20-psatd-rz-galilean-rz-coefficients.md`：standard RZ `C/S_ck/X1-X3/X5-X6`、Galilean RZ `X1-X4/Theta2/T_rho`、`Ep/Em` 字段布局和 RZ current-correction 边界。
+22. implicit solver 的接口细化和正文持续回填。
 
 ## 输出目标
 
@@ -60,6 +61,7 @@
 - `17-psatd-x-coefficients.md`：已建立，覆盖 Cartesian `PsatdAlgorithmGalilean.cpp` 的 `X1-X4` 源码公式、标准/Galilean 极限、零模处理和 E/B 更新式中的位置。
 - `18-psatd-time-averaging-coefficients.md`：已建立，覆盖 Cartesian `PsatdAlgorithmGalilean.cpp` 的 `Psi1/Psi2/Y1-Y4` 源码公式、零模处理、average-field 更新式、`update_with_rho` 前置条件和 `PSATDScaleAverageFields()/PSATDBackwardTransformEBavg()` 回填路径。
 - `19-psatd-jrhom-y-coefficients.md`：已建立，覆盖 Cartesian `PsatdAlgorithmJRhomSecondOrder.cpp` 的 `Y1-Y8` 源码公式、零模处理、`a/b/c` 多项式源项、ordinary `E/B/F` 推进、time-averaged field 累计和防混写边界。
+- `20-psatd-rz-galilean-rz-coefficients.md`：已建立，覆盖 standard RZ `C/S_ck/X1-X3/X5-X6`、Galilean RZ `X1-X4/Theta2/T_rho`、`Ep/Em` 字段布局、linear-J time averaging 限制、RZ current correction 和防混写边界。
 - 重写 `manuscript/chapters/06-field-solvers.md`。
 
 ## 验证线索

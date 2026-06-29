@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-06-29：完成 `v0.29` RZ/Galilean RZ PSATD 系数边界版：冻结 `manuscript/VERSION-v0.28.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.29，新增 `scripts/build_v29.py`，生成 `dist/pic-tutor-v0.29.md` 与 `dist/pic-tutor-v0.29.html`；第 6 章新增 `6.8.1 v0.29 RZ/Galilean RZ PSATD 系数边界`，新增 `notes/code-reading/fieldsolver/20-psatd-rz-galilean-rz-coefficients.md`，把 standard RZ `C/S_ck/X1-X3/X5-X6`、Galilean RZ `X1-X4/Theta2/T_rho`、`Ep/Em` 字段布局、linear-J time averaging 限制、RZ current correction 和防混写边界拆成源码图谱。
 - [x] 2026-06-29：完成 `v0.28` PSATD-JRhom `Y1-Y8` 系数闭环版：冻结 `manuscript/VERSION-v0.27.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.28，新增 `scripts/build_v28.py`，生成 `dist/pic-tutor-v0.28.md` 与 `dist/pic-tutor-v0.28.html`；第 6 章新增 `6.7.1 v0.28 JRhom second-order Y1-Y8 系数的源码公式闭环`，新增 `notes/code-reading/fieldsolver/19-psatd-jrhom-y-coefficients.md`，把 Cartesian `PsatdAlgorithmJRhomSecondOrder.cpp` 的 `Y1-Y8`、`a/b/c` 多项式源项、零模处理、ordinary `E/B/F` 推进、time-averaged field 累计和防混写边界拆成源码公式图谱。
 - [x] 2026-06-29：完成 `v0.27` PSATD time-averaging `Psi/Y` 系数闭环版：冻结 `manuscript/VERSION-v0.26.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.27，新增 `scripts/build_v27.py`，生成 `dist/pic-tutor-v0.27.md` 与 `dist/pic-tutor-v0.27.html`；第 6 章新增 `6.6.2 v0.27 time-averaging Psi/Y 系数的源码公式闭环`，新增 `notes/code-reading/fieldsolver/18-psatd-time-averaging-coefficients.md`，把 Cartesian `PsatdAlgorithmGalilean.cpp` 的 `Psi1/Psi2/Y1-Y4`、零模处理、average-field 更新式、`update_with_rho` 前置条件和 `PSATDScaleAverageFields()/PSATDBackwardTransformEBavg()` 回填路径拆成源码公式图谱。
 - [x] 2026-06-29：完成 `v0.26` PSATD `X1-X4` 系数闭环版：冻结 `manuscript/VERSION-v0.25.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.26，新增 `scripts/build_v26.py`，生成 `dist/pic-tutor-v0.26.md` 与 `dist/pic-tutor-v0.26.html`；第 6 章新增 `6.6.1 v0.26 X1-X4 系数的源码公式闭环`，新增 `notes/code-reading/fieldsolver/17-psatd-x-coefficients.md`，把 Cartesian `PsatdAlgorithmGalilean.cpp` 的 `X1-X4`、`T2`、standard/Galilean 极限、零模处理和 E/B 更新式中的作用位置拆成源码公式图谱。
@@ -22,7 +23,7 @@
 - [x] 2026-06-29：完成 `v0.9` 边界 regression 判据索引草稿：冻结 `manuscript/VERSION-v0.8.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.9，新增 `scripts/build_v09.py`，生成 `dist/pic-tutor-v0.9.md` 与 `dist/pic-tutor-v0.9.html`；第 7 章已按当前 `../warpx` 的 `Examples/Tests/*/CMakeLists.txt`、输入卡和 `analysis*.py` 新增统一 regression 入口索引表，明确区分强 analysis、restart 一致性和 checksum-only 证据。
 - [x] 2026-06-29：完成 `v0.8` 边界与 AMR 源码入口校准草稿：冻结 `manuscript/VERSION-v0.7.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.8，新增 `scripts/build_v08.py`，生成 `dist/pic-tutor-v0.8.md` 与 `dist/pic-tutor-v0.8.html`；第 7 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 增补边界/PML/guard-cell/AMR 源码入口地图，串联 `WarpX::MakeWarpX()`、`FieldBoundaries`、`ParticleBoundaries`、`WarpXFieldBoundaries`、`WarpXComm`、`GuardCellManager`、`WarpXRegrid` 和 boundary scraping 入口。
 
-## v0.28 后续收口队列
+## v0.29 后续收口队列
 
 - [x] 人工审读并修正 `dist/pic-tutor-v0.12.html` 暴露出的第 7 章 HTML 排版风险：宽表格、Mermaid 图、公式、inline code 和长源码路径需要项目级样式兜底。
 - [x] 继续细核 `GuardCellManager.cpp`、`WarpXComm.cpp`、`WarpXRegrid.cpp` 的 AMR/regrid/guard-cell 路径，把 v0.8 入口地图扩成可讲解的正文段落。
@@ -48,7 +49,8 @@
 - [x] 为 v0.26 推进第 6 章成书短板：在 LeeCPC2015 授权 PDF 仍不可得时，转向本地可验证的 Cartesian PSATD `X1-X4` 系数闭环，把 `PsatdAlgorithmGalilean.cpp` 的标准/Galilean 源项积分系数写成源码公式图谱和正文。
 - [x] 为 v0.27 继续完成第 6 章 PSATD 系数体系：拆 `Psi/Y` time averaging 系数、JRhom `Y1-Y8` 或 RZ/Galilean RZ 系数边界，避免把不同 algorithm 的同名系数混写。
 - [x] 为 v0.28 继续完成第 6 章 PSATD 系数体系：拆 JRhom `Y1-Y8` 或 RZ/Galilean RZ 系数边界，避免把不同 algorithm 的同名系数混写。
-- [ ] 为 v0.29 继续完成第 6 章 PSATD 系数体系：拆 RZ/Galilean RZ 或 comoving 系数边界，避免把不同 algorithm 的同名系数混写。
+- [x] 为 v0.29 继续完成第 6 章 PSATD 系数体系：拆 RZ/Galilean RZ 或 comoving 系数边界，避免把不同 algorithm 的同名系数混写。
+- [ ] 为 v0.30 继续完成第 6 章 PSATD 系数体系：拆 comoving 或 RZ validation 边界，避免把不同 algorithm 的同名系数混写。
 - [ ] 继续完成 LeeCPC2015 全文闭环：通过机构访问、OSTI 可用全文、eScholarship 可访问副本或 AIP 可访问 PDF 取得授权 PDF，执行 MinerU 转换，补逐段中文讲解和图片，并把 pseudo-spectral PML 反射率/效率公式与 WarpX 当前 `PsatdAlgorithmPml.cpp` 做逐项对应。
 
 - [x] 2026-06-29：完成 `v0.4` 沉积与形函数校准草稿：冻结 `manuscript/VERSION-v0.3.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.4，新增 `scripts/build_v04.py`，生成 `dist/pic-tutor-v0.4.md` 与 `dist/pic-tutor-v0.4.html`；第 5 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `ShapeFactors`、`DepositCurrent/DepositCharge`、Esirkepov/Villasenor/Vay 分派和 Langmuir / `vay_deposition` 验证入口。

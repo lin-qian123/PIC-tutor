@@ -1111,6 +1111,112 @@ v0.14 先把上面那句“需要更强 validation”落成可执行的检查清
 
 这条路线的价值是把 validation 从“AMR 组合案例跑通”提高到“每个 transition-zone branch 被直接命中”。它也给后续写作设了边界：在这类 dedicated test 出现之前，本章只能把 `nfine_gather/nfine_deposit`、`E/Bfield_cax` 和 `current_buf/rho_buf` 写成源码审计结论，不能把现有 MR regression 夸写成已经逐项验证这些分支。
 
+### 7.7.4 v0.15 dedicated transition-zone 测试草案
+
+v0.15 把上一节的检查清单继续推进到测试草案层。这里的目标不是在 `PIC-tutor` 里修改 WarpX，而是给后续 WarpX regression 提供一个足够具体的设计：输入卡应如何最小化，粒子应如何放置，analysis 应该断言哪些路由，以及现有 diagnostics 到底能观察到哪里。
+
+建议新增一个独立 test family，例如：
+
+```text
+Examples/Tests/amr_transition_zone/
+  inputs_test_2d_transition_zone_buffers
+  inputs_test_2d_transition_zone_deposit_on_main_grid
+  inputs_test_2d_transition_zone_gather_from_main_grid
+  analysis_transition_zone.py
+```
+
+对应 CMake wiring 不应只挂 checksum，而应让主 analysis 先执行路由断言，再追加默认 regression checksum。形式上可以是：
+
+```cmake
+add_warpx_test(
+    test_2d_transition_zone_buffers 2 2
+    inputs_test_2d_transition_zone_buffers
+    "analysis_transition_zone.py diags/diag1000001 buffers"
+    "analysis_default_regression.py --path diags/diag1000001"
+    OFF)
+```
+
+`deposit_on_main_grid` 与 `gather_from_main_grid` 两条 sibling 也应复用同一个 analysis，只把 mode 参数改成 `deposit_on_main_grid` 或 `gather_from_main_grid`。这样可以避免三条测试各自发展出不同的判据口径。
+
+最小输入卡不需要复杂物理场景。它应像 `single_particle`、`multiple_particles`、`laser_on_fine` 这些 regression 一样，把几何、粒子和 diagnostics 固定到可预测状态：
+
+```text
+max_step = 1
+geometry.dims = 2
+amr.n_cell = 32 32
+amr.max_level = 1
+amr.ref_ratio = 2
+amr.blocking_factor = 8
+amr.max_grid_size = 16
+warpx.fine_tag_lo = -4.0 -4.0
+warpx.fine_tag_hi =  4.0  4.0
+
+algo.current_deposition = esirkepov
+algo.charge_deposition = standard
+algo.field_gathering = energy-conserving
+algo.particle_shape = 1
+
+warpx.n_current_deposition_buffer = 1
+warpx.n_field_gather_buffer = 2
+
+particles.species_names = p_interior p_gather_only p_both
+p_interior.injection_style = MultipleParticles
+p_gather_only.injection_style = MultipleParticles
+p_both.injection_style = MultipleParticles
+
+diagnostics.diags_names = diag1
+diag1.diag_type = Full
+diag1.intervals = 1
+diag1.fields_to_plot = rho jx jy jz Ex Ey Ez part_per_cell
+diag1.particle_fields_to_plot = x y ux uy route_x route_y
+diag1.particle_fields_species = p_interior p_gather_only p_both
+diag1.particle_fields.route_x(x,y,z,ux,uy,uz) = x
+diag1.particle_fields.route_y(x,y,z,ux,uy,uz) = y
+```
+
+上面只是骨架，真实输入卡还要按 WarpX 当前 parser 语法补齐 `geometry.prob_lo/hi`、边界条件、粒子 `multiple_particles_pos_x/y`、动量和权重等字段。关键是使用 deterministic `MultipleParticles`，而不是随机分布；粒子坐标要分别落在 fine patch interior、只命中较宽 gather buffer 的区域、只命中较宽 current buffer 的区域、两个 buffer 都命中的区域。`do_not_push` 不适合作为主测试开关，因为 `PhysicalParticleContainer::Evolve()` 只有在 `has_buffer && !do_not_push` 时才调用 `PartitionParticlesInBuffers()`；它最多只能用于额外 control species，不能用于要验证 transition-zone partition 的主粒子。
+
+buffer-width case 至少要三条：
+
+| case | buffer 设置 | 目标 |
+|---|---|---|
+| gather wider | `n_field_gather_buffer = 2`、`n_current_deposition_buffer = 1` | 产生“coarse gather + fine deposit”的粒子 |
+| current wider | `n_field_gather_buffer = 1`、`n_current_deposition_buffer = 2` | 产生“fine gather + coarse-buffer deposit”的粒子 |
+| equal width | `n_field_gather_buffer = 1`、`n_current_deposition_buffer = 1` | 确认两个分界一致时不会出现 only-gather 或 only-deposit 中间层 |
+
+再加两条强制路由 case：
+
+| case | 输入开关 | 目标 |
+|---|---|---|
+| main-grid deposit | `particles.deposit_on_main_grid = p_deposit_main` | 不管 current mask 如何，`nfine_deposit` 应被压成 `0` |
+| main-grid gather | `particles.gather_from_main_grid = p_gather_main` | 不管 gather mask 如何，`nfine_gather` 应被压成 `0` |
+
+预期粒子分区可以先写成以下判据表。这里 `M_J` 表示 `current_buffer_masks`，`M_G` 表示 `gather_buffer_masks`；`1` 是 fine-interior，`0` 是 buffer/guard 邻域。
+
+| 粒子组 | `M_G` | `M_J` | 预期 gather | 预期 deposit |
+|---|---:|---:|---|---|
+| interior | 1 | 1 | fine `E/Bfield_aux` | fine `rho_fp/current_fp` |
+| gather-only buffer | 0 | 1 | coarse `E/Bfield_cax` | fine `rho_fp/current_fp` |
+| deposit-only buffer | 1 | 0 | fine `E/Bfield_aux` | coarse `rho_buf/current_buf` |
+| both-buffer | 0 | 0 | coarse `E/Bfield_cax` | coarse `rho_buf/current_buf` |
+| `deposit_on_main_grid` species | 任意 | 任意 | 按 gather mask 或 species 设置 | 强制 coarse/main-grid deposit |
+| `gather_from_main_grid` species | 任意 | 任意 | 强制 coarse/main-grid gather | 按 current mask 或 species 设置 |
+
+analysis 可分两层写。第一层完全使用现有 diagnostics：用 `diag1` 读取粒子位置、动量、权重和 `rho/J`，再用已知粒子坐标与权重反推出哪些 coarse/fine cell 收到了沉积。若要反推 gather 路由，应让 fine aux 与 coarse cax 上某个场分量在 transition zone 内产生可区分的解析值，然后通过单步动量变化判断粒子到底从哪张场 gather。这个方案不需要改 diagnostics，但它是间接证据，容易被场插值、同步和最终 plotfile 合并面模糊。
+
+第二层是更干净的 dedicated instrumentation。建议在测试专用路径中输出四类量：
+
+| 输出 | 粒度 | 用途 |
+|---|---|---|
+| `current_buffer_mask`、`gather_buffer_mask` | level/grid field | 直接断言 mask 拓扑随 buffer width 改变 |
+| `nfine_gather`、`nfine_deposit` | species/tile reduced table | 直接断言 stable partition 分界 |
+| `gather_route`、`deposit_route` | particle diagnostic 或 route-count table | 直接断言每个粒子组命中的目标层 |
+| `rho_buf/current_buf` routed sums | reduced diagnostics | 在 coarse sync 前确认 buffer deposition 没被最终 plotfile 合并掩盖 |
+
+这组 instrumentation 不必变成用户长期依赖的物理诊断。它可以是 regression-only reduced output，或挂在 debug/test 选项后面。关键是主 analysis 要断言 route counts，而不是只比较最终 plotfile checksum。否则即使某个 route 悄悄从 `E/Bfield_cax` 退回 `E/Bfield_aux`，末态场也可能因为同步或数值容差而没有明显漂移。
+
+因此，v0.15 对 dedicated transition-zone validation 的结论是：最小 test 可以用现有输入语法和 Full diagnostics 起步，但完整 branch proof 需要额外暴露 mask、partition 分界或 route id。书稿层面后续应把这条草案作为第 7 章的“测试设计合同”，等真正实现或找到对应 WarpX regression 后，再把它升级成 verified validation。
+
 源码上，AMR 与 subcycling 的关键入口在 `WarpXEvolve.cpp`：
 
 - `OneStep` 行 469-492：有 mesh refinement 时决定是否进入 subcycling。

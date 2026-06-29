@@ -8,7 +8,7 @@ lang: zh-CN
 
 
 
-<!-- source: manuscript/VERSION.md -->
+<!-- source: manuscript/VERSION-v0.11.md -->
 
 # PIC-tutor v0.11
 
@@ -11207,6 +11207,50 @@ amrex::FillBoundary_finish(vec_mf);
 3. `FillBoundary` / `ParallelCopy` / `ParallelAdd` 再按通信精度、nodal sync 和 guard-cell 安全策略分支。
 
 这一层现在已经单独整理在 `notes/code-reading/parallelization/04-warpxcomm-kernel-execution-model.md`。
+
+### 7.7.2 v0.12 coarse-fine substitution 与 transition zone 的证据图
+
+把 v0.11 的 runtime 合同再往读者侧收一步，可以把 AMR coarse-fine 路径画成下面这张图。它的目的不是替代源码，而是把 `UpdateAuxilaryData*()`、`WarpXComm_K.H`、buffer masks 和 particle gather/deposition 分区放到同一个视图里。
+
+```mermaid
+flowchart TD
+    A["Parent full solution F(s): E/Bfield_aux on level lev-1"] --> B["ParallelCopy into dE/dB on coarse patch boxes"]
+    C["Coarse-patch solution F(c): E/Bfield_cp on lev"] --> D["MultiFab::Subtract: d = F(s)-F(c)"]
+    B --> D
+    E["Fine-patch solution F(r): E/Bfield_fp on lev"] --> F["WarpXComm_K warpx_interp"]
+    D --> F
+    F --> G["Fine full solution F(a): E/Bfield_aux on lev"]
+    G --> H["Fine interior particles gather from lev"]
+    G --> I["Optional copy to E/Bfield_cax for lower-level gather"]
+    J["gather_buffer_masks / current_buffer_masks"] --> K["PartitionParticlesInBuffers"]
+    K --> H
+    K --> L["Transition-zone particles gather from lev-1 cax"]
+    K --> M["Fine interior particles deposit to current_fp/rho_fp"]
+    K --> N["Transition-zone particles deposit to current_buf/rho_buf"]
+    N --> O["AddCurrent/AddRho from fine level and SumBoundary"]
+```
+
+这张图里最核心的方向是从左到右：先构造 parent full solution 与 coarse patch 的差，再把这份“patch 外源的 coarse 背景”插值到 fine patch，最后加到 fine patch 自己的解上。`UpdateAuxilaryDataSameType()` 对 E/B 都按这条路走：level 0 直接把 `fp` 或 time-averaged `fp` 拷到 `aux`；level > 0 时，用 `ParallelCopy()` 从 `aux(lev-1)` 取 parent full solution 到临时 `dE/dB`，可选复制一份到 `E/Bfield_cax`，再减去 `E/Bfield_cp`，最后通过 `warpx_interp()` 加回 `E/Bfield_fp` 得到 `E/Bfield_aux`。如果 momentum-conserving gather 需要 staggered-to-nodal，`UpdateAuxilaryDataStagToNodal()` 会进入 `WarpXComm_K.H` 的另一组 kernel，但数学骨架仍是 `tmp + (fine - coarse)`。
+
+transition zone 则决定粒子是否真的使用这套 fine-level full solution。`PhysicalParticleContainer::Evolve()` 开头先取 `current_buffer_masks` 与 `gather_buffer_masks`，再判断是否存在 `current_buf/rho_buf` 或 `E/Bfield_cax`。如果存在 buffer，它调用 `PartitionParticlesInBuffers()`，先按较大的 buffer 宽度稳定分区，再在较大 buffer 内按较小 buffer 二次稳定分区，得到 `nfine_gather` 与 `nfine_deposit`。随后：
+
+- 前 `nfine_gather` 个粒子从 `E/Bfield_aux` gather，`gather_lev = lev`；
+- 后面的 gather-buffer 粒子从 `E/Bfield_cax` gather，`gather_lev = lev-1`；
+- 前 `nfine_deposit` 个粒子把 charge/current 沉积到 `rho_fp/current_fp`；
+- 后面的 deposition-buffer 粒子沉积到 `rho_buf/current_buf`，并把 deposit level 标成 `lev-1`。
+
+这解释了为什么 `n_field_gather_buffer` 和 `n_current_deposition_buffer` 必须分开。一个粒子可以因为离 refinement edge 太近而从 lower level gather，但仍在 fine patch 上 deposit；也可以反过来。源码上这不是概念描述，而是由同一批粒子数组重新排序后用不同的 `[offset, count)` 区间喂给 `PushPX()`、`DepositCharge()` 和 `DepositCurrent()`。
+
+v0.12 还要把 regression 证据分层记录下来。当前可直接支撑 AMR/coarse-fine 叙述的入口可以先分成四类：
+
+| 证据入口 | 覆盖的 AMR 机制 | analysis 强度 | 适合写入正文的结论 |
+|---|---|---|---|
+| `langmuir/inputs_test_2d_langmuir_multi_mr`、`..._mr_anisotropic`、`..._mr_maxlevel2` | CKC + MR refinement、coarse-fine field gather、`E/Bfield_aux` 对解析 Langmuir 场的闭合 | 强 analysis：`analysis_2d.py` 在 level-0 covering grid 上比较 `Ex/Ez` 解析场，主误差 `< 0.0503`，并按路径叠加 charge conservation | 可以作为 MR coarse-fine field solution 没有破坏 Langmuir 主模的正文证据 |
+| `langmuir/inputs_test_2d_langmuir_multi_mr_momentum_conserving` | momentum-conserving gather 下的 staggered-to-nodal substitution kernel | 强 analysis：同样使用 `analysis_2d.py` 与 checksum；输入显式设置 `algo.field_gathering = momentum-conserving` | 可以支撑 `WarpXComm_K.H` 中 `tmp + (fine - coarse)` 这条 kernel 不是孤立代码，而是被 MR Langmuir 路径覆盖 |
+| `particles_in_pml/inputs_test_{2d,3d}_particles_in_pml_mr` | MR patch + in-domain PML + particle current damping 后的 finest-level residual field | 强 analysis：`analysis_particles_in_pml.py` 在 finest covering grid 上取 `max(Ex,Ey,Ez)`，MR 容差为 2D `< 6e-4`、3D `< 110` | 可以作为 AMR/PML/particle-current 组合路径的残余场证据，但不是 coarse-fine substitution 的专门 benchmark |
+| `subcycling/inputs_test_2d_subcycling_mr` | `do_subcycling=1`、`deposit_on_main_grid`、`n_current_deposition_buffer=0`、`n_field_gather_buffer=0` 的 MR workflow | checksum-only：`analysis=OFF`，只走 `analysis_default_regression.py --path diags/diag1000250` | 只能写成 subcycling+MR workflow/output baseline，不能写成 transition-zone 物理强断言 |
+
+这张表的边界很重要：`langmuir` MR 系列可以支持“MR 下解析场仍在容差内”；`particles_in_pml_mr` 可以支持“MR+PML+粒子离域后残余场在阈值内”；`subcycling_mr` 目前只能支持“这条组合工作流输出没有漂移”。如果后续要把 transition zone 写成更强的物理验证，需要新增或找到直接检查 `n_field_gather_buffer/n_current_deposition_buffer` 分区结果、`E/Bfield_cax` gather 路径和 `current_buf/rho_buf` 回灌结果的 analysis，而不是只引用 checksum。
 
 源码上，AMR 与 subcycling 的关键入口在 `WarpXEvolve.cpp`：
 

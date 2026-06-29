@@ -833,6 +833,10 @@ buffer</a>
 <li><a href="#v0.11-guard-cell通信和-regrid-的闭环"
 id="toc-v0.11-guard-cell通信和-regrid-的闭环">7.7.1 v0.11
 guard-cell、通信和 regrid 的闭环</a></li>
+<li><a
+href="#v0.12-coarse-fine-substitution-与-transition-zone-的证据图"
+id="toc-v0.12-coarse-fine-substitution-与-transition-zone-的证据图">7.7.2
+v0.12 coarse-fine substitution 与 transition zone 的证据图</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#诊断验证与案例" id="toc-诊断验证与案例">8.
@@ -15061,6 +15065,137 @@ cells 都交换掉。</p>
 </ol>
 <p>这一层现在已经单独整理在
 <code>notes/code-reading/parallelization/04-warpxcomm-kernel-execution-model.md</code>。</p>
+<h3
+id="v0.12-coarse-fine-substitution-与-transition-zone-的证据图">7.7.2
+v0.12 coarse-fine substitution 与 transition zone 的证据图</h3>
+<p>把 v0.11 的 runtime 合同再往读者侧收一步，可以把 AMR coarse-fine
+路径画成下面这张图。它的目的不是替代源码，而是把
+<code>UpdateAuxilaryData*()</code>、<code>WarpXComm_K.H</code>、buffer
+masks 和 particle gather/deposition 分区放到同一个视图里。</p>
+<pre class="mermaid"><code>flowchart TD
+    A[&quot;Parent full solution F(s): E/Bfield_aux on level lev-1&quot;] --&gt; B[&quot;ParallelCopy into dE/dB on coarse patch boxes&quot;]
+    C[&quot;Coarse-patch solution F(c): E/Bfield_cp on lev&quot;] --&gt; D[&quot;MultiFab::Subtract: d = F(s)-F(c)&quot;]
+    B --&gt; D
+    E[&quot;Fine-patch solution F(r): E/Bfield_fp on lev&quot;] --&gt; F[&quot;WarpXComm_K warpx_interp&quot;]
+    D --&gt; F
+    F --&gt; G[&quot;Fine full solution F(a): E/Bfield_aux on lev&quot;]
+    G --&gt; H[&quot;Fine interior particles gather from lev&quot;]
+    G --&gt; I[&quot;Optional copy to E/Bfield_cax for lower-level gather&quot;]
+    J[&quot;gather_buffer_masks / current_buffer_masks&quot;] --&gt; K[&quot;PartitionParticlesInBuffers&quot;]
+    K --&gt; H
+    K --&gt; L[&quot;Transition-zone particles gather from lev-1 cax&quot;]
+    K --&gt; M[&quot;Fine interior particles deposit to current_fp/rho_fp&quot;]
+    K --&gt; N[&quot;Transition-zone particles deposit to current_buf/rho_buf&quot;]
+    N --&gt; O[&quot;AddCurrent/AddRho from fine level and SumBoundary&quot;]</code></pre>
+<p>这张图里最核心的方向是从左到右：先构造 parent full solution 与 coarse
+patch 的差，再把这份“patch 外源的 coarse 背景”插值到 fine
+patch，最后加到 fine patch
+自己的解上。<code>UpdateAuxilaryDataSameType()</code> 对 E/B
+都按这条路走：level 0 直接把 <code>fp</code> 或 time-averaged
+<code>fp</code> 拷到 <code>aux</code>；level &gt; 0 时，用
+<code>ParallelCopy()</code> 从 <code>aux(lev-1)</code> 取 parent full
+solution 到临时 <code>dE/dB</code>，可选复制一份到
+<code>E/Bfield_cax</code>，再减去 <code>E/Bfield_cp</code>，最后通过
+<code>warpx_interp()</code> 加回 <code>E/Bfield_fp</code> 得到
+<code>E/Bfield_aux</code>。如果 momentum-conserving gather 需要
+staggered-to-nodal，<code>UpdateAuxilaryDataStagToNodal()</code> 会进入
+<code>WarpXComm_K.H</code> 的另一组 kernel，但数学骨架仍是
+<code>tmp + (fine - coarse)</code>。</p>
+<p>transition zone 则决定粒子是否真的使用这套 fine-level full
+solution。<code>PhysicalParticleContainer::Evolve()</code> 开头先取
+<code>current_buffer_masks</code> 与
+<code>gather_buffer_masks</code>，再判断是否存在
+<code>current_buf/rho_buf</code> 或 <code>E/Bfield_cax</code>。如果存在
+buffer，它调用 <code>PartitionParticlesInBuffers()</code>，先按较大的
+buffer 宽度稳定分区，再在较大 buffer 内按较小 buffer 二次稳定分区，得到
+<code>nfine_gather</code> 与 <code>nfine_deposit</code>。随后：</p>
+<ul>
+<li>前 <code>nfine_gather</code> 个粒子从 <code>E/Bfield_aux</code>
+gather，<code>gather_lev = lev</code>；</li>
+<li>后面的 gather-buffer 粒子从 <code>E/Bfield_cax</code>
+gather，<code>gather_lev = lev-1</code>；</li>
+<li>前 <code>nfine_deposit</code> 个粒子把 charge/current 沉积到
+<code>rho_fp/current_fp</code>；</li>
+<li>后面的 deposition-buffer 粒子沉积到
+<code>rho_buf/current_buf</code>，并把 deposit level 标成
+<code>lev-1</code>。</li>
+</ul>
+<p>这解释了为什么 <code>n_field_gather_buffer</code> 和
+<code>n_current_deposition_buffer</code> 必须分开。一个粒子可以因为离
+refinement edge 太近而从 lower level gather，但仍在 fine patch 上
+deposit；也可以反过来。源码上这不是概念描述，而是由同一批粒子数组重新排序后用不同的
+<code>[offset, count)</code> 区间喂给
+<code>PushPX()</code>、<code>DepositCharge()</code> 和
+<code>DepositCurrent()</code>。</p>
+<p>v0.12 还要把 regression 证据分层记录下来。当前可直接支撑
+AMR/coarse-fine 叙述的入口可以先分成四类：</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>证据入口</th>
+<th>覆盖的 AMR 机制</th>
+<th>analysis 强度</th>
+<th>适合写入正文的结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>langmuir/inputs_test_2d_langmuir_multi_mr</code>、<code>..._mr_anisotropic</code>、<code>..._mr_maxlevel2</code></td>
+<td>CKC + MR refinement、coarse-fine field
+gather、<code>E/Bfield_aux</code> 对解析 Langmuir 场的闭合</td>
+<td>强 analysis：<code>analysis_2d.py</code> 在 level-0 covering grid
+上比较 <code>Ex/Ez</code> 解析场，主误差
+<code>&lt; 0.0503</code>，并按路径叠加 charge conservation</td>
+<td>可以作为 MR coarse-fine field solution 没有破坏 Langmuir
+主模的正文证据</td>
+</tr>
+<tr>
+<td><code>langmuir/inputs_test_2d_langmuir_multi_mr_momentum_conserving</code></td>
+<td>momentum-conserving gather 下的 staggered-to-nodal substitution
+kernel</td>
+<td>强 analysis：同样使用 <code>analysis_2d.py</code> 与
+checksum；输入显式设置
+<code>algo.field_gathering = momentum-conserving</code></td>
+<td>可以支撑 <code>WarpXComm_K.H</code> 中
+<code>tmp + (fine - coarse)</code> 这条 kernel 不是孤立代码，而是被 MR
+Langmuir 路径覆盖</td>
+</tr>
+<tr>
+<td><code>particles_in_pml/inputs_test_{2d,3d}_particles_in_pml_mr</code></td>
+<td>MR patch + in-domain PML + particle current damping 后的
+finest-level residual field</td>
+<td>强 analysis：<code>analysis_particles_in_pml.py</code> 在 finest
+covering grid 上取 <code>max(Ex,Ey,Ez)</code>，MR 容差为 2D
+<code>&lt; 6e-4</code>、3D <code>&lt; 110</code></td>
+<td>可以作为 AMR/PML/particle-current 组合路径的残余场证据，但不是
+coarse-fine substitution 的专门 benchmark</td>
+</tr>
+<tr>
+<td><code>subcycling/inputs_test_2d_subcycling_mr</code></td>
+<td><code>do_subcycling=1</code>、<code>deposit_on_main_grid</code>、<code>n_current_deposition_buffer=0</code>、<code>n_field_gather_buffer=0</code>
+的 MR workflow</td>
+<td>checksum-only：<code>analysis=OFF</code>，只走
+<code>analysis_default_regression.py --path diags/diag1000250</code></td>
+<td>只能写成 subcycling+MR workflow/output baseline，不能写成
+transition-zone 物理强断言</td>
+</tr>
+</tbody>
+</table>
+<p>这张表的边界很重要：<code>langmuir</code> MR 系列可以支持“MR
+下解析场仍在容差内”；<code>particles_in_pml_mr</code>
+可以支持“MR+PML+粒子离域后残余场在阈值内”；<code>subcycling_mr</code>
+目前只能支持“这条组合工作流输出没有漂移”。如果后续要把 transition zone
+写成更强的物理验证，需要新增或找到直接检查
+<code>n_field_gather_buffer/n_current_deposition_buffer</code>
+分区结果、<code>E/Bfield_cax</code> gather 路径和
+<code>current_buf/rho_buf</code> 回灌结果的 analysis，而不是只引用
+checksum。</p>
 <p>源码上，AMR 与 subcycling 的关键入口在
 <code>WarpXEvolve.cpp</code>：</p>
 <ul>
@@ -15303,10 +15438,10 @@ scaffold，不应和原生输入的强物理断言混成同一等级。</p>
 <li><code>/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/langmuir_1d</code></li>
 </ul>
 <p>用</p>
-<div class="sourceCode" id="cb337"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb337-1"><a href="#cb337-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env</span> OMP_NUM_THREADS=1 FI_PROVIDER=tcp <span class="dt">\</span></span>
-<span id="cb337-2"><a href="#cb337-2" aria-hidden="true" tabindex="-1"></a>  /Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.1d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES <span class="dt">\</span></span>
-<span id="cb337-3"><a href="#cb337-3" aria-hidden="true" tabindex="-1"></a>  /Volumes/PHILIPS/programs/PIC/warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi</span></code></pre></div>
+<div class="sourceCode" id="cb338"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb338-1"><a href="#cb338-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env</span> OMP_NUM_THREADS=1 FI_PROVIDER=tcp <span class="dt">\</span></span>
+<span id="cb338-2"><a href="#cb338-2" aria-hidden="true" tabindex="-1"></a>  /Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.1d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES <span class="dt">\</span></span>
+<span id="cb338-3"><a href="#cb338-3" aria-hidden="true" tabindex="-1"></a>  /Volumes/PHILIPS/programs/PIC/warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi</span></code></pre></div>
 <p>完成了真实运行，并生成 <code>diags/diag1000080</code>。虽然官方
 <code>analysis_1d.py</code> 因本机缺 <code>matplotlib/yt</code>
 没有原样跑通，但它的核心断言已经按同一公式手工复现：</p>
@@ -15395,10 +15530,10 @@ analysis，而是它把：</p>
 <li><code>/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/uniform_plasma_2d</code></li>
 </ul>
 <p>用</p>
-<div class="sourceCode" id="cb339"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb339-1"><a href="#cb339-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env</span> OMP_NUM_THREADS=1 FI_PROVIDER=tcp <span class="dt">\</span></span>
-<span id="cb339-2"><a href="#cb339-2" aria-hidden="true" tabindex="-1"></a>  /Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.2d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES <span class="dt">\</span></span>
-<span id="cb339-3"><a href="#cb339-3" aria-hidden="true" tabindex="-1"></a>  /Volumes/PHILIPS/programs/PIC/warpx/Examples/Physics_applications/uniform_plasma/inputs_test_2d_uniform_plasma</span></code></pre></div>
+<div class="sourceCode" id="cb340"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb340-1"><a href="#cb340-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env</span> OMP_NUM_THREADS=1 FI_PROVIDER=tcp <span class="dt">\</span></span>
+<span id="cb340-2"><a href="#cb340-2" aria-hidden="true" tabindex="-1"></a>  /Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.2d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES <span class="dt">\</span></span>
+<span id="cb340-3"><a href="#cb340-3" aria-hidden="true" tabindex="-1"></a>  /Volumes/PHILIPS/programs/PIC/warpx/Examples/Physics_applications/uniform_plasma/inputs_test_2d_uniform_plasma</span></code></pre></div>
 <p>完成了真实运行，并生成
 <code>diags/diag1000010</code>。但这里必须保持验证分级：</p>
 <ul>
@@ -15558,9 +15693,9 @@ antenna，而是 relativistic bunch。</p>
 <code>TODO</code></li>
 </ul>
 <p>同时，<code>CMakeLists.txt</code> 中所有 active tests 都是：</p>
-<div class="sourceCode" id="cb340"><pre
-class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb340-1"><a href="#cb340-1" aria-hidden="true" tabindex="-1"></a><span class="fu">OFF  # analysis</span></span>
-<span id="cb340-2"><a href="#cb340-2" aria-hidden="true" tabindex="-1"></a><span class="fu">&quot;analysis_default_regression.py --path ...&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb341"><pre
+class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb341-1"><a href="#cb341-1" aria-hidden="true" tabindex="-1"></a><span class="fu">OFF  # analysis</span></span>
+<span id="cb341-2"><a href="#cb341-2" aria-hidden="true" tabindex="-1"></a><span class="fu">&quot;analysis_default_regression.py --path ...&quot;</span></span></code></pre></div>
 <p>因此 <code>plasma_acceleration</code> 当前最准确的角色是：</p>
 <ul>
 <li><code>PWFA workflow matrix</code></li>
@@ -16480,9 +16615,9 @@ CMake test/input。因此这两条都不能被夸大成当前活跃的强 regres
   WarpXHeader
   raw_fields/   # optional</code></pre>
 <p>主读取工具是 <code>yt</code>，WarpX 文档里的标准入口就是：</p>
-<div class="sourceCode" id="cb346"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb346-1"><a href="#cb346-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> yt</span>
-<span id="cb346-2"><a href="#cb346-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> yt.load(<span class="st">&#39;./diags/plotfiles/plt00000/&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb347"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb347-1"><a href="#cb347-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> yt</span>
+<span id="cb347-2"><a href="#cb347-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> yt.load(<span class="st">&#39;./diags/plotfiles/plt00000/&#39;</span>)</span></code></pre></div>
 <p>如果只是要常规 field/particle 分析、AMR-aware 后处理，plotfile + yt
 仍然是最顺手的默认组合。只有当打开 <code>plot_raw_fields = 1</code>
 想看原始 staggered 网格时，才需要额外走
@@ -16600,23 +16735,23 @@ id="boundaryscrapingdiagnostics-与-python-scraped-particle-buffer"><code>Bounda
 <code>diag_type=BoundaryScraping</code>。</p>
 <p><code>MultiDiagnostics.cpp</code> 读到这个 <code>diag_type</code>
 时，会直接构造：</p>
-<div class="sourceCode" id="cb351"><pre
-class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb351-1"><a href="#cb351-1" aria-hidden="true" tabindex="-1"></a>alldiags<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>BoundaryScrapingDiagnostics<span class="op">&gt;(</span>i<span class="op">,</span> diags_names<span class="op">[</span>i<span class="op">],</span> diags_types<span class="op">[</span>i<span class="op">]);</span></span></code></pre></div>
+<div class="sourceCode" id="cb352"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb352-1"><a href="#cb352-1" aria-hidden="true" tabindex="-1"></a>alldiags<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>BoundaryScrapingDiagnostics<span class="op">&gt;(</span>i<span class="op">,</span> diags_names<span class="op">[</span>i<span class="op">],</span> diags_types<span class="op">[</span>i<span class="op">]);</span></span></code></pre></div>
 <p>而 <code>BoundaryScrapingDiagnostics::ReadParameters()</code>
 又立刻把默认 field 输出关掉：</p>
-<div class="sourceCode" id="cb352"><pre
-class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb352-1"><a href="#cb352-1" aria-hidden="true" tabindex="-1"></a><span class="va">m_varnames_fields</span> <span class="op">=</span> <span class="op">{};</span></span>
-<span id="cb352-2"><a href="#cb352-2" aria-hidden="true" tabindex="-1"></a><span class="va">m_varnames</span> <span class="op">=</span> <span class="op">{};</span></span>
-<span id="cb352-3"><a href="#cb352-3" aria-hidden="true" tabindex="-1"></a><span class="va">m_num_buffers</span> <span class="op">=</span> AMREX_SPACEDIM<span class="op">*</span><span class="dv">2</span><span class="op">;</span></span>
-<span id="cb352-4"><a href="#cb352-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>eb_enabled<span class="op">)</span> <span class="op">{</span> <span class="va">m_num_buffers</span> <span class="op">+=</span> <span class="dv">1</span><span class="op">;</span> <span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb353"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb353-1"><a href="#cb353-1" aria-hidden="true" tabindex="-1"></a><span class="va">m_varnames_fields</span> <span class="op">=</span> <span class="op">{};</span></span>
+<span id="cb353-2"><a href="#cb353-2" aria-hidden="true" tabindex="-1"></a><span class="va">m_varnames</span> <span class="op">=</span> <span class="op">{};</span></span>
+<span id="cb353-3"><a href="#cb353-3" aria-hidden="true" tabindex="-1"></a><span class="va">m_num_buffers</span> <span class="op">=</span> AMREX_SPACEDIM<span class="op">*</span><span class="dv">2</span><span class="op">;</span></span>
+<span id="cb353-4"><a href="#cb353-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>eb_enabled<span class="op">)</span> <span class="op">{</span> <span class="va">m_num_buffers</span> <span class="op">+=</span> <span class="dv">1</span><span class="op">;</span> <span class="op">}</span></span></code></pre></div>
 <p>这说明它的输出对象不是普通场变量，而是每个边界各自那份
 <code>ParticleBoundaryBuffer</code>。</p>
 <p>进一步看 <code>InitializeParticleBuffer()</code>，它对每个
 species、每个 boundary 都直接取：</p>
-<div class="sourceCode" id="cb353"><pre
-class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb353-1"><a href="#cb353-1" aria-hidden="true" tabindex="-1"></a>WarpXParticleContainer<span class="op">::</span>Base<span class="op">*</span> bnd_buffer <span class="op">=</span></span>
-<span id="cb353-2"><a href="#cb353-2" aria-hidden="true" tabindex="-1"></a>    particle_buffer<span class="op">.</span>getParticleBufferPointer<span class="op">(</span>species_name<span class="op">,</span> i_buffer<span class="op">);</span></span>
-<span id="cb353-3"><a href="#cb353-3" aria-hidden="true" tabindex="-1"></a><span class="va">m_output_species</span><span class="op">[</span>i_buffer<span class="op">].</span>push_back<span class="op">(</span>ParticleDiag<span class="op">(</span><span class="va">m_diag_name</span><span class="op">,</span> species_name<span class="op">,</span> pc<span class="op">,</span> bnd_buffer<span class="op">));</span></span></code></pre></div>
+<div class="sourceCode" id="cb354"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb354-1"><a href="#cb354-1" aria-hidden="true" tabindex="-1"></a>WarpXParticleContainer<span class="op">::</span>Base<span class="op">*</span> bnd_buffer <span class="op">=</span></span>
+<span id="cb354-2"><a href="#cb354-2" aria-hidden="true" tabindex="-1"></a>    particle_buffer<span class="op">.</span>getParticleBufferPointer<span class="op">(</span>species_name<span class="op">,</span> i_buffer<span class="op">);</span></span>
+<span id="cb354-3"><a href="#cb354-3" aria-hidden="true" tabindex="-1"></a><span class="va">m_output_species</span><span class="op">[</span>i_buffer<span class="op">].</span>push_back<span class="op">(</span>ParticleDiag<span class="op">(</span><span class="va">m_diag_name</span><span class="op">,</span> species_name<span class="op">,</span> pc<span class="op">,</span> bnd_buffer<span class="op">));</span></span></code></pre></div>
 <p>所以 <code>BoundaryScrapingDiagnostics</code>
 不是重新扫主粒子容器，而是直接消费前面边界处理阶段已经收集好的 scraped
 event。</p>
@@ -16626,21 +16761,21 @@ event。</p>
 <li><code>&lt;diag&gt;.format</code> 必须是 <code>openpmd</code>。</li>
 </ul>
 <p>写出时，<code>Flush(i_buffer)</code> 会把每个边界单独写到：</p>
-<div class="sourceCode" id="cb354"><pre
-class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb354-1"><a href="#cb354-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="bu">std::</span>string file_prefix <span class="op">=</span></span>
-<span id="cb354-2"><a href="#cb354-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_file_prefix</span> <span class="op">+</span> <span class="st">&quot;/particles_at_&quot;</span> <span class="op">+</span> particle_buffer<span class="op">.</span>boundaryName<span class="op">(</span>i_buffer<span class="op">);</span></span></code></pre></div>
+<div class="sourceCode" id="cb355"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb355-1"><a href="#cb355-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="bu">std::</span>string file_prefix <span class="op">=</span></span>
+<span id="cb355-2"><a href="#cb355-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">m_file_prefix</span> <span class="op">+</span> <span class="st">&quot;/particles_at_&quot;</span> <span class="op">+</span> particle_buffer<span class="op">.</span>boundaryName<span class="op">(</span>i_buffer<span class="op">);</span></span></code></pre></div>
 <p>因此目录天然会分成
 <code>particles_at_xlo</code>、<code>particles_at_zhi</code>、<code>particles_at_eb</code>
 等子目录。更关键的是，写完后它立即：</p>
-<div class="sourceCode" id="cb355"><pre
-class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb355-1"><a href="#cb355-1" aria-hidden="true" tabindex="-1"></a>particle_buffer<span class="op">.</span>clearParticles<span class="op">(</span>i_buffer<span class="op">);</span></span></code></pre></div>
+<div class="sourceCode" id="cb356"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb356-1"><a href="#cb356-1" aria-hidden="true" tabindex="-1"></a>particle_buffer<span class="op">.</span>clearParticles<span class="op">(</span>i_buffer<span class="op">);</span></span></code></pre></div>
 <p>也就是说，<code>BoundaryScrapingDiagnostics</code> 对
 <code>ParticleBoundaryBuffer</code>
 是“写出并消费”的语义，而不是只读观察。</p>
 <p>Python 接口走的是同一份底层状态。<code>Source/Python/WarpX.cpp</code>
 只是把 WarpX 单例里的：</p>
-<div class="sourceCode" id="cb356"><pre
-class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb356-1"><a href="#cb356-1" aria-hidden="true" tabindex="-1"></a>wx<span class="op">.</span>GetParticleBoundaryBuffer<span class="op">()</span></span></code></pre></div>
+<div class="sourceCode" id="cb357"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb357-1"><a href="#cb357-1" aria-hidden="true" tabindex="-1"></a>wx<span class="op">.</span>GetParticleBoundaryBuffer<span class="op">()</span></span></code></pre></div>
 <p>直接暴露给
 <code>sim.extension.get_particle_boundary_buffer()</code>。高层
 <code>ParticleBoundaryBufferWrapper</code> 再把它封成：</p>
@@ -16693,9 +16828,9 @@ diag1.write_species = 1</code></pre>
     WarpXHeader
     raw_fields/   # optional</code></pre>
 <p>读取入口：</p>
-<div class="sourceCode" id="cb359"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb359-1"><a href="#cb359-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> yt</span>
-<span id="cb359-2"><a href="#cb359-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> yt.load(<span class="st">&quot;./diags/diag1/diag1000000/&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb360"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb360-1"><a href="#cb360-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> yt</span>
+<span id="cb360-2"><a href="#cb360-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> yt.load(<span class="st">&quot;./diags/diag1/diag1000000/&quot;</span>)</span></code></pre></div>
 <p>适用场景：</p>
 <ul>
 <li>常规 field/particle 分析。</li>
@@ -16722,9 +16857,9 @@ diag1.plot_B = 1</code></pre>
   openpmd_000000.h5
   openpmd_000010.h5</code></pre>
 <p>读取入口：</p>
-<div class="sourceCode" id="cb363"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb363-1"><a href="#cb363-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openpmd_viewer <span class="im">import</span> OpenPMDTimeSeries</span>
-<span id="cb363-2"><a href="#cb363-2" aria-hidden="true" tabindex="-1"></a>ts <span class="op">=</span> OpenPMDTimeSeries(<span class="st">&quot;./diags/diag1/&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb364"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb364-1"><a href="#cb364-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openpmd_viewer <span class="im">import</span> OpenPMDTimeSeries</span>
+<span id="cb364-2"><a href="#cb364-2" aria-hidden="true" tabindex="-1"></a>ts <span class="op">=</span> OpenPMDTimeSeries(<span class="st">&quot;./diags/diag1/&quot;</span>)</span></code></pre></div>
 <p>适用场景：</p>
 <ul>
 <li>标准化数据交换。</li>
@@ -16780,12 +16915,12 @@ carbon12_4.save_particles_at_zhi = 1</code></pre>
 <p>如果是 embedded boundary scraping，则目录会变成
 <code>particles_at_eb/</code>。</p>
 <p>读取入口：</p>
-<div class="sourceCode" id="cb369"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb369-1"><a href="#cb369-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openpmd_viewer <span class="im">import</span> OpenPMDTimeSeries</span>
-<span id="cb369-2"><a href="#cb369-2" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> OpenPMDTimeSeries(<span class="st">&quot;./diags/screen/particles_at_zhi/&quot;</span>)</span></code></pre></div>
-<p><code>point_of_contact_eb/analysis.py</code> 也用同一路径读取：</p>
 <div class="sourceCode" id="cb370"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb370-1"><a href="#cb370-1" aria-hidden="true" tabindex="-1"></a>ts_scraping <span class="op">=</span> OpenPMDTimeSeries(<span class="st">&quot;./diags/diag2/particles_at_eb/&quot;</span>)</span></code></pre></div>
+class="sourceCode python"><code class="sourceCode python"><span id="cb370-1"><a href="#cb370-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openpmd_viewer <span class="im">import</span> OpenPMDTimeSeries</span>
+<span id="cb370-2"><a href="#cb370-2" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> OpenPMDTimeSeries(<span class="st">&quot;./diags/screen/particles_at_zhi/&quot;</span>)</span></code></pre></div>
+<p><code>point_of_contact_eb/analysis.py</code> 也用同一路径读取：</p>
+<div class="sourceCode" id="cb371"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb371-1"><a href="#cb371-1" aria-hidden="true" tabindex="-1"></a>ts_scraping <span class="op">=</span> OpenPMDTimeSeries(<span class="st">&quot;./diags/diag2/particles_at_eb/&quot;</span>)</span></code></pre></div>
 <p>适用场景：</p>
 <ul>
 <li>探测器或屏幕 hit 记录。</li>
@@ -16832,21 +16967,21 @@ detector-hit 持久化</li>
 <h3 id="模式-a运行结束后统一检查">模式 A：运行结束后统一检查</h3>
 <p><code>particle_boundary_scrape</code> 给的是最小自检骨架。species
 只要打开：</p>
-<div class="sourceCode" id="cb371"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb371-1"><a href="#cb371-1" aria-hidden="true" tabindex="-1"></a>electrons <span class="op">=</span> picmi.Species(</span>
-<span id="cb371-2"><a href="#cb371-2" aria-hidden="true" tabindex="-1"></a>    ...,</span>
-<span id="cb371-3"><a href="#cb371-3" aria-hidden="true" tabindex="-1"></a>    warpx_save_particles_at_xhi<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb371-4"><a href="#cb371-4" aria-hidden="true" tabindex="-1"></a>    warpx_save_particles_at_eb<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb371-5"><a href="#cb371-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>模拟结束后直接：</p>
 <div class="sourceCode" id="cb372"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb372-1"><a href="#cb372-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pywarpx <span class="im">import</span> particle_containers</span>
-<span id="cb372-2"><a href="#cb372-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb372-3"><a href="#cb372-3" aria-hidden="true" tabindex="-1"></a>particle_buffer <span class="op">=</span> particle_containers.ParticleBoundaryBufferWrapper()</span>
-<span id="cb372-4"><a href="#cb372-4" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> particle_buffer.get_particle_boundary_buffer_size(<span class="st">&quot;electrons&quot;</span>, <span class="st">&quot;eb&quot;</span>)</span>
-<span id="cb372-5"><a href="#cb372-5" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> particle_buffer.get_particle_boundary_buffer(<span class="st">&quot;electrons&quot;</span>, <span class="st">&quot;eb&quot;</span>, <span class="st">&quot;w&quot;</span>, <span class="dv">0</span>)</span>
-<span id="cb372-6"><a href="#cb372-6" aria-hidden="true" tabindex="-1"></a>total_weight <span class="op">=</span> <span class="bu">sum</span>(w.<span class="bu">sum</span>() <span class="cf">for</span> w <span class="kw">in</span> weights)</span>
-<span id="cb372-7"><a href="#cb372-7" aria-hidden="true" tabindex="-1"></a>particle_buffer.clear_buffer()</span></code></pre></div>
+class="sourceCode python"><code class="sourceCode python"><span id="cb372-1"><a href="#cb372-1" aria-hidden="true" tabindex="-1"></a>electrons <span class="op">=</span> picmi.Species(</span>
+<span id="cb372-2"><a href="#cb372-2" aria-hidden="true" tabindex="-1"></a>    ...,</span>
+<span id="cb372-3"><a href="#cb372-3" aria-hidden="true" tabindex="-1"></a>    warpx_save_particles_at_xhi<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb372-4"><a href="#cb372-4" aria-hidden="true" tabindex="-1"></a>    warpx_save_particles_at_eb<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb372-5"><a href="#cb372-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>模拟结束后直接：</p>
+<div class="sourceCode" id="cb373"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb373-1"><a href="#cb373-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pywarpx <span class="im">import</span> particle_containers</span>
+<span id="cb373-2"><a href="#cb373-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb373-3"><a href="#cb373-3" aria-hidden="true" tabindex="-1"></a>particle_buffer <span class="op">=</span> particle_containers.ParticleBoundaryBufferWrapper()</span>
+<span id="cb373-4"><a href="#cb373-4" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> particle_buffer.get_particle_boundary_buffer_size(<span class="st">&quot;electrons&quot;</span>, <span class="st">&quot;eb&quot;</span>)</span>
+<span id="cb373-5"><a href="#cb373-5" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> particle_buffer.get_particle_boundary_buffer(<span class="st">&quot;electrons&quot;</span>, <span class="st">&quot;eb&quot;</span>, <span class="st">&quot;w&quot;</span>, <span class="dv">0</span>)</span>
+<span id="cb373-6"><a href="#cb373-6" aria-hidden="true" tabindex="-1"></a>total_weight <span class="op">=</span> <span class="bu">sum</span>(w.<span class="bu">sum</span>() <span class="cf">for</span> w <span class="kw">in</span> weights)</span>
+<span id="cb373-7"><a href="#cb373-7" aria-hidden="true" tabindex="-1"></a>particle_buffer.clear_buffer()</span></code></pre></div>
 <p>这里有三个实现细节必须记住：</p>
 <ol type="1">
 <li><code>get_particle_boundary_buffer_size()</code>
@@ -16860,19 +16995,19 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb372-1"><a 
 或在线控制里的即时事件流</h3>
 <p><code>spacecraft_charging</code> 给的是“文件化 writer 和 Python
 在线消费并存”的例子。它一边开：</p>
-<div class="sourceCode" id="cb373"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb373-1"><a href="#cb373-1" aria-hidden="true" tabindex="-1"></a>part_scraping_boundary_diag <span class="op">=</span> picmi.ParticleBoundaryScrapingDiagnostic(</span>
-<span id="cb373-2"><a href="#cb373-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;diag2&quot;</span>,</span>
-<span id="cb373-3"><a href="#cb373-3" aria-hidden="true" tabindex="-1"></a>    period<span class="op">=-</span><span class="dv">1</span>,</span>
-<span id="cb373-4"><a href="#cb373-4" aria-hidden="true" tabindex="-1"></a>    species<span class="op">=</span>[electrons, protons],</span>
-<span id="cb373-5"><a href="#cb373-5" aria-hidden="true" tabindex="-1"></a>    warpx_format<span class="op">=</span><span class="st">&quot;openpmd&quot;</span>,</span>
-<span id="cb373-6"><a href="#cb373-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>一边又在 Python 里直接读同一个 EB buffer：</p>
 <div class="sourceCode" id="cb374"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb374-1"><a href="#cb374-1" aria-hidden="true" tabindex="-1"></a>particle_buffer <span class="op">=</span> ParticleBoundaryBufferWrapper()</span>
-<span id="cb374-2"><a href="#cb374-2" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> particle_buffer.get_particle_boundary_buffer(species, <span class="st">&quot;eb&quot;</span>, <span class="st">&quot;w&quot;</span>, <span class="dv">0</span>)</span>
-<span id="cb374-3"><a href="#cb374-3" aria-hidden="true" tabindex="-1"></a>sum_weights_over_tiles <span class="op">=</span> <span class="bu">sum</span>([w.<span class="bu">sum</span>() <span class="cf">for</span> w <span class="kw">in</span> weights])</span>
-<span id="cb374-4"><a href="#cb374-4" aria-hidden="true" tabindex="-1"></a>ntot <span class="op">=</span> <span class="bu">float</span>(mpi.COMM_WORLD.allreduce(sum_weights_over_tiles, op<span class="op">=</span>mpi.SUM))</span></code></pre></div>
+class="sourceCode python"><code class="sourceCode python"><span id="cb374-1"><a href="#cb374-1" aria-hidden="true" tabindex="-1"></a>part_scraping_boundary_diag <span class="op">=</span> picmi.ParticleBoundaryScrapingDiagnostic(</span>
+<span id="cb374-2"><a href="#cb374-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;diag2&quot;</span>,</span>
+<span id="cb374-3"><a href="#cb374-3" aria-hidden="true" tabindex="-1"></a>    period<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb374-4"><a href="#cb374-4" aria-hidden="true" tabindex="-1"></a>    species<span class="op">=</span>[electrons, protons],</span>
+<span id="cb374-5"><a href="#cb374-5" aria-hidden="true" tabindex="-1"></a>    warpx_format<span class="op">=</span><span class="st">&quot;openpmd&quot;</span>,</span>
+<span id="cb374-6"><a href="#cb374-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>一边又在 Python 里直接读同一个 EB buffer：</p>
+<div class="sourceCode" id="cb375"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb375-1"><a href="#cb375-1" aria-hidden="true" tabindex="-1"></a>particle_buffer <span class="op">=</span> ParticleBoundaryBufferWrapper()</span>
+<span id="cb375-2"><a href="#cb375-2" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> particle_buffer.get_particle_boundary_buffer(species, <span class="st">&quot;eb&quot;</span>, <span class="st">&quot;w&quot;</span>, <span class="dv">0</span>)</span>
+<span id="cb375-3"><a href="#cb375-3" aria-hidden="true" tabindex="-1"></a>sum_weights_over_tiles <span class="op">=</span> <span class="bu">sum</span>([w.<span class="bu">sum</span>() <span class="cf">for</span> w <span class="kw">in</span> weights])</span>
+<span id="cb375-4"><a href="#cb375-4" aria-hidden="true" tabindex="-1"></a>ntot <span class="op">=</span> <span class="bu">float</span>(mpi.COMM_WORLD.allreduce(sum_weights_over_tiles, op<span class="op">=</span>mpi.SUM))</span></code></pre></div>
 <p>这里它把 <code>period=-1</code> 设成只在末尾 flush
 一次，目的就是在模拟中途保留完整 in-memory buffer，供 Python 侧累计计算
 spacecraft 收集到的净电荷。</p>
@@ -16892,10 +17027,10 @@ spacecraft 收集到的净电荷。</p>
 </ul>
 <p>三者联动的应用级 regression。</p>
 <p>如果逻辑只想处理“本步刚撞边界的粒子”，更直接的高层接口是：</p>
-<div class="sourceCode" id="cb375"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb375-1"><a href="#cb375-1" aria-hidden="true" tabindex="-1"></a>weights_this_step <span class="op">=</span> particle_buffer.get_particle_scraped_this_step(</span>
-<span id="cb375-2"><a href="#cb375-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;electrons&quot;</span>, <span class="st">&quot;eb&quot;</span>, <span class="st">&quot;w&quot;</span>, <span class="dv">0</span></span>
-<span id="cb375-3"><a href="#cb375-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb376"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb376-1"><a href="#cb376-1" aria-hidden="true" tabindex="-1"></a>weights_this_step <span class="op">=</span> particle_buffer.get_particle_scraped_this_step(</span>
+<span id="cb376-2"><a href="#cb376-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;electrons&quot;</span>, <span class="st">&quot;eb&quot;</span>, <span class="st">&quot;w&quot;</span>, <span class="dv">0</span></span>
+<span id="cb376-3"><a href="#cb376-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>它本质上只是按 <code>stepScraped == current_step</code> 对累计 buffer
 做过滤，但这已经足够支撑：</p>
 <ul>
@@ -16932,36 +17067,36 @@ smoke test，而是直接验证：</p>
 <p>能否在 Python 侧被稳定访问。</p>
 <p>这条 regression 在 <code>CMakeLists.txt</code> 里没有独立
 <code>analysis.py</code>：</p>
-<div class="sourceCode" id="cb376"><pre
-class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb376-1"><a href="#cb376-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add_warpx_test</span>(</span>
-<span id="cb376-2"><a href="#cb376-2" aria-hidden="true" tabindex="-1"></a>    test_2d_python_wrappers_picmi</span>
-<span id="cb376-3"><a href="#cb376-3" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb376-4"><a href="#cb376-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">OFF</span></span>
-<span id="cb376-5"><a href="#cb376-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;analysis_default_regression.py --path diags/diag1000100&quot;</span></span>
-<span id="cb376-6"><a href="#cb376-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">OFF</span></span>
-<span id="cb376-7"><a href="#cb376-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb377"><pre
+class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb377-1"><a href="#cb377-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add_warpx_test</span>(</span>
+<span id="cb377-2"><a href="#cb377-2" aria-hidden="true" tabindex="-1"></a>    test_2d_python_wrappers_picmi</span>
+<span id="cb377-3"><a href="#cb377-3" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb377-4"><a href="#cb377-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">OFF</span></span>
+<span id="cb377-5"><a href="#cb377-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;analysis_default_regression.py --path diags/diag1000100&quot;</span></span>
+<span id="cb377-6"><a href="#cb377-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">OFF</span></span>
+<span id="cb377-7"><a href="#cb377-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>所以如果只看 CMake，会误以为它只是
 checksum-only。实际上强断言全部写在 input 脚本内部。脚本在</p>
-<div class="sourceCode" id="cb377"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb377-1"><a href="#cb377-1" aria-hidden="true" tabindex="-1"></a>sim.initialize_inputs()</span>
-<span id="cb377-2"><a href="#cb377-2" aria-hidden="true" tabindex="-1"></a>sim.initialize_warpx()</span></code></pre></div>
-<p>之后，直接抓出：</p>
 <div class="sourceCode" id="cb378"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb378-1"><a href="#cb378-1" aria-hidden="true" tabindex="-1"></a>Ex <span class="op">=</span> sim.fields.get(<span class="st">&quot;Efield_fp&quot;</span>, <span class="bu">dir</span><span class="op">=</span><span class="st">&quot;x&quot;</span>, level<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb378-2"><a href="#cb378-2" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb378-3"><a href="#cb378-3" aria-hidden="true" tabindex="-1"></a>Expml <span class="op">=</span> sim.fields.get(<span class="st">&quot;pml_E_fp&quot;</span>, <span class="bu">dir</span><span class="op">=</span><span class="st">&quot;x&quot;</span>, level<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb378-4"><a href="#cb378-4" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb378-5"><a href="#cb378-5" aria-hidden="true" tabindex="-1"></a>Fpml <span class="op">=</span> sim.fields.get(<span class="st">&quot;pml_F_fp&quot;</span>, level<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb378-6"><a href="#cb378-6" aria-hidden="true" tabindex="-1"></a>Gpml <span class="op">=</span> sim.fields.get(<span class="st">&quot;pml_G_fp&quot;</span>, level<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div>
+class="sourceCode python"><code class="sourceCode python"><span id="cb378-1"><a href="#cb378-1" aria-hidden="true" tabindex="-1"></a>sim.initialize_inputs()</span>
+<span id="cb378-2"><a href="#cb378-2" aria-hidden="true" tabindex="-1"></a>sim.initialize_warpx()</span></code></pre></div>
+<p>之后，直接抓出：</p>
+<div class="sourceCode" id="cb379"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb379-1"><a href="#cb379-1" aria-hidden="true" tabindex="-1"></a>Ex <span class="op">=</span> sim.fields.get(<span class="st">&quot;Efield_fp&quot;</span>, <span class="bu">dir</span><span class="op">=</span><span class="st">&quot;x&quot;</span>, level<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb379-2"><a href="#cb379-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb379-3"><a href="#cb379-3" aria-hidden="true" tabindex="-1"></a>Expml <span class="op">=</span> sim.fields.get(<span class="st">&quot;pml_E_fp&quot;</span>, <span class="bu">dir</span><span class="op">=</span><span class="st">&quot;x&quot;</span>, level<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb379-4"><a href="#cb379-4" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb379-5"><a href="#cb379-5" aria-hidden="true" tabindex="-1"></a>Fpml <span class="op">=</span> sim.fields.get(<span class="st">&quot;pml_F_fp&quot;</span>, level<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb379-6"><a href="#cb379-6" aria-hidden="true" tabindex="-1"></a>Gpml <span class="op">=</span> sim.fields.get(<span class="st">&quot;pml_G_fp&quot;</span>, level<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div>
 <p>然后给 valid domain 里的 <code>E/B/F/G</code> 填一个平滑 unit
 pulse，推进 <code>100</code> 步，最后不是看图片，而是逐分量检查
 benchmark：</p>
-<div class="sourceCode" id="cb379"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb379-1"><a href="#cb379-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> check_values(benchmark, data, comp, rtol, atol):</span>
-<span id="cb379-2"><a href="#cb379-2" aria-hidden="true" tabindex="-1"></a>    passed <span class="op">=</span> np.allclose(</span>
-<span id="cb379-3"><a href="#cb379-3" aria-hidden="true" tabindex="-1"></a>        benchmark, np.<span class="bu">sum</span>(np.<span class="bu">abs</span>(data[(), (), comp])), rtol<span class="op">=</span>rtol, atol<span class="op">=</span>atol</span>
-<span id="cb379-4"><a href="#cb379-4" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb379-5"><a href="#cb379-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> passed</span></code></pre></div>
+<div class="sourceCode" id="cb380"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb380-1"><a href="#cb380-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> check_values(benchmark, data, comp, rtol, atol):</span>
+<span id="cb380-2"><a href="#cb380-2" aria-hidden="true" tabindex="-1"></a>    passed <span class="op">=</span> np.allclose(</span>
+<span id="cb380-3"><a href="#cb380-3" aria-hidden="true" tabindex="-1"></a>        benchmark, np.<span class="bu">sum</span>(np.<span class="bu">abs</span>(data[(), (), comp])), rtol<span class="op">=</span>rtol, atol<span class="op">=</span>atol</span>
+<span id="cb380-4"><a href="#cb380-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb380-5"><a href="#cb380-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> passed</span></code></pre></div>
 <p>这里 <code>data[(), (), comp]</code> 的意思也很关键：</p>
 <ul>
 <li><code>()</code> 取 valid + ghost 全范围；</li>
@@ -16989,8 +17124,8 @@ cleaning 字段这几层上都没有被包装错。</p>
 <h2 id="本地运行注意">本地运行注意</h2>
 <p>本机过去运行短 WarpX 案例时，MPI/OFI
 路径可能受网络接口影响；小规模复现实验可优先设置：</p>
-<div class="sourceCode" id="cb380"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb380-1"><a href="#cb380-1" aria-hidden="true" tabindex="-1"></a><span class="va">FI_PROVIDER</span><span class="op">=</span>tcp</span></code></pre></div>
+<div class="sourceCode" id="cb381"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb381-1"><a href="#cb381-1" aria-hidden="true" tabindex="-1"></a><span class="va">FI_PROVIDER</span><span class="op">=</span>tcp</span></code></pre></div>
 <p>这不是物理参数，只是本机 MPI transport
 的稳定性处理。正式实验记录必须把环境变量、binary
 路径、输入文件、输出目录和分析脚本写入对应章节。</p>

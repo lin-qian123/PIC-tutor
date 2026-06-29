@@ -243,23 +243,24 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">PIC 程序详解：从物理模型到 WarpX 源码</h1>
-<p class="subtitle">v0.9 边界 regression 判据索引草稿</p>
+<p class="subtitle">v0.11 AMR guard-cell/regrid 闭环草稿</p>
 <p class="author">PIC-tutor</p>
 <p class="date">2026-06-29</p>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#pic-tutor-v0.9" id="toc-pic-tutor-v0.9">PIC-tutor v0.9</a>
+<li><a href="#pic-tutor-v0.11" id="toc-pic-tutor-v0.11">PIC-tutor
+v0.11</a>
 <ul>
 <li><a href="#定位" id="toc-定位">定位</a></li>
 <li><a href="#源码基线" id="toc-源码基线">源码基线</a></li>
-<li><a href="#v0.9-章节范围" id="toc-v0.9-章节范围">v0.9
+<li><a href="#v0.11-章节范围" id="toc-v0.11-章节范围">v0.11
 章节范围</a></li>
-<li><a href="#v0.9-已完成的增量" id="toc-v0.9-已完成的增量">v0.9
+<li><a href="#v0.11-已完成的增量" id="toc-v0.11-已完成的增量">v0.11
 已完成的增量</a></li>
 <li><a href="#成书前必须补齐"
 id="toc-成书前必须补齐">成书前必须补齐</a></li>
-<li><a href="#v0.9-构建方式" id="toc-v0.9-构建方式">v0.9
+<li><a href="#v0.11-构建方式" id="toc-v0.11-构建方式">v0.11
 构建方式</a></li>
 </ul></li>
 <li><a href="#写作说明" id="toc-写作说明">0. 写作说明</a></li>
@@ -966,25 +967,23 @@ id="toc-python-field-wrapper-的最小强回归">Python field wrapper
 A：符号表草稿</a></li>
 </ul>
 </nav>
-<!-- source: manuscript/VERSION-v0.9.md -->
-<h1 id="pic-tutor-v0.9">PIC-tutor v0.9</h1>
+<!-- source: manuscript/VERSION.md -->
+<h1 id="pic-tutor-v0.11">PIC-tutor v0.11</h1>
 <p>版本日期：2026-06-29</p>
 <h2 id="定位">定位</h2>
-<p><code>v0.9</code> 是 <code>PIC-tutor</code> 的边界 regression
-判据索引版。它继承 <code>v0.8</code> 的第 7
-章源码入口地图，并继续把边界、PML、AMR 和 boundary scraping
-的验证证据从“知道入口在哪里”推进到“知道哪些 regression
-真正在验证什么”的状态。</p>
-<p>本版的重点是给第 7 章补一个统一的 regression 入口索引表。表格按当前
-<code>../warpx</code> checkout 中的
-<code>Examples/Tests/*/CMakeLists.txt</code>、输入卡和
-<code>analysis*.py</code> 整理，明确区分物理强 analysis、restart
-一致性检查和 checksum-only 输出回归。这样后续扩写边界章节时，可以避免把
-<code>analysis=OFF</code> 的 smoke/checksum 路径误写成完整物理
-benchmark。</p>
-<p>本版仍不是出版终稿。它的目标是把第 7
-章先连接到可运行测试入口，下一步再继续把表格中的重点条目扩写成正文推导，并补齐
-AMR/regrid/guard-cell 的细节段落。</p>
+<p><code>v0.11</code> 是 <code>PIC-tutor</code> 的 AMR guard-cell/regrid
+闭环版。它继承 <code>v0.10</code> 的边界强 analysis 正文，并继续把第 7
+章里原先只作为入口地图出现的
+<code>GuardCellManager</code>、<code>WarpXComm</code> 和
+<code>WarpXRegrid</code> 串成一段可审校正文。</p>
+<p>本版的重点是说明 WarpX 的 AMR 运行时不是单纯的 coarse-fine
+插值公式。guard-cell 预算同时约束数组分配、阶段通信和 load-balance
+后重建；field 的 <code>FillBoundary</code>、PML exchange、source 项的
+<code>SyncCurrent/SyncRho</code> 和 <code>RemakeLevel()</code>
+必须共同保持布局、通信和诊断指针一致。</p>
+<p>本版仍不是出版终稿。它补齐第 7 章 AMR 并行层的一条核心主线，但
+PSATD/Galilean/NCI/PML 文献闭环、HTML
+宽表格人工审读、更多边界索引条目正文和 PDF 出版流程仍需继续推进。</p>
 <h2 id="源码基线">源码基线</h2>
 <ul>
 <li>本书项目仓库：<code>/Volumes/PHILIPS/programs/PIC/PIC-tutor</code></li>
@@ -992,11 +991,11 @@ AMR/regrid/guard-cell 的细节段落。</p>
 <li>当前 WarpX 分支：<code>pkuHEDPbranch</code></li>
 <li>当前 WarpX commit：<code>8c488b1a9</code></li>
 </ul>
-<p>v0.9 只修改 <code>PIC-tutor</code> 书稿项目，不修改
-<code>../warpx</code> 原仓库。章节里的源码行号和 regression 入口按上述
+<p>v0.11 只修改 <code>PIC-tutor</code> 书稿项目，不修改
+<code>../warpx</code> 原仓库。章节里的源码路径和 regression 入口按上述
 checkout 复核；后续若 WarpX
-更新，必须重新校准行号和测试入口后再发布新版。</p>
-<h2 id="v0.9-章节范围">v0.9 章节范围</h2>
+更新，必须重新校准源码行号和测试入口后再发布新版。</p>
+<h2 id="v0.11-章节范围">v0.11 章节范围</h2>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -1008,7 +1007,7 @@ checkout 复核；后续若 WarpX
 <tr>
 <th>章节</th>
 <th>文件</th>
-<th>v0.9 状态</th>
+<th>v0.11 状态</th>
 <th>下一步缺口</th>
 </tr>
 </thead>
@@ -1066,9 +1065,9 @@ checkout 复核；后续若 WarpX
 <tr>
 <td>边界、PML 与 AMR</td>
 <td><code>chapters/07-boundaries-amr.md</code></td>
-<td>已做 v0.9 regression 判据索引</td>
-<td>需要把索引表扩写成分节正文，并继续细核 AMR/regrid/guard-cell
-路径</td>
+<td>已做 v0.11 AMR guard-cell/regrid 闭环正文</td>
+<td>需要继续把 coarse-fine substitution、transition zone 和更多
+regression 条目图形化</td>
 </tr>
 <tr>
 <td>诊断、验证与案例</td>
@@ -1090,24 +1089,35 @@ checkout 复核；后续若 WarpX
 </tr>
 </tbody>
 </table>
-<h2 id="v0.9-已完成的增量">v0.9 已完成的增量</h2>
+<h2 id="v0.11-已完成的增量">v0.11 已完成的增量</h2>
 <ul>
-<li>冻结 <code>manuscript/VERSION-v0.8.md</code>，避免重建 v0.8 时误用
-v0.9 版本说明。</li>
-<li>新增 v0.9 当前版本说明，并把构建输出切到
-<code>dist/pic-tutor-v0.9.md</code> 与
-<code>dist/pic-tutor-v0.9.html</code>。</li>
-<li>把 <code>scripts/build_v08.py</code> 改为读取冻结的
-<code>manuscript/VERSION-v0.8.md</code>，保持 v0.8 版本说明可复现。</li>
-<li>在第 7 章新增 <code>v0.9 边界 regression 入口索引</code>，按
-family、代表输入、analysis 入口、主要判据和源码风险整理。</li>
-<li>表格覆盖 domain particle boundary、PEC/PMC、PECInsulator、PML
-FDTD/PSATD/RZ/restart、particles in PML、3D EB scrape、RZ EB
-scraping/filter 和 Silver-Mueller。</li>
-<li>明确
-<code>test_3d_pec_particle</code>、<code>test_2d_pec_field_insulator</code>
-和 <code>test_3d_pml_psatd_dive_divb_cleaning</code> 当前属于
-checksum-only 或 smoke/checksum 证据，不能写成强物理验证。</li>
+<li>冻结 <code>manuscript/VERSION-v0.10.md</code>，避免重建 v0.10 时误用
+v0.11 版本说明。</li>
+<li>新增 <code>scripts/build_v11.py</code>，生成
+<code>dist/pic-tutor-v0.11.md</code> 与
+<code>dist/pic-tutor-v0.11.html</code>。</li>
+<li>把 <code>scripts/build_v10.py</code> 改为读取冻结的
+<code>manuscript/VERSION-v0.10.md</code>，保持 v0.10
+版本说明可复现。</li>
+<li>在第 7 章新增
+<code>7.7.1 v0.11 guard-cell、通信和 regrid 的闭环</code>。</li>
+<li>把 <code>GuardCellManager</code> 的 <code>ng_alloc_*</code> 与
+<code>ng_FieldSolver/ng_FieldGather/ng_UpdateAux</code>
+等阶段交换量区分开。</li>
+<li>说明 subcycling、Galilean/comoving、moving
+window、JRhom/time-averaging、filter、PSATD FFT stencil 和 safe mode
+如何共同影响 guard-cell 预算。</li>
+<li>把 <code>WarpXComm.cpp</code> 中 E/B 的 PML exchange、valid-domain
+<code>FillBoundary</code>、single-precision
+wrapper、<code>nodal_sync</code> 和 safe-mode full exchange
+串成一条通信语义。</li>
+<li>把 <code>SyncCurrent()</code> / <code>SyncRho()</code> 的
+coarse-fine source 同步写成
+<code>coarsen -&gt; optional buffer merge -&gt; temporary receive -&gt; OwnerMask de-dup -&gt; SumBoundary</code>
+的流程。</li>
+<li>把 <code>WarpXRegrid.cpp::RemakeLevel()</code> 写成 load-balance
+后的重建端，说明 field registry、EB factory、spectral solver、buffer
+mask、particle boundary buffer 和 diagnostics 的一致提交关系。</li>
 </ul>
 <h2 id="成书前必须补齐">成书前必须补齐</h2>
 <ul>
@@ -1120,18 +1130,18 @@ commit，并避免同章混用未说明的历史行号。</li>
 中的资料条目回填为正文叙述。</li>
 <li>按 <code>docs/paper-reading-workflow.md</code> 完成核心论文 MinerU
 转换和中文讲解笔记。</li>
-<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.9 仍只保证
+<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.11 仍只保证
 Markdown/HTML。</li>
 <li>对 public GitHub 仓库中的 PDF 和运行产物做版权与体积审计。</li>
 </ul>
-<h2 id="v0.9-构建方式">v0.9 构建方式</h2>
+<h2 id="v0.11-构建方式">v0.11 构建方式</h2>
 <p>生成合订 Markdown 和 HTML 预览：</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v09.py</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v11.py</span></code></pre></div>
 <p>生成的文件：</p>
 <ul>
-<li><code>dist/pic-tutor-v0.9.md</code></li>
-<li><code>dist/pic-tutor-v0.9.html</code>（若本机存在
+<li><code>dist/pic-tutor-v0.11.md</code></li>
+<li><code>dist/pic-tutor-v0.11.html</code>（若本机存在
 <code>pandoc</code>）</li>
 </ul>
 <!-- source: manuscript/chapters/00-preface.md -->

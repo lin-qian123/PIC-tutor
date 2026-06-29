@@ -10970,6 +10970,38 @@ reduced_diags->LoadBalance();
 
 这一层现在已经单独整理在 `notes/code-reading/parallelization/02-regrid-and-load-balance.md`。
 
+### 7.7.1 v0.11 guard-cell、通信和 regrid 的闭环
+
+把上面的源码入口连起来看，AMR 章节最容易误读的一点是：`guard_cells` 不是一个单独的“安全余量”，而是一份同时约束内存分配、通信宽度和 regrid 重建的合同。`GuardCellManager.H` 明确把它拆成两组字段：`ng_alloc_EB/J/Rho/F/G` 表示各类 `MultiFab` 实际分配的 guard cells；`ng_FieldSolver`、`ng_FieldGather`、`ng_UpdateAux`、`ng_MovingWindow`、`ng_afterPushPSATD` 等则表示 PIC 循环不同阶段真正需要交换的宽度。也就是说，分配量回答“数组能容纳多少”，阶段量回答“这一次通信应该交换多少”。
+
+`GuardCellManager.cpp::Init()` 的计算顺序体现了这个区别。它先从粒子 shape 阶数 `nox` 起步；若多层 AMR 且开启 subcycling，则因为 fine level 粒子在重分布前会做两次 push，先额外加一层；若使用 Galilean 或 comoving PSATD，再额外加一层；随后把 E/B guard cells 取成偶数，便于 coarse-fine 插值。J/rho 则先允许非偶数，因为 J 只需要 fine-to-coarse 插值。之后，moving window 会用 refinement ratio 把所有相关方向的 guard cells 抬高；显式电磁路径还会按 `ceil(c dt / dx)` 给 rho 和 J 追加粒子位移距离，JRhom/time-averaging 会把等效位移时间从 `0.5 dt`、`dt` 推到 `2 dt`。隐式路径则不再用光速 Courant 估算，而是用 `particle_max_grid_crossings` 给 J/rho 定界。
+
+这说明 guard-cell 预算本身已经含有物理时间尺度：rho 要覆盖一个 PIC iteration 前后两次 charge 状态，J 要覆盖半步或 JRhom 特例下的一整步/两步位移。后面的 filter 和 solver 又继续加约束：bilinear filter 会扩展 J/rho 分配；F/G 为 moving window、CKC 和 div cleaning 保留自己的 guard cells；PSATD 则按 FFT stencil 计算 `ngFFT`，并允许用户用 `psatd.nx_guard/ny_guard/nz_guard` 覆盖。进入 PSATD 分支后，WarpX 为了避免临时 parallel copy，会把 `ng_alloc_EB/J/Rho/F/G` 统一抬到所有字段所需 guard cells 的最大值。这样做牺牲了一些内存，但换来后续 field solver、deposition 和 FFT stencil 在同一组 box 上可直接通信。
+
+通信层 `WarpXComm.cpp` 消费的是这些阶段量，而不是重新推导 guard cells。`FillBoundaryE()` 与 `FillBoundaryB()` 对每个 level 都先处理 fine patch；若 `lev > 0`，再处理 coarse patch。每个 patch 内部先让 PML 与 valid domain 做 `Exchange()`，再填 PML 自己的 guard cells；RZ+FFT PML 还有独立的 `pml_rz->FillBoundaryE/B()`。随后才轮到 valid-domain field 的 `FillBoundary`。如果启用 single-precision communications，WarpX 会显式断言 `ng <= nGrowVect()`，然后在 safe mode 下把 `nghost` 提升到整个已分配 `nGrowVect()`；否则只交换调用者传入的阶段量 `ng`。如果不走 single-precision wrapper，则根据 `nodal_sync` 选择 AMReX 的 `FillBoundaryAndSync` 或普通 `FillBoundary`。因此，`m_safe_guard_cells` 的含义不是“分配更多 guard cells”，而是“每次通信都交换所有已分配 guard cells”；真正的分配量早在 `GuardCellManager` 里定好了。
+
+source 项的同步是另一套语义。`SyncCurrent()` 的源码注释把单层和多层路径分得很清楚：单层时，先可选 filter，再 `SumBoundary`，使 box 边缘或周期边界上的重复沉积回到“好像只有一个 box”的结果；多层时，从 finest level 往 coarse level 走，fine-patch J 先 coarsen 到同层 coarse patch，若有 current buffer 就先并入 buffer，再把 buffer 或 coarse patch 作为通信源送到更粗 level。更粗 level 接收时不能直接 `ParallelAdd` 到 `J_fp`，因为 nodal 点可能属于多个 box；WarpX 先建临时 `fine_lev_cp`，再用 `OwnerMask` 只让 owner box 把该点加回主 `J_fp`。`SyncRho()` 复用同一套 owner-mask 思路，只是把 rho 的 filter 和 `SumBoundary` 收在 `ApplyFilterandSumBoundaryRho()` 里。
+
+因此，AMR 里的 field 通信和 source 同步可以按下面的最小图式理解：
+
+```mermaid
+flowchart LR
+    A["GuardCellManager Init"] --> B["ng_alloc_*: allocated ghost cells"]
+    A --> C["ng_FieldSolver / ng_FieldGather / ng_UpdateAux"]
+    C --> D["WarpXComm FillBoundary E/B/F/G/Aux"]
+    B --> E["nGrowVect checks and safe mode full exchange"]
+    D --> F["PML Exchange and valid-domain FillBoundary"]
+    A --> G["ng_depos_J / ng_depos_rho"]
+    G --> H["SyncCurrent / SyncRho"]
+    H --> I["coarsen, optional buffer merge, OwnerMask de-dup, SumBoundary"]
+    B --> J["WarpXRegrid RemakeLevel"]
+    J --> K["remake fields, EB factory, spectral solvers, masks, diagnostics"]
+```
+
+`WarpXRegrid.cpp::RemakeLevel()` 则是这份合同在 load balance 后的重建端。它在 `BoxArray` 不变、`DistributionMapping` 改变时才工作；若 patch 拓扑真的改变，当前代码直接 `WARPX_ABORT_WITH_MESSAGE("RemakeLevel: to be implemented")`。对已有 `MultiFab`，局部 lambda 会读取旧对象的 `nGrowVect()`，再用新 `DistributionMapping` 调 `AllocInitMultiFab()`，这保证重建后字段仍保留原有 guard-cell 分配宽度。EB 路径进一步用 `guard_cells.ng_FieldSolver.max()` 创建 `EBFabFactory` 的几何 ghost 宽度，并重新初始化 EB grid data。PSATD 路径会把 real-space box 转成 cell-centered，按 `getngEB()` 增长后重建 fine/coarse spectral solver；buffer mask、accelerator lattice、diagnostic field functor 也都重新绑定到新的 `ba/dm`。
+
+这一层给 v0.11 的成书结论是：WarpX 的 AMR/load-balance 不是“换一个 MPI rank 分布”这么窄。它必须同时保持三类一致性：guard-cell 分配和阶段交换的一致性，PML/valid-domain field communication 与 source `SumBoundary` 语义的一致性，以及 regrid 后 field registry、EB factory、spectral solver、buffer mask、particle boundary buffer 和 diagnostics 的指针/布局一致性。后续讲 coarse-fine substitution 公式时，只有先承认这三层 runtime 合同，读者才不会把 AMR 误解成单纯的插值公式。
+
 但 `regrid` 仍然没有回答 refinement interface 最关键的物理问题：粒子在 coarse-fine 界面附近到底应该看哪套场，patch 内外源项的粗细解又如何合成。WarpX 在 `Docs/source/theory/amr.rst` 里给出的主公式是：
 
 $$

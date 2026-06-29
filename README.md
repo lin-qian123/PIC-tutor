@@ -5,6 +5,7 @@
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+- 2026-06-29：完成 `v0.5` 场求解器校准草稿，新增 `scripts/build_v05.py`，生成 `dist/pic-tutor-v0.5.md` 与 `dist/pic-tutor-v0.5.html`；冻结 `manuscript/VERSION-v0.4.md` 保持 v0.4 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.5。第 6 章已按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重核 `OneStep_nosub`、`EvolveB/E`、Yee/Nodal/CKC kernel、`PushPSATD`、`SpectralSolver`、`OneStep_JRhom`、PML damping/current 和 `Examples/Tests/pml` 验证入口，下一步继续收束 PSATD/Galilean/NCI/PML 文献闭环与第 7 章边界/AMR。
 - 2026-06-29：完成 `v0.4` 沉积与形函数校准草稿，新增 `scripts/build_v04.py`，生成 `dist/pic-tutor-v0.4.md` 与 `dist/pic-tutor-v0.4.html`；冻结 `manuscript/VERSION-v0.3.md` 保持 v0.3 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.4。第 5 章已按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重核 `ShapeFactors`、`DepositCurrent/DepositCharge`、Esirkepov/Villasenor/Vay 分派和 Langmuir / `vay_deposition` 验证入口，下一步继续收束第 6 章场求解器。
 - 2026-06-29：完成 `v0.3` 粒子推进器校准草稿，新增 `scripts/build_v03.py`，生成 `dist/pic-tutor-v0.3.md` 与 `dist/pic-tutor-v0.3.html`；冻结 `manuscript/VERSION-v0.2.md` 保持 v0.2 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.3。第 4 章已按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重核 `UpdateMomentumBoris/Vay/HigueraCary`、`PushSelector`、`PushPX` 与 `particle_pusher` 强验证入口，下一步继续收束第 5-6 章。
 - 2026-06-25：完成 `v0.2` 可审校草稿，新增 `scripts/build_v02.py`，生成 `dist/pic-tutor-v0.2.md` 与 `dist/pic-tutor-v0.2.html`；冻结 `manuscript/VERSION-v0.1.md` 保持 v0.1 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.2。第 2、3、3A 章已按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重核核心源码基线、路径和关键行号，v0.2 仍不是出版终稿，下一步应继续收束第 4-6 章。

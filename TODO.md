@@ -4278,7 +4278,7 @@
 - [x] 第 2、3、3A 章已同步 `8c488b1a9` 源码基线，修正旧 commit 和核心源码行号。
 - [x] 第 4 章粒子推进器已同步 `8c488b1a9` 源码基线，修正 Boris half push、主调用链和 `particle_pusher` 强验证入口。
 - [x] 第 5 章沉积与形函数已同步 `8c488b1a9` 源码基线，修正 `DepositCurrent/DepositCharge`、AMR buffer、Esirkepov/Villasenor/Vay 和验证入口。
-- [ ] 继续逐章同步第 6 章的 `8c488b1a9` 源码基线，修正旧 commit 和源码行号。
+- [x] 第 6 章场求解器已同步 `8c488b1a9` 源码基线，修正 `OneStep_nosub`、FDTD/PSATD/JRhom/PML 分派和验证入口。
 - [ ] 将 `manuscript/VERSION.md` 的章节状态表转成每章文件头状态块。
 - [ ] 为第 1-8 章各补至少一个“练习 / 复现实验 / 源码定位题”小节。
 - [ ] 为 `dist/pic-tutor-v0.1.html` 做一次人工阅读审校，清理重复段落、长表格和过长日志。
@@ -4291,14 +4291,14 @@
 - [x] 第 4 章粒子推进器已同步到 `8c488b1a9`，并把 `Examples/Tests/particle_pusher` 的强分析闭环写进正文。
 - [x] 第 5 章沉积与形函数已同步到 `8c488b1a9`，并把 `DepositCurrent/DepositCharge` 与 Langmuir / `vay_deposition` 验证入口写进正文。
 - [ ] 完成 Esirkepov / Villasenor-Buneman 文献 MinerU 笔记，并回填第 5 章理论小节。
-- [ ] 继续把第 6 章场求解器同步到 `8c488b1a9`，优先拆清 Yee/CKC/PSATD/JRhom/PML 的证据边界。
+- [x] 第 6 章场求解器已同步到 `8c488b1a9`，已拆清 Yee/CKC/PSATD/JRhom/PML 的证据边界。
 - [ ] 给第 2、3、3A 章各补一张读者侧流程图或表格，减少纯文字调用链负担。
 
 ## v0.3 后续收口队列
 
 - [ ] 手工通读 `dist/pic-tutor-v0.3.html`，优先检查第 4 章 Boris half-push 公式和源码块是否顺畅。
 - [x] 第 5 章沉积与形函数已同步到 `8c488b1a9`，已核 `DepositCurrent/DepositCharge` 和 Esirkepov/Villasenor/Vay 分支。
-- [ ] 继续把第 6 章场求解器同步到 `8c488b1a9`，优先核 Yee/CKC/PSATD/JRhom/PML 的当前文件路径和行号。
+- [x] 第 6 章场求解器已同步到 `8c488b1a9`，已核 Yee/CKC/PSATD/JRhom/PML 的当前文件路径和行号。
 - [ ] 把第 4 章过长的多物理 validation 小节拆成表格或附录，降低正文阅读负担。
 
 ## v0.4 后续收口队列
@@ -4306,7 +4306,14 @@
 - [ ] 手工通读 `dist/pic-tutor-v0.4.html`，重点检查第 5 章 long chapter 的小节顺序、重复段落和源码块长度。
 - [ ] 继续追 `ablastr::particles::deposit_charge(...)` 的实际模板位置，把 `ChargeDeposition` 普通路径补成逐行源码解释。
 - [ ] 完成 Esirkepov / Villasenor-Buneman 论文 MinerU 笔记，把 charge-conserving 推导从源码说明升级为文献闭环。
-- [ ] 继续把第 6 章场求解器同步到 `8c488b1a9`，优先核 Yee/CKC/PSATD/JRhom/PML 的当前文件路径和行号。
+- [x] 第 6 章场求解器已同步到 `8c488b1a9`，已核 Yee/CKC/PSATD/JRhom/PML 的当前文件路径和行号。
+
+## v0.5 后续收口队列
+
+- [ ] 手工通读 `dist/pic-tutor-v0.5.html`，重点检查第 6 章源码入口地图、PSATD/JRhom 长段和 PML 小节是否顺畅。
+- [ ] 完成 PSATD / Galilean PSATD / NCI / PML 核心论文 MinerU 笔记，把第 6 章从源码校准升级为文献闭环。
+- [ ] 给第 6 章补一张场求解器分派流程图和一张 FDTD/PSATD/PML/JRhom 对照表。
+- [ ] 继续把第 7 章边界、PML 与 AMR 同步到 `8c488b1a9`，优先核物理边界、field boundary、particle boundary、PML 与 AMR guard-cell 交界。
 
 ## 阻塞点与约束
 

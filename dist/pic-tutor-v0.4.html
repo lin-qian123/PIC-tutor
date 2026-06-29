@@ -949,7 +949,7 @@ id="toc-python-field-wrapper-的最小强回归">Python field wrapper
 A：符号表草稿</a></li>
 </ul>
 </nav>
-<!-- source: manuscript/VERSION.md -->
+<!-- source: manuscript/VERSION-v0.4.md -->
 <h1 id="pic-tutor-v0.4">PIC-tutor v0.4</h1>
 <p>版本日期：2026-06-29</p>
 <h2 id="定位">定位</h2>
@@ -11045,6 +11045,81 @@ boundary 处理路径；</li>
 </ol>
 <!-- source: manuscript/chapters/06-field-solvers.md -->
 <h1 id="电磁场求解器">6. 电磁场求解器</h1>
+<p>本章当前依据的 WarpX 源码版本是：</p>
+<ul>
+<li>只读源码路径：<code>../warpx</code></li>
+<li>分支：<code>pkuHEDPbranch</code></li>
+<li>commit：<code>8c488b1a9</code></li>
+</ul>
+<p>v0.5 校准说明：本章已把场推进主入口、FDTD stencil、PSATD/JRhom
+谱推进、PML damping 和 regression 入口重新核到上述
+checkout。旧版草稿里仍保留较长的理论和代码精读段落；若后续 WarpX
+更新，优先重核下表中的入口，再更新小节中的源码块。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>主题</th>
+<th>当前入口</th>
+<th>v0.5 证据边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主时间步分支</td>
+<td><code>../warpx/Source/Evolve/WarpXEvolve.cpp:564-641</code></td>
+<td><code>SyncCurrentAndRho()</code> 后，PSATD 走
+<code>PushPSATD()</code>，FDTD 走
+<code>EvolveB(dt/2) -&gt; EvolveE(dt) -&gt; EvolveB(dt/2)</code></td>
+</tr>
+<tr>
+<td>PSATD 推进</td>
+<td><code>../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:771-943</code></td>
+<td>current correction、Vay deposition、J/rho
+谱变换、<code>PSATDPushSpectralFields()</code>、PML push 和边界回填</td>
+</tr>
+<tr>
+<td>FDTD <code>B/E</code> 分派</td>
+<td><code>../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:945-1045</code></td>
+<td>level/patch type 分派到 <code>m_fdtd_solver_fp/cp</code>，并在 PML
+打开时调用 <code>EvolveBPML()</code> / <code>EvolveEPML()</code></td>
+</tr>
+<tr>
+<td>FDTD kernel</td>
+<td><code>../warpx/Source/FieldSolver/FiniteDifferenceSolver/EvolveB.cpp:53-225</code>
+与 <code>EvolveE.cpp:55-235</code></td>
+<td>Yee/Nodal/CKC 通过模板算法替换 <code>Upward/Downward</code>
+差分算子</td>
+</tr>
+<tr>
+<td>SpectralSolver 分派</td>
+<td><code>../warpx/Source/FieldSolver/SpectralSolver/SpectralSolver.cpp:26-143</code></td>
+<td>按 PML、comoving、Galilean、first-order JRhom、second-order JRhom
+选择具体 <code>PsatdAlgorithm*</code></td>
+</tr>
+<tr>
+<td>JRhom 外层循环</td>
+<td><code>../warpx/Source/Evolve/WarpXEvolve.cpp:843-1008</code></td>
+<td>粒子先完整推进，再按子区间多次沉积 J/rho、谱推进并回填平均场</td>
+</tr>
+<tr>
+<td>PML split fields</td>
+<td><code>../warpx/Source/BoundaryConditions/PMLComponent.H:10-19</code>、<code>WarpXEvolvePML.cpp:46-365</code>、<code>PML.cpp:582-1197</code></td>
+<td>split component 编号、damping 因子、电流 damping、常规场与 PML
+场交换</td>
+</tr>
+<tr>
+<td>验证入口</td>
+<td><code>../warpx/Examples/Tests/pml/</code></td>
+<td>Yee、CKC、PSATD、Galilean PSATD、RZ PSATD 和 restart PML
+regression</td>
+</tr>
+</tbody>
+</table>
 <p>电磁 PIC 的场求解器离散 Maxwell 方程。显式 FDTD 的经典代表是 Yee
 算法：电场和磁场在空间上交错，在时间上也交错。抽象地写，</p>
 <p><span class="math display">\[
@@ -11062,23 +11137,25 @@ t}{2}\nabla_h\times\mathbf{E}^{n+1}.
 \]</span></p>
 <p>这正对应 <code>WarpX::OneStep_nosub</code> 中的 FDTD
 路径：<code>EvolveB(dt/2)</code>、<code>EvolveE(dt)</code>、<code>EvolveB(dt/2)</code>。本机源码位置是
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp</code> 行 603-640。</p>
+<code>../warpx/Source/Evolve/WarpXEvolve.cpp:606-643</code>，其中三次核心推进调用位于
+<code>:612</code>、<code>:617</code> 和 <code>:628</code>。</p>
 <p>WarpX 的场推进封装在
 <code>../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp</code>。其中：</p>
 <ul>
-<li><code>WarpX::EvolveB</code> 行 946 起：按 level 和 patch type 调用
-FDTD solver 或 PML solver 的 B 更新。</li>
-<li><code>WarpX::EvolveE</code> 行 1000 起：按 level 和 patch type 调用
-E 更新，并处理 PML 和电荷守恒相关字段。</li>
-<li>文件前部包含 PSATD current correction、Vay deposition 和谱空间
-transform 辅助函数。</li>
+<li><code>WarpX::EvolveB</code> 在 <code>:945-996</code>：按 level 和
+patch type 调用 FDTD solver 或 PML solver 的 B 更新。</li>
+<li><code>WarpX::EvolveE</code> 在 <code>:999-1045</code> 起：按 level
+和 patch type 调用 E 更新，并处理 PML 和电荷守恒相关字段。</li>
+<li><code>WarpX::PushPSATD</code> 在 <code>:771-943</code>：处理 PSATD
+current correction、Vay deposition、谱空间 transform、PML push
+和边界回填。</li>
 </ul>
 <p>真正的 FDTD stencil 在
 <code>Source/FieldSolver/FiniteDifferenceSolver/</code> 中，例如
 <code>EvolveB.cpp</code>、<code>EvolveE.cpp</code>、<code>EvolveBPML.cpp</code>、<code>EvolveEPML.cpp</code>。当前已新增第一篇源码精读
 <code>notes/code-reading/fieldsolver/00-fieldsolver-dispatch.md</code>，开始逐块展开这些文件。</p>
 <p><code>WarpX::EvolveB()</code> 的顶层路由在
-<code>../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:946-990</code>：</p>
+<code>../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:945-996</code>：</p>
 <div class="sourceCode" id="cb175"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb175-1"><a href="#cb175-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
 <span id="cb175-2"><a href="#cb175-2" aria-hidden="true" tabindex="-1"></a>WarpX<span class="op">::</span>EvolveB <span class="op">(</span><span class="dt">int</span> lev<span class="op">,</span> PatchType <span class="dt">patch_type</span><span class="op">,</span> amrex<span class="op">::</span>Real a_dt<span class="op">,</span> SubcyclingHalf subcycling_half<span class="op">,</span> amrex<span class="op">::</span>Real start_time<span class="op">)</span></span>
@@ -11113,7 +11190,7 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb176-1"><a href="
 \]</span></p>
 <p><code>FiniteDifferenceSolver::EvolveE()</code> 的 Cartesian 主 kernel
 在
-<code>../warpx/Source/FieldSolver/FiniteDifferenceSolver/EvolveE.cpp:119-228</code>：</p>
+<code>../warpx/Source/FieldSolver/FiniteDifferenceSolver/EvolveE.cpp:119-235</code>：</p>
 <div class="sourceCode" id="cb177"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb177-1"><a href="#cb177-1" aria-hidden="true" tabindex="-1"></a>Ex<span class="op">(</span>i<span class="op">,</span> j<span class="op">,</span> k<span class="op">)</span> <span class="op">+=</span> c2 <span class="op">*</span> dt <span class="op">*</span> <span class="op">(</span></span>
 <span id="cb177-2"><a href="#cb177-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">-</span> T_Algo<span class="op">::</span>DownwardDz<span class="op">(</span>By<span class="op">,</span> coefs_z<span class="op">,</span> n_coefs_z<span class="op">,</span> i<span class="op">,</span> j<span class="op">,</span> k<span class="op">)</span></span>
@@ -11139,8 +11216,8 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb177-1"><a href="
 方程的线性部分可以在一个时间步内解析积分。这样可以显著降低数值色散，尤其适合激光等离子体加速、boosted
 frame 和长距离传播问题。代价是并行分解、边界、PML、current correction
 和多层 AMR 的实现更复杂。WarpX 的 <code>OneStep_nosub</code> 对 PSATD
-单独分支：行 575-602 调用 <code>PushPSATD</code>、PML damping
-和谱场回填。</p>
+单独分支：<code>../warpx/Source/Evolve/WarpXEvolve.cpp:578-604</code>
+调用 <code>PushPSATD</code>、PML damping 和谱场回填。</p>
 <p>电磁求解器的稳定性首先受 CFL 条件约束。对标准 Yee
 网格，时间步必须小于电磁波跨越网格的稳定上限。WarpX 输入中可通过
 <code>warpx.cfl</code> 控制 CFL 系数；Langmuir 示例使用
@@ -11406,7 +11483,8 @@ regularization 都写入公式和源码解读。</p>
 <p><span class="math display">\[
 C=\cos(k\Delta t),\qquad S=\sin(k\Delta t)
 \]</span></p>
-<p>的更新式。源码入口是 <code>WarpX::PushPSATD()</code>：</p>
+<p>的更新式。源码入口是 <code>WarpX::PushPSATD()</code>，当前位于
+<code>../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:771-943</code>：</p>
 <div class="sourceCode" id="cb196"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb196-1"><a href="#cb196-1" aria-hidden="true" tabindex="-1"></a><span class="co">// FFT of E and B</span></span>
 <span id="cb196-2"><a href="#cb196-2" aria-hidden="true" tabindex="-1"></a>PSATDForwardTransformEB<span class="op">();</span></span>
@@ -11431,8 +11509,22 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb197-1"><a href="
 <span id="cb197-5"><a href="#cb197-5" aria-hidden="true" tabindex="-1"></a><span class="op">::</span>PSATDCurrentCorrection<span class="op">(</span>finest_level<span class="op">,</span> spectral_solver_fp<span class="op">,</span> spectral_solver_cp<span class="op">);</span></span>
 <span id="cb197-6"><a href="#cb197-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb197-7"><a href="#cb197-7" aria-hidden="true" tabindex="-1"></a>PSATDBackwardTransformJ<span class="op">(</span>current_fp_string<span class="op">,</span> current_cp_string<span class="op">);</span></span></code></pre></div>
+<p>v0.5
+需要特别记住两个实现边界。第一，<code>fft_periodic_single_box</code>
+分支会在 <code>:791-837</code> 内完成 current correction 或 Vay
+deposition 的 k-space 处理；非 periodic single box 分支在
+<code>:839-899</code> 里还会在 correction/Vay 后调用
+<code>SyncCurrent()</code>、<code>SyncRho()</code> 或
+<code>SumBoundaryJ()</code>。第二，真正的场推进顺序是
+<code>PSATDForwardTransformEB()</code> <code>:901-902</code>、可选 RZ
+PML push <code>:904-907</code>、<code>F/G</code> transform
+<code>:909-911</code>、<code>PSATDPushSpectralFields()</code>
+<code>:913-914</code>、再做 <code>E/B/F/G</code> 反变换
+<code>:916-926</code>；最后才进入每层 PML push 和物理边界条件
+<code>:928-940</code>。</p>
 <p><code>SpectralSolver</code> 本身只负责建立 k-space、spectral field
-storage 和选择具体算法：</p>
+storage 和选择具体算法。当前分派入口是
+<code>../warpx/Source/FieldSolver/SpectralSolver/SpectralSolver.cpp:26-143</code>：</p>
 <div class="sourceCode" id="cb198"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb198-1"><a href="#cb198-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> SpectralKSpace k_space<span class="op">=</span> SpectralKSpace<span class="op">(</span>realspace_ba<span class="op">,</span> dm<span class="op">,</span> dx<span class="op">);</span></span>
 <span id="cb198-2"><a href="#cb198-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -11569,6 +11661,12 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb209-1"><a href="
 <span id="cb209-2"><a href="#cb209-2" aria-hidden="true" tabindex="-1"></a><span class="co">//               from p^{n-1/2} to p^{n+1/2}</span></span>
 <span id="cb209-3"><a href="#cb209-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="dt">bool</span> skip_deposition <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
 <span id="cb209-4"><a href="#cb209-4" aria-hidden="true" tabindex="-1"></a>PushParticlesandDeposit<span class="op">(</span>cur_time<span class="op">,</span> skip_deposition<span class="op">);</span></span></code></pre></div>
+<p>当前源码入口是
+<code>../warpx/Source/Evolve/WarpXEvolve.cpp:843-1008</code>。初始化阶段先把
+<code>E/B/F/G</code> 变换到谱空间 <code>:866-869</code>，按需清零平均场
+<code>:871-872</code>，再对 <code>rho</code> 做初始沉积和 FFT
+<code>:874-889</code>，并对非 constant <code>J</code> 做第一次沉积和 FFT
+<code>:892-905</code>。</p>
 <p>随后在每个子区间按时间依赖类型重新沉积 <code>J/rho</code>：</p>
 <div class="sourceCode" id="cb210"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb210-1"><a href="#cb210-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="dt">int</span> n_deposit <span class="op">=</span> WarpX<span class="op">::</span><span class="va">m_JRhom_subintervals</span><span class="op">;</span></span>
@@ -11650,6 +11748,12 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb216-1"><a href="
 <span id="cb216-5"><a href="#cb216-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb216-6"><a href="#cb216-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb216-7"><a href="#cb216-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span><span class="va">m_JRhom</span><span class="op">)</span> <span class="op">{</span> current_correction <span class="op">=</span> <span class="kw">false</span><span class="op">;</span> <span class="op">}</span></span></code></pre></div>
+<p>在当前 <code>OneStep_JRhom()</code> 中，二次 <code>J</code>
+的中点沉积位于
+<code>../warpx/Source/Evolve/WarpXEvolve.cpp:941-947</code>，<code>rho</code>
+的 old/new/mid 处理位于 <code>:949-975</code>，每个子区间的谱推进位于
+<code>:984-985</code>。若开启 time averaging，平均场在
+<code>:997-1007</code> 缩放并反变换回实空间。</p>
 <div class="sourceCode" id="cb217"><pre
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb217-1"><a href="#cb217-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span><span class="va">m_JRhom</span><span class="op">)</span></span>
 <span id="cb217-2"><a href="#cb217-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>

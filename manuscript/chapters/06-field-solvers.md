@@ -1,5 +1,24 @@
 # 6. 电磁场求解器
 
+本章当前依据的 WarpX 源码版本是：
+
+- 只读源码路径：`../warpx`
+- 分支：`pkuHEDPbranch`
+- commit：`8c488b1a9`
+
+v0.5 校准说明：本章已把场推进主入口、FDTD stencil、PSATD/JRhom 谱推进、PML damping 和 regression 入口重新核到上述 checkout。旧版草稿里仍保留较长的理论和代码精读段落；若后续 WarpX 更新，优先重核下表中的入口，再更新小节中的源码块。
+
+| 主题 | 当前入口 | v0.5 证据边界 |
+|---|---|---|
+| 主时间步分支 | `../warpx/Source/Evolve/WarpXEvolve.cpp:564-641` | `SyncCurrentAndRho()` 后，PSATD 走 `PushPSATD()`，FDTD 走 `EvolveB(dt/2) -> EvolveE(dt) -> EvolveB(dt/2)` |
+| PSATD 推进 | `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:771-943` | current correction、Vay deposition、J/rho 谱变换、`PSATDPushSpectralFields()`、PML push 和边界回填 |
+| FDTD `B/E` 分派 | `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:945-1045` | level/patch type 分派到 `m_fdtd_solver_fp/cp`，并在 PML 打开时调用 `EvolveBPML()` / `EvolveEPML()` |
+| FDTD kernel | `../warpx/Source/FieldSolver/FiniteDifferenceSolver/EvolveB.cpp:53-225` 与 `EvolveE.cpp:55-235` | Yee/Nodal/CKC 通过模板算法替换 `Upward/Downward` 差分算子 |
+| SpectralSolver 分派 | `../warpx/Source/FieldSolver/SpectralSolver/SpectralSolver.cpp:26-143` | 按 PML、comoving、Galilean、first-order JRhom、second-order JRhom 选择具体 `PsatdAlgorithm*` |
+| JRhom 外层循环 | `../warpx/Source/Evolve/WarpXEvolve.cpp:843-1008` | 粒子先完整推进，再按子区间多次沉积 J/rho、谱推进并回填平均场 |
+| PML split fields | `../warpx/Source/BoundaryConditions/PMLComponent.H:10-19`、`WarpXEvolvePML.cpp:46-365`、`PML.cpp:582-1197` | split component 编号、damping 因子、电流 damping、常规场与 PML 场交换 |
+| 验证入口 | `../warpx/Examples/Tests/pml/` | Yee、CKC、PSATD、Galilean PSATD、RZ PSATD 和 restart PML regression |
+
 电磁 PIC 的场求解器离散 Maxwell 方程。显式 FDTD 的经典代表是 Yee 算法：电场和磁场在空间上交错，在时间上也交错。抽象地写，
 
 $$
@@ -15,17 +34,17 @@ $$
 \mathbf{B}^{n+1}=\mathbf{B}^{n+1/2}-\frac{\Delta t}{2}\nabla_h\times\mathbf{E}^{n+1}.
 $$
 
-这正对应 `WarpX::OneStep_nosub` 中的 FDTD 路径：`EvolveB(dt/2)`、`EvolveE(dt)`、`EvolveB(dt/2)`。本机源码位置是 `../warpx/Source/Evolve/WarpXEvolve.cpp` 行 603-640。
+这正对应 `WarpX::OneStep_nosub` 中的 FDTD 路径：`EvolveB(dt/2)`、`EvolveE(dt)`、`EvolveB(dt/2)`。本机源码位置是 `../warpx/Source/Evolve/WarpXEvolve.cpp:606-643`，其中三次核心推进调用位于 `:612`、`:617` 和 `:628`。
 
 WarpX 的场推进封装在 `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp`。其中：
 
-- `WarpX::EvolveB` 行 946 起：按 level 和 patch type 调用 FDTD solver 或 PML solver 的 B 更新。
-- `WarpX::EvolveE` 行 1000 起：按 level 和 patch type 调用 E 更新，并处理 PML 和电荷守恒相关字段。
-- 文件前部包含 PSATD current correction、Vay deposition 和谱空间 transform 辅助函数。
+- `WarpX::EvolveB` 在 `:945-996`：按 level 和 patch type 调用 FDTD solver 或 PML solver 的 B 更新。
+- `WarpX::EvolveE` 在 `:999-1045` 起：按 level 和 patch type 调用 E 更新，并处理 PML 和电荷守恒相关字段。
+- `WarpX::PushPSATD` 在 `:771-943`：处理 PSATD current correction、Vay deposition、谱空间 transform、PML push 和边界回填。
 
 真正的 FDTD stencil 在 `Source/FieldSolver/FiniteDifferenceSolver/` 中，例如 `EvolveB.cpp`、`EvolveE.cpp`、`EvolveBPML.cpp`、`EvolveEPML.cpp`。当前已新增第一篇源码精读 `notes/code-reading/fieldsolver/00-fieldsolver-dispatch.md`，开始逐块展开这些文件。
 
-`WarpX::EvolveB()` 的顶层路由在 `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:946-990`：
+`WarpX::EvolveB()` 的顶层路由在 `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:945-996`：
 
 ```cpp
 void
@@ -64,7 +83,7 @@ $$
 \partial_t\mathbf{B}=-\nabla_h\times\mathbf{E}.
 $$
 
-`FiniteDifferenceSolver::EvolveE()` 的 Cartesian 主 kernel 在 `../warpx/Source/FieldSolver/FiniteDifferenceSolver/EvolveE.cpp:119-228`：
+`FiniteDifferenceSolver::EvolveE()` 的 Cartesian 主 kernel 在 `../warpx/Source/FieldSolver/FiniteDifferenceSolver/EvolveE.cpp:119-235`：
 
 ```cpp
 Ex(i, j, k) += c2 * dt * (
@@ -93,7 +112,7 @@ $$
 
 并由 `EvolveB.cpp` 中的 `+grad(G)` 反馈到磁场。
 
-PSATD 的思路不同：在 Fourier 空间中，Maxwell 方程的线性部分可以在一个时间步内解析积分。这样可以显著降低数值色散，尤其适合激光等离子体加速、boosted frame 和长距离传播问题。代价是并行分解、边界、PML、current correction 和多层 AMR 的实现更复杂。WarpX 的 `OneStep_nosub` 对 PSATD 单独分支：行 575-602 调用 `PushPSATD`、PML damping 和谱场回填。
+PSATD 的思路不同：在 Fourier 空间中，Maxwell 方程的线性部分可以在一个时间步内解析积分。这样可以显著降低数值色散，尤其适合激光等离子体加速、boosted frame 和长距离传播问题。代价是并行分解、边界、PML、current correction 和多层 AMR 的实现更复杂。WarpX 的 `OneStep_nosub` 对 PSATD 单独分支：`../warpx/Source/Evolve/WarpXEvolve.cpp:578-604` 调用 `PushPSATD`、PML damping 和谱场回填。
 
 电磁求解器的稳定性首先受 CFL 条件约束。对标准 Yee 网格，时间步必须小于电磁波跨越网格的稳定上限。WarpX 输入中可通过 `warpx.cfl` 控制 CFL 系数；Langmuir 示例使用 `warpx.cfl = 0.8`，uniform plasma 示例使用 `warpx.cfl = 1.0`。
 
@@ -369,7 +388,7 @@ $$
 C=\cos(k\Delta t),\qquad S=\sin(k\Delta t)
 $$
 
-的更新式。源码入口是 `WarpX::PushPSATD()`：
+的更新式。源码入口是 `WarpX::PushPSATD()`，当前位于 `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:771-943`：
 
 ```cpp
 // FFT of E and B
@@ -398,7 +417,9 @@ PSATDForwardTransformRho(rho_fp_string, rho_cp_string, 1, rho_new);
 PSATDBackwardTransformJ(current_fp_string, current_cp_string);
 ```
 
-`SpectralSolver` 本身只负责建立 k-space、spectral field storage 和选择具体算法：
+v0.5 需要特别记住两个实现边界。第一，`fft_periodic_single_box` 分支会在 `:791-837` 内完成 current correction 或 Vay deposition 的 k-space 处理；非 periodic single box 分支在 `:839-899` 里还会在 correction/Vay 后调用 `SyncCurrent()`、`SyncRho()` 或 `SumBoundaryJ()`。第二，真正的场推进顺序是 `PSATDForwardTransformEB()` `:901-902`、可选 RZ PML push `:904-907`、`F/G` transform `:909-911`、`PSATDPushSpectralFields()` `:913-914`、再做 `E/B/F/G` 反变换 `:916-926`；最后才进入每层 PML push 和物理边界条件 `:928-940`。
+
+`SpectralSolver` 本身只负责建立 k-space、spectral field storage 和选择具体算法。当前分派入口是 `../warpx/Source/FieldSolver/SpectralSolver/SpectralSolver.cpp:26-143`：
 
 ```cpp
 const SpectralKSpace k_space= SpectralKSpace(realspace_ba, dm, dx);
@@ -549,6 +570,8 @@ const bool skip_deposition = true;
 PushParticlesandDeposit(cur_time, skip_deposition);
 ```
 
+当前源码入口是 `../warpx/Source/Evolve/WarpXEvolve.cpp:843-1008`。初始化阶段先把 `E/B/F/G` 变换到谱空间 `:866-869`，按需清零平均场 `:871-872`，再对 `rho` 做初始沉积和 FFT `:874-889`，并对非 constant `J` 做第一次沉积和 FFT `:892-905`。
+
 随后在每个子区间按时间依赖类型重新沉积 `J/rho`：
 
 ```cpp
@@ -647,6 +670,8 @@ if (current_deposition_algo == CurrentDepositionAlgo::Vay) {
 
 if (m_JRhom) { current_correction = false; }
 ```
+
+在当前 `OneStep_JRhom()` 中，二次 `J` 的中点沉积位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:941-947`，`rho` 的 old/new/mid 处理位于 `:949-975`，每个子区间的谱推进位于 `:984-985`。若开启 time averaging，平均场在 `:997-1007` 缩放并反变换回实空间。
 
 ```cpp
 if (m_JRhom)

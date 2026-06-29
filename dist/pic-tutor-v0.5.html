@@ -243,23 +243,23 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">PIC 程序详解：从物理模型到 WarpX 源码</h1>
-<p class="subtitle">v0.3 粒子推进器校准草稿</p>
+<p class="subtitle">v0.5 场求解器校准草稿</p>
 <p class="author">PIC-tutor</p>
 <p class="date">2026-06-29</p>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#pic-tutor-v0.3" id="toc-pic-tutor-v0.3">PIC-tutor v0.3</a>
+<li><a href="#pic-tutor-v0.5" id="toc-pic-tutor-v0.5">PIC-tutor v0.5</a>
 <ul>
 <li><a href="#定位" id="toc-定位">定位</a></li>
 <li><a href="#源码基线" id="toc-源码基线">源码基线</a></li>
-<li><a href="#v0.3-章节范围" id="toc-v0.3-章节范围">v0.3
+<li><a href="#v0.5-章节范围" id="toc-v0.5-章节范围">v0.5
 章节范围</a></li>
-<li><a href="#v0.3-已完成的增量" id="toc-v0.3-已完成的增量">v0.3
+<li><a href="#v0.5-已完成的增量" id="toc-v0.5-已完成的增量">v0.5
 已完成的增量</a></li>
 <li><a href="#成书前必须补齐"
 id="toc-成书前必须补齐">成书前必须补齐</a></li>
-<li><a href="#v0.3-构建方式" id="toc-v0.3-构建方式">v0.3
+<li><a href="#v0.5-构建方式" id="toc-v0.5-构建方式">v0.5
 构建方式</a></li>
 </ul></li>
 <li><a href="#写作说明" id="toc-写作说明">0. 写作说明</a></li>
@@ -949,22 +949,24 @@ id="toc-python-field-wrapper-的最小强回归">Python field wrapper
 A：符号表草稿</a></li>
 </ul>
 </nav>
-<!-- source: manuscript/VERSION-v0.3.md -->
-<h1 id="pic-tutor-v0.3">PIC-tutor v0.3</h1>
+<!-- source: manuscript/VERSION.md -->
+<h1 id="pic-tutor-v0.5">PIC-tutor v0.5</h1>
 <p>版本日期：2026-06-29</p>
 <h2 id="定位">定位</h2>
-<p><code>v0.3</code> 是 <code>PIC-tutor</code>
-的粒子推进器校准版。它继承 <code>v0.2</code> 的第一卷范围，并把第 4 章
-<code>粒子推进器</code> 从长草稿推进到当前源码可复查状态。</p>
-<p>本版的重点不是扩写新章节，而是修正一个会影响读者判断的实现差异：当前
-WarpX 的 Boris half momentum push 已经使用半角关系重标定磁旋转
-<code>t</code>，不是旧草稿里“直接把磁旋转系数减半”的写法。v0.3
-同步了这一点，并重新校准
-<code>PushParticlesandDeposit() -&gt; MultiParticleContainer::Evolve() -&gt; PhysicalParticleContainer::Evolve() -&gt; PushPX() -&gt; doParticleMomentumPush()</code>
-的关键行号。</p>
-<p>本版仍不是出版终稿。它的目标是把第 2、3、3A、4
-章先变成能按当前源码逐段复查的骨架；第 5、6
-章仍是下一批需要同步的核心章节。</p>
+<p><code>v0.5</code> 是 <code>PIC-tutor</code> 的场求解器校准版。它继承
+<code>v0.4</code> 的第一卷范围，并把第 6 章 <code>电磁场求解器</code>
+从旧源码长草稿推进到当前源码可复查状态。</p>
+<p>本版的重点仍不是扩写新章节，而是把第 6
+章的源码证据从早期行号校准到当前的场推进主线：<code>WarpX::OneStep_nosub()</code>
+分出 FDTD 和 PSATD 两条路径，<code>WarpXPushFieldsEM.cpp</code> 承接
+<code>EvolveB/E</code>、<code>PushPSATD</code> 和 PML
+推进，<code>FiniteDifferenceSolver</code> 承载 Yee/Nodal/CKC 的模板
+stencil，<code>SpectralSolver</code> 分派普通、Galilean、comoving、PML
+与 JRhom PSATD 算法。v0.5 也把 <code>OneStep_JRhom()</code>、PML
+damping/copyJ 和 pml regression 入口补进第 6 章的证据地图。</p>
+<p>本版仍不是出版终稿。它的目标是把第 2、3、3A、4、5、6
+章先变成能按当前源码逐段复查的骨架；下一批需要继续收束第 6
+章的文献闭环、图表表达，以及第 7 章边界、PML 与 AMR。</p>
 <h2 id="源码基线">源码基线</h2>
 <ul>
 <li>本书项目仓库：<code>/Volumes/PHILIPS/programs/PIC/PIC-tutor</code></li>
@@ -972,10 +974,10 @@ WarpX 的 Boris half momentum push 已经使用半角关系重标定磁旋转
 <li>当前 WarpX 分支：<code>pkuHEDPbranch</code></li>
 <li>当前 WarpX commit：<code>8c488b1a9</code></li>
 </ul>
-<p>v0.3 只修改 <code>PIC-tutor</code> 书稿项目，不修改
+<p>v0.5 只修改 <code>PIC-tutor</code> 书稿项目，不修改
 <code>../warpx</code> 原仓库。章节里的源码行号按上述 checkout
 复核；后续若 WarpX 更新，必须重新校准行号后再发布新版。</p>
-<h2 id="v0.3-章节范围">v0.3 章节范围</h2>
+<h2 id="v0.5-章节范围">v0.5 章节范围</h2>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -987,7 +989,7 @@ WarpX 的 Boris half momentum push 已经使用半角关系重标定磁旋转
 <tr>
 <th>章节</th>
 <th>文件</th>
-<th>v0.3 状态</th>
+<th>v0.5 状态</th>
 <th>下一步缺口</th>
 </tr>
 </thead>
@@ -1031,14 +1033,16 @@ WarpX 的 Boris half momentum push 已经使用半角关系重标定磁旋转
 <tr>
 <td>沉积与形函数</td>
 <td><code>chapters/05-deposition-shapes.md</code></td>
-<td>沿用 v0.1 长草稿</td>
-<td>Esirkepov、Villasenor-Buneman 论文仍需 MinerU 闭环</td>
+<td>已做 v0.4 源码校准</td>
+<td>Esirkepov、Villasenor-Buneman 论文仍需 MinerU
+闭环，<code>ChargeDeposition</code> 的 ABLASTR 模板还需继续逐行展开</td>
 </tr>
 <tr>
 <td>场求解器</td>
 <td><code>chapters/06-field-solvers.md</code></td>
-<td>沿用 v0.1 长草稿</td>
-<td>PSATD、PML、implicit/hybrid 验证小节需回填</td>
+<td>已做 v0.5 源码校准</td>
+<td>PSATD/Galilean/NCI/PML 论文仍需 MinerU 闭环，读者侧流程图和
+validation 表格还需补齐</td>
 </tr>
 <tr>
 <td>边界、PML 与 AMR</td>
@@ -1066,21 +1070,30 @@ WarpX 的 Boris half momentum push 已经使用半角关系重标定磁旋转
 </tr>
 </tbody>
 </table>
-<h2 id="v0.3-已完成的增量">v0.3 已完成的增量</h2>
+<h2 id="v0.5-已完成的增量">v0.5 已完成的增量</h2>
 <ul>
-<li>冻结 <code>manuscript/VERSION-v0.2.md</code>，避免重建 v0.2 时误用
-v0.3 版本说明。</li>
-<li>新增 v0.3 当前版本说明，并把构建输出切到
-<code>dist/pic-tutor-v0.3.md</code> 与
-<code>dist/pic-tutor-v0.3.html</code>。</li>
-<li>把第 4 章绑定到当前 WarpX commit <code>8c488b1a9</code>。</li>
-<li>更新 <code>UpdateMomentumBoris.H</code> 的源码节选和行号，补清当前
-half push 的半角重标定实现。</li>
-<li>复核并更新
-<code>PushSelector.H</code>、<code>UpdateMomentumVay.H</code>、<code>UpdateMomentumHigueraCary.H</code>、<code>WarpXEvolve.cpp</code>、<code>MultiParticleContainer.cpp</code>、<code>PhysicalParticleContainer.cpp</code>
-相关关键行号。</li>
-<li>把 <code>Examples/Tests/particle_pusher</code> 明确保留为本章
-Higuera-Cary force-free relativistic push 的本地强验证入口。</li>
+<li>冻结 <code>manuscript/VERSION-v0.4.md</code>，避免重建 v0.4 时误用
+v0.5 版本说明。</li>
+<li>新增 v0.5 当前版本说明，并把构建输出切到
+<code>dist/pic-tutor-v0.5.md</code> 与
+<code>dist/pic-tutor-v0.5.html</code>。</li>
+<li>把第 6 章绑定到当前 WarpX commit <code>8c488b1a9</code>。</li>
+<li>更新 <code>WarpX::OneStep_nosub()</code> 的 FDTD 与 PSATD
+分支行号，明确
+<code>SyncCurrentAndRho()</code>、<code>CopyJPML()</code>、<code>DampJPML()</code>、<code>PushPSATD()</code>、<code>DampPML()</code>
+和 guard-cell 回填的相对顺序。</li>
+<li>更新 <code>WarpX::EvolveB()</code> / <code>WarpX::EvolveE()</code>
+的当前分派路径，并重新标定
+<code>FiniteDifferenceSolver::EvolveB/E()</code> 的 Yee/Nodal/CKC 模板
+kernel 行号。</li>
+<li>更新 <code>WarpX::PushPSATD()</code> 的 current correction、Vay
+deposition、spectral transform、PML push 和物理边界回填路径。</li>
+<li>补入 <code>SpectralSolver</code> 的算法分派地图，区分
+PML、comoving、Galilean、first-order JRhom 与 second-order JRhom。</li>
+<li>补入 <code>WarpX::OneStep_JRhom()</code> 的多次沉积、rho/J
+谱变换和平均场回填路径。</li>
+<li>把 <code>Examples/Tests/pml</code> 的 Yee/CKC/PSATD/Galilean/RZ PML
+regression 入口写入第 6 章验证边界。</li>
 </ul>
 <h2 id="成书前必须补齐">成书前必须补齐</h2>
 <ul>
@@ -1093,18 +1106,18 @@ commit，并避免同章混用未说明的历史行号。</li>
 中的资料条目回填为正文叙述。</li>
 <li>按 <code>docs/paper-reading-workflow.md</code> 完成核心论文 MinerU
 转换和中文讲解笔记。</li>
-<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.3 仍只保证
+<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.5 仍只保证
 Markdown/HTML。</li>
 <li>对 public GitHub 仓库中的 PDF 和运行产物做版权与体积审计。</li>
 </ul>
-<h2 id="v0.3-构建方式">v0.3 构建方式</h2>
+<h2 id="v0.5-构建方式">v0.5 构建方式</h2>
 <p>生成合订 Markdown 和 HTML 预览：</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v03.py</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v05.py</span></code></pre></div>
 <p>生成的文件：</p>
 <ul>
-<li><code>dist/pic-tutor-v0.3.md</code></li>
-<li><code>dist/pic-tutor-v0.3.html</code>（若本机存在
+<li><code>dist/pic-tutor-v0.5.md</code></li>
+<li><code>dist/pic-tutor-v0.5.html</code>（若本机存在
 <code>pandoc</code>）</li>
 </ul>
 <!-- source: manuscript/chapters/00-preface.md -->

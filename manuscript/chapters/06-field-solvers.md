@@ -683,6 +683,70 @@ $$
 
 Godfrey 2014、Lehe 2016、Kirchen 2016 合起来形成一个清楚的策略谱系。Godfrey 论文讲 fixed-grid PSATD 中如何用数字滤波、三次插值、current scaling 和时间步选择降低 NCI；Lehe 论文讲 Galilean PSATD 如何通过移动坐标/源项表示，在 $v_{gal}\approx v_0$ 时从表示层面消除均匀漂移 NCI；Kirchen 论文讲这个 Galilean 表示如何落到 boosted-frame LPA workflow 并保持回变换后的物理量一致。对应到 WarpX，`nci_psatd_stability` 的 `warpx.use_filter = 1`、`psatd.current_correction`、`psatd.do_time_averaging` 和 `psatd.JRhom` 应被写成不同机制的 regression 入口，而不是同一个“稳定化开关”的不同名字。
 
+### 6.6.4 v0.20 源码闭环：WarpX PSATD/NCI 机制对照表
+
+v0.20 继续把上一节的策略谱系落回 WarpX 源码。结论先写清楚：当前 WarpX 中和 NCI 稳定性相关的 filter、current correction、finite-order PSATD、Galilean representation 和 JRhom 是五组不同机制；其中源码里叫 `NCIGodfreyFilter` 的路径也不是 `nci_psatd_stability` 输入卡里常见的 `warpx.use_filter = 1`。
+
+| 机制 | 触发入口 | 当前源码证据 | 实际操作 | 和 Godfrey 2014 的关系 |
+|---|---|---|---|---|
+| 实空间 bilinear/binomial-like filter | 普通 Cartesian explicit/PSATD 路径中 `warpx.use_filter = 1`，默认值由 `WarpX.cpp` 根据 `evolve_scheme` 和几何决定 | `Source/WarpX.cpp:825-842` 读取 `warpx.use_filter`、`warpx.use_filter_compensation`、`warpx.filter_npass_each_dir`；`Source/Initialization/WarpXInitData.cpp:1203-1208` 初始化 `bilinear_filter`；`Source/Filter/BilinearFilter.cpp:24-87` 构造逐方向 stencil；`Source/Filter/Filter.cpp:38-130` 应用 tensor-product stencil；`Source/Parallelization/WarpXComm.cpp:1479-1496` 和 `1677-1693` 对 current/rho 做 filter 与边界求和 | 多次卷积中心权重 `0.5`、相邻权重 `0.25` 的对称 1D stencil，再按方向组合成多维 filter；`filter_npass_each_dir` 决定 stencil 宽度 | 属于 Godfrey 论文中的 digital filtering/smoothing 家族，可以压制高 $k$ alias，但不是论文中的 current scaling 因子 $\zeta$ |
+| RZ PSATD k-space binomial filter | RZ/RCYLINDER/RSPHERE 几何且 PSATD 时，`WarpX.cpp` 把 `use_filter` 转成 `use_kspace_filter` | `Source/WarpX.cpp:853-858` 在 RZ PSATD 下设置 `use_kspace_filter = use_filter` 并关闭实空间 `use_filter`；`Source/WarpX.cpp:3123-3125` 调用 `SpectralSolver::InitFilter()`；`Source/FieldSolver/SpectralSolver/SpectralBinomialFilter.cpp:18-38` 构造 k-space filter；`Source/FieldSolver/SpectralSolver/SpectralFieldDataRZ.cpp:800-848` 初始化并应用 radial/z filter；`Source/FieldSolver/WarpXPushFieldsEM.cpp:514-538` 与 `612-625` 在 spectral J/rho 上应用 | 对每个方向使用 $1-\sin^2(k\Delta/2)$ 的幂次 filter，补偿打开时再乘一个低阶补偿因子 | 仍是 spectral filtering 家族；和 Cartesian 实空间 bilinear filter 入口相同，但实现位置、作用空间和 RZ 语义不同 |
+| FDTD Godfrey gather filter | `use_fdtd_nci_corr`，不是 `warpx.use_filter` | `Source/Initialization/WarpXInitData.cpp:1170-1198` 初始化两组 `NCIGodfreyFilter`；`Source/Filter/NCIGodfreyFilter.cpp:29-138` 固定 z 向 5 点 stencil 并按 gather 类型查表插值；`Source/Particles/PhysicalParticleContainer.cpp:552-563` 与 `896-970` 在粒子 gather 前过滤场；`Source/Parallelization/GuardCellManager.cpp:355-365` 为 gather 增加 z 向 guard cells | 对 field gather 使用 Godfrey 表系数构造的 z 向 5 点 filter，分别作用于 `Ex/Ey/Bz` 和 `Bx/By/Ez` 组合 | 这是 FDTD NCI corrector 的 gather-side filter；不能把它误读成 PSATD `nci_psatd_stability` 中 `warpx.use_filter = 1` 的 filter profile |
+
+这张表给本章一个新的写作规则：以后看到 `filter` 必须先问它是实空间 source filter、RZ spectral filter，还是 FDTD gather-side Godfrey filter。三者都能和 NCI 稳定性有关，但它们不共享同一条源码路径，也不该在书中被统一写成“打开 Godfrey filter”。
+
+`psatd.current_correction` 的边界也需要更精确。WarpX 在 `Source/WarpX.cpp:1653-1682` 根据 current deposition、divE cleaning 和用户输入决定默认值，并在 `Source/FieldSolver/WarpXPushFieldsEM.cpp:791-805`、`840-866` 把 J、rho 变换到 spectral 空间后调用 `PSATDCurrentCorrection()`。在标准连续性投影分支，核心形式可以写成
+
+$$
+\mathbf{J}_{corr}
+=
+\mathbf{J}
+-
+\frac{
+\mathbf{k}\cdot\mathbf{J}
+- i(\rho^{n+1}-\rho^n)/\Delta t
+}{
+\mathbf{k}\cdot\mathbf{k}
+}
+\mathbf{k}.
+$$
+
+`Source/FieldSolver/SpectralSolver/SpectralAlgorithms/PsatdAlgorithmJRhomSecondOrder.cpp:544-610` 中的 JRhom second-order current correction 就是这个投影式结构，并且源码断言它只在 `J` 常数、`rho` 线性时间依赖的组合下实现。Galilean 与 comoving 分支仍是连续性投影，只是连续性方程本身包含移动坐标相位。`Source/FieldSolver/SpectralSolver/SpectralAlgorithms/PsatdAlgorithmGalilean.cpp:634-731` 中，当 $\mathbf{k}_c\cdot\mathbf{v}_{gal}\ne0$ 时，源码先构造
+
+$$
+\rho^n_{gal}=\rho^n \exp(i\,\mathbf{k}_c\cdot\mathbf{v}_{gal}\Delta t),
+$$
+
+再用
+
+$$
+\mathbf{k}\cdot\mathbf{J}
+-
+\frac{\mathbf{k}_c\cdot\mathbf{v}_{gal}\,(\rho^{n+1}-\rho^n_{gal})}
+{1-\exp(i\,\mathbf{k}_c\cdot\mathbf{v}_{gal}\Delta t)}
+$$
+
+替换标准分支里的连续性残差。`Source/FieldSolver/SpectralSolver/SpectralAlgorithms/PsatdAlgorithmComoving.cpp:418-503` 也沿用相同思想，只是速度来自 comoving formulation。由此可见，`psatd.current_correction` 是让 spectral current 满足离散连续性/Gauss-law 约束的 projection，不是 Godfrey 2014 中为降低 NCI 增长率引入的 $\zeta(k)$ current scaling。
+
+finite-order PSATD 是另一条独立轴线。`Source/WarpX.cpp:1557-1590` 读取 `psatd.nox/noy/noz`，字符串 `"inf"` 会转成 `-1`，但源码随后断言：如果不是 `psatd.periodic_single_box_fft = 1`，每个方向的 FFT order 必须是正整数。因此普通 multi-box PSATD 不能写成“无限阶全局谱求解器”。`Source/WarpX.cpp:3164-3182` 把 `nox_fft/noy_fft/noz_fft`、`periodic_single_box`、`update_with_rho`、`fft_do_time_averaging`、solution type 和 J/rho time dependency 传给 `SpectralSolver`；`Source/FieldSolver/SpectralSolver/SpectralSolver.cpp:60-107` 再按 PML、comoving、Galilean、first-order JRhom、second-order standard/JRhom 的优先级选择具体 algorithm。
+
+这也解释了 `Examples/Tests/nci_psatd_stability` 的输入卡为什么不能只按 “PSATD” 一个词归类。`inputs_base_2d` 打开 `warpx.use_filter = 1`，并设置 `psatd.nox/noy/noz = 16`；`inputs_base_3d` 同样打开 `warpx.use_filter = 1`，但有限阶为 `8`。这些 regression 不是无限阶 periodic single-box PSATD 的泛化代表，而是有限阶 PSATD、filter、Galilean/current-correction/JRhom 分支的组合测试。
+
+| regression / analysis | 代表输入 | 脚本判据 | 本章应如何表述 |
+|---|---|---|---|
+| `analysis_galilean.py` 普通 Galilean / averaged Galilean | `inputs_test_2d_galilean_psatd*`、`inputs_test_3d_galilean_psatd*`、`inputs_test_rz_galilean_psatd*` | 读取最终 plotfile 的 `Ex/Ey/Ez`，用电场能量除以脚本中的不稳定参考能量，并要求低于维度/分支容差 | 这是 NCI 抑制的强 regression gate，但主判据是能量比，不是色散关系重建 |
+| `analysis_galilean.py` current-correction 分支 | `inputs_test_2d_galilean_psatd_current_correction`、`inputs_test_3d_galilean_psatd_current_correction_psb` 等 | 除电场能量比外，还读取 `divE` 和 `rho`，检查 `max|divE-rho/eps0|` 的相对误差 | 这条 gate 同时覆盖稳定性和 Gauss-law/continuity projection；它不能证明 Godfrey $\zeta(k)$ current scaling 已实现 |
+| `analysis_psatd_CC1.py` | `inputs_test_3d_uniform_plasma_psatd_JRhom_CC1` | 电场能量除以 `66e6` 后要求 `< 1e-8` | 这是 JRhom CC1 的 NCI 能量 gate，没有额外 charge-conservation assert |
+| checksum-only RZ JRhom | `test_rz_psatd_JRhom_LL2` | CMake 中 `analysis=OFF`，只走 checksum | 只能写成 workflow/output regression，不能写成强 NCI 物理论证 |
+
+把这些源码和 regression 合起来，v0.20 对 Godfrey 2014 策略谱系的落点是：
+
+1. filtering/smoothing 在 WarpX 中至少有实空间 bilinear filter 和 RZ spectral binomial filter 两条实现；
+2. 源码名为 `NCIGodfreyFilter` 的路径属于 FDTD gather-side NCI corrector，不能直接外推到 PSATD filter；
+3. `psatd.current_correction` 是连续性投影，不是 Godfrey $\zeta(k)$ current scaling；
+4. finite-order PSATD 由 `psatd.nox/noy/noz` 和 `periodic_single_box_fft` 共同限定，NCI tests 中常见的是有限阶分支；
+5. Galilean PSATD 是表示层面的移动坐标策略，JRhom 是源项时间积分策略，二者和 filter/current correction 可以组合出不同 regression 入口，但不能合并成同一个物理机制。
+
 ## 6.7 PSATD-JRhom：多次源项沉积与一阶/二阶谱更新
 
 `notes/code-reading/fieldsolver/07-psatd-jrhom.md` 把 PSATD-JRhom 从主循环到谱算法做了第一轮完整精读。物理上，JRhom 处理的是一个 PIC 时间步内 `J` 和 `rho` 不一定满足“电流常量、电荷线性”的假设。WarpX 使用 `psatd.JRhom` 字符串指定时间依赖：

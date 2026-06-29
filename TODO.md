@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-06-29：完成 `v0.31` comoving PSATD regression analysis 方案版：冻结 `manuscript/VERSION-v0.30.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.31，新增 `scripts/build_v31.py`，生成 `dist/pic-tutor-v0.31.md` 与 `dist/pic-tutor-v0.31.html`；第 6 章新增 `6.8.3 v0.31 comoving PSATD regression analysis 方案`，新增 `notes/code-reading/fieldsolver/22-psatd-comoving-regression-analysis-plan.md`，把 `test_2d_comoving_psatd_hybrid` 当前 `analysis=OFF` 的证据边界、现有 `Ex/Ey/Ez/B/J/rho` 输出可支持的 finite/energy/spike gate、缺少 `divE` 时不能声称 charge-conservation analysis，以及后续 CMake wiring 草案拆成可执行方案。
 - [x] 2026-06-29：完成 `v0.30` comoving PSATD 系数与验证边界版：冻结 `manuscript/VERSION-v0.29.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.30，新增 `scripts/build_v30.py`，生成 `dist/pic-tutor-v0.30.md` 与 `dist/pic-tutor-v0.30.html`；第 6 章新增 `6.8.2 v0.30 comoving PSATD 系数与验证边界`，新增 `notes/code-reading/fieldsolver/21-psatd-comoving-coefficients.md`，把 regular-domain `v_comoving` 分派优先级、direct deposition/update-with-rho 限制、`X1-X4/Theta2` 一般分支与特殊极限、comoving current correction 和 `test_2d_comoving_psatd_hybrid` 的 checksum-only 验证边界拆成源码图谱。
 - [x] 2026-06-29：完成 `v0.29` RZ/Galilean RZ PSATD 系数边界版：冻结 `manuscript/VERSION-v0.28.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.29，新增 `scripts/build_v29.py`，生成 `dist/pic-tutor-v0.29.md` 与 `dist/pic-tutor-v0.29.html`；第 6 章新增 `6.8.1 v0.29 RZ/Galilean RZ PSATD 系数边界`，新增 `notes/code-reading/fieldsolver/20-psatd-rz-galilean-rz-coefficients.md`，把 standard RZ `C/S_ck/X1-X3/X5-X6`、Galilean RZ `X1-X4/Theta2/T_rho`、`Ep/Em` 字段布局、linear-J time averaging 限制、RZ current correction 和防混写边界拆成源码图谱。
 - [x] 2026-06-29：完成 `v0.28` PSATD-JRhom `Y1-Y8` 系数闭环版：冻结 `manuscript/VERSION-v0.27.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.28，新增 `scripts/build_v28.py`，生成 `dist/pic-tutor-v0.28.md` 与 `dist/pic-tutor-v0.28.html`；第 6 章新增 `6.7.1 v0.28 JRhom second-order Y1-Y8 系数的源码公式闭环`，新增 `notes/code-reading/fieldsolver/19-psatd-jrhom-y-coefficients.md`，把 Cartesian `PsatdAlgorithmJRhomSecondOrder.cpp` 的 `Y1-Y8`、`a/b/c` 多项式源项、零模处理、ordinary `E/B/F` 推进、time-averaged field 累计和防混写边界拆成源码公式图谱。
@@ -24,7 +25,7 @@
 - [x] 2026-06-29：完成 `v0.9` 边界 regression 判据索引草稿：冻结 `manuscript/VERSION-v0.8.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.9，新增 `scripts/build_v09.py`，生成 `dist/pic-tutor-v0.9.md` 与 `dist/pic-tutor-v0.9.html`；第 7 章已按当前 `../warpx` 的 `Examples/Tests/*/CMakeLists.txt`、输入卡和 `analysis*.py` 新增统一 regression 入口索引表，明确区分强 analysis、restart 一致性和 checksum-only 证据。
 - [x] 2026-06-29：完成 `v0.8` 边界与 AMR 源码入口校准草稿：冻结 `manuscript/VERSION-v0.7.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.8，新增 `scripts/build_v08.py`，生成 `dist/pic-tutor-v0.8.md` 与 `dist/pic-tutor-v0.8.html`；第 7 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 增补边界/PML/guard-cell/AMR 源码入口地图，串联 `WarpX::MakeWarpX()`、`FieldBoundaries`、`ParticleBoundaries`、`WarpXFieldBoundaries`、`WarpXComm`、`GuardCellManager`、`WarpXRegrid` 和 boundary scraping 入口。
 
-## v0.30 后续收口队列
+## v0.31 后续收口队列
 
 - [x] 人工审读并修正 `dist/pic-tutor-v0.12.html` 暴露出的第 7 章 HTML 排版风险：宽表格、Mermaid 图、公式、inline code 和长源码路径需要项目级样式兜底。
 - [x] 继续细核 `GuardCellManager.cpp`、`WarpXComm.cpp`、`WarpXRegrid.cpp` 的 AMR/regrid/guard-cell 路径，把 v0.8 入口地图扩成可讲解的正文段落。
@@ -52,7 +53,8 @@
 - [x] 为 v0.28 继续完成第 6 章 PSATD 系数体系：拆 JRhom `Y1-Y8` 或 RZ/Galilean RZ 系数边界，避免把不同 algorithm 的同名系数混写。
 - [x] 为 v0.29 继续完成第 6 章 PSATD 系数体系：拆 RZ/Galilean RZ 或 comoving 系数边界，避免把不同 algorithm 的同名系数混写。
 - [x] 为 v0.30 继续完成第 6 章 PSATD 系数体系：拆 comoving 或 RZ validation 边界，避免把不同 algorithm 的同名系数混写。
-- [ ] 为 v0.31 继续推进第 6/7 章验证强度：优先把 `test_2d_comoving_psatd_hybrid` 从 checksum-only 边界扩成可解释的 NCI/field-energy analysis 方案，或继续压实 RZ PSATD validation 的强判据。
+- [x] 为 v0.31 继续推进第 6/7 章验证强度：优先把 `test_2d_comoving_psatd_hybrid` 从 checksum-only 边界扩成可解释的 NCI/field-energy analysis 方案，或继续压实 RZ PSATD validation 的强判据。
+- [ ] 为 v0.32 继续推进验证强度：把 v0.31 的 `analysis_comoving.py` 方案细化为 WarpX 侧 patch 草案所需的 reference 标定步骤，或转向 RZ PSATD validation 强判据表。
 - [ ] 继续完成 LeeCPC2015 全文闭环：通过机构访问、OSTI 可用全文、eScholarship 可访问副本或 AIP 可访问 PDF 取得授权 PDF，执行 MinerU 转换，补逐段中文讲解和图片，并把 pseudo-spectral PML 反射率/效率公式与 WarpX 当前 `PsatdAlgorithmPml.cpp` 做逐项对应。
 
 - [x] 2026-06-29：完成 `v0.4` 沉积与形函数校准草稿：冻结 `manuscript/VERSION-v0.3.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.4，新增 `scripts/build_v04.py`，生成 `dist/pic-tutor-v0.4.md` 与 `dist/pic-tutor-v0.4.html`；第 5 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `ShapeFactors`、`DepositCurrent/DepositCharge`、Esirkepov/Villasenor/Vay 分派和 Langmuir / `vay_deposition` 验证入口。

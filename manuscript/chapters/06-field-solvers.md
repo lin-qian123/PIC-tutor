@@ -1705,6 +1705,96 @@ fields(i,j,k,Idx.Jx_mid) = Jx
 
 v0.30 之后，第 6 章的 PSATD 系数边界已经形成一套明确分层：Cartesian Galilean `X1-X4`、average-field `Psi/Y`、JRhom `Y1-Y8`、RZ/Galilean RZ `X/Theta/T_rho`、comoving `X1-X4/Theta2` 和 PML `C1-C25` 都按 algorithm class 分开；后续工作应从“验证强度”继续推进，而不是继续把同名符号并表。
 
+### 6.8.3 v0.31 comoving PSATD regression analysis 方案
+
+v0.31 把 `notes/code-reading/fieldsolver/22-psatd-comoving-regression-analysis-plan.md` 补成 `test_2d_comoving_psatd_hybrid` 的 analysis 升级方案。当前 CMake 注册是：
+
+```cmake
+add_warpx_test(
+    test_2d_comoving_psatd_hybrid
+    2
+    2
+    inputs_test_2d_comoving_psatd_hybrid
+    OFF
+    "analysis_default_regression.py --path diags/diag1000400"
+    OFF
+)
+```
+
+这表示它现在只有 checksum 自动消费者。输入卡本身已经是很明确的 boosted-frame hybrid comoving producer：
+
+```ini
+algo.maxwell_solver = psatd
+algo.current_deposition = direct
+psatd.use_default_v_comoving = 1
+psatd.current_correction = 0
+warpx.grid_type = hybrid
+warpx.gamma_boost = 13.
+warpx.do_moving_window = 1
+warpx.use_filter = 1
+diag1.fields_to_plot = Ex Ey Ez Bx By Bz jx jy jz rho
+```
+
+因此 v0.31 的第一条边界是：现有输出能支持 `Ex/Ey/Ez/Bx/By/Bz/jx/jy/jz/rho` 的 analysis，但不能直接支持 `divE-rho/epsilon0` 的 charge-conservation gate，因为 `divE` 没有输出。
+
+可直接落地的第一阶段 analysis 应包括三类检查。第一，finite field sanity：所有输出字段都必须有限，避免 checksum 之外的 NaN/Inf 被掩盖：
+
+```python
+for name in ["Ex", "Ey", "Ez", "Bx", "By", "Bz", "jx", "jy", "jz", "rho"]:
+    arr = all_data["boxlib", name].squeeze().v
+    assert np.all(np.isfinite(arr))
+```
+
+第二，沿用 Galilean analysis 的电场能量 proxy：
+
+$$
+U_E=\sum \frac{\epsilon_0}{2}(E_x^2+E_y^2+E_z^2).
+$$
+
+但 `energy_ref_comoving` 不能借用 `analysis_galilean.py` 中的 Galilean reference；它必须来自 comoving reference run 或 CI baseline 的明确记录。初版脚本可以写成：
+
+```python
+energy = np.sum(scc.epsilon_0 / 2 * (Ex**2 + Ey**2 + Ez**2))
+err_energy = energy / energy_ref_comoving
+assert err_energy < tol_energy
+```
+
+第三，增加局部异常 spike sanity：
+
+$$
+R_E=\frac{\max |\mathbf E|}{\mathrm{p99}(|\mathbf E|)+\delta}.
+$$
+
+这个 ratio 可以发现单点谱异常或边界异常，但仍只是异常探测，不是 NCI 增长率拟合。
+
+如果后续要把这个 regression 推到更强的 Gauss-law 证据，输入卡必须先增加：
+
+```ini
+diag1.fields_to_plot = Ex Ey Ez Bx By Bz jx jy jz rho divE
+```
+
+然后才能定义
+
+$$
+\epsilon_G=
+\frac{\|\nabla\cdot\mathbf E-\rho/\epsilon_0\|_\infty}
+{\max(\|\nabla\cdot\mathbf E\|_\infty,\|\rho/\epsilon_0\|_\infty,\delta)}.
+$$
+
+由于当前 comoving 输入卡设置 `psatd.current_correction=0`，这条 Gauss-law gate 的语义应写成“末态 Gauss-law drift diagnostic”，不能写成“current-correction correctness”。
+
+v0.31 对读者的实际增量是把“checksum-only”拆成一条可执行的升级路线：
+
+| 层级 | 当前状态 | 可支持的说法 |
+|---|---|---|
+| checksum | 已存在 | 末态 plotfile 与 baseline 一致 |
+| finite field sanity | 可直接实现 | 捕捉 NaN/Inf，不是物理强判据 |
+| electric energy ceiling | 需要 reference 标定 | 可作为稳定性 proxy，不是增长率拟合 |
+| spike ratio | 需要 reference 标定 | 捕捉局部异常，不替代能量判据 |
+| Gauss-law drift | 需要输出 `divE` | 验证末态 Gauss-law drift，需和 `current_correction=0` 语义分开 |
+
+所以后续真正提交 WarpX 侧 patch 时，最小完整包应包含 `analysis_comoving.py`、CMake wiring、必要时的 `divE` 输出变更，以及 `energy_ref/tol_energy/spike_ratio_ref` 的 reference 来源说明。
+
 ## 6.9 静电与静磁求解器
 
 绑定精读笔记：`notes/code-reading/fieldsolver/09-electrostatic-magnetostatic.md`。

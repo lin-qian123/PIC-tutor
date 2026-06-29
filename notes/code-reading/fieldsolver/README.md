@@ -38,7 +38,8 @@
 20. `19-psatd-jrhom-y-coefficients.md`：Cartesian `PsatdAlgorithmJRhomSecondOrder.cpp` 中 `Y1-Y8`、多项式源项积分、零模处理、ordinary field push 和 time-averaged field 累计路径。
 21. `20-psatd-rz-galilean-rz-coefficients.md`：standard RZ `C/S_ck/X1-X3/X5-X6`、Galilean RZ `X1-X4/Theta2/T_rho`、`Ep/Em` 字段布局和 RZ current-correction 边界。
 22. `21-psatd-comoving-coefficients.md`：regular-domain comoving PSATD 的分派优先级、`X1-X4/Theta2` 系数、current correction、参数限制和 checksum-only regression 边界。
-23. implicit solver 的接口细化和正文持续回填。
+23. `22-psatd-comoving-regression-analysis-plan.md`：`test_2d_comoving_psatd_hybrid` 的现有 checksum 边界、可直接实现的 field-energy sanity analysis、需要 `divE` 输出后才能做的 Gauss-law diagnostic 和 CMake patch 草案。
+24. implicit solver 的接口细化和正文持续回填。
 
 ## 输出目标
 
@@ -64,6 +65,7 @@
 - `19-psatd-jrhom-y-coefficients.md`：已建立，覆盖 Cartesian `PsatdAlgorithmJRhomSecondOrder.cpp` 的 `Y1-Y8` 源码公式、零模处理、`a/b/c` 多项式源项、ordinary `E/B/F` 推进、time-averaged field 累计和防混写边界。
 - `20-psatd-rz-galilean-rz-coefficients.md`：已建立，覆盖 standard RZ `C/S_ck/X1-X3/X5-X6`、Galilean RZ `X1-X4/Theta2/T_rho`、`Ep/Em` 字段布局、linear-J time averaging 限制、RZ current correction 和防混写边界。
 - `21-psatd-comoving-coefficients.md`：已建立，覆盖 regular-domain comoving PSATD 的 `v_comoving` 分派优先级、direct deposition/update-with-rho 限制、`X1-X4/Theta2` 一般分支与特殊极限、comoving current correction 和 `test_2d_comoving_psatd_hybrid` 的 checksum-only 验证边界。
+- `22-psatd-comoving-regression-analysis-plan.md`：已建立，覆盖 `test_2d_comoving_psatd_hybrid` 当前 `analysis=OFF` 的证据边界、现有 `Ex/Ey/Ez/B/J/rho` 输出可支持的 finite/energy/spike gate、缺少 `divE` 时不能声称 charge-conservation analysis，以及后续 CMake wiring 草案。
 - 重写 `manuscript/chapters/06-field-solvers.md`。
 
 ## 验证线索

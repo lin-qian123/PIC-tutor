@@ -5,6 +5,7 @@
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+- 2026-06-29：完成 `v0.13` 第 7 章 HTML 审读与排版收口版，新增 `scripts/build_v13.py`，生成 `dist/pic-tutor-v0.13.md` 与 `dist/pic-tutor-v0.13.html`；冻结 `manuscript/VERSION-v0.12.md` 保持 v0.12 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.13。新增 `manuscript/assets/pic-tutor-html-style.html`，让技术书稿预览具备更宽正文、横向可滚动表格、可断行长路径、可滚动 Mermaid/源码块和打印视图样式。
 - 2026-06-29：完成 `v0.12` AMR coarse-fine 图形化证据草稿，新增 `scripts/build_v12.py`，生成 `dist/pic-tutor-v0.12.md` 与 `dist/pic-tutor-v0.12.html`；冻结 `manuscript/VERSION-v0.11.md` 保持 v0.11 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.12。第 7 章新增 `7.7.2 v0.12 coarse-fine substitution 与 transition zone 的证据图`，用 Mermaid 图串联 `F(s)-F(c)`、`E/Bfield_aux`、`E/Bfield_cax`、`current/rho_buf` 和 `PartitionParticlesInBuffers()`，并新增 AMR regression 证据等级表。
 - 2026-06-29：完成 `v0.11` AMR guard-cell/regrid 闭环草稿，新增 `scripts/build_v11.py`，生成 `dist/pic-tutor-v0.11.md` 与 `dist/pic-tutor-v0.11.html`；冻结 `manuscript/VERSION-v0.10.md` 保持 v0.10 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.11。第 7 章新增 `7.7.1 v0.11 guard-cell、通信和 regrid 的闭环`，把 `GuardCellManager` 的分配/阶段交换预算、`WarpXComm` 的 field/source 通信语义和 `WarpXRegrid::RemakeLevel()` 的 load-balance 后重建路径串成正文。
 - 2026-06-29：完成 `v0.10` 边界强 analysis 路径扩写草稿，新增 `scripts/build_v10.py`，生成 `dist/pic-tutor-v0.10.md` 与 `dist/pic-tutor-v0.10.html`；冻结 `manuscript/VERSION-v0.9.md` 保持 v0.9 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.10。第 7 章新增 `7.5.2 v0.10 四条强 analysis 路径的正文化`，把 particle domain boundary、PEC/PMC 场反射、particles in PML 和 RZ EB scraping 从索引表扩写成正文级判据说明，下一步继续细核 AMR/regrid/guard-cell 和更多边界索引条目。

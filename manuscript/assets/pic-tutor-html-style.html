@@ -1,0 +1,156 @@
+<style>
+  :root {
+    --pic-text: #1d242b;
+    --pic-muted: #59636f;
+    --pic-border: #d7dde4;
+    --pic-soft: #f5f7fa;
+    --pic-code-bg: #f3f6f8;
+  }
+
+  html {
+    background: #ffffff;
+  }
+
+  body {
+    max-width: 76rem;
+    padding: 2.5rem clamp(1rem, 4vw, 4rem);
+    color: var(--pic-text);
+    line-height: 1.72;
+    overflow-wrap: anywhere;
+  }
+
+  header {
+    max-width: 54rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.28;
+  }
+
+  p,
+  blockquote,
+  ul,
+  ol {
+    max-width: 54rem;
+  }
+
+  #TOC {
+    max-width: 64rem;
+    margin: 0 auto 3rem auto;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--pic-border);
+    background: var(--pic-soft);
+  }
+
+  a {
+    text-underline-offset: 0.18em;
+  }
+
+  code {
+    padding: 0.08em 0.22em;
+    border-radius: 4px;
+    background: var(--pic-code-bg);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  pre {
+    max-width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--pic-border);
+    border-radius: 6px;
+    background: var(--pic-code-bg);
+    overflow-x: auto;
+    overflow-y: hidden;
+    line-height: 1.45;
+  }
+
+  pre code {
+    padding: 0;
+    background: transparent;
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  pre.mermaid,
+  div.sourceCode,
+  .sourceCode {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  table {
+    width: max-content;
+    max-width: 100%;
+    margin: 1.25rem 0;
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    line-height: 1.52;
+  }
+
+  th,
+  td {
+    min-width: 10rem;
+    max-width: 26rem;
+    padding: 0.45rem 0.65rem;
+    vertical-align: top;
+    border: 1px solid var(--pic-border);
+  }
+
+  th {
+    background: var(--pic-soft);
+  }
+
+  td code,
+  th code {
+    font-size: 0.84em;
+  }
+
+  blockquote {
+    color: var(--pic-muted);
+    border-left-color: var(--pic-border);
+  }
+
+  @media (max-width: 760px) {
+    body {
+      padding: 1rem;
+      line-height: 1.66;
+    }
+
+    table {
+      font-size: 0.86rem;
+    }
+
+    th,
+    td {
+      min-width: 12rem;
+    }
+  }
+
+  @media print {
+    body {
+      max-width: none;
+      padding: 0;
+    }
+
+    #TOC {
+      border: 0;
+      background: transparent;
+    }
+
+    table,
+    pre {
+      white-space: normal;
+      overflow: visible;
+    }
+  }
+</style>

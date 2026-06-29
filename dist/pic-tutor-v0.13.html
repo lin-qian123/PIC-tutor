@@ -236,6 +236,162 @@
     code span.vs { color: #4070a0; } /* VerbatimString */
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
+  <style>
+    :root {
+      --pic-text: #1d242b;
+      --pic-muted: #59636f;
+      --pic-border: #d7dde4;
+      --pic-soft: #f5f7fa;
+      --pic-code-bg: #f3f6f8;
+    }
+
+    html {
+      background: #ffffff;
+    }
+
+    body {
+      max-width: 76rem;
+      padding: 2.5rem clamp(1rem, 4vw, 4rem);
+      color: var(--pic-text);
+      line-height: 1.72;
+      overflow-wrap: anywhere;
+    }
+
+    header {
+      max-width: 54rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      line-height: 1.28;
+    }
+
+    p,
+    blockquote,
+    ul,
+    ol {
+      max-width: 54rem;
+    }
+
+    #TOC {
+      max-width: 64rem;
+      margin: 0 auto 3rem auto;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--pic-border);
+      background: var(--pic-soft);
+    }
+
+    a {
+      text-underline-offset: 0.18em;
+    }
+
+    code {
+      padding: 0.08em 0.22em;
+      border-radius: 4px;
+      background: var(--pic-code-bg);
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    pre {
+      max-width: 100%;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--pic-border);
+      border-radius: 6px;
+      background: var(--pic-code-bg);
+      overflow-x: auto;
+      overflow-y: hidden;
+      line-height: 1.45;
+    }
+
+    pre code {
+      padding: 0;
+      background: transparent;
+      white-space: pre;
+      overflow-wrap: normal;
+      word-break: normal;
+    }
+
+    pre.mermaid,
+    div.sourceCode,
+    .sourceCode {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: max-content;
+      max-width: 100%;
+      margin: 1.25rem 0;
+      display: block;
+      overflow-x: auto;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      line-height: 1.52;
+    }
+
+    th,
+    td {
+      min-width: 10rem;
+      max-width: 26rem;
+      padding: 0.45rem 0.65rem;
+      vertical-align: top;
+      border: 1px solid var(--pic-border);
+    }
+
+    th {
+      background: var(--pic-soft);
+    }
+
+    td code,
+    th code {
+      font-size: 0.84em;
+    }
+
+    blockquote {
+      color: var(--pic-muted);
+      border-left-color: var(--pic-border);
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 1rem;
+        line-height: 1.66;
+      }
+
+      table {
+        font-size: 0.86rem;
+      }
+
+      th,
+      td {
+        min-width: 12rem;
+      }
+    }
+
+    @media print {
+      body {
+        max-width: none;
+        padding: 0;
+      }
+
+      #TOC {
+        border: 0;
+        background: transparent;
+      }
+
+      table,
+      pre {
+        white-space: normal;
+        overflow: visible;
+      }
+    }
+  </style>
   <script
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
   type="text/javascript"></script>
@@ -243,24 +399,24 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">PIC 程序详解：从物理模型到 WarpX 源码</h1>
-<p class="subtitle">v0.12 AMR coarse-fine 图形化证据草稿</p>
+<p class="subtitle">v0.13 第 7 章 HTML 审读与排版收口版</p>
 <p class="author">PIC-tutor</p>
 <p class="date">2026-06-29</p>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#pic-tutor-v0.12" id="toc-pic-tutor-v0.12">PIC-tutor
-v0.12</a>
+<li><a href="#pic-tutor-v0.13" id="toc-pic-tutor-v0.13">PIC-tutor
+v0.13</a>
 <ul>
 <li><a href="#定位" id="toc-定位">定位</a></li>
 <li><a href="#源码基线" id="toc-源码基线">源码基线</a></li>
-<li><a href="#v0.12-章节范围" id="toc-v0.12-章节范围">v0.12
+<li><a href="#v0.13-章节范围" id="toc-v0.13-章节范围">v0.13
 章节范围</a></li>
-<li><a href="#v0.12-已完成的增量" id="toc-v0.12-已完成的增量">v0.12
+<li><a href="#v0.13-已完成的增量" id="toc-v0.13-已完成的增量">v0.13
 已完成的增量</a></li>
 <li><a href="#成书前必须补齐"
 id="toc-成书前必须补齐">成书前必须补齐</a></li>
-<li><a href="#v0.12-构建方式" id="toc-v0.12-构建方式">v0.12
+<li><a href="#v0.13-构建方式" id="toc-v0.13-构建方式">v0.13
 构建方式</a></li>
 </ul></li>
 <li><a href="#写作说明" id="toc-写作说明">0. 写作说明</a></li>
@@ -971,24 +1127,22 @@ id="toc-python-field-wrapper-的最小强回归">Python field wrapper
 A：符号表草稿</a></li>
 </ul>
 </nav>
-<!-- source: manuscript/VERSION-v0.12.md -->
-<h1 id="pic-tutor-v0.12">PIC-tutor v0.12</h1>
+<!-- source: manuscript/VERSION.md -->
+<h1 id="pic-tutor-v0.13">PIC-tutor v0.13</h1>
 <p>版本日期：2026-06-29</p>
 <h2 id="定位">定位</h2>
-<p><code>v0.12</code> 是 <code>PIC-tutor</code> 的 AMR coarse-fine
-图形化证据版。它继承 <code>v0.11</code> 的 guard-cell/regrid
-闭环，并继续把第 7 章里的 coarse-fine substitution、transition
-zone、<code>WarpXComm_K.H</code> 点值 kernel 和 regression
-证据组织成一张读者侧流程图与一张证据等级表。</p>
-<p>本版的重点是把“公式、源码和测试”三条线对齐：<code>F(a)=F(r)+I[F(s)-F(c)]</code>
-对应 <code>UpdateAuxilaryData*()</code> 和
-<code>warpx_interp()</code>；transition zone 对应
-<code>gather/current buffer masks</code> 与
-<code>PartitionParticlesInBuffers()</code>；MR regression 则必须区分强
-analysis、组合路径残余场检查和 checksum-only workflow。</p>
-<p>本版仍不是出版终稿。它把第 7 章 AMR 粗细界面解释推进到可审校图表，但
-PSATD/Galilean/NCI/PML 文献闭环、HTML
-宽表格人工审读、更多边界索引条目正文和 PDF 出版流程仍需继续推进。</p>
+<p><code>v0.13</code> 是 <code>PIC-tutor</code> 的第 7 章 HTML
+审读与排版收口版。它继承 <code>v0.12</code> 的 AMR coarse-fine
+图形化证据，不新增物理结论，而是把成书预览中最容易影响审校的表格、长源码路径、代码块和
+Mermaid 图容器先收成稳定样式。</p>
+<p>本版的重点是把“内容已写出”推进到“可以在浏览器里审读”：第 7 章的
+regression 索引表和 AMR 证据等级表要能横向滚动，长路径与 inline code
+要能断行，Mermaid 源码块要保留横向滚动而不压坏正文宽度，正文栏宽要比
+Pandoc 默认 <code>36em</code> 更适合技术书稿。</p>
+<p>本版仍不是出版终稿。它解决 Markdown/HTML
+预览层的第一轮排版问题；PSATD/Galilean/NCI/PML
+文献闭环、更多边界索引条目正文、transition-zone 专门 validation、PDF
+出版流程和版权/体积审计仍需继续推进。</p>
 <h2 id="源码基线">源码基线</h2>
 <ul>
 <li>本书项目仓库：<code>/Volumes/PHILIPS/programs/PIC/PIC-tutor</code></li>
@@ -996,11 +1150,11 @@ PSATD/Galilean/NCI/PML 文献闭环、HTML
 <li>当前 WarpX 分支：<code>pkuHEDPbranch</code></li>
 <li>当前 WarpX commit：<code>8c488b1a9</code></li>
 </ul>
-<p>v0.12 只修改 <code>PIC-tutor</code> 书稿项目，不修改
-<code>../warpx</code> 原仓库。章节里的源码路径和 regression 入口按上述
-checkout 复核；后续若 WarpX
-更新，必须重新校准源码行号和测试入口后再发布新版。</p>
-<h2 id="v0.12-章节范围">v0.12 章节范围</h2>
+<p>v0.13 只修改 <code>PIC-tutor</code> 书稿项目，不修改
+<code>../warpx</code> 原仓库。本版没有重核新的 WarpX
+源码行号；章节里的源码路径和 regression 入口沿用 v0.12 复核结果。后续若
+WarpX 更新，必须重新校准源码行号和测试入口后再发布新版。</p>
+<h2 id="v0.13-章节范围">v0.13 章节范围</h2>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -1012,7 +1166,7 @@ checkout 复核；后续若 WarpX
 <tr>
 <th>章节</th>
 <th>文件</th>
-<th>v0.12 状态</th>
+<th>v0.13 状态</th>
 <th>下一步缺口</th>
 </tr>
 </thead>
@@ -1065,14 +1219,13 @@ checkout 复核；后续若 WarpX
 <td><code>chapters/06-field-solvers.md</code></td>
 <td>已做 v0.7 验证入口表</td>
 <td>PSATD/Galilean/NCI/PML 论文仍需 MinerU 闭环，HTML
-宽表格还需人工审读</td>
+宽表格还需继续审读</td>
 </tr>
 <tr>
 <td>边界、PML 与 AMR</td>
 <td><code>chapters/07-boundaries-amr.md</code></td>
-<td>已做 v0.12 AMR coarse-fine 图形化证据</td>
-<td>需要人工审读 HTML 图表，并继续补更专门的 transition-zone
-validation</td>
+<td>已做 v0.13 HTML 可读性收口</td>
+<td>需要继续补更专门的 transition-zone validation</td>
 </tr>
 <tr>
 <td>诊断、验证与案例</td>
@@ -1094,28 +1247,23 @@ validation</td>
 </tr>
 </tbody>
 </table>
-<h2 id="v0.12-已完成的增量">v0.12 已完成的增量</h2>
+<h2 id="v0.13-已完成的增量">v0.13 已完成的增量</h2>
 <ul>
-<li>冻结 <code>manuscript/VERSION-v0.11.md</code>，避免重建 v0.11 时误用
-v0.12 版本说明。</li>
-<li>新增 <code>scripts/build_v12.py</code>，生成
-<code>dist/pic-tutor-v0.12.md</code> 与
-<code>dist/pic-tutor-v0.12.html</code>。</li>
-<li>把 <code>scripts/build_v11.py</code> 改为读取冻结的
-<code>manuscript/VERSION-v0.11.md</code>，保持 v0.11
+<li>冻结 <code>manuscript/VERSION-v0.12.md</code>，避免重建 v0.12 时误用
+v0.13 版本说明。</li>
+<li>新增 <code>scripts/build_v13.py</code>，生成
+<code>dist/pic-tutor-v0.13.md</code> 与
+<code>dist/pic-tutor-v0.13.html</code>。</li>
+<li>把 <code>scripts/build_v12.py</code> 改为读取冻结的
+<code>manuscript/VERSION-v0.12.md</code>，保持 v0.12
 版本说明可复现。</li>
-<li>在第 7 章新增
-<code>7.7.2 v0.12 coarse-fine substitution 与 transition zone 的证据图</code>。</li>
-<li>用 Mermaid 图把
-<code>F(s) -&gt; F(s)-F(c) -&gt; F(a)</code>、<code>E/Bfield_aux</code>、<code>E/Bfield_cax</code>、<code>current/rho_buf</code>
-和 <code>PartitionParticlesInBuffers()</code> 串成读者侧流程。</li>
-<li>把 transition zone 明确写成 <code>nfine_gather</code> 与
-<code>nfine_deposit</code> 两个不同分界，而不是单个“是否在 fine patch
-内”的布尔条件。</li>
-<li>新增 AMR regression 证据等级表，区分 <code>langmuir</code> MR 强
-analysis、<code>particles_in_pml_mr</code>
-组合路径残余场强检查、<code>subcycling_mr</code> checksum-only
-workflow。</li>
+<li>新增 <code>manuscript/assets/pic-tutor-html-style.html</code>，由
+v0.13 构建脚本通过 Pandoc <code>--include-in-header</code> 注入
+HTML。</li>
+<li>扩大 HTML 正文最大宽度，并给 TOC、表格、代码块、inline code、Mermaid
+源码块和打印视图提供项目级样式。</li>
+<li>保持第 7 章 v0.12 的 AMR coarse-fine
+物理内容不变，只把浏览器审读体验先稳定下来。</li>
 </ul>
 <h2 id="成书前必须补齐">成书前必须补齐</h2>
 <ul>
@@ -1128,18 +1276,18 @@ commit，并避免同章混用未说明的历史行号。</li>
 中的资料条目回填为正文叙述。</li>
 <li>按 <code>docs/paper-reading-workflow.md</code> 完成核心论文 MinerU
 转换和中文讲解笔记。</li>
-<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.12 仍只保证
+<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.13 仍只保证
 Markdown/HTML。</li>
 <li>对 public GitHub 仓库中的 PDF 和运行产物做版权与体积审计。</li>
 </ul>
-<h2 id="v0.12-构建方式">v0.12 构建方式</h2>
+<h2 id="v0.13-构建方式">v0.13 构建方式</h2>
 <p>生成合订 Markdown 和 HTML 预览：</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v12.py</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v13.py</span></code></pre></div>
 <p>生成的文件：</p>
 <ul>
-<li><code>dist/pic-tutor-v0.12.md</code></li>
-<li><code>dist/pic-tutor-v0.12.html</code>（若本机存在
+<li><code>dist/pic-tutor-v0.13.md</code></li>
+<li><code>dist/pic-tutor-v0.13.html</code>（若本机存在
 <code>pandoc</code>）</li>
 </ul>
 <!-- source: manuscript/chapters/00-preface.md -->

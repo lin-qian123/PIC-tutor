@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Build the PIC-tutor v0.12 Markdown manuscript and optional HTML preview."""
+"""Build the PIC-tutor v0.13 Markdown manuscript and optional HTML preview."""
 
 from __future__ import annotations
 
@@ -10,11 +10,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
-OUTPUT_MD = DIST / "pic-tutor-v0.12.md"
-OUTPUT_HTML = DIST / "pic-tutor-v0.12.html"
+OUTPUT_MD = DIST / "pic-tutor-v0.13.md"
+OUTPUT_HTML = DIST / "pic-tutor-v0.13.html"
+HTML_STYLE = ROOT / "manuscript" / "assets" / "pic-tutor-html-style.html"
 
 PARTS = [
-    ROOT / "manuscript" / "VERSION-v0.12.md",
+    ROOT / "manuscript" / "VERSION.md",
     ROOT / "manuscript" / "chapters" / "00-preface.md",
     ROOT / "manuscript" / "chapters" / "01-kinetic-models.md",
     ROOT / "manuscript" / "chapters" / "02-pic-loop.md",
@@ -40,7 +41,7 @@ def build_markdown() -> None:
     DIST.mkdir(exist_ok=True)
     front_matter = """---
 title: "PIC 程序详解：从物理模型到 WarpX 源码"
-subtitle: "v0.12 AMR coarse-fine 图形化证据草稿"
+subtitle: "v0.13 第 7 章 HTML 审读与排版收口版"
 author: "PIC-tutor"
 date: "2026-06-29"
 lang: zh-CN
@@ -65,6 +66,8 @@ def build_html() -> bool:
             "--standalone",
             "--toc",
             "--mathjax",
+            "--include-in-header",
+            str(HTML_STYLE),
             "--metadata",
             "title=PIC 程序详解：从物理模型到 WarpX 源码",
             "-o",

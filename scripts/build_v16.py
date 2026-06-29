@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Build the PIC-tutor v0.15 Markdown manuscript and optional HTML preview."""
+"""Build the PIC-tutor v0.16 Markdown manuscript and optional HTML preview."""
 
 from __future__ import annotations
 
@@ -10,12 +10,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
-OUTPUT_MD = DIST / "pic-tutor-v0.15.md"
-OUTPUT_HTML = DIST / "pic-tutor-v0.15.html"
+OUTPUT_MD = DIST / "pic-tutor-v0.16.md"
+OUTPUT_HTML = DIST / "pic-tutor-v0.16.html"
 HTML_STYLE = ROOT / "manuscript" / "assets" / "pic-tutor-html-style.html"
 
 PARTS = [
-    ROOT / "manuscript" / "VERSION-v0.15.md",
+    ROOT / "manuscript" / "VERSION.md",
     ROOT / "manuscript" / "chapters" / "00-preface.md",
     ROOT / "manuscript" / "chapters" / "01-kinetic-models.md",
     ROOT / "manuscript" / "chapters" / "02-pic-loop.md",
@@ -41,7 +41,7 @@ def build_markdown() -> None:
     DIST.mkdir(exist_ok=True)
     front_matter = """---
 title: "PIC 程序详解：从物理模型到 WarpX 源码"
-subtitle: "v0.15 transition-zone 测试草案版"
+subtitle: "v0.16 transition-zone regression patch 计划版"
 author: "PIC-tutor"
 date: "2026-06-29"
 lang: zh-CN

@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-06-29：完成 `v0.16` transition-zone regression patch 计划版：冻结 `manuscript/VERSION-v0.15.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.16，新增 `scripts/build_v16.py`，生成 `dist/pic-tutor-v0.16.md` 与 `dist/pic-tutor-v0.16.html`；第 7 章新增 `7.7.5 v0.16 transition-zone regression patch 计划`，把后续 WarpX 侧实现拆成 `TransitionZoneRoutes` reduced diagnostic、`PhysicalParticleContainer::Evolve()` route-count hook、可选 mask output、`amr_transition_zone` 输入卡/analysis 和 CMake wiring 五块。
 - [x] 2026-06-29：完成 `v0.15` transition-zone 测试草案版：冻结 `manuscript/VERSION-v0.14.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.15，新增 `scripts/build_v15.py`，生成 `dist/pic-tutor-v0.15.md` 与 `dist/pic-tutor-v0.15.html`；第 7 章新增 `7.7.4 v0.15 dedicated transition-zone 测试草案`，写出 dedicated regression family、最小 2D MR 输入卡骨架、粒子分区预期表、现有 diagnostics 可观测边界和测试专用 instrumentation 建议。
 - [x] 2026-06-29：完成 `v0.14` transition-zone validation 线索版：冻结 `manuscript/VERSION-v0.13.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.14，新增 `scripts/build_v14.py`，生成 `dist/pic-tutor-v0.14.md` 与 `dist/pic-tutor-v0.14.html`；第 7 章新增 `7.7.3 v0.14 transition-zone validation 应该直接检查什么`，把 startup buffer allocation、mask topology、particle partition、gather/deposition routing 和 coarse-level sync 写成 validation checklist。
 - [x] 2026-06-29：完成 `v0.13` 第 7 章 HTML 审读与排版收口版：冻结 `manuscript/VERSION-v0.12.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.13，新增 `scripts/build_v13.py`，生成 `dist/pic-tutor-v0.13.md` 与 `dist/pic-tutor-v0.13.html`；新增 `manuscript/assets/pic-tutor-html-style.html`，改善宽表格、长源码路径、inline code、Mermaid 源码块、TOC 和打印视图的浏览器可读性。
@@ -9,7 +10,7 @@
 - [x] 2026-06-29：完成 `v0.9` 边界 regression 判据索引草稿：冻结 `manuscript/VERSION-v0.8.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.9，新增 `scripts/build_v09.py`，生成 `dist/pic-tutor-v0.9.md` 与 `dist/pic-tutor-v0.9.html`；第 7 章已按当前 `../warpx` 的 `Examples/Tests/*/CMakeLists.txt`、输入卡和 `analysis*.py` 新增统一 regression 入口索引表，明确区分强 analysis、restart 一致性和 checksum-only 证据。
 - [x] 2026-06-29：完成 `v0.8` 边界与 AMR 源码入口校准草稿：冻结 `manuscript/VERSION-v0.7.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.8，新增 `scripts/build_v08.py`，生成 `dist/pic-tutor-v0.8.md` 与 `dist/pic-tutor-v0.8.html`；第 7 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 增补边界/PML/guard-cell/AMR 源码入口地图，串联 `WarpX::MakeWarpX()`、`FieldBoundaries`、`ParticleBoundaries`、`WarpXFieldBoundaries`、`WarpXComm`、`GuardCellManager`、`WarpXRegrid` 和 boundary scraping 入口。
 
-## v0.15 后续收口队列
+## v0.16 后续收口队列
 
 - [x] 人工审读并修正 `dist/pic-tutor-v0.12.html` 暴露出的第 7 章 HTML 排版风险：宽表格、Mermaid 图、公式、inline code 和长源码路径需要项目级样式兜底。
 - [x] 继续细核 `GuardCellManager.cpp`、`WarpXComm.cpp`、`WarpXRegrid.cpp` 的 AMR/regrid/guard-cell 路径，把 v0.8 入口地图扩成可讲解的正文段落。
@@ -22,7 +23,8 @@
 - [x] 为 v0.13 做一次第 7 章 HTML 人工审读与排版修正，尤其检查宽表格、Mermaid 图、公式和长源码路径在浏览器中的可读性。
 - [x] 为 v0.14 继续补 transition-zone 专门 validation 线索：直接检查 `n_field_gather_buffer/n_current_deposition_buffer`、`E/Bfield_cax`、`current_buf/rho_buf` 和 `PartitionParticlesInBuffers()` 的分析入口。
 - [x] 为 v0.15 继续把 dedicated transition-zone validation 方案推进到测试草案层：设计最小输入卡、预期粒子分区表、可观测 diagnostics/analysis 输出，以及是否需要 WarpX 侧测试专用 instrumentation。
-- [ ] 为 v0.16 继续推进第 7 章 transition-zone validation：把 v0.15 草案拆成可实际落地的 WarpX regression patch 计划，包括需要新增的 route-count reduced output、mask 输出开关、analysis 断言和 CMake wiring。
+- [x] 为 v0.16 继续推进第 7 章 transition-zone validation：把 v0.15 草案拆成可实际落地的 WarpX regression patch 计划，包括需要新增的 route-count reduced output、mask 输出开关、analysis 断言和 CMake wiring。
+- [ ] 为 v0.17 继续推进成书短板：从 PSATD/Galilean/NCI/PML 文献闭环中选择一篇核心论文，按项目规范补 MinerU Markdown、图片、中文逐段讲解笔记，并回填第 6 或第 7 章的文献论证入口。
 
 - [x] 2026-06-29：完成 `v0.4` 沉积与形函数校准草稿：冻结 `manuscript/VERSION-v0.3.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.4，新增 `scripts/build_v04.py`，生成 `dist/pic-tutor-v0.4.md` 与 `dist/pic-tutor-v0.4.html`；第 5 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `ShapeFactors`、`DepositCurrent/DepositCharge`、Esirkepov/Villasenor/Vay 分派和 Langmuir / `vay_deposition` 验证入口。
 - [x] 2026-06-29：完成 `v0.3` 粒子推进器校准草稿：冻结 `manuscript/VERSION-v0.2.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.3，新增 `scripts/build_v03.py`，生成 `dist/pic-tutor-v0.3.md` 与 `dist/pic-tutor-v0.3.html`；第 4 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `UpdateMomentumBoris/Vay/HigueraCary`、`PushSelector`、`PushPX` 和 `particle_pusher` 强验证入口。

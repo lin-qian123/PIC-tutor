@@ -1217,6 +1217,116 @@ analysis 可分两层写。第一层完全使用现有 diagnostics：用 `diag1`
 
 因此，v0.15 对 dedicated transition-zone validation 的结论是：最小 test 可以用现有输入语法和 Full diagnostics 起步，但完整 branch proof 需要额外暴露 mask、partition 分界或 route id。书稿层面后续应把这条草案作为第 7 章的“测试设计合同”，等真正实现或找到对应 WarpX regression 后，再把它升级成 verified validation。
 
+### 7.7.5 v0.16 transition-zone regression patch 计划
+
+v0.16 继续把上面的草案拆成 WarpX 侧可以实施的 patch 计划。本项目仍不修改 `../warpx`，但计划必须钉到真实源码入口，否则后续实现时很容易把 route-count 做成与粒子实际推进脱节的旁路统计。
+
+先确定扩展点。当前 reduced diagnostics 的类型分派集中在 `../warpx/Source/Diagnostics/ReducedDiags/MultiReducedDiags.cpp`：构造函数读取 `warpx.reduced_diags_names`，再按每个 `<rd_name>.type` 从 `reduced_diags_dictionary` 里创建具体类。所有 reduced diagnostics 继承 `ReducedDiags`，基类负责 `path`、`extension`、`intervals`、`separator`、`precision`、表头文件创建和 `WriteToFile()` 的通用文本输出。`ParticleNumber.cpp` 是一个最小模板：构造时按 species 数量建立列，`ComputeDiags()` 中循环 `MultiParticleContainer` 的 species 并把结果写入 `m_data`。因此，transition-zone route-count 最自然的第一阶段实现不是改 Full diagnostics，而是新增一个 reduced diagnostic，例如：
+
+```text
+Source/Diagnostics/ReducedDiags/TransitionZoneRoutes.H
+Source/Diagnostics/ReducedDiags/TransitionZoneRoutes.cpp
+```
+
+并在：
+
+```text
+Source/Diagnostics/ReducedDiags/MultiReducedDiags.cpp
+Source/Diagnostics/ReducedDiags/CMakeLists.txt
+```
+
+里注册 `TransitionZoneRoutes` 类型。
+
+route-count 的观测点也必须放对。`PhysicalParticleContainer::Evolve()` 里，源码先取 `current_masks`、`gather_masks`、`has_J_buf`、`has_E_cax`，再对每个 tile 调用 `PartitionParticlesInBuffers()`。这个调用返回后，局部变量里同时存在：
+
+- `np`：该 tile 粒子数；
+- `nfine_deposit`：仍向 fine `rho_fp/current_fp` 沉积的前段粒子数；
+- `nfine_gather`：仍从 fine `E/Bfield_aux` gather 的前段粒子数；
+- `has_J_buf`：是否真的存在 `current_buf/rho_buf`；
+- `has_E_cax`：是否真的存在 `E/Bfield_cax/Bfield_cax`；
+- species 成员 `m_deposit_on_main_grid` 与 `m_gather_from_main_grid`：是否覆盖 mask 路由。
+
+这一瞬间是 route-count 的唯一强观测点。再往后，`rho_buf/current_buf` 会参与 coarse sync，最终 plotfile 可能已经把 buffer 贡献混到 coarse/fine 输出面里；再往前，`nfine_deposit/nfine_gather` 还不存在。因此，patch 计划应在 `PartitionParticlesInBuffers()` 之后、第一次 `DepositCharge()` 之前插入一个轻量 hook。它不应改变粒子顺序，也不应读取最终场数据。
+
+第一阶段可以新增一个小型运行时累加器，目标不是用户诊断，而是 regression instrumentation。接口形状可以是：
+
+```cpp
+TransitionZoneRouteCounter::Record(
+    species_name, lev, tile_id, np,
+    nfine_gather, nfine_deposit,
+    has_E_cax, has_J_buf,
+    m_gather_from_main_grid, m_deposit_on_main_grid);
+```
+
+如果不希望引入全局单例，也可以把累加器挂到 `MultiReducedDiags` 或 `WarpX` 实例上；但无论挂在哪里，都要满足三条约束：
+
+1. `Record()` 只在对应 reduced diagnostic 被启用时做实际工作，默认运行不能付出额外同步成本；
+2. GPU/OMP tile 循环里不能直接做重 I/O，最多写线程本地或 rank-local counters；
+3. `ComputeDiags()` 或 `WriteToFile()` 时再做 MPI reduce，并由 IO rank 输出文本表。
+
+建议输出列不要过细到每个粒子 id，先做 species/level 聚合即可：
+
+| 列 | 含义 |
+|---|---|
+| `step`、`time` | 继承 reduced diagnostic 基类口径 |
+| `lev` | refinement level，transition-zone validation 主要检查 `lev=1` |
+| `<species>_np` | 本 step 该 species 在该 level 被统计的粒子数 |
+| `<species>_fine_gather` | `nfine_gather` 累加值 |
+| `<species>_coarse_gather` | `np - nfine_gather` 累加值，只有 `has_E_cax` 或 main-grid gather case 应非零 |
+| `<species>_fine_deposit` | `nfine_deposit` 累加值 |
+| `<species>_coarse_deposit` | `np - nfine_deposit` 累加值，只有 `has_J_buf` 或 main-grid deposit case 应非零 |
+| `<species>_forced_gather_main` | `m_gather_from_main_grid` 命中计数 |
+| `<species>_forced_deposit_main` | `m_deposit_on_main_grid` 命中计数 |
+
+如果要区分 tile 级 geometry，可以额外输出 `tile_count`、`tiles_with_coarse_gather`、`tiles_with_coarse_deposit`，但不建议第一版输出所有 tile 行。route-count 的 regression 目标是确认分支命中和数量正确，不是做性能诊断。
+
+第二阶段才考虑 mask 输出。`current_buffer_masks` 与 `gather_buffer_masks` 是 `iMultiFab`，当前可通过 `WarpX::CurrentBufferMasks(lev)` 和 `WarpX::GatherBufferMasks(lev)` 取到，但普通 `fields_to_plot` 不会自动暴露它们。若要验证 mask 拓扑，有两条路线：
+
+| 路线 | 修改点 | 优点 | 风险 |
+|---|---|---|---|
+| field functor / debug field surface | 在 Full diagnostics 初始化 field functors 时把 mask 转成可输出 MultiFab 名称，如 `current_buffer_mask`、`gather_buffer_mask` | analysis 可直接用 yt 读 mask 图 | 需要处理 `iMultiFab -> MultiFab`、level 命名和非 AMR case |
+| reduced mask summary | 在 `TransitionZoneRoutes` 里额外统计 mask interior/buffer cell 数 | 修改小，输出稳定 | 不能直接检查空间拓扑，只能检查数量 |
+
+v0.16 的建议是先做 reduced route-count，再按需要补 reduced mask summary；整张 mask plotfile 可以留到第二个 PR。原因很直接：真正的 branch proof 先要证明粒子是否走了 coarse gather / coarse deposit，而不是先证明 mask 图长得对。
+
+基于这个 instrumentation，后续 WarpX patch 可以拆成五个可 review 的提交：
+
+| patch | 文件范围 | 验证点 |
+|---|---|---|
+| 1. reduced diagnostic skeleton | `TransitionZoneRoutes.H/.cpp`、`MultiReducedDiags.cpp`、`CMakeLists.txt` | 输入 `warpx.reduced_diags_names = TZR`、`TZR.type = TransitionZoneRoutes` 后能生成带表头的 `TZR.txt` |
+| 2. route-count hook | `PhysicalParticleContainer::Evolve()` 附近或独立 helper | 在无 AMR 或未启用 TZR 时无输出变化；启用后 `np = fine_gather + coarse_gather = fine_deposit + coarse_deposit` |
+| 3. regression inputs | `Examples/Tests/amr_transition_zone/inputs_*` | 三类 buffer-width case 和两类 main-grid override case 都能稳定命中预期 route |
+| 4. analysis | `Examples/Tests/amr_transition_zone/analysis_transition_zone.py` | 读取 `TZR.txt`，断言每个 species 的 route counts 与预期表一致，并追加 plotfile checksum |
+| 5. CMake wiring | `Examples/Tests/amr_transition_zone/CMakeLists.txt` 与上级注册 | CI 中新增短程 2D regression，不依赖 slow 标签 |
+
+`analysis_transition_zone.py` 的断言应比 v0.15 草案更具体。对于 `gather wider` case，至少要出现：
+
+```text
+p_interior: coarse_gather = 0, coarse_deposit = 0
+p_gather_only: coarse_gather > 0, coarse_deposit = 0
+p_both: coarse_gather > 0, coarse_deposit > 0
+```
+
+对于 `current wider` case，至少要出现：
+
+```text
+p_deposit_only: coarse_gather = 0, coarse_deposit > 0
+p_both: coarse_gather > 0, coarse_deposit > 0
+```
+
+对于 main-grid override case，强断言应写成：
+
+```text
+p_deposit_main: fine_deposit = 0, coarse_deposit = np
+p_gather_main: fine_gather = 0, coarse_gather = np
+```
+
+这比只看 `rho/J` 的最终分布更稳，因为它直接绑定 `PartitionParticlesInBuffers()` 的输出边界。后续若要再加 field-level 物理检查，可以在同一 analysis 里继续读取 `diag1000001`，把 `rho/jx/jy/jz` 的非零 cell 与 route-count 做交叉校验；但那应是第二层检查，不应替代 route-count 主断言。
+
+最后要把 patch 的负面边界也写进计划：这条 instrumentation 不应成为用户长期依赖的物理输出，不应在默认运行中引入 GPU 同步，不应绕过 `m_deposit_on_main_grid/m_gather_from_main_grid` 的真实逻辑，也不应把 `do_not_push` case 作为主 validation。`do_not_push` 会跳过 `PartitionParticlesInBuffers()`，只能当 control，不适合作为 transition-zone branch proof。
+
+因此，v0.16 的接续目标已经从“设计一个测试”变成“写出一组可 review 的 WarpX patch”。下一步若要真正实现，就应在 WarpX 仓库中开独立分支，先做 `TransitionZoneRoutes` skeleton 和 route-count hook，再把 `Examples/Tests/amr_transition_zone` 接入 CI。
+
 源码上，AMR 与 subcycling 的关键入口在 `WarpXEvolve.cpp`：
 
 - `OneStep` 行 469-492：有 mesh refinement 时决定是否进入 subcycling。

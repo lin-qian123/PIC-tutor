@@ -1,13 +1,13 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.13` 第 7 章 HTML 审读与排版收口版，目标是先形成一条可复查、可审读的主线，再逐章加深公式推导、源码逐行讲解、图表和可复现实验。
+这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.14` transition-zone validation 线索版，目标是先形成一条可复查、可审读、可验证的主线，再逐章加深公式推导、源码逐行讲解、图表和可复现实验。
 
 ## 版本边界
 
 - WarpX 路径：`../warpx`
 - WarpX 分支：`pkuHEDPbranch`
 - 当前 WarpX commit：`8c488b1a9`
-- 第 2、3、3A、4、5、6 章已按当前 checkout 重新核对核心源码行号；第 7 章已完成 v0.12 AMR coarse-fine 图形化证据正文，并在 v0.13 完成第一轮 HTML 表格、代码路径和 Mermaid 容器排版收口，后续仍需继续补更专门的 transition-zone validation。
+- 第 2、3、3A、4、5、6 章已按当前 checkout 重新核对核心源码行号；第 7 章已完成 v0.12 AMR coarse-fine 图形化证据正文、v0.13 HTML 排版收口，并在 v0.14 把 transition-zone 专门 validation 写成检查清单，后续仍需把方案推进到测试草案或实际 analysis。
 - 本书稿不修改 WarpX 原仓库。
 - 本版优先覆盖显式电磁 PIC 主线：Vlasov-Maxwell、宏粒子、gather-push-deposit-field solve、WarpX 主循环、粒子推进、沉积、场求解、边界/AMR、诊断和案例。
 
@@ -32,12 +32,12 @@
 - 文献库：`../bibliography/warpx-refs.bib`
 - PDF 文献索引：`../references/00_index/current_inventory.md`
 
-## v0.13 构建
+## v0.14 构建
 
 详见 [VERSION.md](VERSION.md)。生成合订 Markdown 和 HTML 预览：
 
 ```bash
-python ../scripts/build_v13.py
+python ../scripts/build_v14.py
 ```
 
 历史 v0.1 版本说明冻结在 [VERSION-v0.1.md](VERSION-v0.1.md)，可用 `python ../scripts/build_v01.py` 重建 v0.1 合订稿。
@@ -52,3 +52,4 @@ python ../scripts/build_v13.py
 历史 v0.10 版本说明冻结在 [VERSION-v0.10.md](VERSION-v0.10.md)，可用 `python ../scripts/build_v10.py` 重建 v0.10 合订稿。
 历史 v0.11 版本说明冻结在 [VERSION-v0.11.md](VERSION-v0.11.md)，可用 `python ../scripts/build_v11.py` 重建 v0.11 合订稿。
 历史 v0.12 版本说明冻结在 [VERSION-v0.12.md](VERSION-v0.12.md)，可用 `python ../scripts/build_v12.py` 重建 v0.12 合订稿。
+历史 v0.13 版本说明冻结在 [VERSION-v0.13.md](VERSION-v0.13.md)，可用 `python ../scripts/build_v13.py` 重建 v0.13 合订稿。

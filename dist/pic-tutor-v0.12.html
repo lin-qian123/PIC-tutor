@@ -838,6 +838,9 @@ guard-cell、通信和 regrid 的闭环</a></li>
 href="#v0.12-coarse-fine-substitution-与-transition-zone-的证据图"
 id="toc-v0.12-coarse-fine-substitution-与-transition-zone-的证据图">7.7.2
 v0.12 coarse-fine substitution 与 transition zone 的证据图</a></li>
+<li><a href="#v0.14-transition-zone-validation-应该直接检查什么"
+id="toc-v0.14-transition-zone-validation-应该直接检查什么">7.7.3 v0.14
+transition-zone validation 应该直接检查什么</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#诊断验证与案例" id="toc-诊断验证与案例">8.
@@ -15200,6 +15203,215 @@ transition-zone 物理强断言</td>
 分区结果、<code>E/Bfield_cax</code> gather 路径和
 <code>current_buf/rho_buf</code> 回灌结果的 analysis，而不是只引用
 checksum。</p>
+<h3 id="v0.14-transition-zone-validation-应该直接检查什么">7.7.3 v0.14
+transition-zone validation 应该直接检查什么</h3>
+<p>v0.14 先把上面那句“需要更强 validation”落成可执行的检查清单。当前本地
+<code>../warpx</code> 里，transition-zone 不是一个单独 diagnostics
+名称，而是四段源码合同叠在一起：</p>
+<ol type="1">
+<li>startup 根据
+<code>n_current_deposition_buffer</code>、<code>n_field_gather_buffer</code>
+和 <code>particles.deposit_on_main_grid</code> 决定是否分配 buffer
+资源；</li>
+<li><code>BuildBufferMasks()</code> 把 fine patch 的 interior / buffer
+zone 写成 <code>current_buffer_masks</code> 与
+<code>gather_buffer_masks</code>；</li>
+<li><code>PartitionParticlesInBuffers()</code> 根据两张 mask 改写
+<code>nfine_deposit</code> 与
+<code>nfine_gather</code>，并重新排列粒子数组；</li>
+<li><code>PhysicalParticleContainer::Evolve()</code>
+根据这两个分界，把粒子分别送入
+<code>E/Bfield_aux</code>、<code>E/Bfield_cax</code>、<code>current_fp/rho_fp</code>
+和 <code>current_buf/rho_buf</code>。</li>
+</ol>
+<p>源码第一段在 <code>WarpX.cpp::AllocLevelData()</code> 与
+<code>AllocLevelMFs()</code>。若有 species 打开
+<code>deposit_on_main_grid</code> 且
+<code>n_current_deposition_buffer == 0</code>，源码会先把 current buffer
+强制补到 <code>1</code>，目的只是激活 buffer 路径；注释同时说明这个
+<code>1</code> 并不代表真实几何宽度，因为
+<code>deposit_on_main_grid</code>
+会把所有相关粒子都送到主网格沉积。随后，负的
+<code>n_current_deposition_buffer</code> 会回退到
+<code>guard_cells.ng_alloc_J.max()</code>，负的
+<code>n_field_gather_buffer</code> 会回退到
+<code>n_current_deposition_buffer + 1</code>。资源分配则更硬：只要
+<code>lev &gt; 0</code> 且 gather buffer、current buffer 或 species
+gather-from-main-grid 任一条件成立，WarpX 就会先 coarsen fine-level
+<code>BoxArray</code>；其中 gather 分支分配
+<code>Efield_cax/Bfield_cax</code> 与
+<code>gather_buffer_masks</code>，current 分支分配
+<code>current_buf/rho_buf</code> 与
+<code>current_buffer_masks</code>。</p>
+<p>第二段在 <code>WarpX.cpp::BuildBufferMasks()</code>。函数对每个 level
+的 current pass 与 gather pass 分别取 <code>ngbuffer</code>，先用 AMReX
+<code>BuildMask()</code> 建出 guard mask，再在
+<code>BuildBufferMasksInBox()</code> 中检查每个 cell 周围
+<code>[-ngbuffer,+ngbuffer]</code> 邻域：只要邻域里有一个 guard-mask
+cell 是 <code>0</code>，当前 cell 的 buffer mask 就写成
+<code>0</code>；只有整个邻域都留在 interior 时才写成
+<code>1</code>。因此 validation 不能只看“是否有 refined
+patch”，而应直接检查 mask 的 <code>0/1</code> 拓扑是否随
+<code>n_current_deposition_buffer</code> 与
+<code>n_field_gather_buffer</code> 改变。</p>
+<p>第三段在
+<code>Particles/Sorting/Partition.cpp::PartitionParticlesInBuffers()</code>。函数先选较大的
+buffer mask 做第一次 stable partition，把较大 buffer
+外的粒子放到前段；如果两个 buffer 宽度不同，再在较大 buffer 内用较小
+mask 做第二次 stable partition。最终得到两个可以不同的分界：</p>
+<ul>
+<li><code>nfine_gather</code>：前段粒子从 fine-level
+<code>E/Bfield_aux</code> gather；</li>
+<li><code>nfine_deposit</code>：前段粒子向 fine-level
+<code>current_fp/rho_fp</code> 沉积。</li>
+</ul>
+<p>这里还有两条会覆盖 mask
+结果的强制路由：<code>m_deposit_on_main_grid &amp;&amp; lev &gt; 0</code>
+会把 <code>nfine_current</code> 直接压成
+<code>0</code>；<code>m_gather_from_main_grid &amp;&amp; lev &gt; 0</code>
+会把 <code>nfine_gather</code> 直接压成 <code>0</code>。这意味着
+dedicated validation 至少要分三类 case：普通 buffer-width
+case、<code>deposit_on_main_grid</code>
+case、<code>gather_from_main_grid</code> case。把这三类混成一条 MR
+checksum，会掩盖真正的分支行为。</p>
+<p>第四段在 <code>PhysicalParticleContainer::Evolve()</code>。源码先读
+<code>CurrentBufferMasks()</code> 和
+<code>GatherBufferMasks()</code>，再由
+<code>has_J_buf</code>、<code>has_E_cax</code> 得到
+<code>has_buffer</code>。若
+<code>has_buffer &amp;&amp; !do_not_push</code>，才调用
+<code>PartitionParticlesInBuffers()</code>。之后，真正写网格和 gather
+的调用都以 <code>[offset, count)</code> 体现分界：</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>路径</th>
+<th>源码动作</th>
+<th>validation 应直接观测的量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fine charge deposition</td>
+<td><code>DepositCharge(..., rho_fp, 0, 0, np_to_deposit, lev, lev)</code></td>
+<td><code>rho_fp</code> 只接收前 <code>nfine_deposit</code> 段</td>
+</tr>
+<tr>
+<td>coarse-buffer charge deposition</td>
+<td><code>DepositCharge(..., rho_buf, 0, np_to_deposit, np-np_to_deposit, lev, lev-1)</code></td>
+<td><code>rho_buf</code> 接收尾段粒子，目标 level 是
+<code>lev-1</code></td>
+</tr>
+<tr>
+<td>fine gather/push</td>
+<td><code>PushPX(..., 0, np_gather, lev, lev)</code></td>
+<td>前 <code>nfine_gather</code> 段从 <code>E/Bfield_aux</code>
+读场</td>
+</tr>
+<tr>
+<td>coarse gather/push</td>
+<td><code>PushPX(..., nfine_gather, np-nfine_gather, lev, lev-1)</code></td>
+<td>尾段粒子从 <code>E/Bfield_cax/Bfield_cax</code> 读场</td>
+</tr>
+<tr>
+<td>fine current deposition</td>
+<td><code>DepositCurrent(..., 0, np_to_deposit, lev, lev)</code></td>
+<td><code>current_fp</code> 只接收前 <code>nfine_deposit</code> 段</td>
+</tr>
+<tr>
+<td>coarse-buffer current deposition</td>
+<td><code>DepositCurrent(..., current_buf, np_to_deposit, np-np_to_deposit, lev, lev-1)</code></td>
+<td><code>current_buf</code> 接收尾段粒子，随后参与 coarse-level
+sync</td>
+</tr>
+</tbody>
+</table>
+<p>最后，<code>current_buf/rho_buf</code> 不是沉积终点。subcycling
+路径在 <code>WarpXEvolve.cpp</code> 里会把 <code>current_buf</code> 和
+<code>rho_buf</code> 交给
+<code>AddCurrentFromFineLevelandSumBoundary()</code>、<code>AddRhoFromFineLevelandSumBoundary()</code>；常规同步路径也会在
+<code>WarpXComm.cpp::SyncCurrent()</code> 中把 coarse patch current 与
+<code>current_buf</code> 相加，再把别名 <code>mf_comm</code>
+传入跨层通信。<code>SyncRho()</code> 同理把 <code>rho_buf</code>
+作为第三个 multilevel scalar field 传入。</p>
+<p>把这些源码合同放回当前 regression，可以得到一个更严格的证据边界：</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>现有入口</th>
+<th>能证明什么</th>
+<th>不能证明什么</th>
+<th>v0.14 结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>langmuir/*multi_mr*</code></td>
+<td>MR 后 <code>Ex/Ez</code> 解析场仍在容差内，并有部分路径叠加 charge
+conservation</td>
+<td>不直接输出 mask、<code>nfine_*</code> 或 <code>*_buf/*_cax</code>
+分支命中情况</td>
+<td>仍是强 AMR 场解证据，但不是 transition-zone branch test</td>
+</tr>
+<tr>
+<td><code>particles_in_pml/*_mr</code></td>
+<td>MR+PML+粒子离域后的 finest-level residual field 在阈值内</td>
+<td>不区分 residual field 来自 PML damping、particle current damping
+还是 buffer routing</td>
+<td>是组合路径强检查，不是专门的 buffer 分区检查</td>
+</tr>
+<tr>
+<td><code>subcycling/inputs_test_2d_subcycling_mr</code></td>
+<td><code>do_subcycling=1</code>、moving
+window、<code>deposit_on_main_grid</code> 与 CKC MR workflow 的最终输出
+checksum 没漂</td>
+<td><code>analysis=OFF</code>；且输入显式
+<code>n_current_deposition_buffer=0</code>、<code>n_field_gather_buffer=0</code>，没有
+dedicated mask-width 分区观测</td>
+<td>只能当 workflow baseline，不能当 transition-zone 物理强断言</td>
+</tr>
+</tbody>
+</table>
+<p>因此，若后续要补一条真正的 transition-zone
+validation，最小方案应当不是再加一条末态
+checksum，而是新增一个可观测分区的测试面。一个可执行的设计是：</p>
+<ol type="1">
+<li>使用 2D MR 小盒子，固定一个 level-1 patch，并把一组单粒子放在 patch
+interior、gather buffer、current buffer 和 patch 外侧的已知位置；</li>
+<li>分别运行
+<code>n_field_gather_buffer &gt; n_current_deposition_buffer</code>、<code>n_current_deposition_buffer &gt; n_field_gather_buffer</code>、二者相等、<code>deposit_on_main_grid</code>、<code>gather_from_main_grid</code>
+五类输入；</li>
+<li>在 diagnostics
+或测试专用输出中记录每类粒子的场采样结果与沉积目标，至少能区分
+<code>E/Bfield_aux</code> vs
+<code>E/Bfield_cax</code>、<code>rho/current_fp</code> vs
+<code>rho/current_buf</code>；</li>
+<li>analysis 不只检查最终 plotfile checksum，而应断言每组粒子的
+<code>gather_lev</code>、<code>depos_lev</code>
+或等价可观测结果与预期一致；</li>
+<li>若不希望修改 WarpX 诊断接口，可以先用构造场策略：让 fine aux 与 cax
+上的某个场分量取明显不同的常数或解析值，再用单粒子动量变化反推出它到底从哪张场
+gather；沉积侧则用空间上隔离的单粒子权重，在 coarse-level sync
+后检查对应 cell 的 <code>rho/J</code> 是否只出现在预期 coarse/fine
+面。</li>
+</ol>
+<p>这条路线的价值是把 validation 从“AMR 组合案例跑通”提高到“每个
+transition-zone branch 被直接命中”。它也给后续写作设了边界：在这类
+dedicated test 出现之前，本章只能把
+<code>nfine_gather/nfine_deposit</code>、<code>E/Bfield_cax</code> 和
+<code>current_buf/rho_buf</code> 写成源码审计结论，不能把现有 MR
+regression 夸写成已经逐项验证这些分支。</p>
 <p>源码上，AMR 与 subcycling 的关键入口在
 <code>WarpXEvolve.cpp</code>：</p>
 <ul>

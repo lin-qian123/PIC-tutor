@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-06-29：完成 `v0.3` 粒子推进器校准草稿：冻结 `manuscript/VERSION-v0.2.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.3，新增 `scripts/build_v03.py`，生成 `dist/pic-tutor-v0.3.md` 与 `dist/pic-tutor-v0.3.html`；第 4 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `UpdateMomentumBoris/Vay/HigueraCary`、`PushSelector`、`PushPX` 和 `particle_pusher` 强验证入口。
 - [x] 2026-06-25：完成 `v0.2` 可审校草稿：冻结 `manuscript/VERSION-v0.1.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.2，新增 `scripts/build_v02.py`，生成 `dist/pic-tutor-v0.2.md` 与 `dist/pic-tutor-v0.2.html`；第 2、3、3A 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核源码基线、路径和关键行号。
 - [x] 2026-06-25：开始收束 `v0.1` 第一卷草稿，新增版本说明和 `scripts/build_v01.py`，把现有 11 章与附录 A 合订为 `dist/pic-tutor-v0.1.md`，并在本机存在 `pandoc` 时生成 HTML 预览；v0.1 版本说明现已冻结到 `manuscript/VERSION-v0.1.md`。本版范围限定为 PIC 主线、WarpX 主循环、初始化、推进、沉积、场求解、边界/AMR、诊断和第一批案例，尚不是完整 38 章终稿。
 - [x] 2026-06-23：完成阶段性收口：复核当前工作区仍只包含 `README.md`、`TODO.md`、`docs/example-regression-map.md`、`docs/parameter-map.md` 四个文档改动；确认 `PIC-tutor` 已是 git 仓库并修正旧阻塞项；记录当前相邻 `../warpx` checkout 为 `pkuHEDPbranch / 8c488b1a9`，后续章节源码行号和实现论断仍需按写作当天重新读取本地源码。
@@ -4274,7 +4275,8 @@
 ## v0.1 后续收口队列
 
 - [x] 第 2、3、3A 章已同步 `8c488b1a9` 源码基线，修正旧 commit 和核心源码行号。
-- [ ] 继续逐章同步第 4、5、6 章的 `8c488b1a9` 源码基线，修正旧 commit 和源码行号。
+- [x] 第 4 章粒子推进器已同步 `8c488b1a9` 源码基线，修正 Boris half push、主调用链和 `particle_pusher` 强验证入口。
+- [ ] 继续逐章同步第 5、6 章的 `8c488b1a9` 源码基线，修正旧 commit 和源码行号。
 - [ ] 将 `manuscript/VERSION.md` 的章节状态表转成每章文件头状态块。
 - [ ] 为第 1-8 章各补至少一个“练习 / 复现实验 / 源码定位题”小节。
 - [ ] 为 `dist/pic-tutor-v0.1.html` 做一次人工阅读审校，清理重复段落、长表格和过长日志。
@@ -4284,10 +4286,17 @@
 ## v0.2 后续收口队列
 
 - [ ] 手工通读 `dist/pic-tutor-v0.2.html`，优先清理第 3A 章过长的审计式段落。
-- [ ] 继续把第 4 章粒子推进器同步到 `8c488b1a9`，并把 `Examples/Tests/particle_pusher` 的强分析闭环写进正文。
+- [x] 第 4 章粒子推进器已同步到 `8c488b1a9`，并把 `Examples/Tests/particle_pusher` 的强分析闭环写进正文。
 - [ ] 继续把第 5 章沉积与形函数同步到 `8c488b1a9`，并完成 Esirkepov / Villasenor-Buneman 文献 MinerU 笔记。
 - [ ] 继续把第 6 章场求解器同步到 `8c488b1a9`，优先拆清 Yee/CKC/PSATD/JRhom/PML 的证据边界。
 - [ ] 给第 2、3、3A 章各补一张读者侧流程图或表格，减少纯文字调用链负担。
+
+## v0.3 后续收口队列
+
+- [ ] 手工通读 `dist/pic-tutor-v0.3.html`，优先检查第 4 章 Boris half-push 公式和源码块是否顺畅。
+- [ ] 继续把第 5 章沉积与形函数同步到 `8c488b1a9`，先核 `DepositCurrent/DepositCharge` 和 Esirkepov/Villasenor/Vay 分支。
+- [ ] 继续把第 6 章场求解器同步到 `8c488b1a9`，优先核 Yee/CKC/PSATD/JRhom/PML 的当前文件路径和行号。
+- [ ] 把第 4 章过长的多物理 validation 小节拆成表格或附录，降低正文阅读负担。
 
 ## 阻塞点与约束
 

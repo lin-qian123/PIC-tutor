@@ -4,6 +4,14 @@
 
 本章对应源码笔记见 `notes/code-reading/particles/00-particle-evolve-callchain.md`、`notes/code-reading/particles/01-pusher-and-deposition-evidence.md`、`notes/code-reading/particles/02-gather-shape-deposition-kernels.md`、`notes/code-reading/particles/03-vay-higuera-cary-pushers.md`、`notes/code-reading/particles/24-thermalizer-validation-and-checksum-boundaries.md`、`notes/code-reading/particles/25-gather-variants-and-external-particle-fields.md`、`notes/code-reading/particles/26-pusher-single-particle-and-photon-validation-map.md`、`notes/code-reading/particles/27-particle-fields-plasma-lens-and-mpi-validation-map.md`、`notes/code-reading/particles/28-particle-diagnostics-python-interface-validation-map.md`、`notes/code-reading/particles/29-boundary-and-python-front-end-validation-map.md` 和 `notes/code-reading/particles/30-pml-eb-contact-and-mr-validation-map.md`。
 
+本章当前依据的 WarpX 源码版本是：
+
+- `../warpx`
+- 分支：`pkuHEDPbranch`
+- commit：`8c488b1a9`
+
+v0.3 校准说明：本章已按当前 checkout 复核 `UpdateMomentumBoris.H`、`PushSelector.H`、`UpdateMomentumVay.H`、`UpdateMomentumHigueraCary.H`、`WarpXEvolve.cpp`、`MultiParticleContainer.cpp` 与 `PhysicalParticleContainer.cpp` 的主链行号。尤其需要注意：当前 Boris half push 不再简单把磁旋转系数减半，而是按 Birdsall-Langdon 半角关系重标定 `t`，因此本章已同步修正旧草稿中的 `bconst` 写法。`Examples/Tests/particle_pusher` 仍是本章当前最直接的 Higuera-Cary force-free 强验证入口。
+
 ## 4.1 连续 Lorentz 方程
 
 WarpX 对带质量粒子推进的基本方程是相对论 Lorentz 方程。令
@@ -103,7 +111,7 @@ $$
 +\frac{q\Delta t}{2m}\mathbf{E}^{n}.
 $$
 
-WarpX 的实现见 `../warpx/Source/Particles/Pusher/UpdateMomentumBoris.H:20-62`：
+WarpX 的实现见 `../warpx/Source/Particles/Pusher/UpdateMomentumBoris.H:20-75`：
 
 源码原文如下：
 
@@ -120,10 +128,16 @@ if (momentum_push_type == MomentumPushType::FirstHalf || momentum_push_type == M
 constexpr auto inv_c2 = PhysConst::inv_c2_v< amrex::ParticleReal>;
 const amrex::ParticleReal inv_gamma = 1._prt/std::sqrt(1._prt + (ux*ux + uy*uy + uz*uz)*inv_c2);
 // Magnetic rotation
-const amrex::Real bconst = (momentum_push_type == MomentumPushType::FirstHalf || momentum_push_type == MomentumPushType::SecondHalf) ? 0.5_rt*econst : econst;
-const amrex::ParticleReal tx = bconst*inv_gamma*Bx;
-const amrex::ParticleReal ty = bconst*inv_gamma*By;
-const amrex::ParticleReal tz = bconst*inv_gamma*Bz;
+amrex::ParticleReal tx = econst*inv_gamma*Bx;
+amrex::ParticleReal ty = econst*inv_gamma*By;
+amrex::ParticleReal tz = econst*inv_gamma*Bz;
+if (momentum_push_type == MomentumPushType::FirstHalf || momentum_push_type == MomentumPushType::SecondHalf) {
+    const amrex::ParticleReal tsq = tx*tx + ty*ty + tz*tz;
+    const amrex::ParticleReal factor = (tsq > 0._prt) ? (std::sqrt(1._prt + tsq) - 1._prt) / tsq : 0.5_prt;
+    tx *= factor;
+    ty *= factor;
+    tz *= factor;
+}
 const amrex::ParticleReal tsqi = 2._prt/(1._prt + tx*tx + ty*ty + tz*tz);
 const amrex::ParticleReal sx = tx*tsqi;
 const amrex::ParticleReal sy = ty*tsqi;
@@ -147,11 +161,22 @@ if (momentum_push_type == MomentumPushType::SecondHalf || momentum_push_type == 
 |---|---|---|
 | `:28` | `econst = 0.5*q*dt/m` | \(\frac{q\Delta t}{2m}\) |
 | `:30-35` | FirstHalf 或 Full 时做电半步 | \(\mathbf{u}^{n-1/2}\to\mathbf{u}^{-}\) |
-| `:37-45` | 计算 `inv_gamma`、`t`、`s` | \(\gamma^{-},\mathbf{t},\mathbf{s}\) |
-| `:49-55` | 磁旋转 | \(\mathbf{u}^{-}\to\mathbf{u}^{+}\) |
-| `:56-61` | SecondHalf 或 Full 时做第二个电半步 | \(\mathbf{u}^{+}\to\mathbf{u}^{n+1/2}\) |
+| `:37-43` | 计算 `inv_gamma` 和 full-step `t` | \(\gamma^{-},\mathbf{t}\) |
+| `:44-57` | FirstHalf/SecondHalf 时按半角关系重标定 `t` | 使两次 half push 合成一次 Full 的磁旋转 |
+| `:58-68` | 磁旋转 | \(\mathbf{u}^{-}\to\mathbf{u}^{+}\) |
+| `:69-74` | SecondHalf 或 Full 时做第二个电半步 | \(\mathbf{u}^{+}\to\mathbf{u}^{n+1/2}\) |
 
 文件注释 `:13-18` 说明 `FirstHalf` 和 `SecondHalf` 可以分裂执行，并且连续执行应与一次 `Full` 更新数学等价。这正好服务于 `WarpXEvolve.cpp` 中把碰撞放在 momentum push 中间的路径。
+
+这里有一个 v0.3 必须补上的实现细节：当前 WarpX 的 half momentum push 不是简单把 `q dt B/(2m\gamma)` 再乘 `1/2`。代码在 `UpdateMomentumBoris.H:44-57` 使用
+
+$$
+\frac{|t_{\mathrm{half}}|}{|t_{\mathrm{full}}|}
+=
+\frac{\sqrt{1+|t_{\mathrm{full}}|^2}-1}{|t_{\mathrm{full}}|^2}
+$$
+
+重标定 `tx,ty,tz`。这来自 `tan(alpha/2)` 与 `tan(alpha/4)` 的半角关系，目的是让 `FirstHalf` 后接 `SecondHalf` 的组合仍对应 full Boris rotation，而不是两个朴素半磁旋转的近似拼接。
 
 ## 4.3 WarpX 如何选择 pusher
 
@@ -416,15 +441,15 @@ WarpX 参数文档把 `algo.particle_pusher = vay` 和 `higuera` 分别列为可
 
 ## 4.6 从 `MultiParticleContainer` 到 `PhysicalParticleContainer`
 
-主循环的入口是 `../warpx/Source/Evolve/WarpXEvolve.cpp:1311-1415` 的 `WarpX::PushParticlesandDeposit()`。它选择 current 字段名后调用 `mypc->Evolve(...)`。
+主循环的入口是 `../warpx/Source/Evolve/WarpXEvolve.cpp:1324-1428` 的 `WarpX::PushParticlesandDeposit()`。它选择 current 字段名后调用 `mypc->Evolve(...)`。
 
-`mypc` 是 `MultiParticleContainer`。其 `Evolve()` 位于 `../warpx/Source/Particles/MultiParticleContainer.cpp:471-516`：
+`mypc` 是 `MultiParticleContainer`。其 `Evolve()` 位于 `../warpx/Source/Particles/MultiParticleContainer.cpp:478-522`：
 
 | 行号 | 操作 |
 |---|---|
-| `:479-489` | 不跳过沉积时清零 `current_fp/current_buf/rho_fp/rho_buf`。 |
-| `:490-510` | 隐式 solver 相关源项和 mass matrix 的额外清零逻辑。 |
-| `:513-515` | 遍历所有 species，调用每个 `pc->Evolve(...)`。 |
+| `:486-496` | 不跳过沉积时清零 `current_fp/current_buf/rho_fp/rho_buf`。 |
+| `:497-518` | 隐式 solver 相关源项和 mass matrix 的额外清零逻辑。 |
+| `:520-522` | 遍历所有 species，调用每个 `pc->Evolve(...)`。 |
 
 这层只负责多物种调度。真正的单 species 粒子推进在 `PhysicalParticleContainer::Evolve()`。
 
@@ -488,27 +513,27 @@ MultiParticleContainer
 
 ## 4.7 `PhysicalParticleContainer::Evolve()` 的 tile loop
 
-`../warpx/Source/Particles/PhysicalParticleContainer.cpp:452-825` 是本章最重要的函数。它把一个 species 的粒子按 tile 遍历，并把沉积、gather、push、buffer、隐式路径和 load-balance cost 放在一个局部循环里。
+`../warpx/Source/Particles/PhysicalParticleContainer.cpp:457-831` 是本章最重要的函数。它把一个 species 的粒子按 tile 遍历，并把沉积、gather、push、buffer、隐式路径和 load-balance cost 放在一个局部循环里。
 
 核心顺序是：
 
 | 行号 | 操作 | 含义 |
 |---|---|---|
-| `:480-485` | 取得 `Efield_aux` 和 `Bfield_aux` | 粒子 gather 使用 auxiliary fields。 |
-| `:487-497` | 判断是否沉积 charge/current | `skip_deposition` 和 `do_not_deposit` 会关掉沉积。 |
-| `:517-575` | 遍历 tile，必要时按 AMR buffer 分区粒子 | fine/coarse gather 和 deposit 的粒子集合可能不同。 |
-| `:579-592` | push 前沉积 `rho` component 0 | 旧时间层电荷，通常对应 \(\rho^n\)。 |
-| `:613-617` | fine patch 粒子调用 `PushPX()` | gather fine fields 并推进粒子。 |
-| `:671-676` | buffer/coarse 粒子调用 `PushPX()` | AMR 边界附近可从 coarse auxiliary fields gather。 |
-| `:697-733` | 沉积 current | 显式路径 `relative_time=-0.5*dt`，对应 \(\mathbf{J}^{n+1/2}\)。 |
-| `:785-803` | push 后沉积 `rho` component 1 | 新时间层电荷，通常对应 \(\rho^{n+1}\)。 |
-| `:816-824` | 可选 particle splitting | subcycling 时避免 coarse level 重复沉积。 |
+| `:486-491` | 取得 `Efield_aux` 和 `Bfield_aux` | 粒子 gather 使用 auxiliary fields。 |
+| `:493-508` | 判断是否沉积 charge/current、是否 split particles | `skip_deposition` 和 `do_not_deposit` 会关掉沉积。 |
+| `:523-580` | 遍历 tile，必要时按 AMR buffer 分区粒子 | fine/coarse gather 和 deposit 的粒子集合可能不同。 |
+| `:585-598` | push 前沉积 `rho` component 0 | 旧时间层电荷，通常对应 \(\rho^n\)。 |
+| `:619-623` | fine patch 粒子调用 `PushPX()` | gather fine fields 并推进粒子。 |
+| `:675-682` | buffer/coarse 粒子调用 `PushPX()` | AMR 边界附近可从 coarse auxiliary fields gather。 |
+| `:703-738` | 沉积 current | 显式路径 `relative_time=-0.5*dt`，对应 \(\mathbf{J}^{n+1/2}\)。 |
+| `:791-808` | push 后沉积 `rho` component 1 | 新时间层电荷，通常对应 \(\rho^{n+1}\)。 |
+| `:822-830` | 可选 particle splitting | subcycling 时避免 coarse level 重复沉积。 |
 
 这段源码说明，真实粒子推进不是“先推所有粒子，再单独沉积”。WarpX 为了 AMR、缓存局部性、GPU/CPU 并行和时间层一致性，在 tile 内完成 gather/push/deposit 的组合。
 
 ## 4.8 `PushPX()`：gather 和 push 的融合 kernel
 
-`PhysicalParticleContainer::PushPX()` 位于 `../warpx/Source/Particles/PhysicalParticleContainer.cpp:1324-1565`。它是真正进入单粒子并行循环的地方。
+`PhysicalParticleContainer::PushPX()` 位于 `../warpx/Source/Particles/PhysicalParticleContainer.cpp:1330-1575`。它是真正进入单粒子并行循环的地方。
 
 核心源码原文如下，省略了 QED 宏分支和部分属性准备：
 
@@ -557,15 +582,15 @@ amrex::ParallelFor(
 
 | 行号 | 操作 |
 |---|---|
-| `:1340-1344` | 检查 gather level，并对空粒子直接返回。 |
-| `:1346-1360` | 构造 gather box，并按 `ngEB` 扩展 guard cells。 |
-| `:1373-1421` | 准备粒子位置访问器、外场、动量数组、ionization level 等。 |
-| `:1440-1468` | 取 species 电荷/质量、pusher 算法、radiation/QED flags。 |
-| `:1474-1479` | 启动 `amrex::ParallelFor`。 |
-| `:1480-1508` | 读取粒子位置，调用 `doGatherShapeN()` 把网格场 gather 到粒子。 |
-| `:1511-1516` | 叠加外部粒子场和缩放。 |
-| `:1523-1547` | 调用 `doParticleMomentumPush()` 更新动量。 |
-| `:1549-1552` | 若 `PositionPushType::Full`，调用 `UpdatePosition()` 更新位置。 |
+| `:1346-1350` | 检查 gather level，并对空粒子直接返回。 |
+| `:1352-1367` | 构造 gather box，并按 `ngEB` 扩展 guard cells。 |
+| `:1379-1444` | 准备粒子位置访问器、外场、动量数组、ionization level、旧位置缓存等。 |
+| `:1446-1477` | 取 species 电荷/质量、pusher 算法、radiation/QED flags。 |
+| `:1478-1486` | 启动带 compile-time option 的 `amrex::ParallelFor`。 |
+| `:1488-1517` | 读取粒子位置，调用 `doGatherShapeN()` 把网格场 gather 到粒子。 |
+| `:1519-1524` | 叠加外部粒子场和缩放。 |
+| `:1531-1555` | 调用 `doParticleMomentumPush()` 更新动量。 |
+| `:1557-1560` | 若 `PositionPushType::Full`，调用 `UpdatePosition()` 更新位置。 |
 
 这给出了 WarpX 显式粒子推进的真实顺序：
 

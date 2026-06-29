@@ -399,24 +399,24 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">PIC 程序详解：从物理模型到 WarpX 源码</h1>
-<p class="subtitle">v0.18 boosted-frame Galilean 速度闭环版</p>
+<p class="subtitle">v0.19 PSATD NCI 策略谱系版</p>
 <p class="author">PIC-tutor</p>
 <p class="date">2026-06-29</p>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#pic-tutor-v0.18" id="toc-pic-tutor-v0.18">PIC-tutor
-v0.18</a>
+<li><a href="#pic-tutor-v0.19" id="toc-pic-tutor-v0.19">PIC-tutor
+v0.19</a>
 <ul>
 <li><a href="#定位" id="toc-定位">定位</a></li>
 <li><a href="#源码基线" id="toc-源码基线">源码基线</a></li>
-<li><a href="#v0.18-章节范围" id="toc-v0.18-章节范围">v0.18
+<li><a href="#v0.19-章节范围" id="toc-v0.19-章节范围">v0.19
 章节范围</a></li>
-<li><a href="#v0.18-已完成的增量" id="toc-v0.18-已完成的增量">v0.18
+<li><a href="#v0.19-已完成的增量" id="toc-v0.19-已完成的增量">v0.19
 已完成的增量</a></li>
 <li><a href="#成书前必须补齐"
 id="toc-成书前必须补齐">成书前必须补齐</a></li>
-<li><a href="#v0.18-构建方式" id="toc-v0.18-构建方式">v0.18
+<li><a href="#v0.19-构建方式" id="toc-v0.19-构建方式">v0.19
 构建方式</a></li>
 </ul></li>
 <li><a href="#写作说明" id="toc-写作说明">0. 写作说明</a></li>
@@ -1148,26 +1148,27 @@ id="toc-python-field-wrapper-的最小强回归">Python field wrapper
 A：符号表草稿</a></li>
 </ul>
 </nav>
-<!-- source: manuscript/VERSION-v0.18.md -->
-<h1 id="pic-tutor-v0.18">PIC-tutor v0.18</h1>
+<!-- source: manuscript/VERSION.md -->
+<h1 id="pic-tutor-v0.19">PIC-tutor v0.19</h1>
 <p>版本日期：2026-06-29</p>
 <h2 id="定位">定位</h2>
-<p><code>v0.18</code> 是 <code>PIC-tutor</code> 的 boosted-frame
-Galilean 速度闭环版。它继承 <code>v0.17</code> 的 Lehe et al. 2016
-文献闭环，并继续补入 Kirchen et al. 2016 的本地 PDF、MinerU
-Markdown、图片和中文讲解笔记，把 Galilean PSATD
-从“均匀漂移等离子体的稳定离散表示”推进到 Lorentz boosted-frame
-激光等离子体加速 workflow。</p>
-<p>本版的重点仍不是修改 <code>../warpx</code>，而是把“boosted-frame
-背景等离子体速度 -&gt; Galilean 网格速度 -&gt; WarpX 默认 Galilean
-速度语义 -&gt; NCI regression 与应用层物理量”的证据链写清楚。v0.18 新增
-<code>references/06_stability_filtering_nci/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas/</code>，其中包含原
+<p><code>v0.19</code> 是 <code>PIC-tutor</code> 的 PSATD NCI
+策略谱系版。它继承 <code>v0.18</code> 的 Kirchen et al. 2016
+boosted-frame Galilean 应用证据，并继续补入 Godfrey, Vay, Haber 2014
+的本地 PDF、MinerU Markdown、图片、中文讲解笔记和 reading log，把第 6
+章中的 NCI 讨论从 “Galilean 能稳定” 扩展成更完整的策略分类：fixed-grid
+PSATD 的数字滤波、插值阶数、current scaling、时间步选择，与 Galilean
+PSATD 的表示层面消除机制并列说明。</p>
+<p>本版仍不修改 <code>../warpx</code>。v0.19 新增
+<code>references/06_stability_filtering_nci/2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm/</code>，其中包含原
 PDF、MinerU 转换 Markdown、图片、中文讲解笔记和 reading log；第 6 章新增
-<code>6.6.2 v0.18 文献闭环：Kirchen et al. 2016 的 boosted-frame 应用证据</code>。</p>
+<code>6.6.3 v0.19 文献闭环：Godfrey et al. 2014 的 PSATD NCI 策略谱系</code>。本版的写作重点是把
+<code>warpx.use_filter = 1</code>、<code>psatd.current_correction</code>、<code>psatd.do_time_averaging</code>、<code>psatd.JRhom</code>
+和 Galilean PSATD 分成不同机制，避免把它们统称为同一个“稳定化开关”。</p>
 <p>本版仍不是出版终稿。它完成了 PSATD/Galilean/NCI
-文献闭环的前两篇核心论文；后续仍需继续补 Godfrey PSATD/NCI 或 PML
-相关论文，把第 6 章中 <code>X1-X4</code> 系数、time averaging、PML PSATD
-和 WarpX 默认速度源码路径逐项展开，并建立 PDF 出版流程。</p>
+文献闭环的第三个核心节点；后续仍需继续核 WarpX 当前 filter
+profile、current correction 源码实现、finite-order PSATD 参数，以及 PML
+PSATD 相关论文和出版级 PDF 流程。</p>
 <h2 id="源码基线">源码基线</h2>
 <ul>
 <li>本书项目仓库：<code>/Volumes/PHILIPS/programs/PIC/PIC-tutor</code></li>
@@ -1175,13 +1176,14 @@ PDF、MinerU 转换 Markdown、图片、中文讲解笔记和 reading log；第 
 <li>当前 WarpX 分支：<code>pkuHEDPbranch</code></li>
 <li>当前 WarpX commit：<code>8c488b1a9</code></li>
 </ul>
-<p>v0.18 只修改 <code>PIC-tutor</code> 书稿项目，不修改
-<code>../warpx</code> 原仓库。本版按当前 checkout 连接了 Kirchen et
-al. 2016、Lehe et al. 2016、WarpX boosted-frame
-官方文档、<code>PsatdAlgorithmGalilean.cpp</code> 和
-<code>nci_psatd_stability</code> regression；后续若 WarpX
+<p>v0.19 只修改 <code>PIC-tutor</code> 书稿项目，不修改
+<code>../warpx</code> 原仓库。本版按当前 checkout 连接了 Godfrey et
+al. 2014、Lehe et al. 2016、Kirchen et al. 2016、WarpX
+<code>nci_psatd_stability</code>
+regression、<code>analysis_galilean.py</code>、<code>analysis_psatd_CC1.py</code>
+和第 6 章已有的 PSATD/JRhom 源码精读。后续若 WarpX
 更新，必须重新校准源码行号和测试入口后再发布新版。</p>
-<h2 id="v0.18-章节范围">v0.18 章节范围</h2>
+<h2 id="v0.19-章节范围">v0.19 章节范围</h2>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -1193,7 +1195,7 @@ al. 2016、Lehe et al. 2016、WarpX boosted-frame
 <tr>
 <th>章节</th>
 <th>文件</th>
-<th>v0.18 状态</th>
+<th>v0.19 状态</th>
 <th>下一步缺口</th>
 </tr>
 </thead>
@@ -1244,10 +1246,10 @@ al. 2016、Lehe et al. 2016、WarpX boosted-frame
 <tr>
 <td>场求解器</td>
 <td><code>chapters/06-field-solvers.md</code></td>
-<td>已补 Lehe 2016 与 Kirchen 2016 的 Galilean PSATD / boosted-frame
+<td>已补 Lehe 2016、Kirchen 2016、Godfrey 2014 的 PSATD/Galilean/NCI
 文献闭环</td>
-<td>仍需继续补 Godfrey/PML 论文，并把 <code>X1-X4</code>、time averaging
-和默认速度源码逐项对表</td>
+<td>仍需核 WarpX filter/current correction 源码公式、PML PSATD 论文和
+<code>X1-X4</code> 系数逐项推导</td>
 </tr>
 <tr>
 <td>边界、PML 与 AMR</td>
@@ -1276,27 +1278,26 @@ regression</td>
 </tr>
 </tbody>
 </table>
-<h2 id="v0.18-已完成的增量">v0.18 已完成的增量</h2>
+<h2 id="v0.19-已完成的增量">v0.19 已完成的增量</h2>
 <ul>
-<li>冻结 <code>manuscript/VERSION-v0.17.md</code>，避免重建 v0.17 时误用
-v0.18 版本说明。</li>
-<li>新增 <code>scripts/build_v18.py</code>，生成
-<code>dist/pic-tutor-v0.18.md</code> 与
-<code>dist/pic-tutor-v0.18.html</code>。</li>
-<li>把 <code>scripts/build_v17.py</code> 改为读取冻结的
-<code>manuscript/VERSION-v0.17.md</code>，保持 v0.17
+<li>冻结 <code>manuscript/VERSION-v0.18.md</code>，避免重建 v0.18 时误用
+v0.19 版本说明。</li>
+<li>新增 <code>scripts/build_v19.py</code>，生成
+<code>dist/pic-tutor-v0.19.md</code> 与
+<code>dist/pic-tutor-v0.19.html</code>。</li>
+<li>把 <code>scripts/build_v18.py</code> 改为读取冻结的
+<code>manuscript/VERSION-v0.18.md</code>，保持 v0.18
 版本说明可复现。</li>
-<li>新增 Kirchen et al. 2016 论文专属目录，保存 PDF、MinerU
+<li>新增 Godfrey et al. 2014 论文专属目录，保存 PDF、MinerU
 Markdown、图片、中文讲解笔记和 reading log。</li>
 <li>在第 6 章新增
-<code>6.6.2 v0.18 文献闭环：Kirchen et al. 2016 的 boosted-frame 应用证据</code>。</li>
-<li>把 boosted-frame 中背景等离子体漂移速度 <span
-class="math inline">\(\mathbf{v}_{plasma}=-\beta c\mathbf{e}_z\)</span>
-与 Galilean 网格速度 <span
-class="math inline">\(\mathbf{v}_{gal}\)</span> 连成正文说明。</li>
-<li>把 Kirchen 的应用层证据连接到 WarpX 官方 boosted-frame
-文档、<code>psatd.use_default_v_galilean</code> 的语义和
-<code>nci_psatd_stability</code> regression gate。</li>
+<code>6.6.3 v0.19 文献闭环：Godfrey et al. 2014 的 PSATD NCI 策略谱系</code>。</li>
+<li>把 fixed-grid PSATD 的数字滤波、三次插值、current
+scaling、时间步选择，与 Galilean PSATD 的表示层面策略分开说明。</li>
+<li>明确 <code>warpx.use_filter = 1</code> 属于 filter/smoothing
+家族，<code>psatd.current_correction</code> 属于连续性方程/Gauss law
+约束路径，<code>psatd.JRhom</code>
+属于源项时间积分家族，三者不应混写成同一个机制。</li>
 </ul>
 <h2 id="成书前必须补齐">成书前必须补齐</h2>
 <ul>
@@ -1309,18 +1310,18 @@ commit，并避免同章混用未说明的历史行号。</li>
 中的资料条目回填为正文叙述。</li>
 <li>按 <code>docs/paper-reading-workflow.md</code> 完成核心论文 MinerU
 转换和中文讲解笔记。</li>
-<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.18 仍只保证
+<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.19 仍只保证
 Markdown/HTML。</li>
 <li>对 public GitHub 仓库中的 PDF 和运行产物做版权与体积审计。</li>
 </ul>
-<h2 id="v0.18-构建方式">v0.18 构建方式</h2>
+<h2 id="v0.19-构建方式">v0.19 构建方式</h2>
 <p>生成合订 Markdown 和 HTML 预览：</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v18.py</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v19.py</span></code></pre></div>
 <p>生成的文件：</p>
 <ul>
-<li><code>dist/pic-tutor-v0.18.md</code></li>
-<li><code>dist/pic-tutor-v0.18.html</code>（若本机存在
+<li><code>dist/pic-tutor-v0.19.md</code></li>
+<li><code>dist/pic-tutor-v0.19.html</code>（若本机存在
 <code>pandoc</code>）</li>
 </ul>
 <!-- source: manuscript/chapters/00-preface.md -->

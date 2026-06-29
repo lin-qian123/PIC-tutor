@@ -625,6 +625,64 @@ Kirchen 论文的应用图也给出一个读者侧验证顺序。第一，固定
 
 这也解释了 `nci_psatd_stability` regression 和更高层 boosted-frame example 之间的关系：前者用均匀流动等离子体和电场能量比做最小稳定性 gate；Kirchen 论文提供的是应用层证据，说明同一 Galilean 表示在激光等离子体加速的 boosted-frame workflow 中既抑制 NCI，又保持实验室系物理可比性。
 
+### 6.6.3 v0.19 文献闭环：Godfrey et al. 2014 的 PSATD NCI 策略谱系
+
+v0.19 补入 Godfrey, Vay, Haber 2014：`references/06_stability_filtering_nci/2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm/2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm-中文讲解.md`。这篇论文在本章中的位置应放在 Lehe/Kirchen 之前的理论基线：它不是 Galilean PSATD 论文，而是固定网格 PSATD 的 NCI 色散分析和抑制策略谱系。
+
+论文的起点是 PSATD 场推进本身。谱空间中定义
+
+$$
+C=\cos(k\Delta t),\qquad S=\sin(k\Delta t),
+$$
+
+电场更新包含旋度场项、电流项和纵向投影项：
+
+$$
+\mathbf{E}^{n+1}
+= C\mathbf{E}^{n}
+- iS\frac{\mathbf{k}\times\mathbf{B}^{n}}{k}
+- \frac{S}{k}\mathbf{J}^{n+1/2}
++ (1-C)\frac{\mathbf{k}\mathbf{k}\cdot\mathbf{E}^{n}}{k^2}
++ \left(\frac{S}{k}-\Delta t\right)
+\frac{\mathbf{k}\mathbf{k}\cdot\mathbf{J}^{n+1/2}}{k^2}.
+$$
+
+PSATD 的真空电磁模没有普通 FDTD Courant 限制，但相对论束流 PIC 仍有 NCI，因为离散粒子-网格系统中存在空间 alias 和时间 alias。Godfrey et al. 把这一点写成离散色散矩阵：
+
+$$
+\det \mathcal{D}(\omega,\mathbf{k})=0,
+$$
+
+其中束流 alias 可写作
+
+$$
+k_z'=k_z+m_z\frac{2\pi}{\Delta z},
+$$
+
+而危险的共振位置满足类似
+
+$$
+k_x^r =
+\left[
+\left(
+\left(k_z+m_z\frac{2\pi}{\Delta z}\right)v
+-p\frac{2\pi}{\Delta t}
+\right)^2
+-k_z^2
+\right]^{1/2}.
+$$
+
+这给本章一个很重要的写作边界：`warpx.use_filter = 1` 不是随意的数值润色，而是针对高 $k$ alias 和短波共振的 filter/smoothing 家族；但 filter 也不是万能的，因为小 $k$ 非共振增长可能需要 current scaling、插值阶数、时间步或表示方式共同处理。Godfrey 论文中的 current scaling 写成
+
+$$
+\mathbf{J}=\boldsymbol{\zeta}:\mathbf{J}_e,\qquad
+\boldsymbol{\zeta}=\mathrm{diag}(\zeta_z,\zeta_x,\zeta_y),
+$$
+
+它是 NCI 色散矩阵中的 k 依赖电流因子。这里必须和 WarpX regression 里的 `psatd.current_correction` 分开：`psatd.current_correction` 首先是连续性方程/Gauss law 约束路径，`analysis_galilean.py` 在 current-correction 分支还会检查 `max|divE-rho/eps0|` 相对误差；Godfrey 的 $\zeta$ 则是为压低 NCI 增长率而设计的 current scaling。
+
+Godfrey 2014、Lehe 2016、Kirchen 2016 合起来形成一个清楚的策略谱系。Godfrey 论文讲 fixed-grid PSATD 中如何用数字滤波、三次插值、current scaling 和时间步选择降低 NCI；Lehe 论文讲 Galilean PSATD 如何通过移动坐标/源项表示，在 $v_{gal}\approx v_0$ 时从表示层面消除均匀漂移 NCI；Kirchen 论文讲这个 Galilean 表示如何落到 boosted-frame LPA workflow 并保持回变换后的物理量一致。对应到 WarpX，`nci_psatd_stability` 的 `warpx.use_filter = 1`、`psatd.current_correction`、`psatd.do_time_averaging` 和 `psatd.JRhom` 应被写成不同机制的 regression 入口，而不是同一个“稳定化开关”的不同名字。
+
 ## 6.7 PSATD-JRhom：多次源项沉积与一阶/二阶谱更新
 
 `notes/code-reading/fieldsolver/07-psatd-jrhom.md` 把 PSATD-JRhom 从主循环到谱算法做了第一轮完整精读。物理上，JRhom 处理的是一个 PIC 时间步内 `J` 和 `rho` 不一定满足“电流常量、电荷线性”的假设。WarpX 使用 `psatd.JRhom` 字符串指定时间依赖：

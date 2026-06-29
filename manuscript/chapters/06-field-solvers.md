@@ -565,7 +565,56 @@ fields(i,j,k,Idx.Jx_mid) = Jx - (k_dot_J - k_dot_vg * (rho_new - rho_old_mod) / 
 
 这里 `rho_old_mod` 是 $\rho^n\theta^2$，`den` 是 $1-\theta^2$。因此 current correction 的目的不是平滑电流，而是投影掉违反谱空间连续性方程的纵向误差，使修正后的电流与 `rho_old/rho_new` 相容。
 
-### 6.6.1 v0.17 文献闭环：Lehe et al. 2016 的 Galilean PSATD
+### 6.6.1 v0.26 `X1-X4` 系数的源码公式闭环
+
+v0.26 把 `notes/code-reading/fieldsolver/17-psatd-x-coefficients.md` 回填到正文。这里的范围限定为 Cartesian `PsatdAlgorithmGalilean.cpp`：标准 PSATD 是 `v_galilean=0` 的极限，Galilean PSATD 则通过
+
+$$
+\omega_c=\mathbf{k}_c\cdot\mathbf{v}_{gal},\qquad
+T_2=\exp(i\omega_c\Delta t)
+$$
+
+把旧时刻场和旧时刻电荷项移到 Galilean 网格。源码使用 centered modified k 计算 $\omega_c$，而使用 spectral solver 的 modified k 计算
+
+$$
+\omega_s=c|\mathbf{k}_s|,\qquad
+C=\cos(\omega_s\Delta t),\qquad
+S_{ck}=\frac{\sin(\omega_s\Delta t)}{\omega_s}.
+$$
+
+`S_ck` 在 $\omega_s=0$ 时直接取 $\Delta t$。这个零模分支非常重要，因为 `X1-X4` 里既有 $\omega_s^2-\omega_c^2$，也有 $\theta_c^\ast-\theta_c$ 这样的分母，不能用一个通式硬算所有模式。
+
+四个系数在源码中的角色如下：
+
+| 系数 | Galilean 通式或标准极限 | 更新式中的位置 | 解释 |
+|---|---|---|---|
+| `X1` | 通式为 `(1 - theta2_c*C + i*w_c*theta2_c*S_ck)/(epsilon0*(om_s^2-w_c^2))`；零模为 `dt^2/(2 epsilon0)` | `B_new` 中的 `i*X1*(k x J)` | 电流通过 Faraday/Ampere 耦合对磁场的贡献 |
+| `X2` | `w_c!=0` 时由 `c^2*(theta_c_star*X1 - theta_c*tmp)/(theta_c_star-theta_c)` 给出；标准非零模为 `c^2*(dt-S_ck)/(epsilon0*dt*om_s^2)` | `E_new` 中 `-i*X2*rho_new*k` | 新时刻电荷对纵向电场的贡献 |
+| `X3` | `w_c!=0` 时由 `c^2*(theta_c_star*X1 - theta_c_star*tmp)/(theta_c_star-theta_c)` 给出；标准非零模为 `c^2*(dt*C-S_ck)/(epsilon0*dt*om_s^2)` | `E_new` 中 `+i*T2*X3*rho_old*k` | 旧时刻电荷经 Galilean 相位后的纵向贡献 |
+| `X4` | `i*w_c*X1 - theta2_c*S_ck/epsilon0`；标准 PSATD 为 `-S_ck/epsilon0` | `E_new` 中的 `X4*J` | 电流对电场的直接源项 |
+
+因此，Cartesian standard/Galilean PSATD 的核心更新可以压缩成：
+
+$$
+\mathbf{E}^{n+1}
+=T_2 C\mathbf{E}^{n}
++i c^2T_2 S_{ck}(\mathbf{k}\times\mathbf{B}^{n})
++X_4\mathbf{J}
+-i(X_2\rho^{n+1}-T_2X_3\rho^n)\mathbf{k},
+$$
+
+$$
+\mathbf{B}^{n+1}
+=T_2 C\mathbf{B}^{n}
+-iT_2 S_{ck}(\mathbf{k}\times\mathbf{E}^{n})
++iX_1(\mathbf{k}\times\mathbf{J}).
+$$
+
+这两个式子也说明为什么本章不能把 `X1-X4` 写成“稳定化系数”。它们首先是 PSATD 对源项积分的解析系数：`X1/X4` 管电流源项，`X2/X3` 管电荷源项，`T2` 管 Galilean 相位。`nci_psatd_stability` regression 里的 NCI 能量比和 Gauss-law 检查，是这些系数、current correction、filter、有限阶 modified k 和输入参数共同作用后的结果，而不是某一个 `X` 系数单独承担的验证。
+
+本节还要保留三个边界。第一，time averaging 使用 `Psi*` 和 `Y*` 系数，不能只靠 `X1-X4` 描述平均场输出。第二，JRhom 使用 `PsatdAlgorithmJRhomFirstOrder/SecondOrder`，源项时间依赖和系数体系不同。第三，RZ、Galilean RZ、PML PSATD 都有各自的系数语义，不能把 Cartesian `PsatdAlgorithmGalilean.cpp` 的 `X1-X4` 直接搬过去。
+
+### 6.6.2 v0.17 文献闭环：Lehe et al. 2016 的 Galilean PSATD
 
 v0.17 为本节补入第一篇 PSATD/Galilean/NCI 核心论文闭环：`references/06_stability_filtering_nci/2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates/2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates-中文讲解.md`。该笔记基于本地 PDF、MinerU Markdown 和论文图片，按论文顺序记录 Galilean 坐标、离散连续性方程、PIC cycle、二维稳定性分析和准柱坐标扩展。
 
@@ -603,7 +652,7 @@ $$
 
 因此，本书后面讲 `psatd.use_default_v_galilean` 时，不能把它写成经验开关。它的理论含义是：在 boosted-frame 或均匀流动等离子体问题中，让 Galilean 网格速度接近背景漂移速度 $\mathbf{v}_0$，使背景等离子体在数值网格中近似静止，从而移除主要 alias resonance。论文的二维稳定性分析和 Warp/FBPIC 数值实验都显示，最大增长率只在 $\mathbf{v}_{gal}\approx\mathbf{v}_0$ 附近降到零；取反方向的 Galilean 速度并不会自动稳定。
 
-### 6.6.2 v0.18 文献闭环：Kirchen et al. 2016 的 boosted-frame 应用证据
+### 6.6.3 v0.18 文献闭环：Kirchen et al. 2016 的 boosted-frame 应用证据
 
 v0.18 继续补入 Kirchen et al. 2016：`references/06_stability_filtering_nci/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas-中文讲解.md`。这篇论文和 Lehe et al. 2016 的分工不同：Lehe 论文负责 Galilean PSATD 的推导、离散连续性方程和稳定性分析；Kirchen 论文负责说明该离散表示如何落到 Lorentz boosted-frame 等离子体加速 workflow。
 
@@ -625,7 +674,7 @@ Kirchen 论文的应用图也给出一个读者侧验证顺序。第一，固定
 
 这也解释了 `nci_psatd_stability` regression 和更高层 boosted-frame example 之间的关系：前者用均匀流动等离子体和电场能量比做最小稳定性 gate；Kirchen 论文提供的是应用层证据，说明同一 Galilean 表示在激光等离子体加速的 boosted-frame workflow 中既抑制 NCI，又保持实验室系物理可比性。
 
-### 6.6.3 v0.19 文献闭环：Godfrey et al. 2014 的 PSATD NCI 策略谱系
+### 6.6.4 v0.19 文献闭环：Godfrey et al. 2014 的 PSATD NCI 策略谱系
 
 v0.19 补入 Godfrey, Vay, Haber 2014：`references/06_stability_filtering_nci/2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm/2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm-中文讲解.md`。这篇论文在本章中的位置应放在 Lehe/Kirchen 之前的理论基线：它不是 Galilean PSATD 论文，而是固定网格 PSATD 的 NCI 色散分析和抑制策略谱系。
 
@@ -683,7 +732,7 @@ $$
 
 Godfrey 2014、Lehe 2016、Kirchen 2016 合起来形成一个清楚的策略谱系。Godfrey 论文讲 fixed-grid PSATD 中如何用数字滤波、三次插值、current scaling 和时间步选择降低 NCI；Lehe 论文讲 Galilean PSATD 如何通过移动坐标/源项表示，在 $v_{gal}\approx v_0$ 时从表示层面消除均匀漂移 NCI；Kirchen 论文讲这个 Galilean 表示如何落到 boosted-frame LPA workflow 并保持回变换后的物理量一致。对应到 WarpX，`nci_psatd_stability` 的 `warpx.use_filter = 1`、`psatd.current_correction`、`psatd.do_time_averaging` 和 `psatd.JRhom` 应被写成不同机制的 regression 入口，而不是同一个“稳定化开关”的不同名字。
 
-### 6.6.4 v0.20 源码闭环：WarpX PSATD/NCI 机制对照表
+### 6.6.5 v0.20 源码闭环：WarpX PSATD/NCI 机制对照表
 
 v0.20 继续把上一节的策略谱系落回 WarpX 源码。结论先写清楚：当前 WarpX 中和 NCI 稳定性相关的 filter、current correction、finite-order PSATD、Galilean representation 和 JRhom 是五组不同机制；其中源码里叫 `NCIGodfreyFilter` 的路径也不是 `nci_psatd_stability` 输入卡里常见的 `warpx.use_filter = 1`。
 

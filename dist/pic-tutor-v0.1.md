@@ -6527,6 +6527,14 @@ flowchart TD
 
 本章对应源码笔记见 `notes/code-reading/particles/00-particle-evolve-callchain.md`、`notes/code-reading/particles/01-pusher-and-deposition-evidence.md` 和 `notes/code-reading/particles/02-gather-shape-deposition-kernels.md`。
 
+本章当前依据的 WarpX 源码版本是：
+
+- `../warpx`
+- 分支：`pkuHEDPbranch`
+- commit：`8c488b1a9`
+
+v0.4 校准说明：本章已按当前 checkout 复核 `ShapeFactors.H`、`WarpXParticleContainer.cpp`、`PhysicalParticleContainer.cpp` 与 `CurrentDeposition.H` 中的沉积主链。旧稿中把 current deposition 的 `ShapeN<1..4>` 分派作为形函数入口的写法过窄；当前正文改为分清三层：`ShapeFactors.H` 定义 0-4 阶形函数，`WarpXParticleContainer::DepositCurrent()` / `DepositCharge()` 做 tile 级分派，`Particles/Deposition/CurrentDeposition.H` 承载 Direct、Esirkepov、Villasenor 和 Vay 的实际 current kernel。验证入口以 `Examples/Tests/langmuir/analysis_utils.py` 和 `Examples/Tests/vay_deposition/analysis.py` 的 `divE-rho/epsilon_0` 检查为当前闭环。
+
 Birdsall-Langdon 在 `Plasma Physics via Computer Simulation` 第一分卷的 `4-6` 到 `4-8` 给了一个很硬的理论边界：只要粒子通过空间网格被观测和求场，它就不再表现成零厚度 point particle，而必须被理解成具有有效形状因子 `S(x)`、频域响应 `S(k)` 的 finite-size cloud。这样一来，shape order 不是单纯“更光滑的插值公式”，而是同时改写三件事：
 
 1. 粒子如何把 `rho/J` 交回网格；
@@ -6574,7 +6582,7 @@ $$
 
 这里 \(S_i\) 是粒子形函数对网格自由度 \(i\) 的权重。形函数阶数越高，粒子影响的网格范围越大，噪声通常越低，但 stencil、guard cell 和通信成本也更高。
 
-WarpX 中 shape 阶数通过 `nox/noy/noz` 等内部变量进入 gather 和 deposition 分派。例如 current deposition 里会根据 `WarpX::nox` 选择 `ShapeN<1>` 到 `ShapeN<4>` 的模板实例，见 `../warpx/Source/Particles/WarpXParticleContainer.cpp:662-694`、`:810-864`、`:867-890`。
+WarpX 中 shape 阶数通过 `nox/noy/noz` 等内部变量进入 gather 和 deposition 分派。当前源码里，0-4 阶权重的唯一基础定义在 `../warpx/Source/Particles/ShapeFactors.H:27-156`；current deposition 再在 `../warpx/Source/Particles/WarpXParticleContainer.cpp:654-930` 根据 `WarpX::nox` 与 `CurrentDepositionAlgo` 选择 `doEsirkepovDepositionShapeN<N>()`、`doVillasenorDepositionShapeN*<N>()`、`doVayDepositionShapeN<N>()` 或 direct `doDepositionShapeN<N>()`。因此读者应把 `nox/noy/noz` 看成“shape order 的全局分派键”，而不是某一个 kernel 的局部参数。
 
 ## 5.2 `ShapeFactors.H`：WarpX 实际使用的 0 到 4 阶形函数
 
@@ -6778,7 +6786,7 @@ $$
 
 ## 5.4 WarpX 的旧电荷、新电荷和半步电流
 
-`PhysicalParticleContainer::Evolve()` 在 `../warpx/Source/Particles/PhysicalParticleContainer.cpp:452-825` 中组织单 species 的沉积顺序。
+`PhysicalParticleContainer::Evolve()` 在 `../warpx/Source/Particles/PhysicalParticleContainer.cpp:457-831` 中组织单 species 的沉积顺序。
 
 关键源码节选如下，来自同一个 tile loop；这里省略了 buffer/coarse gather 和隐式 suborbit 的长分支，但保留 push 前电荷、粒子推进、半步电流和 push 后电荷的原始调用形态：
 
@@ -6832,10 +6840,10 @@ if (deposit_charge) {
 
 | 行号 | 动作 | 时间层解释 |
 |---|---|---|
-| `:579-592` | push 前沉积 `rho` component 0 | 旧电荷，通常是 \(\rho^n\)。 |
-| `:613-617`、`:671-676` | 调用 `PushPX()` 推进粒子 | \(\mathbf{x}^n,\mathbf{u}^{n-1/2}\to\mathbf{x}^{n+1},\mathbf{u}^{n+1/2}\)。 |
-| `:697-733` | push 后沉积 current | 显式路径 `relative_time=-0.5*dt`，对应 \(\mathbf{J}^{n+1/2}\)。 |
-| `:785-803` | push 后沉积 `rho` component 1 | 新电荷，通常是 \(\rho^{n+1}\)。 |
+| `:585-598` | push 前沉积 `rho` component 0 | 旧电荷，通常是 \(\rho^n\)。 |
+| `:619-623`、`:675-682` | 调用 `PushPX()` 推进粒子 | \(\mathbf{x}^n,\mathbf{u}^{n-1/2}\to\mathbf{x}^{n+1},\mathbf{u}^{n+1/2}\)。 |
+| `:703-738` | push 后沉积 current | 显式路径 `relative_time=-0.5*dt`，对应 \(\mathbf{J}^{n+1/2}\)。 |
+| `:791-808` | push 后沉积 `rho` component 1 | 新电荷，通常是 \(\rho^{n+1}\)。 |
 
 为什么电流在 push 后沉积还要 `relative_time=-0.5*dt`？因为粒子位置已经是 \(\mathbf{x}^{n+1}\)，而电流应位于半步 \(n+1/2\)。WarpX 在 `DepositCurrent()` 的注释中说明：`relative_time` 非零时会临时修改粒子位置以匹配沉积时间，见 `../warpx/Source/Particles/WarpXParticleContainer.cpp:386-389`。
 
@@ -6843,21 +6851,21 @@ if (deposit_charge) {
 
 ## 5.5 多物种层如何清零和汇总源项
 
-`../warpx/Source/Particles/MultiParticleContainer.cpp:471-516` 是多物种粒子推进入口。
+`../warpx/Source/Particles/MultiParticleContainer.cpp:478-522` 是多物种粒子推进入口。
 
 若不跳过沉积，`MultiParticleContainer::Evolve()` 先把本 level 的当前步源项清零：
 
-- `current_fp` 三个方向：`:482-484`；
-- `current_buf` 三个方向：`:485-487`；
-- `rho_fp`：`:488`；
-- `rho_buf`：`:489`。
+- `current_fp` 三个方向：`:489-491`；
+- `current_buf` 三个方向：`:492-494`；
+- `rho_fp`：`:495`；
+- `rho_buf`：`:496`。
 
-然后在 `:513-515` 遍历 `allcontainers`，每个 species 各自沉积到同一组源项数组中。也就是说，最终的 \(\rho\) 和 \(\mathbf{J}\) 是所有物种贡献之和。
+然后在 `:520-522` 遍历 `allcontainers`，每个 species 各自沉积到同一组源项数组中。也就是说，最终的 \(\rho\) 和 \(\mathbf{J}\) 是所有物种贡献之和。
 
 独立调用的 `DepositCurrent()` 和 `DepositCharge()` 也有类似结构：
 
-- `MultiParticleContainer::DepositCurrent()` 位于 `:580-605`，先清零多层 \(J\)，再逐 species 调 `pc->DepositCurrent()`。
-- `MultiParticleContainer::DepositCharge()` 位于 `:608-640`，先清零 \(\rho\)，若 `relative_time != 0` 则临时 `PushX(relative_time)`，逐 species 沉积后再推回。
+- `MultiParticleContainer::DepositCurrent()` 位于 `../warpx/Source/Particles/MultiParticleContainer.cpp:586-612`，先清零多层 \(J\)，再逐 species 调 `pc->DepositCurrent()`，RZ/RCYLINDER/RSPHERE 下随后做 inverse-volume scaling。
+- `MultiParticleContainer::DepositCharge()` 位于 `../warpx/Source/Particles/MultiParticleContainer.cpp:614-642`，先清零 \(\rho\)，若 `relative_time != 0` 则临时 `PushX(relative_time)`，逐 species 沉积后再推回。
 
 这些函数主要服务于 PSATD-JRhom、多时间层 charge/current、静电场或诊断等场景。
 
@@ -6889,7 +6897,7 @@ if (has_buffer && !do_not_push) {
 }
 ```
 
-源码位置：`../warpx/Source/Particles/PhysicalParticleContainer.cpp:566-575`。
+源码位置：`../warpx/Source/Particles/PhysicalParticleContainer.cpp:568-580`。
 
 这一步之后：
 
@@ -6909,7 +6917,7 @@ PushPX(pti, exfab, eyfab, ezfab,
        0, np_to_push, lev, gather_lev, dt, ...);
 ```
 
-源码位置：`../warpx/Source/Particles/PhysicalParticleContainer.cpp:611-617`。
+源码位置：`../warpx/Source/Particles/PhysicalParticleContainer.cpp:617-623`。
 
 这里的 `exfab/eyfab/...` 来自 `Efield_aux/Bfield_aux`，也就是已经做完 substitution 的 full solution。
 
@@ -6925,7 +6933,7 @@ PushPX(pti, cexfab, ceyfab, cezfab,
        lev, lev-1, dt, ...);
 ```
 
-源码位置：`../warpx/Source/Particles/PhysicalParticleContainer.cpp:640-676`。
+源码位置：`../warpx/Source/Particles/PhysicalParticleContainer.cpp:643-682`。
 
 这里不再使用 fine-level `aux`，而是使用 coarse-aux 副本 `E/Bfield_cax`，并且把 `gather_lev` 显式设成 `lev-1`。
 
@@ -6953,7 +6961,7 @@ DepositCharge(... crho, 0, np_to_deposit,
               np-np_to_deposit, thread_num, lev, lev-1);
 ```
 
-源码位置：`../warpx/Source/Particles/PhysicalParticleContainer.cpp:583-591,712-730,797-801`。
+源码位置：`../warpx/Source/Particles/PhysicalParticleContainer.cpp:591-598,712-738,802-808`。
 
 这里：
 
@@ -6972,7 +6980,7 @@ if (lev == depos_lev) {
 }
 ```
 
-源码位置：`../warpx/Source/Particles/WarpXParticleContainer.cpp:462-467,1542-1547`。
+源码位置：`../warpx/Source/Particles/WarpXParticleContainer.cpp:465-471,1763-1769`。
 
 也就是说，buffer deposition 真正变化的是：
 
@@ -7070,7 +7078,7 @@ const amrex::XDim3 dinv = WarpX::InvCellSize(std::max(depos_lev,0));
 const amrex::XDim3 xyzmin = WarpX::LowerCorner(tilebox, depos_lev, 0.5_rt*dt);
 ```
 
-源码位置：`../warpx/Source/Particles/WarpXParticleContainer.cpp:462-474,517`。
+源码位置：`../warpx/Source/Particles/WarpXParticleContainer.cpp:465-480,520`。
 
 因此，AMR buffer 本身只改变：
 
@@ -7325,23 +7333,25 @@ $$
 - current-correction 变体对应 `PSATD + periodic single box` 下仍立即同步的那条路径；
 - Vay 变体对应非 periodic-single-box 下 `current_fp_vay` 单独过滤、再交给后续 PSATD 同步链的那条专门路径。
 
-tile 级 charge deposition 入口在 `../warpx/Source/Particles/WarpXParticleContainer.cpp:1479-1585`。
+tile 级 charge deposition 入口在 `../warpx/Source/Particles/WarpXParticleContainer.cpp:1502-1790`。它现在需要拆成两段读：`1502-1607` 是 component 检查、shared-memory 前置检查、tilebox、`xyzmin` 与 `time_shift_delta`；`1713-1788` 才是真正的 charge kernel 分派。
 
 | 行号 | 操作 |
 |---|---|
-| `:1485-1489` | 检查 `rho` component 数量是否足够。 |
-| `:1497-1503` | 非空粒子检查并取得 `ng_rho`。 |
-| `:1504-1533` | 检查粒子 shape 与 guard cells。 |
-| `:1535-1539` | 取得 species 电荷并建立 profiling scope。 |
-| `:1541-1558` | 构造沉积 tilebox，并处理 level/coarse buffer。 |
-| `:1560-1577` | GPU 使用 `rho` alias，CPU 使用 thread-local `local_rho`。 |
-| `:1579-1585` | 根据 `icomp` 计算 `time_shift_delta`。 |
+| `:1508-1512` | 检查 `rho` component 数量是否足够。 |
+| `:1520-1525` | shared-memory 路径下做非空粒子检查并取得 `ng_rho`。 |
+| `:1527-1556` | shared-memory 路径下检查粒子 shape 与 guard cells。 |
+| `:1558-1600` | 取得 species 电荷、profiling scope、tilebox 和 GPU/CPU 本地 `rho_fab`。 |
+| `:1602-1612` | 根据 `icomp` 计算 `time_shift_delta`，再确定 `xyzmin` 和 `dinv`。 |
+| `:1713-1737` | shared-memory charge deposition，根据 `WarpX::nox` 调 `doChargeDepositionSharedShapeN<1..4>()`。 |
+| `:1744-1788` | 普通 charge deposition，重新建立 `ng_rho/tilebox/xyzmin` 后委托 `ablastr::particles::deposit_charge(...)`。 |
 
 `time_shift_delta` 对理解 `rho` component 很关键：`icomp==0` 表示旧时间层；`icomp==1` 表示新时间层。它和 `PhysicalParticleContainer::Evolve()` 中 push 前/后两次 charge deposition 对应。
 
+这里还有一个 v0.4 必须补上的分叉：`DepositCharge()` 不像 current deposition 那样在这个文件里直接按 `Standard`/算法名展开。共享内存路径显式调用 `doChargeDepositionSharedShapeN<1..4>()`；普通路径则交给 `ablastr::particles::deposit_charge(...)`。这说明 charge deposition 的主入口和 current deposition 的主入口是并列的，但 kernel 所在位置并不完全相同。后续若要把 `ChargeDeposition.H` 写成逐行讲解，需要从 ABLASTR 的 `deposit_charge` 模板继续追，而不是只在 `WarpXParticleContainer.cpp` 内部找 `doChargeDepositionShapeN`。
+
 ## 5.9 `ChargeDeposition.H`：电荷沉积 kernel 的逐项结构
 
-`WarpXParticleContainer::DepositCharge()` 最后会进入 `../warpx/Source/Particles/Deposition/ChargeDeposition.H:36-172` 的模板 kernel。下面按 3D 主干摘出核心源码，并保留 XZ/RZ 与 3D 的原始写入分支；完整维度条件见原文件同一函数：
+普通路径的中间桥接在 `../warpx/Source/ablastr/particles/DepositCharge.H:50-195`：它接收 `WarpXParticleContainer` 的 particle iterator、本地/目标 `rho`、`ng_rho`、`depos_lev`、`ref_ratio` 与 `icomp/nc`，再按 `WarpX::noz` 选择 `doChargeDepositionShapeN<1..4>()`。最终的 WarpX-specific shape kernel 位于 `../warpx/Source/Particles/Deposition/ChargeDeposition.H:37-172`。下面按 3D 主干摘出核心源码，并保留 XZ/RZ 与 3D 的原始写入分支；完整维度条件见原文件同一函数：
 
 ```cpp
 template <int depos_order>
@@ -7983,7 +7993,7 @@ particle trajectory
 2. 粒子噪声降低，但局部性和通信成本增加；
 3. 在边界、AMR coarse-fine interface、PML 和 embedded boundary 附近，shape 的截断或修正会影响守恒。
 
-源码中 current deposition 和 charge deposition 都会检查 shape 是否能放进 guard cells。例如 current deposition 在 `WarpXParticleContainer.cpp:416-446` 计算 `shape_extent` 和 `range`，charge deposition 在 `:1504-1533` 做类似检查。这些检查不是性能细节，而是物理离散化安全条件。
+源码中 current deposition 和 charge deposition 都会检查 shape 是否能放进 guard cells。例如 current deposition 在 `WarpXParticleContainer.cpp:416-446` 计算 `shape_extent` 和 `range`；shared-memory charge deposition 在 `WarpXParticleContainer.cpp:1527-1556` 做类似检查，普通 charge deposition 则经 `Source/ablastr/particles/DepositCharge.H` 的桥接路径处理本地 tile 与 guard 区。这些检查不是性能细节，而是物理离散化安全条件。
 
 ## 5.14 本章结论
 

@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-06-29：完成 `v0.4` 沉积与形函数校准草稿：冻结 `manuscript/VERSION-v0.3.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.4，新增 `scripts/build_v04.py`，生成 `dist/pic-tutor-v0.4.md` 与 `dist/pic-tutor-v0.4.html`；第 5 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `ShapeFactors`、`DepositCurrent/DepositCharge`、Esirkepov/Villasenor/Vay 分派和 Langmuir / `vay_deposition` 验证入口。
 - [x] 2026-06-29：完成 `v0.3` 粒子推进器校准草稿：冻结 `manuscript/VERSION-v0.2.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.3，新增 `scripts/build_v03.py`，生成 `dist/pic-tutor-v0.3.md` 与 `dist/pic-tutor-v0.3.html`；第 4 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `UpdateMomentumBoris/Vay/HigueraCary`、`PushSelector`、`PushPX` 和 `particle_pusher` 强验证入口。
 - [x] 2026-06-25：完成 `v0.2` 可审校草稿：冻结 `manuscript/VERSION-v0.1.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.2，新增 `scripts/build_v02.py`，生成 `dist/pic-tutor-v0.2.md` 与 `dist/pic-tutor-v0.2.html`；第 2、3、3A 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核源码基线、路径和关键行号。
 - [x] 2026-06-25：开始收束 `v0.1` 第一卷草稿，新增版本说明和 `scripts/build_v01.py`，把现有 11 章与附录 A 合订为 `dist/pic-tutor-v0.1.md`，并在本机存在 `pandoc` 时生成 HTML 预览；v0.1 版本说明现已冻结到 `manuscript/VERSION-v0.1.md`。本版范围限定为 PIC 主线、WarpX 主循环、初始化、推进、沉积、场求解、边界/AMR、诊断和第一批案例，尚不是完整 38 章终稿。
@@ -4276,7 +4277,8 @@
 
 - [x] 第 2、3、3A 章已同步 `8c488b1a9` 源码基线，修正旧 commit 和核心源码行号。
 - [x] 第 4 章粒子推进器已同步 `8c488b1a9` 源码基线，修正 Boris half push、主调用链和 `particle_pusher` 强验证入口。
-- [ ] 继续逐章同步第 5、6 章的 `8c488b1a9` 源码基线，修正旧 commit 和源码行号。
+- [x] 第 5 章沉积与形函数已同步 `8c488b1a9` 源码基线，修正 `DepositCurrent/DepositCharge`、AMR buffer、Esirkepov/Villasenor/Vay 和验证入口。
+- [ ] 继续逐章同步第 6 章的 `8c488b1a9` 源码基线，修正旧 commit 和源码行号。
 - [ ] 将 `manuscript/VERSION.md` 的章节状态表转成每章文件头状态块。
 - [ ] 为第 1-8 章各补至少一个“练习 / 复现实验 / 源码定位题”小节。
 - [ ] 为 `dist/pic-tutor-v0.1.html` 做一次人工阅读审校，清理重复段落、长表格和过长日志。
@@ -4287,16 +4289,24 @@
 
 - [ ] 手工通读 `dist/pic-tutor-v0.2.html`，优先清理第 3A 章过长的审计式段落。
 - [x] 第 4 章粒子推进器已同步到 `8c488b1a9`，并把 `Examples/Tests/particle_pusher` 的强分析闭环写进正文。
-- [ ] 继续把第 5 章沉积与形函数同步到 `8c488b1a9`，并完成 Esirkepov / Villasenor-Buneman 文献 MinerU 笔记。
+- [x] 第 5 章沉积与形函数已同步到 `8c488b1a9`，并把 `DepositCurrent/DepositCharge` 与 Langmuir / `vay_deposition` 验证入口写进正文。
+- [ ] 完成 Esirkepov / Villasenor-Buneman 文献 MinerU 笔记，并回填第 5 章理论小节。
 - [ ] 继续把第 6 章场求解器同步到 `8c488b1a9`，优先拆清 Yee/CKC/PSATD/JRhom/PML 的证据边界。
 - [ ] 给第 2、3、3A 章各补一张读者侧流程图或表格，减少纯文字调用链负担。
 
 ## v0.3 后续收口队列
 
 - [ ] 手工通读 `dist/pic-tutor-v0.3.html`，优先检查第 4 章 Boris half-push 公式和源码块是否顺畅。
-- [ ] 继续把第 5 章沉积与形函数同步到 `8c488b1a9`，先核 `DepositCurrent/DepositCharge` 和 Esirkepov/Villasenor/Vay 分支。
+- [x] 第 5 章沉积与形函数已同步到 `8c488b1a9`，已核 `DepositCurrent/DepositCharge` 和 Esirkepov/Villasenor/Vay 分支。
 - [ ] 继续把第 6 章场求解器同步到 `8c488b1a9`，优先核 Yee/CKC/PSATD/JRhom/PML 的当前文件路径和行号。
 - [ ] 把第 4 章过长的多物理 validation 小节拆成表格或附录，降低正文阅读负担。
+
+## v0.4 后续收口队列
+
+- [ ] 手工通读 `dist/pic-tutor-v0.4.html`，重点检查第 5 章 long chapter 的小节顺序、重复段落和源码块长度。
+- [ ] 继续追 `ablastr::particles::deposit_charge(...)` 的实际模板位置，把 `ChargeDeposition` 普通路径补成逐行源码解释。
+- [ ] 完成 Esirkepov / Villasenor-Buneman 论文 MinerU 笔记，把 charge-conserving 推导从源码说明升级为文献闭环。
+- [ ] 继续把第 6 章场求解器同步到 `8c488b1a9`，优先核 Yee/CKC/PSATD/JRhom/PML 的当前文件路径和行号。
 
 ## 阻塞点与约束
 

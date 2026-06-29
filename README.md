@@ -5,6 +5,7 @@
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+- 2026-06-29：完成 `v0.4` 沉积与形函数校准草稿，新增 `scripts/build_v04.py`，生成 `dist/pic-tutor-v0.4.md` 与 `dist/pic-tutor-v0.4.html`；冻结 `manuscript/VERSION-v0.3.md` 保持 v0.3 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.4。第 5 章已按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重核 `ShapeFactors`、`DepositCurrent/DepositCharge`、Esirkepov/Villasenor/Vay 分派和 Langmuir / `vay_deposition` 验证入口，下一步继续收束第 6 章场求解器。
 - 2026-06-29：完成 `v0.3` 粒子推进器校准草稿，新增 `scripts/build_v03.py`，生成 `dist/pic-tutor-v0.3.md` 与 `dist/pic-tutor-v0.3.html`；冻结 `manuscript/VERSION-v0.2.md` 保持 v0.2 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.3。第 4 章已按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重核 `UpdateMomentumBoris/Vay/HigueraCary`、`PushSelector`、`PushPX` 与 `particle_pusher` 强验证入口，下一步继续收束第 5-6 章。
 - 2026-06-25：完成 `v0.2` 可审校草稿，新增 `scripts/build_v02.py`，生成 `dist/pic-tutor-v0.2.md` 与 `dist/pic-tutor-v0.2.html`；冻结 `manuscript/VERSION-v0.1.md` 保持 v0.1 可复现，并把当前 `manuscript/VERSION.md` 切到 v0.2。第 2、3、3A 章已按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重核核心源码基线、路径和关键行号，v0.2 仍不是出版终稿，下一步应继续收束第 4-6 章。
 - 2026-06-25：开始收束 `v0.1` 第一卷草稿，新增版本说明和 `scripts/build_v01.py`，把现有 11 章与附录 A 合订为 `dist/pic-tutor-v0.1.md`，并在本机存在 `pandoc` 时生成 HTML 预览；v0.1 版本说明现已冻结到 [manuscript/VERSION-v0.1.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/VERSION-v0.1.md)。本版范围限定为 PIC 主线、WarpX 主循环、初始化、推进、沉积、场求解、边界/AMR、诊断和第一批案例，尚不是完整 38 章终稿。

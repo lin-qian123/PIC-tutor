@@ -243,23 +243,23 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">PIC 程序详解：从物理模型到 WarpX 源码</h1>
-<p class="subtitle">v0.3 粒子推进器校准草稿</p>
+<p class="subtitle">v0.4 沉积与形函数校准草稿</p>
 <p class="author">PIC-tutor</p>
 <p class="date">2026-06-29</p>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#pic-tutor-v0.3" id="toc-pic-tutor-v0.3">PIC-tutor v0.3</a>
+<li><a href="#pic-tutor-v0.4" id="toc-pic-tutor-v0.4">PIC-tutor v0.4</a>
 <ul>
 <li><a href="#定位" id="toc-定位">定位</a></li>
 <li><a href="#源码基线" id="toc-源码基线">源码基线</a></li>
-<li><a href="#v0.3-章节范围" id="toc-v0.3-章节范围">v0.3
+<li><a href="#v0.4-章节范围" id="toc-v0.4-章节范围">v0.4
 章节范围</a></li>
-<li><a href="#v0.3-已完成的增量" id="toc-v0.3-已完成的增量">v0.3
+<li><a href="#v0.4-已完成的增量" id="toc-v0.4-已完成的增量">v0.4
 已完成的增量</a></li>
 <li><a href="#成书前必须补齐"
 id="toc-成书前必须补齐">成书前必须补齐</a></li>
-<li><a href="#v0.3-构建方式" id="toc-v0.3-构建方式">v0.3
+<li><a href="#v0.4-构建方式" id="toc-v0.4-构建方式">v0.4
 构建方式</a></li>
 </ul></li>
 <li><a href="#写作说明" id="toc-写作说明">0. 写作说明</a></li>
@@ -949,22 +949,25 @@ id="toc-python-field-wrapper-的最小强回归">Python field wrapper
 A：符号表草稿</a></li>
 </ul>
 </nav>
-<!-- source: manuscript/VERSION-v0.3.md -->
-<h1 id="pic-tutor-v0.3">PIC-tutor v0.3</h1>
+<!-- source: manuscript/VERSION.md -->
+<h1 id="pic-tutor-v0.4">PIC-tutor v0.4</h1>
 <p>版本日期：2026-06-29</p>
 <h2 id="定位">定位</h2>
-<p><code>v0.3</code> 是 <code>PIC-tutor</code>
-的粒子推进器校准版。它继承 <code>v0.2</code> 的第一卷范围，并把第 4 章
-<code>粒子推进器</code> 从长草稿推进到当前源码可复查状态。</p>
-<p>本版的重点不是扩写新章节，而是修正一个会影响读者判断的实现差异：当前
-WarpX 的 Boris half momentum push 已经使用半角关系重标定磁旋转
-<code>t</code>，不是旧草稿里“直接把磁旋转系数减半”的写法。v0.3
-同步了这一点，并重新校准
-<code>PushParticlesandDeposit() -&gt; MultiParticleContainer::Evolve() -&gt; PhysicalParticleContainer::Evolve() -&gt; PushPX() -&gt; doParticleMomentumPush()</code>
-的关键行号。</p>
-<p>本版仍不是出版终稿。它的目标是把第 2、3、3A、4
-章先变成能按当前源码逐段复查的骨架；第 5、6
-章仍是下一批需要同步的核心章节。</p>
+<p><code>v0.4</code> 是 <code>PIC-tutor</code>
+的沉积与形函数校准版。它继承 <code>v0.3</code> 的第一卷范围，并把第 5 章
+<code>沉积与形函数</code> 从旧源码长草稿推进到当前源码可复查状态。</p>
+<p>本版的重点不是扩写新章节，而是把第 5 章的源码证据从旧的
+<code>WarpXParticleContainer.cpp</code>
+局部行号，重新校准为当前的三层结构：<code>ShapeFactors.H</code> 定义 0-4
+阶形函数，<code>WarpXParticleContainer::DepositCurrent()</code> /
+<code>DepositCharge()</code> 做 tile
+级分派，<code>Particles/Deposition/CurrentDeposition.H</code> 承载
+Direct、Esirkepov、Villasenor 和 Vay 的实际 current deposition
+kernel。v0.4 也把 Langmuir 与 <code>vay_deposition</code> 的
+<code>divE-rho/epsilon_0</code> 检查写成第 5 章的本地验证入口。</p>
+<p>本版仍不是出版终稿。它的目标是把第 2、3、3A、4、5
+章先变成能按当前源码逐段复查的骨架；第 6
+章场求解器仍是下一批需要同步的核心章节。</p>
 <h2 id="源码基线">源码基线</h2>
 <ul>
 <li>本书项目仓库：<code>/Volumes/PHILIPS/programs/PIC/PIC-tutor</code></li>
@@ -972,10 +975,10 @@ WarpX 的 Boris half momentum push 已经使用半角关系重标定磁旋转
 <li>当前 WarpX 分支：<code>pkuHEDPbranch</code></li>
 <li>当前 WarpX commit：<code>8c488b1a9</code></li>
 </ul>
-<p>v0.3 只修改 <code>PIC-tutor</code> 书稿项目，不修改
+<p>v0.4 只修改 <code>PIC-tutor</code> 书稿项目，不修改
 <code>../warpx</code> 原仓库。章节里的源码行号按上述 checkout
 复核；后续若 WarpX 更新，必须重新校准行号后再发布新版。</p>
-<h2 id="v0.3-章节范围">v0.3 章节范围</h2>
+<h2 id="v0.4-章节范围">v0.4 章节范围</h2>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -987,7 +990,7 @@ WarpX 的 Boris half momentum push 已经使用半角关系重标定磁旋转
 <tr>
 <th>章节</th>
 <th>文件</th>
-<th>v0.3 状态</th>
+<th>v0.4 状态</th>
 <th>下一步缺口</th>
 </tr>
 </thead>
@@ -1031,8 +1034,9 @@ WarpX 的 Boris half momentum push 已经使用半角关系重标定磁旋转
 <tr>
 <td>沉积与形函数</td>
 <td><code>chapters/05-deposition-shapes.md</code></td>
-<td>沿用 v0.1 长草稿</td>
-<td>Esirkepov、Villasenor-Buneman 论文仍需 MinerU 闭环</td>
+<td>已做 v0.4 源码校准</td>
+<td>Esirkepov、Villasenor-Buneman 论文仍需 MinerU
+闭环，<code>ChargeDeposition</code> 的 ABLASTR 模板还需继续逐行展开</td>
 </tr>
 <tr>
 <td>场求解器</td>
@@ -1066,21 +1070,27 @@ WarpX 的 Boris half momentum push 已经使用半角关系重标定磁旋转
 </tr>
 </tbody>
 </table>
-<h2 id="v0.3-已完成的增量">v0.3 已完成的增量</h2>
+<h2 id="v0.4-已完成的增量">v0.4 已完成的增量</h2>
 <ul>
-<li>冻结 <code>manuscript/VERSION-v0.2.md</code>，避免重建 v0.2 时误用
-v0.3 版本说明。</li>
-<li>新增 v0.3 当前版本说明，并把构建输出切到
-<code>dist/pic-tutor-v0.3.md</code> 与
-<code>dist/pic-tutor-v0.3.html</code>。</li>
-<li>把第 4 章绑定到当前 WarpX commit <code>8c488b1a9</code>。</li>
-<li>更新 <code>UpdateMomentumBoris.H</code> 的源码节选和行号，补清当前
-half push 的半角重标定实现。</li>
-<li>复核并更新
-<code>PushSelector.H</code>、<code>UpdateMomentumVay.H</code>、<code>UpdateMomentumHigueraCary.H</code>、<code>WarpXEvolve.cpp</code>、<code>MultiParticleContainer.cpp</code>、<code>PhysicalParticleContainer.cpp</code>
-相关关键行号。</li>
-<li>把 <code>Examples/Tests/particle_pusher</code> 明确保留为本章
-Higuera-Cary force-free relativistic push 的本地强验证入口。</li>
+<li>冻结 <code>manuscript/VERSION-v0.3.md</code>，避免重建 v0.3 时误用
+v0.4 版本说明。</li>
+<li>新增 v0.4 当前版本说明，并把构建输出切到
+<code>dist/pic-tutor-v0.4.md</code> 与
+<code>dist/pic-tutor-v0.4.html</code>。</li>
+<li>把第 5 章绑定到当前 WarpX commit <code>8c488b1a9</code>。</li>
+<li>更新 <code>PhysicalParticleContainer::Evolve()</code> 中 push 前/后
+charge deposition、current deposition 和 AMR buffer
+路径的当前行号。</li>
+<li>更新 <code>WarpXParticleContainer::DepositCurrent()</code>
+的分派地图，明确 shared-memory 只支持 direct，Esirkepov/Villasenor/Vay
+各自的显式/隐式边界。</li>
+<li>更新 <code>WarpXParticleContainer::DepositCharge()</code>
+的入口说明，区分 shared-memory
+<code>doChargeDepositionSharedShapeN&lt;1..4&gt;()</code> 与普通
+<code>ablastr::particles::deposit_charge(...)</code> 路径。</li>
+<li>把 <code>Examples/Tests/langmuir/analysis_utils.py</code> 与
+<code>Examples/Tests/vay_deposition/analysis.py</code> 的
+<code>divE-rho/epsilon_0</code> 检查写入第 5 章验证边界。</li>
 </ul>
 <h2 id="成书前必须补齐">成书前必须补齐</h2>
 <ul>
@@ -1093,18 +1103,18 @@ commit，并避免同章混用未说明的历史行号。</li>
 中的资料条目回填为正文叙述。</li>
 <li>按 <code>docs/paper-reading-workflow.md</code> 完成核心论文 MinerU
 转换和中文讲解笔记。</li>
-<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.3 仍只保证
+<li>建立稳定的 Markdown/HTML/PDF 构建流程；v0.4 仍只保证
 Markdown/HTML。</li>
 <li>对 public GitHub 仓库中的 PDF 和运行产物做版权与体积审计。</li>
 </ul>
-<h2 id="v0.3-构建方式">v0.3 构建方式</h2>
+<h2 id="v0.4-构建方式">v0.4 构建方式</h2>
 <p>生成合订 Markdown 和 HTML 预览：</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v03.py</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v04.py</span></code></pre></div>
 <p>生成的文件：</p>
 <ul>
-<li><code>dist/pic-tutor-v0.3.md</code></li>
-<li><code>dist/pic-tutor-v0.3.html</code>（若本机存在
+<li><code>dist/pic-tutor-v0.4.md</code></li>
+<li><code>dist/pic-tutor-v0.4.html</code>（若本机存在
 <code>pandoc</code>）</li>
 </ul>
 <!-- source: manuscript/chapters/00-preface.md -->

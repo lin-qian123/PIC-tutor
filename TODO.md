@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-06-29：完成 `v0.27` PSATD time-averaging `Psi/Y` 系数闭环版：冻结 `manuscript/VERSION-v0.26.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.27，新增 `scripts/build_v27.py`，生成 `dist/pic-tutor-v0.27.md` 与 `dist/pic-tutor-v0.27.html`；第 6 章新增 `6.6.2 v0.27 time-averaging Psi/Y 系数的源码公式闭环`，新增 `notes/code-reading/fieldsolver/18-psatd-time-averaging-coefficients.md`，把 Cartesian `PsatdAlgorithmGalilean.cpp` 的 `Psi1/Psi2/Y1-Y4`、零模处理、average-field 更新式、`update_with_rho` 前置条件和 `PSATDScaleAverageFields()/PSATDBackwardTransformEBavg()` 回填路径拆成源码公式图谱。
 - [x] 2026-06-29：完成 `v0.26` PSATD `X1-X4` 系数闭环版：冻结 `manuscript/VERSION-v0.25.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.26，新增 `scripts/build_v26.py`，生成 `dist/pic-tutor-v0.26.md` 与 `dist/pic-tutor-v0.26.html`；第 6 章新增 `6.6.1 v0.26 X1-X4 系数的源码公式闭环`，新增 `notes/code-reading/fieldsolver/17-psatd-x-coefficients.md`，把 Cartesian `PsatdAlgorithmGalilean.cpp` 的 `X1-X4`、`T2`、standard/Galilean 极限、零模处理和 E/B 更新式中的作用位置拆成源码公式图谱。
 - [x] 2026-06-29：完成 `v0.25` LeeCPC2015 公式核对清单版：冻结 `manuscript/VERSION-v0.24.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.25，新增 `scripts/build_v25.py`，生成 `dist/pic-tutor-v0.25.md` 与 `dist/pic-tutor-v0.25.html`；第 7 章新增 `7.5.7 v0.25 LeeCPC2015 的论文-源码公式核对清单`，在 CPC 主引用目录新增公式核对清单，把 PML profile、高阶 FD PML、PSATD split-field 更新、`C1-C25`、Galilean `T2`、cleaning `F/G` 和 RZ 分支的待证项拆成论文证据、源码锚点、regression 证据和正文边界四列；同时补充 AIP `pubs.aip.org` 直接 PDF 端点仍返回 HTTP 403 的访问复核。
 - [x] 2026-06-29：完成 `v0.24` PSATD PML 系数图谱版：冻结 `manuscript/VERSION-v0.23.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.24，新增 `scripts/build_v24.py`，生成 `dist/pic-tutor-v0.24.md` 与 `dist/pic-tutor-v0.24.html`；第 7 章新增 `7.5.6 v0.24 PsatdAlgorithmPml.cpp 的 C1-C25 系数图谱`，新增 `notes/code-reading/fieldsolver/16-psatd-pml-coefficient-atlas.md`，把 `C1-C9`、`C10-C22`、`C23-C25`、Galilean `T2` 和 PML PSATD regression 证据边界拆成源码图谱；同时补充 eScholarship/OSTI/AIP 的全文访问审计。
@@ -20,7 +21,7 @@
 - [x] 2026-06-29：完成 `v0.9` 边界 regression 判据索引草稿：冻结 `manuscript/VERSION-v0.8.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.9，新增 `scripts/build_v09.py`，生成 `dist/pic-tutor-v0.9.md` 与 `dist/pic-tutor-v0.9.html`；第 7 章已按当前 `../warpx` 的 `Examples/Tests/*/CMakeLists.txt`、输入卡和 `analysis*.py` 新增统一 regression 入口索引表，明确区分强 analysis、restart 一致性和 checksum-only 证据。
 - [x] 2026-06-29：完成 `v0.8` 边界与 AMR 源码入口校准草稿：冻结 `manuscript/VERSION-v0.7.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.8，新增 `scripts/build_v08.py`，生成 `dist/pic-tutor-v0.8.md` 与 `dist/pic-tutor-v0.8.html`；第 7 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 增补边界/PML/guard-cell/AMR 源码入口地图，串联 `WarpX::MakeWarpX()`、`FieldBoundaries`、`ParticleBoundaries`、`WarpXFieldBoundaries`、`WarpXComm`、`GuardCellManager`、`WarpXRegrid` 和 boundary scraping 入口。
 
-## v0.26 后续收口队列
+## v0.27 后续收口队列
 
 - [x] 人工审读并修正 `dist/pic-tutor-v0.12.html` 暴露出的第 7 章 HTML 排版风险：宽表格、Mermaid 图、公式、inline code 和长源码路径需要项目级样式兜底。
 - [x] 继续细核 `GuardCellManager.cpp`、`WarpXComm.cpp`、`WarpXRegrid.cpp` 的 AMR/regrid/guard-cell 路径，把 v0.8 入口地图扩成可讲解的正文段落。
@@ -44,7 +45,8 @@
 - [x] 为 v0.24 继续完成 LeeCPC2015 全文闭环：重核 eScholarship/OSTI/AIP/ScienceDirect 获取路径；在全文仍不可得时，继续推进源码侧 `PsatdAlgorithmPml.cpp` 系数图谱和 regression 映射。
 - [x] 为 v0.25 继续完成 LeeCPC2015 全文闭环：重试 CPC/AIP 全文路径；在仍未取得 PDF 时，新增论文-源码公式核对清单，把后续全文到位后的 PML profile、FD PML、PSATD PML、`C1-C25`、Galilean、cleaning 和 RZ 分支核对项拆成可执行表。
 - [x] 为 v0.26 推进第 6 章成书短板：在 LeeCPC2015 授权 PDF 仍不可得时，转向本地可验证的 Cartesian PSATD `X1-X4` 系数闭环，把 `PsatdAlgorithmGalilean.cpp` 的标准/Galilean 源项积分系数写成源码公式图谱和正文。
-- [ ] 为 v0.27 继续完成第 6 章 PSATD 系数体系：拆 `Psi/Y` time averaging 系数、JRhom `Y1-Y8` 或 RZ/Galilean RZ 系数边界，避免把不同 algorithm 的同名系数混写。
+- [x] 为 v0.27 继续完成第 6 章 PSATD 系数体系：拆 `Psi/Y` time averaging 系数、JRhom `Y1-Y8` 或 RZ/Galilean RZ 系数边界，避免把不同 algorithm 的同名系数混写。
+- [ ] 为 v0.28 继续完成第 6 章 PSATD 系数体系：拆 JRhom `Y1-Y8` 或 RZ/Galilean RZ 系数边界，避免把不同 algorithm 的同名系数混写。
 - [ ] 继续完成 LeeCPC2015 全文闭环：通过机构访问、OSTI 可用全文、eScholarship 可访问副本或 AIP 可访问 PDF 取得授权 PDF，执行 MinerU 转换，补逐段中文讲解和图片，并把 pseudo-spectral PML 反射率/效率公式与 WarpX 当前 `PsatdAlgorithmPml.cpp` 做逐项对应。
 
 - [x] 2026-06-29：完成 `v0.4` 沉积与形函数校准草稿：冻结 `manuscript/VERSION-v0.3.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.4，新增 `scripts/build_v04.py`，生成 `dist/pic-tutor-v0.4.md` 与 `dist/pic-tutor-v0.4.html`；第 5 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `ShapeFactors`、`DepositCurrent/DepositCharge`、Esirkepov/Villasenor/Vay 分派和 Langmuir / `vay_deposition` 验证入口。

@@ -347,6 +347,64 @@ $$
 
 这也解释了为什么 `analysis_vandb_jfnk_2d_cropping.py` 要把 PEC 场边界、absorbing 粒子边界、`particles.crop_on_PEC_boundary = 1`、`implicit_evolve.particle_suborbits = 1` 和 `algo.current_deposition = villasenor` 一起打开：它不是在测单个参数，而是在测 `ApplyBoundaryConditions -> do_cropping -> suborbit Villasenor deposition -> boundary buffer -> deleteInvalidParticles()` 这整条组合链还能不能维持局部 Gauss 定律。
 
+### 7.5.3 v0.21 PSATD PML 源码闭环：普通 PML、RZ PML 与 regression 边界
+
+v0.21 继续把 PSATD PML 从“表格里的一个验证项”扩成源码闭环。先看主时间步顺序。`WarpX::PushPSATD()` 在 `Source/FieldSolver/WarpXPushFieldsEM.cpp:791-899` 先处理 current correction、Vay deposition 或普通 J/rho spectral transform；随后在 `:901-902` 对主域 `E/B` 做 forward transform。RZ 几何有一个特殊插入点：`Source/FieldSolver/WarpXPushFieldsEM.cpp:904-907` 会在主域 `F/G` transform 和 `PSATDPushSpectralFields()` 之前调用
+
+```cpp
+if (pml_rz[lev0]) {
+    pml_rz[lev0]->PushPSATD(lev0, m_fields, get_spectral_solver_fp(lev0));
+}
+```
+
+普通 Cartesian/2D/3D PML 则不同：主域 `E/B/F/G` 在 `:913-926` 完成 spectral push 和 backward transform 之后，`Source/FieldSolver/WarpXPushFieldsEM.cpp:928-940` 才逐 level 调 `pml[lev]->PushPSATD(m_fields, lev)`，然后再施加物理 `E/B` 边界条件。因此本书后续不能把 PML PSATD 写成“主域 PSATD 公式多乘一个阻尼因子”。更准确的说法是：主域 PSATD、RZ PML spectral push、普通 PML spectral push 和物理边界条件是四个相邻但不同的 runtime stage。
+
+普通 PML 的分配阶段也说明它是一套独立 spectral 子域。`Source/BoundaryConditions/PML.cpp:785-817` 在 `algo.maxwell_solver = psatd` 时先把 PML field guard cells 提升到 FFT stencil 所需范围；`Source/BoundaryConditions/PML.cpp:913-936` 随后为 PML box 单独构造 `SpectralSolver`。传给这套 PML spectral solver 的关键 flags 是：
+
+| flag | PML 构造时的值 | 含义 |
+|---|---|---|
+| `in_pml` | `true` | `SpectralSolver.cpp:60-65` 会优先选择 `PsatdAlgorithmPml`，不再走普通 comoving/Galilean/JRhom 分派树 |
+| `periodic_single_box` | `false` | PML 子域不是全局 periodic single-box spectral solve |
+| `update_with_rho` | `false` | PML spectral push 不走普通主域 rho update 语义 |
+| `fft_do_time_averaging` | `false` | PML 子域不生成主域 time-averaged field 输出 |
+| `v_galilean` | 继承 `WarpX::m_v_galilean` | Galilean PML 不是另一个 solver 类，而是 `PsatdAlgorithmPml` 内部的相位因子分支 |
+| `v_comoving` | `{0,0,0}` | PML 子域不走 comoving PSATD |
+
+这组 flags 解释了一个容易误读的地方：`inputs_test_2d_pml_x_galilean` 虽然打开了 `psatd.v_galilean = 0. 0. 0.99`，但 PML 子域仍由 `PsatdAlgorithmPml` 处理；`Source/FieldSolver/SpectralSolver/SpectralAlgorithms/PsatdAlgorithmPml.cpp:56-60` 只把非零 Galilean velocity 记录成 `m_is_galilean`，然后在更新式中使用 `T2` 相位因子。它不是把 PML 子域改派到普通主域的 `PsatdAlgorithmGalilean`。
+
+`PML::PushPSATD()` 的实际工作也不是直接推进整体 `Ex/Ey/Ez/Bx/By/Bz`。`Source/BoundaryConditions/PML.cpp:1310-1325` 先取 `pml_E_fp/pml_B_fp`，可选取 `pml_F_fp/pml_G_fp`，再分别对 fine patch 和 coarse patch 调 `PushPMLPSATDSinglePatch()`。该函数在 `Source/BoundaryConditions/PML.cpp:1329-1365` 对 split components 做 forward transform，例如 `Ex` 会被拆成 `Exy` 与 `Exz`，`By` 会被拆成 `Byx` 与 `Byz`；开启 `warpx.do_pml_dive_cleaning` 时还会额外 transform `Exx/Eyy/Ezz` 和 `Fx/Fy/Fz`。后面的 `PsatdAlgorithmPml.cpp:142-180` 再根据是否同时开启 `dive_cleaning/divb_cleaning` 来重组 `E/B/F/G` 并选择不同公式分支。
+
+普通 PML PSATD 的核心系数仍来自真空 spectral wave propagator。`Source/FieldSolver/SpectralSolver/SpectralAlgorithms/PsatdAlgorithmPml.cpp:195-215` 先构造
+
+$$
+k^2 = k_x^2+k_y^2+k_z^2,\qquad
+C=\cos(c|k|\Delta t),\qquad
+S_{ck}=\frac{\sin(c|k|\Delta t)}{c|k|},
+$$
+
+再用 `C1-C9` 组织 longitudinal/transverse 投影；无 divergence cleaning 时，`Source/FieldSolver/SpectralSolver/SpectralAlgorithms/PsatdAlgorithmPml.cpp:217-283` 继续构造 `C10-C22` 并更新 split `E/B` components；有 `do_pml_dive_cleaning` 和 `do_pml_divb_cleaning` 时，`Source/FieldSolver/SpectralSolver/SpectralAlgorithms/PsatdAlgorithmPml.cpp:285-320` 开始走 `C23-C25` 与 `F/G` 耦合分支。这说明 PML PSATD 里的 split-field 更新仍是 spectral Maxwell update，只是状态变量不再是主域整体场，而是 PML 子域的 split components。
+
+RZ PML 是另一条更窄的专用路径。`Source/BoundaryConditions/PML_RZ.cpp:39-69` 只分配 `Er/Et` 和 `Br/Bt` 的 PML fields；`Source/BoundaryConditions/PML_RZ.cpp:195-216` 对这四个 PML fields 做 RZ spectral forward transform、`spec_solver.pushSpectralFields(doing_pml=true)` 和 backward transform。真正的 RZ PML algorithm 在 `Source/FieldSolver/SpectralSolver/SpectralAlgorithms/PsatdAlgorithmPmlRZ.cpp:19-34` 分配 `C_coef` 与 `S_ck_coef`，在 `:115-159` 按
+
+$$
+|k|=\sqrt{k_r^2+k_z^2},\qquad
+C=\cos(c|k|\Delta t),\qquad
+S_{ck}=\frac{\sin(c|k|\Delta t)}{c|k|}
+$$
+
+生成系数；更新式在 `:100-109` 只耦合 `Er/Et` 的 PML components 与主域 `Bz`、`Br/Bt` 的 PML components 与主域 `Ez`。同一文件 `:161-172` 明确把 RZ PML 中的 current correction 与 Vay deposition 设为未实现。这也是为什么 `inputs_test_rz_pml_psatd` 显式固定 `psatd.current_correction = 0`。
+
+把源码放回 regression，证据等级应写成三层：
+
+| regression | 输入侧真实分支 | analysis 消费面 | 自动断言 | 证据等级 |
+|---|---|---|---|---|
+| `test_2d_pml_x_psatd` | `inputs_base_2d` 上覆写 `algo.maxwell_solver = psatd`、`warpx.cfl = 0.7071067811865475`、`do_pml_divb/dive_cleaning = 0`、`psatd.current_correction = 0`、`psatd.update_with_rho = 1` | `analysis_pml_psatd.py` 先读 `diags/diag1000050`，再读 `diags/diag1000300`；只消费 `Ex/Ey/Ez/Bx/By/Bz` | 第 50 步能量与 `7.282940112203595e-08` 的相对误差 `< 1e-14`；末态反射率 `< 1e-6` | 2D plain PSATD PML 的强低反射率 gate |
+| `test_2d_pml_x_galilean` | 同一 base 上覆写 `psatd.v_galilean = 0. 0. 0.99`、`warpx.grid_type = collocated`，并打开 `do_pml_divb/dive_cleaning = 1` | 同一 `analysis_pml_psatd.py`，但根据 cwd 中的 `galilean` 切到能量 oracle `4.439376202529614e-08` | 第 50 步能量 oracle `< 1e-14`；末态反射率 `< 1e-6` | 2D Galilean PSATD + collocated + PML div-cleaning 的强低反射率 gate |
+| `test_rz_pml_psatd` | RZ 几何、`boundary.field_hi = pml periodic`、`warpx.pml_ncell = 10`、`algo.maxwell_solver = psatd`、单电子从轴上径向外冲 | `analysis_pml_psatd_rz.py` 只读末态 `diags/diag1000500` 的 `Er/Ez` | `max(max(|Er|), max(|Ez|)) < 2.0` | RZ radial PML 的末态残余场强 gate，不是能量反射率 gate |
+| `test_3d_pml_psatd_dive_divb_cleaning` | 3D 全 PML、三束 Gaussian laser、`psatd.nox/noy/noz = 8`、主域和 PML 的 `do_dive/divb_cleaning = 1` | CMake 中 `analysis=OFF`，只跑 `analysis_default_regression.py --path diags/diag1000100` | 只有 checksum | workflow/output baseline，不能写成 divergence-cleaning 强物理断言 |
+
+这张表也解释了 v0.21 对第 7 章的修正：PML PSATD 的强证据目前主要来自 2D plain/Galilean 的低反射率 gate 和 RZ 的残余场 gate；3D cleaning 组合虽然覆盖了更复杂的开关组合，但自动消费者没有读取 `divE/divB/F/G`，因此不能支撑“divergence cleaning 在 3D PML 中已被物理强验证”的说法。后续若要把这条写成强结论，需要新增 analysis，至少输出并消费 `divE`、`divB` 或 `F/G`，并把最终残差和场能一起设成显式断言。
+
 ## 7.6 Embedded boundary 先是几何初始化和辅助标记系统
 
 前面讨论的 PML、PEC、PMC、Silver-Mueller 都作用在计算域外边界上，而 embedded boundary 的第一步不是“给某个边界类型分派更新公式”，而是先把几何对象嵌入到 AMReX cut-cell 数据结构。

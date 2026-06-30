@@ -13483,11 +13483,27 @@ envelope 候选值，也能证明 ledger/provenance
 工具链是通的；但它还不能让我们诚实地把
 <code>energy_ref_unstable = 7.786411776882875e+14</code> 宣称为最终 CI
 gate，因为这个“unstable reference”并没有在本地样本上表现出比 stable
-baseline 更高的电场能量。更严格的说法应当是：本地 audit
-已经验证了参数分支和 ledger 提取流程，但真正写入 WarpX
-<code>analysis_comoving.py</code> 的 <code>energy_ref/tol_energy</code>
-仍需在更接近 upstream regression 的
-MPI/并行设置下重跑，或进一步寻找更有解释力的 contrast sibling。</p>
+baseline 更高的电场能量。</p>
+<p>更重要的是，后续本地 control experiment
+进一步收紧了这个判断。用同一台机器、同样的
+<code>warpx.numprocs='1 1'</code> 覆盖方式，对 WarpX 已经具备成熟 energy
+gate 的 <code>test_2d_galilean_psatd_hybrid</code> 再做一组 stable /
+no-Galilean sibling 对照，当前仓库在
+<code>runs/fieldsolver-validation/galilean-reference-ledgers/galilean-stable-vs-no-galilean.{md,json}</code>
+中得到
+<code>stable_over_unstable_energy_ratio = 0.8418992628444483</code>：也就是
+stable Galilean baseline 的电场能量明显低于禁用 Galilean 的
+sibling。这个 control 说明“本机缺 MPI，所以单进程样本看不出 unstable
+contrast”并不是一个足够强的解释；至少对 Galilean family
+而言，单进程本地设置仍然能复现预期的 unstable-energy ordering。</p>
+<p>因此，更严格的说法应当是：本地 audit 已经验证了参数分支和 ledger
+提取流程，但 comoving <code>no-comoving</code> sibling
+当前没有给出可用的 unstable-energy contrast，这更像是 contrast
+设计本身还不够贴近真正的 unstable branch，而不只是并行环境缺失。真正写入
+WarpX <code>analysis_comoving.py</code> 的
+<code>energy_ref/tol_energy</code>，仍需在更接近 upstream regression 的
+MPI/并行设置下重跑，并且可能需要先重新选择更有解释力的 comoving
+sibling。</p>
 <p>因此，comoving reference
 标定这块现在的闭合条件可以重新表述为：第一，正文诚实记录当前
 <code>analysis=OFF</code>、第一阶段 finite/energy/spike gate 和第二阶段

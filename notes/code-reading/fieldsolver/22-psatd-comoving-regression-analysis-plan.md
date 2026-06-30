@@ -186,6 +186,32 @@ assert energy / energy_ref < tol_energy
 
 其中 `energy_ref/tol_energy/spike_ratio_ref` 不能凭空写死，需要先跑一次 reference 或从 CI baseline 反推出数值后再提交 WarpX 侧 patch。
 
+## 当前原型落地状态
+
+`PIC-tutor` 当前已经把这份方案中的第一阶段 fallback 落成原型脚本：
+
+- `scripts/analysis_comoving.py`
+
+它遵循 WarpX analysis helper 的基本形状，但把 gate 语义显式拆开：
+
+- finite-field sanity：始终执行
+- spike gate：可通过 `--ledger-json ... --enable-spike-gate` 打开
+- energy gate：当前保留为显式可选项，不默认启用
+
+本地自校验已经跑过两次：
+
+```bash
+python scripts/analysis_comoving.py \
+  runs/fieldsolver-validation/comoving-stable-baseline/diags/diag1000400 \
+  --label stable-comoving-prototype \
+  --ledger-json runs/fieldsolver-validation/comoving-reference-ledgers/comoving-stable-vs-no-comoving.json \
+  --enable-spike-gate
+```
+
+这条 stable baseline 当前通过 `finite + spike`。而同样命令替换成 `comoving-unstable-no-comoving/diags/diag1000400` 时，会在相同 `spike_ratio_ref_stable` 阈值下失败。也就是说，当前第一阶段 fallback 已经不只是纸面方案，而是本地可执行原型。
+
+这进一步说明：即便后续最终决定不采用 Galilean 式 energy gate，comoving patch 第一阶段也已经有一条可落地的 `finite + spike` 路线。
+
 ## v0.31 正文边界
 
 本书 v0.31 只记录“可落地分析方案”，不声称 WarpX 侧已经实现该 analysis。当前证据等级应写为：

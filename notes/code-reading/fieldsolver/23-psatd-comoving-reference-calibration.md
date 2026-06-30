@@ -332,3 +332,28 @@ python scripts/build_comoving_reference_ledger.py \
 - 先重新论证 comoving family 中哪一条 sibling 才真正有资格当 unstable reference；
 - 同时准备一个更保守的 fallback：若 energy ordering 仍不成立，就把第一阶段 patch 重心转到 finite/spike 或其他更合适的判据；
 - 再在条件允许时用更接近 upstream regression 的 MPI/并行设置复核。
+
+## 当前脚本原型状态
+
+这条更保守的 fallback 现在已经不是一句抽象建议。当前仓库已新增：
+
+- `scripts/analysis_comoving.py`
+
+它的设计边界是：
+
+- 默认始终执行 `finite-field sanity`
+- 可从 ledger 读取 `spike_ratio_ref_stable` 并启用 spike gate
+- 只有在显式传入 `--enable-energy-gate` 时才会启用 energy ratio gate
+
+也就是说，脚本本身已经把“comoving 第一阶段未必适合默认带 energy gate”这个判断固化进接口，而不是只写在文档里。
+
+当前本地自校验结果：
+
+1. stable comoving baseline：
+   - 命令：`python scripts/analysis_comoving.py ...comoving-stable-baseline... --ledger-json ...comoving-stable-vs-no-comoving.json --enable-spike-gate`
+   - 结果：通过
+2. no-comoving sibling：
+   - 相同阈值
+   - 结果：在 `spike_ratio=1.1119614945212388` 对 `spike_ratio_threshold=1.1103719982074416` 处失败
+
+这说明第一阶段 fallback 已经具备可执行性：即便先不引入 energy gate，当前也已经有一条可本地验证、可讨论是否上提到 WarpX patch 的 `finite + spike` analysis 原型。

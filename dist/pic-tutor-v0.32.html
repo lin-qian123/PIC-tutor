@@ -13528,6 +13528,16 @@ comoving baseline 能通过 <code>finite + spike</code>，而
 阈值下失败。于是第一个真正可执行的第一阶段 patch
 形态已经变得具体起来：即便后续继续搁置 energy gate，comoving family
 也已经具备一条可落地的 <code>finite + spike</code> analysis 路线。</p>
+<p>为了再往前逼近真正的 WarpX patch
+目录结构，当前仓库还把这条路线进一步压成了一个最小 draft
+helper：<code>notes/code-reading/fieldsolver/analysis_comoving_first_stage_draft.py</code>，并配套
+<code>24-psatd-comoving-first-stage-patch-draft.md</code> 说明其
+intended wiring 和候选 <code>SPIKE_RATIO_MAX</code> 来源。这份 draft
+helper
+的目标不是替代本地原型，而是回答另一个更实际的问题：如果下一轮真的要往
+<code>Examples/Tests/nci_psatd_stability/</code> 提
+patch，最小、最克制、最不夸大证据边界的第一版文件长什么样。当前答案是：只带
+<code>finite + spike</code>，不带 energy gate。</p>
 <p>因此，comoving reference
 标定这块现在的闭合条件可以重新表述为：第一，正文诚实记录当前
 <code>analysis=OFF</code>、第一阶段 finite/energy/spike gate 和第二阶段

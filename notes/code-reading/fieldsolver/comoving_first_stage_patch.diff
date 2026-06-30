@@ -21,14 +21,22 @@ index 0000000..0000000
 --- /dev/null
 +++ b/Examples/Tests/nci_psatd_stability/analysis_comoving.py
 @@
-+#!/usr/bin/env python3
++#!/usr/bin/env python
 +"""
 +Draft WarpX-side first-stage analysis for test_2d_comoving_psatd_hybrid.
 +
-+Current scope:
++This file is intentionally stored in PIC-tutor as a patch draft asset. It is
++the smallest helper shape that matches the current evidence boundary:
++
 +- always enforce finite-field sanity
 +- enforce a first-stage spike-ratio gate
 +- do not yet enforce an energy gate
++
++Why no energy gate here?
++Because the current local calibration audit shows that the obvious
++`no-comoving` sibling does not yield the same unstable-energy ordering that the
++analogous Galilean family does, so a hard-coded comoving `energy_ref` would
++overstate what has actually been validated.
 +"""
 +
 +import sys
@@ -44,7 +52,7 @@ index 0000000..0000000
 +# Candidate first-stage ceiling derived from the current stable baseline:
 +# spike_ratio_ref_stable = 1.1103719982074416
 +# safety_factor = 1.001
-+SPIKE_RATIO_MAX = 1.111482370205649
++SPIKE_RATIO_MAX = 1.1114823702056489
 +
 +
 +def main() -> None:

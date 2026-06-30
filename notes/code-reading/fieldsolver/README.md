@@ -40,7 +40,7 @@
 22. `21-psatd-comoving-coefficients.md`：regular-domain comoving PSATD 的分派优先级、`X1-X4/Theta2` 系数、current correction、参数限制和 checksum-only regression 边界。
 23. `22-psatd-comoving-regression-analysis-plan.md`：`test_2d_comoving_psatd_hybrid` 的现有 checksum 边界、可直接实现的 field-energy sanity analysis、需要 `divE` 输出后才能做的 Gauss-law diagnostic 和 CMake patch 草案。
 24. `23-psatd-comoving-reference-calibration.md`：把 comoving `analysis_comoving.py` 从方案推进到可提交 patch 的 reference 标定、unstable contrast、provenance 和 patch 四件套清单。
-25. `24-psatd-comoving-first-stage-patch-draft.md`：把当前已验证的 `finite + spike` fallback 收成更接近 WarpX 提交流的第一阶段 patch 草案，并附上最小 helper 资产 `analysis_comoving_first_stage_draft.py` 与 unified diff 草案 `comoving_first_stage_patch.diff`。
+25. `24-psatd-comoving-first-stage-patch-draft.md`：把当前已验证的 `finite + spike` fallback 收成更接近 WarpX 提交流的第一阶段 patch 草案，并附上最小 helper 资产 `analysis_comoving_first_stage_draft.py`、unified diff 草案 `comoving_first_stage_patch.diff` 以及对应的 ledger 驱动生成脚本 `scripts/build_comoving_first_stage_patch.py`。
 26. implicit solver 的接口细化和正文持续回填。
 
 ## 输出目标
@@ -69,7 +69,7 @@
 - `21-psatd-comoving-coefficients.md`：已建立，覆盖 regular-domain comoving PSATD 的 `v_comoving` 分派优先级、direct deposition/update-with-rho 限制、`X1-X4/Theta2` 一般分支与特殊极限、comoving current correction 和 `test_2d_comoving_psatd_hybrid` 的 checksum-only 验证边界。
 - `22-psatd-comoving-regression-analysis-plan.md`：已建立，覆盖 `test_2d_comoving_psatd_hybrid` 当前 `analysis=OFF` 的证据边界、现有 `Ex/Ey/Ez/B/J/rho` 输出可支持的 finite/energy/spike gate、缺少 `divE` 时不能声称 charge-conservation analysis，以及后续 CMake wiring 草案。
 - `23-psatd-comoving-reference-calibration.md`：已建立，覆盖 `analysis_galilean.py` / `analysis_psatd_CC1.py` 可复用的 reference 模式、comoving `energy_ref` 不应借用 Galilean 数值、stable ledger vs unstable contrast 的标定流程，以及真正提交 WarpX patch 时应附带的 provenance note。
-- `24-psatd-comoving-first-stage-patch-draft.md`：已建立，覆盖当前更接近 WarpX 提交流的第一阶段 `finite + spike` patch 形状、CMake wiring 草案、候选 `SPIKE_RATIO_MAX` 常量、配套 unified diff 草案，以及为什么第一阶段故意不带 energy gate。
+- `24-psatd-comoving-first-stage-patch-draft.md`：已建立，覆盖当前更接近 WarpX 提交流的第一阶段 `finite + spike` patch 形状、CMake wiring 草案、候选 `SPIKE_RATIO_MAX` 常量、配套 unified diff 草案、ledger 驱动重建脚本，以及为什么第一阶段故意不带 energy gate。
 - 重写 `manuscript/chapters/06-field-solvers.md`。
 
 ## 验证线索

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Draft WarpX-side first-stage analysis for test_2d_comoving_psatd_hybrid.
 
@@ -29,7 +29,7 @@ FIELD_NAMES = ("Ex", "Ey", "Ez", "Bx", "By", "Bz", "jx", "jy", "jz", "rho")
 # Candidate first-stage ceiling derived from the current stable baseline:
 # spike_ratio_ref_stable = 1.1103719982074416
 # safety_factor = 1.001
-SPIKE_RATIO_MAX = 1.111482370205649
+SPIKE_RATIO_MAX = 1.1114823702056489
 
 
 def main() -> None:

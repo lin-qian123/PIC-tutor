@@ -30,6 +30,7 @@
 
 - `notes/code-reading/fieldsolver/analysis_comoving_first_stage_draft.py`
 - `notes/code-reading/fieldsolver/comoving_first_stage_patch.diff`
+- `scripts/build_comoving_first_stage_patch.py`
 
 它只做两件事：
 
@@ -70,7 +71,7 @@ add_warpx_test(
 `analysis_comoving_first_stage_draft.py` 当前写入的候选阈值是：
 
 ```python
-SPIKE_RATIO_MAX = 1.111482370205649
+SPIKE_RATIO_MAX = 1.1114823702056489
 ```
 
 来源是：
@@ -79,6 +80,23 @@ SPIKE_RATIO_MAX = 1.111482370205649
 - safety factor `1.001`
 
 这样做的目的不是宣称这个阈值已经能过全部 CI，而是为了给第一版 patch 提供一个明确、可审查、可复现实验来源的常量候选。
+
+现在这两个草案资产已经可以直接由下面这条命令重建：
+
+```bash
+python scripts/build_comoving_first_stage_patch.py
+```
+
+默认情况下，它读取：
+
+- `runs/fieldsolver-validation/comoving-reference-ledgers/comoving-stable-vs-no-comoving.json`
+
+并重写：
+
+- `notes/code-reading/fieldsolver/analysis_comoving_first_stage_draft.py`
+- `notes/code-reading/fieldsolver/comoving_first_stage_patch.diff`
+
+这一步把候选 `SPIKE_RATIO_MAX` 的来源、helper 内容和 diff wiring 统一绑回 ledger，避免后续改动时出现“正文、草案 helper 和 patch diff 三处口径漂移”。
 
 在当前本地样本上：
 

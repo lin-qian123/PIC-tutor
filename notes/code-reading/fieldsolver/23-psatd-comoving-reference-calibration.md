@@ -207,6 +207,43 @@ review 时很难判断到底是哪一处改变导致结果变化。
 2. 计划笔记已经把 reference 标定、unstable contrast、patch 包结构和 provenance 要求写清楚；
 3. 下一步若继续推进，就该真的去 materialize reference ledger 或转向 RZ PSATD validation 强判据表，而不是再做一轮泛泛的“analysis 方案描述”。
 
+## 当前仓库内已补的提取工具
+
+为了把“materialize reference ledger”从一句话推进到真正可执行的动作，当前仓库已补入：
+
+- `scripts/build_comoving_reference_ledger.py`
+
+它的职责不是直接替你决定最终 `tol_energy`，而是把 stable / unstable plotfile 的关键统计量、输入卡路径、WarpX commit 和运行命令收成一份可审查 ledger。典型用法可以写成：
+
+```bash
+python scripts/build_comoving_reference_ledger.py \
+  --label comoving-stable-vs-contrast \
+  --stable-plotfile /path/to/stable/diags/diag1000400 \
+  --unstable-plotfile /path/to/unstable/diags/diag1000400 \
+  --stable-input ../warpx/Examples/Tests/nci_psatd_stability/inputs_test_2d_comoving_psatd_hybrid \
+  --unstable-input /path/to/contrast_input \
+  --warpx-commit 8c488b1a9 \
+  --producer-command "mpirun -np 4 ./warpx inputs_test_2d_comoving_psatd_hybrid" \
+  --output-stem runs/fieldsolver-validation/comoving-reference-ledgers/comoving-stable-vs-contrast
+```
+
+脚本会提取：
+
+- `electric_energy`
+- `e_mag_max`
+- `e_mag_p99`
+- `spike_ratio`
+- 每个 `Ex/Ey/Ez/Bx/By/Bz/jx/jy/jz/rho` 的 finite/extrema 状态
+
+若同时提供 stable / unstable 两张 plotfile，还会额外给出：
+
+- `energy_ref_unstable`
+- `spike_ratio_ref_stable`
+- `stable_over_unstable_energy_ratio`
+- `minimum_tol_energy_for_observed_stable_sample`
+
+这些量是当前样本对的事实记录，不是自动推荐的最终 hard-coded tolerance。真正要不要把它们写进 WarpX patch，仍需结合重复运行和 CI 波动再判断。
+
 ## 当前结论
 
 当前最稳妥的说法是：

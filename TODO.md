@@ -54,7 +54,7 @@
 - [x] 为 v0.29 继续完成第 6 章 PSATD 系数体系：拆 RZ/Galilean RZ 或 comoving 系数边界，避免把不同 algorithm 的同名系数混写。
 - [x] 为 v0.30 继续完成第 6 章 PSATD 系数体系：拆 comoving 或 RZ validation 边界，避免把不同 algorithm 的同名系数混写。
 - [x] 为 v0.31 继续推进第 6/7 章验证强度：优先把 `test_2d_comoving_psatd_hybrid` 从 checksum-only 边界扩成可解释的 NCI/field-energy analysis 方案，或继续压实 RZ PSATD validation 的强判据。
-- [ ] 按模块收口继续推进 comoving PSATD：把 v0.31 的 `analysis_comoving.py` 方案细化为 WarpX 侧 patch 草案所需的 reference 标定步骤、stable ledger / unstable contrast 区分、patch 四件套与 provenance 要求；这块真正闭合后再统一更新版本。若这条线暂时停住，再转向 RZ PSATD validation 强判据表。
+- [ ] 按模块收口继续推进 comoving PSATD：已经补入 `scripts/build_comoving_reference_ledger.py` 用于从 stable / unstable `diag1000400` 直接提取 reference ledger；下一步是实际生成一对 ledger，收敛 `energy_ref_unstable`、`spike_ratio_ref_stable` 和 provenance note，再决定是否进入 WarpX patch 四件套。若这条线暂时停住，再转向 RZ PSATD validation 强判据表。
 - [ ] 继续完成 LeeCPC2015 全文闭环：通过机构访问、OSTI 可用全文、eScholarship 可访问副本或 AIP 可访问 PDF 取得授权 PDF，执行 MinerU 转换，补逐段中文讲解和图片，并把 pseudo-spectral PML 反射率/效率公式与 WarpX 当前 `PsatdAlgorithmPml.cpp` 做逐项对应。
 
 - [x] 2026-06-29：完成 `v0.4` 沉积与形函数校准草稿：冻结 `manuscript/VERSION-v0.3.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.4，新增 `scripts/build_v04.py`，生成 `dist/pic-tutor-v0.4.md` 与 `dist/pic-tutor-v0.4.html`；第 5 章已按 `../warpx` 当前 `pkuHEDPbranch / 8c488b1a9` 重核 `ShapeFactors`、`DepositCurrent/DepositCharge`、Esirkepov/Villasenor/Vay 分派和 Langmuir / `vay_deposition` 验证入口。

@@ -5,7 +5,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="PIC-tutor" />
-  <meta name="dcterms.date" content="2026-06-29" />
+  <meta name="dcterms.date" content="2026-06-30" />
   <title>PIC 程序详解：从物理模型到 WarpX 源码</title>
   <style>
     /* Default styles provided by pandoc.
@@ -399,24 +399,25 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">PIC 程序详解：从物理模型到 WarpX 源码</h1>
-<p class="subtitle">v0.31 comoving PSATD regression analysis 方案版</p>
+<p class="subtitle">v0.32 comoving PSATD local reference calibration
+audit 版</p>
 <p class="author">PIC-tutor</p>
-<p class="date">2026-06-29</p>
+<p class="date">2026-06-30</p>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#pic-tutor-v0.31" id="toc-pic-tutor-v0.31">PIC-tutor
-v0.31</a>
+<li><a href="#pic-tutor-v0.32" id="toc-pic-tutor-v0.32">PIC-tutor
+v0.32</a>
 <ul>
 <li><a href="#定位" id="toc-定位">定位</a></li>
 <li><a href="#源码基线" id="toc-源码基线">源码基线</a></li>
-<li><a href="#v0.31-章节范围" id="toc-v0.31-章节范围">v0.31
+<li><a href="#v0.32-章节范围" id="toc-v0.32-章节范围">v0.32
 章节范围</a></li>
-<li><a href="#v0.31-已完成的增量" id="toc-v0.31-已完成的增量">v0.31
+<li><a href="#v0.32-已完成的增量" id="toc-v0.32-已完成的增量">v0.32
 已完成的增量</a></li>
 <li><a href="#成书前必须补齐"
 id="toc-成书前必须补齐">成书前必须补齐</a></li>
-<li><a href="#v0.31-构建方式" id="toc-v0.31-构建方式">v0.31
+<li><a href="#v0.32-构建方式" id="toc-v0.32-构建方式">v0.32
 构建方式</a></li>
 </ul></li>
 <li><a href="#写作说明" id="toc-写作说明">0. 写作说明</a></li>
@@ -1194,26 +1195,27 @@ id="toc-python-field-wrapper-的最小强回归">Python field wrapper
 A：符号表草稿</a></li>
 </ul>
 </nav>
-<!-- source: manuscript/VERSION-v0.31.md -->
-<h1 id="pic-tutor-v0.31">PIC-tutor v0.31</h1>
-<p>版本日期：2026-06-29</p>
+<!-- source: manuscript/VERSION.md -->
+<h1 id="pic-tutor-v0.32">PIC-tutor v0.32</h1>
+<p>版本日期：2026-06-30</p>
 <h2 id="定位">定位</h2>
-<p><code>v0.31</code> 是 <code>PIC-tutor</code> 的 comoving PSATD
-regression analysis 方案版。它继承 <code>v0.30</code> 的 comoving
-系数图谱，并继续推进第 6 章的验证强度：把
-<code>test_2d_comoving_psatd_hybrid</code> 从 “analysis=OFF +
-checksum-only” 拆成可执行的 finite-field、electric-energy、spike-ratio
-和 Gauss-law diagnostic 升级路线。</p>
-<p>本版仍不修改 <code>../warpx</code>。第 6 章新增
-<code>6.8.3 v0.31 comoving PSATD regression analysis 方案</code>，并新增
-<code>notes/code-reading/fieldsolver/22-psatd-comoving-regression-analysis-plan.md</code>。本版的核心写作边界是：当前
-comoving regression 只能证明末态 plotfile checksum 一致；若要升级为强
-analysis，需要新增 <code>analysis_comoving.py</code>、标定 reference
-数值，必要时还要把输入卡输出扩展到 <code>divE</code>。</p>
-<p>本版仍不是出版终稿。它继续保留 LeeCPC2015 PDF/MinerU
-缺口，但不再把项目推进完全卡在授权全文上。后续仍应补齐 Lee/Vay PML
-论文全文，同时把 v0.31 的 analysis 方案推进成真正的 WarpX 侧 regression
-patch，或继续压实 RZ validation 边界。</p>
+<p><code>v0.32</code> 是 <code>PIC-tutor</code> 的 comoving PSATD local
+reference calibration audit 版。它继承 <code>v0.31</code> 的 analysis
+方案，不再停留在“应该怎样标定 reference”的抽象设计，而是把 stable
+baseline、no-comoving sibling、ledger 提取和 provenance note
+真正在本地跑通，并把审计结论写回第 6 章。</p>
+<p>本版仍不修改 <code>../warpx</code>。第 6 章继续围绕
+<code>6.8.3</code> / <code>6.8.4</code> 收口 comoving
+PSATD，新增的关键事实是：本地单进程 sibling override 已经证明
+<code>psatd.use_default_v_comoving=0, psatd.v_comoving=0</code> 会切到非
+comoving 分支，但当前样本并没有得到比 stable baseline
+更高的电场能量。因此，<code>v0.32</code> 诚实完成的是 local calibration
+audit，而不是直接声称 WarpX 侧最终 <code>energy_ref_unstable</code> /
+<code>tol_energy</code> 已经定稿。</p>
+<p>本版仍不是出版终稿。它继续保留 LeeCPC2015 PDF/MinerU 缺口，也保留
+comoving WarpX patch 尚未提交这一现实边界；后续仍应补齐 Lee/Vay PML
+论文全文，并在更接近 upstream regression 的 MPI/并行设置下重复 comoving
+contrast，或转向 RZ validation 强判据表。</p>
 <h2 id="源码基线">源码基线</h2>
 <ul>
 <li>本书项目仓库：<code>/Volumes/PHILIPS/programs/PIC/PIC-tutor</code></li>
@@ -1221,12 +1223,14 @@ patch，或继续压实 RZ validation 边界。</p>
 <li>当前 WarpX 分支：<code>pkuHEDPbranch</code></li>
 <li>当前 WarpX commit：<code>8c488b1a9</code></li>
 </ul>
-<p>v0.31 只修改 <code>PIC-tutor</code> 书稿项目，不修改
+<p>v0.32 只修改 <code>PIC-tutor</code> 书稿项目，不修改
 <code>../warpx</code> 原仓库。本版继续按当前 checkout 核对
-<code>Examples/Tests/nci_psatd_stability/CMakeLists.txt:28-38</code>、<code>inputs_test_2d_comoving_psatd_hybrid:1-138</code>、<code>analysis_galilean.py:1-111</code>、<code>analysis_psatd_CC1.py</code>
-和 <code>analysis_default_regression.py</code> 的验证边界。后续若 WarpX
-更新，必须重新校准源码行号、文档段落和测试入口后再发布新版。</p>
-<h2 id="v0.31-章节范围">v0.31 章节范围</h2>
+<code>Examples/Tests/nci_psatd_stability/CMakeLists.txt:28-38</code>、<code>inputs_test_2d_comoving_psatd_hybrid:1-138</code>、<code>analysis_galilean.py:1-111</code>、<code>analysis_psatd_CC1.py</code>、<code>SpectralSolver.cpp</code>、<code>WarpX.cpp</code>
+和参数文档里的 <code>psatd.v_comoving</code> 语义，并把对应本地运行与
+ledger 路径写入 provenance。后续若 WarpX
+更新，必须重新校准源码行号、文档段落、测试入口和 ledger
+样本后再发布新版。</p>
+<h2 id="v0.32-章节范围">v0.32 章节范围</h2>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -1293,9 +1297,10 @@ patch，或继续压实 RZ validation 边界。</p>
 v0.26 增补 Cartesian <code>X1-X4</code>、v0.27 增补 time-averaging
 <code>Psi/Y</code>、v0.28 增补 JRhom <code>Y1-Y8</code>、v0.29 增补
 RZ/Galilean RZ 系数边界、v0.30 增补 comoving PSATD 系数与验证边界、v0.31
-增补 comoving regression analysis 升级方案</td>
-<td>仍需真正提交 WarpX 侧 <code>analysis_comoving.py</code> 或继续压实
-RZ validation 边界</td>
+增补 comoving regression analysis 升级方案、v0.32 增补本地
+stable/contrast ledger audit</td>
+<td>仍需真正提交 WarpX 侧 <code>analysis_comoving.py</code>，并在更贴近
+upstream regression 的设置下收敛最终 energy gate</td>
 </tr>
 <tr>
 <td>边界、PML 与 AMR</td>
@@ -1326,29 +1331,32 @@ transition-zone regression</td>
 </tr>
 </tbody>
 </table>
-<h2 id="v0.31-已完成的增量">v0.31 已完成的增量</h2>
+<h2 id="v0.32-已完成的增量">v0.32 已完成的增量</h2>
 <ul>
-<li>冻结 <code>manuscript/VERSION-v0.30.md</code>，避免重建 v0.30 时误用
-v0.31 版本说明。</li>
-<li>新增 <code>scripts/build_v31.py</code>，生成
-<code>dist/pic-tutor-v0.31.md</code> 与
-<code>dist/pic-tutor-v0.31.html</code>。</li>
-<li>把 <code>scripts/build_v30.py</code> 改为读取冻结的
-<code>manuscript/VERSION-v0.30.md</code>，保持 v0.30
+<li>冻结 <code>manuscript/VERSION-v0.31.md</code>，避免重建 v0.31 时误用
+v0.32 版本说明。</li>
+<li>新增 <code>scripts/build_v32.py</code>，生成
+<code>dist/pic-tutor-v0.32.md</code> 与
+<code>dist/pic-tutor-v0.32.html</code>。</li>
+<li>把 <code>scripts/build_v31.py</code> 改为读取冻结的
+<code>manuscript/VERSION-v0.31.md</code>，保持 v0.31
 版本说明可复现。</li>
-<li>新增
-<code>notes/code-reading/fieldsolver/22-psatd-comoving-regression-analysis-plan.md</code>，覆盖
-<code>test_2d_comoving_psatd_hybrid</code> 当前
-<code>analysis=OFF</code> 的证据边界、现有 <code>Ex/Ey/Ez/B/J/rho</code>
-输出可支持的 finite/energy/spike gate、缺少 <code>divE</code> 时不能声称
-charge-conservation analysis，以及后续 CMake wiring 草案。</li>
+<li>新增 <code>scripts/build_comoving_reference_ledger.py</code>，可从
+stable / unstable <code>diag1000400</code> 直接提取
+<code>electric_energy</code>、<code>e_mag_max</code>、<code>e_mag_p99</code>、<code>spike_ratio</code>、field
+finite/extrema 和 provenance。</li>
+<li>在 <code>runs/fieldsolver-validation/</code> 下完成 stable baseline
+与 no-comoving sibling 的单进程本地运行，生成
+<code>comoving-stable-baseline.{md,json}</code> 与
+<code>comoving-stable-vs-no-comoving.{md,json}</code> ledger。</li>
+<li>确认 no-comoving sibling 的 override 已切到非 comoving
+分支，但当前单进程样本得到
+<code>stable_over_unstable_energy_ratio = 1.0469608718245416</code>，说明它还不能直接充当最终
+WarpX CI <code>energy_ref_unstable</code>。</li>
 <li>更新
-<code>notes/code-reading/fieldsolver/README.md</code>，把新图谱纳入
-fieldsolver 精读顺序。</li>
-<li>在第 6 章新增
-<code>6.8.3 v0.31 comoving PSATD regression analysis 方案</code>，把
-checksum、finite sanity、energy ceiling、spike ratio 和 Gauss-law drift
-的证据等级拆开说明。</li>
+<code>notes/code-reading/fieldsolver/23-psatd-comoving-reference-calibration.md</code>
+和第 6 章 <code>6.8.4</code>，把 local calibration audit
+的事实边界写清楚。</li>
 </ul>
 <h2 id="成书前必须补齐">成书前必须补齐</h2>
 <ul>
@@ -1365,14 +1373,14 @@ commit，并避免同章混用未说明的历史行号。</li>
 Markdown/HTML。</li>
 <li>对 public GitHub 仓库中的 PDF 和运行产物做版权与体积审计。</li>
 </ul>
-<h2 id="v0.31-构建方式">v0.31 构建方式</h2>
+<h2 id="v0.32-构建方式">v0.32 构建方式</h2>
 <p>生成合订 Markdown 和 HTML 预览：</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v31.py</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/build_v32.py</span></code></pre></div>
 <p>生成的文件：</p>
 <ul>
-<li><code>dist/pic-tutor-v0.31.md</code></li>
-<li><code>dist/pic-tutor-v0.31.html</code>（若本机存在
+<li><code>dist/pic-tutor-v0.32.md</code></li>
+<li><code>dist/pic-tutor-v0.32.html</code>（若本机存在
 <code>pandoc</code>）</li>
 </ul>
 <!-- source: manuscript/chapters/00-preface.md -->

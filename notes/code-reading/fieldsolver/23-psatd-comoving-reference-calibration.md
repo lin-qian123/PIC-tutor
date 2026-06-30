@@ -250,5 +250,40 @@ python scripts/build_comoving_reference_ledger.py \
 
 - `analysis_comoving.py` 的脚本形状已经清楚；
 - 真正的难点在 reference 标定与 provenance；
-- 这一步应作为 comoving PSATD 模块内的继续收口，而不是单独再发一个小版本；
-- 只有当 reference ledger 和 patch 四件套都齐了，才值得统一更新版本说明。
+- 当前仓库已经把 reference ledger 工具链和一组本地样本跑通，但审计结论是“分支已验证，能量 gate 还不能定”；
+- 只有当更接近 upstream regression 的 repeated/MPI contrast 也证明 non-comoving sibling 会把电场能量抬高，才适合把 `energy_ref_unstable` 硬编码进 WarpX patch。
+
+## 2026-06-30 本地 audit 实跑结果
+
+当前仓库已在只读 `../warpx` 前提下完成两条单进程本地运行：
+
+1. stable baseline：
+   - 输入：`../warpx/Examples/Tests/nci_psatd_stability/inputs_test_2d_comoving_psatd_hybrid`
+   - 命令行覆盖：`warpx.numprocs='1 1'`
+   - 末态 plotfile：`runs/fieldsolver-validation/comoving-stable-baseline/diags/diag1000400`
+2. no-comoving sibling：
+   - 同一输入卡
+   - 命令行覆盖：`warpx.numprocs='1 1' psatd.use_default_v_comoving=0 psatd.v_comoving='0. 0. 0.'`
+   - 末态 plotfile：`runs/fieldsolver-validation/comoving-unstable-no-comoving/diags/diag1000400`
+
+对应生成的 ledger：
+
+- `runs/fieldsolver-validation/comoving-reference-ledgers/comoving-stable-baseline.md`
+- `runs/fieldsolver-validation/comoving-reference-ledgers/comoving-stable-baseline.json`
+- `runs/fieldsolver-validation/comoving-reference-ledgers/comoving-stable-vs-no-comoving.md`
+- `runs/fieldsolver-validation/comoving-reference-ledgers/comoving-stable-vs-no-comoving.json`
+
+当前样本给出的关键事实是：
+
+- stable baseline：`electric_energy = 8.1520684623101725e+14`
+- no-comoving sibling：`electric_energy = 7.7864117768828750e+14`
+- `stable_over_unstable_energy_ratio = 1.0469608718245416`
+- `spike_ratio_ref_stable = 1.1103719982074416`
+- `stable_over_unstable_spike_ratio = 0.9985705473421257`
+
+这组数字说明两点：
+
+1. sibling override 已经切到非 comoving 分支。运行日志里 stable baseline 会打印 `v_comoving = (0,0,-298904182.1)`，而 no-comoving sibling 不再出现该行。
+2. 但这组单进程本地样本没有出现“关闭 comoving 后电场能量更高”的预期；相反 stable baseline 的能量略高。因此这里的 `energy_ref_unstable` 只能算 ledger 事实记录，不能直接充当最终 WarpX CI gate。
+
+换句话说，`v0.32` 能诚实声称的闭合点不是“energy gate 已定”，而是“reference 标定已经从抽象方案推进到本地 audit，且 audit 结果证明还需要更接近 upstream regression 的 repeated/MPI contrast 才能定 gate”。

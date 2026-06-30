@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.31` comoving PSATD regression analysis 方案版，目标是先形成一条可复查、可审读、可验证的主线，再逐章加深公式推导、源码逐行讲解、图表和可复现实验。
+这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.31` comoving PSATD regression analysis 方案版，目标是先形成一条可复查、可审读、可验证的主线，再逐章加深公式推导、源码逐行讲解、图表和可复现实验。2026-06-30 起，后续推进改为“模块闭合后再统一升版本”：当前先在 `v0.31` 基础上继续收口 comoving PSATD 的 reference 标定与 patch 草案，不再为每一小步单独切版本号。
 
 ## 版本边界
 

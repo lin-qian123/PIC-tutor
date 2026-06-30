@@ -13496,14 +13496,27 @@ stable Galilean baseline 的电场能量明显低于禁用 Galilean 的
 sibling。这个 control 说明“本机缺 MPI，所以单进程样本看不出 unstable
 contrast”并不是一个足够强的解释；至少对 Galilean family
 而言，单进程本地设置仍然能复现预期的 unstable-energy ordering。</p>
+<p>这里还有一个更硬的事实。当前 <code>no-comoving</code> 和
+<code>no-galilean</code> 两个 sibling 的末态
+<code>electric_energy</code>、<code>e_mag_max</code>、<code>e_mag_p99</code>
+和 <code>spike_ratio</code> 在本地 ledger 中已经重合到
+<code>1e-14</code> 相对误差量级；换句话说，一旦把
+<code>v_comoving</code> 或 <code>v_galilean</code> 都压成零，它们在这组
+2D hybrid boosted-frame 运行里就实际汇合到同一条 standard-PSATD
+branch。于是问题就不再是“comoving 的 unstable sibling
+还没找到”，而是“当前可识别的 shared unstable branch 对 Galilean family
+提供了有效 energy ordering，却没有对 comoving family 提供同样的
+ordering”。</p>
 <p>因此，更严格的说法应当是：本地 audit 已经验证了参数分支和 ledger
 提取流程，但 comoving <code>no-comoving</code> sibling
-当前没有给出可用的 unstable-energy contrast，这更像是 contrast
-设计本身还不够贴近真正的 unstable branch，而不只是并行环境缺失。真正写入
-WarpX <code>analysis_comoving.py</code> 的
-<code>energy_ref/tol_energy</code>，仍需在更接近 upstream regression 的
-MPI/并行设置下重跑，并且可能需要先重新选择更有解释力的 comoving
-sibling。</p>
+当前没有给出可用的 unstable-energy contrast，这更像是 comoving family
+本身未必适合直接沿用 Galilean 式 energy gate
+语义，而不只是并行环境缺失。真正写入 WarpX
+<code>analysis_comoving.py</code>
+的实现方向，接下来至少要先回答两个问题之一：要么重新选择更有解释力的
+comoving sibling；要么明确承认 comoving 的第一阶段 patch 应该以
+finite/spike 或其他更合适的判据为主，把 energy gate
+降级为待更多样本后再定。</p>
 <p>因此，comoving reference
 标定这块现在的闭合条件可以重新表述为：第一，正文诚实记录当前
 <code>analysis=OFF</code>、第一阶段 finite/energy/spike gate 和第二阶段

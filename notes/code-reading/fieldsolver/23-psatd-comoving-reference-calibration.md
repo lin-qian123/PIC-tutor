@@ -315,7 +315,20 @@ python scripts/build_comoving_reference_ledger.py \
 1. 在这台机器上，即便没有 `mpirun/mpiexec`、只能把 `warpx.numprocs` 改成 `1 1`，单进程本地样本仍然能复现 WarpX 已知的 Galilean unstable-energy ordering。
 2. 因此，comoving `no-comoving` sibling 当前没有抬高电场能量，已经不能简单归咎于“本机没有 MPI”；更可能的解释是这个 sibling 还不够贴近真正应该被视作 unstable reference 的 branch。
 
-换句话说，Galilean control experiment 把结论从“环境可能太弱”收紧成了“comoving contrast 设计仍需重审”。这也意味着后续若继续推进 `analysis_comoving.py`，优先级应当从“先想办法补 MPI”调整为：
+这里还可以再收紧一步。当前仓库里 `no-comoving` 与 `no-galilean` 这两条 sibling 的末态指标已经几乎完全重合：
+
+- `electric_energy` 相对差异约 `3.0e-14`
+- `e_mag_max` 相对差异约 `2.7e-14`
+- `e_mag_p99` 相对差异约 `2.2e-14`
+- `spike_ratio` 相对差异约 `5.6e-15`
+
+这说明一旦把 `v_comoving` 或 `v_galilean` 压成零，这两条 2D hybrid boosted-frame sibling 在本机上实际上汇合到同一条 standard-PSATD unstable branch。于是问题就更清楚了：
+
+- 对 Galilean family，这条 shared unstable branch 能形成有效的 energy ordering；
+- 对 comoving family，这条 shared unstable branch 目前不能形成有效的 energy ordering。
+
+换句话说，Galilean control experiment 把结论从“环境可能太弱”收紧成了“comoving contrast 设计乃至 gate 语义都仍需重审”。这也意味着后续若继续推进 `analysis_comoving.py`，优先级应当从“先想办法补 MPI”调整为：
 
 - 先重新论证 comoving family 中哪一条 sibling 才真正有资格当 unstable reference；
+- 同时准备一个更保守的 fallback：若 energy ordering 仍不成立，就把第一阶段 patch 重心转到 finite/spike 或其他更合适的判据；
 - 再在条件允许时用更接近 upstream regression 的 MPI/并行设置复核。

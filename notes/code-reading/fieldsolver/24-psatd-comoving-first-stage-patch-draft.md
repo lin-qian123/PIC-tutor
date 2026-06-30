@@ -29,6 +29,7 @@
 当前在 `PIC-tutor` 中对应的草案资产是：
 
 - `notes/code-reading/fieldsolver/analysis_comoving_first_stage_draft.py`
+- `notes/code-reading/fieldsolver/comoving_first_stage_patch.diff`
 
 它只做两件事：
 
@@ -54,6 +55,15 @@ add_warpx_test(
 ```
 
 这保留了现有 checksum surface，同时把 analysis 从 `OFF` 提升到一个真正执行的 helper。
+
+为了避免后续再手工拼 patch，当前仓库还额外保存了一份 unified diff 草案：
+
+- `notes/code-reading/fieldsolver/comoving_first_stage_patch.diff`
+
+它只覆盖最小两处修改：
+
+1. `CMakeLists.txt` 中把 comoving test 的 analysis 从 `OFF` 改成 `analysis_comoving.py`
+2. 新增 `analysis_comoving.py`
 
 ### 3. 当前 hard-coded 草案常量
 
@@ -105,9 +115,10 @@ SPIKE_RATIO_MAX = 1.111482370205649
 如果后续真的上提 WarpX patch，推荐流程是：
 
 1. 先从 `analysis_comoving_first_stage_draft.py` 复制到 WarpX test 目录；
-2. 仅改文件头注释、路径和必要的打印格式；
-3. 保持第一阶段不引入 energy gate；
-4. 单独在后续 patch 或 follow-up PR 中处理 energy gate / `divE` widening。
+2. 对照 `comoving_first_stage_patch.diff` 检查 helper 文件名和 CMake wiring；
+3. 仅改文件头注释、路径和必要的打印格式；
+4. 保持第一阶段不引入 energy gate；
+5. 单独在后续 patch 或 follow-up PR 中处理 energy gate / `divE` widening。
 
 ## 当前结论
 

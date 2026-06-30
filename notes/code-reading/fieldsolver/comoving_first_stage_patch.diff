@@ -1,0 +1,84 @@
+diff --git a/Examples/Tests/nci_psatd_stability/CMakeLists.txt b/Examples/Tests/nci_psatd_stability/CMakeLists.txt
+index 0000000..0000000 100644
+--- a/Examples/Tests/nci_psatd_stability/CMakeLists.txt
++++ b/Examples/Tests/nci_psatd_stability/CMakeLists.txt
+@@
+ if(WarpX_FFT)
+     add_warpx_test(
+         test_2d_comoving_psatd_hybrid  # name
+         2  # dims
+         2  # nprocs
+         inputs_test_2d_comoving_psatd_hybrid  # inputs
+-        OFF  # analysis
++        "analysis_comoving.py diags/diag1000400"  # analysis
+         "analysis_default_regression.py --path diags/diag1000400"  # checksum
+         OFF  # dependency
+     )
+ endif()
+diff --git a/Examples/Tests/nci_psatd_stability/analysis_comoving.py b/Examples/Tests/nci_psatd_stability/analysis_comoving.py
+new file mode 100755
+index 0000000..0000000
+--- /dev/null
++++ b/Examples/Tests/nci_psatd_stability/analysis_comoving.py
+@@
++#!/usr/bin/env python3
++"""
++Draft WarpX-side first-stage analysis for test_2d_comoving_psatd_hybrid.
++
++Current scope:
++- always enforce finite-field sanity
++- enforce a first-stage spike-ratio gate
++- do not yet enforce an energy gate
++"""
++
++import sys
++
++import numpy as np
++import yt
++
++yt.funcs.mylog.setLevel(0)
++
++
++FIELD_NAMES = ("Ex", "Ey", "Ez", "Bx", "By", "Bz", "jx", "jy", "jz", "rho")
++
++# Candidate first-stage ceiling derived from the current stable baseline:
++# spike_ratio_ref_stable = 1.1103719982074416
++# safety_factor = 1.001
++SPIKE_RATIO_MAX = 1.111482370205649
++
++
++def main() -> None:
++    filename = sys.argv[1]
++    ds = yt.load(filename)
++
++    if hasattr(ds, "force_periodicity"):
++        ds.force_periodicity()
++
++    grid = ds.covering_grid(
++        level=0, left_edge=ds.domain_left_edge, dims=ds.domain_dimensions
++    )
++
++    fields = {}
++    for name in FIELD_NAMES:
++        arr = grid["boxlib", name].squeeze().v
++        if not np.all(np.isfinite(arr)):
++            raise AssertionError(f"{name} contains non-finite values")
++        fields[name] = arr
++
++    ex = fields["Ex"]
++    ey = fields["Ey"]
++    ez = fields["Ez"]
++    e_mag = np.sqrt(ex**2 + ey**2 + ez**2)
++    spike_ratio = np.max(e_mag) / (np.percentile(e_mag, 99) + 1e-300)
++
++    print("\nCheck finite-field sanity:")
++    print("all_fields_finite = True")
++
++    print("\nCheck spike-ratio sanity:")
++    print(f"spike_ratio = {spike_ratio}")
++    print(f"spike_ratio_max = {SPIKE_RATIO_MAX}")
++    assert spike_ratio <= SPIKE_RATIO_MAX
++
++
++if __name__ == "__main__":
++    main()

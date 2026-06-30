@@ -287,3 +287,35 @@ python scripts/build_comoving_reference_ledger.py \
 2. 但这组单进程本地样本没有出现“关闭 comoving 后电场能量更高”的预期；相反 stable baseline 的能量略高。因此这里的 `energy_ref_unstable` 只能算 ledger 事实记录，不能直接充当最终 WarpX CI gate。
 
 换句话说，`v0.32` 能诚实声称的闭合点不是“energy gate 已定”，而是“reference 标定已经从抽象方案推进到本地 audit，且 audit 结果证明还需要更接近 upstream regression 的 repeated/MPI contrast 才能定 gate”。
+
+## 2026-06-30 本地 Galilean control experiment
+
+为了确认“当前单进程本地样本看不出 comoving unstable-energy contrast”到底是环境问题，还是 comoving sibling 本身就不够好，当前仓库又补做了一组 control：
+
+1. stable Galilean baseline：
+   - 输入：`../warpx/Examples/Tests/nci_psatd_stability/inputs_test_2d_galilean_psatd_hybrid`
+   - 命令行覆盖：`warpx.numprocs='1 1'`
+2. no-Galilean sibling：
+   - 同一输入卡
+   - 命令行覆盖：`warpx.numprocs='1 1' psatd.use_default_v_galilean=0 psatd.v_galilean='0. 0. 0.'`
+
+对应 ledger：
+
+- `runs/fieldsolver-validation/galilean-reference-ledgers/galilean-stable-vs-no-galilean.md`
+- `runs/fieldsolver-validation/galilean-reference-ledgers/galilean-stable-vs-no-galilean.json`
+
+这组 control 给出的关键事实是：
+
+- stable Galilean：`electric_energy = 6.5553743351612200e+14`
+- no-Galilean sibling：`electric_energy = 7.7864117768831088e+14`
+- `stable_over_unstable_energy_ratio = 0.8418992628444483`
+
+这件事很关键，因为它说明：
+
+1. 在这台机器上，即便没有 `mpirun/mpiexec`、只能把 `warpx.numprocs` 改成 `1 1`，单进程本地样本仍然能复现 WarpX 已知的 Galilean unstable-energy ordering。
+2. 因此，comoving `no-comoving` sibling 当前没有抬高电场能量，已经不能简单归咎于“本机没有 MPI”；更可能的解释是这个 sibling 还不够贴近真正应该被视作 unstable reference 的 branch。
+
+换句话说，Galilean control experiment 把结论从“环境可能太弱”收紧成了“comoving contrast 设计仍需重审”。这也意味着后续若继续推进 `analysis_comoving.py`，优先级应当从“先想办法补 MPI”调整为：
+
+- 先重新论证 comoving family 中哪一条 sibling 才真正有资格当 unstable reference；
+- 再在条件允许时用更接近 upstream regression 的 MPI/并行设置复核。

@@ -5,6 +5,7 @@
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+- 2026-06-30：继续推进 `v0.32` 后的 comoving 收口判断，补做本地 `test_2d_galilean_psatd_hybrid` control experiment：在同样的单进程 `warpx.numprocs='1 1'` 环境下，`psatd.use_default_v_galilean=0, psatd.v_galilean=0` sibling 仍给出 `stable_over_unstable_energy_ratio = 0.8418992628444483`，说明这台机器上的单进程本地设置依然能复现 WarpX 已知的 Galilean unstable-energy contrast；因此 comoving `no-comoving` sibling 当前不抬高能量，不能再简单归咎于“缺 MPI”，后续应优先重审 comoving contrast 设计本身。
 - 2026-06-30：完成 `v0.32` comoving PSATD local reference calibration audit 版：冻结 `manuscript/VERSION-v0.31.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.32，新增 `scripts/build_v32.py`，生成 `dist/pic-tutor-v0.32.md` 与 `dist/pic-tutor-v0.32.html`；本地只读使用 `../warpx` 的 `test_2d_comoving_psatd_hybrid` 跑通 stable baseline 和 `psatd.use_default_v_comoving=0, psatd.v_comoving=0` sibling，对 `diag1000400` 产出 stable/paired ledger，并把“override 已切到非 comoving 分支、但单进程样本未出现更高电场能量，因此还不能直接把 `energy_ref_unstable` 硬编码成 CI gate”写回第 6 章与校准笔记。
 - 2026-06-30：继续把 comoving PSATD 模块从方案推进到工具层，新增 `scripts/build_comoving_reference_ledger.py`，可直接对 stable / unstable `diag1000400` 产出 Markdown/JSON reference ledger，记录 `electric_energy`、`spike_ratio`、field finite/extrema、`energy_ref_unstable` 候选值和 provenance。
 - 2026-06-30：继续在 `v0.31` 基础上推进 comoving PSATD 模块内收口，新增 `notes/code-reading/fieldsolver/23-psatd-comoving-reference-calibration.md`，把 `analysis_comoving.py` 需要的 reference 标定、stable ledger / unstable contrast 区分、patch 四件套和 provenance 要求写清楚。

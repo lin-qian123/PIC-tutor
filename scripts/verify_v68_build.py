@@ -17,7 +17,7 @@ SOURCE_CHAPTERS = sorted((ROOT / "manuscript" / "chapters").glob("*.md"))
 MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.68.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.68.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.68.pdf"
-EXPECTED_PDF_PAGES = 313
+EXPECTED_PDF_PAGES = 314
 
 
 def image_links(text: str) -> list[str]:
@@ -37,12 +37,12 @@ def main() -> None:
 
     checks = {
         "pdf_pages": len(reader.pages) == EXPECTED_PDF_PAGES,
-        "source_image_links": len(image_links(source)) == 15,
-        "merged_image_links": len(image_links(merged)) == 15,
+        "source_image_links": len(image_links(source)) == 16,
+        "merged_image_links": len(image_links(merged)) == 16,
         "image_links_relative": all(
             not link.startswith("/") for link in image_links(source) + image_links(merged)
         ),
-        "html_embedded_images": html.count("data:image/png;base64,") >= 15,
+        "html_embedded_images": html.count("data:image/png;base64,") >= 16,
         "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],

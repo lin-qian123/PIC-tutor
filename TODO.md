@@ -8,6 +8,7 @@
 - [x] 2026-07-13：为第 5 章新增 geometry/order coverage 图，按 PASS/MIXED/BOUNDARY/LIMITED 可视化 9 条现有证据行；构建验收从 13 张资源扩展为 14 张，仍明确不代表完整笛卡尔积回归。
 - [x] 2026-07-13：将 AMR transition-zone packet 落成 schema validator 和 synthetic fixture；route-count 正例通过、故意破坏的负例被拒绝，真实 WarpX runtime ledger 仍保持未完成边界。
 - [x] 2026-07-13：为第 7 章新增 transition-zone route-count 设计流程图，展示 partition、fine/buffer source ledger、coarsen/owner-mask 和 sync closure 的计划数据流；构建验收资源扩展为 15 张。
+- [x] 2026-07-13：为第 5 章新增 RZ Esirkepov correction/shape tradeoff 图，展示三档 resolution trend、`256x512` shape family 和 `1e-11` charge gate；构建验收资源扩展为 16 张。
 
 - [x] 2026-07-12：完成 public release path hygiene：对 v0.66 Markdown/HTML 的旧产物发现 `/Volumes/` 31 处和 HTML 绝对本地链接 12 个；新增 `scripts/audit_public_release_paths.py`，在 v0.67 build layer 将项目绝对路径改为 `../...`、WarpX 路径改为 `$WARPX_ROOT/...`，Markdown/HTML 两侧 forbidden path 和 absolute local link 均为 0，并纳入 `verify_v67_build.py`。
 - [x] 2026-07-12：完成 PSATD/NCI literature-to-source strategy matrix：新增 `scripts/audit_psatd_literature_strategy_contract.py` 与 `notes/code-reading/fieldsolver/35-psatd-literature-source-runtime-strategy-matrix.md`，对 Godfrey 2014、Lehe 2016、Kirchen 2016 的本地 PDF/MinerU/中文讲解/reading-log、章节映射、WarpX 源码关键词和 runtime consumer 共 3×5 项检查全部通过；分类为 `FULL_TEXT_SOURCE_GROUNDED_RUNTIME_STRATEGY_MATRIX`。该矩阵是证据索引，不新增物理 regression，不把 fixed-grid、Galilean 和 boosted-frame 三条机制混写。

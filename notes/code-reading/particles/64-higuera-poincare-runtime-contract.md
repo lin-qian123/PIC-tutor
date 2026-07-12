@@ -17,7 +17,7 @@ The analyzer `scripts/analyze_higuera_poincare_contract.py` passes its structura
 | `H` | `1.532e-3` |
 | `I_y` | `8.206e-3` |
 
-The detailed values and section points are stored in `runs/stage-c-validation/higuera_poincare_comparison/contract.{json,md}`. This establishes a reproducible section/invariant consumer and provides runtime evidence that the three pusher paths remain close on this setup. It does not yet automate the paper's nested-surface, trajectory-crossing, or resonance-island topology classifier, so no full Fig. 2 topology reproduction is claimed.
+The detailed values and section points are stored in `runs/stage-c-validation/higuera_poincare_comparison/contract.{json,md}`. This establishes a reproducible section/invariant consumer and provides runtime evidence that the three pusher paths remain close on this setup. A sampled topology consumer now exists in `scripts/classify_higuera_poincare_topology.py`, but the current 8 points per orbit are below its 16-point threshold, so no full Fig. 2 topology reproduction is claimed.
 
 ## Reproduction boundary
 

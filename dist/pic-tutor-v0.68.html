@@ -844,6 +844,11 @@ topology 仍作为边界。</p>
 <code>1.532e-3/8.206e-3</code>。该证据建立 section/invariant
 consumer，但不宣称 resonance-island 或 trajectory-crossing topology
 已自动分类。</p>
+<p>本版又加入 sampled Poincare topology
+classifier：它会计算截面多边形候选自交和轨道间交叉，但当前 8
+点/轨道采样未达到 16 点最低阈值，结果保持
+<code>INSUFFICIENT_SAMPLING</code>，不提升为论文 Fig. 2 topology
+reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
 汇总本地 135 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
@@ -7729,8 +7734,12 @@ drift-preservation 的本地强断言。本轮新增的
 <code>1.532\times10^{-3}</code>/<code>8.206\times10^{-3}</code>。分析器明确把
 WarpX 机械 <code>p_z</code> 映射回论文的
 <code>P_z-A_z</code>，因此这是一条可复核的 section/invariant
-consumer；但 nested surfaces、trajectory crossings 和 resonance island
-尚未自动分类，不能夸写成论文 Fig. 2 的完整 topology reproduction。</p>
+consumer。新增的
+<code>scripts/classify_higuera_poincare_topology.py</code>
+已实现候选自交和轨道间线段交叉计算，但当前每条轨道只有 8
+个截面点，合同返回
+<code>INSUFFICIENT_SAMPLING</code>；粗采样自交不被解释为 resonance
+island，不能夸写成论文 Fig. 2 的完整 topology reproduction。</p>
 <p>本轮新增的 <code>scripts/analyze_larmor_orbit_contract.py</code> 已把
 <code>larmor</code> 的 6 个 Full plotfile
 组织成逐帧离散轨道账本，确认时间序列、1 粒子/species、有限状态和输出

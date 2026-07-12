@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 701,
-  "total_bytes": 27448159,
+  "entry_count": 703,
+  "total_bytes": 27457914,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1512584,
-      "sha256": "81bfefdc9d3cc4a14a7228d06cf5c5ddfc299a42e6b496e7040bf93c02499b2e"
+      "bytes": 1512925,
+      "sha256": "ae37602d60600c1fd1805dd5850c5ab0f25716c7cdee233d071d3d03479ce3ad"
     },
     {
       "path": "TODO.md",
-      "bytes": 1355968,
-      "sha256": "b524e6e5714901e00131f652a295fa33ad828bb1ff64d6558bbe5c97f62f94fa"
+      "bytes": 1356396,
+      "sha256": "c779584a7adf580c27798c7bb54a5b0e3fca777fca863ac1b035d1c3567f0e5e"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5740040,
-      "sha256": "be10761a84a45d994a8ea8db29fa0d3ec54a2e1ed6cf9b8f21555cf7a8165746"
+      "bytes": 5740505,
+      "sha256": "7430e70ba064025cb3562db4378662e99445ee23579de685264265e56389b81c"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1068313,
-      "sha256": "dbdcc0ac8ef313f8d3a44690712563ced7e9d65119903976727b9afcf85b87e8"
+      "bytes": 1068739,
+      "sha256": "dc34eca23ef584ae52543d7d841c38051c358149c923d32cde8dfd33414b7876"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3363888,
-      "sha256": "371cd1b916f12ec822ef132d5fe051700aadf395f0d6de8806de59aa2be373d2"
+      "bytes": 3364354,
+      "sha256": "23704091d05c07b0e660e9f75af14738137581aab466614aeba695ebc8bf189d"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "72571d654cc9ca9a66a62e0a6bd14fa71e205c2b41caf56b5803dd72a331d943"
+      "sha256": "cda540a67fe3437455b40cf36b27f4f4ee74997dac684dbefcea6f7bdc6741dc"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 40367,
-      "sha256": "d9cf9f132b12beabe8edafa43278a40fc3149821464be8eb14b9451118871600"
+      "bytes": 40636,
+      "sha256": "479e0577810394839663ad5d4c995042e8a9597605252f624da4ca3366c55705"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 61403,
-      "sha256": "bf9b6cb7c86edc34f12838303790525148f1252da8390a233926573c1fa46ffa"
+      "bytes": 61668,
+      "sha256": "b05eafc1279fcde68167dc4c41205bfa5a1cc34ece6a6b6ec9b61d1c1fcbb97f"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 147579,
-      "sha256": "598e70e692b44413efbd6bcfb1c167a864e0fc1d25d3bcfba347a966b236054b"
+      "bytes": 147740,
+      "sha256": "689352d84e0756905e86aa9751c68db895cb93c09902b32a4c1b727743dfd8cd"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -2047,8 +2047,13 @@
     },
     {
       "path": "notes/code-reading/particles/64-higuera-poincare-runtime-contract.md",
-      "bytes": 2198,
-      "sha256": "f2827ac936f01a5903477de80e70beadb579337931fe904f7a0df28563de1968"
+      "bytes": 2243,
+      "sha256": "697d6a7c5e573f13b24117ac65674bb633805f677ac342680a3ddf4515cd2e82"
+    },
+    {
+      "path": "notes/code-reading/particles/65-higuera-poincare-topology-classifier.md",
+      "bytes": 1036,
+      "sha256": "37f08ff41c421ac6ec666c3592bb2a3cb517fdec31d0abd7502e8ea44073805e"
     },
     {
       "path": "notes/code-reading/particles/README.md",
@@ -2247,8 +2252,8 @@
     },
     {
       "path": "scripts/analyze_higuera_poincare_contract.py",
-      "bytes": 8277,
-      "sha256": "0ec9dc20492b3cb9bd431be114d1e51e099b38cb9fba1a6bef13d2fee099fb59"
+      "bytes": 8179,
+      "sha256": "3f0c8c65baf4d3054ac44be92a402a9e8d9fde2560803ffc95d7c8a266cc03a0"
     },
     {
       "path": "scripts/analyze_implicit_picard_energy_contract.py",
@@ -2994,6 +2999,11 @@
       "path": "scripts/build_v68.py",
       "bytes": 4840,
       "sha256": "973a893f3ad17d30e1d5a10963e18e40a0bee539742d4876c06928e783f80752"
+    },
+    {
+      "path": "scripts/classify_higuera_poincare_topology.py",
+      "bytes": 5951,
+      "sha256": "0bcf223d7f67dcc7100f227b0c2911c209315f9c2bcca298dd26d650eea15aa3"
     },
     {
       "path": "scripts/compare_energy_conserving_thermal_plasma_family.py",

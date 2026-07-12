@@ -22,7 +22,9 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 2026-07-13：新增窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：三条无 AMR/PML/场演化 sibling 各输出 81 个 Full plotfile；基于 `UpdatePosition.H` 的 position-update velocity/gyroradius proxy 误差分别压到 `1.34e-14/4.8e-15` 以内，支持 Vay Appendix B 条件的 proxy 层证据，但仍不宣称直接 half-step attribute 或 Poincare topology 专门 gate。
 
-2026-07-13：新增 Higuera-Cary Poincare section runtime contract：64³ 专用盒、三种 pusher、5 个初始条件和 1001 帧均通过截面结构检查；最大 `H`/`I_y` 漂移为 `1.532e-3/8.206e-3`。规范动量到 WarpX 机械动量的转换已固化，resonance-island/topology classifier 仍未自动化。
+2026-07-13：新增 Higuera-Cary Poincare section runtime contract：64³ 专用盒、三种 pusher、5 个初始条件和 1001 帧均通过截面结构检查；最大 `H`/`I_y` 漂移为 `1.532e-3/8.206e-3`。规范动量到 WarpX 机械动量的转换已固化，topology classifier 已实现但当前返回 `INSUFFICIENT_SAMPLING`。
+
+2026-07-13：新增 sampled Poincare topology classifier：已实现候选自交、轨道间线段交叉和面积计算；由于当前每条轨道只有 8 个截面点，分类结果为 `INSUFFICIENT_SAMPLING`，不宣称论文 topology gate 通过。
 
 本轮又把第 7 章 transition-zone route-count packet 落成可执行的 schema validator 和 synthetic fixture：正例检查 route count、weight closure、`rho/J` 中间账本与显式 merge gates，负例会被拒绝；当前 WarpX 尚未接入 runtime hook，因此仍保持 `RUNTIME_LEDGER_UNPROVEN`。
 

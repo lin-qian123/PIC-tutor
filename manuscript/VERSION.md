@@ -8,6 +8,8 @@
 
 本版又新增 Higuera-Cary Poincare section runtime contract：64³ 专用盒中三种 pusher 各输出 1001 帧，5 个初始条件均产生正向 `p_x` 的 `x=0` 截面交叉；最大 `H`/`I_y` 相对漂移为 `1.532e-3/8.206e-3`。该证据建立 section/invariant consumer，但不宣称 resonance-island 或 trajectory-crossing topology 已自动分类。
 
+本版又加入 sampled Poincare topology classifier：它会计算截面多边形候选自交和轨道间交叉，但当前 8 点/轨道采样未达到 16 点最低阈值，结果保持 `INSUFFICIENT_SAMPLING`，不提升为论文 Fig. 2 topology reproduction。
+
 本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 135 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。

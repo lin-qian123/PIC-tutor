@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-12：完成 RZ correction-on `256x512` shape=1/2/3/4 high-resolution family：field gate 全通过，charge residual 为 `7.554e-4/8.990e-4/9.289e-4/9.729e-4`，均由 axis cell 主导并保留 BOUNDARY；新增 `scripts/summarize_rz_esirkepov_highres_shape_family.py`，不宣称完整 Gauss-law 或正式 convergence order。
 - [x] 2026-07-12：完成 RZ shape=1 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`；官方 field analysis 全通过，但最高分辨率 correction-off charge 越过 `1e-11`，因此只记录为 resolution trend/非单调 boundary，不把 correction-off 写成通用修复。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_resolution-trend/`。
 - [x] 2026-07-12：完成 v0.54 3D Esirkepov shape=2/3/4 refined-resolution family：`128^3` case-local controls 的 field error 为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 为 `5.4174e-12/4.3288e-12/3.0001e-12`，三档官方 field 与独立 charge gate 均通过；不宣称正式 convergence order。
 - [x] 2026-07-12：统一收口 RCYLINDER/RSPHERE Esirkepov shape=1/2/3/4 径向 `rho/divE` charge observation：八条 field gate 全通过，RCYLINDER charge residual 为 `4.711e-3/7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `4.166e-2/6.269e-2/6.928e-2/8.003e-2`，均保留 charge BOUNDARY；新增 `scripts/summarize_radial_charge_shape_contract.py`，不把局部观测写成完整 Gauss-law 闭环。

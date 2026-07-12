@@ -1,6 +1,6 @@
-# PIC-tutor v0.60
+# PIC-tutor v0.59
 
-当前合订 PDF 为 310 页；本 v0.60 版本在 v0.59 基础上补入 RZ correction-on shape=1/2/3/4 的 `256x512` high-resolution family，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 310 页；本 v0.59 版本在 v0.58 基础上补入 RZ shape=1 的三档分辨率 correction-on/off trend，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 

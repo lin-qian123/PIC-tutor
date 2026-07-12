@@ -1,12 +1,13 @@
 # PIC-tutor
 
-当前成书版本为 `v0.59`，对应 310 页 3D Esirkepov refined matrix 与 RZ 三档分辨率审计版；历史 `v0.58` 由 `manuscript/VERSION-v0.58.md` 保留。
+当前成书版本为 `v0.60`，对应 310 页 3D Esirkepov refined matrix 与 RZ 高分辨率 shape family 版；历史 `v0.59` 由 `manuscript/VERSION-v0.59.md` 保留。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+- 2026-07-12：完成 RZ correction-on `256x512` shape=1/2/3/4 high-resolution family：field gate 全通过，charge residual 为 `7.554e-4/8.990e-4/9.289e-4/9.729e-4`，均由 axis cell 主导并保留 BOUNDARY；汇总见 `runs/stage-c-validation/esirkepov_langmuir_rz_highres_shape-family/`。
 - 2026-07-12：完成 RZ shape=1 `256x512` resolution control：correction-on 的 axis charge residual 由 `3.593e-3 -> 1.520e-3 -> 7.554e-4` 单调下降，但 correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`，最高分辨率反而越过强 gate；该结果支持 correction-on 的分辨率趋势，但不支持把 correction-off 写成通用修复。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_resolution-trend/`。
 - 2026-07-12：统一收口 RCYLINDER/RSPHERE Esirkepov shape=1/2/3/4 的径向 `rho/divE` charge observation：八条 `Er` field gate 全通过，RCYLINDER charge residual 为 `4.711e-3/7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `4.166e-2/6.269e-2/6.928e-2/8.003e-2`，均保留为 charge BOUNDARY；汇总见 `runs/stage-c-validation/esirkepov_radial_charge_shape-matrix/`。
 - 2026-07-12：完成 v0.54 3D Esirkepov refined-resolution family：shape=2/3/4 的 `128^3` controls 均通过官方 `5%` field gate 和独立 `1e-11` charge gate，field error 为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 为 `5.4174e-12/4.3288e-12/3.0001e-12`；该结果仍只作为 case-local 分辨率证据，不宣称正式收敛阶。

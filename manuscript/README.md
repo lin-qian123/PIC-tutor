@@ -1,6 +1,8 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.49 合订 PDF 为 309 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v49_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.50 合订 PDF 为 309 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v50_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+
+2026-07-12 又补入 Esirkepov paper-to-WarpX notation matrix：14 个当前源码锚点全部通过，正文明确 `W^1/W^2/W^3`、`sdxi/sdyj/sdzk` 和 `Jx/Jy/Jz` 的层级对应，并保留 publisher-formatted PDF 未取得的边界。
 
 2026-07-12 又补入 3D AMR particles-in-PML 的逐分量 signed/absolute/level decomposition：初始帧全零，末态只有负向 `Ex` 峰值越过 `110`，且 coarse/fine 读取一致；正文继续把它写成官方 gate 通过、严格 absolute gate 失败的判据边界。
 

@@ -19,3 +19,9 @@ These are abstract-level claims only. The paper's derivation, implementation det
 - `full_text_line_by_line_compare`: not completed;
 - `abstract_backed`: true;
 - `metadata_verified`: true.
+
+## 2026-07-13 acquisition recheck
+
+- Elsevier API `https://api.elsevier.com/content/article/pii/0021999174900102` returned the DOI/title metadata, with `openaccess=0` and `openaccessArticle=false`.
+- Browser-like requests to the ScienceDirect `/pdf` endpoint returned HTTP `403` HTML rather than a PDF.
+- This confirms that metadata is reachable but does not upgrade the local evidence to publisher full text.

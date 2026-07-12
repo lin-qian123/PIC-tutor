@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 724,
-  "total_bytes": 27562579,
+  "total_bytes": 27563332,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1519547,
-      "sha256": "21ecfa98239180f11cb5318c8a4d6bae09e428f3a03f23b203d391ff214b6041"
+      "bytes": 1519778,
+      "sha256": "c950d3cb9b850c7626d3c2c4e389b75732b5238bda0b8a2b8e22c78c13835d10"
     },
     {
       "path": "TODO.md",
-      "bytes": 1363328,
-      "sha256": "bb83cc60e4279b8440376c229c5d89cbd4db7caf8dcdc478d5c6e3d3b34bf6c6"
+      "bytes": 1363568,
+      "sha256": "1b3b9dee710e7a89dc9e036b3e654afd0fe8fcb98864e2030b2c74b1a9ecffb2"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -82,8 +82,8 @@
     },
     {
       "path": "docs/literature-map.md",
-      "bytes": 76147,
-      "sha256": "d988d3ed63607d1e998bbcf28f25ca21fecc5c132e0425221bf35c4644026c6d"
+      "bytes": 76429,
+      "sha256": "db40cb3d626fbdc82561cb9f26cf238fde1f8792b64a4e2357fecda4b71fe182"
     },
     {
       "path": "docs/master-plan.md",

@@ -73,6 +73,7 @@
     - confirmed title/DOI: *Shaping the force law in two-dimensional particle-mesh models*, `10.1016/0021-9991(74)90044-8`
   - `Abe et al. (1975)`：`delta F` heuristic self-heating estimate
   - `Peiravi and Birdsall (1978)`：heating time 对 smoothing cutoff 与 weighting order 的依赖
+- 2026-07-13 acquisition recheck：Elsevier API 对两篇 1974 论文均返回 DOI/title 元数据，但 `openaccess=0`、`openaccessArticle=false`；ScienceDirect `/pdf` 请求仍返回 HTTP `403` HTML，因此 metadata reachability 不改变 publisher full-text missing 边界。
 - `Hockney 1971` 现已建立论文专属目录、access audit、摘要级中文讲解和 8 项本地 contract；两篇 1974 fallback 也已建立论文专属目录、摘要级中文讲解和 16/16 子检查 contract，三者证据分类均为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。`Peiravi and Birdsall (1978)` 已进一步取得 Berkeley technical-report full text、MinerU 资产和独立 contract；`Abe et al. (1975)` 已建立 ScienceDirect 摘要/DOI 级专属目录与 contract，publisher full text 仍缺，其他 fallback article 仍未 materialize。
 - 当前 web 证据层级已进一步明确：
   - `Hockney 1971 / Hockney et al. 1974 / Eastwood-Hockney 1974` 已有正式题名、DOI、外部摘要和本地 abstract contract，但三者 full text 均未 materialize；Peiravi 1978 是机构技术报告全文，不改变这三篇 publisher full-text 的缺失边界

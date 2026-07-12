@@ -16,6 +16,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 150 条 `contrac
 
 2026-07-13：完成 `Abe et al. (1975)` 摘要级 article contract，固定 DOI、ScienceDirect abstract、`sigma(K_g)`/correlation-time/grid-force 证据和全文缺失边界；公开证据摘要更新为 150 条。
 
+2026-07-13：重新核查两篇 1974 Hockney-Eastwood fallback 的 Elsevier API 与 ScienceDirect PDF 端点：API 仅返回非开放获取元数据，PDF 仍为 HTTP `403`，因此继续保留 publisher full-text 缺失边界。
+
 2026-07-13：将 LeeCPC2015 accepted manuscript 的 paper/source/regression crosswalk 接入第 7 章 `7.5.8`；正文现在可直接定位三方合同，同时保留 publisher-formatted PDF 和 `C1-C25` 逐系数等价尚未完成的边界。
 
 2026-07-13：改进 Higuera-Cary Poincare topology classifier，同时保留时间顺序与相空间中心角排序；长轨道三种 pusher 的角排序候选均无自交/轨道间交叉，确认原时间折线交叉是排序伪影，但完整论文 topology gate 仍关闭。

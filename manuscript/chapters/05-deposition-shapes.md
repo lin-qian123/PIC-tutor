@@ -2449,6 +2449,8 @@ RZ + Esirkepov 还需要单独保留一个诊断边界：当前 2-rank case 的 
 
 最后把 correction-off 的相同 resolution 对照扩展到 shape=3/4。三档 coarse `Er` field error 为 `0.1323/0.1734/0.2134`，而 `128x256` refined sibling 降至 `9.318e-3/1.113e-2/1.365e-2`；对应 refined charge residual 为 `9.644e-12/6.086e-12/6.724e-12`，三档 field/charge 双 gate 全部通过。`scripts/summarize_rz_esirkepov_shape_resolution_family.py` 将这三条 case 收成 family contract，报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_shape-resolution-family/contract.{json,md}`。这关闭的是 higher-shape coarse field boundary 的分辨率诊断，不关闭 correction-on axis charge residual，也不外推到其他 geometry、AMR 或 implicit 路径。
 
+最后将 shape=2/3/4 的 correction-on refined siblings 也纳入同一完整矩阵：`Er/Ez` field errors 分别为 `9.321e-3/5.154e-3`、`9.342e-3/6.392e-3` 和 `1.079e-2/7.454e-3`，均通过 `0.12` field gate；但 axis charge residual 仍为 `2.177e-3/2.353e-3/2.552e-3`。相比之下，correction-off refined charge residual 为 `9.644e-12/6.086e-12/6.724e-12`。完整矩阵由 `scripts/summarize_rz_esirkepov_axis_correction_family.py` 生成，报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_axis-correction-family/contract.{json,md}`。因此当前第 5 章可以明确区分：高阶 shape refined field 已闭合，correction-off charge 在 case-local sibling 上闭合，而 correction-on axis charge 仍是独立诊断边界。
+
 同一诊断也已扩展到 RCYLINDER/RSPHERE shape=1：默认 correction 下 charge residual 为 `4.711e-3/4.166e-2`，关闭后为 `3.505e-12/2.420e-11`。这表明 RCYLINDER 的 axis correction off 可以恢复当前强 gate，而 RSPHERE 虽明显改善仍略超 `1e-11`；两者均不支持直接修改全局默认值，完整对照见 `runs/stage-c-validation/esirkepov_radial_charge_axis-comparison/contract.{json,md}`。
 
 RSPHERE 的 64/128 resolution paired control 进一步显示：correction on 的 residual 为 `4.166e-2/1.390e-2`，correction off 为 `2.420e-11/9.843e-11`；四个 field gate 都通过，但四个 charge gate 都未闭合。因此这条证据只能说明 axis/resolution 组合敏感，不能替代正式收敛研究或作为全局默认参数修改依据。

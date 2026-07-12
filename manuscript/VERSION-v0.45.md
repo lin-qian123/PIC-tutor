@@ -1,10 +1,8 @@
-# PIC-tutor v0.46
+# PIC-tutor v0.45
 
-当前合订 PDF 为 307 页；本 v0.46 版本在 v0.45 基础上补入 RZ Esirkepov shape=2/3/4 correction-on/off 的完整高阶矩阵，明确 refined field closure、correction-off charge closure 和 correction-on axis charge boundary。
+当前合订 PDF 为 307 页；本 v0.45 版本在 v0.44 基础上补入 RZ Esirkepov shape=2/3/4 correction-off 的高阶 shape 分辨率族对照，统一解释粗网格 `Er` field boundary 的分辨率依赖。
 
 版本日期：2026-07-12
-
-本次新增完整高阶 shape family：在 `128x256` 下 shape=2/3/4 的 correction-on/off field gate 全部通过；correction-off charge residual 为 `9.644e-12/6.086e-12/6.724e-12`，correction-on axis charge residual 为 `2.177e-3/2.353e-3/2.552e-3`。该结果没有把 correction-on residual 伪装成已闭合，也没有建议修改全局默认值。
 
 本次新增 shape=2/3/4 的 `64x128 -> 128x256` correction-off refined siblings：粗网格 `Er` error 为 `0.1323/0.1734/0.2134`，细网格降至 `9.318e-3/1.113e-2/1.365e-2`；三档 charge residual 均低于 `1e-11`，field/charge 双 gate 全部通过。该族结果仍限定为 RZ、单层、固定 Langmuir 输入，不改变全局轴修正默认值。
 

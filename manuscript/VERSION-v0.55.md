@@ -1,6 +1,6 @@
-# PIC-tutor v0.56
+# PIC-tutor v0.55
 
-当前合订 PDF 为 310 页；本 v0.56 版本在 v0.55 基础上补入 RSPHERE `256` paired controls，并修正 RSPHERE 专用 executable 与 3D executable 的几何匹配边界；不把此前错误 executable 的初始化失败误写成物理 charge failure。
+当前合订 PDF 为 310 页；本 v0.55 版本在 v0.54 基础上补入 RSPHERE `256` paired controls，并修正 RSPHERE 专用 executable 与 3D executable 的几何匹配边界；不把此前错误 executable 的初始化失败误写成物理 charge failure。
 
 版本日期：2026-07-12
 

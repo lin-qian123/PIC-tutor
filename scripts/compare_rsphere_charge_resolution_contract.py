@@ -24,6 +24,8 @@ def main() -> None:
         (64, "off", "esirkepov_langmuir_rsphere_charge_no_verboncoeur_mpi2"),
         (128, "on", "esirkepov_langmuir_rsphere_charge_n128_on_mpi2"),
         (128, "off", "esirkepov_langmuir_rsphere_charge_n128_off_mpi2"),
+        (256, "on", "esirkepov_langmuir_rsphere_charge_n256_on_mpi2"),
+        (256, "off", "esirkepov_langmuir_rsphere_charge_n256_off_mpi2"),
     ]
     rows = []
     for cells, correction, dirname in specs:

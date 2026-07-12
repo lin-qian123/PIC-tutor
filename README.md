@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.55`，对应 310 页 3D Esirkepov refined matrix 与边界审计版；历史 `v0.54` 由 `manuscript/VERSION-v0.54.md` 保留。
+当前成书版本为 `v0.56`，对应 310 页 3D Esirkepov refined matrix 与 RSPHERE charge-resolution audit 版；历史 `v0.55` 由 `manuscript/VERSION-v0.55.md` 保留。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 
@@ -8,7 +8,7 @@
 
 ## 当前状态
 - 2026-07-12：完成 v0.54 3D Esirkepov refined-resolution family：shape=2/3/4 的 `128^3` controls 均通过官方 `5%` field gate 和独立 `1e-11` charge gate，field error 为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 为 `5.4174e-12/4.3288e-12/3.0001e-12`；该结果仍只作为 case-local 分辨率证据，不宣称正式收敛阶。
-- 2026-07-12：尝试补做 RSPHERE Esirkepov `256` 网格 paired control，但当前 binary 在初始化阶段触发 boundary-array `ParmParse`/parser 异常，未产生 plotfile；因此该结果只记录为输入/解析边界，不改写已有 `64/128` charge BOUNDARY 结论。
+- 2026-07-12：完成 RSPHERE Esirkepov `256` 网格 paired control：改用专用 `warpx.rsphere` binary 后 producer、官方 case-local `analysis_r1d.py` 与独立 radial charge contract 均通过流程；correction-on 的 `Er/charge=9.422e-3/4.142e-3`，correction-off 为 `1.117e-2/7.461e-11`，field 全通过但 charge 仍保留 BOUNDARY。此前 `warpx.3d` 的 parser 异常已定位为 executable/geometry 不匹配。
 - 2026-07-12：进入 v0.53 3D Esirkepov refined-resolution 阶段：shape=3/4 的 `64^3` field boundary 在 `128^3` case-local controls 中分别降至 `2.3515%/3.0644%` 并通过官方 `5%` field gate，charge residual 为 `4.3288e-12/3.0001e-12`；该结果支持分辨率敏感性解释，不包装成正式收敛阶或全局默认建议。
 - 2026-07-12：进入 v0.52 3D Esirkepov shape runtime matrix 阶段：新增 `scripts/summarize_esirkepov_3d_shape_contract.py` 与 `notes/code-reading/particles/60-esirkepov-3d-shape-runtime-contract.md`；在 `64^3`、2-rank case 中 shape=2 field/charge 均通过，shape=3/4 charge 通过但 field error 分别为 `6.7792%/8.7344% > 5%`，保留为 field boundary，不修改默认值。
 - 2026-07-12：进入 v0.51 第 5 章 deposition geometry/order coverage matrix 阶段：新增 `scripts/summarize_deposition_geometry_order_coverage.py` 与 `notes/code-reading/particles/59-deposition-geometry-order-coverage-matrix.md`，把 1D/2D/3D、2D MR、RZ、RCYLINDER/RSPHERE 和 implicit Villasenor 的现有证据与明确缺口并排整理；不把局部 PASS 外推成全组合验证。
@@ -41,7 +41,7 @@
 - 2026-07-12：补做官方 RCYLINDER/RSPHERE Esirkepov Langmuir 2-rank siblings，并新增 `scripts/analyze_esirkepov_radial_langmuir_contract.py` 独立复核；`Er` 相对误差分别为 `2.174e-2` 和 `5.405e-3`，均通过 `0.12` gate。证据归档于两个 `runs/stage-c-validation/esirkepov_langmuir_*_mpi2/`，范围限定为径向场 contract。
 - 2026-07-12：将 RCYLINDER/RSPHERE Esirkepov radial `Er` coverage 扩展到 shape=1/2/3/4，8 个 geometry×shape contracts 全部通过；汇总报告归档于 `runs/stage-c-validation/esirkepov_radial_geometry_shape-matrix/`，不外推为 charge/Gauss-law 全覆盖。
 - 2026-07-12：补做 RCYLINDER/RSPHERE shape=1 `rho/divE` charge 对照：关闭 axis correction 后 RCYLINDER 恢复 `3.505e-12`，RSPHERE 降至 `2.420e-11` 但仍略超 gate；报告归档于 `runs/stage-c-validation/esirkepov_radial_charge_axis-comparison/`。
-- 2026-07-12：完成 RSPHERE 64/128 resolution paired control：field gate 全部通过，但 charge residual 对 correction/resolution 组合仍敏感，报告归档于 `runs/stage-c-validation/esirkepov_rsphere_charge_resolution-comparison/`，不宣称正式收敛阶。
+- 2026-07-12：完成 RSPHERE 64/128/256 resolution paired control：field gate 全部通过，charge residual 仍对 correction/resolution 组合敏感；汇总报告归档于 `runs/stage-c-validation/esirkepov_rsphere_charge_resolution-comparison/`，不宣称正式收敛阶。
 - 2026-07-12：新增 `scripts/audit_radial_axis_volume_contract.py`，当前 WarpX 的 10 个径向 axis-volume correction 源码锚点全部通过，报告归档于 `runs/stage-c-validation/radial-axis-volume-source/`。
 - 2026-07-12：重新核查 Esirkepov CPC 定稿的 CiNii、ResearchGate 和 ScienceDirect 访问路径：只新增元数据/请求全文证据，publisher PDF 仍为 HTTP 403，未改变 line-by-line compare 未完成边界。
 - 2026-07-12：补做官方 RZ Esirkepov Langmuir 2-rank producer，并新增 `scripts/analyze_esirkepov_rz_langmuir_contract.py`：`Er/Ez=1.075e-2/8.240e-3` 通过 `0.12` field gate，但同面 charge residual 为 `3.593e-3 > 1e-11`，分类为 field PASS、charge BOUNDARY；报告归档于 `runs/stage-c-validation/esirkepov_langmuir_rz_mpi2/`。

@@ -1707,6 +1707,8 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 为避免这条边界只停留在叙述层，本版新增 `scripts/audit_esirkepov_bounded_compare.py`，对本地预印本、`access-audit.md` 和五项 bounded compare 目标做可重复检查。当前报告 `runs/stage-c-validation/esirkepov-bounded-compare/contract.{json,md}` 的 8 项检查全部通过：预印本资产、发表版题名、DOI、Section 1--5、Eq.(23)、二阶 spline 线索和 publisher PDF 缺失状态均与当前项目材料一致。这个 contract 的分类仍是 `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING`，因此它完成的是“证据边界可审计化”，不是 CPC 定稿的逐行核对。
 
+配套的本地读取包合同 `runs/stage-c-validation/esirkepov-2001-paper-asset/contract.{json,md}` 又确认了 13 页 arXiv PDF、39 张图片、MinerU 结构和第一轮中文讲解均完整。它补强的是“当前预印本资产可读且可复核”，不改变 publisher-formatted CPC PDF 仍缺失的判断。
+
 公式层还增加了一项可复现的负责任验证：`scripts/verify_esirkepov_density_decomposition.py` 用 10000 组确定性随机 old/new shape 分量检查
 
 $$
@@ -1987,6 +1989,8 @@ $$
 其余三个 `x`-face 按横向因子和交叉项符号变化，`y/z` 分量由循环置换得到。论文明确指出 `\Delta x\Delta y\Delta z/12` 是三维新增项。WarpX 当前 3D Villasenor kernel 不把它保留为一个独立的单项式，而是通过 `one_third/one_sixth` 组成的四个 old/new 横向权重乘积表达同一类 mixed-direction coupling。因而“源码没有显式的 `/12`”不能被解释成“三维交叉耦合不存在”。
 
 这次审计的完整公式与证据边界记录于 `notes/code-reading/particles/45-villasenor-formula-level-audit.md`。当前可以把 Villasenor 线标记为 **paper-backed + source-grounded + formula-audited**；尚未完成的只是论文图示逐图回填、记号统一和所有现代 geometry/order 分支的逐项等价性审查。
+
+本地论文资产合同 `runs/stage-c-validation/villasenor-1992-paper-asset/contract.{json,md}` 进一步确认了 11 页 PDF、27 张图片、MinerU 结构和第一轮中文讲解均完整；该合同不把本地 PDF 自动升级为 publisher provenance 已核实的公开版本。
 
 这里还应补一条维度差异，否则读者容易误以为 Villasenor 在所有几何里都完全按同一平均式沉积。实际并不是这样。WarpX 的 `3D` kernel 中，`Jx/Jy/Jz` 三个分量都要面对真正的双横向耦合，因此都会写成 `cell-based weight * (old/new node weights 的 1/3,1/6 组合) * seg_factor`。但在 `XZ/RZ` kernel 里，in-plane 的 `Jx/Jz` 只需要处理单个横向方向，所以退化成 `(old+new)/2` 的简单平均；只有 out-of-plane 的 `Jy` 仍保留 `1/3,1/6` 组合。换句话说：
 

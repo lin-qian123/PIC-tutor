@@ -8,6 +8,8 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 2026-07-13：完成 `LeeCPC2015` accepted/submitted manuscript contract：7 页全文、13 张抽取图片、MinerU 结构、公式锚点和中文讲解均通过；第 7 章可使用第一轮 paper-backed PML 解释，但不把该资产标记为 CPC publisher-formatted 定稿。
 
+2026-07-13：完成第 5 章 Villasenor/Esirkepov 本地论文资产合同：Villasenor 11 页/27 图、Esirkepov 13 页/39 图均通过结构、公式锚点和中文讲解检查；两条线仍保留各自的 publisher provenance / CPC 定稿差异边界。
+
 本轮又把第 7 章 transition-zone route-count packet 落成可执行的 schema validator 和 synthetic fixture：正例检查 route count、weight closure、`rho/J` 中间账本与显式 merge gates，负例会被拒绝；当前 WarpX 尚未接入 runtime hook，因此仍保持 `RUNTIME_LEDGER_UNPROVEN`。
 
 本轮又补入 Hockney 1971 的摘要级 article asset：8 项本地 contract 全部通过，正文只使用摘要支持的 collision/heating scaling、optimum path 和 `K_2` 关系，继续明确 publisher full text、PDF、MinerU 和逐段核对尚未完成。

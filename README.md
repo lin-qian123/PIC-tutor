@@ -10,6 +10,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：完成 `LeeCPC2015` accepted/submitted manuscript 资产合同：7 页 PDF、MinerU Markdown、13 张图片和中文讲解全部通过可重复检查，已足以支撑第 7 章第一轮 paper-backed PML 解释；CPC publisher-formatted PDF 逐项差异核对仍未完成。
 
+2026-07-13：完成第 5 章 Villasenor/Esirkepov 本地论文资产合同：分别验收 11 页/27 图和 13 页/39 图的 PDF、MinerU、公式锚点与中文讲解；当前可读资产已形成可复核闭环，但 publisher provenance 与 Esirkepov CPC 定稿逐行对照仍未完成。
+
 AMR transition-zone 的下一阶段接口已落成可执行设计合同：`python scripts/validate_transition_zone_route_contract.py --input docs/transition-zone-route-contract-example.json` 正例通过、破坏 route count 的负例被拒绝；这仍是 schema/analysis 层验证，不是当前 WarpX runtime route proof。
 
 2026-07-12：新增 Hockney 1971 article-level abstract contract，8/8 检查通过；项目内已保存正式书目信息、IBM Research 作者机构摘要、摘要级中文讲解和 full-text 缺失边界，证据分类为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。

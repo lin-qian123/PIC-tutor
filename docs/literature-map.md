@@ -42,6 +42,7 @@
 - 现已额外 materialize 两份 particle-pusher 核心文献：
   - `references/04_particle_pushers_deposition_shapes/2008_VayPOP2008_Simulation_of_beams_or_plasmas_crossing_at_relativistic_velocity/`
   - `references/04_particle_pushers_deposition_shapes/2017_HigueraPOP2017_Structure-preserving_second-order_integration_of_relativistic_charged_particle_trajectories_in_electromagnetic_fields/`
+- `Villasenor-Buneman 1992` 与 `Esirkepov 1999/2001` 的本地读取包现已分别通过 `scripts/audit_deposition_paper_asset_contract.py`：前者为 11 页本地全文/27 张图，后者为 13 页 arXiv 预印本/39 张图；两者均完成第一轮结构、公式锚点和中文讲解资产验收，但仍分别保留 publisher provenance 或 CPC 定稿逐行对照边界。
 - 其中 `Birdsall 1985` 因原书 `469` 页超过 MinerU `200` 页限制，当前保留：
   - 原 PDF
   - `split_parts/*.pdf`

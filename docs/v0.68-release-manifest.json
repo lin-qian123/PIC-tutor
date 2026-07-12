@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 693,
-  "total_bytes": 27336312,
+  "entry_count": 694,
+  "total_bytes": 27347325,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1509931,
-      "sha256": "d76238e16e3a2b87eca508638776d92a5bbcc1a4b22b8c61e6580373dacd556b"
+      "bytes": 1510223,
+      "sha256": "b61efa89c7a6b9a42715ecc9b2c4ebe27f8552e7506dbf3d72ec0d0858a81530"
     },
     {
       "path": "TODO.md",
-      "bytes": 1353943,
-      "sha256": "6e32cf4962ab92e1d4b782ccf4bc882193b856fc315103716f7199605beab7c9"
+      "bytes": 1354312,
+      "sha256": "9a135d5f181063910eb1e49b99648f19a30cdbe8bced371a83014a4b12d8e91c"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5723839,
-      "sha256": "68d846b2ab944cd2965b0cdb0f459cacec84fc0692e2e4f3cf3b8bc6e7a96c6e"
+      "bytes": 5724723,
+      "sha256": "92dafafee4d165583ec916fdff08e0a575d9905c7e4a38927617c0e3ec94494d"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1054713,
-      "sha256": "0994be7171d0f1f48b6d4dcc05e01d0edd4b60919e146f5aa39d30d10664056f"
+      "bytes": 1055557,
+      "sha256": "9ae13053196fc695abf186042de211b8124ced25effa1635ee07133c474096e7"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3344637,
-      "sha256": "e0858ff93a23b0851ef041032d6fa8f21e108349aa7b801202f40dc25112236b"
+      "bytes": 3345745,
+      "sha256": "a3695a410bc142712e783b6964aee2d49c2bc45bca2e8f47560c531165a9d9e5"
     },
     {
       "path": "docs/chapter-template.md",
@@ -82,8 +82,8 @@
     },
     {
       "path": "docs/literature-map.md",
-      "bytes": 75188,
-      "sha256": "c87b8eb9c913f279f8572d2c9937465f853a3349ddaf4d5486bdf47d2ca8f8e8"
+      "bytes": 75569,
+      "sha256": "4b432a2ea7a45f5ea3c4e1bd4c72d976a2279023c410f399641fe86459dae6db"
     },
     {
       "path": "docs/master-plan.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "1e6f988e2e52273609e5e3162bc574977b67e59ff7f147e68ea7b937d0a99efb"
+      "sha256": "19d15fcc14e7ddfc2265a3797c20dea2c4b03307acd2e5a1967a00dad6cadf9c"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 38066,
-      "sha256": "b58986f58fb332cc3f4065735d02f0eaca26aa0bc81d78139d806a0ce451ce2e"
+      "bytes": 38325,
+      "sha256": "c1a13a58639d093b2ae9ddfccbae0d90b4beb39bbf4af2686934d139d154235f"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 59018,
-      "sha256": "dba07f17bc6778870703b8b207af7e129081c7a21e3e780c1aae554ec4d3786a"
+      "bytes": 59253,
+      "sha256": "e9abad49e8711ba59c9fb7f365ed1639de5af509041303da14b6c7b24e2ce93a"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -897,8 +897,8 @@
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
-      "bytes": 178504,
-      "sha256": "0d00295faca1059b32c68a0543b7918adb71820a959101c4d34eb075b271473b"
+      "bytes": 179113,
+      "sha256": "6b47accbea7476ea5c8ff86df475c447e2d9ed1e9a18977da0a8af5a3cfaf25f"
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
@@ -2494,6 +2494,11 @@
       "path": "scripts/audit_deposition_geometry_order_contract.py",
       "bytes": 4055,
       "sha256": "5d882997f454a2d86c151e2ecba6dfa078382be09b38e785646a3745bf7ca36c"
+    },
+    {
+      "path": "scripts/audit_deposition_paper_asset_contract.py",
+      "bytes": 6032,
+      "sha256": "efa489cfde81375e88dc9fba7fdabcb94410cd85f8ea0736bd4af14fc7125467"
     },
     {
       "path": "scripts/audit_esirkepov_bounded_compare.py",

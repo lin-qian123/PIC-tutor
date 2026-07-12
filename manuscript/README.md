@@ -12,6 +12,8 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 2026-07-13：第 6 章新增 Birdsall 13-5 后半段的 `K_4`/QPM/`N_C`/stochastic-heating 回写；数值来自 Birdsall 对 Hockney 的历史转述，未升级为 Hockney-Eastwood 原始图表逐页证据。
 
+2026-07-13：第 8 章新增 Dawson 1983 wave-side diagnostics 主线，将 modal energy、power spectrum、correlation、normal modes 与 quiet-start measurement boundary 组织成连续的 reader-side 合同。
+
 本轮又把第 7 章 transition-zone route-count packet 落成可执行的 schema validator 和 synthetic fixture：正例检查 route count、weight closure、`rho/J` 中间账本与显式 merge gates，负例会被拒绝；当前 WarpX 尚未接入 runtime hook，因此仍保持 `RUNTIME_LEDGER_UNPROVEN`。
 
 本轮又补入 Hockney 1971 的摘要级 article asset：8 项本地 contract 全部通过，正文只使用摘要支持的 collision/heating scaling、optimum path 和 `K_2` 关系，继续明确 publisher full text、PDF、MinerU 和逐段核对尚未完成。

@@ -14,6 +14,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：将 Birdsall 1985 Chapter 13-5 后半段回写第 6 章，补入 `K_4`、QPM、`N_C`/`1/N_C` field fluctuation 和 linear stochastic heating 的工程解释；Hockney-Eastwood 原始全文和图表逐页核对边界仍保留。
 
+2026-07-13：将 Dawson 1983 的 wave-side statistical diagnostics 链回写第 8 章，补入 modal energy、power spectrum、time correlation、磁化 peak taxonomy、normal-mode reconstruction 和 continuous-spectrum/quiet-start 边界。
+
 AMR transition-zone 的下一阶段接口已落成可执行设计合同：`python scripts/validate_transition_zone_route_contract.py --input docs/transition-zone-route-contract-example.json` 正例通过、破坏 route count 的负例被拒绝；这仍是 schema/analysis 层验证，不是当前 WarpX runtime route proof。
 
 2026-07-12：新增 Hockney 1971 article-level abstract contract，8/8 检查通过；项目内已保存正式书目信息、IBM Research 作者机构摘要、摘要级中文讲解和 full-text 缺失边界，证据分类为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。

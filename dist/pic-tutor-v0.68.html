@@ -661,6 +661,8 @@ transition-zone regression patch 计划</a></li>
 <li><a href="#诊断验证与案例" id="toc-诊断验证与案例">8.
 诊断、验证与案例</a>
 <ul>
+<li><a href="#dawson-统计诊断链从-modal-energy-到-normal-mode-reconstruction" id="toc-dawson-统计诊断链从-modal-energy-到-normal-mode-reconstruction">Dawson
+统计诊断链：从 modal energy 到 normal-mode reconstruction</a></li>
 <li><a href="#langmuir-wave" id="toc-langmuir-wave">Langmuir
 wave</a></li>
 <li><a href="#uniform-plasma" id="toc-uniform-plasma">Uniform plasma</a>
@@ -854,7 +856,7 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 发表元数据、Section 1–5、Eq.(23)、二阶 spline 线索与 publisher PDF
 缺失状态共 8 项检查全部通过。该 contract
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
-<p>当前合订 PDF 为 314 页；本 v0.68 版本在 v0.67
+<p>当前合订 PDF 为 315 页；本 v0.68 版本在 v0.67
 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整
 Gauss-law 闭环。</p>
 <p>本版另补入 RZ shape=1 的 <code>256x512</code> resolution
@@ -890,6 +892,10 @@ publisher provenance 或 CPC 定稿逐行对照。</p>
 <code>K_4</code>、QPM、<code>N_C</code>/<code>1/N_C</code> field
 fluctuation 和 linear stochastic heating 写成 solver-design
 语言，并保留其来自 Hockney 历史转述而非原始图表逐页核对的边界。</p>
+<p>本版补充第 8 章 Dawson 1983 wave-side statistical diagnostics
+链：modal energy、power spectrum、time correlation、磁化 peak
+taxonomy、normal-mode reconstruction 和 continuous-spectrum/quiet-start
+边界均已回写正文。</p>
 <p>版本日期：2026-07-13</p>
 <p>本次新增 3D Esirkepov shape=2/3/4 refined controls：shape=2/3/4 的
 field error 分别为 <code>1.2523e-2/2.3515e-2/3.0644e-2</code>，charge
@@ -23185,6 +23191,55 @@ small-<code>k</code> long-wavelength electrostatic modes，因为它没有体现
 Debye shielding 和局域电中性；这说明 quiet-start 或 cell-neutral loading
 的意义不只是“让初值更平滑”，而是把 weak-effect measurements
 的可识别动态范围从噪声底里救出来。</p>
+<h3 id="dawson-统计诊断链从-modal-energy-到-normal-mode-reconstruction">Dawson
+统计诊断链：从 modal energy 到 normal-mode reconstruction</h3>
+<p>Dawson 1983 的统计理论 examples 还给出了一条可以直接移植到现代
+reader-side analysis 的 wave-side 诊断链。第一层不是把整张场图压成一个
+RMS，而是对每个 Fourier mode 计算 time-averaged modal
+energy；第二层把同一 mode 的时间序列变成 power
+spectrum，用来区分随机粒子运动形成的连续谱和 collective plasma
+oscillation 形成的离散尖峰；第三层计算时间相关函数，测量 phase memory 和
+decorrelation；第四层在非均匀等离子体中重建 mode
+的空间波函数。四层分别回答“能量有多大、是哪类频率结构、记忆持续多久、空间上究竟是哪一个本征模”。</p>
+<p>对单个波数 <code>k</code>，相关函数可写为</p>
+<p><span class="math display">\[
+C(k,\tau)=\lim_{T\to\infty}\frac{1}{T}\int_0^T E(k,t)E(k,t+\tau)\,dt,
+\]</span></p>
+<p>其对应的谱密度满足 Wiener–Khintchine 型关系</p>
+<p><span class="math display">\[
+G(k,\omega)=4\int_0^\infty C(k,\tau)\cos(\omega\tau)\,d\tau.
+\]</span></p>
+<p>因此 power spectrum 和 time correlation
+不是两个互不相关的后处理图，而是同一 fluctuation process
+的频域/时域表示。有限 run length <code>T</code>
+还给出不可绕过的频率分辨率边界 <code>\Delta\omega\simeq 1/T</code>：如果
+<code>1/T</code> 大于目标谱线宽度，所谓 peak width
+主要是窗函数和有限样本造成的，不能直接当成物理 damping
+rate。对长期运行，应按多个短窗口分别估计，再把统计量汇总，而不是盲目延长一个相位已经失真的积分窗口。</p>
+<p>在磁化等离子体中，peak taxonomy 本身也是物理结果。Bernstein
+harmonics、upper-hybrid、ion-cyclotron、lower-hybrid，以及
+<code>\omega=0</code> 附近的 convective-cell / charged-flux-tube
+结构，不能统一归类为“噪声峰”；它们需要结合外磁场、species mobility
+和空间结构共同解释。对非均匀等离子体，若沿均匀方向先做 Fourier
+分解，可在剩余坐标上构造 <code>\phi(k_x,y,\omega)</code>；再把离散频率
+<code>\omega_1</code> 的信号分别与
+<code>\sin\omega_1t</code>、<code>\cos\omega_1t</code>
+做相关积分，就能恢复 mode amplitude、phase
+和空间波函数。这里的积分窗口必须短于该 mode 的 damping time，否则初始
+coherent oscillation
+衰减后，随机粒子运动重新激发的任意相位会把空间结构洗掉。</p>
+<p>continuous spectrum
+也不能自动当成无意义的背景。它可能包含局域在某一小块等离子体区域的真实振荡，也可能只是随机粒子运动的
+continuum；后者需要进一步观察 <code>\delta v(\mathbf v,x,\omega)</code>
+等 kinetic observable，而不是只凭势场或电场谱下结论。对 weak
+instability，随机初态的 <code>N^{-1/2}</code>
+模涨落还会消耗可用的指数增长窗口，数量级上
+<code>\gamma t\sim\frac12\ln N</code>；quiet-start / cell-neutral
+loading
+的价值因此是提高可识别动态范围，而不是保证所有后续演化都更物理。上述统计链来自项目内
+<code>Dawson 1983</code> 中文讲解的第 22、24–26、53–59 节；它支撑的是
+diagnostics 设计原则，不替代当前 WarpX 各案例已有的具体 runtime
+gate。</p>
 <p>再往实现层压一步，Dawson 给的 quiet-start recipe
 也不是抽象建议，而是明确的 phase-space construction：把相空间切成
 cells，把每个空间 cell 内的目标速度分布 <code>P(v)</code> 归一到该 cell

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 694,
-  "total_bytes": 27361885,
+  "total_bytes": 27376601,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1510465,
-      "sha256": "16937a258fa6db57ee2ae5853e1ee95c5387ae85a8ee3e331b67ec44cd512d30"
+      "bytes": 1510708,
+      "sha256": "a027924862981fc7c79038816f72b84d20b38fe89b7b218f8794007fe4d3bb3b"
     },
     {
       "path": "TODO.md",
-      "bytes": 1354519,
-      "sha256": "f012bdb49d8d037be2b5a7b852d8283c6cf7e1f3cc5e6bde9dbbf2d46f99d846"
+      "bytes": 1353974,
+      "sha256": "dccf6a36085d29d9f6d3aaf9a71387ea4e2cbb849d678f3fc40c99cd4cd27d60"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5728107,
-      "sha256": "f9e6041a704b08be73637afeb89452d083c3ec89dc71f71f839da3f52fb4fc65"
+      "bytes": 5732044,
+      "sha256": "1c4ee9b508a4da5a2cbb85ad4a7092f6f06fe9a81e4521016796c87e83f7b2ef"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1058330,
-      "sha256": "0eedacddac7d2a726a2bb07ed3ccb32b476fddd608ac7fd2575c622fe2d30abf"
+      "bytes": 1061674,
+      "sha256": "c971ddd04b8dcec298d1d3ebdb6ea3f28e9e92fbd5e9546ebcdcd4ce3ec6d9dc"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3350715,
-      "sha256": "386ef5bd8ecabe3cdf2ca5567f9e01fbc7aaee40cbe06d0c449486d05a1bc045"
+      "bytes": 3354894,
+      "sha256": "a4e20a05a2c74f03449edbfe3b7d53dae3b7e38945fcb3d89cd385603ac63f32"
     },
     {
       "path": "docs/chapter-template.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 38536,
-      "sha256": "757d8de0e3b681ff50a5ce6f314b2c699d211e9914873c1601740f6085465b1e"
+      "bytes": 38750,
+      "sha256": "d83204e43e56422e75990e332d0690171ec3c4d440c208d89562fafac5dd4ba4"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 59494,
-      "sha256": "a7e1df23ab784b9b74bc2aaaac6766fb423e547e1eec7065b35f2ca89ff7dc60"
+      "bytes": 59734,
+      "sha256": "20000f0929845bf67e64c7198163e69bb5bc332976d0452e732a5a293d4732cd"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -912,8 +912,8 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 108088,
-      "sha256": "d9e24f6cc7b6b862ae75b39c9f170817997a63189e0cdfc3a42ea257c338935a"
+      "bytes": 111192,
+      "sha256": "f54750d57af2d333cf81d582927c737473cbf4c41df9db0667f121b32e2e90a0"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",

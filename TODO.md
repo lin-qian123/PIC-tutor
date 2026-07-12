@@ -4510,33 +4510,12 @@
 - [x] 继续精读 `Dawson 1983`。当前已完成：
   - `free-electron laser` 图 54-57 与效率估计的图文整理
   - 已把 mechanism verification -> nonlinear saturation -> rough efficiency scaling 这条 FEL 历史论证链最小回填到第 8 章和束流-FEL 应用笔记
-- [ ] 继续精读 `Dawson 1983`，优先：
-  - 已开始：
-    - `Tests of the statistical theory of plasmas`
-    - `Kinetics of a one-dimensional plasma`
-  - 当前已明确：
-    - 一维 electrostatic sheet model 的 benchmark 角色
-    - drag / diffusion / field-fluctuation measurements 的统计理论语境
-  - 下一步：
-    - 已完成：
-      - drag 的 velocity-shell ensemble 测量合同
-      - velocity diffusion 的 `\tau^2 -> \tau` 双阶段
-      - thermal field fluctuation 的 `KT/2` 型 modal-energy 合同与 finite-size 修正
-    - 继续补：
-      - 已完成：
-        - power spectrum / time correlations
-        - magnetized fluctuation peaks
-        - nonuniform-plasma normal-mode reconstruction
-        - continuous-spectrum localization 与 `\delta v(\mathbf v,x,\omega)` 的 kinetic diagnostics 边界
-        - random-start 对 weak-instability growth-rate measurement 的限制
-        - quiet-start phase-space cell construction 的更细实现边界
-        - thermal/noisy starts 与 quiet starts 在弱效应测量中的取舍总结
-        - 已评估：`Dawson 1983` 统计理论 / quiet-start 主线已到自然收口点
-      - 继续补：
-        - 转入下一组基础文献，优先 `Yee 1966`
-        - 已完成：`Documents/Desktop/Downloads` 与 `1138693/01138693` 级本机搜索，仍无现成正文
-        - 已完成：CiNii / ScienceOpen / 历史 IEEE PDF 端点模式核对，仍无可合法全文
-        - 若后续仍无可合法全文，则继续只做 acquisition 边界收口，不进入 MinerU
+- [x] 继续精读并回写 `Dawson 1983` statistical-theory / quiet-start 主线：
+  - 已完成 `Tests of the statistical theory of plasmas` 与 `Kinetics of a one-dimensional plasma` 的主线精读。
+  - 已固定一维 electrostatic sheet model 的 benchmark 角色，以及 drag / diffusion / field-fluctuation measurements 的统计理论语境。
+  - 已完成 drag 的 velocity-shell ensemble 合同、velocity diffusion 的 `\tau^2 -> \tau` 双阶段、thermal field fluctuation 的 `KT/2` 型 modal-energy 合同与 finite-size 修正。
+  - 已完成 power spectrum / time correlations、magnetized fluctuation peaks、nonuniform-plasma normal-mode reconstruction、continuous-spectrum localization、random-start growth-rate 限制、quiet-start phase-space construction 和 thermal/noisy-versus-quiet 取舍总结。
+  - 已将 wave-side diagnostics 链回写第 8 章；当前判断该统计理论 / quiet-start 主线已到自然收口点，下一条基础文献主线转入 `Yee 1966` acquisition 边界。
 - [ ] 用 MinerU 处理 Yee 1966、Boris pusher 资料、Vay pusher、Higuera-Cary。
   - [x] 已继续核对 `Boris` 原始资料 acquisition 边界：
     - 已确认项目内已登记的 primary-source metadata 为：

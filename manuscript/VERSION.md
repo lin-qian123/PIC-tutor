@@ -32,6 +32,8 @@
 
 本版补充第 6 章 Birdsall 13-5 后半段：将 `K_4`、QPM、`N_C`/`1/N_C` field fluctuation 和 linear stochastic heating 写成 solver-design 语言，并保留其来自 Hockney 历史转述而非原始图表逐页核对的边界。
 
+本版补充第 8 章 Dawson 1983 wave-side statistical diagnostics 链：modal energy、power spectrum、time correlation、磁化 peak taxonomy、normal-mode reconstruction 和 continuous-spectrum/quiet-start 边界均已回写正文。
+
 版本日期：2026-07-13
 
 本次新增 3D Esirkepov shape=2/3/4 refined controls：shape=2/3/4 的 field error 分别为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 分别为 `5.4174e-12/4.3288e-12/3.0001e-12`。三档 `128^3` sibling 均通过官方 `0.05` field gate 和独立 `1e-11` charge gate。该结果支持分辨率敏感性解释，不修改全局默认值，也不宣称正式 convergence order。

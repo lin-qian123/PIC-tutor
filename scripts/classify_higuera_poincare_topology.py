@@ -11,6 +11,8 @@ import numpy as np
 
 
 MIN_POINTS_FOR_TOPOLOGY = 16
+MAX_REFERENCE_CURVE_RELATIVE_RESIDUAL = 1.0e-2
+B_COEFF = 2.0
 
 
 def orientation(a: tuple[float, float], b: tuple[float, float], c: tuple[float, float]) -> float:
@@ -65,6 +67,37 @@ def invariant_band_order(case: dict) -> dict:
     }
 
 
+def analytic_curve_reference(case: dict) -> dict:
+    rows = {}
+    for species, data in case["species"].items():
+        target = float(data["invariant_ledger"]["I_y_initial"])
+        residuals = []
+        for point in data["points"]:
+            y = float(point["y_over_L0"])
+            py = float(point["py"])
+            reference_i = py * py + (0.5 * B_COEFF * y * y) ** 2
+            residuals.append(abs(reference_i - target) / max(abs(target), 1.0e-30))
+        rows[species] = {
+            "I_y_reference": target,
+            "relative_residual_max": max(residuals) if residuals else None,
+            "reference_curve_gate_passed": bool(residuals)
+            and max(residuals) <= MAX_REFERENCE_CURVE_RELATIVE_RESIDUAL,
+        }
+    ordered = sorted(rows, key=lambda species: rows[species]["I_y_reference"])
+    nested = all(
+        rows[first]["I_y_reference"] < rows[second]["I_y_reference"]
+        for first, second in zip(ordered, ordered[1:])
+    )
+    return {
+        "equation": f"p_y^2 + (b*y_over_L0^2/2)^2 = I_y, with b={B_COEFF:g} and canonical p_z=0",
+        "maximum_allowed_relative_residual": MAX_REFERENCE_CURVE_RELATIVE_RESIDUAL,
+        "curves": rows,
+        "order": ordered,
+        "nested_reference_order_passed": nested,
+        "reference_curve_gate_passed": nested and all(row["reference_curve_gate_passed"] for row in rows.values()),
+    }
+
+
 def classify_case(case: dict) -> dict:
     polygons = {
         species: [(float(point["y_over_L0"]), float(point["py"])) for point in data["points"]]
@@ -91,6 +124,7 @@ def classify_case(case: dict) -> dict:
         "minimum_points_for_topology": MIN_POINTS_FOR_TOPOLOGY,
         "sampling_sufficient": enough_points,
         "invariant_order": invariant_band_order(case),
+        "analytic_curve_reference": analytic_curve_reference(case),
         "signed_polygon_area": {
             species: polygon_area(points) if len(points) >= 3 else None for species, points in polygons.items()
         },
@@ -117,6 +151,7 @@ def main() -> int:
     }
     sampling_sufficient = all(case["sampling_sufficient"] for case in cases)
     invariant_order_gate_passed = all(case["invariant_order"]["invariant_order_gate_passed"] for case in cases)
+    analytic_reference_gate_passed = all(case["analytic_curve_reference"]["reference_curve_gate_passed"] for case in cases)
     signatures = [
         (
             tuple(sorted(case["self_intersection_candidates"].items())),
@@ -139,6 +174,7 @@ def main() -> int:
         "checks": checks,
         "topology_gate_passed": False,
         "invariant_order_gate_passed": invariant_order_gate_passed,
+        "analytic_reference_curve_gate_passed": analytic_reference_gate_passed,
         "status": status,
         "minimum_points_for_topology": MIN_POINTS_FOR_TOPOLOGY,
         "candidate_signature_consistent_across_pushers": candidate_signature_consistent,
@@ -167,7 +203,14 @@ def main() -> int:
         lines.append(
             f"| `{case['pusher']}` | `{min(counts)}/{max(counts)}` | `{'READY' if case['sampling_sufficient'] else 'INSUFFICIENT'}` | `{case['self_intersection_candidates']}` |"
         )
-    lines += ["", f"Invariant-order gate: `{'PASS' if result['invariant_order_gate_passed'] else 'FAIL'}`.", result["evidence_boundary"]["reason"], "", result["evidence_boundary"]["next_required_evidence"]]
+    lines += [
+        "",
+        f"Invariant-order gate: `{'PASS' if result['invariant_order_gate_passed'] else 'FAIL'}`.",
+        f"Analytic quartic reference-curve gate: `{'PASS' if result['analytic_reference_curve_gate_passed'] else 'FAIL'}`.",
+        result["evidence_boundary"]["reason"],
+        "",
+        result["evidence_boundary"]["next_required_evidence"],
+    ]
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2))
     return 0 if result["passed"] else 1

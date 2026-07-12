@@ -28,6 +28,8 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 2026-07-13：Poincare 分类器的 invariant-order gate 已通过：三种 pusher 的 `I_y` 区间均保持 `p05 < p10 < p17 < p22 < p27` 且互不重叠；该结果只支持 invariant ordering，不等价于完整 resonance-island topology reproduction。
 
+2026-07-13：Poincare 分类器又加入 Section VI 的解析 quartic reference gate；全部长轨道残差低于 `1e-2`，最差为 Vay `p22=7.52e-3`，但完整 topology gate 仍保持关闭。
+
 本轮又把第 7 章 transition-zone route-count packet 落成可执行的 schema validator 和 synthetic fixture：正例检查 route count、weight closure、`rho/J` 中间账本与显式 merge gates，负例会被拒绝；当前 WarpX 尚未接入 runtime hook，因此仍保持 `RUNTIME_LEDGER_UNPROVEN`。
 
 本轮又补入 Hockney 1971 的摘要级 article asset：8 项本地 contract 全部通过，正文只使用摘要支持的 collision/heating scaling、optimum path 和 `K_2` 关系，继续明确 publisher full text、PDF、MinerU 和逐段核对尚未完成。

@@ -45,6 +45,7 @@ Birdsall 在 Chapter 13 又把这条 shape-factor 主线往“长期数值健康
 所以本章讨论 shape order 时，不能只写“更高阶更光滑、噪声更低”。更准确的说法是：shape order、cloud width 和 smoothing policy 一起决定了热等离子体多久会因为 finite-grid effects 累积出不可忽略的数值自热。
 
 这里的 Hockney 1971 依据已从单纯书目线索提升为摘要级证据：项目目录 `references/02_books_lecture_notes/1971_HockneyJCP1971_Measurements_of_collision_and_heating_times_in_a_two-dimensional_thermal_computer_plasma/` 保存了 IBM Research 作者机构页面、access audit 和摘要级中文讲解；`scripts/audit_hockney_1971_abstract_contract.py` 的 8 项检查全部通过。摘要支持 `tau_coll/tau_pe`、电场能量涨落、`(omega_pe Delta t)_opt` 和 `K_2` 分层的定量路线，但没有本地 publisher PDF，因此本段仍不声称论文正文或图表已逐段核对。
+同一条 heating 证据线还包括 Abe et al. 1975 的摘要级 `sigma(K_g)` 与 correlation-time 观测；它补充的是短时 fluctuation 的统计量，而不是 Hockney 长时 `tau_H` 的替代。Abe 的 publisher PDF 同样未取得，因此这里只使用 `runs/stage-c-validation/abe-1975-abstract/contract.{json,md}` 固定的窄边界。
 
 同一条 particle-mesh 文献线又补上了两篇 1974 摘要级来源。Hockney、Goel 与 Eastwood 的 QPM/PPPM 摘要把 Gaussian cloud、potential shaping、mesh noise 和 sub-mesh resolution 放到同一个模型谱系；Eastwood 与 Hockney 的 force-shaping 摘要则把 NGP/CIC/九点 charge-sharing hierarchy、potential correction 与 force-law angular anisotropy 直接联系起来。两篇各 8 项检查都在 `runs/stage-c-validation/particle-mesh-1974-abstract/contract.{json,md}` 通过，但由于 full text 仍缺，本段只使用其摘要级历史定位，不把摘要数值包装成 WarpX 当前 kernel 的复现结果。
 

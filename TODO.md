@@ -23,6 +23,8 @@
 
 - [x] 2026-07-13：完成 RZ JRhom first-stage handoff 的当前目标 checkout 只读验收：`audit/report/preview/stage --dry-run` 全部成功，目标 `/Volumes/PHILIPS/programs/PIC/warpx` 保持 `unstaged`；planned write surface 仅为新增 `analysis_rz_jrhom.py` 和一处 CMake analysis wiring。MPI=2 ledger 的 `finite + energy` contract 继续通过，正式 staging 仍需 WarpX 维护者明确允许。决策记录见 `notes/code-reading/fieldsolver/36-rz-jrhom-first-stage-decision.md`。
 
+- [x] 2026-07-13：完成 comoving velocity sibling scan 的可复现 contract：修复 `scripts/scan_comoving_velocity_candidates.py` 在相对 ledger path 下的输出 bug，生成默认 selector / 显式 `-beta` / half-beta / 反号 / no-comoving 五路 ledger；显式/default energy 与 spike 相对差均约 `1e-14`，反号 sibling spike ratio 为 stable 的 `1.0622` 倍，no-comoving 继续越过当前 spike ceiling。新增 `scripts/analyze_comoving_velocity_scan_contract.py` 与 `notes/code-reading/fieldsolver/38-comoving-velocity-scan-contract.md`；energy gate 仍关闭。
+
 - [x] 2026-07-13：新增 `scripts/audit_esirkepov_paper_source_runtime_crosswalk.py`，将 Esirkepov 预印本 `Eq.(23)`/二阶 spline、WarpX `ShapeFactors.H`/`CurrentDeposition.H`/dispatch 表面和现有 3D/RZ/径向/MR runtime contract 收成三方只读 crosswalk；各 family 的 `PASS/BOUNDARY` 和 publisher-PDF 缺失边界均保留。报告见 `runs/stage-c-validation/esirkepov-paper-source-runtime-crosswalk/contract.{json,md}`，笔记见 `notes/code-reading/particles/62-esirkepov-paper-source-runtime-crosswalk.md`。
 
 - [x] 2026-07-13：新增 `scripts/audit_leecpc2015_source_crosswalk.py`，完成 LeeCPC2015 accepted manuscript、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 和官方 `pml` regression wiring 的三方只读交叉审计；该 contract 通过表示证据表面已连通，不表示 publisher-formatted CPC PDF 已取得，也不表示 `C1-C25` 逐系数等价已证明。报告见 `runs/stage-c-validation/leecpc2015-source-crosswalk/contract.{json,md}`，笔记见 `notes/code-reading/fieldsolver/37-leecpc2015-source-crosswalk.md`。

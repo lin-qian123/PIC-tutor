@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 711,
-  "total_bytes": 27487995,
+  "entry_count": 713,
+  "total_bytes": 27493908,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1515024,
-      "sha256": "f33caba40fcf60cf6145cdd7e6a8fbb9ac55353523d4380faf6aec5e146e5a9a"
+      "bytes": 1515380,
+      "sha256": "001f6750f9d251cb76d7ca13825b1992edb25d8ea4d1049416ef44e7ce6dc0d5"
     },
     {
       "path": "TODO.md",
-      "bytes": 1358582,
-      "sha256": "74545b835784e79413e27f6beec516aacdeb07ef37ccdbf16fc0ad5f2735c55a"
+      "bytes": 1359173,
+      "sha256": "5b161b4aa128a457fc31baec0487f58639f6dcacd291f62d9c5efc7807e0267f"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "69a28b98eeee31ce229521fbff7313128a2be169978a709410063350e37e19fd"
+      "sha256": "5b820e51760a252cf62705bd898f709b86040c24d3f34da9be015402d5b3818e"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -1346,6 +1346,11 @@
       "sha256": "a0a6048b843b365a9a7d2e193451e247680d36a5099b72601b31d86ddbc02d32"
     },
     {
+      "path": "notes/code-reading/fieldsolver/38-comoving-velocity-scan-contract.md",
+      "bytes": 1447,
+      "sha256": "923c34eab7667b3862ccef0c3eb88805768f62a16236d4064a7a10877cd9af7f"
+    },
+    {
       "path": "notes/code-reading/fieldsolver/README.md",
       "bytes": 16664,
       "sha256": "398982f00d354d65e43e5e00d20488a7f28f585a4e9b2f7eb4d33a02261c0812"
@@ -2224,6 +2229,11 @@
       "path": "scripts/analyze_comoving_first_stage_contract.py",
       "bytes": 3439,
       "sha256": "f66aca9295c4c563b179f149cfedef68c9249b0188e112ab551d7576ce784387"
+    },
+    {
+      "path": "scripts/analyze_comoving_velocity_scan_contract.py",
+      "bytes": 3429,
+      "sha256": "72a7050150d0878f8b708b3256529f654df4ff3e829742447593ff26391883de"
     },
     {
       "path": "scripts/analyze_diff_lumi_contract.py",
@@ -3342,8 +3352,8 @@
     },
     {
       "path": "scripts/scan_comoving_velocity_candidates.py",
-      "bytes": 14012,
-      "sha256": "744e76785e77ee0459c5fc41f442ff89a916f273229ebb13d23a6522a1a4fd48"
+      "bytes": 14102,
+      "sha256": "c731a13739f689097684bda1479efacf517e6292c9d2d14dcc2830f3668532c7"
     },
     {
       "path": "scripts/scan_rz_jrhom_reference_candidates.py",

@@ -371,7 +371,9 @@ def main() -> None:
     args = parse_args()
     gamma_boost = load_gamma_boost(args.input_file.resolve())
     beta = math.sqrt(1.0 - 1.0 / (gamma_boost * gamma_boost))
-    variants = build_variants(args.output_root.resolve(), beta)
+    args.output_root = args.output_root.resolve()
+    args.ledger_stem = args.ledger_stem.resolve()
+    variants = build_variants(args.output_root, beta)
     results = [run_variant(args, variant) for variant in variants]
     payload = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),

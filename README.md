@@ -6,6 +6,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
+2026-07-13：完成 comoving velocity selector/sign sibling contract：默认 selector 与显式 `-beta` 的 energy/spike 相对差均约 `1e-14`，反号 sibling 的 spike ratio 为 stable 的 `1.0622` 倍，no-comoving 越过当前 spike ceiling；修复 scan ledger 使用相对输出路径时的工具 bug。该证据仍不足以启用 energy gate。
+
 2026-07-13：新增 Esirkepov 2001 paper/source/runtime crosswalk：预印本 `Eq.(23)`/二阶 spline、WarpX current-deposition 源码表面、3D/RZ/径向/MR runtime contract 和 Langmuir wiring 均通过只读审计；结果保留各 family 的 `PASS/BOUNDARY`，不把 geometry/order 矩阵或预印本升格为 CPC 定稿全覆盖。
 
 2026-07-13：新增 `scripts/audit_leecpc2015_source_crosswalk.py`，将 LeeCPC2015 accepted manuscript 的 PSTD/staggered-grid/reflection 锚点、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 实现表面和官方 `pml` reflectivity regression wiring 收成三方可重复 contract；v0.68 已重建并保持 316 页。该 contract 不把 accepted manuscript 升格为 publisher PDF，也不把组合 reflectivity gate 写成 `C1-C25` 逐系数证明。

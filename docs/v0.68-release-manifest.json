@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 722,
-  "total_bytes": 27538505,
+  "total_bytes": 27538641,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1518490,
-      "sha256": "b7e4a0d895660f78c198d7f4450215032c07cff5f6f586567b57bf56d109a449"
+      "bytes": 1518499,
+      "sha256": "94c57cdfcd76302fcd2c48ee32d2ddab9fd5b799617c2c0fc887366bc306ac91"
     },
     {
       "path": "TODO.md",
-      "bytes": 1362025,
-      "sha256": "6da5c249b292c2fff85c7ad95349e0bf87c2975618cea5d7b243749d28e5a962"
+      "bytes": 1362036,
+      "sha256": "dd0ed2fd606dde71b6874bda8e38148c4d5b100b9481828b413aa3fd582613c6"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -107,8 +107,8 @@
     },
     {
       "path": "docs/parameter-map.md",
-      "bytes": 1048558,
-      "sha256": "d953ab804c5b087d081e22b10062aab168f01e06009cba03e54372dc23cabdaa"
+      "bytes": 1048674,
+      "sha256": "76b66b8b0c1552b6b004d8c5426c403712da9ee10b169fc38b4c8e4663ea07c5"
     },
     {
       "path": "docs/public-evidence-index.json",

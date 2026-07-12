@@ -1,5 +1,12 @@
 # Reading Log
 
+## 2026-07-13 第十一轮更新
+
+- 已继续精读 `Birdsall 1985` 第一分卷 Chapter 13 的 `13-6 UNSTABLE PLASMA`。
+- 本轮确认的核心边界：线性介电稳定性 `epsilon(k,omega)=0` 不能单独排除由离子-电子相对漂移自由能驱动的非线性湍流；相空间 `(x,v)` 中的 clumps 与 density holes 是比单一场标量更直接的诊断线索。
+- 已把这条结论写入中文讲解笔记，并回链第 8 章的 reader-side diagnostics 设计；同时明确它不等价于 NCI gate、runtime physics proof 或 Berman 原始论文逐页核对。
+- 下一步仍保留：把 Birdsall 这几轮结论更系统地回填到第 3A / 4 / 5 / 6 章，并继续处理 Hockney-Eastwood / TajimaDawson1982 的全文获取边界。
+
 ## 2026-05-18
 
 - 从 `/Users/yuxiangzhang/Documents/Zoteropaper/plasma_book/` 发现本地现成 PDF。

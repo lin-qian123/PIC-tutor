@@ -8,6 +8,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 148 条 `contrac
 
 2026-07-13：精修第 5 章结论段：删除重复的 Esirkepov publisher-PDF 待办，修正过期的 `v0.40` 阶段口径为当前 v0.68 源码基线；未改变 publisher compare、geometry/order 和 AMR 边界。
 
+2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将“线性稳定不等于非线性无扰动”、相空间 clump/density hole 诊断和相对漂移自由能边界写入中文讲解笔记，并最小回填第 8 章；该结论不升格为 NCI 或 WarpX runtime physics gate。
+
 2026-07-13：将 LeeCPC2015 accepted manuscript 的 paper/source/regression crosswalk 接入第 7 章 `7.5.8`；正文现在可直接定位三方合同，同时保留 publisher-formatted PDF 和 `C1-C25` 逐系数等价尚未完成的边界。
 
 2026-07-13：改进 Higuera-Cary Poincare topology classifier，同时保留时间顺序与相空间中心角排序；长轨道三种 pusher 的角排序候选均无自交/轨道间交叉，确认原时间折线交叉是排序伪影，但完整论文 topology gate 仍关闭。

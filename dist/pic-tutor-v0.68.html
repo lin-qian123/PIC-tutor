@@ -23354,8 +23354,11 @@ instability，随机初态的 <code>N^{-1/2}</code>
 loading
 的价值因此是提高可识别动态范围，而不是保证所有后续演化都更物理。上述统计链来自项目内
 <code>Dawson 1983</code> 中文讲解的第 22、24–26、53–59 节；它支撑的是
-diagnostics 设计原则，不替代当前 WarpX 各案例已有的具体 runtime
-gate。</p>
+diagnostics 设计原则，不替代当前 WarpX 各案例已有的具体 runtime gate。
+此外，<code>Birdsall 1985</code> 的 <code>13-6</code>
+提醒我们：即使线性介电关系显示稳定，相对漂移仍可能把自由能转入非线性相空间
+clump 与 density hole；因此接近稳定阈值的案例还应保留 phase-space
+correlation 观察，而不能只看场能量或把它直接归类为 NCI。</p>
 <p>再往实现层压一步，Dawson 给的 quiet-start recipe
 也不是抽象建议，而是明确的 phase-space construction：把相空间切成
 cells，把每个空间 cell 内的目标速度分布 <code>P(v)</code> 归一到该 cell

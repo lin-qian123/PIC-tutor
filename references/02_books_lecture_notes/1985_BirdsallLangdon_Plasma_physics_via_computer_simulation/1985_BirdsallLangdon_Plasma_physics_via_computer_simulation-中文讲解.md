@@ -2436,3 +2436,19 @@ Birdsall 在这里保留了 Hockney 的一个非常重要观察：
    - `E_x^2` fluctuation scaling
    - linear-in-time heating
    - optimum-path figure of merit
+
+## 33. `13-6`: 线性稳定不等于非线性无扰动
+
+`13-6` 的开头先给出一个重要前提：前面的 kinetic theory 通常从线性稳定的速度分布出发，用
+
+$$
+\epsilon(k,\omega)=0
+$$
+
+来讨论允许的模和阻尼。但这不是“后续演化一定平静”的充分条件。Birdsall 转述的数值结果指出：即使相对漂移速度低于线性稳定阈值，一维等离子体仍可能因为漂移中储存的自由能而发展出大振幅非线性湍流。
+
+这里最值得迁移到 PIC 工作流的不是一句“会有湍流”，而是诊断对象的改变：只看全局场能量或单个 Fourier mode，可能看不到 phase-space correlation；而在 `(x,v)` 相空间中寻找 clumps 与 density holes，才有机会把这种非线性结构和理论机制接起来。它说明粒子相空间诊断不是场诊断的附属品，而是在接近稳定阈值、存在相对漂移或弱扰动长时间积累时的独立证据层。
+
+对本项目的边界必须写清：这条结论来自 Birdsall 对 Berman 等工作的转述，当前没有把 Berman 的原始论文或该现象做成 WarpX runtime reproduction。因此它可以约束第 8 章的诊断设计和后处理提问，但不能被写成 `nci_psatd_stability` 的通过条件，也不能替代 NCI、物理不稳定性或收敛性的专门合同。更稳妥的实现路径是：在已有 field modal energy / power spectrum / time-correlation 链之外，保留粒子 phase-space histogram、局部 density/velocity moments 和随时间的 correlation map，再把 reader-side 观察与 case-local runtime contract 分开记录。
+
+本节对应第一分卷源码化讲解材料：`split_parts/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation_p0201-0400/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation_p0201-0400.md` 的 `13-6 UNSTABLE PLASMA`。当前引用层级是书中转述与本地 MinerU 文本，不冒充已逐页核对 Berman 原始论文。

@@ -1,6 +1,8 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.47 合订 PDF 为 309 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v47_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.48 合订 PDF 为 309 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v48_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+
+2026-07-12 又统一收口 RZ secondary-emission 的分辨率证据：`64x64` 默认基线仍为 `3.6038% > 2%` 的 geometry boundary，`128x128` 与 `256x256` refined controls 分别为 `0.9977%` 与 `0.6646%` 并通过官方 gate；正文不修改默认输入，不放宽 tolerance，也不把 refined sibling 外推成 upstream baseline 已修复。
 
 2026-07-12 又完成 RZ Esirkepov rho-side observable：shape=2/3/4 高分辨率 correction-on 的最终 `rho` 与 `rho_electrons+rho_ions` 相对差约为 `1e-14`，integrated-rho drift 作为时间序列记录；正文明确这只关闭物种分解层，不关闭 `divE-rho`、current closure 或完整 Gauss-law 证据。
 

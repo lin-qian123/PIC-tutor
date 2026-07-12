@@ -1,12 +1,13 @@
 # PIC-tutor
 
-当前成书版本为 `v0.47`，对应 309 页 RZ Esirkepov correction-on/off 完整矩阵与 rho-side observable 版；历史 `v0.46` 仍由 `manuscript/VERSION-v0.46.md` 保留。
+当前成书版本为 `v0.48`，对应 309 页 RZ secondary-emission resolution-aware boundary 与 Esirkepov rho-side observable 版；历史 `v0.47` 仍由 `manuscript/VERSION-v0.47.md` 保留。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+- 2026-07-12：进入 v0.48 RZ secondary-emission resolution-aware boundary 阶段：统一修正第 7 章与 TODO 的状态表述，明确 `64x64` 默认基线仍为 `3.6038% > 2%` 的 BOUNDARY，但 `128x128/256x256` refined controls 分别为 `0.9977%/0.6646%` 并通过官方 gate；该结果解释了分辨率敏感性，但不把默认基线或上游测试改写成通过。
 - 2026-07-12：进入 v0.47 rho-side observable 阶段：新增 `scripts/analyze_rz_esirkepov_rho_observable.py` 与 `notes/code-reading/particles/56-rz-esirkepov-rho-side-observable.md`；shape=2/3/4 高分辨率 correction-on 的最终 `rho` 与 `rho_electrons+rho_ions` 相对差均约 `1e-14`，同时保留 `divE-rho` 的 `O(1e-3)` 诊断边界，不把物种分解闭合误写成完整 Gauss-law 修复。
 - 2026-07-12：进入 v0.46 RZ Esirkepov axis-correction family 阶段：新增 `scripts/summarize_rz_esirkepov_axis_correction_family.py` 和 `notes/code-reading/particles/55-rz-esirkepov-axis-correction-family.md`；shape=2/3/4 refined field gates 全部通过，correction-off charge gates 全部通过，correction-on charge residual 仍为 `2.177e-3/2.353e-3/2.552e-3`，不修改 `../warpx`。
 - 2026-07-12：进入 v0.45 高阶 shape resolution family 阶段：新增 `scripts/summarize_rz_esirkepov_shape_resolution_family.py` 与 `notes/code-reading/particles/54-rz-esirkepov-shape-resolution-family.md`；shape=2/3/4 correction-off 粗网格均有 `Er` field boundary，而 `128x256` refined sibling 的 field/charge 双 gate 全部通过，不修改 `../warpx`。

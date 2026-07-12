@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 719,
-  "total_bytes": 27520639,
+  "total_bytes": 27525023,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1517380,
-      "sha256": "1f057b44ce0c05777ae25d407995c26e11b2c45ef99c46eae78deedf841be6ce"
+      "bytes": 1517659,
+      "sha256": "623f8592d86b612c7bdf01de2ad1e36ba1d298cfef71a5e869781b91bee4139d"
     },
     {
       "path": "TODO.md",
-      "bytes": 1360939,
-      "sha256": "4260e2e04d5328346d4cc8d9006f2f0fa28118cfad271dcfdf40af5e7a7086fb"
+      "bytes": 1361263,
+      "sha256": "b32dfc71480508bb698b2787ae1a62a06f050f8b119e9845832d5b9309942344"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5738516,
-      "sha256": "bebf81a40b750467a08b0c86461af61784035ac62cbb21e909a31447fee0279e"
+      "bytes": 5738810,
+      "sha256": "67fb5f639c6cfd52a2d35d65bc4fd67053e010a10a54e367107b93d4742a4a2d"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1066953,
-      "sha256": "6fb5dce28061fe7382724959338ed3703da873862f5fc439f47561599ff2aa4d"
+      "bytes": 1067247,
+      "sha256": "54b6c75d90af0191d5bdc43001f723c0b4344cfd7b03898b729349de85d32bb9"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3364152,
-      "sha256": "31d432acdf8ed6b2dda37181ebd72b88cf354dd8be5228435182387c4acbc79b"
+      "bytes": 3364449,
+      "sha256": "68f7a43c22e1fbafbe9c984deff774eac8da0186727841abec3d1c944ef45722"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "0a12570f75c222e418c8b9726a3f4d971108f94bc17bd13797fc8c4d27759847"
+      "sha256": "112cff29c30236aac133d7843e2a2573dd2cadc44badb7038d6a85ef3a53c492"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 144854,
-      "sha256": "1989a5a140b580a9f447012dbc1184b9ff1e4f11f67818cccd061d0ad66df15e"
+      "bytes": 145148,
+      "sha256": "89833ec4bd5ac3e323b680f3ec14a518f5214c5d004ef246bf8fdb2db286e2de"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -2092,8 +2092,8 @@
     },
     {
       "path": "notes/code-reading/particles/65-higuera-poincare-topology-classifier.md",
-      "bytes": 1681,
-      "sha256": "12a0ce3d4ef31c0b21041ebeaf68c98334f5695d1558da2adfab0688bc8fd8e3"
+      "bytes": 2023,
+      "sha256": "fc556c4fe5fb48392822096528e1ff72e5d02a768c63c52eb076ebd62d177c66"
     },
     {
       "path": "notes/code-reading/particles/66-higuera-resonance-window-resolution-contract.md",
@@ -3072,8 +3072,8 @@
     },
     {
       "path": "scripts/classify_higuera_poincare_topology.py",
-      "bytes": 9740,
-      "sha256": "79a2785b6fbe9708d8906816d92041af154e1d2f41a4aef39a98639cc389e8a6"
+      "bytes": 12000,
+      "sha256": "d9502833e025326a6c6443bc50a19af8e912cd8c7136b2fc9286d8484b226ae5"
     },
     {
       "path": "scripts/compare_energy_conserving_thermal_plasma_family.py",

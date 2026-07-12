@@ -49,6 +49,25 @@ def polygon_area(points: list[tuple[float, float]]) -> float:
     return float(0.5 * np.sum(x * np.roll(y, -1) - y * np.roll(x, -1)))
 
 
+def angularly_ordered_points(points: list[tuple[float, float]]) -> list[tuple[float, float]]:
+    """Order section samples around their phase-space centroid.
+
+    Successive section crossings are time ordered, not necessarily boundary
+    ordered. Connecting them directly can manufacture polygon crossings.
+    This ordering is only a geometric candidate, not a topology proof.
+    """
+    if len(points) < 3:
+        return points
+    center = np.mean(np.asarray(points), axis=0)
+    order = sorted(
+        range(len(points)),
+        key=lambda index: float(
+            np.arctan2(points[index][1] - center[1], points[index][0] - center[0])
+        ),
+    )
+    return [points[index] for index in order]
+
+
 def invariant_band_order(case: dict) -> dict:
     bands = {
         species: (
@@ -118,6 +137,21 @@ def classify_case(case: dict) -> dict:
             pairwise_intersections[f"{first_name}__{second_name}"] = (
                 segment_intersections(first, second) if enough_points else None
             )
+    angular_polygons = {
+        species: angularly_ordered_points(points) for species, points in polygons.items()
+    }
+    angular_self_intersections = {
+        species: segment_intersections(points, points) // 2 if len(points) >= 3 else 0
+        for species, points in angular_polygons.items()
+    }
+    angular_pairwise_intersections = {}
+    for index, first_name in enumerate(names):
+        for second_name in names[index + 1 :]:
+            first = angular_polygons[first_name]
+            second = angular_polygons[second_name]
+            angular_pairwise_intersections[f"{first_name}__{second_name}"] = (
+                segment_intersections(first, second) if enough_points else None
+            )
     return {
         "pusher": case["pusher"],
         "point_counts": point_counts,
@@ -130,6 +164,16 @@ def classify_case(case: dict) -> dict:
         },
         "self_intersection_candidates": self_intersections,
         "pairwise_intersection_candidates": pairwise_intersections,
+        "angular_order": {
+            "signed_polygon_area": {
+                species: polygon_area(points) if len(points) >= 3 else None
+                for species, points in angular_polygons.items()
+            },
+            "self_intersection_candidates": angular_self_intersections,
+            "pairwise_intersection_candidates": angular_pairwise_intersections,
+            "self_intersections_absent": all(value == 0 for value in angular_self_intersections.values()),
+            "pairwise_intersections_absent": all(value == 0 for value in angular_pairwise_intersections.values()),
+        },
         "topology_gate_passed": False,
         "status": "INSUFFICIENT_SAMPLING" if not enough_points else "REVIEW_REQUIRED",
     }
@@ -162,8 +206,8 @@ def main() -> int:
     candidate_signature_consistent = len(set(signatures)) == 1
     if sampling_sufficient:
         status = "REVIEW_REQUIRED"
-        reason = "The invariant-order gate passes, but time-ordered polyline intersections need a validated section-point ordering and denser reference orbit before they can be promoted to resonance-island or trajectory-crossing evidence."
-        next_required_evidence = "Review the section-point ordering against a denser reference orbit and add a validated topology definition before enabling the physical gate."
+        reason = "The invariant-order gate passes. Time-ordered polyline intersections remain diagnostic artifacts; angularly ordered candidates are reported separately, but a validated section-point ordering and paper-specific topology definition are still required before promotion to resonance-island or trajectory-crossing evidence."
+        next_required_evidence = "Compare angularly ordered candidates against a denser reference orbit and the paper's section construction, then define a physical topology gate before enabling it."
     else:
         status = "INSUFFICIENT_SAMPLING"
         reason = "The available runtime contract contains too few section points per orbit. Polygon crossings at this sampling density are candidates, not a reliable resonance-island or trajectory-crossing classification."
@@ -207,6 +251,7 @@ def main() -> int:
         "",
         f"Invariant-order gate: `{'PASS' if result['invariant_order_gate_passed'] else 'FAIL'}`.",
         f"Analytic quartic reference-curve gate: `{'PASS' if result['analytic_reference_curve_gate_passed'] else 'FAIL'}`.",
+        "Angular-order candidates are stored in each case; they are not promoted to a physical topology gate.",
         result["evidence_boundary"]["reason"],
         "",
         result["evidence_boundary"]["next_required_evidence"],

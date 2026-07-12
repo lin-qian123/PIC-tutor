@@ -2,6 +2,8 @@
 
 # PIC-tutor v0.68
 
+本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access audit、章节/源码映射均通过；Appendix B 圆轨道和 Poincare topology 的专门 runtime 复现仍作为边界。
+
 本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 135 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
@@ -18,7 +20,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 315 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 316 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -4607,6 +4609,8 @@ R=\frac{\|\mathbf v^{i+1/2}\|}{\omega_c}
 $$
 
 所以“Vay 在任意时间步都给出正确 gyroradius”必须加限定：若用于位置推进的半步速度满足 `\|\mathbf v^{i+1/2}\|=v_0`，则 `R=v_0/\omega_c`；若把整数时刻速度直接当作 `v_0`，仍会出现与 Boris 类似的放大因子。pusher 的动量更新、半步速度定义和位置更新必须一起检查。当前 WarpX `particle_pusher` 强 analysis 主要覆盖 force-free/drift-preservation，并没有按 Appendix B 的圆轨道、半步速度和 gyroradius 单独输出，因此不能声称已完成该论文附录的 runtime reproduction。
+
+本章两条核心 pusher 论文资产也已形成可重复合同：Vay 2008 的结果见 `runs/stage-c-validation/vay-2008-paper-asset/contract.{json,md}`，Higuera-Cary 2017 的结果见 `runs/stage-c-validation/higuera-2017-paper-asset/contract.{json,md}`。两者均通过全文、MinerU、中文讲解、章节/源码映射和 access boundary；后文涉及论文专门图形时，仍须遵守各自的 runtime reproduction 边界。
 
 ## 4.5 Higuera-Cary pusher：Boris-like 结构的相对论修正
 

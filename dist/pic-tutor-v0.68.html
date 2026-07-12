@@ -820,6 +820,10 @@ boosted-frame / NCI</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38
+图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access
+audit、章节/源码映射均通过；Appendix B 圆轨道和 Poincare topology 的专门
+runtime 复现仍作为边界。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
 汇总本地 135 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
@@ -860,7 +864,7 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 发表元数据、Section 1–5、Eq.(23)、二阶 spline 线索与 publisher PDF
 缺失状态共 8 项检查全部通过。该 contract
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
-<p>当前合订 PDF 为 315 页；本 v0.68 版本在 v0.67
+<p>当前合订 PDF 为 316 页；本 v0.68 版本在 v0.67
 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整
 Gauss-law 闭环。</p>
 <p>本版另补入 RZ shape=1 的 <code>256x512</code> resolution
@@ -7495,6 +7499,12 @@ gyroradius”必须加限定：若用于位置推进的半步速度满足
 force-free/drift-preservation，并没有按 Appendix B 的圆轨道、半步速度和
 gyroradius 单独输出，因此不能声称已完成该论文附录的 runtime
 reproduction。</p>
+<p>本章两条核心 pusher 论文资产也已形成可重复合同：Vay 2008 的结果见
+<code>runs/stage-c-validation/vay-2008-paper-asset/contract.{json,md}</code>，Higuera-Cary
+2017 的结果见
+<code>runs/stage-c-validation/higuera-2017-paper-asset/contract.{json,md}</code>。两者均通过全文、MinerU、中文讲解、章节/源码映射和
+access boundary；后文涉及论文专门图形时，仍须遵守各自的 runtime
+reproduction 边界。</p>
 <h2 id="higuera-cary-pusherboris-like-结构的相对论修正">4.5 Higuera-Cary
 pusher：Boris-like 结构的相对论修正</h2>
 <p>Higuera-Cary pusher 的 WarpX 实现在

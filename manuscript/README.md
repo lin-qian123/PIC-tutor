@@ -16,6 +16,8 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 2026-07-13：第 4 章补入 Vay 2008 Appendix A/B 的显式 `\gamma` 求解和 gyroradius 边界，并明确当前 WarpX `particle_pusher` analysis 尚未覆盖 Appendix B 的专门圆轨道复现。
 
+2026-07-13：完成第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：分别为 7 页/38 图和 9 页/44 图，包含全文、MinerU、中文讲解、源码映射、access audit 和 runtime boundary；专门 Appendix B/Poincare topology 复现仍未宣称完成。
+
 本轮又把第 7 章 transition-zone route-count packet 落成可执行的 schema validator 和 synthetic fixture：正例检查 route count、weight closure、`rho/J` 中间账本与显式 merge gates，负例会被拒绝；当前 WarpX 尚未接入 runtime hook，因此仍保持 `RUNTIME_LEDGER_UNPROVEN`。
 
 本轮又补入 Hockney 1971 的摘要级 article asset：8 项本地 contract 全部通过，正文只使用摘要支持的 collision/heating scaling、optimum path 和 `K_2` 关系，继续明确 publisher full text、PDF、MinerU 和逐段核对尚未完成。

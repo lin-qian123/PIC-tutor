@@ -353,6 +353,8 @@ $$
 
 所以“Vay 在任意时间步都给出正确 gyroradius”必须加限定：若用于位置推进的半步速度满足 `\|\mathbf v^{i+1/2}\|=v_0`，则 `R=v_0/\omega_c`；若把整数时刻速度直接当作 `v_0`，仍会出现与 Boris 类似的放大因子。pusher 的动量更新、半步速度定义和位置更新必须一起检查。当前 WarpX `particle_pusher` 强 analysis 主要覆盖 force-free/drift-preservation，并没有按 Appendix B 的圆轨道、半步速度和 gyroradius 单独输出，因此不能声称已完成该论文附录的 runtime reproduction。
 
+本章两条核心 pusher 论文资产也已形成可重复合同：Vay 2008 的结果见 `runs/stage-c-validation/vay-2008-paper-asset/contract.{json,md}`，Higuera-Cary 2017 的结果见 `runs/stage-c-validation/higuera-2017-paper-asset/contract.{json,md}`。两者均通过全文、MinerU、中文讲解、章节/源码映射和 access boundary；后文涉及论文专门图形时，仍须遵守各自的 runtime reproduction 边界。
+
 ## 4.5 Higuera-Cary pusher：Boris-like 结构的相对论修正
 
 Higuera-Cary pusher 的 WarpX 实现在 `../warpx/Source/Particles/Pusher/UpdateMomentumHigueraCary.H:16-65`：

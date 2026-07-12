@@ -18,6 +18,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：将 Vay 2008 Appendix A/B 回写第 4 章，补入显式 `\gamma` 四次方程/正根、`gisq` 源码桥接和常磁场 gyroradius / half-step velocity 边界；本地 regression 未被夸写成 Appendix B 专门复现。
 
+2026-07-13：完成 Vay 2008 与 Higuera-Cary 2017 第 4 章论文资产合同：分别验收 7 页/38 图和 9 页/44 图的 PDF、MinerU、中文讲解、README、access audit、源码映射与 runtime boundary；合同报告位于 `runs/stage-c-validation/{vay-2008-paper-asset,higuera-2017-paper-asset}/`。
+
 AMR transition-zone 的下一阶段接口已落成可执行设计合同：`python scripts/validate_transition_zone_route_contract.py --input docs/transition-zone-route-contract-example.json` 正例通过、破坏 route count 的负例被拒绝；这仍是 schema/analysis 层验证，不是当前 WarpX runtime route proof。
 
 2026-07-12：新增 Hockney 1971 article-level abstract contract，8/8 检查通过；项目内已保存正式书目信息、IBM Research 作者机构摘要、摘要级中文讲解和 full-text 缺失边界，证据分类为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。

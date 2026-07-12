@@ -12,11 +12,13 @@
 
 This is the primary reference cited by WarpX as `LeeCPC2015` in `../warpx/Docs/source/refs.bib` and `bibliography/warpx-refs.bib`.
 
-## Access status on 2026-06-29
+## Access status on 2026-07-11
 
 OpenAlex reports the CPC article as green OA and points to the OSTI record `1246488`. Crossref also records an accepted-manuscript license after 2016-05-21. However, the current OSTI record and API responses expose bibliographic metadata and citation links, not a direct PDF/full-text file. ScienceDirect PDF access returns HTTP 403 from the local command line, and the Elsevier API returns minimized metadata without authorization.
 
-Therefore this directory intentionally does not contain a PDF, MinerU Markdown, or extracted images yet. Do not fabricate a paper extraction from abstracts or metadata. Add the PDF only after an authorized full-text copy is obtained.
+The public eScholarship record now exposes a valid 7-page PDF endpoint. The PDF has been downloaded to this directory, converted with the project stdlib MinerU workflow, and materialized with 13 extracted images plus a Chinese walkthrough. This is an accepted/submitted manuscript and should not be silently labeled as the publisher-formatted CPC version.
+
+Primary asset source: <https://escholarship.org/uc/item/49m2k3vj>. The local package is now covered by `scripts/audit_leecpc2015_manuscript_contract.py`; its classification is accepted-manuscript-backed, publisher-formatted CPC PDF still missing.
 
 The v0.25 source-to-paper follow-up table is in:
 

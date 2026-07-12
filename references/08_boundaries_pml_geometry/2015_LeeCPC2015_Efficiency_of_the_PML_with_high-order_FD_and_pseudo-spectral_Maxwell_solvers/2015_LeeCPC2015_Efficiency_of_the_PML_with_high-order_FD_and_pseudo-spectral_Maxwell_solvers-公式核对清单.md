@@ -2,7 +2,7 @@
 
 ## 状态边界
 
-本清单建立于 2026-06-29。当前仍没有 CPC 2015 授权 PDF、MinerU Markdown、图片或逐段中文讲解，因此这里不是论文内容复述，也不把 WarpX 源码公式伪称为论文公式。
+本清单建立于 2026-06-29，并于 2026-07-13 根据 eScholarship accepted/submitted manuscript 资产更新。当前已有 7 页 PDF、MinerU Markdown、13 张图片和第一轮中文讲解；仍没有 publisher-formatted CPC PDF，因此这里不把 accepted manuscript 伪称为正式出版定稿，也不把 WarpX 源码公式伪称为论文公式。
 
 本文件的用途是把后续拿到全文后的核对工作变成可执行表格：每一项都明确“论文应给出的证据”“WarpX 当前源码锚点”“现有 regression 能证明什么”和“正文写作边界”。
 
@@ -14,6 +14,9 @@
 | OSTI `1246488` | 页面/API 仍是 metadata 与 citation links；未暴露 PDF/full text | 不能把 OSTI 记录写成已取得全文 |
 | eScholarship `49m2k3vj` | 本地命令行访问仍受限 | 只能保留为 OpenAlex 指出的 submitted-version 线索 |
 | AIP DOI `10.1063/1.4965625` | 官方 `pubs.aip.org/.../050002_1_online.pdf` 以浏览器 UA 访问仍返回 Cloudflare HTTP 403 | 不能作为 MinerU 输入 |
+| eScholarship accepted/submitted manuscript | `https://escholarship.org/uc/item/49m2k3vj` 提供有效 7 页 PDF；本地已完成 MinerU 和 13 张图片抽取 | 可作为第一轮公式/算法讲解来源，但不能替代 CPC publisher PDF |
+
+本地资产合同：`python scripts/audit_leecpc2015_manuscript_contract.py --paper-dir <paper-dir> --output-dir runs/stage-c-validation/leecpc2015-accepted-manuscript-contract`。2026-07-13 全部检查通过，分类为 `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING`。
 
 ## 后续全文到位后的逐项核对表
 
@@ -34,4 +37,3 @@
 2. 如果论文给出 pseudo-spectral PML 更新式，必须逐项标出论文符号到 `kx, ky, kz, C, S_ck, T2, C1-C25` 的映射。
 3. 如果论文没有 Galilean 或 divergence-cleaning 内容，正文应把 `T2`、`F/G` 和 `C23-C25` 单独列为 WarpX 后续实现分支。
 4. 如果论文参数空间和 WarpX regression 不一致，正文只能说 regression 覆盖了当前代码路径，不能说它复现实验论文图。
-

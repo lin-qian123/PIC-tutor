@@ -1,6 +1,6 @@
 # Access Audit: LeeCPC2015
 
-Date: 2026-06-29
+Date: 2026-07-13
 
 ## Target
 
@@ -23,6 +23,9 @@ Date: 2026-06-29
 | OSTI page button | `View Accepted Manuscript (Publisher)` resolves to the DOI landing page, not an OSTI-hosted file | HTML inspection on 2026-06-29 |
 | OSTI purl guesses | `https://www.osti.gov/servlets/purl/1246488` and variants returned HTTP 404 | local curl checks on 2026-06-29 |
 | eScholarship submitted-version location | OpenAlex lists `https://escholarship.org/uc/item/49m2k3vj`; page and likely PDF endpoint return HTTP 403 from local curl | local curl checks on 2026-06-29 |
+| eScholarship PDF re-check | Browser-like `curl -L` to `https://escholarship.org/content/qt49m2k3vj/qt49m2k3vj.pdf?t=p0jvaf` returned a valid 7-page PDF | local `file`/PDF header check on 2026-07-11 |
+| MinerU conversion | Public eScholarship PDF was downloaded, converted with the project stdlib MinerU workflow, and produced Markdown plus 13 extracted images | local workflow on 2026-07-11 |
+| Local accepted-manuscript contract | `scripts/audit_leecpc2015_manuscript_contract.py` checks the 7-page PDF, MinerU section/formula anchors, 13 images, Chinese walkthrough and explicit publisher boundary | contract run on 2026-07-13; all checks pass |
 | ScienceDirect PDF endpoint | Returned HTTP 403 | local curl check on 2026-06-29 |
 | Elsevier content API PDF endpoint | Returned HTTP 406/minimized metadata without authorization | local curl check on 2026-06-29 |
 | AIP Scitation DOI PDF endpoint | `https://aip.scitation.org/doi/pdf/10.1063/1.4965625` returns a short HTML page, not a PDF; the AIP article PDF endpoint returns Cloudflare HTTP 403 | local curl checks on 2026-06-29 |
@@ -30,12 +33,14 @@ Date: 2026-06-29
 
 ## Current decision
 
-The article should be treated as identified and bibliographically verified, but not yet ingested. The book can cite the DOI and use the WarpX source/documentation mapping, but it should not claim to have a PDF-derived MinerU extraction or a complete paper formula walkthrough.
+The article is now ingested from the public eScholarship accepted/submitted manuscript. The book may use the local PDF, MinerU Markdown, images, and Chinese walkthrough for a first paper-backed explanation. This does not upgrade the asset to the publisher-formatted CPC version; version-specific wording, pagination, and final equation typography still require a separate comparison.
+
+The publisher-formatted CPC PDF is still missing.
+
+The local package is classified as `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING`. The contract closes asset integrity and first-round source mapping, not the publisher-version comparison.
 
 ## Next authorized acquisition paths
 
-1. Use institutional access to download the CPC published version from ScienceDirect.
-2. If OSTI later exposes the accepted manuscript file, download it from the OSTI record and record the exact URL.
-3. If eScholarship becomes reachable from a browser or different network, verify whether it hosts a submitted manuscript and whether its license is compatible with this project.
-4. If the AIP conference bronze OA PDF endpoint becomes accessible, use it as a related version but keep the CPC article as the main WarpX citation.
-5. After obtaining a PDF, place it in this directory and run the project paper workflow before updating the manuscript from "access audit" to "paper-reading closure".
+1. Compare the local eScholarship manuscript with the CPC publisher version when institutional access is available.
+2. Keep the CPC article as the main WarpX citation; treat the AIP conference version as a related record.
+3. Complete the paper-to-source comparison for PML profile, reflection recurrence, PSTD shift factors, and the boundary between paper formulas and WarpX `C1-C25`.

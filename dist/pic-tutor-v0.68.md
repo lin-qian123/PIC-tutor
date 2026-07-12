@@ -28,6 +28,8 @@
 
 本版补充 `TajimaDawson1982` 的正式来源访问审计：DOI 与 AIP canonical resource 已确认，但本机请求返回 Cloudflare HTTP `403`，因此仍不宣称 publisher PDF、MinerU 或逐式核对完成。
 
+本版补充 `LeeCPC2015` accepted/submitted manuscript 资产合同：7 页 PDF、MinerU 结构、13 张图片、公式锚点和中文讲解全部通过；CPC publisher-formatted PDF 的版本差异仍待核对。
+
 版本日期：2026-07-13
 
 本次新增 3D Esirkepov shape=2/3/4 refined controls：shape=2/3/4 的 field error 分别为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 分别为 `5.4174e-12/4.3288e-12/3.0001e-12`。三档 `128^3` sibling 均通过官方 `0.05` field gate 和独立 `1e-11` charge gate。该结果支持分辨率敏感性解释，不修改全局默认值，也不宣称正式 convergence order。
@@ -13537,6 +13539,8 @@ v0.25 继续尝试 Lee/Vay PML 论文的全文路径。CPC DOI、OSTI、eScholar
 | reflection recurrence | 用相邻切片的 `r_j/t_j` 递推整层 PML 反射系数，数值结果与解析积分比较 | `analysis_pml_psatd.py` 的能量/反射率消费 | regression 证明组合反射率，不证明 `C1-C25` 逐系数正确 |
 
 这一步允许第 7 章把 LeeCPC2015 从“只有获取审计”升级为“有全文支撑的第一轮 PML 理论解释”，但仍保留版本边界：本地 PDF 是 eScholarship accepted/submitted manuscript，不是 publisher-formatted CPC PDF；`C1-C25`、Galilean `T2`、PML divergence-cleaning `F/G` 和 RZ PML 仍需分别标成 WarpX 实现侧或专用扩展，不能直接归因给论文原始公式。
+
+该资产的可重复验收报告位于 `runs/stage-c-validation/leecpc2015-accepted-manuscript-contract/contract.{json,md}`，由 `scripts/audit_leecpc2015_manuscript_contract.py` 生成。合同通过的含义是“本地 accepted manuscript 包完整且可用于第一轮讲解”，不是“CPC publisher 版本已取得”或“论文逐式证明了当前 WarpX 的 `C1-C25`”。
 
 ### 7.5.9 v0.40 PSATD-PML 的 Cartesian/RZ 并列复现
 

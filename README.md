@@ -8,6 +8,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：完成 `TajimaDawson1982` 正式来源访问审计。Crossref/AIP 元数据已确认 DOI `10.1063/1.33805` 和 canonical resource，但本机请求返回 Cloudflare HTTP `403`；相关 FNAL 单作者 conference note 继续作为旁证，不替代 publisher PDF/MinerU 全文。
 
+2026-07-13：完成 `LeeCPC2015` accepted/submitted manuscript 资产合同：7 页 PDF、MinerU Markdown、13 张图片和中文讲解全部通过可重复检查，已足以支撑第 7 章第一轮 paper-backed PML 解释；CPC publisher-formatted PDF 逐项差异核对仍未完成。
+
 AMR transition-zone 的下一阶段接口已落成可执行设计合同：`python scripts/validate_transition_zone_route_contract.py --input docs/transition-zone-route-contract-example.json` 正例通过、破坏 route count 的负例被拒绝；这仍是 schema/analysis 层验证，不是当前 WarpX runtime route proof。
 
 2026-07-12：新增 Hockney 1971 article-level abstract contract，8/8 检查通过；项目内已保存正式书目信息、IBM Research 作者机构摘要、摘要级中文讲解和 full-text 缺失边界，证据分类为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。

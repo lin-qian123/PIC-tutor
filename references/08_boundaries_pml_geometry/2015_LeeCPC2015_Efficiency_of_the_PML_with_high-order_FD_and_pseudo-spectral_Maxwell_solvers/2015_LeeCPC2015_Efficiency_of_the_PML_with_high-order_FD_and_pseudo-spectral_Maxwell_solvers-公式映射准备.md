@@ -2,7 +2,7 @@
 
 ## 状态
 
-本文件不是论文逐段讲解。当前尚未取得授权 PDF，也没有 MinerU Markdown。因此这里只记录 v0.23 可以先完成的“映射框架”：拿到全文后，应该把哪些论文公式映射到哪些 WarpX 源码层。
+本文件不是论文逐段讲解。当前已取得 eScholarship accepted/submitted manuscript，并完成 MinerU Markdown 与论文顺序中文讲解；本文件保留 v0.23 的“映射框架”，用于和后续 publisher-formatted CPC 版本做对照。
 
 ## 映射框架
 
@@ -26,4 +26,3 @@
 2. 判断论文中的 pseudo-spectral PML 公式是否直接对应 WarpX 当前 `PsatdAlgorithmPml.cpp`，还是对应较早版本/不同符号约定。
 3. 把公式中的每个 `k`、`C`、`S`、`sigma`、`dt` 和 split component 写入正文符号表，避免和第 6 章主域 PSATD 的 `X1-X4` 系数混淆。
 4. 若论文只给出效率/反射率结果而不直接给出 `C1-C25` 形式，则正文应写成“论文提供数值效率证据，源码提供实现公式”，不能把源码公式伪称为论文公式。
-

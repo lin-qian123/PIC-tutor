@@ -688,6 +688,8 @@ v0.25 继续尝试 Lee/Vay PML 论文的全文路径。CPC DOI、OSTI、eScholar
 
 这一步允许第 7 章把 LeeCPC2015 从“只有获取审计”升级为“有全文支撑的第一轮 PML 理论解释”，但仍保留版本边界：本地 PDF 是 eScholarship accepted/submitted manuscript，不是 publisher-formatted CPC PDF；`C1-C25`、Galilean `T2`、PML divergence-cleaning `F/G` 和 RZ PML 仍需分别标成 WarpX 实现侧或专用扩展，不能直接归因给论文原始公式。
 
+该资产的可重复验收报告位于 `runs/stage-c-validation/leecpc2015-accepted-manuscript-contract/contract.{json,md}`，由 `scripts/audit_leecpc2015_manuscript_contract.py` 生成。合同通过的含义是“本地 accepted manuscript 包完整且可用于第一轮讲解”，不是“CPC publisher 版本已取得”或“论文逐式证明了当前 WarpX 的 `C1-C25`”。
+
 ### 7.5.9 v0.40 PSATD-PML 的 Cartesian/RZ 并列复现
 
 为了把上面的源码和 regression 地图推进到可复查的运行证据，项目又对官方 `pml` 输入做了单进程复现。Cartesian `inputs_test_2d_pml_x_psatd` 使用 `warpx.2d` 运行，官方 `analysis_pml_psatd.py` 与独立脚本 `scripts/analyze_pml_psatd_contract.py` 都通过：`diag1000050` 初始场能量相对参考值误差为 `1.45e-15`，末态总场能量与初始能量之比，即反射率，为 `9.4704e-7 < 1e-6`。这条结果支持“主域 PSATD 与普通 Cartesian PML 组合满足低反射率合同”，但不证明 `C1-C25` 每个系数逐项正确。

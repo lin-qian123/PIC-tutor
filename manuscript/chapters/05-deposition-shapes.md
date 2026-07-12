@@ -1701,6 +1701,8 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 这张表是本章当前的证据边界：前三行可以直接进入成书正文，第四行只能用于出版身份和引用信息，第五行不能写成已完成。
 
+为避免这条边界只停留在叙述层，本版新增 `scripts/audit_esirkepov_bounded_compare.py`，对本地预印本、`access-audit.md` 和五项 bounded compare 目标做可重复检查。当前报告 `runs/stage-c-validation/esirkepov-bounded-compare/contract.{json,md}` 的 8 项检查全部通过：预印本资产、发表版题名、DOI、Section 1--5、Eq.(23)、二阶 spline 线索和 publisher PDF 缺失状态均与当前项目材料一致。这个 contract 的分类仍是 `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING`，因此它完成的是“证据边界可审计化”，不是 CPC 定稿的逐行核对。
+
 公式层还增加了一项可复现的负责任验证：`scripts/verify_esirkepov_density_decomposition.py` 用 10000 组确定性随机 old/new shape 分量检查
 
 $$

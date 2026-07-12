@@ -319,7 +319,11 @@ Lorentz 方程</a></li>
 <li><a href="#warpx-如何选择-pusher" id="toc-warpx-如何选择-pusher">4.3
 WarpX 如何选择 pusher</a></li>
 <li><a href="#vay-pusher相对论速度变换一致性的更新" id="toc-vay-pusher相对论速度变换一致性的更新">4.4 Vay
-pusher：相对论速度变换一致性的更新</a></li>
+pusher：相对论速度变换一致性的更新</a>
+<ul>
+<li><a href="#vay-appendix-ab显式-gamma-根与回旋半径边界" id="toc-vay-appendix-ab显式-gamma-根与回旋半径边界">4.4.1 Vay Appendix
+A/B：显式 <code>\gamma</code> 根与回旋半径边界</a></li>
+</ul></li>
 <li><a href="#higuera-cary-pusherboris-like-结构的相对论修正" id="toc-higuera-cary-pusherboris-like-结构的相对论修正">4.5 Higuera-Cary
 pusher：Boris-like 结构的相对论修正</a></li>
 <li><a href="#从-multiparticlecontainer-到-physicalparticlecontainer" id="toc-从-multiparticlecontainer-到-physicalparticlecontainer">4.6 从
@@ -896,6 +900,10 @@ fluctuation 和 linear stochastic heating 写成 solver-design
 链：modal energy、power spectrum、time correlation、磁化 peak
 taxonomy、normal-mode reconstruction 和 continuous-spectrum/quiet-start
 边界均已回写正文。</p>
+<p>本版补充第 4 章 Vay 2008 Appendix A/B：给出显式 <code>\gamma</code>
+四次方程、正根选择、<code>gisq</code> 对位和常磁场 gyroradius/half-step
+velocity 边界；保留 Appendix B 尚无专门 runtime reproduction
+的限制。</p>
 <p>版本日期：2026-07-13</p>
 <p>本次新增 3D Esirkepov shape=2/3/4 refined controls：shape=2/3/4 的
 field error 分别为 <code>1.2523e-2/2.3515e-2/3.0644e-2</code>，charge
@@ -7430,6 +7438,63 @@ level。因此，对 WarpX 而言，<code>UpdateMomentumVay.H</code>
 的历史角色应理解成 relativistic beam-crossing / boosted-frame
 consistency repair，而不是一个与一般场求解器或一般 relativistic mover
 等价并列的“备选算法”。</p>
+<h3 id="vay-appendix-ab显式-gamma-根与回旋半径边界">4.4.1 Vay Appendix
+A/B：显式 <code>\gamma</code> 根与回旋半径边界</h3>
+<p>Vay 2008 的 Appendix A 给出了源码中 <code>gisq</code> /
+<code>gamma_new</code> 公式为什么可以显式计算。磁旋转中先定义</p>
+<p><span class="math display">\[
+\mathbf u^{i+1}=s\left[\mathbf u&#39; +(\mathbf u&#39;\cdot\mathbf
+t)\mathbf t+\mathbf u&#39;\times\mathbf t\right],
+\qquad s=\frac{1}{1+t^2},
+\qquad \mathbf t=\frac{\boldsymbol\tau}{\gamma^{i+1}},
+\]</span></p>
+<p>其中 <code>\boldsymbol\tau=(q\Delta t/2m)\mathbf B</code>。对上式与
+<code>\mathbf u</code> 做点积，利用
+<code>\gamma^2=1+u^2/c^2</code>，并令</p>
+<p><span class="math display">\[
+\gamma&#39;=\sqrt{1+u&#39;^2/c^2},
+\qquad u^*=\frac{\mathbf u&#39;\cdot\boldsymbol\tau}{c},
+\qquad \sigma=\gamma&#39;^2-\tau^2,
+\]</span></p>
+<p>可把隐式的 relativistic factor 压成一个关于 <code>\gamma^2</code>
+的二次方程：</p>
+<p><span class="math display">\[
+\gamma^4+(\tau^2-\gamma&#39;^2)\gamma^2-\tau^2-u^{*2}=0.
+\]</span></p>
+<p>只保留正的实根，得到</p>
+<p><span class="math display">\[
+\gamma^{i+1}=\sqrt{\frac{\sigma+\sqrt{\sigma^2+4(\tau^2+u^{*2})}}{2}}.
+\]</span></p>
+<p>这解释了 <code>UpdateMomentumVay.H</code> 的实现顺序：先用
+<code>u&#39;</code> 和 <code>tau</code> 构造标量不变量，再取正根，最后由
+<code>t=\tau/\gamma</code> 和 <code>s=1/(1+t^2)</code>
+完成旋转。<code>gisq</code> 存的是 <code>\gamma^{-2}</code>，因此 device
+loop 不需要迭代求解 <code>\gamma</code>。这是 Appendix A 与当前 kernel
+的直接公式桥接，不是普通 Boris 旋转中的经验系数。</p>
+<p>Appendix B 则给出常磁场、<code>\mathbf E=0</code> 时的 gyroradius
+边界：</p>
+<p><span class="math display">\[
+\Delta\theta=2\arctan\left(\frac{\omega_c\Delta t}{2}\right),
+\qquad
+\mathbf v^{i+1/2}=\left[1+\left(\frac{\omega_c\Delta
+t}{2}\right)^2\right]\frac{\mathbf v^i+\mathbf v^{i+1}}{2},
+\]</span></p>
+<p>从圆周几何得到</p>
+<p><span class="math display">\[
+R=\frac{\|\mathbf v^{i+1/2}\|}{\omega_c}
+=\left[1+\left(\frac{\omega_c\Delta
+t}{2}\right)^2\right]^{1/2}\frac{\|\mathbf v^i\|}{\omega_c}.
+\]</span></p>
+<p>所以“Vay 在任意时间步都给出正确
+gyroradius”必须加限定：若用于位置推进的半步速度满足
+<code>\|\mathbf v^{i+1/2}\|=v_0</code>，则
+<code>R=v_0/\omega_c</code>；若把整数时刻速度直接当作
+<code>v_0</code>，仍会出现与 Boris 类似的放大因子。pusher
+的动量更新、半步速度定义和位置更新必须一起检查。当前 WarpX
+<code>particle_pusher</code> 强 analysis 主要覆盖
+force-free/drift-preservation，并没有按 Appendix B 的圆轨道、半步速度和
+gyroradius 单独输出，因此不能声称已完成该论文附录的 runtime
+reproduction。</p>
 <h2 id="higuera-cary-pusherboris-like-结构的相对论修正">4.5 Higuera-Cary
 pusher：Boris-like 结构的相对论修正</h2>
 <p>Higuera-Cary pusher 的 WarpX 实现在

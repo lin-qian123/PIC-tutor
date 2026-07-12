@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.68`，对应 315 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract contract、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
+当前成书版本为 `v0.68`，对应 316 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract contract、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
 v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
@@ -15,6 +15,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 2026-07-13：将 Birdsall 1985 Chapter 13-5 后半段回写第 6 章，补入 `K_4`、QPM、`N_C`/`1/N_C` field fluctuation 和 linear stochastic heating 的工程解释；Hockney-Eastwood 原始全文和图表逐页核对边界仍保留。
 
 2026-07-13：将 Dawson 1983 的 wave-side statistical diagnostics 链回写第 8 章，补入 modal energy、power spectrum、time correlation、磁化 peak taxonomy、normal-mode reconstruction 和 continuous-spectrum/quiet-start 边界。
+
+2026-07-13：将 Vay 2008 Appendix A/B 回写第 4 章，补入显式 `\gamma` 四次方程/正根、`gisq` 源码桥接和常磁场 gyroradius / half-step velocity 边界；本地 regression 未被夸写成 Appendix B 专门复现。
 
 AMR transition-zone 的下一阶段接口已落成可执行设计合同：`python scripts/validate_transition_zone_route_contract.py --input docs/transition-zone-route-contract-example.json` 正例通过、破坏 route count 的负例被拒绝；这仍是 schema/analysis 层验证，不是当前 WarpX runtime route proof。
 

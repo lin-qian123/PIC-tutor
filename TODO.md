@@ -4533,9 +4533,7 @@
     - 已完成 bounded Darwin-lite field solver 边界
     - 已完成 ultrarelativistic beam / background-electron 应用例子
     - 已回填 `manuscript/chapters/04-particle-pushers.md`
-  - [ ] 若继续深挖 `Vay 2008`：
-    - Appendix A 的显式解推导
-    - Appendix B 的 gyroradius / effective-velocity 边界
+  - [x] 已完成 `Vay 2008` Appendix A 的显式 `\gamma` 四次方程/正根推导与 Appendix B 的 gyroradius / effective-velocity 边界回写第 4 章；当前 `particle_pusher` regression 仍未覆盖论文 Appendix B 的专门圆轨道复现。
   - [x] `Higuera 2017` 第一轮中文精读已启动并完成主文第一轮收口：
     - 已完成摘要、引言、`II-VII`
     - 已明确 `volume-preserving + E×B drift` 的双保持目标

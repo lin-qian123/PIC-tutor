@@ -36,6 +36,8 @@
 
 本版补充第 8 章 Dawson 1983 wave-side statistical diagnostics 链：modal energy、power spectrum、time correlation、磁化 peak taxonomy、normal-mode reconstruction 和 continuous-spectrum/quiet-start 边界均已回写正文。
 
+本版补充第 4 章 Vay 2008 Appendix A/B：给出显式 `\gamma` 四次方程、正根选择、`gisq` 对位和常磁场 gyroradius/half-step velocity 边界；保留 Appendix B 尚无专门 runtime reproduction 的限制。
+
 版本日期：2026-07-13
 
 本次新增 3D Esirkepov shape=2/3/4 refined controls：shape=2/3/4 的 field error 分别为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 分别为 `5.4174e-12/4.3288e-12/3.0001e-12`。三档 `128^3` sibling 均通过官方 `0.05` field gate 和独立 `1e-11` charge gate。该结果支持分辨率敏感性解释，不修改全局默认值，也不宣称正式 convergence order。
@@ -4556,6 +4558,55 @@ v_z \gg v_x,v_y,
 $$
 
 的场景。于是 field side 被压成带 `\gamma z` 拉伸的 Poisson 型求解，并近似保留 electrostatic、magnetostatic 以及沿主流向的 inductive effect。对 `N` 个 species，代价就是 `N` 次这类 Poisson solve。这条 bounded Darwin-lite explicit approximation 解释了为什么 `IV` 节的 LHC-like ultrarelativistic beam / electron-cloud 应用会特意选在 `\gamma\approx16.5` 的 moving frame 中做 first-principles PIC：在那里 beam 与 electron cloud 的 self-electric / self-magnetic cancellation 最强，最能放大 mover 的 frame-consistency 缺陷。文中报告 Boris 无论是否带 `\tan` 修正，都会让 beam 和 electron 宏粒子以非物理速度丢失；只有新 pusher 才能恢复预期的 hose-like instability，并且给出和实验室系 quasistatic WARP calculation 一致的 vertical emittance growth rate 与 saturation level。因此，对 WarpX 而言，`UpdateMomentumVay.H` 的历史角色应理解成 relativistic beam-crossing / boosted-frame consistency repair，而不是一个与一般场求解器或一般 relativistic mover 等价并列的“备选算法”。
+
+### 4.4.1 Vay Appendix A/B：显式 `\gamma` 根与回旋半径边界
+
+Vay 2008 的 Appendix A 给出了源码中 `gisq` / `gamma_new` 公式为什么可以显式计算。磁旋转中先定义
+
+$$
+\mathbf u^{i+1}=s\left[\mathbf u' +(\mathbf u'\cdot\mathbf t)\mathbf t+\mathbf u'\times\mathbf t\right],
+\qquad s=\frac{1}{1+t^2},
+\qquad \mathbf t=\frac{\boldsymbol\tau}{\gamma^{i+1}},
+$$
+
+其中 `\boldsymbol\tau=(q\Delta t/2m)\mathbf B`。对上式与 `\mathbf u` 做点积，利用 `\gamma^2=1+u^2/c^2`，并令
+
+$$
+\gamma'=\sqrt{1+u'^2/c^2},
+\qquad u^*=\frac{\mathbf u'\cdot\boldsymbol\tau}{c},
+\qquad \sigma=\gamma'^2-\tau^2,
+$$
+
+可把隐式的 relativistic factor 压成一个关于 `\gamma^2` 的二次方程：
+
+$$
+\gamma^4+(\tau^2-\gamma'^2)\gamma^2-\tau^2-u^{*2}=0.
+$$
+
+只保留正的实根，得到
+
+$$
+\gamma^{i+1}=\sqrt{\frac{\sigma+\sqrt{\sigma^2+4(\tau^2+u^{*2})}}{2}}.
+$$
+
+这解释了 `UpdateMomentumVay.H` 的实现顺序：先用 `u'` 和 `tau` 构造标量不变量，再取正根，最后由 `t=\tau/\gamma` 和 `s=1/(1+t^2)` 完成旋转。`gisq` 存的是 `\gamma^{-2}`，因此 device loop 不需要迭代求解 `\gamma`。这是 Appendix A 与当前 kernel 的直接公式桥接，不是普通 Boris 旋转中的经验系数。
+
+Appendix B 则给出常磁场、`\mathbf E=0` 时的 gyroradius 边界：
+
+$$
+\Delta\theta=2\arctan\left(\frac{\omega_c\Delta t}{2}\right),
+\qquad
+\mathbf v^{i+1/2}=\left[1+\left(\frac{\omega_c\Delta t}{2}\right)^2\right]\frac{\mathbf v^i+\mathbf v^{i+1}}{2},
+$$
+
+从圆周几何得到
+
+$$
+R=\frac{\|\mathbf v^{i+1/2}\|}{\omega_c}
+=\left[1+\left(\frac{\omega_c\Delta t}{2}\right)^2\right]^{1/2}\frac{\|\mathbf v^i\|}{\omega_c}.
+$$
+
+所以“Vay 在任意时间步都给出正确 gyroradius”必须加限定：若用于位置推进的半步速度满足 `\|\mathbf v^{i+1/2}\|=v_0`，则 `R=v_0/\omega_c`；若把整数时刻速度直接当作 `v_0`，仍会出现与 Boris 类似的放大因子。pusher 的动量更新、半步速度定义和位置更新必须一起检查。当前 WarpX `particle_pusher` 强 analysis 主要覆盖 force-free/drift-preservation，并没有按 Appendix B 的圆轨道、半步速度和 gyroradius 单独输出，因此不能声称已完成该论文附录的 runtime reproduction。
 
 ## 4.5 Higuera-Cary pusher：Boris-like 结构的相对论修正
 

@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-12：完成 v0.47 rho-side observable contract：对 shape=2/3/4 高分辨率 correction-on 的 `rho`、`rho_electrons`、`rho_ions` 做末态分解与时间序列观测；最终 `rho-(rho_electrons+rho_ions)` 相对差为 `1.228e-14/1.303e-14/1.343e-14`，但 integrated-rho drift 仅作为观测记录，不升级为完整 Gauss-law 或 current-closure 证明。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_rho-observable/contract.{json,md}`，脚本为 `scripts/analyze_rz_esirkepov_rho_observable.py`。
 - [x] 2026-07-12：完成 RZ Esirkepov shape=2/3/4 correction-on/off 完整高阶矩阵：`128x256` 下两种 correction 的 field gate 全部通过，correction-off charge residual 为 `9.644e-12/6.086e-12/6.724e-12`，correction-on 仍为 `2.177e-3/2.353e-3/2.552e-3`；新增 family 汇总脚本与 note，明确 field closure 与 correction-on charge boundary 分层。
 - [x] 2026-07-12：完成 RZ Esirkepov shape=2/3/4 correction-off 高阶 shape resolution family：粗网格 `Er` error 为 `0.1323/0.1734/0.2134`，细网格降至 `0.0093/0.0111/0.0137`；三档 refined charge residual `9.644e-12/6.086e-12/6.724e-12`，field/charge 双 gate 全部通过。新增 family 汇总脚本与 note，不外推到 correction-on、其他 geometry 或 AMR。
 - [x] 2026-07-12：完成 RZ Esirkepov `particle_shape=2` 高分辨率 paired runtime：`64x128` correction-off 的 `Er=0.1323` field boundary 在 `128x256` 降至 `0.0093`，同时 charge residual 为 `9.644e-12`；新增 shape 参数化汇总脚本和 `53-rz-esirkepov-shape2-resolution-contract.md`，仍不外推到 shape=3/4 或修改默认轴修正。

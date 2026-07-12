@@ -10,6 +10,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 148 条 `contrac
 
 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将“线性稳定不等于非线性无扰动”、相空间 clump/density hole 诊断和相对漂移自由能边界写入中文讲解笔记，并最小回填第 8 章；该结论不升格为 NCI 或 WarpX runtime physics gate。
 
+2026-07-13：整理 `Birdsall 1985` `3A ES1` 的最小程序骨架与 WarpX `InitData()`/`Evolve()` 阶段边界，补充不可等同说明和 Langmuir/初始化验证入口，作为下一次第 3A 章正文回填依据；当前 v0.68 继续保持 316 页。
+
 2026-07-13：将 LeeCPC2015 accepted manuscript 的 paper/source/regression crosswalk 接入第 7 章 `7.5.8`；正文现在可直接定位三方合同，同时保留 publisher-formatted PDF 和 `C1-C25` 逐系数等价尚未完成的边界。
 
 2026-07-13：改进 Higuera-Cary Poincare topology classifier，同时保留时间顺序与相空间中心角排序；长轨道三种 pusher 的角排序候选均无自交/轨道间交叉，确认原时间折线交叉是排序伪影，但完整论文 topology gate 仍关闭。

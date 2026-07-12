@@ -1,6 +1,7 @@
 # TODO
 
 - [x] 2026-07-13：重建 `docs/public-evidence-index.{json,md}`，从本地一级 case contract 汇总 148 条验证合同；修正递归扫描大体积 plotfile 树导致的重建风险，保留原始 PASS/FAIL/UNKNOWN，并显式标记 boundary/unproven/missing 证据。
+- [x] 2026-07-13：整理 `Birdsall 1985` `3A ES1` 的 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 与 WarpX `InitData()`/`Evolve()` 的近似对应、不可等同边界及 Langmuir/初始化验证入口，形成下一次第 3A 章正文回填依据；当前 v0.68 版面保持 316 页，暂不新增独立小节。
 - [x] 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将线性稳定与非线性湍流的边界、相空间 clump/density hole 诊断和相对漂移自由能写入中文讲解笔记，并最小回填第 8 章；明确不把书中转述升格为 NCI 或 WarpX runtime physics gate。
 - [x] 2026-07-12：对公开证据摘要执行 path hygiene，确认不含 `/Volumes/`、`/Users/`、`file://` 或绝对本地链接。
 - [x] 2026-07-12：完成 v0.68 成书构建、manifest 更新；GitHub push 在本轮提交后完成。

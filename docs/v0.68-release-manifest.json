@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 722,
-  "total_bytes": 27551936,
+  "total_bytes": 27552538,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1518787,
-      "sha256": "0c237a4736660bc0f53970c4311d76c0de3fc5900cae6b41d4c7187d3c509567"
+      "bytes": 1519047,
+      "sha256": "b4ef8821608d9764ab52a4a9f0c6a16c3054a2ee968815d3a556912f82311813"
     },
     {
       "path": "TODO.md",
-      "bytes": 1362370,
-      "sha256": "273b0e80eaf2b8da2ed2a848e474649a313f26dcf4d38ce30c64a385ca52a7a5"
+      "bytes": 1362704,
+      "sha256": "a1d0b172e90574d3f14882585cc794089ca0952219fd30d815f746278682a908"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3365264,
-      "sha256": "2e13f745914e8fa43eab38083b5b184108f3724ba4137b2f42a7ef2bc6c81b8b"
+      "bytes": 3365272,
+      "sha256": "e3748944d6206e3aa67ebb73b854805472eab8d52eefa0cfa201b6013d90b79a"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "7f5a3348726fdf202ea62051f465b966ee80724eccc884c1a99310cb82aec25d"
+      "sha256": "c7f3ea4affeac6618f06806921eaefd387cc7e4987e828acbbb4ec34d6b4947b"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",

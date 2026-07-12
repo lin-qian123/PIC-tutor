@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 149,
+  "record_count": 150,
   "status_counts": {
-    "PASS": 106,
+    "PASS": 107,
     "FAIL": 28,
     "UNKNOWN": 15
   },
@@ -11,7 +11,7 @@
     "PASS": 95,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 20
+    "BOUNDARY": 21
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -49,6 +49,17 @@
         "total_weight": 2.504087500000001e-07,
         "total_weight_pass": true,
         "total_weight_relative_error": 0.003655241100933395
+      }
+    },
+    {
+      "case": "abe-1975-abstract",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Abe et al. 1975 bounded abstract-level literature contract",
+      "classification": "ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING",
+      "scope": "abstract-level evidence only; no publisher-PDF or line-by-line claim",
+      "metrics": {
+        "passed": true
       }
     },
     {

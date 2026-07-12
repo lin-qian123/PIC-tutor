@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 723,
-  "total_bytes": 27558279,
+  "entry_count": 724,
+  "total_bytes": 27562579,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1519329,
-      "sha256": "a94d94657459c8e0bd09000f67d4372413d8051becfa51fe49f1f7c5aa2b24c9"
+      "bytes": 1519547,
+      "sha256": "21ecfa98239180f11cb5318c8a4d6bae09e428f3a03f23b203d391ff214b6041"
     },
     {
       "path": "TODO.md",
-      "bytes": 1363023,
-      "sha256": "d39681deb1136f3e9d4758d830d39583d008ab55bd54adbfe6872ac74705beef"
+      "bytes": 1363328,
+      "sha256": "bb83cc60e4279b8440376c229c5d89cbd4db7caf8dcdc478d5c6e3d3b34bf6c6"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
       "bytes": 5739427,
-      "sha256": "2be58694a65592f903ceb985aa7141cd6584b95884ee4b39f406a29fa5081c86"
+      "sha256": "4be068fc6799c803d575ef715d7f8fcb2568f9340f731872e29cdfc8f48721f1"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
       "bytes": 1067821,
-      "sha256": "1b3c898ee046ff8e3f70f977311a29e24850caa5a8a9f5c77cafc75b073a0ada"
+      "sha256": "21785e4308e4487533132a217daa90f7b4117dc53cdc06e0d3c93fb7f2c0bd66"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3365264,
-      "sha256": "82a3dfd60b6db9c1530c6285d41dbeff04dd936fa1c71b27eedd60db6f21245a"
+      "bytes": 3365271,
+      "sha256": "183b8db2604717c221062d5a46933e4e6695c56a5be565569bb45fc1ed6c1a61"
     },
     {
       "path": "docs/chapter-template.md",
@@ -82,8 +82,8 @@
     },
     {
       "path": "docs/literature-map.md",
-      "bytes": 76094,
-      "sha256": "04bce213f412db9cf579202dd3993a0d51fa15835cbe4741c31ba82fcd9a5033"
+      "bytes": 76147,
+      "sha256": "d988d3ed63607d1e998bbcf28f25ca21fecc5c132e0425221bf35c4644026c6d"
     },
     {
       "path": "docs/master-plan.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 80828,
-      "sha256": "e697cfe0eafa11ca0160769d46c1d8ff633d7223c4fb984cd586e79d4634db4e"
+      "bytes": 81231,
+      "sha256": "0eb0cbea865053faee2f7452839650f7f99693aa27d3725040465556dca9f1c1"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 52988,
-      "sha256": "82c136e08f28d3dae82d51898589ff89e45f2762501ed3aeb5aa659c2185bed1"
+      "bytes": 53238,
+      "sha256": "c250a0e79e68a5a6cd2ac6a5f8cc9c4d30f29b03fd54d0e32660a5da8d01cbc3"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "f7a6b8d590a60c50478cd9cf909f2d86f115bd2c443663b738e73566d5c4c282"
+      "sha256": "917895a12ffa49a9300a0a325762ee27834deae19a4c5dde7f22bce8457dab64"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 42067,
-      "sha256": "7984c9678b65691e2000985d3051b37eaf54b2b1cd6fb43f891bcbc5f5c86dfe"
+      "sha256": "d46e021efbbef1786e962dfa9b964a4e3e7b3eb3bb585d54e224631348e28d9b"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -768,7 +768,7 @@
     {
       "path": "manuscript/VERSION.md",
       "bytes": 62406,
-      "sha256": "8e4ab410f68e79eafdd6279e31ab73df748f9b4b3c50ee41acee9ba85f94dfcc"
+      "sha256": "ed7bb304759fa2a1ab44d40aebe56e8abe217f592445b11cd1638236fe30fd51"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -913,7 +913,7 @@
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
       "bytes": 111665,
-      "sha256": "4cf0b78b7b52c190cd8d679dc1d4d24d723d63b6d91500d7d40c7481861119c2"
+      "sha256": "18168175dc081a0fadadb54fa0d20b3a77abe3e64a3754fb5bc2ac41aefd4710"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -2569,6 +2569,11 @@
       "path": "scripts/analyze_uniform_plasma_restart.py",
       "bytes": 3454,
       "sha256": "cc490a6ad7c9bbca070642a482b0d9bfd72e0ab35331bf48b086ca8b8cfa7b91"
+    },
+    {
+      "path": "scripts/audit_abe_1975_abstract_contract.py",
+      "bytes": 3064,
+      "sha256": "fd109eb4fa67765164960c74e6d0f51d67b77109d2024a8c850277a5b5956cc7"
     },
     {
       "path": "scripts/audit_charge_deposition_bridge_contract.py",

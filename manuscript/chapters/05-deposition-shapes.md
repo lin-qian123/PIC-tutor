@@ -44,6 +44,8 @@ Birdsall 在 Chapter 13 又把这条 shape-factor 主线往“长期数值健康
 
 所以本章讨论 shape order 时，不能只写“更高阶更光滑、噪声更低”。更准确的说法是：shape order、cloud width 和 smoothing policy 一起决定了热等离子体多久会因为 finite-grid effects 累积出不可忽略的数值自热。
 
+这里的 Hockney 1971 依据已从单纯书目线索提升为摘要级证据：项目目录 `references/02_books_lecture_notes/1971_HockneyJCP1971_Measurements_of_collision_and_heating_times_in_a_two-dimensional_thermal_computer_plasma/` 保存了 IBM Research 作者机构页面、access audit 和摘要级中文讲解；`scripts/audit_hockney_1971_abstract_contract.py` 的 8 项检查全部通过。摘要支持 `tau_coll/tau_pe`、电场能量涨落、`(omega_pe Delta t)_opt` 和 `K_2` 分层的定量路线，但没有本地 publisher PDF，因此本段仍不声称论文正文或图表已逐段核对。
+
 `Dawson 1983` 则把同一条线往前退回到更基础的动机层：finite-size particles 的第一性目的不是“插值更方便”，而是先把 point-charge 的近距离大冲量软化掉，从而压低不想要的 collisional effects，同时保住长程 Coulomb collective behavior。也正因为粒子已经被改写成有限尺寸 cloud，空间上比 cloud 更细的电荷起伏本来就不再分辨，grid 才成为一种自然的 coarse-grained source representation。这条综述级表述很适合放在本章开头，因为它比直接从 `ShapeFactors.H` 展开更清楚地交代了：shape、charge sharing 和 sampled density 本来就是同一个物理建模决定的三个侧面。
 
 ## 5.1 电荷沉积的基本形式

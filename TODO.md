@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-12：完成 Hockney 1971 article-level abstract contract：建立论文专属目录、access audit 和摘要级中文讲解，新增 `scripts/audit_hockney_1971_abstract_contract.py`，8/8 检查通过；分类为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。IBM Research 作者机构页面提供 NGP/CIC/HNGP/HCIC、collision/heating scaling、optimum path 和 `K_2` 摘要证据，但 publisher full text、PDF、MinerU 和逐段核对仍未完成。
 - [x] 2026-07-12：完成 Esirkepov 2001 bounded compare contract：新增 `scripts/audit_esirkepov_bounded_compare.py`，对本地预印本资产、CPC 发表版题名/DOI、Section 1--5、Eq.(23)、二阶 spline 线索和 publisher PDF 缺失状态共 8 项检查全部通过；报告见 `runs/stage-c-validation/esirkepov-bounded-compare/contract.{json,md}`。该增量把证据边界固化为可重复审计，但仍明确 `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING`，不宣称 CPC 定稿逐行核对完成。
 - [x] 2026-07-12：完成 RZ `256x512` correction-on/off shape=1/2/3/4 双侧 family：field gate 8/8 全通过；correction-on charge 全为 BOUNDARY，correction-off shape=3/4 通过 `1e-11`，shape=1/2 分别为 `1.639e-11/1.020e-11`，不把 correction-off 局部 PASS 外推为通用修复。新增 `scripts/summarize_rz_esirkepov_highres_correction_family.py`。
 - [x] 2026-07-12：完成 RZ correction-on `256x512` shape=1/2/3/4 high-resolution family：field gate 全通过，charge residual 为 `7.554e-4/8.990e-4/9.289e-4/9.729e-4`，均由 axis cell 主导并保留 BOUNDARY；新增 `scripts/summarize_rz_esirkepov_highres_shape_family.py`，不宣称完整 Gauss-law 或正式 convergence order。

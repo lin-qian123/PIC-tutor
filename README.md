@@ -1,6 +1,8 @@
 # PIC-tutor
 
-当前成书版本为 `v0.62`，对应 310 页 3D Esirkepov refined matrix、RZ correction tradeoff audit 与 Esirkepov 2001 bounded compare contract 版；历史 `v0.61` 由 `manuscript/VERSION-v0.61.md` 保留。
+当前成书版本为 `v0.63`，对应 311 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare 和 Hockney 1971 abstract contract 版；历史 `v0.62` 由 `manuscript/VERSION-v0.62.md` 保留。
+
+2026-07-12：新增 Hockney 1971 article-level abstract contract，8/8 检查通过；项目内已保存正式书目信息、IBM Research 作者机构摘要、摘要级中文讲解和 full-text 缺失边界，证据分类为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 

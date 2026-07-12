@@ -24,7 +24,7 @@
 | `Birdsall 1985` | 已 materialize；项目内已有 PDF、MinerU、`images/`、中文讲解和 `reading-log` | 第 1 章、第 2 章，以及第 4/5/6 章 | PIC 作为 collective model 的合法性、`N_D`、`\lambda_D`、`\\omega_p\\Delta t`、finite-grid/aliasing/heating、最小 leapfrog runtime contract、ES1 静电 loop | 原书过长，项目内实际阅读与引用当前主要来自已完成的分卷 MinerU 和中文精读，不是整本都已逐章收口 |
 | `Dawson 1983` | 已 materialize；项目内已有 PDF、MinerU、`images/`、中文讲解和 `reading-log` | 第 1 章、第 2 章，以及第 4/6/8 章 | numerical experiment 视角、superparticle / weighted particles、finite-size particles、FFT-Poisson electrostatic contract、full EM / Darwin / diagnostics 哲学、quiet-start/statistical-theory 边界 | 已覆盖的重点足够支撑基础章节，但仍不是对全文所有例子的完全收口 |
 | `Hockney-Eastwood` | 原书仍缺本地合法 PDF；无项目内 MinerU 产物 | 第 1 章、第 2 章，后续还会回到第 5/6 章 | 当前只能把它写成 particle-mesh foundations 的 acquisition target，以及对 heating / optimum-path / force-anisotropy 主线的来源指向 | 不能把原书正文细节当作已核实一手证据 |
-| `Hockney 1971` fallback | 无本地 PDF；abstract-level 量化关系已确认 | 第 1 章优先，其次第 2/5/6 章 | `tau_coll / tau_pe = n(\\lambda_D^2+W^2)`、field fluctuation 缩放、optimum-path、`K_2` 分层 | 当前只有摘要级/landing-page 证据，不能替代原文逐段核实 |
+| `Hockney 1971` fallback | 已建立论文专属目录和摘要级中文讲解；无本地 PDF/MinerU | 第 1 章优先，其次第 2/5/6 章 | `tau_coll / tau_pe = n(\\lambda_D^2+W^2)`、field fluctuation 缩放、optimum-path、`K_2` 分层 | IBM Research 作者机构页面提供摘要；仍不能替代原文逐段核实 |
 | `Hockney et al. 1974` fallback | 无本地 PDF；正式题名/DOI 已确认 | 第 1 章与后续 heating/noise 主线 | `K_4`、QPM、potential correction 的正式 bibliographic 落点 | 当前无 full text；ScienceDirect `pdf` 端点在本环境下不可直接 materialize |
 | `Eastwood and Hockney 1974` fallback | 无本地 PDF；正式题名/DOI 已确认 | 第 1 章与第 5 章 shape/force law 主线 | force anisotropy 与 shape comparison 的正式 bibliographic 落点 | 当前无 full text；不能把图和结论当作已核正文据 |
 | `Yee 1966` | metadata/DOI 已确认；当前无本地 PDF / MinerU 产物 | 第 2 章优先，后续第 6 章 FDTD 主线 | staggered FDTD 的原始历史入口、`Yee` 命名与离散 Maxwell solver 谱系的 bibliographic 落点 | 当前不能把其正文细节写成已核实的一手推导 |
@@ -48,13 +48,13 @@
 当前只允许写成“待补的一手来源”的条目：
 
 - `Hockney-Eastwood`
-- `Hockney 1971 / 1974 / Eastwood-Hockney 1974`
+- `Hockney 1974 / Eastwood-Hockney 1974`
 - `Yee 1966`
 
 这意味着第 1 章当前版本的安全边界是：
 
 - 可以把 `Birdsall + Dawson` 当作已核实的一手理论基础；
-- 可以把 `Hockney/Eastwood` 当作明确的来源缺口与后续增强方向；
+- 可以把 `Hockney 1971` 的摘要级定量关系作为边界证据，并把其余 `Hockney/Eastwood` 条目当作明确的来源缺口与后续增强方向；
 - 不能把 `Hockney/Eastwood/Yee` 的原始推导、原图或原书措辞冒充成已核正文据。
 
 ### 第 2 章 `02-pic-loop.md`

@@ -1,0 +1,52 @@
+{
+  "schema": "transition-zone-route-count-v0",
+  "scope": "synthetic design fixture; not a current WarpX runtime output",
+  "records": [
+    {
+      "step": 1,
+      "level": 1,
+      "species": "electrons",
+      "nfine_gather": 3,
+      "nbuffer_gather": 1,
+      "nfine_deposit": 3,
+      "nbuffer_deposit": 1,
+      "np_before_partition": 4,
+      "weight_fine": 3.0,
+      "weight_buffer": 1.0,
+      "weight_deposited": 4.0,
+      "rho_fp_l1": 1.25,
+      "rho_buf_l1": 0.25,
+      "current_fp_l1": 2.5,
+      "current_buf_l1": 0.5,
+      "coarsened_fine_l1": 1.5,
+      "merged_coarse_l1": 1.75,
+      "owner_mask_removed_l1": 0.125,
+      "post_sync_l1": 1.75,
+      "route_partition_pass": true,
+      "source_merge_pass": true
+    },
+    {
+      "step": 1,
+      "level": 1,
+      "species": "ions",
+      "nfine_gather": 2,
+      "nbuffer_gather": 2,
+      "nfine_deposit": 2,
+      "nbuffer_deposit": 2,
+      "np_before_partition": 4,
+      "weight_fine": 2.0,
+      "weight_buffer": 2.0,
+      "weight_deposited": 4.0,
+      "rho_fp_l1": 0.75,
+      "rho_buf_l1": 0.5,
+      "current_fp_l1": 1.25,
+      "current_buf_l1": 0.75,
+      "coarsened_fine_l1": 1.0,
+      "merged_coarse_l1": 1.5,
+      "owner_mask_removed_l1": 0.25,
+      "post_sync_l1": 1.5,
+      "route_partition_pass": true,
+      "source_merge_pass": true
+    }
+  ]
+}

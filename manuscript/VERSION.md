@@ -2,6 +2,8 @@
 
 本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 135 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
+本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
+
 本版新增 Hockney 1971 article-level abstract contract：8 项本地检查全部通过，正式题名、DOI、作者机构摘要、摘要级中文讲解和 full-text 缺失边界均已归档。该资产支持 collision/heating scaling、optimum path 和 `K_2` 的摘要级引用，但不替代 publisher PDF、MinerU 或逐段核对。
 
 本版又新增两篇 1974 particle-mesh 摘要级 contract：QPM/PPPM 与 force-shaping 各 8 项检查通过，补入 Gaussian cloud、potential shaping、sub-mesh resolution、charge-sharing hierarchy 和 force anisotropy 的来源边界；两篇 publisher full text 仍未 materialize。

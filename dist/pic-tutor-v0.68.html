@@ -819,6 +819,13 @@ PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
 <code>runs/</code> 仍不进入公共
 release，也不把摘要当作原始运行证据的替代品。</p>
+<p>本版又把 AMR transition-zone route-count packet 落成
+<code>scripts/validate_transition_zone_route_contract.py</code> 和
+<code>docs/transition-zone-route-contract-example.json</code>：正例
+<code>DESIGN_SCHEMA_VALIDATED</code>，故意破坏 route count
+的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与
+arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR
+physics PASS。</p>
 <p>本版新增 Hockney 1971 article-level abstract contract：8
 项本地检查全部通过，正式题名、DOI、作者机构摘要、摘要级中文讲解和
 full-text 缺失边界均已归档。该资产支持 collision/heating
@@ -845,7 +852,7 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 发表元数据、Section 1–5、Eq.(23)、二阶 spline 线索与 publisher PDF
 缺失状态共 8 项检查全部通过。该 contract
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
-<p>当前合订 PDF 为 312 页；本 v0.68 版本在 v0.67
+<p>当前合订 PDF 为 313 页；本 v0.68 版本在 v0.67
 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整
 Gauss-law 闭环。</p>
 <p>本版另补入 RZ shape=1 的 <code>256x512</code> resolution
@@ -22933,8 +22940,24 @@ packet：<code>notes/code-reading/particles/50-transition-zone-route-count-imple
 <code>nfine/nbuffer</code>、weight、<code>rho/J</code>、coarsened-fine、owner-mask
 和 post-sync 的最小 reduced schema。该 packet 仍未写入当前
 <code>../warpx</code>，因此它是接续开发入口，不是已启用的 CI
-regression。 官方 <code>test_2d_subcycling_mr</code> 也已完成当前
-checkout 的 2-rank、250 步运行。独立脚本
+regression。</p>
+<p>本轮进一步把这个 schema 落成
+<code>scripts/validate_transition_zone_route_contract.py</code>，并用
+<code>docs/transition-zone-route-contract-example.json</code> 做
+synthetic fixture。validator 对两条 species 记录检查 gather/deposit
+route count、fine/buffer weight closure、<code>rho/J</code> 与
+coarsened/merged/post-sync 字段完整性以及显式 gate；正例分类为
+<code>DESIGN_SCHEMA_VALIDATED</code>，故意破坏一个 route count
+的负例被拒绝。该结果只证明未来 analysis consumer 的账本接口和 arithmetic
+gate 已可执行，不证明当前 WarpX 已输出 route ledger；当前 checkout
+仍保持 <code>RUNTIME_LEDGER_UNPROVEN</code>。</p>
+<p>对应说明和 fixture 位于
+<code>docs/transition-zone-route-contract.{md,json}</code>。真正关闭本节
+BOUNDARY 仍需要在 WarpX 的 <code>PartitionParticlesInBuffers()</code>
+后接入 runtime hook，并用真实
+<code>current_buf/rho_buf</code>、coarsened fine 和 owner-mask
+数据生成同一 schema。 官方 <code>test_2d_subcycling_mr</code>
+也已完成当前 checkout 的 2-rank、250 步运行。独立脚本
 <code>scripts/analyze_subcycling_mr_contract.py</code> 读取初末
 <code>diag1000000/diag1000250</code>：末态为两层
 AMR、<code>64x256x1</code>，E/B/J 在 finest covering grid 上全部

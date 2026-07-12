@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 685,
-  "total_bytes": 26508922,
+  "entry_count": 688,
+  "total_bytes": 26522141,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1509024,
-      "sha256": "93fb342f331b2252bdcc2997e7d53a5f0e5a2462d4139abc4b0b1431d7eb79f4"
+      "bytes": 1509351,
+      "sha256": "727df1eef45931dd205d11277dd522e96ce05c7f50170d40973d358003481a32"
     },
     {
       "path": "TODO.md",
-      "bytes": 1352472,
-      "sha256": "6ee5ffc83a4eae85895b922bf3da486ac25c53565f05cd541acbbb89e46bb52f"
+      "bytes": 1352686,
+      "sha256": "b7f35aed5f3f5a8495b4e2de99f323211a82a7a5f4d22db950872cfd49417dc1"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5394378,
-      "sha256": "56a7401f04a4ec96dee436c29b4796f99b8f684e5e787f58e23cd9ee63278efc"
+      "bytes": 5395857,
+      "sha256": "6926b72f3fcffe7f6135bded8877a975ed41c0d93658052904bfcfc51de0c73b"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1051058,
-      "sha256": "cf55ddda97d5e2bcb554c8b6e22432e655483d8a3387c88b10110ecd962c3b2b"
+      "bytes": 1052398,
+      "sha256": "1510299a6af11e10a6c007c30d29063a0ebe6a09ecf57a7e659db45e18983fca"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3119745,
-      "sha256": "a9365faa24f3a4f5bde851a4b632dd9fc0f58fb6c2672665b287a826a0708493"
+      "bytes": 3121369,
+      "sha256": "d59c856cffa0199a0d859738c739d83a24a540f5fd37c4f1c9b6c97bcae93eb6"
     },
     {
       "path": "docs/chapter-template.md",
@@ -122,8 +122,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 3961,
-      "sha256": "a5b4e938be84380ef1cd51b8d18c945555827b2d3128c09100d22a7a41c9b517"
+      "bytes": 4126,
+      "sha256": "90c1b91a6968c430d1534f6f0d1cc10d8291d7a4dde5eff39175cf42e72812a7"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -134,6 +134,16 @@
       "path": "docs/source-map.md",
       "bytes": 53679,
       "sha256": "e01b0b3986634e369290bf58dec4ecfa8132c2f672e5095c16a855996647eccc"
+    },
+    {
+      "path": "docs/transition-zone-route-contract-example.json",
+      "bytes": 1350,
+      "sha256": "52dc623f196c21679ff71e04d8f501b509b6992df0a2fb57ae35ac68d0a02475"
+    },
+    {
+      "path": "docs/transition-zone-route-contract.md",
+      "bytes": 1021,
+      "sha256": "f58d40299567652953583a3095aecac1b48ee1abdb1859dd32a8fcbfe03eac1f"
     },
     {
       "path": "docs/v0.41-release-manifest.json",
@@ -417,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 37134,
-      "sha256": "b1d57fb7ed72ddfdd2781148a64881c16b089846b4cb44f48e8ddca8c5e2f2f1"
+      "bytes": 37447,
+      "sha256": "5303ef1eabf9bfcb4227f08d9500b33b32b4d03ef6a4fea093ca91d9dfe3cdfb"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -757,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 58170,
-      "sha256": "32eb2915bd1dff78b5db4341c90777eb9d744d608d1d484f6c931dccae839683"
+      "bytes": 58583,
+      "sha256": "a84698f3aeb22421a2e58e1d554ba608bd065e31e6235ed86dd8cff9189a7ce1"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -887,8 +897,8 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 163811,
-      "sha256": "dc21603a1ca5e4dafef29b6b34f8a7ea750223b9d0d0c92d32946754e5c8823e"
+      "bytes": 164738,
+      "sha256": "4555c86503a61655137661f239d91a2b167689a6b65133985ba00f6fffb770b3"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
@@ -3299,6 +3309,11 @@
       "path": "scripts/summarize_rz_langmuir_psatd_family.py",
       "bytes": 4135,
       "sha256": "1f9e82c1826c0d2681e8a16e3d77556b3b338ec12482fa35d3d9aa6e2f201d2a"
+    },
+    {
+      "path": "scripts/validate_transition_zone_route_contract.py",
+      "bytes": 4046,
+      "sha256": "086ac83af884a04ccdfd6506494c6c4afee54d0e2a4463d1bbaa1aef641b8a00"
     },
     {
       "path": "scripts/verify_esirkepov_density_decomposition.py",

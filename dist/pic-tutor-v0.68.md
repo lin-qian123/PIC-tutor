@@ -4,6 +4,8 @@
 
 本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 135 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
+本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
+
 本版新增 Hockney 1971 article-level abstract contract：8 项本地检查全部通过，正式题名、DOI、作者机构摘要、摘要级中文讲解和 full-text 缺失边界均已归档。该资产支持 collision/heating scaling、optimum path 和 `K_2` 的摘要级引用，但不替代 publisher PDF、MinerU 或逐段核对。
 
 本版又新增两篇 1974 particle-mesh 摘要级 contract：QPM/PPPM 与 force-shaping 各 8 项检查通过，补入 Gaussian cloud、potential shaping、sub-mesh resolution、charge-sharing hierarchy 和 force anisotropy 的来源边界；两篇 publisher full text 仍未 materialize。
@@ -16,7 +18,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 312 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 313 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -14556,6 +14558,10 @@ p_gather_main: fine_gather = 0, coarse_gather = np
 因此，v0.40 的第 7 章对 transition zone 应采用“源码已核、间接验证已核、专门 route proof 待实现”的证据等级。下一步真正进入 WarpX 时，应先实现 reduced diagnostic skeleton 和 `PartitionParticlesInBuffers()` 后的轻量 hook，再接入五类最小输入；在此之前，本书不会把现有 MR checksum 或 residual-field analysis 改写成 branch-level validation。
 
 本轮又把这条“下一步”压成可 review 的 implementation packet：`notes/code-reading/particles/50-transition-zone-route-count-implementation-packet.md` 固定了 `PhysicalParticleContainer::Evolve()`、`SyncCurrent/SyncRho` 的插入点，以及 `nfine/nbuffer`、weight、`rho/J`、coarsened-fine、owner-mask 和 post-sync 的最小 reduced schema。该 packet 仍未写入当前 `../warpx`，因此它是接续开发入口，不是已启用的 CI regression。
+
+本轮进一步把这个 schema 落成 `scripts/validate_transition_zone_route_contract.py`，并用 `docs/transition-zone-route-contract-example.json` 做 synthetic fixture。validator 对两条 species 记录检查 gather/deposit route count、fine/buffer weight closure、`rho/J` 与 coarsened/merged/post-sync 字段完整性以及显式 gate；正例分类为 `DESIGN_SCHEMA_VALIDATED`，故意破坏一个 route count 的负例被拒绝。该结果只证明未来 analysis consumer 的账本接口和 arithmetic gate 已可执行，不证明当前 WarpX 已输出 route ledger；当前 checkout 仍保持 `RUNTIME_LEDGER_UNPROVEN`。
+
+对应说明和 fixture 位于 `docs/transition-zone-route-contract.{md,json}`。真正关闭本节 BOUNDARY 仍需要在 WarpX 的 `PartitionParticlesInBuffers()` 后接入 runtime hook，并用真实 `current_buf/rho_buf`、coarsened fine 和 owner-mask 数据生成同一 schema。
 官方 `test_2d_subcycling_mr` 也已完成当前 checkout 的 2-rank、250 步运行。独立脚本 `scripts/analyze_subcycling_mr_contract.py` 读取初末 `diag1000000/diag1000250`：末态为两层 AMR、`64x256x1`，E/B/J 在 finest covering grid 上全部 finite；moving window 的实际 z 位移为 `1.9453125e-5 m`，而 `c*t=1.9529297e-5 m`，误差 `7.6171875e-8 m`，不超过 coarse `dz=7.8125e-8 m`；最终 `driver/beam/plasma_e/plasma_p` 粒子数分别为 `10000/10000/30218/31872`。初始诊断帧尚未包含连续注入的两个 plasma species，脚本将其记录为初始化时序而非失败。该 contract 只支撑 subcycling+MR+moving-window 的运行完整性和几何时间一致性，不支撑 transition-zone route-count、fine/coarse 电荷守恒或粒子 gather/deposition 分区证明。报告归档于 `runs/stage-c-validation/subcycling_2d_mr_mpi2/contract.{json,md}`。
 
 

@@ -1,6 +1,8 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.67 合订 PDF 为 312 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v67_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.68 合订 PDF 为 312 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+
+v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
 
 本轮又补入 Hockney 1971 的摘要级 article asset：8 项本地 contract 全部通过，正文只使用摘要支持的 collision/heating scaling、optimum path 和 `K_2` 关系，继续明确 publisher full text、PDF、MinerU 和逐段核对尚未完成。
 

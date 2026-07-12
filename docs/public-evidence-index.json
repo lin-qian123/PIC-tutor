@@ -1,0 +1,2031 @@
+{
+  "index": "PIC-tutor public validation evidence digest",
+  "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
+  "record_count": 135,
+  "status_counts": {
+    "PASS": 91,
+    "FAIL": 29,
+    "UNKNOWN": 15
+  },
+  "evidence_kind_counts": {
+    "PASS": 87,
+    "FAIL": 28,
+    "UNKNOWN": 7,
+    "BOUNDARY": 13
+  },
+  "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
+  "records": [
+    {
+      "case": "2d_flux_injection_from_eb_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_2d_flux_injection_from_eb",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "eb_outside_pass": true,
+        "expected_weight": 6.283185307179586e-08,
+        "min_radius_ratio": 0.9986533355394428,
+        "particle_count": 50235,
+        "total_weight": 6.279375000000002e-08,
+        "total_weight_pass": true,
+        "total_weight_relative_error": 0.0006064292223293722
+      }
+    },
+    {
+      "case": "3d_flux_injection_from_eb_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_3d_flux_injection_from_eb",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "eb_outside_pass": true,
+        "expected_weight": 2.5132741228718345e-07,
+        "min_radius_ratio": 0.9963803673196601,
+        "particle_count": 801308,
+        "total_weight": 2.504087500000001e-07,
+        "total_weight_pass": true,
+        "total_weight_relative_error": 0.003655241100933395
+      }
+    },
+    {
+      "case": "charge-deposition-bridge-source",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "ABLASTR charge-deposition bridge source contract",
+      "classification": null,
+      "scope": "source mapping only; not a numerical charge-deposition regression",
+      "metrics": {
+        "anchor_count": 13,
+        "missing_count": 0,
+        "passed": true
+      }
+    },
+    {
+      "case": "deposition-geometry-order-source",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "deposition geometry/order source dispatch",
+      "classification": null,
+      "scope": "read-only source audit; does not claim runtime coverage for every geometry/order combination",
+      "metrics": {
+        "anchor_count": 53,
+        "passed": true,
+        "passed_anchor_count": 53
+      }
+    },
+    {
+      "case": "esirkepov-bounded-compare",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Esirkepov 2001 bounded preprint/publication comparison",
+      "classification": "PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING",
+      "scope": "bounded structural compare only; no publisher-PDF line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov-density-decomposition",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov second-order density decomposition identity",
+      "classification": null,
+      "scope": "paper formula / algebra layer; not a WarpX kernel or end-to-end regression",
+      "metrics": {
+        "max_residual": 8.881784197001252e-16,
+        "passed": true,
+        "sample_count": 10000
+      }
+    },
+    {
+      "case": "esirkepov-notation-source-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov paper-to-WarpX notation bridge",
+      "classification": null,
+      "scope": "source mapping only; does not claim publisher-PDF line-by-line equivalence or all geometry/order runtime coverage",
+      "metrics": {
+        "anchor_count": 14,
+        "passed": true,
+        "passed_anchor_count": 14
+      }
+    },
+    {
+      "case": "esirkepov-source-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "explicit Esirkepov old/new-shape source skeleton",
+      "classification": null,
+      "scope": "read-only source audit; not a runtime or kernel numerical regression",
+      "metrics": {
+        "anchor_count": 14,
+        "passed": true,
+        "passed_anchor_count": 14
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_1d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 8.34503170903001e-12,
+        "charge_residual_max": 3981.65625,
+        "charge_scale_max": 477128953948913.25,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_2d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 3.5650106081703597e-12,
+        "charge_residual_max": 1280.375,
+        "charge_scale_max": 359150403947077.2,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_2d_mr_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Esirkepov Langmuir MR level-wise charge contract",
+      "classification": "BOUNDARY",
+      "scope": "level-wise reader-side diagnostic; not a complete AMR source-sync or route-count proof",
+      "metrics": {
+        "charge_tolerance": 1e-11,
+        "passed": false
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_2d_particle_shape_4_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 2.8977144942762825e-12,
+        "charge_residual_max": 996.5,
+        "charge_scale_max": 343891712578426.56,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_2d_shape3_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 4.560747398772118e-12,
+        "charge_residual_max": 1591.4375,
+        "charge_scale_max": 348942258987739.56,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_3d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 1.3029121817198547e-12,
+        "charge_residual_max": 1500.0,
+        "charge_scale_max": 1151267154490786.8,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_3d_shape-matrix",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "3D Esirkepov Langmuir particle-shape runtime matrix",
+      "classification": null,
+      "scope": "2-rank periodic Yee Langmuir; 64^3 base plus 128^3 shape=2/3/4 refined controls; no formal convergence-order claim",
+      "metrics": {
+        "all_charge_pass": true,
+        "passed": true,
+        "refined_all_charge_pass": true,
+        "refined_all_field_pass": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_3d_shape2_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 1.3913972562816097e-12,
+        "charge_residual_max": 1597.875,
+        "charge_scale_max": 1148395968718656.5,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_3d_shape2_resolution128_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 5.417429940268208e-12,
+        "charge_residual_max": 3379.3125,
+        "charge_scale_max": 623785178075177.0,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_3d_shape3_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 9.204308679216726e-13,
+        "charge_residual_max": 1095.5,
+        "charge_scale_max": 1190203455989728.5,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_3d_shape3_resolution128_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 4.3288274640721505e-12,
+        "charge_residual_max": 2751.5,
+        "charge_scale_max": 635622468864039.6,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_3d_shape4_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 7.239256249794772e-13,
+        "charge_residual_max": 877.5,
+        "charge_scale_max": 1212141095329891.8,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_3d_shape4_resolution128_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof",
+      "metrics": {
+        "charge_relative_residual": 3.0000656036883095e-12,
+        "charge_residual_max": 1920.21875,
+        "charge_scale_max": 640058919924705.9,
+        "charge_tolerance": 1e-11,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rcylinder_charge_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov radial Er and charge reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.004710577454393602,
+        "charge_passed": false,
+        "charge_relative_residual": 0.004710577454393602,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0006235199740751721,
+        "passed": false,
+        "relative_er_error": 0.021744518334393344
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rcylinder_charge_no_verboncoeur_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov radial Er and charge reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 3.1862853409632516e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 3.5054651933075414e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 3.5054651933075414e-12,
+        "passed": true,
+        "relative_er_error": 0.01798056859567138
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rcylinder_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov radial Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er/theory check; not a full charge-conservation or all-combination regression",
+      "metrics": {
+        "passed": true,
+        "relative_er_error": 0.021744518334393344
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rcylinder_shape2_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov radial Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er/theory check; not a full charge-conservation or all-combination regression",
+      "metrics": {
+        "passed": true,
+        "relative_er_error": 0.014538731716157202
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rcylinder_shape3_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov radial Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er/theory check; not a full charge-conservation or all-combination regression",
+      "metrics": {
+        "passed": true,
+        "relative_er_error": 0.02403853765439624
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rcylinder_shape4_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov radial Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er/theory check; not a full charge-conservation or all-combination regression",
+      "metrics": {
+        "passed": true,
+        "relative_er_error": 0.035547424016796975
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rsphere_charge_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov radial Er and charge reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.04165922070361282,
+        "charge_passed": false,
+        "charge_relative_residual": 0.04165922070361282,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.002531402965202412,
+        "passed": false,
+        "relative_er_error": 0.005404660483220067
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rsphere_charge_n128_off_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov radial Er and charge reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 9.842865536436999e-11,
+        "charge_passed": false,
+        "charge_relative_residual": 9.842865536436999e-11,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 3.881674351648735e-11,
+        "passed": false,
+        "relative_er_error": 0.010409992800954126
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rsphere_charge_n128_on_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov radial Er and charge reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.013904292839509402,
+        "charge_passed": false,
+        "charge_relative_residual": 0.013904292839509402,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0009503782437110924,
+        "passed": false,
+        "relative_er_error": 0.033890908922367444
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rsphere_charge_n256_off_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov radial Er and charge reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 7.460937649321889e-11,
+        "charge_passed": false,
+        "charge_relative_residual": 7.460937649321889e-11,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 1.712408872012303e-11,
+        "passed": false,
+        "relative_er_error": 0.011174858445806908
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rsphere_charge_n256_on_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov radial Er and charge reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.004142252590710729,
+        "charge_passed": false,
+        "charge_relative_residual": 0.004142252590710729,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0002770351164748635,
+        "passed": false,
+        "relative_er_error": 0.009422405793057892
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rsphere_charge_no_verboncoeur_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov radial Er and charge reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 2.419909594988411e-11,
+        "charge_passed": false,
+        "charge_relative_residual": 2.419909594988411e-11,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 1.4140114197969747e-11,
+        "passed": false,
+        "relative_er_error": 0.013800881908083002
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rsphere_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov radial Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er/theory check; not a full charge-conservation or all-combination regression",
+      "metrics": {
+        "passed": true,
+        "relative_er_error": 0.005404660483220067
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rsphere_shape2_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov radial Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er/theory check; not a full charge-conservation or all-combination regression",
+      "metrics": {
+        "passed": true,
+        "relative_er_error": 0.010070073404105487
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rsphere_shape3_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov radial Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er/theory check; not a full charge-conservation or all-combination regression",
+      "metrics": {
+        "passed": true,
+        "relative_er_error": 0.015108651884574139
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rsphere_shape4_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov radial Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent radial Er/theory check; not a full charge-conservation or all-combination regression",
+      "metrics": {
+        "passed": true,
+        "relative_er_error": 0.02195398944651997
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_axis-correction-comparison",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "RZ Esirkepov Verboncoeur axis correction comparison",
+      "classification": "AXIS_CORRECTION_OFF_RESTORES_CHARGE_GATE",
+      "scope": "paired reader-side comparison; does not justify changing the global default",
+      "metrics": {
+        "charge_gate": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_axis-correction-family",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ Esirkepov axis-correction shape family",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": true,
+        "refined_field_all_pass": true,
+        "refined_off_all_pass": true,
+        "refined_on_all_charge_boundary": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_axis-resolution-comparison",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ Esirkepov axis-correction resolution comparison",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "correction_on_axis_residual_reduction": 2.3643711907660565,
+        "passed": true,
+        "refined_off_all_gates_pass": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_cleaning-comparison",
+      "status": "UNKNOWN",
+      "evidence_kind": "BOUNDARY",
+      "contract": "RZ Esirkepov divE-cleaning sensitivity comparison",
+      "classification": "AXIS_DOMINATED_CLEANING_SENSITIVE_DIAGNOSTIC_BOUNDARY",
+      "scope": "paired reader-side comparison; not a kernel fix or full RZ conservation proof",
+      "metrics": {
+        "charge_residual_off_over_on": 26.976551516581527
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_highres_correction-family",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "RZ Esirkepov 256x512 correction-on/off shape family",
+      "classification": "RZ_HIGHRES_CORRECTION_SHAPE_TRADEOFF",
+      "scope": "2-rank RZ 256x512 shape=1/2/3/4 correction-on/off controls; not a global-default or formal convergence claim",
+      "metrics": {
+        "all_field_pass": true,
+        "on_all_charge_pass": false
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_highres_shape-family",
+      "status": "UNKNOWN",
+      "evidence_kind": "BOUNDARY",
+      "contract": "RZ Esirkepov correction-on highest-resolution shape family",
+      "classification": "RZ_HIGHRES_FIELD_PASS_AXIS_CHARGE_BOUNDARY",
+      "scope": "2-rank RZ correction-on 256x512 shape=1/2/3/4 controls; no global-default or formal convergence claim",
+      "metrics": {
+        "all_charge_pass": false,
+        "all_field_pass": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.0035929741112595034,
+        "charge_passed": false,
+        "charge_relative_residual": 0.0035929741112595034,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0004292743653990161,
+        "passed": false,
+        "relative_er_error": 0.010748924155027022,
+        "relative_ez_error": 0.008240222669445638
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_no_cleaning_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.09692605121013571,
+        "charge_passed": false,
+        "charge_relative_residual": 0.09692605121013571,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 6.5403691794644035e-12,
+        "passed": false,
+        "relative_er_error": 0.024269291068163567,
+        "relative_ez_error": 0.004941341220026403
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_no_verboncoeur_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 5.512607403282768e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 5.512607403282768e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 1.7202442240408307e-12,
+        "passed": true,
+        "relative_er_error": 0.04279608308788969,
+        "relative_ez_error": 0.009479615923683264
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_resolution-trend",
+      "status": "UNKNOWN",
+      "evidence_kind": "BOUNDARY",
+      "contract": "RZ Esirkepov shape=1 three-resolution correction trend",
+      "classification": "CORRECTION_ON_RESOLUTION_TREND_OFF_NONMONOTONE_BOUNDARY",
+      "scope": "2-rank RZ shape=1 case-local 64x128/128x256/256x512 controls; descriptive trend, not formal convergence order",
+      "metrics": {
+        "off_charge_all_pass": false,
+        "on_axis_residual_monotone_decrease": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_resolution128_axis-correction-comparison",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "RZ Esirkepov Verboncoeur axis correction comparison",
+      "classification": "AXIS_CORRECTION_OFF_RESTORES_CHARGE_GATE",
+      "scope": "paired reader-side comparison; does not justify changing the global default",
+      "metrics": {
+        "charge_gate": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_resolution128_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.001519631995725417,
+        "charge_passed": false,
+        "charge_relative_residual": 0.001519631995725417,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0004691937939105463,
+        "passed": false,
+        "relative_er_error": 0.027970292400520305,
+        "relative_ez_error": 0.03048696870168914
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_resolution128_no_verboncoeur_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 9.353410309699217e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 9.353410309699217e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 3.664230915902013e-12,
+        "passed": true,
+        "relative_er_error": 0.028089026960080407,
+        "relative_ez_error": 0.03661603258231089
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_resolution256_off_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 1.6391145153439027e-11,
+        "charge_passed": false,
+        "charge_relative_residual": 1.6391145153439027e-11,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 8.458667599131464e-12,
+        "passed": false,
+        "relative_er_error": 0.012273448668731042,
+        "relative_ez_error": 0.01501338144035843
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_resolution256_on_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.000755370723357024,
+        "charge_passed": false,
+        "charge_relative_residual": 0.000755370723357024,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0001720180817775647,
+        "passed": false,
+        "relative_er_error": 0.01235893745573737,
+        "relative_ez_error": 0.01296416058309603
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_rho-observable",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ Esirkepov direct rho/species observable",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "all_final_species_difference_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape-axis-matrix",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "RZ Esirkepov shape and axis-correction matrix",
+      "classification": "AXIS_CORRECTION_CHARGE_FIELD_TRADEOFF_BY_SHAPE",
+      "scope": "paired 2-rank reader-side comparison; does not justify changing the global default",
+      "metrics": {}
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape-matrix",
+      "status": "UNKNOWN",
+      "evidence_kind": "BOUNDARY",
+      "contract": "RZ Esirkepov Langmuir shape matrix",
+      "classification": "FIELD_SHAPE_1_TO_4_PASS_AXIS_CHARGE_BOUNDARY",
+      "scope": "2-rank reader-side matrix with default Verboncoeur axis correction; not a global geometry/order proof",
+      "metrics": {
+        "charge_coverage": false,
+        "field_coverage": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape-resolution-family",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ Esirkepov correction-off shape-resolution family",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "all_coarse_field_fail": true,
+        "all_refined_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape2_axis-resolution-comparison",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ Esirkepov axis-correction resolution comparison",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "baseline_off_all_gates_pass": false,
+        "correction_on_axis_residual_reduction": 1.9774298184720984,
+        "passed": true,
+        "refined_off_all_gates_pass": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape2_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.004305829167863592,
+        "charge_passed": false,
+        "charge_relative_residual": 0.004305829167863592,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0007265406263389492,
+        "passed": false,
+        "relative_er_error": 0.057032817444840796,
+        "relative_ez_error": 0.012799428385307685
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape2_no_verboncoeur_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 2.20231490094844e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 2.20231490094844e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": false,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 8.908261358727887e-13,
+        "passed": false,
+        "relative_er_error": 0.13234642741439898,
+        "relative_ez_error": 0.014448705869106775
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape2_resolution128_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.002177487730609109,
+        "charge_passed": false,
+        "charge_relative_residual": 0.002177487730609109,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0006990881083029702,
+        "passed": false,
+        "relative_er_error": 0.009320902369449784,
+        "relative_ez_error": 0.005154383715766646
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape2_resolution128_no_verboncoeur_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 9.64413110993894e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 9.64413110993894e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 4.2407381606530104e-12,
+        "passed": true,
+        "relative_er_error": 0.009318104247427853,
+        "relative_ez_error": 0.0077745758268700695
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape2_resolution256_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.0008989555421081454,
+        "charge_passed": false,
+        "charge_relative_residual": 0.0008989555421081454,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0002232327449135659,
+        "passed": false,
+        "relative_er_error": 0.012205838178232484,
+        "relative_ez_error": 0.0106301956827487
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape2_resolution256_off_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 1.0195185478028515e-11,
+        "charge_passed": false,
+        "charge_relative_residual": 1.0195185478028515e-11,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 4.3100257279153725e-12,
+        "passed": false,
+        "relative_er_error": 0.01749527810426347,
+        "relative_ez_error": 0.012062038923733472
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape3_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.004340566867227309,
+        "charge_passed": false,
+        "charge_relative_residual": 0.004340566867227309,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0007572914920861558,
+        "passed": false,
+        "relative_er_error": 0.08694470759096427,
+        "relative_ez_error": 0.014089897924156403
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape3_no_verboncoeur_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 2.1030591140073517e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 2.1030591140073517e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": false,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 8.078520884641161e-13,
+        "passed": false,
+        "relative_er_error": 0.1733684254696585,
+        "relative_ez_error": 0.016153297921436386
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape3_resolution128_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.0023528899387743555,
+        "charge_passed": false,
+        "charge_relative_residual": 0.0023528899387743555,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0007613217106623299,
+        "passed": false,
+        "relative_er_error": 0.009342142388199305,
+        "relative_ez_error": 0.006392037043822899
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape3_resolution128_no_verboncoeur_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 6.086140574464196e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 6.086140574464196e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 3.1167924488430804e-12,
+        "passed": true,
+        "relative_er_error": 0.011133812396129258,
+        "relative_ez_error": 0.009517194322998697
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape3_resolution256_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.000928874445910727,
+        "charge_passed": false,
+        "charge_relative_residual": 0.000928874445910727,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.00023364697909893092,
+        "passed": false,
+        "relative_er_error": 0.012131058483184461,
+        "relative_ez_error": 0.011139702874365876
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape3_resolution256_off_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 8.399089728366973e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 8.399089728366973e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 3.3130557475350482e-12,
+        "passed": true,
+        "relative_er_error": 0.022883976810296455,
+        "relative_ez_error": 0.012792424470467221
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape4_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.0044331156916155995,
+        "charge_passed": false,
+        "charge_relative_residual": 0.0044331156916155995,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0007885676199005753,
+        "passed": false,
+        "relative_er_error": 0.1166942687647441,
+        "relative_ez_error": 0.01481151438637283
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape4_no_verboncoeur_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 2.0626354249299206e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 2.0626354249299206e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": false,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 7.086210819311928e-13,
+        "passed": false,
+        "relative_er_error": 0.21340090530452624,
+        "relative_ez_error": 0.017020189536315407
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape4_resolution128_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.002552265745604998,
+        "charge_passed": false,
+        "charge_relative_residual": 0.002552265745604998,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0008289110028116213,
+        "passed": false,
+        "relative_er_error": 0.01079430242071758,
+        "relative_ez_error": 0.007453985604338773
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape4_resolution128_no_verboncoeur_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 6.723870395439471e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 6.723870395439471e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 2.8125251542055764e-12,
+        "passed": true,
+        "relative_er_error": 0.013653774853269936,
+        "relative_ez_error": 0.010998844451701637
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape4_resolution256_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 0.0009728865676358024,
+        "charge_passed": false,
+        "charge_relative_residual": 0.0009728865676358024,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 0.0002466515198237149,
+        "passed": false,
+        "relative_er_error": 0.015795355958817293,
+        "relative_ez_error": 0.011578576432834569
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_shape4_resolution256_off_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov RZ Langmuir reader-side runtime contract",
+      "classification": null,
+      "scope": "independent RZ Er/Ez and same-surface divE-rho/epsilon0 check; not a full geometry/order matrix",
+      "metrics": {
+        "axis_charge_relative_residual": 6.668824806565929e-12,
+        "charge_passed": true,
+        "charge_relative_residual": 6.668824806565929e-12,
+        "charge_tolerance": 1e-11,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 3.928485388053559e-12,
+        "passed": true,
+        "relative_er_error": 0.028790394845570715,
+        "relative_ez_error": 0.013426931609073114
+      }
+    },
+    {
+      "case": "esirkepov_mr_source-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Esirkepov AMR routing source contract",
+      "classification": null,
+      "scope": "source skeleton only; does not prove runtime route counts or numerical source closure",
+      "metrics": {
+        "anchor_count": 15,
+        "missing_count": 0,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_radial_charge_axis-comparison",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "radial geometry axis correction charge comparison",
+      "classification": "RCYLINDER_GATE_RESTORED_RSPHERE_RESIDUAL_REMAINS",
+      "scope": "paired radial reader-side Er and divE-rho/epsilon0 comparison; not a global default recommendation",
+      "metrics": {}
+    },
+    {
+      "case": "esirkepov_radial_charge_shape-matrix",
+      "status": "UNKNOWN",
+      "evidence_kind": "BOUNDARY",
+      "contract": "RCYLINDER/RSPHERE Esirkepov radial charge shape matrix",
+      "classification": "RADIAL_SHAPE_CHARGE_BOUNDARY",
+      "scope": "2-rank reader-side radial Er and same-surface divE-rho/epsilon0; shape=1/2/3/4; not a full Gauss-law proof",
+      "metrics": {
+        "all_charge_pass": false,
+        "all_field_pass": true
+      }
+    },
+    {
+      "case": "esirkepov_radial_geometry_shape-matrix",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RCYLINDER/RSPHERE Esirkepov radial shape matrix",
+      "classification": "RADIAL_GEOMETRY_SHAPE_1_TO_4_FIELD_PASS",
+      "scope": "2-rank reader-side radial Er contract; not a charge/Gauss-law or all-geometry proof",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_rsphere_charge_resolution-comparison",
+      "status": "UNKNOWN",
+      "evidence_kind": "BOUNDARY",
+      "contract": "RSPHERE charge resolution/axis-correction comparison",
+      "classification": "RSPHERE_RESOLUTION_SENSITIVE_CHARGE_BOUNDARY",
+      "scope": "paired 2-rank reader-side Er and charge comparison; not a convergence-order proof",
+      "metrics": {}
+    },
+    {
+      "case": "hockney-1971-abstract",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Hockney 1971 bounded abstract-level literature contract",
+      "classification": "ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING",
+      "scope": "abstract-level evidence only; no publisher-PDF or line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "implicit_villasenor_2d_cropping_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "implicit Villasenor reader-side energy/Gauss-law contract; not bitwise kernel equivalence",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "fields_finite": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "implicit_villasenor_2d_filtered_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "implicit Villasenor reader-side energy/Gauss-law contract; not bitwise kernel equivalence",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "fields_finite": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "implicit_villasenor_2d_jfnk_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "implicit Villasenor reader-side energy/Gauss-law contract; not bitwise kernel equivalence",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "fields_finite": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "implicit_villasenor_2d_picmi_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "implicit Villasenor reader-side energy/Gauss-law contract; not bitwise kernel equivalence",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "fields_finite": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "initial_distribution_full_current",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "test_3d_initial_distribution",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "default_checksum_max_relative_difference": 0.00318,
+        "max_official_analysis_relative_difference": 0.018930689633379655,
+        "status": "pass_with_sampling_tolerance"
+      }
+    },
+    {
+      "case": "particle-mesh-1974-abstract",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "1974 particle-mesh bounded abstract-level literature contracts",
+      "classification": "ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING",
+      "scope": "abstract-level evidence only; no publisher-PDF or line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "particle_absorbing_boundary_1d",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_1d_particle_absorbing_boundary",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "iteration": 8000,
+        "passed": true,
+        "region_weight": 2.150955858923628e+20,
+        "region_weight_limit": 3.2e+20,
+        "total_histogram_weight": 8.253966129697429e+23
+      }
+    },
+    {
+      "case": "particle_boundaries_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_3d_particle_boundaries",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "particle_boundary_interaction_rz_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_rz_particle_boundary_interaction_picmi",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "iteration": 23,
+        "passed": true
+      }
+    },
+    {
+      "case": "particle_boundary_scrape_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_3d_particle_scrape",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": true,
+        "weight_relative_difference_20_to_40": 0.0
+      }
+    },
+    {
+      "case": "boris",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "force-free pusher keeps x approximately zero",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "particle_count": 1,
+        "passed": false
+      }
+    },
+    {
+      "case": "higuera",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "force-free pusher keeps x approximately zero",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "particle_count": 1,
+        "passed": true
+      }
+    },
+    {
+      "case": "vay",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "force-free pusher keeps x approximately zero",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "particle_count": 1,
+        "passed": true
+      }
+    },
+    {
+      "case": "particle_reflection_picmi_2d",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_2d_particle_reflection_picmi",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "particle_thermal_boundary_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_2d_particle_thermal_boundary",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "field_energy_final": 9.84501686803055e-06,
+        "field_energy_final_over_step_10": 9.090697870768006,
+        "field_energy_reference_step_10": 1.08297701760479e-06,
+        "field_energy_samples": 201,
+        "particle_energy_final": 0.0141029132380973,
+        "particle_energy_initial": 0.013866757245212,
+        "particle_energy_relative_drift": 0.017030369011965033,
+        "particle_energy_samples": 201,
+        "passed": true
+      }
+    },
+    {
+      "case": "particles-in-pml-analysis-source-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "particles-in-pml-analysis-source-contract",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "independent_uses_absolute_component_max": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "particles_in_pml_2d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "2D particles-in-PML residual electric-field absorption",
+      "classification": null,
+      "scope": "official WarpX 2D input; 2-rank run; independent yt reader; not the upstream checksum benchmark",
+      "metrics": {
+        "max_abs_Efield": 0.00025542538436684726,
+        "passed": true
+      }
+    },
+    {
+      "case": "particles_in_pml_2d_mr_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "particles-in-PML residual electric-field absorption",
+      "classification": null,
+      "scope": "official WarpX input; 2-rank run; independent yt reader; not the upstream checksum benchmark",
+      "metrics": {
+        "max_abs_Efield": 0.0003661057413095795,
+        "passed": true
+      }
+    },
+    {
+      "case": "particles_in_pml_3d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "particles-in-PML residual electric-field absorption",
+      "classification": null,
+      "scope": "official WarpX input; 2-rank run; independent yt reader; not the upstream checksum benchmark",
+      "metrics": {
+        "max_abs_Efield": 4.325973103094924,
+        "passed": true
+      }
+    },
+    {
+      "case": "particles_in_pml_3d_mr_mpi2",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "particles-in-PML residual electric-field absorption",
+      "classification": null,
+      "scope": "official WarpX input; 2-rank run; independent yt reader; not the upstream checksum benchmark",
+      "metrics": {
+        "max_abs_Efield": 110.3993781372607,
+        "passed": false
+      }
+    },
+    {
+      "case": "pec_field_3d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_3d_pec_field",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "max_relative_error": 0.005594417719379853,
+        "min_relative_error": 0.006322001968861878,
+        "reflection_gate": true
+      }
+    },
+    {
+      "case": "pec_field_mr_3d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_3d_pec_field_mr",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "max_relative_error": 0.041003798427618164,
+        "min_relative_error": 0.03554155727132573,
+        "reflection_gate": true
+      }
+    },
+    {
+      "case": "pec_insulator_explicit_2d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "2D explicit PECInsulator boundary-drive localization and By amplitude",
+      "classification": null,
+      "scope": "official WarpX explicit input; 2-rank reader-side contract; cell-centered By boundary sample; not the implicit Poynting-ledger contract",
+      "metrics": {
+        "active_boundary_by_relative_error": 0.015368241679916036,
+        "active_z_cell_count": 16,
+        "final_field_energy_proxy": 112905613127832.42,
+        "final_max_abs_field": 1669497.4348623438,
+        "initial_max_abs_field": 0.0,
+        "passed": true,
+        "relative_tolerance": 0.05
+      }
+    },
+    {
+      "case": "pec_insulator_implicit_2d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_2d_pec_field_insulator_implicit",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "energy_gate": true,
+        "fieldenergy_samples": 21,
+        "final_field_energy": 8.55178514965408e-05,
+        "initial_field_energy": 0.0,
+        "max_normalized_energy_difference": 1.2678080114411674e-15
+      }
+    },
+    {
+      "case": "pec_insulator_implicit_restart_2d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_2d_pec_field_insulator_implicit_restart",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "energy_gate": true,
+        "fieldenergy_samples": 10,
+        "final_field_energy": 8.55178514965408e-05,
+        "initial_field_energy": 3.63323638730053e-05,
+        "max_normalized_energy_difference": 1.2678080114411674e-15
+      }
+    },
+    {
+      "case": "pec_particle_3d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "3D PEC near-boundary field suppression relative to periodic control",
+      "classification": null,
+      "scope": "official PEC input plus local periodic-field control; 2-rank reader-side comparison; not direct particle-gather instrumentation",
+      "metrics": {
+        "Ey_max_abs_ratio": 0.0022796202594083776,
+        "max_abs_E_ratio": 0.0070491256177838395,
+        "passed": true,
+        "ratio_tolerance": 0.01
+      }
+    },
+    {
+      "case": "pmc_field_3d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_3d_pmc_field",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "max_relative_error": 0.006153430381301878,
+        "min_relative_error": 0.006901308573957358,
+        "reflection_gate": true
+      }
+    },
+    {
+      "case": "pml_psatd_2d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Cartesian PSATD-PML initial-energy and low-reflectivity contract",
+      "classification": null,
+      "scope": "2-rank project-level independent reader-side summary; official analysis separately rerun",
+      "metrics": {
+        "expected_initial_energy": 7.282940112203595e-08,
+        "final_energy": 6.897268359469654e-14,
+        "initial_energy": 7.282940112203606e-08,
+        "initial_reference_relative_error": 1.453796362122656e-15,
+        "passed": true
+      }
+    },
+    {
+      "case": "pml_rz_psatd_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ PSATD radial-PML residual-field contract",
+      "classification": null,
+      "scope": "independent reader-side RZ residual-field check on the official 2-rank producer",
+      "metrics": {
+        "max_abs_field": 1.0315718696300396,
+        "passed": true
+      }
+    },
+    {
+      "case": "psatd-literature-strategy",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "PSATD/NCI literature-to-source strategy matrix",
+      "classification": "FULL_TEXT_SOURCE_GROUNDED_RUNTIME_STRATEGY_MATRIX",
+      "scope": "indexing contract across Godfrey fixed-grid PSATD, Lehe Galilean PSATD, and Kirchen boosted-frame application; not a new physics regression",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "python-mr-observability",
+      "status": "UNKNOWN",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Python MR intermediate-field observability audit",
+      "classification": "INTERFACE_PRESENT_RUNTIME_LEDGER_UNPROVEN",
+      "scope": "source/API observability boundary; not a runtime current_buf/rho_buf proof",
+      "metrics": {
+        "missing_count": 0
+      }
+    },
+    {
+      "case": "radial-axis-volume-source",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "radial geometry axis-volume correction source contract",
+      "classification": null,
+      "scope": "read-only source audit; not a numerical regression or default-change recommendation",
+      "metrics": {
+        "anchor_count": 10,
+        "passed": true,
+        "passed_anchor_count": 10
+      }
+    },
+    {
+      "case": "rz-esirkepov-charge-diagnostic-source",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ Esirkepov charge diagnostic boundary source contract",
+      "classification": null,
+      "scope": "read-only source audit; explains diagnostic evidence boundary and is not a physics regression",
+      "metrics": {
+        "anchor_count": 11,
+        "passed": true,
+        "passed_anchor_count": 11
+      }
+    },
+    {
+      "case": "rz_flux_injection_from_eb_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_rz_flux_injection_from_eb",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "eb_outside_pass": true,
+        "expected_weight": 2.5132741228718345e-07,
+        "min_radius_ratio": 0.9978960981558814,
+        "particle_count": 75347,
+        "total_weight": 2.5078544411855113e-07,
+        "total_weight_pass": true,
+        "total_weight_relative_error": 0.002156422825907381
+      }
+    },
+    {
+      "case": "rz_galilean_current_correction_pair",
+      "status": "UNKNOWN",
+      "evidence_kind": "BOUNDARY",
+      "contract": "rz_galilean_current_correction_pair",
+      "classification": {
+        "current-correction": "CHARGE_BOUNDARY",
+        "current-correction-psb": "PASS"
+      },
+      "scope": "project-level RZ Galilean runtime contract; official upstream analysis was also executed",
+      "metrics": {}
+    },
+    {
+      "case": "rz_langmuir_multi_psatd_current_correction_mpi1",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ PSATD current-correction Langmuir reader-side contract",
+      "classification": null,
+      "scope": "independent RZ analytic Er/Ez and same-surface divE-rho/epsilon0 check",
+      "metrics": {
+        "axis_charge_relative_residual": 5.4780903032369686e-14,
+        "charge_passed": true,
+        "charge_relative_residual": 5.4780903032369686e-14,
+        "charge_tolerance": 1e-09,
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "off_axis_charge_relative_residual": 2.7327096578213714e-14,
+        "passed": true,
+        "relative_er_error": 0.10542231708921167,
+        "relative_ez_error": 0.019312914807486016
+      }
+    },
+    {
+      "case": "rz_langmuir_multi_psatd_jrhom_ll4_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ PSATD-JRhom CL4 Langmuir field contract",
+      "classification": null,
+      "scope": "independent RZ analytic Er/Ez check; official filter diagnostics remain a separate consumer",
+      "metrics": {
+        "charge_gate": "not applicable: current_correction=0",
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "passed": true,
+        "relative_er_error": 0.10993709579981246,
+        "relative_ez_error": 0.06430337696910637
+      }
+    },
+    {
+      "case": "rz_langmuir_multi_psatd_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "standard RZ PSATD Langmuir field contract",
+      "classification": null,
+      "scope": "independent RZ analytic Er/Ez check; official filter diagnostics remain a separate consumer",
+      "metrics": {
+        "charge_gate": "not applicable: current_correction=0",
+        "field_passed": true,
+        "field_tolerance": 0.12,
+        "passed": true,
+        "relative_er_error": 0.11616612648486659,
+        "relative_ez_error": 0.015193712379297808
+      }
+    },
+    {
+      "case": "rz_langmuir_psatd-family",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "RZ Langmuir PSATD family matrix",
+      "classification": null,
+      "scope": "project-level family matrix from official-input runtime contracts; not an all-geometry convergence study",
+      "metrics": {
+        "all_field_contracts_passed": true,
+        "case_count": 3
+      }
+    },
+    {
+      "case": "rz_scraping_filter_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_rz_scraping_filter",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "final_particle_count": 512,
+        "final_weight": 4.841626861764053e+18,
+        "initial_particle_count": 6656,
+        "initial_weight": 5.546299286199021e+19,
+        "passed": true,
+        "scraped_particle_count": 3072,
+        "scraped_weight": 2.531068300011308e+19,
+        "weight_relative_error": 0.0
+      }
+    },
+    {
+      "case": "rz_scraping_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_rz_scraping",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "final_particle_count": 512,
+        "final_weight": 4.841626861764053e+18,
+        "initial_particle_count": 6656,
+        "initial_weight": 5.546299286199021e+19,
+        "passed": true,
+        "scraped_particle_count": 6144,
+        "scraped_weight": 5.062136600022616e+19,
+        "weight_relative_error": 0.0
+      }
+    },
+    {
+      "case": "rz_silver_mueller_z_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_rz_silver_mueller_z",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true
+      }
+    },
+    {
+      "case": "secondary-emission-eb-source-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ secondary-emission EB callback/source wiring audit",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "anchor_count": 10,
+        "passed": true,
+        "passed_anchor_count": 10
+      }
+    },
+    {
+      "case": "secondary_ion_emission_rz",
+      "status": "FAIL",
+      "evidence_kind": "FAIL",
+      "contract": "test_rz_secondary_ion_emission_picmi",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": false,
+        "count_pass": true,
+        "electron_count": 2,
+        "expected_electron_count": 2,
+        "geometry_pass": false,
+        "iteration": 3
+      }
+    },
+    {
+      "case": "secondary_ion_emission_rz_resolution128",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_rz_secondary_ion_emission_picmi",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "count_pass": true,
+        "electron_count": 2,
+        "expected_electron_count": 2,
+        "geometry_pass": true,
+        "iteration": 3
+      }
+    },
+    {
+      "case": "secondary_ion_emission_rz_resolution256",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_rz_secondary_ion_emission_picmi",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "count_pass": true,
+        "electron_count": 2,
+        "expected_electron_count": 2,
+        "geometry_pass": true,
+        "iteration": 3
+      }
+    },
+    {
+      "case": "silver_mueller_1d_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Cartesian Silver-Mueller low-residual-field contract",
+      "classification": null,
+      "scope": "official WarpX Cartesian input; 2-rank run; independent yt reader; not the upstream checksum benchmark",
+      "metrics": {
+        "max_abs_field_V_per_m": 3.8865208572269605e-08,
+        "passed": true
+      }
+    },
+    {
+      "case": "silver_mueller_2d_x_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Cartesian Silver-Mueller low-residual-field contract",
+      "classification": null,
+      "scope": "official WarpX Cartesian input; 2-rank run; independent yt reader; not the upstream checksum benchmark",
+      "metrics": {
+        "max_abs_field_V_per_m": 0.003911736505195088,
+        "passed": true
+      }
+    },
+    {
+      "case": "silver_mueller_2d_z_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Cartesian Silver-Mueller low-residual-field contract",
+      "classification": null,
+      "scope": "official WarpX Cartesian input; 2-rank run; independent yt reader; not the upstream checksum benchmark",
+      "metrics": {
+        "max_abs_field_V_per_m": 0.003911736504416756,
+        "passed": true
+      }
+    },
+    {
+      "case": "spacecraft_charging_rz_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "test_rz_spacecraft_charging_picmi",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "contract_pass": true,
+        "first_iteration": 0,
+        "iterations": 101,
+        "last_iteration": 1000,
+        "relative_tau_error": 0.16560622302810388,
+        "relative_v0_error": 0.03551248747438835,
+        "tau_pass": true,
+        "v0_pass": true
+      }
+    },
+    {
+      "case": "subcycling_2d_mr_mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "2D AMR subcycling output completeness and moving-window geometry",
+      "classification": null,
+      "scope": "official WarpX input; 2-rank producer; independent yt reader; not a transition-zone route-count or conservation proof",
+      "metrics": {
+        "finite_fields": true,
+        "moving_window_gate": true,
+        "moving_window_shift_error": 7.617187499991694e-08,
+        "particle_presence_gate": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "villasenor-source-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Villasenor crossing-driven segment source skeleton",
+      "classification": null,
+      "scope": "read-only source audit; not a runtime or kernel numerical regression",
+      "metrics": {
+        "anchor_count": 16,
+        "passed": true,
+        "passed_anchor_count": 16
+      }
+    },
+    {
+      "case": "villasenor_formula_contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "2D four-boundary and 3D cross-term flux/volume identities plus arbitrary crossing-split displacement closure",
+      "classification": null,
+      "scope": "paper formula and geometric segmentation identities; not a WarpX kernel equivalence or end-to-end regression",
+      "metrics": {
+        "max_3d_face_sum_residual": 1.7763568394002505e-15,
+        "max_3d_volume_closure_residual": 1.7763568394002505e-15,
+        "max_crossing_count": 6,
+        "max_flux_sum_residual": 4.440892098500626e-16,
+        "max_four_boundary_residual": 4.440892098500626e-16,
+        "max_segment_sum_residual": 4.440892098500626e-16,
+        "passed": true
+      }
+    },
+    {
+      "case": "yee-1966-indexed-abstract",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Yee 1966 bounded indexed-abstract literature contract",
+      "classification": "INDEXED_ABSTRACT_BACKED_METADATA_VERIFIED_IEEE_FULL_TEXT_MISSING",
+      "scope": "indexed abstract-level evidence only; no IEEE publisher-PDF or line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    }
+  ]
+}

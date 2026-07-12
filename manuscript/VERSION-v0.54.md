@@ -1,6 +1,6 @@
-# PIC-tutor v0.55
+# PIC-tutor v0.54
 
-当前合订 PDF 为 310 页；本 v0.55 版本在 v0.54 基础上修正当前书稿状态元数据，并记录 RSPHERE `256` 高分辨率尝试在初始化阶段遇到的 boundary-array parser 边界；不把该初始化失败误写成物理 charge failure。
+当前合订 PDF 为 310 页；本 v0.54 版本在 v0.53 基础上补入 3D Esirkepov shape=2/3/4 refined-resolution controls，明确 64³ shape=3/4 field boundary 在 128³ case-local sibling 中消失，但不把单组 refined pair 写成正式收敛阶。
 
 版本日期：2026-07-12
 

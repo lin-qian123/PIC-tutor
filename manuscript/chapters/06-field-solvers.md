@@ -858,6 +858,8 @@ $$
 
 Godfrey 2014、Lehe 2016、Kirchen 2016 合起来形成一个清楚的策略谱系。Godfrey 论文讲 fixed-grid PSATD 中如何用数字滤波、三次插值、current scaling 和时间步选择降低 NCI；Lehe 论文讲 Galilean PSATD 如何通过移动坐标/源项表示，在 $v_{gal}\approx v_0$ 时从表示层面消除均匀漂移 NCI；Kirchen 论文讲这个 Galilean 表示如何落到 boosted-frame LPA workflow 并保持回变换后的物理量一致。对应到 WarpX，`nci_psatd_stability` 的 `warpx.use_filter = 1`、`psatd.current_correction`、`psatd.do_time_averaging` 和 `psatd.JRhom` 应被写成不同机制的 regression 入口，而不是同一个“稳定化开关”的不同名字。
 
+本版新增 `scripts/audit_psatd_literature_strategy_contract.py`，把上述三篇已有全文资产、章节映射、源码关键词和 runtime consumer 统一检查为 `runs/stage-c-validation/psatd-literature-strategy/contract.{json,md}`。三篇均通过；该矩阵只说明 Godfrey 的 fixed-grid NCI 基线、Lehe 的 Galilean 表示和 Kirchen 的 boosted-frame 应用各自负责什么，不把三篇论文或其 regression 结果合并成同一个“PSATD 已验证”结论。详细表格见 `notes/code-reading/fieldsolver/35-psatd-literature-source-runtime-strategy-matrix.md`。
+
 ### 6.6.6 v0.20 源码闭环：WarpX PSATD/NCI 机制对照表
 
 v0.20 继续把上一节的策略谱系落回 WarpX 源码。结论先写清楚：当前 WarpX 中和 NCI 稳定性相关的 filter、current correction、finite-order PSATD、Galilean representation 和 JRhom 是五组不同机制；其中源码里叫 `NCIGodfreyFilter` 的路径也不是 `nci_psatd_stability` 输入卡里常见的 `warpx.use_filter = 1`。

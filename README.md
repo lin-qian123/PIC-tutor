@@ -1,12 +1,14 @@
 # PIC-tutor
 
-当前成书版本为 `v0.65`，对应 311 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts 和 Yee 1966 indexed-abstract contract 版；历史 `v0.64` 由 `manuscript/VERSION-v0.64.md` 保留。
+当前成书版本为 `v0.66`，对应 312 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract contract 和 PSATD/NCI strategy matrix 版；历史 `v0.65` 由 `manuscript/VERSION-v0.65.md` 保留。
 
 2026-07-12：新增 Hockney 1971 article-level abstract contract，8/8 检查通过；项目内已保存正式书目信息、IBM Research 作者机构摘要、摘要级中文讲解和 full-text 缺失边界，证据分类为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。
 
 2026-07-12：新增 Hockney/Goel/Eastwood 1974 的 QPM/PPPM 与 Eastwood/Hockney force-shaping 两条摘要级 contract；两篇各 8 项检查通过，补入 Gaussian cloud、potential shaping、sub-mesh resolution、charge-sharing hierarchy 和 force anisotropy 的来源边界，仍不宣称 publisher full text 已取得。
 
 2026-07-12：新增 Yee 1966 indexed-abstract contract，9/9 检查通过；同步记录 finite-difference Maxwell、field-point placement、PEC boundary 和 conducting-cylinder example 的窄证据范围，并明确 IEEE full text endpoint 返回 HTML access response、PDF/MinerU 仍缺失。
+
+2026-07-12：新增 PSATD/NCI literature-to-source strategy matrix，Godfrey 2014、Lehe 2016、Kirchen 2016 三篇全文资产与章节/源码/runtime 对照全部通过；明确 fixed-grid、Galilean 和 boosted-frame 三条机制及其 regression 边界不应混写。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 

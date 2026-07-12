@@ -1,6 +1,6 @@
-# PIC-tutor v0.58
+# PIC-tutor v0.57
 
-当前合订 PDF 为 310 页；本 v0.58 版本在 v0.57 基础上统一 RCYLINDER/RSPHERE shape=1/2/3/4 的径向 `rho/divE` charge observation，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 310 页；本 v0.57 版本在 v0.56 基础上补入 RCYLINDER/RSPHERE shape=2/3/4 的径向 `rho/divE` charge observation，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 版本日期：2026-07-12
 

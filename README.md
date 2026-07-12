@@ -1,13 +1,13 @@
 # PIC-tutor
 
-当前成书版本为 `v0.57`，对应 310 页 3D Esirkepov refined matrix 与径向高阶 shape charge audit 版；历史 `v0.56` 由 `manuscript/VERSION-v0.56.md` 保留。
+当前成书版本为 `v0.58`，对应 310 页 3D Esirkepov refined matrix 与完整径向 shape charge audit 版；历史 `v0.57` 由 `manuscript/VERSION-v0.57.md` 保留。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
-- 2026-07-12：补齐 RCYLINDER/RSPHERE Esirkepov shape=2/3/4 的径向 `rho/divE` charge observation：六条 `Er` field gate 全通过，RCYLINDER charge residual 为 `7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `6.269e-2/6.928e-2/8.003e-2`，均保留为 charge BOUNDARY；汇总见 `runs/stage-c-validation/esirkepov_radial_charge_shape-matrix/`。
+- 2026-07-12：统一收口 RCYLINDER/RSPHERE Esirkepov shape=1/2/3/4 的径向 `rho/divE` charge observation：八条 `Er` field gate 全通过，RCYLINDER charge residual 为 `4.711e-3/7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `4.166e-2/6.269e-2/6.928e-2/8.003e-2`，均保留为 charge BOUNDARY；汇总见 `runs/stage-c-validation/esirkepov_radial_charge_shape-matrix/`。
 - 2026-07-12：完成 v0.54 3D Esirkepov refined-resolution family：shape=2/3/4 的 `128^3` controls 均通过官方 `5%` field gate 和独立 `1e-11` charge gate，field error 为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 为 `5.4174e-12/4.3288e-12/3.0001e-12`；该结果仍只作为 case-local 分辨率证据，不宣称正式收敛阶。
 - 2026-07-12：完成 RSPHERE Esirkepov `256` 网格 paired control：改用专用 `warpx.rsphere` binary 后 producer、官方 case-local `analysis_r1d.py` 与独立 radial charge contract 均通过流程；correction-on 的 `Er/charge=9.422e-3/4.142e-3`，correction-off 为 `1.117e-2/7.461e-11`，field 全通过但 charge 仍保留 BOUNDARY。此前 `warpx.3d` 的 parser 异常已定位为 executable/geometry 不匹配。
 - 2026-07-12：进入 v0.53 3D Esirkepov refined-resolution 阶段：shape=3/4 的 `64^3` field boundary 在 `128^3` case-local controls 中分别降至 `2.3515%/3.0644%` 并通过官方 `5%` field gate，charge residual 为 `4.3288e-12/3.0001e-12`；该结果支持分辨率敏感性解释，不包装成正式收敛阶或全局默认建议。

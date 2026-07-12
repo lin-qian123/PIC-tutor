@@ -17,9 +17,11 @@ def main() -> None:
 
     rows = []
     for geometry in ("rcylinder", "rsphere"):
-        for shape in (2, 3, 4):
-            case_dir = args.root / f"esirkepov_langmuir_{geometry}_shape{shape}_mpi2"
-            data = json.loads((case_dir / "charge-contract.json").read_text(encoding="utf-8"))
+        for shape in (1, 2, 3, 4):
+            suffix = "charge_mpi2" if shape == 1 else f"shape{shape}_mpi2"
+            case_dir = args.root / f"esirkepov_langmuir_{geometry}_{suffix}"
+            contract_path = case_dir / ("contract.json" if shape == 1 else "charge-contract.json")
+            data = json.loads(contract_path.read_text(encoding="utf-8"))
             rows.append(
                 {
                     "geometry": geometry.upper(),
@@ -40,7 +42,7 @@ def main() -> None:
         "all_field_pass": all(row["field_passed"] for row in rows),
         "all_charge_pass": all(row["charge_passed"] for row in rows),
         "classification": "RADIAL_SHAPE_CHARGE_BOUNDARY",
-        "scope": "2-rank reader-side radial Er and same-surface divE-rho/epsilon0; shape=2/3/4 only; not a full Gauss-law proof",
+        "scope": "2-rank reader-side radial Er and same-surface divE-rho/epsilon0; shape=1/2/3/4; not a full Gauss-law proof",
     }
     args.output_json.parent.mkdir(parents=True, exist_ok=True)
     args.output_json.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")

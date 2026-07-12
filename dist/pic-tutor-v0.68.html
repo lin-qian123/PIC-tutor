@@ -824,6 +824,11 @@ boosted-frame / NCI</a></li>
 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access
 audit、章节/源码映射均通过；Appendix B 圆轨道和 Poincare topology 的专门
 runtime 复现仍作为边界。</p>
+<p>本版又新增 <code>larmor</code> 逐帧离散轨道合同：6 个 Full plotfile
+的时间序列和粒子状态检查通过，报告记录了
+<code>B_y</code>、<code>gamma</code> 与每个输出间隔的 Boris
+rotation-angle；当前仍不把该 AMR/PML/div-cleaning case 升级为论文专门
+runtime reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
 汇总本地 135 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
@@ -7707,6 +7712,15 @@ checksum，没有按 Poincare section 或 invariant drift 去复现论文第 VI 
 practical-timestep topology / resonance-island 的专门
 analysis，所以不能把这组本地 test 夸写成 Higuera-Cary
 论文数值部分的完整本地再现。</p>
+<p>本轮新增的 <code>scripts/analyze_larmor_orbit_contract.py</code> 已把
+<code>larmor</code> 的 6 个 Full plotfile
+组织成逐帧离散轨道账本，确认时间序列、1 粒子/species、有限状态和输出
+cadence，并给出由 <code>B_y</code> 与 <code>\gamma</code> 推出的 Boris
+rotation-angle 参考值。这个结果只提高了现有 checksum case
+的可观测性；由于输入仍含 AMR/PML/current correction/divergence
+cleaning，且没有 half-step velocity 输出，仍不能把它升级为 Vay Appendix
+B 的 gyroradius 复现或 Higuera-Cary 的 Poincare topology gate。报告见
+<code>runs/stage-c-validation/larmor_single_process/larmor-orbit-contract.{json,md}</code>。</p>
 <h2 id="从-multiparticlecontainer-到-physicalparticlecontainer">4.6 从
 <code>MultiParticleContainer</code> 到
 <code>PhysicalParticleContainer</code></h2>

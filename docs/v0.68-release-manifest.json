@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 695,
-  "total_bytes": 27400477,
+  "entry_count": 697,
+  "total_bytes": 27413010,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1511257,
-      "sha256": "f6a86f1db414596b1e4dcdf8344f5165460a1dfbde9ad1f556cfd5d45afa9236"
+      "bytes": 1511599,
+      "sha256": "fb357130851dd1cb324ff56dcb2d1c1488b6c8d57b734037a603bae169044797"
     },
     {
       "path": "TODO.md",
-      "bytes": 1354465,
-      "sha256": "6585118fa6bb8d78beea167e130e0b3df7105066b7469da9172015efe5479f1f"
+      "bytes": 1354856,
+      "sha256": "2cf031cbe47c61a72545c19156949f44c7c79cb2d80654fc68ad5becd381a31b"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5736169,
-      "sha256": "9ac1817c45ccf4e35359d4c10ccc7d2786e4f9fdd5fe546a9bae302874e9d6bc"
+      "bytes": 5737210,
+      "sha256": "d954397e76483f59e47a252ca98f0d10e66bfdea140cf9e27fe7f47a82ab275b"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1064904,
-      "sha256": "dfbf7ec260677742c5417d924214c981df651762332ef09b8a905464f889eae4"
+      "bytes": 1065845,
+      "sha256": "afd8028e6fd556e9933f3017cda808672eac6555ca896bb6148eb3a013ef3c8a"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3360324,
-      "sha256": "0efd0e1e536861bc0ed121cc5916328781caea41be11593917d685d1b4b2ecce"
+      "bytes": 3361255,
+      "sha256": "1b3a95579a162e8812d652db5783c0d730a8a39671022e81aeee2e1b9737544b"
     },
     {
       "path": "docs/chapter-template.md",
@@ -72,8 +72,8 @@
     },
     {
       "path": "docs/example-regression-map.md",
-      "bytes": 1844427,
-      "sha256": "1f56eac2eed93cfac345fe4280c603ca5f2ae3dd29c1a5e1a71a524d8d6b37f5"
+      "bytes": 1844566,
+      "sha256": "48c96ccf98a3b74bacc716a4419a37b113868c8630cf769f9ae030fe444fb0e0"
     },
     {
       "path": "docs/foundations-literature-list.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "a88e91bf4197dee6059b731146350c4b350949b15421959d014afffc2de54626"
+      "sha256": "aa7143ee90b447e512f9783a24abecf70fe86219cca009532a92e03cfa916327"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 39225,
-      "sha256": "9379baccf4949cef53657cf496a5b42550a8bfb7faf9e3df30af5f3762b46df6"
+      "bytes": 39504,
+      "sha256": "1c52e4dc102c3d0052c442580f01a6b9b8e7c12aecd6e5a9a843cdd061c18dbf"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 60254,
-      "sha256": "a0eb817dec7af52085872f246eaab88064fdf8049c12c93f047303d81af2c23f"
+      "bytes": 60543,
+      "sha256": "9f5637fb3b0884a99d47dedfce9426f8f92c6625824abd2b6b8268a8538b564f"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 145319,
-      "sha256": "eee0e84d2cca10cf818829144a4d2a6dd81058391ae02df845b921032d54185b"
+      "bytes": 145971,
+      "sha256": "32bdc4fa54cb1245e6a5e3142ed2f66df8c10bb7bbe1b60a48869e5d4df31f8b"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -2036,6 +2036,11 @@
       "sha256": "536e36b9d8124cdde77f560c0c73647cda8b919f22a58b5be5781a4e84507325"
     },
     {
+      "path": "notes/code-reading/particles/62-larmor-discrete-orbit-contract.md",
+      "bytes": 1443,
+      "sha256": "535708b8c1703353a9afab445f56b6058a971f47b62454956cb844585300ebde"
+    },
+    {
       "path": "notes/code-reading/particles/README.md",
       "bytes": 18390,
       "sha256": "532bc03a4de781643989e76048a41bfc8812b9c000043b709f8dd7cee22d31f9"
@@ -2254,6 +2259,11 @@
       "path": "scripts/analyze_larmor_continuum_audit.py",
       "bytes": 3372,
       "sha256": "51368a887926c57885971f97d523d1000b947267ac50a3ebbc6f6a4e70f38156"
+    },
+    {
+      "path": "scripts/analyze_larmor_orbit_contract.py",
+      "bytes": 6085,
+      "sha256": "7902eb89328b8d703a2a51d028a370bf64804fd06da0c3dcd7fd169b7a702d24"
     },
     {
       "path": "scripts/analyze_load_balance_costs_contract.py",

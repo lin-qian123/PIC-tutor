@@ -490,6 +490,8 @@ WarpX 参数文档把 `algo.particle_pusher = vay` 和 `higuera` 分别列为可
 
 当前本地 regression 和这篇文献的配对也要写得保守。最直接能接 Higuera-Cary 文献主线的是 `Examples/Tests/particle_pusher`：它在 `algo.particle_pusher = higuera`、force-free 常量外部 `E/B` 构型下，用 `analysis.py` 强检查长时间推进后 `x \approx 0`，因此可以当作 relativistic force-free / drift-preservation 的本地强断言。相反，`Examples/Tests/larmor` 目前仍只有 checksum，没有按 Poincare section 或 invariant drift 去复现论文第 VI 节 practical-timestep topology / resonance-island 的专门 analysis，所以不能把这组本地 test 夸写成 Higuera-Cary 论文数值部分的完整本地再现。
 
+本轮新增的 `scripts/analyze_larmor_orbit_contract.py` 已把 `larmor` 的 6 个 Full plotfile 组织成逐帧离散轨道账本，确认时间序列、1 粒子/species、有限状态和输出 cadence，并给出由 `B_y` 与 `\gamma` 推出的 Boris rotation-angle 参考值。这个结果只提高了现有 checksum case 的可观测性；由于输入仍含 AMR/PML/current correction/divergence cleaning，且没有 half-step velocity 输出，仍不能把它升级为 Vay Appendix B 的 gyroradius 复现或 Higuera-Cary 的 Poincare topology gate。报告见 `runs/stage-c-validation/larmor_single_process/larmor-orbit-contract.{json,md}`。
+
 ## 4.6 从 `MultiParticleContainer` 到 `PhysicalParticleContainer`
 
 主循环的入口是 `../warpx/Source/Evolve/WarpXEvolve.cpp:1324-1428` 的 `WarpX::PushParticlesandDeposit()`。它选择 current 字段名后调用 `mypc->Evolve(...)`。

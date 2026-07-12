@@ -1,17 +1,17 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 135,
+  "record_count": 148,
   "status_counts": {
-    "PASS": 91,
-    "FAIL": 29,
+    "PASS": 105,
+    "FAIL": 28,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 87,
-    "FAIL": 28,
+    "PASS": 94,
+    "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 13
+    "BOUNDARY": 20
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -78,6 +78,17 @@
       }
     },
     {
+      "case": "esirkepov-2001-paper-asset",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Esirkepov 1999/2001 Chapter 5 deposition paper asset contract",
+      "classification": "PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING",
+      "scope": "author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
       "case": "esirkepov-bounded-compare",
       "status": "PASS",
       "evidence_kind": "BOUNDARY",
@@ -112,6 +123,28 @@
         "anchor_count": 14,
         "passed": true,
         "passed_anchor_count": 14
+      }
+    },
+    {
+      "case": "esirkepov-paper-asset-contract",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Esirkepov 1999/2001 Chapter 5 deposition paper asset contract",
+      "classification": "PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING",
+      "scope": "author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov-paper-source-runtime-crosswalk",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Esirkepov paper/source/runtime crosswalk",
+      "classification": "PREPRINT_SOURCE_RUNTIME_CROSSWALK_PUBLISHER_PDF_MISSING",
+      "scope": "paper anchors, current-deposition source surfaces, geometry-family runtime contracts, and active Langmuir wiring; no publisher-PDF line-by-line claim",
+      "metrics": {
+        "passed": true
       }
     },
     {
@@ -1277,6 +1310,61 @@
       "metrics": {}
     },
     {
+      "case": "higuera-2017-paper-asset",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Higuera-Cary 2017 Chapter 4 pusher paper asset contract",
+      "classification": "FULLTEXT_SOURCE_GROUNDED_VOLUME_DRIFT_JACOBIAN_BOUNDARY",
+      "scope": "local full-text PDF and MinerU package support Higuera-Cary volume/drift/Jacobian explanations; dedicated phase-space-topology runtime reproduction remains open",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "higuera_poincare_comparison",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Higuera-Cary Poincare section and invariant ledger",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "higuera_poincare_dense_comparison",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Higuera-Cary Poincare section and invariant ledger",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "higuera_poincare_long_comparison",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Higuera-Cary Poincare section and invariant ledger",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "higuera_poincare_resonance_comparison",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Higuera-Cary Poincare section and invariant ledger",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
       "case": "hockney-1971-abstract",
       "status": "PASS",
       "evidence_kind": "BOUNDARY",
@@ -1349,6 +1437,53 @@
       }
     },
     {
+      "case": "ionization-dsmc-source-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "3D DSMC electron/ion-impact source and regression wiring",
+      "classification": "ION_IMPACT_CHECKSUM_ONLY_ELECTRON_IMPACT_ANALYSIS_ACTIVE",
+      "scope": "CMake/input/analysis source wiring; no runtime physics claim",
+      "metrics": {
+        "anchor_count": 10,
+        "passed": true,
+        "passed_anchor_count": 10
+      }
+    },
+    {
+      "case": "leecpc2015-accepted-manuscript-contract",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "LeeCPC2015 accepted-manuscript source-grounded literature contract",
+      "classification": "ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING",
+      "scope": "seven-page accepted/submitted manuscript supports first-round PML formula and source mapping; publisher-formatted CPC comparison remains open",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "leecpc2015-source-crosswalk",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "LeeCPC2015 paper/source/regression crosswalk",
+      "classification": "ACCEPTED_MANUSCRIPT_SOURCE_CROSSWALK_PUBLISHER_PDF_STILL_MISSING",
+      "scope": "paper anchors, WarpX implementation surfaces, and official regression wiring; no publisher-PDF or coefficient-equivalence claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "parameter-map-surface-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "WarpX parameter-map structural surface",
+      "classification": "STRUCTURAL_SURFACE_PASS_MANUAL_PARSER_REVIEW_REMAINS",
+      "scope": "row shape, current chapter labels, and source-path existence; not semantic parser-function verification",
+      "metrics": {
+        "data_row_count": 445,
+        "passed": true
+      }
+    },
+    {
       "case": "particle-mesh-1974-abstract",
       "status": "PASS",
       "evidence_kind": "BOUNDARY",
@@ -1407,42 +1542,6 @@
       "metrics": {
         "passed": true,
         "weight_relative_difference_20_to_40": 0.0
-      }
-    },
-    {
-      "case": "boris",
-      "status": "FAIL",
-      "evidence_kind": "FAIL",
-      "contract": "force-free pusher keeps x approximately zero",
-      "classification": null,
-      "scope": null,
-      "metrics": {
-        "particle_count": 1,
-        "passed": false
-      }
-    },
-    {
-      "case": "higuera",
-      "status": "PASS",
-      "evidence_kind": "PASS",
-      "contract": "force-free pusher keeps x approximately zero",
-      "classification": null,
-      "scope": null,
-      "metrics": {
-        "particle_count": 1,
-        "passed": true
-      }
-    },
-    {
-      "case": "vay",
-      "status": "PASS",
-      "evidence_kind": "PASS",
-      "contract": "force-free pusher keeps x approximately zero",
-      "classification": null,
-      "scope": null,
-      "metrics": {
-        "particle_count": 1,
-        "passed": true
       }
     },
     {
@@ -1674,6 +1773,17 @@
       "contract": "PSATD/NCI literature-to-source strategy matrix",
       "classification": "FULL_TEXT_SOURCE_GROUNDED_RUNTIME_STRATEGY_MATRIX",
       "scope": "indexing contract across Godfrey fixed-grid PSATD, Lehe Galilean PSATD, and Kirchen boosted-frame application; not a new physics regression",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "pusher_uniform_b_comparison",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "dedicated uniform-B Boris/Vay/Higuera-Cary orbit comparison",
+      "classification": null,
+      "scope": null,
       "metrics": {
         "passed": true
       }
@@ -1983,6 +2093,43 @@
         "moving_window_gate": true,
         "moving_window_shift_error": 7.617187499991694e-08,
         "particle_presence_gate": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "test_2d_pml_x_psatd",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Cartesian PSATD-PML initial-energy and low-reflectivity contract",
+      "classification": null,
+      "scope": "2-rank project-level independent reader-side summary; official analysis separately rerun",
+      "metrics": {
+        "expected_initial_energy": 7.282940112203595e-08,
+        "final_energy": 6.897268359469654e-14,
+        "initial_energy": 7.282940112203606e-08,
+        "initial_reference_relative_error": 1.453796362122656e-15,
+        "passed": true
+      }
+    },
+    {
+      "case": "vay-2008-paper-asset",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Vay 2008 Chapter 4 pusher paper asset contract",
+      "classification": "FULLTEXT_SOURCE_GROUNDED_FRAME_CONSISTENCY_APPENDIX_BOUNDARY",
+      "scope": "local full-text PDF and MinerU package support Vay frame-consistency, explicit-gamma and gyroradius explanations; dedicated Appendix-B runtime reproduction remains open",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "villasenor-1992-paper-asset",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Villasenor-Buneman 1992 Chapter 5 deposition paper asset contract",
+      "classification": "LOCAL_FULLTEXT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_PROVENANCE_PENDING",
+      "scope": "local full-text PDF and MinerU package support a first-round formula/source walkthrough; publisher provenance and final-formula transcription remain open",
+      "metrics": {
         "passed": true
       }
     },

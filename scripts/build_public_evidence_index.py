@@ -49,7 +49,14 @@ def evidence_kind(data: dict[str, Any], raw_status: str) -> str:
 
 def build_index(root: Path) -> dict[str, Any]:
     records = []
-    for path in sorted(root.rglob("contract.json")):
+    # Contract files are materialized at the case-directory root. Avoid a
+    # recursive walk through plotfile/openPMD payloads under the same tree.
+    contract_paths = sorted(
+        child / "contract.json"
+        for child in root.iterdir()
+        if child.is_dir() and (child / "contract.json").is_file()
+    )
+    for path in contract_paths:
         data = json.loads(path.read_text(encoding="utf-8"))
         raw_status = status(data)
         records.append(

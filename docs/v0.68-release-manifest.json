@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 692,
-  "total_bytes": 27319056,
+  "total_bytes": 27327511,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1509351,
-      "sha256": "b62de969ae26f867f9ed402d9896c404ae075739c26020d0cd4a0259322cb178"
+      "bytes": 1509643,
+      "sha256": "00cfa55a60e4d94114c2e9f48bf51d80526c49be37262412c7bb68ef39fabe19"
     },
     {
       "path": "TODO.md",
-      "bytes": 1353114,
-      "sha256": "f51cba102d86ac7bad022502b9ede72b654fc15c5d008dbda3cbeab01a9b3ba0"
+      "bytes": 1353605,
+      "sha256": "698fae911e5ec8a22993cd0c670ab5495e076bcfc176562f66e8fa5237483862"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5722282,
-      "sha256": "cebf0d9f3d331109e59ed4e418702ccb81c138f739c34565a0c172a2429f43f8"
+      "bytes": 5723180,
+      "sha256": "26fe46fd49cf40c2cd40bb7617056a7eef62b7a940ad83c73fe612de401887d2"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1053319,
-      "sha256": "692881d27a6a4394c3541f345c6ba90b46bfb2d9fa0fad0843933d8df0428190"
+      "bytes": 1054110,
+      "sha256": "002471ded16400120edae2a298a4afa0395b95916a07dcd24b2fe6892d43a5a8"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3339800,
-      "sha256": "394974b90925ebfc7696ae463783bfa95404294e028481f60eee7ea7a91405a6"
+      "bytes": 3344236,
+      "sha256": "50299fadb66b8fcd897521de116c7d4749f241fe80c2c81f2ed74124bc8d411f"
     },
     {
       "path": "docs/chapter-template.md",
@@ -82,8 +82,8 @@
     },
     {
       "path": "docs/literature-map.md",
-      "bytes": 74701,
-      "sha256": "595ad27b11a9343b7aa00c4dadfbe93dd12690f2eb509d1b1ee81c44e2fb76ad"
+      "bytes": 75188,
+      "sha256": "c87b8eb9c913f279f8572d2c9937465f853a3349ddaf4d5486bdf47d2ca8f8e8"
     },
     {
       "path": "docs/master-plan.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 37516,
-      "sha256": "bf9f844003a34540ec89f51310c49fad5da15014bb4d90560ca47d0f44f6272c"
+      "bytes": 37785,
+      "sha256": "2e0fced42bb470edf6d476479fe514ccb914e5444f31df06af13eee69ba03387"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 58583,
-      "sha256": "b468208409e437fe80a294c72228a3b2d0c4f30e02eaf6394a481466eda71872"
+      "bytes": 58802,
+      "sha256": "7da8a6b3c0c9f86374d1797ff5628f6801fba682bc66211e61b7165c64149125"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -917,8 +917,8 @@
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
-      "bytes": 12190,
-      "sha256": "493e60c8abe380c2746c72fbc02582c58ddb12166dd9793e6378206d3d0b8bbd"
+      "bytes": 12762,
+      "sha256": "dfc3eb30474f81a090805e506858e5e43a7d817dbcad6c9e32949882b62bad63"
     },
     {
       "path": "notes/code-reading/README.md",

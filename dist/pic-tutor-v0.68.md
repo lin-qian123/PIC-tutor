@@ -18,7 +18,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 313 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 314 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -26,7 +26,9 @@
 
 本版进一步补入同一 `256x512` 分辨率下的 correction-off 对照：shape=1/2/3/4 的 charge residual 为 `1.639e-11/1.020e-11/8.399e-12/6.669e-12`，只有 shape=3/4 通过 `1e-11`。八条 field gate 全通过，因此当前最准确的结论是 correction/shape 之间存在 tradeoff，不能把 correction-off 的局部通过外推为默认修复。
 
-版本日期：2026-07-12
+本版补充 `TajimaDawson1982` 的正式来源访问审计：DOI 与 AIP canonical resource 已确认，但本机请求返回 Cloudflare HTTP `403`，因此仍不宣称 publisher PDF、MinerU 或逐式核对完成。
+
+版本日期：2026-07-13
 
 本次新增 3D Esirkepov shape=2/3/4 refined controls：shape=2/3/4 的 field error 分别为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 分别为 `5.4174e-12/4.3288e-12/3.0001e-12`。三档 `128^3` sibling 均通过官方 `0.05` field gate 和独立 `1e-11` charge gate。该结果支持分辨率敏感性解释，不修改全局默认值，也不宣称正式 convergence order。
 
@@ -16383,6 +16385,8 @@ $$
 因此第 6 章当前虽然仍有 runtime validation 和 upstream handoff 的工程缺口，但在文献层已经不再是空心章节。
 
 ## 9.3 当前最突出的未闭环文献缺口
+
+以 `TajimaDawson1982` 为例，当前应把“正式来源已确认”和“正文已取得”分开记录：Crossref/AIP 元数据确认 *AIP Conference Proceedings* `91(1):69-93`、DOI `10.1063/1.33805` 及 canonical resource `https://pubs.aip.org/aip/acp/article/91/1/69-93/612300`；2026-07-13 本机请求该页面返回 Cloudflare HTTP `403`，所以本书不把 publisher PDF、MinerU Markdown 或逐式核对标记为已完成。FNAL 的 `p169.pdf` 是 Tajima 单作者的相关会议稿，只能作为主题旁证，不能替代 Tajima–Dawson 正式条目。
 
 如果按“哪一章会因为缺它而不够出版级”排序，当前最重要的缺口不是更多新论文，而是以下几条老而关键的 primary sources。
 

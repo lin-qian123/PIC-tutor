@@ -49,6 +49,8 @@
 - 当前这组核心基础文献里仍未 materialize 的缺口主要收缩为：
   - `Hockney-Eastwood`：已有 BibTeX，但当前在 `Zoteropaper`、`llm-for-zotero-mineru` 和更宽的 `Documents/` 扫描下都未发现本地合法 PDF
   - `TajimaDawson1982`：已有 BibTeX，且现已确认正式出版信息为 *AIP Conference Proceedings* `91(1):69-93`、`Sep 1982`、DOI `10.1063/1.33805`；但当前在 `Zoteropaper`、`llm-for-zotero-mineru`、更宽的 `Documents/` 和 `minerU/md_output` 扫描下都未发现本地 PDF 或 MinerU 产物
+    - Crossref 当前给出的 AIP canonical resource 为 `https://pubs.aip.org/aip/acp/article/91/1/69-93/612300`；同一记录确认该条目是 `proceedings-article`，题名为 *Laser accelerator by plasma waves*，作者为 `T. Tajima` 与 `J. M. Dawson`。
+    - 2026-07-13 本地 `curl -L` 请求该 canonical page 返回 HTTP `403`，响应为 Cloudflare challenge；这说明当前环境不能把页面当作可下载全文，不改变“publisher PDF 未取得”的结论。
     - 另已确认一个 related-but-not-identical 的公开 conference note：
       - FNAL `p169.pdf`
       - *Laser accelerator by plasma waves for ultra-high energies*

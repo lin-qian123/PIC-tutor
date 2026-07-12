@@ -84,6 +84,8 @@ Current local-state note:
     - it is not the same bibliographic item as `TajimaDawson1982`
 - current local-state boundary:
   - no matching PDF or MinerU output was found in `Zoteropaper`, `llm-for-zotero-mineru`, broader `Documents/`, or `minerU/md_output`
+  - Crossref canonical resource: `https://pubs.aip.org/aip/acp/article/91/1/69-93/612300`
+  - 2026-07-13 local `curl -L` access to that canonical page returned HTTP `403` with a Cloudflare challenge; this is an access boundary, not evidence that the publisher PDF was obtained
 
 ## Article-Level Fallback Targets Around Hockney-Eastwood
 

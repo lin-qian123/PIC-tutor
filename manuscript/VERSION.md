@@ -24,7 +24,9 @@
 
 本版进一步补入同一 `256x512` 分辨率下的 correction-off 对照：shape=1/2/3/4 的 charge residual 为 `1.639e-11/1.020e-11/8.399e-12/6.669e-12`，只有 shape=3/4 通过 `1e-11`。八条 field gate 全通过，因此当前最准确的结论是 correction/shape 之间存在 tradeoff，不能把 correction-off 的局部通过外推为默认修复。
 
-版本日期：2026-07-12
+本版补充 `TajimaDawson1982` 的正式来源访问审计：DOI 与 AIP canonical resource 已确认，但本机请求返回 Cloudflare HTTP `403`，因此仍不宣称 publisher PDF、MinerU 或逐式核对完成。
+
+版本日期：2026-07-13
 
 本次新增 3D Esirkepov shape=2/3/4 refined controls：shape=2/3/4 的 field error 分别为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 分别为 `5.4174e-12/4.3288e-12/3.0001e-12`。三档 `128^3` sibling 均通过官方 `0.05` field gate 和独立 `1e-11` charge gate。该结果支持分辨率敏感性解释，不修改全局默认值，也不宣称正式 convergence order。
 

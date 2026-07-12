@@ -27,6 +27,8 @@
 
 - [x] 2026-07-13：完成 comoving 真实 MPI=2 stable/sign pair：默认 selector、显式 `-beta` 和反号 `v_comoving=+beta` 三个 plotfile 均完整落盘且 fields finite；显式/default 的 energy/spike 差均约 `1e-14`，MPI=2 stable 相对既有 1-rank stable 的 energy/spike 差低于 1%，positive/stable spike ratio 约 `1.0637`。新增 `scripts/analyze_comoving_mpi2_pair.py` 与 `notes/code-reading/fieldsolver/39-comoving-mpi2-pair-contract.md`；MPI finalize 尾噪声单独记录，energy gate 仍关闭。
 
+- [x] 2026-07-13：将 MPI=2 pair contract 接入 `scripts/build_comoving_first_stage_patch.py` 的生成链；comoving provenance note、submission packet、PR draft 和 staging bundle 现在都自动引用 MPI=2 selector-equivalence/sign-sensitivity 证据。重新生成后对目标 WarpX 完成 `audit/report/preview/stage --dry-run`，目标仍为 `unstaged`，未写入 `../warpx`。
+
 - [x] 2026-07-13：新增 `scripts/audit_esirkepov_paper_source_runtime_crosswalk.py`，将 Esirkepov 预印本 `Eq.(23)`/二阶 spline、WarpX `ShapeFactors.H`/`CurrentDeposition.H`/dispatch 表面和现有 3D/RZ/径向/MR runtime contract 收成三方只读 crosswalk；各 family 的 `PASS/BOUNDARY` 和 publisher-PDF 缺失边界均保留。报告见 `runs/stage-c-validation/esirkepov-paper-source-runtime-crosswalk/contract.{json,md}`，笔记见 `notes/code-reading/particles/62-esirkepov-paper-source-runtime-crosswalk.md`。
 
 - [x] 2026-07-13：新增 `scripts/audit_leecpc2015_source_crosswalk.py`，完成 LeeCPC2015 accepted manuscript、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 和官方 `pml` regression wiring 的三方只读交叉审计；该 contract 通过表示证据表面已连通，不表示 publisher-formatted CPC PDF 已取得，也不表示 `C1-C25` 逐系数等价已证明。报告见 `runs/stage-c-validation/leecpc2015-source-crosswalk/contract.{json,md}`，笔记见 `notes/code-reading/fieldsolver/37-leecpc2015-source-crosswalk.md`。

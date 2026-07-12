@@ -41,6 +41,17 @@ The current local sibling does not inflate electric energy above the stable base
 
 The velocity-only scan confirms two things: default selector and explicit default velocity are numerically equivalent, and spike can worsen without producing a higher electric-energy ordering.
 
+## Real MPI=2 cross-check
+
+- Contract JSON: `runs/fieldsolver-validation/comoving-reference-ledgers/comoving-mpi2-pair-contract/contract.json`
+- Stable electric energy: `8.1660553510044375e+14`
+- Explicit-default electric energy: `8.1660553510045362e+14`
+- Explicit/default energy relative difference: `1.199e-14`
+- Explicit/default spike relative difference: `4.030e-14`
+- Positive-sign spike/stable = `1.0636724700037294e+00`
+
+The real MPI=2 pair confirms selector equivalence and sign sensitivity at the plotfile level; it still does not justify an energy gate.
+
 ## Review guidance
 
 If this draft is proposed upstream now, the review claim should stay narrow:

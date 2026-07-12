@@ -32,6 +32,13 @@ This PR upgrades the comoving PSATD test from checksum-only to a narrow first-st
 - Positive-default beta energy/stable = `8.0281253219914006e-01`
 - The local velocity-only scan shows that spike can worsen without producing a larger final electric energy inside the same comoving family.
 
+## Real MPI=2 cross-check
+
+- Explicit/default energy relative difference = `1.199e-14`
+- Explicit/default spike relative difference = `4.030e-14`
+- Positive-sign spike/stable = `1.0636724700037294e+00`
+- The MPI pair supports selector equivalence and sign sensitivity, but not an energy-gate claim.
+
 ## Out of scope
 
 - no `divE` or other producer-surface widening in this PR;

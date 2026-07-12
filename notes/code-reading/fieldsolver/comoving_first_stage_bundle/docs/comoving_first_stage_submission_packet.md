@@ -41,6 +41,13 @@ This change upgrades the comoving PSATD test from checksum-only to a narrow firs
 - Positive-default beta energy/stable = `8.0281253219914006e-01`
 - This confirms that spike can get worse without producing a stronger electric-energy ordering inside the same comoving family.
 
+## Real MPI=2 cross-check
+
+- Explicit/default energy relative difference = `1.199e-14`
+- Explicit/default spike relative difference = `4.030e-14`
+- Positive-sign spike/stable = `1.0636724700037294e+00`
+- This strengthens the selector/sign evidence without enabling an energy gate.
+
 ## Review checklist
 
 1. Confirm the helper stays `finite + spike` only.

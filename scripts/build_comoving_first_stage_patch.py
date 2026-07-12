@@ -27,6 +27,14 @@ DEFAULT_SCAN_JSON = (
     / "comoving-reference-ledgers"
     / "comoving-velocity-scan.json"
 )
+DEFAULT_MPI2_JSON = (
+    ROOT
+    / "runs"
+    / "fieldsolver-validation"
+    / "comoving-reference-ledgers"
+    / "comoving-mpi2-pair-contract"
+    / "contract.json"
+)
 DEFAULT_HELPER_PATH = (
     ROOT
     / "notes"
@@ -92,6 +100,12 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=DEFAULT_SCAN_JSON,
         help="Optional comoving velocity scan summary JSON.",
+    )
+    parser.add_argument(
+        "--mpi2-json",
+        type=Path,
+        default=DEFAULT_MPI2_JSON,
+        help="Optional real MPI=2 stable/explicit/sign contract JSON.",
     )
     parser.add_argument(
         "--helper-output",
@@ -267,6 +281,7 @@ def render_diff(helper_text: str) -> str:
 def render_note(
     ledger_payload: dict,
     scan_payload: dict | None,
+    mpi2_payload: dict | None,
     safety_factor: float,
 ) -> str:
     stable = ledger_payload["stable_metrics"]
@@ -332,6 +347,26 @@ def render_note(
                 "",
             ]
         )
+    if mpi2_payload is not None:
+        metrics = mpi2_payload["comparisons"]
+        stable = mpi2_payload["stable"]
+        explicit = mpi2_payload["explicit_default"]
+        positive = mpi2_payload["positive_sign"]
+        lines.extend(
+            [
+                "## Real MPI=2 cross-check",
+                "",
+                f"- Contract JSON: `{DEFAULT_MPI2_JSON.relative_to(ROOT)}`",
+                f"- Stable electric energy: `{stable['electric_energy']:.16e}`",
+                f"- Explicit-default electric energy: `{explicit['electric_energy']:.16e}`",
+                f"- Explicit/default energy relative difference: `{metrics['explicit_to_stable_energy_delta']:.3e}`",
+                f"- Explicit/default spike relative difference: `{metrics['explicit_to_stable_spike_delta']:.3e}`",
+                f"- Positive-sign spike/stable = `{metrics['positive_to_stable_spike_ratio']:.16e}`",
+                "",
+                "The real MPI=2 pair confirms selector equivalence and sign sensitivity at the plotfile level; it still does not justify an energy gate.",
+                "",
+            ]
+        )
     lines.extend(
         [
             "## Review guidance",
@@ -350,6 +385,7 @@ def render_note(
 def render_packet(
     ledger_payload: dict,
     scan_payload: dict | None,
+    mpi2_payload: dict | None,
     safety_factor: float,
 ) -> str:
     stable = ledger_payload["stable_metrics"]
@@ -413,6 +449,19 @@ def render_packet(
                 "",
             ]
         )
+    if mpi2_payload is not None:
+        metrics = mpi2_payload["comparisons"]
+        lines.extend(
+            [
+                "## Real MPI=2 cross-check",
+                "",
+                f"- Explicit/default energy relative difference = `{metrics['explicit_to_stable_energy_delta']:.3e}`",
+                f"- Explicit/default spike relative difference = `{metrics['explicit_to_stable_spike_delta']:.3e}`",
+                f"- Positive-sign spike/stable = `{metrics['positive_to_stable_spike_ratio']:.16e}`",
+                "- This strengthens the selector/sign evidence without enabling an energy gate.",
+                "",
+            ]
+        )
     lines.extend(
         [
             "## Review checklist",
@@ -434,6 +483,7 @@ def render_packet(
 def render_pr_draft(
     ledger_payload: dict,
     scan_payload: dict | None,
+    mpi2_payload: dict | None,
     safety_factor: float,
 ) -> str:
     stable = ledger_payload["stable_metrics"]
@@ -488,6 +538,19 @@ def render_pr_draft(
                 f"- Positive-default beta spike/stable = `{positive['stable_spike_ratio']:.16e}`",
                 f"- Positive-default beta energy/stable = `{positive['stable_energy_ratio']:.16e}`",
                 "- The local velocity-only scan shows that spike can worsen without producing a larger final electric energy inside the same comoving family.",
+                "",
+            ]
+        )
+    if mpi2_payload is not None:
+        metrics = mpi2_payload["comparisons"]
+        lines.extend(
+            [
+                "## Real MPI=2 cross-check",
+                "",
+                f"- Explicit/default energy relative difference = `{metrics['explicit_to_stable_energy_delta']:.3e}`",
+                f"- Explicit/default spike relative difference = `{metrics['explicit_to_stable_spike_delta']:.3e}`",
+                f"- Positive-sign spike/stable = `{metrics['positive_to_stable_spike_ratio']:.16e}`",
+                "- The MPI pair supports selector equivalence and sign sensitivity, but not an energy-gate claim.",
                 "",
             ]
         )
@@ -614,11 +677,12 @@ def main() -> None:
         )
 
     scan_payload = load_scan_payload(args.scan_json.resolve())
+    mpi2_payload = load_scan_payload(args.mpi2_json.resolve())
     helper_text = render_helper(spike_ratio_ref_stable, args.safety_factor)
     diff_text = render_diff(helper_text)
-    note_text = render_note(ledger_payload, scan_payload, args.safety_factor)
-    packet_text = render_packet(ledger_payload, scan_payload, args.safety_factor)
-    pr_draft_text = render_pr_draft(ledger_payload, scan_payload, args.safety_factor)
+    note_text = render_note(ledger_payload, scan_payload, mpi2_payload, args.safety_factor)
+    packet_text = render_packet(ledger_payload, scan_payload, mpi2_payload, args.safety_factor)
+    pr_draft_text = render_pr_draft(ledger_payload, scan_payload, mpi2_payload, args.safety_factor)
     write_text(args.helper_output.resolve(), helper_text)
     write_text(args.diff_output.resolve(), diff_text)
     write_text(args.note_output.resolve(), note_text)

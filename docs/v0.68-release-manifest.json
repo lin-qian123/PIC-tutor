@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 715,
-  "total_bytes": 27502520,
+  "total_bytes": 27508487,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1515770,
-      "sha256": "caee71219f5fe09904ff6299d69f718ea7e9e3e76640587bd003c4be4f76e9ed"
+      "bytes": 1516037,
+      "sha256": "7797e28a798f2a7d6e886ff9a23c7f7cee77d8af24317414f4bea28bcb561383"
     },
     {
       "path": "TODO.md",
-      "bytes": 1359703,
-      "sha256": "61d83c96caa3846200b0b1ee450a760011b54fc11b405f8d84fc9e1f54e45489"
+      "bytes": 1360094,
+      "sha256": "af8b5fead91a7a6c8e1a74d98e1593b5b76af66878a5aeadc04c1d71904cd1a7"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "f6360238acaa0d6ce3c3de0a8856eade413c7111889f71566b5f183124ea753a"
+      "sha256": "15302ba65f0f3fcb794fb7c039a2c7f5de9713ec438125a7342ef1644d6d8631"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -1377,18 +1377,18 @@
     },
     {
       "path": "notes/code-reading/fieldsolver/comoving_first_stage_bundle/docs/comoving_first_stage_pr_draft.md",
-      "bytes": 1952,
-      "sha256": "8e8cf99167c7950a321b28b79f1da2f9cebea6fb790b40d03e5daa156461594a"
+      "bytes": 2252,
+      "sha256": "06b7f8b6b24ce2b5294e2313952281d7e67e0cfa4ccff4cac3b99b79c26b907f"
     },
     {
       "path": "notes/code-reading/fieldsolver/comoving_first_stage_bundle/docs/comoving_first_stage_provenance_note.md",
-      "bytes": 2741,
-      "sha256": "19b59c206e760f988e10a9acde1c7742487e0ee8cbe374491ad7135f75592f82"
+      "bytes": 3307,
+      "sha256": "9c0070ed6328e32e7ee524d1f512e5908c5c5af9d7822d363ad37da98b808202"
     },
     {
       "path": "notes/code-reading/fieldsolver/comoving_first_stage_bundle/docs/comoving_first_stage_submission_packet.md",
-      "bytes": 2396,
-      "sha256": "8ec6c12918356750d7b814c2344cc60452be4486f64fd8edad26d5705cdb7136"
+      "bytes": 2678,
+      "sha256": "4bfde0b7baf3276343353fdfcee3b1243dd7a7037e882c0423788620496784e0"
     },
     {
       "path": "notes/code-reading/fieldsolver/comoving_first_stage_bundle/warpx/Examples/Tests/nci_psatd_stability/analysis_comoving.py",
@@ -1407,18 +1407,18 @@
     },
     {
       "path": "notes/code-reading/fieldsolver/comoving_first_stage_pr_draft.md",
-      "bytes": 1952,
-      "sha256": "8e8cf99167c7950a321b28b79f1da2f9cebea6fb790b40d03e5daa156461594a"
+      "bytes": 2252,
+      "sha256": "06b7f8b6b24ce2b5294e2313952281d7e67e0cfa4ccff4cac3b99b79c26b907f"
     },
     {
       "path": "notes/code-reading/fieldsolver/comoving_first_stage_provenance_note.md",
-      "bytes": 2741,
-      "sha256": "19b59c206e760f988e10a9acde1c7742487e0ee8cbe374491ad7135f75592f82"
+      "bytes": 3307,
+      "sha256": "9c0070ed6328e32e7ee524d1f512e5908c5c5af9d7822d363ad37da98b808202"
     },
     {
       "path": "notes/code-reading/fieldsolver/comoving_first_stage_submission_packet.md",
-      "bytes": 2396,
-      "sha256": "8ec6c12918356750d7b814c2344cc60452be4486f64fd8edad26d5705cdb7136"
+      "bytes": 2678,
+      "sha256": "4bfde0b7baf3276343353fdfcee3b1243dd7a7037e882c0423788620496784e0"
     },
     {
       "path": "notes/code-reading/fieldsolver/comoving_first_stage_target_report.md",
@@ -2687,8 +2687,8 @@
     },
     {
       "path": "scripts/build_comoving_first_stage_patch.py",
-      "bytes": 24648,
-      "sha256": "b2bab52028b675e0130b74a3e4fbec057d0d7101c147d45df3d84dedbb2dd178"
+      "bytes": 27661,
+      "sha256": "133de3cfcc9c0ff2e919923542f3b479a8c606a3f5cabd0dd95cf12ec348eebc"
     },
     {
       "path": "scripts/build_comoving_reference_ledger.py",

@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 706,
-  "total_bytes": 27467257,
+  "entry_count": 707,
+  "total_bytes": 27470106,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1513729,
-      "sha256": "30d52ceb99aee94b700c3629fac581f360d1ccf4ea10282bd2554e38b3c2aeff"
+      "bytes": 1514233,
+      "sha256": "b87e5050e64b876062b628fbbeaed63c70becddafe3f6709e6fd5510c33087fa"
     },
     {
       "path": "TODO.md",
-      "bytes": 1357433,
-      "sha256": "4f51483a2c5fb59f1a37dc2a5967229765167ab439b22ebee03350a6fa8bdd04"
+      "bytes": 1357514,
+      "sha256": "553fe61a9279299178e2ab83ceb807a2a867746954595b841439b12d49101b2a"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 41393,
-      "sha256": "03c50cd2bf441110d1ba0f6639bfe01b4afae4346993f4590402fe6dacd8fab5"
+      "bytes": 41723,
+      "sha256": "c3fe35365a4ea5cc2faa3ed6991b8099d6b6039ab17afd6dec4a3766e9900ff9"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -1334,6 +1334,11 @@
       "path": "notes/code-reading/fieldsolver/35-psatd-literature-source-runtime-strategy-matrix.md",
       "bytes": 1763,
       "sha256": "279646e5f4cfe83543b27a1b6409273a930e965f410049fad55ee140262ae30c"
+    },
+    {
+      "path": "notes/code-reading/fieldsolver/36-rz-jrhom-first-stage-decision.md",
+      "bytes": 1934,
+      "sha256": "ec9e5d32f5912bb66da8c5db3a14c569cf07a2d7575ca175464c7801e95c4dcd"
     },
     {
       "path": "notes/code-reading/fieldsolver/README.md",

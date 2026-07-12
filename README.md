@@ -6,6 +6,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
+2026-07-13：新增 `scripts/audit_leecpc2015_source_crosswalk.py`，将 LeeCPC2015 accepted manuscript 的 PSTD/staggered-grid/reflection 锚点、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 实现表面和官方 `pml` reflectivity regression wiring 收成三方可重复 contract；v0.68 已重建并保持 316 页。该 contract 不把 accepted manuscript 升格为 publisher PDF，也不把组合 reflectivity gate 写成 `C1-C25` 逐系数证明。
+
 2026-07-13：完成 RZ JRhom first-stage handoff 的目标 checkout 只读验收：目标 `/Volumes/PHILIPS/programs/PIC/warpx` 保持 `unstaged`，`audit/report/preview/stage --dry-run` 全部成功，计划写入面仅包含一个 analysis helper 和一处 CMake wiring；MPI=2 的 `finite + energy` contract 继续通过。正式 staging 仍需 WarpX 维护者明确允许，当前不声称 upstream 已接入。决策记录见 `notes/code-reading/fieldsolver/36-rz-jrhom-first-stage-decision.md`。
 
 2026-07-13：完成 `TajimaDawson1982` 正式来源访问审计。Crossref/AIP 元数据已确认 DOI `10.1063/1.33805` 和 canonical resource，但本机请求返回 Cloudflare HTTP `403`；相关 FNAL 单作者 conference note 继续作为旁证，不替代 publisher PDF/MinerU 全文。

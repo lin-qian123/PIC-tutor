@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 707,
-  "total_bytes": 27470106,
+  "entry_count": 709,
+  "total_bytes": 27478768,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1514233,
-      "sha256": "b87e5050e64b876062b628fbbeaed63c70becddafe3f6709e6fd5510c33087fa"
+      "bytes": 1514684,
+      "sha256": "e329274e9b2d8d1a323ded52d1e0e810a23ac665684296ffcb4ba1232cc7b3f0"
     },
     {
       "path": "TODO.md",
-      "bytes": 1357514,
-      "sha256": "553fe61a9279299178e2ab83ceb807a2a867746954595b841439b12d49101b2a"
+      "bytes": 1358047,
+      "sha256": "9298c5281de28a4e6b286a649eb61666acb036722ee2b80aab6e28bc2f3f004b"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3363759,
-      "sha256": "33e7b20466db7899a9ed7723f620313222bda25b9b1b3daf7e73c4233c8cf3e7"
+      "bytes": 3363764,
+      "sha256": "d43a59a54bf91cd89e364b9304620fed494e49d2f67b0c56d2345bfbc6aec505"
     },
     {
       "path": "docs/chapter-template.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 41723,
-      "sha256": "c3fe35365a4ea5cc2faa3ed6991b8099d6b6039ab17afd6dec4a3766e9900ff9"
+      "bytes": 42067,
+      "sha256": "2e55b39c239ae83818f5e295c79c9c60f67f6e9165b1852f7ba22b9a74d0b8e9"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -1339,6 +1339,11 @@
       "path": "notes/code-reading/fieldsolver/36-rz-jrhom-first-stage-decision.md",
       "bytes": 1934,
       "sha256": "ec9e5d32f5912bb66da8c5db3a14c569cf07a2d7575ca175464c7801e95c4dcd"
+    },
+    {
+      "path": "notes/code-reading/fieldsolver/37-leecpc2015-source-crosswalk.md",
+      "bytes": 1922,
+      "sha256": "a0a6048b843b365a9a7d2e193451e247680d36a5099b72601b31d86ddbc02d32"
     },
     {
       "path": "notes/code-reading/fieldsolver/README.md",
@@ -2574,6 +2579,11 @@
       "path": "scripts/audit_leecpc2015_manuscript_contract.py",
       "bytes": 5628,
       "sha256": "afced8b143605b2b36105e0b49e40fc9e4e4951fb354ef67b43acfed0e680362"
+    },
+    {
+      "path": "scripts/audit_leecpc2015_source_crosswalk.py",
+      "bytes": 5407,
+      "sha256": "e8e0441ecd1d99f54e4a679a081a5da77e2eaccc91a1582c4415ce5e41d6c89b"
     },
     {
       "path": "scripts/audit_particle_mesh_1974_abstract_contract.py",

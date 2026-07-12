@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 719,
-  "total_bytes": 27525023,
+  "entry_count": 720,
+  "total_bytes": 27527958,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1517659,
-      "sha256": "623f8592d86b612c7bdf01de2ad1e36ba1d298cfef71a5e869781b91bee4139d"
+      "bytes": 1517918,
+      "sha256": "120fdca6ae87d4e8af26440419c82ec6f0820c9d4ac9b49527691c662c667294"
     },
     {
       "path": "TODO.md",
-      "bytes": 1361263,
-      "sha256": "b32dfc71480508bb698b2787ae1a62a06f050f8b119e9845832d5b9309942344"
+      "bytes": 1361486,
+      "sha256": "6742b57c9bb11cc1623dc28dbffd618ac6b9ad375c06df3f5021848b1647ad61"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -2092,8 +2092,8 @@
     },
     {
       "path": "notes/code-reading/particles/65-higuera-poincare-topology-classifier.md",
-      "bytes": 2023,
-      "sha256": "fc556c4fe5fb48392822096528e1ff72e5d02a768c63c52eb076ebd62d177c66"
+      "bytes": 2343,
+      "sha256": "4f3a463a54abc816d81b08c4c375912e5efcbdcd19cd277548cba13f8b15d459"
     },
     {
       "path": "notes/code-reading/particles/66-higuera-resonance-window-resolution-contract.md",
@@ -3459,6 +3459,11 @@
       "path": "scripts/summarize_rz_langmuir_psatd_family.py",
       "bytes": 4135,
       "sha256": "1f9e82c1826c0d2681e8a16e3d77556b3b338ec12482fa35d3d9aa6e2f201d2a"
+    },
+    {
+      "path": "scripts/test_higuera_poincare_topology.py",
+      "bytes": 2133,
+      "sha256": "950acb2926ab9e1821cc4d0902db9ada881c9e2aab83d7c9d7d83daa0ae5158e"
     },
     {
       "path": "scripts/validate_transition_zone_route_contract.py",

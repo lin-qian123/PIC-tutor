@@ -19,6 +19,7 @@
 - [x] 2026-07-13：新增 `scripts/classify_higuera_poincare_topology.py` 和 `notes/code-reading/particles/65-higuera-poincare-topology-classifier.md`；分类器会计算候选多边形交叉/面积，短基线正确返回 `INSUFFICIENT_SAMPLING`。另完成 32³、2201-frame 长轨道控制，三种 pusher 均有 18/19 个截面点，分类器进入 `REVIEW_REQUIRED`，但候选签名完全一致，仍不把时间序列多边形自交误判为 resonance island。
 - [x] 2026-07-13：在 sampled topology classifier 中加入 invariant-order gate；长轨道三种 pusher 的 `I_y` 区间均互不重叠且保持 `p05 < p10 < p17 < p22 < p27` 顺序。该 gate 通过，但完整 topology gate 仍因折线点序/参考轨道未验证而保持关闭。
 - [x] 2026-07-13：改进 `scripts/classify_higuera_poincare_topology.py`，并行记录时间顺序与相空间中心角排序候选；长轨道三种 pusher 的角排序均无自交/轨道间交叉，确认原大规模时间折线交叉是排序伪影。论文一致的 topology 定义和更密参考轨道仍未完成。
+- [x] 2026-07-13：新增 `scripts/test_higuera_poincare_topology.py` 确定性回归合同，覆盖 bow-tie 时间排序伪影、嵌套角排序候选和不足采样状态；测试通过但不改变物理 topology gate。
 - [x] 2026-07-13：加入论文 Section VI 的解析 quartic reference `p_y^2 + (b y^2/2)^2 = I_y` gate；三种 pusher、五条轨道均通过 `1e-2` 相对残差阈值，最差为 Vay `p22=7.52e-3`。该结果支持 section/invariant consistency，不替代完整 topology gate。
 - [x] 2026-07-13：完成 14-species `p_y=0.2..2.8` 密集族和 64³ `p_y=1.6/1.8` resolution control；新增 `scripts/analyze_higuera_poincare_resonance_window.py` 与 `scripts/compare_higuera_resonance_window_resolution.py`。Vay 窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，细网格比较通过 5x screen ratio；该结果是 resonance-sensitive invariant screen，不是完整 topology proof。
 

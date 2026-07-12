@@ -830,9 +830,11 @@ runtime 复现仍作为边界。</p>
 rotation-angle；当前仍不把该 AMR/PML/div-cleaning case 升级为论文专门
 runtime reproduction。</p>
 <p>本版又完成窄化 uniform-<code>B</code> Boris/Vay/Higuera-Cary runtime
-对照：三条 case 各有 81 个 Full plotfile，半径 spread 和动量范数 drift
-已统一记录；同时修正 2D XZ 面内动量读取路径为
-<code>particle_momentum_x/z</code>。half-step velocity 与 Poincare
+对照：三条 case 各有 81 个 Full plotfile，并依据
+<code>UpdatePosition.H</code> 重建 position-update velocity/gyroradius
+proxy；最大相对误差分别低于 <code>1.34e-14/4.8e-15</code>。该结果支持
+Vay Appendix B 的 proxy 层条件，同时修正 2D XZ 面内动量读取路径为
+<code>particle_momentum_x/z</code>；直接 half-step attribute 与 Poincare
 topology 仍作为边界。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
 汇总本地 135 条 <code>contract.json</code>，保留原始
@@ -7735,11 +7737,14 @@ AMR、PML、divergence cleaning 和自洽场演化，只保留 <code>B_y</code>
 cadence、粒子数、有限状态、半径和动量范数统一检查通过；半径 relative
 spread 分别为
 <code>3.889e-3</code>、<code>3.889e-3</code>、<code>3.218e-3</code>，动量范数
-relative spread 均低于 <code>1.1e-14</code>。这条证据已经是专门 pusher
-runtime 对照，但因为 plotfile 仍没有 half-step velocity，不能把它写成
-Vay Appendix B 的最终 gyroradius gate；同样，它没有论文第 VI 节的
-Poincare-section consumer，不能替代 Higuera-Cary topology
-reproduction。报告见
+relative spread 均低于 <code>1.1e-14</code>。进一步依据
+<code>../warpx/Source/Particles/Pusher/UpdatePosition.H</code> 的
+<code>x += u*gamma_inverse*dt</code>，从相邻位置差重建 position-update
+velocity：三种 pusher 的最大相对误差均低于 <code>1.34e-14</code>，对应
+gyroradius proxy 误差均低于 <code>4.8e-15</code>。这已经支持 Vay
+Appendix B 条件的 proxy 层证据，但不是直接读取的 half-step
+attribute；同样，它没有论文第 VI 节的 Poincare-section
+consumer，不能替代 Higuera-Cary topology reproduction。报告见
 <code>runs/stage-c-validation/pusher_uniform_b_comparison/contract.{json,md}</code>。</p>
 <h2 id="从-multiparticlecontainer-到-physicalparticlecontainer">4.6 从
 <code>MultiParticleContainer</code> 到

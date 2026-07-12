@@ -20,7 +20,7 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 2026-07-13：新增 `larmor` 逐帧离散轨道合同：6 个 Full plotfile 的时间、粒子数、有限状态、cadence 和 Boris rotation-angle 参考量均通过独立脚本提取；该增强仍不等价于 Vay Appendix B 或 Higuera-Cary Poincare topology 专门复现。
 
-2026-07-13：新增窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：三条无 AMR/PML/场演化 sibling 各输出 81 个 Full plotfile，统一轨道合同通过；该证据仍不宣称取得 half-step velocity 或 Poincare topology 专门 gate。
+2026-07-13：新增窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：三条无 AMR/PML/场演化 sibling 各输出 81 个 Full plotfile；基于 `UpdatePosition.H` 的 position-update velocity/gyroradius proxy 误差分别压到 `1.34e-14/4.8e-15` 以内，支持 Vay Appendix B 条件的 proxy 层证据，但仍不宣称直接 half-step attribute 或 Poincare topology 专门 gate。
 
 本轮又把第 7 章 transition-zone route-count packet 落成可执行的 schema validator 和 synthetic fixture：正例检查 route count、weight closure、`rho/J` 中间账本与显式 merge gates，负例会被拒绝；当前 WarpX 尚未接入 runtime hook，因此仍保持 `RUNTIME_LEDGER_UNPROVEN`。
 

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 699,
-  "total_bytes": 27428883,
+  "total_bytes": 27432656,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1511995,
-      "sha256": "384147aaa2606ebecc22b4792ff42f6e11e824c85058f4e93f0b87ad07ee5e6b"
+      "bytes": 1512131,
+      "sha256": "04769cd24d5991cc13003fb05f300378139f2438c940bd13c77479ac4a84dc16"
     },
     {
       "path": "TODO.md",
-      "bytes": 1355350,
-      "sha256": "d7ae3120ba048977e51626fffb93d3512c96d0d1d359899b7ae42df45ec8f435"
+      "bytes": 1355492,
+      "sha256": "e789852270f7e76126e397f5bacdb78f7fccb2def33bb3d06acfa5caa5237463"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5738651,
-      "sha256": "7622328677ff9d2d0e0d8801efe635e6e64f9e84ee5c64009da2faa703f604ff"
+      "bytes": 5739060,
+      "sha256": "0feab3df869bbd65e53fc55f515a326e7226e331717dabc0ee9e113cf1e8f1db"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1067153,
-      "sha256": "8ecaefd12d54f55c2f7f0bb7af1fde4e5fd5191f270dd9208fab289a0a6e6cb7"
+      "bytes": 1067496,
+      "sha256": "3369d9a1e042533d3abe6d7596d59eb536d296d8d6a3487cf9973db92e996f05"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3362639,
-      "sha256": "4b6f7534ad1e8222b05fe3277d772681cfaf9cc352366821e7b3b60e78a93d02"
+      "bytes": 3362985,
+      "sha256": "868fed0e679be32a319d978ed36a3f35f07ebab349e0049d8d9df5bb1aa3744b"
     },
     {
       "path": "docs/chapter-template.md",
@@ -72,8 +72,8 @@
     },
     {
       "path": "docs/example-regression-map.md",
-      "bytes": 1844649,
-      "sha256": "899436d56ed37dbc638b59126b1c637254443e1f96502075e8d880d24682d6d4"
+      "bytes": 1844782,
+      "sha256": "60a167e504244cbc326391ecc826c31d86e2ce56b797fefbfb167ff63540231d"
     },
     {
       "path": "docs/foundations-literature-list.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "0b0ea50ed2796056a9c7259625cefff68607c9c926a0e87495610cc2c6c25223"
+      "sha256": "8294a8fb9e6ac6a5cd21ea0d7678b1d7da637969c547f131208b043a11d1295b"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 39828,
-      "sha256": "a41931aa02ffa13e696ae8d51af626a3f5c941fe1ba8d090d6086e7939e21963"
+      "bytes": 39965,
+      "sha256": "8e5d7f8c3aa15ed1c952d82ec8d3ee04e6c2f27df1271659958c238805879041"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 60847,
-      "sha256": "076687fa4e1247045221931e97faeadedab645ad138186bc38d1424c4ae6c7d8"
+      "bytes": 60986,
+      "sha256": "95a24e74c1aeeeda19bb54379b5777c952236d0bd01d46cc5b0fdf54f6a436f6"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 146975,
-      "sha256": "95af6b10fc56877fa08a635f566b2c933e3775525e104dc1665e8846574a8dd3"
+      "bytes": 147179,
+      "sha256": "a13184cb3238c10b88bab052d1b753af0313db61521a4418ea6495514573ed61"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -2042,8 +2042,8 @@
     },
     {
       "path": "notes/code-reading/particles/63-uniform-b-pusher-runtime-contract.md",
-      "bytes": 1870,
-      "sha256": "0092501bc378e669382c1524f5305b923178bd716b93dcac3a04a885e154b49d"
+      "bytes": 2384,
+      "sha256": "dcf9f89b399f7b815a670b41893e2dec144325405026ca0b44b8eccbb2833405"
     },
     {
       "path": "notes/code-reading/particles/README.md",
@@ -3027,8 +3027,8 @@
     },
     {
       "path": "scripts/compare_uniform_b_pushers.py",
-      "bytes": 7160,
-      "sha256": "d133c8e5fa40ef9da0b4c8b8e6acda736cc5bbe2329bf0e3739b646d38ca5f5f"
+      "bytes": 8430,
+      "sha256": "8213593bc1a25ca960b547a7008c0e531ba23a652dc6e537e4de08fa828e31b3"
     },
     {
       "path": "scripts/download_open_references.py",

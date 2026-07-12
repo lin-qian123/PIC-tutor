@@ -18,6 +18,14 @@
 | Vay | `3.88925585e-3` | `1.05200844e-14` | `1.24730914e-1` |
 | Higuera-Cary | `3.21781662e-3` | `9.01721517e-15` | `1.24772899e-1` |
 
-这组结果是“窄化 external-B particle-pusher 对照”，不是论文图形复现。当前 diagnostics 仍没有 half-step velocity，因此不能关闭 Vay Appendix B 的 `v^{i+1/2}` gyroradius 条件；也没有 Poincare-section consumer，因此不能关闭 Higuera-Cary 论文的 resonance-island/topology 边界。运行时结束后 binary 在 AMReX finalize 后留下不退出的尾进程，但 81 个 plotfile 和 `warpx_used_inputs` 已完整落盘；该环境行为单独保留，不计入物理 PASS。
+源码核对 `../warpx/Source/Particles/Pusher/UpdatePosition.H` 后，进一步用相邻 plotfile 的位置差重建 `u*gamma_inverse`，即显式 `UpdatePosition` 实际使用的 position-update velocity proxy。结果如下：
+
+| pusher | max relative error of velocity proxy | relative error of gyroradius proxy |
+|---|---:|---:|
+| Boris | `7.75525003e-15` | `1.88737918e-15` |
+| Vay | `1.33628924e-14` | `4.77395910e-15` |
+| Higuera-Cary | `1.20504654e-14` | `4.44089218e-15` |
+
+这组结果是“窄化 external-B particle-pusher 对照”，不是论文图形复现。它已经在 position-update proxy 层支持 Vay Appendix B 所需的半步速度/回旋半径条件，但不是直接读取的 half-step attribute；也没有 Poincare-section consumer，因此不能关闭 Higuera-Cary 论文的 resonance-island/topology 边界。运行时结束后 binary 在 AMReX finalize 后留下不退出的尾进程，但 81 个 plotfile 和 `warpx_used_inputs` 已完整落盘；该环境行为单独保留，不计入物理 PASS。
 
 报告：`runs/stage-c-validation/pusher_uniform_b_comparison/contract.{json,md}`。

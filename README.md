@@ -22,7 +22,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：将现有 `larmor` checksum surface 扩展为逐帧离散轨道合同：6 个 Full plotfile 的时间序列、粒子数、有限性、输出 cadence 和 Boris rotation-angle 参考量均可重复提取；仍明确不将 AMR/PML/div-cleaning 组合 case 升级为 Vay Appendix B 或 Higuera-Cary Poincare runtime reproduction。
 
-2026-07-13：完成窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：移除 AMR/PML/场演化，三条 case 各输出 81 个 Full plotfile，统一轨道合同通过；半径 spread 为 `3.889e-3/3.889e-3/3.218e-3`，动量范数 drift 均低于 `1.1e-14`。half-step velocity 与 Poincare consumer 仍是明确缺口。
+2026-07-13：完成窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：移除 AMR/PML/场演化，三条 case 各输出 81 个 Full plotfile，统一轨道合同通过；由 `UpdatePosition.H` 和相邻位置差重建的 position-update velocity proxy 最大误差均低于 `1.34e-14`，gyroradius proxy 误差均低于 `4.8e-15`。该结果支持 Vay Appendix B 条件的 proxy 层证据，但直接 half-step attribute 和 Poincare consumer 仍未完成。
 
 AMR transition-zone 的下一阶段接口已落成可执行设计合同：`python scripts/validate_transition_zone_route_contract.py --input docs/transition-zone-route-contract-example.json` 正例通过、破坏 route count 的负例被拒绝；这仍是 schema/analysis 层验证，不是当前 WarpX runtime route proof。
 

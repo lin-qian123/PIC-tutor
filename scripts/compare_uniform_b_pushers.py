@@ -77,6 +77,9 @@ def collect(run_dir: Path) -> dict:
         momentum_norm = np.linalg.norm(momentum, axis=1)
         momentum_phase = np.unwrap(np.arctan2(momentum[:, 1], momentum[:, 0]))
         phase_increment = np.diff(momentum_phase)
+        effective_velocity = np.diff(position, axis=0) / dt[:, None]
+        effective_speed = np.linalg.norm(effective_velocity, axis=1)
+        effective_speed_relative_error = (effective_speed - U0 * c / GAMMA) / (U0 * c / GAMMA)
         nonzero_radius = radius[1:]
         rows.append(
             {
@@ -92,6 +95,11 @@ def collect(run_dir: Path) -> dict:
                 ),
                 "momentum_phase_increment_abs_mean": float(np.mean(np.abs(phase_increment))),
                 "momentum_phase_increment_abs_max": float(np.max(np.abs(phase_increment))),
+                "position_update_velocity_proxy_mean": float(effective_speed.mean()),
+                "position_update_velocity_proxy_relative_error_mean": float(effective_speed_relative_error.mean()),
+                "position_update_velocity_proxy_relative_error_max_abs": float(np.max(np.abs(effective_speed_relative_error))),
+                "gyroradius_proxy_mean": float(effective_speed.mean() / OMEGA_C),
+                "gyroradius_proxy_relative_error": float((effective_speed.mean() / OMEGA_C - RADIUS) / RADIUS),
                 "position_finite": bool(np.isfinite(position).all()),
                 "momentum_finite": bool(np.isfinite(momentum).all()),
             }
@@ -146,7 +154,9 @@ def main() -> int:
         "evidence_boundary": {
             "paper_reproduction_promoted": False,
             "half_step_velocity_available": False,
-            "remaining": "The comparison isolates external-B particle pushing, but does not yet provide the half-step velocity observable required to close Vay Appendix B or a Poincare-section topology gate for Higuera-Cary.",
+            "position_update_velocity_proxy_available": True,
+            "source_mapping": "UpdatePosition.H uses x += u*gamma_inverse*dt; adjacent Full plotfiles reconstruct this position-update velocity when diag1.intervals=1.",
+            "remaining": "The proxy is not a direct half-step attribute diagnostic and the comparison still has no Poincare-section topology consumer for Higuera-Cary.",
         },
     }
     args.output_json.parent.mkdir(parents=True, exist_ok=True)
@@ -161,13 +171,18 @@ def main() -> int:
         "|---|:---:|",
     ]
     lines.extend(f"| `{name}` | `{'PASS' if passed else 'FAIL'}` |" for name, passed in checks.items())
-    lines += ["", "| pusher | plotfiles | output dt |", "|---|---:|---:|"]
+    lines += [
+        "",
+        "| pusher | plotfiles | output dt | position-update velocity max error | gyroradius proxy error |",
+        "|---|---:|---:|---:|---:|",
+    ]
     lines.extend(
-        f"| `{case['pusher']}` | `{case['plotfile_count']}` | `{case['output_dt']:.8e}` |" for case in cases
+        f"| `{case['pusher']}` | `{case['plotfile_count']}` | `{case['output_dt']:.8e}` | `{case['species'][0]['position_update_velocity_proxy_relative_error_max_abs']:.8e}` | `{case['species'][0]['gyroradius_proxy_relative_error']:.8e}` |"
+        for case in cases
     )
     lines += [
         "",
-        "The case isolates the particle pusher but does not claim the Vay half-step-velocity condition or the Higuera-Cary Poincare-section topology experiment.",
+        "The position-update velocity and gyroradius values are reconstructed proxies from adjacent Full plotfiles; the case does not claim a direct half-step attribute diagnostic or the Higuera-Cary Poincare-section topology experiment.",
     ]
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2))

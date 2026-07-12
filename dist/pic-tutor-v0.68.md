@@ -6,7 +6,7 @@
 
 本版又新增 `larmor` 逐帧离散轨道合同：6 个 Full plotfile 的时间序列和粒子状态检查通过，报告记录了 `B_y`、`gamma` 与每个输出间隔的 Boris rotation-angle；当前仍不把该 AMR/PML/div-cleaning case 升级为论文专门 runtime reproduction。
 
-本版又完成窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：三条 case 各有 81 个 Full plotfile，半径 spread 和动量范数 drift 已统一记录；同时修正 2D XZ 面内动量读取路径为 `particle_momentum_x/z`。half-step velocity 与 Poincare topology 仍作为边界。
+本版又完成窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：三条 case 各有 81 个 Full plotfile，并依据 `UpdatePosition.H` 重建 position-update velocity/gyroradius proxy；最大相对误差分别低于 `1.34e-14/4.8e-15`。该结果支持 Vay Appendix B 的 proxy 层条件，同时修正 2D XZ 面内动量读取路径为 `particle_momentum_x/z`；直接 half-step attribute 与 Poincare topology 仍作为边界。
 
 本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 135 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
@@ -4753,7 +4753,7 @@ WarpX 参数文档把 `algo.particle_pusher = vay` 和 `higuera` 分别列为可
 
 本轮新增的 `scripts/analyze_larmor_orbit_contract.py` 已把 `larmor` 的 6 个 Full plotfile 组织成逐帧离散轨道账本，确认时间序列、1 粒子/species、有限状态和输出 cadence，并给出由 `B_y` 与 `\gamma` 推出的 Boris rotation-angle 参考值。这个结果只提高了现有 checksum case 的可观测性；由于输入仍含 AMR/PML/current correction/divergence cleaning，且没有 half-step velocity 输出，仍不能把它升级为 Vay Appendix B 的 gyroradius 复现或 Higuera-Cary 的 Poincare topology gate。报告见 `runs/stage-c-validation/larmor_single_process/larmor-orbit-contract.{json,md}`。
 
-为把这两个边界从“没有专门 case”推进到可执行对照，本轮又用当前 WarpX binary 构造了窄化 uniform-`B` sibling：关闭 AMR、PML、divergence cleaning 和自洽场演化，只保留 `B_y` 外部粒子场，分别运行 Boris、Vay、Higuera-Cary 80 步并逐步落盘。`scripts/compare_uniform_b_pushers.py` 对三条 81-frame 轨道的 cadence、粒子数、有限状态、半径和动量范数统一检查通过；半径 relative spread 分别为 `3.889e-3`、`3.889e-3`、`3.218e-3`，动量范数 relative spread 均低于 `1.1e-14`。这条证据已经是专门 pusher runtime 对照，但因为 plotfile 仍没有 half-step velocity，不能把它写成 Vay Appendix B 的最终 gyroradius gate；同样，它没有论文第 VI 节的 Poincare-section consumer，不能替代 Higuera-Cary topology reproduction。报告见 `runs/stage-c-validation/pusher_uniform_b_comparison/contract.{json,md}`。
+为把这两个边界从“没有专门 case”推进到可执行对照，本轮又用当前 WarpX binary 构造了窄化 uniform-`B` sibling：关闭 AMR、PML、divergence cleaning 和自洽场演化，只保留 `B_y` 外部粒子场，分别运行 Boris、Vay、Higuera-Cary 80 步并逐步落盘。`scripts/compare_uniform_b_pushers.py` 对三条 81-frame 轨道的 cadence、粒子数、有限状态、半径和动量范数统一检查通过；半径 relative spread 分别为 `3.889e-3`、`3.889e-3`、`3.218e-3`，动量范数 relative spread 均低于 `1.1e-14`。进一步依据 `../warpx/Source/Particles/Pusher/UpdatePosition.H` 的 `x += u*gamma_inverse*dt`，从相邻位置差重建 position-update velocity：三种 pusher 的最大相对误差均低于 `1.34e-14`，对应 gyroradius proxy 误差均低于 `4.8e-15`。这已经支持 Vay Appendix B 条件的 proxy 层证据，但不是直接读取的 half-step attribute；同样，它没有论文第 VI 节的 Poincare-section consumer，不能替代 Higuera-Cary topology reproduction。报告见 `runs/stage-c-validation/pusher_uniform_b_comparison/contract.{json,md}`。
 
 ## 4.6 从 `MultiParticleContainer` 到 `PhysicalParticleContainer`
 

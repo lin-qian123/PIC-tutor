@@ -9588,6 +9588,10 @@ RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on
 
 这张矩阵由 `scripts/summarize_deposition_geometry_order_coverage.py` 从现有 contract/reference 生成，报告见 `runs/stage-c-validation/deposition-geometry-order-coverage-matrix/coverage-matrix.{json,md}`。它明确关闭的是“证据在哪里、证据能支持什么”的索引缺口，不是所有 Cartesian product 的回归缺口。当前仍不能声明：RZ correction-on charge 已闭合、RCYLINDER/RSPHERE 已有完整 charge contract、2D MR 已完成 route-count/intermediate-field 证明、RZ implicit Villasenor 已进入物理计算，或 3D shape=3/4 已形成正式 convergence-order 证明。
 
+![](manuscript/assets/figures/deposition-geometry-order-coverage.png)
+
+图 5-2：当前 deposition geometry/order 证据矩阵的可视化。`PASS` 表示该行最强可用证据通过，`MIX` 表示同一行同时包含通过项和边界项，`EDGE` 表示构建或运行边界，`LIMIT` 表示只覆盖径向场而非完整 charge/Gauss-law。它展示的是九条证据行，不是完整 geometry × shape/order 的笛卡尔积。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

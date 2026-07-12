@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 683,
-  "total_bytes": 25960267,
+  "entry_count": 685,
+  "total_bytes": 26508922,
   "entries": [
     {
       "path": ".gitignore",
@@ -43,27 +43,27 @@
     {
       "path": "README.md",
       "bytes": 1509024,
-      "sha256": "1f8d123f89b47226a3ce366115dbf77f3c145a8aabf833b4582546d1f2153296"
+      "sha256": "93fb342f331b2252bdcc2997e7d53a5f0e5a2462d4139abc4b0b1431d7eb79f4"
     },
     {
       "path": "TODO.md",
-      "bytes": 1352246,
-      "sha256": "b7c69e713f1505440cf2f42f1d244608bd7797fb1d74192402794ad60a1331a1"
+      "bytes": 1352472,
+      "sha256": "6ee5ffc83a4eae85895b922bf3da486ac25c53565f05cd541acbbb89e46bb52f"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5169517,
-      "sha256": "af18c34fb53d45f9ce82b51e0ca4dff90a7eda18f1414c265ba5f8355a1db501"
+      "bytes": 5394378,
+      "sha256": "56a7401f04a4ec96dee436c29b4796f99b8f684e5e787f58e23cd9ee63278efc"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1050623,
-      "sha256": "c03d6308590306c661923567f63c81e649e50426041143af4f9a35c1133fd7cc"
+      "bytes": 1051058,
+      "sha256": "cf55ddda97d5e2bcb554c8b6e22432e655483d8a3387c88b10110ecd962c3b2b"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 2969258,
-      "sha256": "7b325a28b1f8630518a9be8f8f2004f65488dee83da31c25e49519ddfb6912ec"
+      "bytes": 3119745,
+      "sha256": "a9365faa24f3a4f5bde851a4b632dd9fc0f58fb6c2672665b287a826a0708493"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 3961,
-      "sha256": "33e2c5f40a9d596b85ad3dc3226e6f36889dec90e6ac55422961ca8ba5b3aac4"
+      "sha256": "a5b4e938be84380ef1cd51b8d18c945555827b2d3128c09100d22a7a41c9b517"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -417,8 +417,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 37103,
-      "sha256": "0b47c284649ae8dff1e75a420fb18d4ad0a0ecdb8824c377e98404d3621c085c"
+      "bytes": 37134,
+      "sha256": "b1d57fb7ed72ddfdd2781148a64881c16b089846b4cb44f48e8ddca8c5e2f2f1"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -758,7 +758,7 @@
     {
       "path": "manuscript/VERSION.md",
       "bytes": 58170,
-      "sha256": "57c926353cb634e8a655edccd42b419b2ca789ce870d1846acd91c11614ebe6e"
+      "sha256": "32eb2915bd1dff78b5db4341c90777eb9d744d608d1d484f6c931dccae839683"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -774,6 +774,11 @@
       "path": "manuscript/assets/figures/collider-dldt-consistency.png",
       "bytes": 51980,
       "sha256": "60b549e261d5446bf953bae9310a747232ff738d14f8ca46a9ba3d82492d7b62"
+    },
+    {
+      "path": "manuscript/assets/figures/deposition-geometry-order-coverage.png",
+      "bytes": 168292,
+      "sha256": "cb63ab8f46b43e31cc9126b334d52cd7c53e2a86ead6d14ea6d706c9c073b7ef"
     },
     {
       "path": "manuscript/assets/figures/diff-lumi-errors.png",
@@ -872,8 +877,8 @@
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
-      "bytes": 177607,
-      "sha256": "5b45c7feca6cbbc6f6364542056d03d2a02907b7486e0f72c70cd4f28df31789"
+      "bytes": 178034,
+      "sha256": "cd829c4c128b5cb0f2b52d6cd9dbac8a4f607677a2ecd0047ff0dc5dc0e6a0f7"
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
@@ -2996,6 +3001,11 @@
       "sha256": "a4bcf1d7a4d68ac4fd9da0695ceb253468a060ce1c23402410892df0dfb7a6a1"
     },
     {
+      "path": "scripts/plot_deposition_coverage_matrix.py",
+      "bytes": 3896,
+      "sha256": "07503708e781f295b6ff4d51f32d0a6c113c380b1cc0980bb4db99f96df7da72"
+    },
+    {
       "path": "scripts/plot_diff_lumi_errors.py",
       "bytes": 1891,
       "sha256": "8e38d731ba122194e34059e007e4885f2adf4a677293842343873a49a2269503"
@@ -3438,7 +3448,7 @@
     {
       "path": "scripts/verify_v68_build.py",
       "bytes": 2518,
-      "sha256": "61eeb0cebed9f33a80bd3ca5a919c400d5a05748dee00c8aa4571ee25323b7bb"
+      "sha256": "c5e3dfd9350f40f894a013d5695a19884cf1ab50484043de96455761d2d662c0"
     },
     {
       "path": "scripts/verify_villasenor_formula_contract.py",

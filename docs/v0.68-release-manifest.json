@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 718,
-  "total_bytes": 27515427,
+  "entry_count": 719,
+  "total_bytes": 27518163,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1516630,
-      "sha256": "3153448ec3f13adbeb0c2265bf169568a66e13e22d9aa1b6040d4e9a70f7339f"
+      "bytes": 1516915,
+      "sha256": "77ecd23b84b7cf64f35cc6d797aac7de195f250a832d87918a1d41de0f5c6e19"
     },
     {
       "path": "TODO.md",
-      "bytes": 1360117,
-      "sha256": "b1158356f85384f063d73fbac9830c7f1a9606cc62d1f9d47b80d53a9bfc4cb5"
+      "bytes": 1360429,
+      "sha256": "dc7571c989409e419ddd23dead82ede68d25090c20e460e231a0b8f17c3bed30"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "8b37f8e4a543f57815cb3613c373027edd8db5218fa424221835e9f640c37ca2"
+      "sha256": "6600298d768473d48f0f0115914aa8fb4ca8e6eb37184f66a557a81d74a68881"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -1364,6 +1364,11 @@
       "path": "notes/code-reading/fieldsolver/41-rz-jrhom-helper-execution-contract.md",
       "bytes": 1288,
       "sha256": "cc7ca379806518c841ac86de085c27e97ff0d0e1c94139a9d9f1090f244b0811"
+    },
+    {
+      "path": "notes/code-reading/fieldsolver/42-rz-jrhom-first-stage-decision.md",
+      "bytes": 2139,
+      "sha256": "a8582bd5298558c101a904fd0571cb6863664452ed61c4d2f736c26001c52082"
     },
     {
       "path": "notes/code-reading/fieldsolver/README.md",

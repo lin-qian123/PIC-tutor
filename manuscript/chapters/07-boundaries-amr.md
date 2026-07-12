@@ -1718,4 +1718,8 @@ p_gather_main: fine_gather = 0, coarse_gather = np
 本轮进一步把这个 schema 落成 `scripts/validate_transition_zone_route_contract.py`，并用 `docs/transition-zone-route-contract-example.json` 做 synthetic fixture。validator 对两条 species 记录检查 gather/deposit route count、fine/buffer weight closure、`rho/J` 与 coarsened/merged/post-sync 字段完整性以及显式 gate；正例分类为 `DESIGN_SCHEMA_VALIDATED`，故意破坏一个 route count 的负例被拒绝。该结果只证明未来 analysis consumer 的账本接口和 arithmetic gate 已可执行，不证明当前 WarpX 已输出 route ledger；当前 checkout 仍保持 `RUNTIME_LEDGER_UNPROVEN`。
 
 对应说明和 fixture 位于 `docs/transition-zone-route-contract.{md,json}`。真正关闭本节 BOUNDARY 仍需要在 WarpX 的 `PartitionParticlesInBuffers()` 后接入 runtime hook，并用真实 `current_buf/rho_buf`、coarsened fine 和 owner-mask 数据生成同一 schema。
+
+![](../assets/figures/transition-zone-route-contract.png)
+
+图 7-1：transition-zone reduced route-count 合同的计划数据流。粒子分区先产生 fine/buffer route counts 和 weights，再分别记录 `rho_fp/current_fp` 与 `rho_buf/current_buf`，最后经过 coarsened-fine、owner-mask 和 `SyncRho/SyncCurrent` 形成 post-sync closure。图中流程是设计层接口，不表示当前 checkout 已有 runtime 输出。
 官方 `test_2d_subcycling_mr` 也已完成当前 checkout 的 2-rank、250 步运行。独立脚本 `scripts/analyze_subcycling_mr_contract.py` 读取初末 `diag1000000/diag1000250`：末态为两层 AMR、`64x256x1`，E/B/J 在 finest covering grid 上全部 finite；moving window 的实际 z 位移为 `1.9453125e-5 m`，而 `c*t=1.9529297e-5 m`，误差 `7.6171875e-8 m`，不超过 coarse `dz=7.8125e-8 m`；最终 `driver/beam/plasma_e/plasma_p` 粒子数分别为 `10000/10000/30218/31872`。初始诊断帧尚未包含连续注入的两个 plasma species，脚本将其记录为初始化时序而非失败。该 contract 只支撑 subcycling+MR+moving-window 的运行完整性和几何时间一致性，不支撑 transition-zone route-count、fine/coarse 电荷守恒或粒子 gather/deposition 分区证明。报告归档于 `runs/stage-c-validation/subcycling_2d_mr_mpi2/contract.{json,md}`。

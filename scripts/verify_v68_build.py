@@ -37,12 +37,12 @@ def main() -> None:
 
     checks = {
         "pdf_pages": len(reader.pages) == EXPECTED_PDF_PAGES,
-        "source_image_links": len(image_links(source)) == 14,
-        "merged_image_links": len(image_links(merged)) == 14,
+        "source_image_links": len(image_links(source)) == 15,
+        "merged_image_links": len(image_links(merged)) == 15,
         "image_links_relative": all(
             not link.startswith("/") for link in image_links(source) + image_links(merged)
         ),
-        "html_embedded_images": html.count("data:image/png;base64,") >= 14,
+        "html_embedded_images": html.count("data:image/png;base64,") >= 15,
         "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],

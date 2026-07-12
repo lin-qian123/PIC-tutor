@@ -29,8 +29,8 @@ CASES = [
         "family": "Esirkepov",
         "geometry": "3D",
         "shape_order": "1/2/3/4",
-        "evidence": "shape1/2 field + charge PASS; shape3/4 charge PASS, field BOUNDARY",
-        "scope": "64^3 3D Langmuir shape matrix",
+        "evidence": "64^3 shape1/2 field + charge PASS; shape3/4 field BOUNDARY; 128^3 refined shape3/4 double PASS",
+        "scope": "3D Langmuir base + refined controls",
         "contract": "runs/stage-c-validation/esirkepov_langmuir_3d_shape-matrix/contract.json",
     },
     {

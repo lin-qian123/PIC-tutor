@@ -8,7 +8,7 @@
 |---|---|---:|---|---|
 | Esirkepov | `1D_Z` | 1 | field + charge PASS | Langmuir |
 | Esirkepov | `XZ` | 1/2/3/4 | field + charge PASS | 2D Langmuir siblings |
-| Esirkepov | `3D` | 1/2/3/4 | shape=1/2 field + charge PASS；shape=3/4 charge PASS、field BOUNDARY | `64^3` Langmuir shape matrix |
+| Esirkepov | `3D` | 1/2/3/4 | `64^3` shape=1/2 field + charge PASS、shape=3/4 field BOUNDARY；`128^3` refined shape=3/4 field + charge PASS | Langmuir base + refined controls |
 | Esirkepov | `XZ + AMR` | 1 | field PASS；level charge BOUNDARY | 2D MR overlay |
 | Esirkepov | `RZ` | 1/2/3/4 | field PASS；correction-on charge BOUNDARY；correction-off refined PASS | axis correction/resolution family |
 | Esirkepov | `RCYLINDER/RSPHERE` | 1/2/3/4 | radial `Er` PASS | 不含完整 charge/Gauss-law |
@@ -22,6 +22,6 @@
 - RCYLINDER/RSPHERE 的 shape=1/2/3/4 矩阵只覆盖径向 `Er`，不覆盖完整 charge/Gauss-law。
 - 2D MR 的 `rho/divE` 逐层结果不能替代 route-count、intermediate-field 或 coarse-fine source ledger。
 - RZ implicit Villasenor 当前受 PETSc 缺失和 `amrex_gmres` control 的 `SIGILL` 阻断，不能写成 physics pass/fail。
-- 3D Esirkepov shape=2 已有 field + charge PASS；shape=3/4 已有 charge PASS 但 field BOUNDARY，尚未完成 refined-resolution 对照；完整 geometry/order Cartesian product 仍未声明覆盖。
+- 3D Esirkepov shape=2 已有 field + charge PASS；shape=3/4 的 `64^3` field boundary 在 `128^3` refined controls 中消失，但只有一组 refined pair，不能包装成正式 convergence order；完整 geometry/order Cartesian product 仍未声明覆盖。
 
 因此，矩阵的用途是约束成书措辞：它可以回答“哪类证据已经存在”，但不能回答“所有组合都已验证”。源码分派合同、runtime field contract、charge contract、AMR route contract 和 implicit solver build contract 必须继续分层引用。

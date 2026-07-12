@@ -40,8 +40,16 @@
 22. `21-psatd-comoving-coefficients.md`：regular-domain comoving PSATD 的分派优先级、`X1-X4/Theta2` 系数、current correction、参数限制和 checksum-only regression 边界。
 23. `22-psatd-comoving-regression-analysis-plan.md`：`test_2d_comoving_psatd_hybrid` 的现有 checksum 边界、可直接实现的 field-energy sanity analysis、需要 `divE` 输出后才能做的 Gauss-law diagnostic 和 CMake patch 草案。
 24. `23-psatd-comoving-reference-calibration.md`：把 comoving `analysis_comoving.py` 从方案推进到可提交 patch 的 reference 标定、unstable contrast、provenance 和 patch 四件套清单。
-25. `24-psatd-comoving-first-stage-patch-draft.md`：把当前已验证的 `finite + spike` fallback 收成更接近 WarpX 提交流的第一阶段 patch 草案，并附上最小 helper 资产 `analysis_comoving_first_stage_draft.py`、unified diff 草案 `comoving_first_stage_patch.diff` 以及对应的 ledger 驱动生成脚本 `scripts/build_comoving_first_stage_patch.py`。
-26. implicit solver 的接口细化和正文持续回填。
+25. `24-psatd-comoving-first-stage-patch-draft.md`：把当前已验证的 `finite + spike` fallback 收成更接近 WarpX 提交流的第一阶段 patch 草案，并附上最小 helper 资产 `analysis_comoving_first_stage_draft.py`、unified diff 草案 `comoving_first_stage_patch.diff`、自动生成的 `comoving_first_stage_provenance_note.md`、`comoving_first_stage_submission_packet.md`、`comoving_first_stage_pr_draft.md` 与 `comoving_first_stage_bundle/` staging bundle，以及对应的 ledger 驱动生成脚本 `scripts/build_comoving_first_stage_patch.py`、目标 worktree 安装脚本 `scripts/stage_comoving_first_stage_patch.py`、只读审计脚本 `scripts/audit_comoving_first_stage_patch.py`、预检报告脚本 `scripts/report_comoving_first_stage_patch.py` 和只读 diff 预览脚本 `scripts/preview_comoving_first_stage_patch.py`。
+26. `25-psatd-comoving-velocity-candidate-scan.md`：只沿 `v_comoving` 路径做本地 sibling 扫描，比较 stable / explicit-default / half-default / zero / positive-default 五条 velocity 候选，明确说明 default selector 不是隐藏变量、velocity-only sibling 仍不能形成 local energy ordering，而反号 `v_comoving` 只会显著抬高 spike。
+27. `26-rz-psatd-validation-strong-criteria.md`：把当前 WarpX 源码树里 RZ PSATD 的 active validation 主线收成“强 analysis / 弱 analysis / checksum-only”判据表，明确指出 `test_rz_galilean_psatd*`、`test_rz_langmuir_multi_psatd*` 和 `test_rz_pml_psatd` 分别支撑哪类强论断，以及 `test_rz_psatd_JRhom_LL2` 仍缺独立 main analysis。
+28. `27-rz-jrhom-ll2-analysis-direction.md`：判定 `test_rz_psatd_JRhom_LL2` 下一步更适合补哪类独立 main analysis，结论是优先走 `analysis_psatd_CC1.py` / `analysis_galilean.py` 风格的 stability-style 末态 field-energy gate，而不是直接套 Langmuir 的解析场 gate。
+29. `28-rz-jrhom-reference-sibling-scan.md`：把 `test_rz_psatd_JRhom_LL2` 的 reference sibling 搜索收成可执行脚本骨架，新增 RZ 专用 ledger builder 和 candidate scan 脚本，优先比较 `JRhom / time_averaging / cleaning` 三组最小改动候选。
+30. `29-rz-jrhom-first-stage-helper.md`：把 RZ JRhom LL2 第一阶段 helper 原型落成 `scripts/analysis_rz_jrhom.py`，默认收成 `finite + energy`，并把 `spike` 保留为可选增强项。
+31. `30-rz-jrhom-input-numprocs-audit.md`：审计输入卡原生 `warpx.numprocs = 1 2` 在当前本机调用方式下的行为，确认当前 blocker 是 process-count mismatch，而不是 energy ordering 漂移；同时补入 scan 脚本的 `--numprocs-override` / `--command-prefix` 接口，并继续记录后续 `mpiexec -n 2` repeated/MPI 复核。
+32. `31-rz-jrhom-first-stage-patch-draft.md`：把当前已通过 repeated/MPI 复核的 `finite + energy` helper 收成更接近 WarpX 提交流的第一阶段 patch 草案，并附上 helper/diff/provenance packet/PR draft/bundle 与对应生成脚本 `scripts/build_rz_jrhom_first_stage_patch.py`。
+33. `32-rz-jrhom-target-checkout-workflow.md`：把 RZ JRhom first-stage bundle 再推进到目标 worktree 级别，新增目标 worktree 安装脚本 `scripts/stage_rz_jrhom_first_stage_patch.py`、只读审计脚本 `scripts/audit_rz_jrhom_first_stage_patch.py`、预检报告脚本 `scripts/report_rz_jrhom_first_stage_patch.py` 和只读 diff 预览脚本 `scripts/preview_rz_jrhom_first_stage_patch.py`。
+34. implicit solver 的接口细化和正文持续回填。
 
 ## 输出目标
 
@@ -69,7 +77,15 @@
 - `21-psatd-comoving-coefficients.md`：已建立，覆盖 regular-domain comoving PSATD 的 `v_comoving` 分派优先级、direct deposition/update-with-rho 限制、`X1-X4/Theta2` 一般分支与特殊极限、comoving current correction 和 `test_2d_comoving_psatd_hybrid` 的 checksum-only 验证边界。
 - `22-psatd-comoving-regression-analysis-plan.md`：已建立，覆盖 `test_2d_comoving_psatd_hybrid` 当前 `analysis=OFF` 的证据边界、现有 `Ex/Ey/Ez/B/J/rho` 输出可支持的 finite/energy/spike gate、缺少 `divE` 时不能声称 charge-conservation analysis，以及后续 CMake wiring 草案。
 - `23-psatd-comoving-reference-calibration.md`：已建立，覆盖 `analysis_galilean.py` / `analysis_psatd_CC1.py` 可复用的 reference 模式、comoving `energy_ref` 不应借用 Galilean 数值、stable ledger vs unstable contrast 的标定流程，以及真正提交 WarpX patch 时应附带的 provenance note。
-- `24-psatd-comoving-first-stage-patch-draft.md`：已建立，覆盖当前更接近 WarpX 提交流的第一阶段 `finite + spike` patch 形状、CMake wiring 草案、候选 `SPIKE_RATIO_MAX` 常量、配套 unified diff 草案、ledger 驱动重建脚本，以及为什么第一阶段故意不带 energy gate。
+- `24-psatd-comoving-first-stage-patch-draft.md`：已建立，覆盖当前更接近 WarpX 提交流的第一阶段 `finite + spike` patch 形状、CMake wiring 草案、候选 `SPIKE_RATIO_MAX` 常量、配套 unified diff 草案、自动生成的 provenance note / submission packet / PR draft / staging bundle、ledger 驱动重建脚本、目标 worktree 安装脚本、只读审计脚本、预检报告脚本、只读 diff 预览脚本，以及为什么第一阶段故意不带 energy gate。
+- `25-psatd-comoving-velocity-candidate-scan.md`：已建立，覆盖 `v_comoving` 本地 sibling 扫描、`explicit-default-beta/half-default-beta/positive-default-beta` 三条新增候选、`comoving-velocity-scan.{md,json}` 汇总，以及为什么这轮结果进一步支持第一阶段 patch 收敛到 `finite + spike`。
+- `26-rz-psatd-validation-strong-criteria.md`：已建立，覆盖 RZ Galilean/current-correction/PSB、RZ Langmuir PSATD、RZ PML PSATD 三条强 validation 主线，以及 `test_rz_psatd_JRhom_LL2` 仍是 checksum-only 的当前缺口。
+- `27-rz-jrhom-ll2-analysis-direction.md`：已建立，覆盖为什么 `test_rz_psatd_JRhom_LL2` 更适合优先补 stability-style 末态 field-energy gate，而不是直接套解析 `Er/Ez` gate，以及第一阶段 reference sibling 应如何找。
+- `28-rz-jrhom-reference-sibling-scan.md`：已建立，覆盖 RZ 专用 reference-ledger builder、`scan_rz_jrhom_reference_candidates.py` 的五条候选 sibling，以及后续如何把第一轮 energy/spike ordering 接成独立 main analysis。
+- `29-rz-jrhom-first-stage-helper.md`：已建立，覆盖 `analysis_rz_jrhom.py` 的第一阶段 `finite + energy` helper 形态、baseline/reference 阈值导出方式、可选 spike gate 和当前 provenance 边界。
+- `30-rz-jrhom-input-numprocs-audit.md`：已建立，覆盖输入卡原生 `warpx.numprocs = 1 2` 的当前本机审计、为什么 plain single-process 调用会统一触发 `process_count_mismatch`，以及后续 repeated/MPI 复核需要的 launcher 前提。
+- `31-rz-jrhom-first-stage-patch-draft.md`：已建立，覆盖 `finite + energy` 第一阶段 patch 草案、候选 `ENERGY_REF/TOL_ENERGY` 常量、最小 CMake wiring、helper/diff/provenance/submission packet/PR draft/bundle 资产，以及为什么当前故意不带 spike gate。
+- `32-rz-jrhom-target-checkout-workflow.md`：已建立，覆盖 RZ JRhom first-stage bundle 的 preview/audit/report/stage 四脚本、目标 checkout 的 `unstaged / partial / staged` 三档状态，以及为什么这一轮收口的是“可对目标 worktree 落地的工程链路”，而不是继续增加新的 physics gate。
 - 重写 `manuscript/chapters/06-field-solvers.md`。
 
 ## 验证线索

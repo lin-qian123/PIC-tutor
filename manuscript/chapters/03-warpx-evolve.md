@@ -10,7 +10,7 @@
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.2 校准说明：本章已按当前 checkout 复核 `main.cpp`、`WarpX.H`、`WarpX.cpp`、`Source/Evolve/WarpXEvolve.cpp` 与 `Source/Initialization/WarpXInitData.cpp` 的主链行号。仍未在本章完全展开的内容包括 `OneStep_sub1()` 的两层 subcycling 细节、PSATD-JRhom 谱空间源项公式，以及 implicit solver 的非线性迭代；这些保留到后续专章，不在 v0.2 中硬塞成摘要。
+v0.2 校准说明：本章已按当前 checkout 复核 `main.cpp`、`WarpX.H`、`WarpX.cpp`、`Source/Evolve/WarpXEvolve.cpp` 与 `Source/Initialization/WarpXInitData.cpp` 的主链行号。本章现已补入 `OneStep_sub1()`、PSATD-JRhom 和 implicit solver 的主入口与时间组织边界；更细的场算法公式、粒子 nonlinear solve 参数和 mass-matrix kernel 仍分别留在第 5/6 章及配套源码笔记中。
 
 ## 3.1 顶层入口：`main.cpp`
 
@@ -774,6 +774,73 @@ for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
 2. `JRhom` 当前和 `current_correction`、`Vay deposition` 都不兼容；源码层会把 `current_correction` 关掉，并显式禁止 `Vay deposition` 和 JRhom 组合。
 
 所以这一支的真实定位是：它不是“PSATD 上再附加一个任意可叠加的小修正”，而是 PSATD 自身的一种替代性时间积分组织方式。
+
+### 3.11.1 implicit 分支：一次物理步包含多次试探性 source 重建
+
+在 `WarpX::OneStep()` 中，只要 `m_implicit_solver` 非空，程序就不会进入 `OneStep_nosub()`、`OneStep_sub1()` 或 `OneStep_JRhom()`，而是把整步交给 `m_implicit_solver->OneStep(...)`。当前入口位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:398-402`。
+
+以 `SemiImplicitEM::OneStep()` 为代表，隐式电磁步的控制流是：
+
+| 顺序 | 源码动作 | 时间层/物理含义 |
+| --- | --- | --- |
+| 1 | `SaveParticlesAtImplicitStepStart()` | 保存 $x^n,p^n$，供非线性迭代和最终提交使用 |
+| 2 | 初始化 $E^{n+θ}$ 猜测、保存 `E_old` | 构造 solver 的中间场未知量，而不是直接写最终 $E^{n+1}$ |
+| 3 | `EvolveB(Δt/2)` | 先把 WarpX 所有的磁场推进到半步 |
+| 4 | `m_nlsolver->Solve(...)` | 反复调用 `ComputeRHS()`，求粒子和中间电场自洽的离散方程 |
+| 5 | `SetElectricFieldAndApplyBCs()`、`FinishImplicitParticleUpdate()` | 将收敛的中间场写回，并把粒子从半步状态完成到 $t^{n+1}$ |
+| 6 | 第二个 `EvolveB(Δt/2)` | 完成磁场后半步，物理时间步才真正结束 |
+
+因此 `m_nlsolver->Solve()` 不是一个普通的函数调用包装，而是这条路径的核心时间组织。`SemiImplicitEM::ComputeRHS()` 会先用当前猜测的 $E^{n+1/2}$ 更新 WarpX 持有的电场，然后调用 `PreRHSOp()`；后者在 `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:784-853` 中完成：
+
+1. 以当前中间场推进粒子位置和速度；
+2. 形成 $J^{n+1/2}$；
+3. 按需要合并 `current_fp_non_suborbit`、mass-matrix 或 JFNK 线性阶段贡献；
+4. 做 RZ/柱/球几何的逆体积缩放；
+5. 调用 `SyncCurrentAndRho()`，把源项整理后交给隐式 RHS 或 Jacobian。
+
+这条链中的 `PushParticlesandDeposit()` 可能在多个 nonlinear iteration、Jacobian evaluation 和 particle Picard iteration 中重复出现，但这些重复并不代表多个物理时间步。它们是在同一个 $t^n -> t^{n+1}$ 问题上，对不同中间场猜测重新计算离散残差。
+
+implicit 还有两个容易误读的实现边界：
+
+- `CumulateJ()` 必须在 `SyncCurrentAndRho()` 之前，把 mass-matrix 路径之外的 `J` 贡献合入 `current_fp`；否则同步的是不完整源项。
+- `m_use_mass_matrices_jacobian` 和 `m_particle_suborbits` 会让 Jacobian 阶段只推进 suborbit 粒子或直接用 `ComputeJfromMassMatrices()` 构造电流，因而不能假定每次 RHS 都走同一个粒子 kernel。
+
+这也解释了为什么 implicit 的验证不能只复制显式 Langmuir 的“单步场误差”判据。至少要分别检查：非线性求解是否收敛、粒子最终状态是否只提交一次、RHS 期间的 source synchronization 是否完整，以及最终 $E/B$ 时间层是否与 `FinishImplicitParticleUpdate()` 一致。
+
+### 3.11.2 nonlinear solver、JFNK 与 mass-matrix：`J` 的三种构造层
+
+`ImplicitSolver::parseNonlinearSolverParams()` 位于 `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:448-517`。它首先读取 `nonlinear_solver`，再决定后续 `J` 是通过完整粒子响应、Newton/JFNK 近似，还是 PETSc SNES 的线性阶段构造：
+
+| 配置 | solver 对象 | 粒子/电流路径 | 关键边界 |
+| --- | --- | --- | --- |
+| `picard` | `PicardSolver` | 每次 RHS 直接用当前场推进粒子并沉积 `J` | 当前实现把 `max_particle_iterations=1`、`particle_tolerance=0` 固定为最小 Picard 路径 |
+| `newton` | `NewtonSolver` | 非线性外层配合 JFNK；可选 particle suborbits 与 mass-matrix Jacobian | `use_mass_matrices_jacobian` 和 `use_mass_matrices_pc` 只能在该类 solver 中启用 |
+| `petsc_snes` | `PETScSNES` | 由 PETSc 管理 nonlinear/linear solve，仍复用 `PreRHSOp()` 构造源项 | 必须以 `AMREX_USE_PETSC` 编译，否则源码直接 abort |
+
+在普通 nonlinear RHS 阶段，`PreRHSOp()` 的电流来源可以概括为完整粒子响应：
+
+$$
+J = J_{\mathrm{particle}} + J_{\mathrm{non\text{-}suborbit}}.
+$$
+
+但在使用 mass matrices 的 Jacobian 阶段，源码采用的是线性化响应：
+
+$$
+J(E_0+\delta E)
+=J_{\mathrm{suborbit}}+J_0+M\,\delta E,
+$$
+
+其中 (E_0) 是 Newton step 开始时由 `SaveE()` 保存的电场，(J_0) 是以 (E_0) 推进的非 mass-matrix 粒子电流，(M) 是 `MassMatrices_X/Y/Z` 表示的离散响应算子。这个式子正是 `CumulateJ()` 和 `ComputeJfromMassMatrices()` 之间的职责分界：
+
+- `CumulateJ()` 把 `current_fp_non_suborbit` 加回当前 `current_fp`，补上不在 mass matrices 中的粒子贡献；
+- `ComputeJfromMassMatrices()` 根据当前 `E-E0`、`J0` 和各方向交叉响应，把 $M\,\delta E$ 写入 `current_fp`；
+- `SyncCurrentAndRho()` 只负责之后的滤波、边界、guard/level 通信，不负责判断 `J` 应该由完整粒子还是线性响应产生。
+
+`ComputeJfromMassMatrices()` 还必须处理 Yee/nodal staggering。源码先根据 `Jx/Jy/Jz` 的 `ixType()` 计算 `offset_xx ... offset_zz`，再用 `Sxx/Sxy/.../Szz` 的多分量 stencil 访问邻近电场。因此 mass matrix 不是一个可以在任意 centering 上直接相乘的标量系数；它同时编码了方向耦合、空间 support 和网格位置偏移。把它简写成“(M=dJ/dE)”只足以说明物理意图，不足以替代对 index type 和 component offset 的源码核对。
+
+配置层也有明确的几何限制：当前源码禁止 3D 使用 `use_mass_matrices_jacobian`，禁止 RSPHERE 使用 mass matrices；`mass_matrices_pc_width` 只在非 3D 情况下读取。因而这条路径不能被描述成所有 implicit geometry 的通用加速开关。
+
+最后，`particle_suborbits` 改变的是粒子响应如何被拆分，而不是外层物理时间步。在线性 Jacobian 阶段，若启用 suborbit，`PreRHSOp()` 可以只推进 suborbit 粒子并用 `ComputeJfromMassMatrices(J_from_MM_only)` 补齐响应；若未启用，则由 mass matrices 直接构造线性阶段的 `J`。这正是 implicit 验证必须同时记录 solver 类型、particle suborbit、mass-matrix 开关和最终 source gate 的原因。
 
 ## 3.12 参数示例与最小运行闭环
 

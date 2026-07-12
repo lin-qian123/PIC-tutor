@@ -911,8 +911,12 @@ finite-order PSATD 是另一条独立轴线。`Source/WarpX.cpp:1557-1590` 读�
 |---|---|---|---|
 | `analysis_galilean.py` 普通 Galilean / averaged Galilean | `inputs_test_2d_galilean_psatd*`、`inputs_test_3d_galilean_psatd*`、`inputs_test_rz_galilean_psatd*` | 读取最终 plotfile 的 `Ex/Ey/Ez`，用电场能量除以脚本中的不稳定参考能量，并要求低于维度/分支容差 | 这是 NCI 抑制的强 regression gate，但主判据是能量比，不是色散关系重建 |
 | `analysis_galilean.py` current-correction 分支 | `inputs_test_2d_galilean_psatd_current_correction`、`inputs_test_3d_galilean_psatd_current_correction_psb` 等 | 除电场能量比外，还读取 `divE` 和 `rho`，检查 `max|divE-rho/eps0|` 的相对误差 | 这条 gate 同时覆盖稳定性和 Gauss-law/continuity projection；它不能证明 Godfrey $\zeta(k)$ current scaling 已实现 |
+| RZ Galilean current-correction paired runtime | `test_rz_galilean_psatd_current_correction`、`test_rz_galilean_psatd_current_correction_psb` | 非 PSB 2-rank energy `7.536e-11` 通过但 charge `3.1805e-4 > 3e-4`；PSB single-box single-rank energy `8.163e-11`、charge `2.642e-11 < 1e-9` 均通过 | 当前项目级证据分层为 `CHARGE_BOUNDARY` 与 `PASS`；PSB 的严格 charge gate 不能外推到非 PSB 多 rank |
 | `analysis_psatd_CC1.py` | `inputs_test_3d_uniform_plasma_psatd_JRhom_CC1` | 电场能量除以 `66e6` 后要求 `< 1e-8` | 这是 JRhom CC1 的 NCI 能量 gate，没有额外 charge-conservation assert |
 | checksum-only RZ JRhom | `test_rz_psatd_JRhom_LL2` | CMake 中 `analysis=OFF`，只走 checksum | 只能写成 workflow/output regression，不能写成强 NCI 物理论证 |
+| project-level RZ JRhom first-stage helper | 同一 `test_rz_psatd_JRhom_LL2` 的 2-rank repeated/MPI ledger | `scripts/analyze_rz_jrhom_first_stage_contract.py`：baseline `finite + energy` 通过，`ll2-no-timeavg-cleaning` reference 被拒绝 | 这是可审阅的 local validation/handoff evidence；尚未改变上游 CMake 的 `analysis=OFF` |
+
+本版还把这条 local validation 收成可重复的交接链：`scripts/build_rz_jrhom_first_stage_patch.py` 从 `rz-jrhom-reference-scan-mpi2.json` 重建 helper、unified diff、provenance、submission packet、PR draft 和 bundle；随后 `audit`、`report`、`preview` 与 `stage --dry-run` 对只读目标 checkout 进行一致性检查。当前实际状态仍是 `unstaged`：`analysis_rz_jrhom.py` 尚未写入 `../warpx`，`test_rz_psatd_JRhom_LL2` 的 CMake 行仍为 `analysis=OFF`。因此这里交付的是可审阅、可复现的 handoff asset，不是已经进入 WarpX upstream CI 的 patch。对 bundle helper 的直接复核中，MPI=2 baseline 返回通过，`ll2-no-timeavg-cleaning` 返回拒绝；两者与独立 first-stage contract 的 `baseline_ratio=0.9770894022295227`、`reference_ratio=1.0` 一致。
 
 把这些源码和 regression 合起来，v0.20 对 Godfrey 2014 策略谱系的落点是：
 
@@ -1817,9 +1821,82 @@ v0.31 对读者的实际增量是把“checksum-only”拆成一条可执行的�
 
 这条更保守的路线现在已经有了脚本原型，而不再只是文字判断。`PIC-tutor` 当前新增了 `scripts/analysis_comoving.py`：它保持 WarpX regression helper 的读取方式，但把 gate 拆成三层接口，默认始终执行 finite-field sanity，可按 ledger 启用 spike gate，而 energy gate 只有在显式传入参数时才会启用。更关键的是，这个原型已经用现有本地样本做过自校验：stable comoving baseline 能通过 `finite + spike`，而 `no-comoving` sibling 会在同一 `spike_ratio_ref_stable` 阈值下失败。于是第一个真正可执行的第一阶段 patch 形态已经变得具体起来：即便后续继续搁置 energy gate，comoving family 也已经具备一条可落地的 `finite + spike` analysis 路线。
 
+本轮又把这组判别收成了独立的 reader-side contract：`scripts/analyze_comoving_first_stage_contract.py` 同时读取 stable baseline 和 `no-comoving` reference，要求前者通过、后者被同一 spike ceiling 拒绝。实际结果为 stable `spike_ratio=1.1103719982074416`，reference `spike_ratio=1.1119614945212388`，阈值 `1.1114823702056489`；两组输出字段都保持 finite，只有 reference 未通过 spike gate。因此这不是“两个 case 都能跑”的弱 smoke，而是对第一阶段 gate 判别力的最小正/负对照。报告归档于 `runs/fieldsolver-validation/comoving-reference-ledgers/comoving-first-stage-contract.{json,md}`。同时，能量 gate 仍明确关闭：当前本地 calibration 没有形成可解释的 unstable-energy oracle。
+
 为了再往前逼近真正的 WarpX patch 目录结构，当前仓库还把这条路线进一步压成了一个最小 draft helper：`notes/code-reading/fieldsolver/analysis_comoving_first_stage_draft.py`，并配套 `24-psatd-comoving-first-stage-patch-draft.md` 说明其 intended wiring 和候选 `SPIKE_RATIO_MAX` 来源。这份 draft helper 的目标不是替代本地原型，而是回答另一个更实际的问题：如果下一轮真的要往 `Examples/Tests/nci_psatd_stability/` 提 patch，最小、最克制、最不夸大证据边界的第一版文件长什么样。当前答案是：只带 `finite + spike`，不带 energy gate。现在这份 helper 及其 `comoving_first_stage_patch.diff` 也已经不再是手工维护的孤立草稿，而是可以通过 `scripts/build_comoving_first_stage_patch.py` 从 `comoving-stable-vs-no-comoving.json` ledger 自动重建，从而把阈值来源、helper 内容和 CMake wiring 绑定回同一份 reference 证据。
 
+这一轮模块收口又往前走了一步：生成链现在不只输出 helper、diff 和 provenance note，还会自动生成 `comoving_first_stage_submission_packet.md`、`comoving_first_stage_pr_draft.md`，以及镜像 WarpX 目录结构的 `comoving_first_stage_bundle/`。前者固定 scope、review claim、checklist 和 follow-up boundary；PR draft 直接给出可复用的 title、summary、out-of-scope 列表与 reviewer checklist；staging bundle 则把 `analysis_comoving.py`、patch diff 和随附说明收成可直接复制到另一个 worktree 的目录包。进一步地，`PIC-tutor` 现在还补了 `scripts/stage_comoving_first_stage_patch.py`，可以对目标 WarpX worktree 先做 dry-run，再自动复制 helper 并只改写 `test_2d_comoving_psatd_hybrid` 那一段 CMake analysis wiring，而不碰其他 test block；`scripts/audit_comoving_first_stage_patch.py` 又把同一个目标 worktree 的状态判成 `unstaged / partial / staged` 三档，避免后续连“现在到底装没装进去”都只能靠人工 grep；`scripts/report_comoving_first_stage_patch.py` 则把这份状态和下一条推荐命令写成 markdown 预检报告，方便后续接续者直接接手；而 `scripts/preview_comoving_first_stage_patch.py` 再往前一步，把目标 checkout 将会发生的 helper/CMake 改动直接打印成 unified diff。换句话说，当前 `PIC-tutor` 已经把 comoving 第一阶段 patch 从“本地可验证的 helper 草案”继续推进成“可直接整理成 upstream 提交描述并交给真实 WarpX worktree 的 handoff bundle”。这不会自动证明 energy gate 已经成立，但它把第一阶段 patch 应该如何被诚实地提交、评审和后续拆分，收成了更稳定的文字资产。
+
+本次重建和复核把上述 handoff 链重新跑通：`scripts/build_comoving_first_stage_patch.py` 由 stable/no-comoving ledger 生成 bundle，`audit/report/preview/stage --dry-run` 均成功；直接执行 bundle helper 时 stable 返回 `0`、no-comoving 返回 `1`，独立 contract 也确认 stable `spike_ratio=1.1103719982074416` 低于 `1.1114823702056489`，reference `1.1119614945212388` 被拒绝。目标 checkout 仍保持 `unstaged`，所以本节的结论是“交接包可复现且可审阅”，不是“WarpX upstream 已接入”。
+
 因此，comoving reference 标定这块现在的闭合条件可以重新表述为：第一，正文诚实记录当前 `analysis=OFF`、第一阶段 finite/energy/spike gate 和第二阶段 `divE` gate 之间的证据等级差异；第二，stable ledger、no-comoving sibling 和 provenance note 已经 materialize，且已确认当前单进程样本不足以直接推出最终 `energy_ref_unstable`；第三，下一步若继续做 WarpX patch，就该把重心放在更贴近 upstream regression 的 repeated/MPI contrast，而不是继续停留在抽象方案描述。达到这一步，模块本身已经足够支撑一个“local calibration audit”版本号，但还不足以声称 WarpX 侧强 analysis gate 已经定稿。
+
+在这之后，当前仓库又沿 `v_comoving` 本身做了一轮更窄的 sibling 扫描，结果记录在 `notes/code-reading/fieldsolver/25-psatd-comoving-velocity-candidate-scan.md` 与 `runs/fieldsolver-validation/comoving-reference-ledgers/comoving-velocity-scan.{md,json}`。这轮扫描刻意不改 filter、moving window、hybrid grid 或 deposition，只比较五条 velocity 路径：stable default selector、显式写回默认 `v_comoving`、半速 `v_comoving`、零 `v_comoving` 和反号 `v_comoving`。结果有三点最关键。第一，显式默认 `v_comoving` 与 stable baseline 的 `electric_energy` 和 `spike_ratio` 在舍入误差内完全重合，说明 default selector 本身不是隐藏变量。第二，`half-default-beta` 与 `zero-comoving` 都没有把末态电场能量抬高到 stable 之上，反而分别降到 `0.9880x` 和 `0.9551x stable`，因此“只沿 velocity 自身减弱 comoving”仍然给不出可用的 local energy-reference sibling。第三，反号 `v_comoving` 会把 `spike_ratio` 推到 `1.0622x stable`，但同时把 `electric_energy` 压到 `0.8028x stable`。这说明在 comoving family 内部，spike 与 energy 已经可以明确解耦：它是一个更坏的局部异常候选，却不是一个更高能量的末态候选。于是第一阶段 patch 的收口逻辑反而更清楚了：`finite + spike` 继续是当前最有本地证据支撑的主 gate，而 `energy gate` 若还要争取，就不应继续停留在本机 `v_comoving` 数值扫描，而应转向更接近 upstream regression 的 repeated/MPI contrast。
+
+和这条 comoving 主线并行的后备收口方向，现在也可以写得更硬了：`notes/code-reading/fieldsolver/26-rz-psatd-validation-strong-criteria.md` 已经把 RZ PSATD 当前真正的强 validation 主线收成一张判据表。当前最强的 RZ PSATD regression 并不是 `test_rz_psatd_JRhom_LL2`，而是三条分开的 active family：第一，`test_rz_galilean_psatd*` 用 `analysis_galilean.py` 提供 RZ NCI suppression 与 `current_correction/periodic_single_box_fft` 的 charge gate；第二，`test_rz_langmuir_multi_psatd*` 用 `analysis_rz.py + analysis_utils.py` 提供解析 `Er/Ez` 波形与部分 charge-conservation gate；第三，`test_rz_pml_psatd` 用 `analysis_pml_psatd_rz.py` 提供 radial PML 残余场上界。相对地，`test_rz_psatd_JRhom_LL2` 当前仍只有 checksum。
+
+如果把这条 fallback 线也按“能支撑什么论断”拆开，当前最稳妥的写法可以先固定成下面四层：
+
+| 层级 | 代表测试 | 当前主判据 | 正文里允许写到的强度 |
+|---|---|---|---|
+| 强 NCI 抑制 | `test_rz_galilean_psatd*` | `analysis_galilean.py` 的末态全域 field-energy gate；`current_correction` 分支再加 `divE-rho/\epsilon_0` gate | 可直接写成 RZ Galilean PSATD 对 drifting-plasma NCI 的强 regression |
+| 强解析场 / 局部守恒 | `test_rz_langmuir_multi_psatd*` | `analysis_rz.py` 的解析 `Er/Ez` 对照；部分 sibling 再加 `analysis_utils.py` 守恒 gate | 可写成 RZ PSATD 在 Langmuir 小振幅问题上的波形正确性和部分守恒 |
+| RZ Langmuir current-correction runtime | `test_rz_langmuir_multi_psatd_current_correction` | 官方 `analysis_rz.py` 与独立 contract 均通过；`Er/Ez=1.0542e-1/1.9313e-2`，charge residual `5.4781e-14` | 当前项目级 1-rank evidence 可同时支撑解析场与同面 charge-conservation；不外推到 RZ JRhom LL2 |
+| Standard RZ Langmuir PSATD runtime | `test_rz_langmuir_multi_psatd` | 官方 `analysis_rz.py` 与独立 field contract 均通过；`Er/Ez=1.1617e-1/1.5194e-2 < 0.12`，`current_correction=0` | 可支撑 standard RZ PSATD 的解析场与 filter workflow；charge gate 在该 sibling 中不适用 |
+| RZ Langmuir PSATD-JRhom `CL4` runtime | `test_rz_langmuir_multi_psatd_JRhom_LL4` | 官方 `analysis_rz.py` 与独立 field contract 均通过；`Er/Ez=1.0994e-1/6.4303e-2 < 0.12`，`current_correction=0` | 可支撑 RZ PSATD-JRhom `CL4` 的解析场与 filter workflow；charge gate 在该 sibling 中不适用 |
+三条结果已由 `scripts/summarize_rz_langmuir_psatd_family.py` 收成 family matrix：三者都使用 `RZ + PSATD + direct`，网格维度均为 `[64,128,1]`，解析场 gate 全部通过；只有 `current-correction` 行带 `charge=PASS`，standard 与 JRhom `CL4` 行明确标成 `NOT_APPLICABLE`。这张矩阵是 family-level runtime evidence，不是所有 geometry/order 组合的收敛研究。
+| 强 PML 残余场 | `test_rz_pml_psatd` | `analysis_pml_psatd_rz.py` 的全域残余 `Er/Ez` 上界 | 可写成 RZ PSATD + radial PML 的吸收残余场控制 |
+| checksum-only workflow | `test_rz_psatd_JRhom_LL2` | `analysis=OFF`，只保留 final checksum | 只能写成 JRhom LL2 的输出/流程回归，不能写成独立稳定性强判据 |
+
+这张表的意义不在于再重复一遍 CMake，而是把“RZ PSATD 已经有哪些强 gate、哪些还没有”收成一本书里可直接引用的证据等级表。这样如果 comoving 第一阶段 patch 线暂时不直接上提，第 6 章接下来的最合理推进就不是继续堆外围 patch 工具，而是补 RZ JRhom LL2 的独立 main analysis，或至少继续保持这条线的表述纪律: 已有强 gate 的 family 就按强 gate 写，没有 main analysis 的 family 就明确写成 checksum-only workflow。
+
+沿着这条缺口继续往前压，当前仓库又把 `test_rz_psatd_JRhom_LL2` 下一步到底该补哪类 analysis 单独判定了一次，结果记录在 `notes/code-reading/fieldsolver/27-rz-jrhom-ll2-analysis-direction.md`。关键结论是：这条 RZ JRhom 路线虽然也带 `update_with_rho + do_time_averaging`，但它并不像 `langmuir/analysis_rz.py` 那样站在一个小振幅、周期、解析可写的 modal scaffold 上。相反，它当前的 producer 形状是 moving window、rigid `driver`、`driver_back`、continuous-injection `plasma_e/plasma_p`、damped longitudinal boundary，再叠 `JRhom_LL2 + div cleaning` 的 application workflow；而 diagnostics 只输出 `Er Ez Bt jr jz rho rho_driver rho_plasma_e rho_plasma_p`，并没有 `divE`、`phi` 或可直接回代理论波形的 reduced diagnostic。这意味着如果第一步就强行走 Langmuir 式解析 `Er/Ez` gate，反而要先额外定义“理论上应该长什么样”。
+
+在当前证据下，它更像 `analysis_psatd_CC1.py` 或 `analysis_galilean.py` 那类 stability-style gate 候选，而不是解析场 gate 候选。最实际的第一阶段主判据，应先尝试补一个末态 field-energy route：先在同一 workflow 上寻找最小改动的 reference sibling，确认是否存在稳定的 energy ordering；若 ordering 成立，再决定把第一阶段脚本收成 `finite + energy`，还是 `finite + energy + spike`。换句话说，`test_rz_psatd_JRhom_LL2` 现在最需要补的不是另一张解析场表，而是一条和 `nci_psatd_stability` family 口径一致的独立 stability-style main analysis。
+
+这一步现在也已经不再只是口头计划。当前仓库新增了 `scripts/build_rz_psatd_reference_ledger.py` 与 `scripts/scan_rz_jrhom_reference_candidates.py`，并在 `notes/code-reading/fieldsolver/28-rz-jrhom-reference-sibling-scan.md` 里固定了第一批最小改动 sibling：保持当前 workflow 不变，只比较 `JRhom` 从 `LL2 -> CL1`、关闭 `do_time_averaging`、关闭 `divE/divB cleaning`，以及它们的组合。这样下一步就可以直接去跑 `diag1000025` 的 energy/spike ordering，而不需要再手工拼接 reference sibling 和 ledger 汇总流程。
+
+这轮本地扫描现在已经给出第一批真正可用的排序。当前 `diag1000025` surface 上，`ll2-no-timeavg-cleaning` 同时给出最高 `electric_energy` 和最高 `spike_ratio`，因此它是第一阶段最像 unstable reference 的候选；相对地，单独关掉 `divE/divB cleaning` 并不会把能量抬高，`cl1-no-timeavg-no-cleaning` 虽然会略抬高 spike，但能量仍低于 baseline，而 `cl1-timeavg-cleaning` 更是被 `PsatdAlgorithmRZ.cpp` 的源码断言直接拒绝，因为 RZ `psatd.do_time_averaging=1` 只支持 `J` 线性时间依赖。这意味着下一步已经不必继续泛泛地“搜索 reference sibling”，而是可以直接围绕 baseline 与 `ll2-no-timeavg-cleaning` 这对候选去写第一阶段 `finite + energy` helper，并把 `spike` 作为增强项保留。
+
+这条 helper 现在也已经落成脚本原型，记录在 `notes/code-reading/fieldsolver/29-rz-jrhom-first-stage-helper.md`。当前新增的 `scripts/analysis_rz_jrhom.py` 保持了和本地 `analysis_comoving.py` 类似的接口形态，但换成 RZ 字段口径：它始终检查 `Er/Ez/Bt/jr/jz/rho` 的 finite 性，默认从 `rz-jrhom-reference-scan.json` 读取 baseline `baseline-jrhom-ll2-timeavg-cleaning` 与 unstable reference `ll2-no-timeavg-cleaning`，并把
+
+$$
+\mathrm{err\_energy} = \frac{E_{\mathrm{plotfile}}}{E_{\mathrm{ref}}}
+$$
+
+作为主 gate，再用当前 stable/reference 比值乘一个很小的 safety factor 自动导出 `tol_energy`。按当前 ledger，baseline 样本满足 `err_energy = 9.7708651502456867 \times 10^{-1}`，而 reference sibling 自身会因为 `err_energy = 1` 在同一阈值下失败。这说明 `test_rz_psatd_JRhom_LL2` 这条线已经不只是“知道下一步该写 helper”，而是已经具备了一个可直接运行的第一阶段 `finite + energy` 原型。
+
+与此同时，`spike` 仍被刻意保留为第二层增强项，而不是第一阶段默认主合同。原因不是它没有分辨力，而是当前最需要先回答的问题，是这条 RZ JRhom workflow 能否像 `analysis_psatd_CC1.py` 那样先拥有一条稳定性主 gate。现在答案已经是肯定的：至少在 `diag1000025` 这一张 active checksum surface 上，当前仓库已经把这条主 gate 收成了可运行脚本和可追溯阈值来源。后续若 repeated/MPI 设置或更长时间窗继续支持同样 ordering，再决定是否把这条 helper 真正上提到 WarpX `Examples/Tests/nci_psatd_stability/`，以及是否把 `spike` 从可选增强项升级成正式第二 gate。
+
+这一轮继续往 upstream 方向推进时，还多得到了一条同样重要的执行边界，记录在 `notes/code-reading/fieldsolver/30-rz-jrhom-input-numprocs-audit.md`。`test_rz_psatd_JRhom_LL2` 的输入卡本身写着 `warpx.numprocs = 1 2`，而 `CMakeLists.txt` 里它也注册成 `nprocs = 2`。当前仓库先把 `scan_rz_jrhom_reference_candidates.py` 扩成可显式切换 `--numprocs-override` 和 `--command-prefix-str` 的脚本，再用 `--numprocs-override none` 做输入卡原生审计。第一轮 plain single-process 调用确实统一触发了 `warpx.numprocs, if specified ... number of processes` 断言，说明单进程 direct invocation 与输入卡原生 `1 x 2` decomposition 的进程数合同不匹配；但这条线没有停在“缺 launcher”上。进一步搜索本机环境后，当前已经在另一个 Conda 环境里找到可用的 `mpiexec -n 2`，并用同一脚本真正重跑出 `rz-jrhom-reference-scan-mpi2.{md,json}`。结果更关键：baseline、`ll2-no-timeavg-cleaning`、`ll2-timeavg-no-cleaning` 和 `cl1-no-timeavg-no-cleaning` 都能在 2 ranks 下落出 `diag1000025`，而且 repeated/MPI 下的 energy 排序与本机 `1 1` 快速样本完全一致，仍然是 `ll2-no-timeavg-cleaning > baseline > cl1-no-timeavg-no-cleaning > ll2-timeavg-no-cleaning`。这意味着当前 `finite + energy` helper 已经不再只是本机单进程样本的临时口径，而是有了更贴近 upstream regression 形状的 2-rank 复核支持。它当然还没有自动变成 WarpX upstream 的正式 analysis，但至少“当前排序只是单进程偶然产物”这条怀疑，现在已经没有证据支撑了。
+
+更进一步，当前仓库已经把这条 repeated/MPI 已验证的 helper 又往前收成了一套真正可交接的 handoff 资产，记录在 `notes/code-reading/fieldsolver/31-rz-jrhom-first-stage-patch-draft.md`。具体来说，`scripts/build_rz_jrhom_first_stage_patch.py` 现在会从 `rz-jrhom-reference-scan-mpi2.json` 自动重建六类产物：`analysis_rz_jrhom_first_stage_draft.py`、`rz_jrhom_first_stage_patch.diff`、`rz_jrhom_first_stage_provenance_note.md`、`rz_jrhom_first_stage_submission_packet.md`、`rz_jrhom_first_stage_pr_draft.md` 和 `rz_jrhom_first_stage_bundle/`。它们的作用和边界都很明确：第一阶段 patch 只声称 `finite + energy`，仍保留现有 checksum，不引入新的 diagnostics surface，也不把 spike gate 一起塞进第一版草案。这样一来，RZ JRhom LL2 这条线现在已经不只是“有一个本地可运行 helper”，而是已经具备了 helper、diff、review 口径和 bundle 目录一体化的上提草案。
+
+但仅有 bundle 还不够，因为真正的接续问题不是“能不能再生成一份 diff”，而是“目标 WarpX checkout 当前到底是什么状态，这份 bundle 会对它造成什么精确改动”。因此当前仓库又补了 `notes/code-reading/fieldsolver/32-rz-jrhom-target-checkout-workflow.md`，把这一轮工程闭合点压到 target-checkout workflow：`scripts/preview_rz_jrhom_first_stage_patch.py` 只读打印 unified diff，`scripts/audit_rz_jrhom_first_stage_patch.py` 把目标 worktree 判成 `unstaged / partial / staged` 三档，`scripts/report_rz_jrhom_first_stage_patch.py` 自动生成 markdown 预检报告，而 `scripts/stage_rz_jrhom_first_stage_patch.py` 则在显式传入 `--warpx-root` 的前提下支持 dry-run 和最小写入 staging。它们共同绑定的写入面很克制：只新增 `Examples/Tests/nci_psatd_stability/analysis_rz_jrhom.py`，并只把 `test_rz_psatd_JRhom_LL2` 的 analysis 行从 `OFF` 改成 `"analysis_rz_jrhom.py diags/diag1000025"`，不碰任何其他 test block、checksum 行或 dependency 行。这样第 6 章现在已经不只是“说明如何设计这条 helper”，而是已经把“如果要把它交给另一个 WarpX checkout，应当先如何预览、审计、报告和 staging”收成了可直接执行的工程流程。换句话说，当前这条线的下一步已经不再是继续打磨 handoff 文本，而是非常具体的两种选择：要么在目标 checkout 上按当前口径做 preview/report/dry-run/stage，并准备实际提交流程；要么把它作为一个已经闭合的 first-stage boundary 暂时冻结，转去推进下一个成书模块。
+
+截至 2026-07-12，对相邻目标 checkout `../warpx` 的只读审计结果是：整体状态为 `unstaged`；`Examples/Tests/nci_psatd_stability/analysis_rz_jrhom.py` 尚不存在；`test_rz_psatd_JRhom_LL2` 的 CMake analysis 行仍是 `OFF`。本轮重新运行 audit、dry-run 和 unified preview，三者均成功，精确改动仍只有两项：新增第一阶段 `finite + energy` helper，以及把该 test 的 analysis 行改成 `"analysis_rz_jrhom.py diags/diag1000025"`。因此当前项目可以声称“RZ JRhom first-stage handoff bundle 和目标 checkout workflow 已准备好”，但不能声称 patch 已经写入 WarpX，更不能声称 upstream regression 已经接入。
+
+这次审计报告已写入 `notes/code-reading/fieldsolver/rz_jrhom_first_stage_target_report.md`，运行级 JSON/Markdown 快照另归档于 `runs/fieldsolver-validation/rz-reference-ledgers/rz-jrhom-first-stage-target-audit.{json,md}`。它把 bundle 状态、helper 状态、CMake 状态和下一条推荐命令固定在同一份可接续记录中；后续若要实际 staging，仍需显式传入目标 checkout 并先执行 dry-run，当前书稿工作本身不修改 `../warpx`。
+
+### 6.8.5 PSATD/场求解器算法族决策矩阵
+
+前面的各节分别解释了系数、源项时间依赖和验证脚本，但读者在实际阅读输入卡或源码时还需要一个横向索引。下面这张表只做算法族导航，不把同名系数强行合并；“验证强度”描述的是本项目当前 checkout 中能直接找到的证据等级，不等于算法理论上的完整正确性。
+
+| 算法族 | 主要谱基/空间表示 | 源项时间模型 | 粒子沉积与组合限制 | 代表系数或字段 | 当前可用验证证据 |
+|---|---|---|---|---|---|
+| FDTD / Yee / CKC | 实空间有限差分 stencil | 按离散时间层推进 `E/B/J` | 依赖对应的 current deposition、guard-cell 和边界链；不进入 PSATD 的谱系 | Yee/CKC 差分算子、split-field PML 系数 | NCI FDTD、PML 和部分解析场 regression 可提供强判据 |
+| Cartesian standard PSATD | 3D Fourier `k` 空间 | 常规 `J`/`rho` 时间依赖与可选 current correction | 与 `grid_type`、`current_deposition`、filter 和 periodic FFT 组合受约束 | `C`、`S_ck`、`K^{-2}`、`X1-X4` | Langmuir、NCI energy、Gauss-law 和部分 PML regression |
+| Cartesian Galilean PSATD | Fourier `k` 空间 + Galilean moving frame | 以 `v_galilean` 修正相位和源项积分 | 与 current correction、Vay、JRhom、implicit 等存在反向兼容约束 | Galilean `X1-X4`、`Theta2`、average-field `Psi/Y` | `analysis_galilean.py` 提供较成熟的 NCI/energy 与部分 charge gate |
+| Cartesian comoving PSATD | regular-domain Fourier `k` 空间 + `v_comoving` | comoving 相位、`rho` 参考层和 current correction | 当前要求 direct deposition、`update_with_rho=1`；不支持 Esirkepov/Villasenor/Vay 和 JRhom 组合 | comoving `X1-X4`、`Theta2`、comoving continuity residual | 当前有 local `finite + spike` 原型；energy reference 尚未形成可靠 ordering |
+| Cartesian PSATD-JRhom | Fourier `k` 空间 + 子区间推进 | `J/rho` 在一个 PIC 步内按 constant/linear/quadratic 形式分段采样 | 不支持 Vay 和 Galilean PSATD；外层 `OneStep_JRhom()` 改写沉积与谱推进时序 | JRhom `Y1-Y8`、`E/B/F/G` 子区间更新 | `analysis_psatd_CC1.py` 有强 NCI/energy 入口；其余家族需按时间模型分别验证 |
+| RZ standard / Galilean PSATD | `k_z` FFT + `k_r` Hankel/Bessel roots；`Ep/Em/Ez` 字段布局 | standard 或轴向 Galilean 相位/源项积分 | RZ mode 对称性、轴上 guard、current correction 和 time-averaging 有独立限制；不支持 Vay | standard `X1-X3/X5-X6`；Galilean `X1-X4/Theta2/T_rho` | RZ Langmuir、RZ Galilean NCI、RZ PML 可提供强判据 |
+| PSATD PML | split-field spectral/PML 表示 | 吸收层内使用专用 split-field 时间推进 | 受 PML profile、方向、RZ 分支和 `C1-C25` 系数合同约束 | `C1-C25`、PML split fields | Cartesian/RZ PML residual-field analysis；论文闭环仍待 Lee/Vay 全文 |
+
+读这张表时应先区分三种“选择”：第一是谱基或空间离散（FDTD、Cartesian Fourier、RZ Hankel/Fourier）；第二是源项时间模型（普通、Galilean/comoving、JRhom）；第三是沉积与同步组合（Direct、charge-conserving current、Vay、current correction、filter）。例如，`JRhom` 的 `Y1-Y8` 不能因为名字与 Galilean average-field 的 `Y1-Y4` 相似就合并解释；同样，RZ 的 `Ep/Em` 不是 Cartesian `Ex/Ey` 的简单改名。
+
+验证列也应按证据等级阅读。`analysis_galilean.py`、Langmuir 解析场和 PML residual-field analysis 已经能对相应 family 提供较强的物理断言；`test_rz_psatd_JRhom_LL2` 的上游 CMake 仍是 checksum/workflow 入口，但本地 repeated/MPI ledger 已支持一个通过正/负对照的 `finite + energy` helper，二者必须分开写。comoving 同理：本地 ledger 已验证分支选择和 `finite + spike` 方向，却还没有证明可复用 Galilean 式 `energy_ref`。这张矩阵因此同时是算法选择表和证据边界表。
+
+本轮又把这条 helper 收成独立的正/负 contract：`scripts/analyze_rz_jrhom_first_stage_contract.py` 直接读取真实 2-rank repeated/MPI 末态 plotfile，要求 baseline 被 energy ceiling 接受、`ll2-no-timeavg-cleaning` reference 被同一 ceiling 拒绝。实际 baseline energy ratio 为 `0.9770894022295227`，reference ratio 为 `1.0`，由 `1.001` safety factor 导出的阈值为 `0.9780664916317521`；六个字段 `Er/Ez/Bt/jr/jz/rho` 在两组 plotfile 中均 finite。报告位于 `runs/fieldsolver-validation/rz-reference-ledgers/rz-jrhom-first-stage-contract.{json,md}`。这仍是 project-level repeated/MPI validation，不等于 WarpX upstream CMake 已经接入 analysis；spike 只记录、不作为第一阶段主 gate。
 
 ## 6.9 静电与静磁求解器
 
@@ -2760,7 +2837,30 @@ elif re.match("test_1d_theta_implicit_picard", test_name):
 assert max_delta_E < tolerance_rel
 ```
 
+本项目已在当前 checkout 上完成 `inputs_test_1d_theta_implicit_picard` 的单进程复现。运行产物位于 `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/implicit_theta_picard`，共 101 个 reduced-diagnostic 样本；项目脚本 `scripts/analyze_implicit_theta_picard_contract.py` 与官方 `analysis_1d.py` 均通过：
+
+$$
+\max\left|\frac{W(t)-W(0)}{W(0)}\right|
+=3.4784001\times 10^{-15}
+<10^{-14}.
+$$
+
+这条结果把第 3 章的 implicit 时间合同接到了第 6 章的 field-solver gate：粒子能量与场能量必须作为一个总账本检查，不能只看某一类能量。还要注意官方 `analysis_1d.py` 通过 CMake 测试目录名选择容差；直接在任意自定义目录执行会出现 `tolerance_rel` 未定义，因此项目保留了独立、不依赖目录名的合同分析脚本。
+
 `theta_implicit_picard` 要求接近机器精度，`semi_implicit_picard` 允许更大的能量误差。对 exactly energy-conserving implicit EM，`analysis_implicit.py` 还检查 Gauss law RMS：
+
+本项目随后在同一 checkout 上复现了 sibling `inputs_test_1d_semi_implicit_picard`。它同样输出 101 个 reduced-energy 样本，但采用半隐式 EM 的实际容差合同：
+
+$$
+\begin{array}{c|c|c|c}
+\text{scheme} & \max |\Delta W/W_0| & \text{tolerance} & \text{status}\\
+\hline
+\text{theta-implicit Picard} & 3.4784001\times 10^{-15} & 10^{-14} & \text{PASS}\\
+\text{semi-implicit Picard} & 2.2569031\times 10^{-6} & 2.5\times 10^{-5} & \text{PASS}
+\end{array}
+$$
+
+两条结果均由官方 `analysis_1d.py` 和项目独立脚本 `scripts/analyze_implicit_picard_energy_contract.py` 复核。这里不能把两档容差读成分析脚本不一致：它们对应的是两个不同的时间离散/场推进合同。theta-implicit 分支在该基准上把粒子与场总账本压到机器精度量级；semi-implicit 分支则以 `2.5e-5` 作为官方允许的能量漂移上界。运行产物分别归档于 `runs/stage-c-validation/implicit_theta_picard/` 和 `runs/stage-c-validation/implicit_semi_picard/`。
 
 ```python
 drho = (rho - epsilon_0 * divE) / e / ne0
@@ -3081,7 +3181,13 @@ $$
 
 这个索引表也暴露了一个写作边界：有些 regression 是物理强判据，例如 Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum 或 restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum 说成完整物理验证。
 
-### 6.11.8 本章验证链的结论
+## 6.12 练习与运行验证
+
+1. **solver 分派题**：给定 `algo.maxwell_solver`、`psatd.JRhom`、`m_implicit_solver` 和 AMR subcycling 四个开关，使用第 2 章决策图判断它们分别会落到哪一个 `OneStep` 入口，并列出一个不允许的组合。
+2. **源码定位题**：从 `EvolveB/EvolveE`、`PushPSATD`、`ImplicitSolver::ComputeRHS` 中各选一个入口，指出它消费的是 `J/rho`、谱空间历史源项还是 nonlinear residual。
+3. **最小运行题**：复现 `runs/stage-c-validation/implicit_theta_picard/` 与 `implicit_semi_picard/` 的独立能量合同，解释两者为什么分别使用 `1e-14` 与 `2.5e-5` 容差，而不能只比较“是否通过”。
+
+### 6.12.1 本章验证链的结论
 
 综合这些脚本，FieldSolver 的验证链可以这样归纳：
 

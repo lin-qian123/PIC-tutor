@@ -1774,6 +1774,31 @@ $$
 
 这整条 relativistic Higuera-Cary push 主链做强断言。
 
+本项目在当前 checkout 上又完成了一次真实单进程复现。运行产物位于：
+
+- `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/particle_pusher_higuera`
+- 末态 plotfile：`diags/diag1010000`
+- 项目分析脚本：`scripts/analyze_particle_pusher_contract.py`
+- 合同报告：`particle-pusher-contract.json`、`particle-pusher-contract.md`
+
+实际末态为 `current_time = 100.00000000001425`，单个 positron 的
+
+$$
+\max |x| = 1.1430664323700516\times 10^{-4}
+$$
+
+小于官方 `1e-3` 容差，且官方 `analysis.py` 与项目脚本都通过。这个证据可以把“当前 binary 确实走 Higuera-Cary force-free 主链”从静态输入/源码判断推进到运行级验证，但它仍然只覆盖单进程、单粒子、恒定外场和 `x approximately 0` 这一条合同，不等价于对 Boris/Vay/Higuera-Cary 三者的完整轨道 benchmark。
+
+在同一官方输入上只替换 `algo.particle_pusher` 后，本项目还做了一个 local sibling 对照：
+
+| pusher | 末态 $\max|x|$ | `1e-3` gate | 解释 |
+| --- | ---: | ---: | --- |
+| Boris | `2.3213958529e3` | FAIL | force-free cancellation 在这个高相对论设置下明显失真 |
+| Vay | `1.0795497978e-4` | PASS | 保留较好的 relativistic frame/cancellation 行为 |
+| Higuera-Cary | `1.1430664324e-4` | PASS | 在该合同下与 Vay 同量级 |
+
+完整 sibling JSON/Markdown 对照报告位于 `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/particle_pusher_siblings/`，由 `scripts/compare_particle_pusher_siblings.py` 重建。必须保留其证据等级：三组使用的是官方输入加 pusher-only override 的项目级对照，不是 `CMakeLists.txt` 注册的三条独立官方 regression；它支持的是 force-free cancellation 的差异提示，不替代 boosted-frame、Poincare section 或长期能量/相空间 benchmark。
+
 `single_particle` 则必须拆成两类。
 
 第一类 `inputs_test_2d_bilinear_filter` 虽然也只有一个电子，但 analysis 完全不看轨道，而是手工构造未滤波 `Jx`、再用二维 bilinear kernel 卷积，最后和 plotfile 里的 `jx` 比较。它真正验证的是：
@@ -1798,6 +1823,21 @@ analysis 先在 Python 里手动做 half-backward、5 步 leapfrog、再加 half
 
 也就是说，它验证的不是 Boris 物理轨道误差，而是“输出给 diagnostics 的速度是否和位置处在同一时间层”。
 
+本项目对这条路径也完成了真实单进程复现。运行产物位于：
+
+- `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/single_particle_synchronize_velocity`
+- 末态 plotfile：`diags/diag1000005`
+- 项目分析脚本：`scripts/analyze_single_particle_synchronization.py`
+- 合同报告：`single-particle-sync-contract.json`、`single-particle-sync-contract.md`
+
+第 5 个诊断步的理论/模拟结果为：
+
+- $z = 2.2985203786002786 / 2.2985203756075920$；
+- $u_z = 879410.0053860814 / 879410.0053860815$；
+- 相对速度误差 `1.3237889e-16 < 1e-15`。
+
+这条运行证据支持的是 diagnostics time-level synchronization，不应被误写成单粒子 pusher 的独立轨道精度 benchmark。
+
 `photon_pusher` 又是另一类。输入里建了 16 个 photon species，覆盖：
 
 - 六个坐标轴正负方向
@@ -1816,6 +1856,20 @@ $$
 - `UpdatePosition(...)` 里的 massless branch
 - photon 不做 charge/current deposition 的合同
 
+本项目已完成该官方 regression 的单进程复现。运行产物位于：
+
+- `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/photon_pusher`
+- 末态 plotfile：`diags/diag1000050`
+- 项目分析脚本：`scripts/analyze_photon_pusher_contract.py`
+- 合同报告：`photon-pusher-contract.json`、`photon-pusher-contract.md`
+
+16 个 photon species 的末态最大相对误差为：
+
+- 位置直线传播：`6.0986372e-16 < 1e-14`；
+- 动量保持：`1.7217530e-16 < 2.2204460e-16`。
+
+这条证据支持的是无质量粒子的 `c` 速率传播、方向保持和不参与带电粒子 current deposition 的路径，不应与 Boris/Vay/Higuera-Cary 的带电动量旋转合同混写。
+
 最后 `larmor` 反而要最保守。它输入里组合了：
 
 - `electron` 和 `positron`
@@ -1830,6 +1884,8 @@ $$
 - 这是一个 charged-particle gyro-motion 与 external-particle-field、MR、PML、div-cleaning 组合稳定性的应用级 checksum 基线
 - 不是已经有独立解析半径/回旋频率对照的强单粒子 analysis
 
+本项目也运行了该 case 的单进程版本，并新增 `scripts/analyze_larmor_continuum_audit.py` 做 uniform-(B_y) 连续轨道审计。末态位于 `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/larmor_single_process/diags/diag1000010`，电子/正电子的轨迹相对位移误差均为 `1.28285096e-2`，动量相对误差均为 `3.44029897e-2`。这不是一个失败的官方 regression：checksum 仍是当前官方合同；它说明在 MR/PML/div-cleaning 组合下，直接把连续 uniform-(B) 解析轨道当成严格 gate 并不成立。因此本章继续把 larmor 标为 checksum-only，并把该审计报告定位为“为什么暂不升级强物理 gate”的证据。
+
 这组 regression 目前能明确支持的结论是：
 
 - Higuera-Cary force-free relativistic push：有强 analysis。
@@ -1837,6 +1893,7 @@ $$
 - bilinear current filter：有强 analysis。
 - photon 直线传播与动量守恒：有强 analysis。
 - Larmor 半径/频率独立解析对照：当前这组里没有看到，不能夸大。
+- Larmor 连续轨道审计：已运行，但当前只作为 diagnostic evidence，未升级为强 gate。
 
 ### 4.13.9 `particle_fields_diags` 与 `plasma_lens`：粒子 diagnostics 和粒子侧外场的两类强验证
 
@@ -2774,3 +2831,9 @@ flowchart TD
 ```
 
 后续继续深入时，应分别追踪三个子问题：`doGatherShapeN()` 的形函数插值、`doParticleMomentumPush()` 的具体 pusher 公式、`DepositCurrent/DepositCharge()` 的守恒沉积算法。
+
+## 4.16 练习与复现实验
+
+1. **pusher 对照题**：用 `scripts/compare_particle_pusher_siblings.py` 读取 Boris/Vay/Higuera-Cary sibling 报告，解释为什么 Boris 的大位移结果不能被简单归结为“代码运行失败”，而应联系 force-free relativistic pusher contract 判断。
+2. **源码定位题**：从 `PhysicalParticleContainer::Evolve()` 定位 `doGatherShapeN()`、momentum push、`UpdatePosition` 和 current/charge deposition，画出一次粒子 tile loop 的四个时间层节点。
+3. **最小复现实验**：运行官方 `particle_pusher` 或 `photon_pusher` analysis，并同时记录官方 analysis 与项目独立合同脚本的输出；说明 charged pusher 的位置误差和 massless photon 的位置/动量误差为何不能共用同一容差。

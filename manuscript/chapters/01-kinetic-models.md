@@ -354,7 +354,38 @@ $$
 - reduced diagnostics 应平均多久；
 - 弱效应、弱不稳定和 Landau damping 的 measurement window 多大才可信。
 
-## 1.11 这一章对后面源码章节的真正约束
+## 1.11 从连续模型到 PIC 离散变量
+
+前面的方程还没有直接变成程序里的数组。PIC 的第一步不是把分布函数存成一个高维网格，而是用带权粒子样本代表它，再用网格上的有限差分或谱变量承载场。可以把这条映射写成下面的最小合同：
+
+| 连续对象 | PIC 离散载体 | 典型时间层/位置 | 在 WarpX 代码中应如何理解 |
+| --- | --- | --- | --- |
+| $f_s(x,p,t)$ | 物种粒子的位置、动量、权重集合 | $x_p^n,p_p^{n-1/2},w_p$ | `ParticleContainer` 中的粒子样本，不是一个逐点存储的分布函数 |
+| $ρ(x,t)$ | shape-weighted charge density | $ρ^n$ 或 `rho^{n+1/2}` | 由粒子沉积得到；`rho_fp` 与 `rho_buf` 还可能分别属于 fine 与 coarse-buffer 路径 |
+| $J(x,t)$ | trajectory-based current density | 通常跨越 $n -> n+1$ | Esirkepov/Villasenor 等 current deposition 需要 old/new 轨迹或等价的 crossing 信息 |
+| $E,B$ | staggered/collocated grid fields | 由 solver 规定 | `Efield_*`、`Bfield_*` 的后缀表示时间层、网格位置或辅助副本，不能只按变量名猜物理时刻 |
+| 连续性方程 | 离散 source synchronization | 每个粒子推进步或 solver stage | `SyncCurrentAndRho()`、guard exchange、AMR average-down 等共同完成可供场求解器使用的 source |
+
+最容易被忽略的是 $ρ$ 和 $J$ 的时间语义不同。单时间层的 charge deposition 可以直接对粒子位置取样：
+
+$$
+ρ_i^n = (1 / ΔV_i) Σ_p q_p w_p S_i(x_p^n),
+$$
+
+而守恒的 current deposition 必须表达粒子从 $x_p^n$ 到 $x_p^{n+1}$ 的输运：
+
+$$
+Δt (∇_h·J)_i = ρ_i^n - ρ_i^{n+1}.
+$$
+
+这里的第二式不是说所有 current deposition 都在程序中显式先算出左右两边，而是说明它们必须共享同一条离散连续性合同。也因此，
+
+- `DepositCharge()` 负责单时间层的 $ρ$ 采样及其时间层、几何和 AMR 桥接；
+- `DepositCurrent()` 及其 Esirkepov/Villasenor 等路径负责轨迹输运产生的 $J$；
+- `SyncCurrentAndRho()` 负责把不同 level、边界和 source buffer 中的结果整理成 solver 可消费的源项。
+
+这三层不能合并成“粒子把电荷写到网格”一句话。后续第 5 章会从 kernel 角度展开，第 6 章则会继续说明不同 field solver 如何消费这些 source。附录 A 给出 `rho_fp`、`rho_buf`、`current_fp`、`current_buf` 和 `lev` 等项目内变量的速查定义。
+## 1.12 这一章对后面源码章节的真正约束
 
 到这里，后续读 WarpX 代码时至少要带着下面这些硬问题，而不是只盯函数名：
 
@@ -375,7 +406,7 @@ $$
 
 都会被读成“工程控制流”，而不是“连续模型的离散化实现”。
 
-## 1.12 本章当前文献边界
+## 1.13 本章当前文献边界
 
 本章当前正文已真正依托的文献边界是：
 
@@ -405,3 +436,9 @@ $$
 1. 补 `Hockney-Eastwood` 或其 article-level fallback 对 weighted particles / heating estimates / optimum path 的原始证据；
 2. 补 `Yee 1966` 对 staggered FDTD 与离散约束传播的原始文献入口；
 3. 再把本章和第 2 章之间关于 leapfrog、CFL、Debye 长度、数值色散的边界继续压紧。
+
+## 1.14 练习与源码定位
+
+1. **变量桥接题**：根据 1.11 的映射表，说明为什么 `rho_fp/rho_buf` 不能直接当作两个不同物理量，并指出它们分别在哪个 AMR/source-synchronization 场景出现。
+2. **尺度判断题**：给定 `lambda_D/delta_x = 2` 和 `v_t Delta t/delta_x = 0.4`，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率还是时间推进约束。
+3. **源码定位题**：在当前 WarpX checkout 中定位 `PushParticlesandDeposit()`、`SyncCurrentAndRho()` 和一个 field-solver 入口，分别写出它们连接连续模型中哪一个对象：粒子输运、源项连续性还是 Maxwell/Poisson 闭合。

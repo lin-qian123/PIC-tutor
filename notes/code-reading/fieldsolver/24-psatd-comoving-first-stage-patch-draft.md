@@ -30,7 +30,15 @@
 
 - `notes/code-reading/fieldsolver/analysis_comoving_first_stage_draft.py`
 - `notes/code-reading/fieldsolver/comoving_first_stage_patch.diff`
+- `notes/code-reading/fieldsolver/comoving_first_stage_provenance_note.md`
+- `notes/code-reading/fieldsolver/comoving_first_stage_submission_packet.md`
+- `notes/code-reading/fieldsolver/comoving_first_stage_pr_draft.md`
+- `notes/code-reading/fieldsolver/comoving_first_stage_bundle/`
 - `scripts/build_comoving_first_stage_patch.py`
+- `scripts/stage_comoving_first_stage_patch.py`
+- `scripts/audit_comoving_first_stage_patch.py`
+- `scripts/report_comoving_first_stage_patch.py`
+- `scripts/preview_comoving_first_stage_patch.py`
 
 它只做两件事：
 
@@ -95,8 +103,12 @@ python scripts/build_comoving_first_stage_patch.py
 
 - `notes/code-reading/fieldsolver/analysis_comoving_first_stage_draft.py`
 - `notes/code-reading/fieldsolver/comoving_first_stage_patch.diff`
+- `notes/code-reading/fieldsolver/comoving_first_stage_provenance_note.md`
+- `notes/code-reading/fieldsolver/comoving_first_stage_submission_packet.md`
+- `notes/code-reading/fieldsolver/comoving_first_stage_pr_draft.md`
+- `notes/code-reading/fieldsolver/comoving_first_stage_bundle/README.md`
 
-这一步把候选 `SPIKE_RATIO_MAX` 的来源、helper 内容和 diff wiring 统一绑回 ledger，避免后续改动时出现“正文、草案 helper 和 patch diff 三处口径漂移”。
+这一步把候选 `SPIKE_RATIO_MAX` 的来源、helper 内容、diff wiring、submission/provenance 说明、upstream-facing packet、PR draft 和 staging bundle 统一绑回 ledger，避免后续改动时出现“正文、草案 helper、patch diff、review note、handoff packet、PR draft 和 staging bundle 七处口径漂移”。
 
 在当前本地样本上：
 
@@ -134,9 +146,17 @@ python scripts/build_comoving_first_stage_patch.py
 
 1. 先从 `analysis_comoving_first_stage_draft.py` 复制到 WarpX test 目录；
 2. 对照 `comoving_first_stage_patch.diff` 检查 helper 文件名和 CMake wiring；
-3. 仅改文件头注释、路径和必要的打印格式；
-4. 保持第一阶段不引入 energy gate；
-5. 单独在后续 patch 或 follow-up PR 中处理 energy gate / `divE` widening。
+3. 对照 `comoving_first_stage_provenance_note.md` 保留阈值来源、velocity scan 结论和“为什么当前不带 energy gate”的 review 口径；
+4. 对照 `comoving_first_stage_submission_packet.md` 保持提交摘要、review claim、checklist 和 follow-up boundary 的表述一致；
+5. 对照 `comoving_first_stage_pr_draft.md` 直接复用 title/summary/out-of-scope/reviewer-checklist 的措辞；
+6. 若需要直接交给另一个 worktree 或上游仓库，优先从 `comoving_first_stage_bundle/` 复制镜像目录，而不是手工重组资产；
+7. 若准备在目标 WarpX worktree 里实装这套草案，优先用 `scripts/stage_comoving_first_stage_patch.py --warpx-root ...` 做 dry-run 和 staging，而不是手工改 helper/CMake；
+8. 若需要确认目标 worktree 当前是否仍是 `analysis=OFF`、是否已经部分安装，优先先跑 `scripts/audit_comoving_first_stage_patch.py --warpx-root ...`；
+9. 若需要把当前 checkout 状态和推荐下一步命令交给后续接续者，优先生成 `scripts/report_comoving_first_stage_patch.py --warpx-root ...` 的 markdown 预检报告；
+10. 若需要先审阅目标 checkout 将会发生的精确改动，优先跑 `scripts/preview_comoving_first_stage_patch.py --warpx-root ...` 看 unified diff；
+11. 仅改文件头注释、路径和必要的打印格式；
+12. 保持第一阶段不引入 energy gate；
+13. 单独在后续 patch 或 follow-up PR 中处理 energy gate / `divE` widening。
 
 ## 当前结论
 

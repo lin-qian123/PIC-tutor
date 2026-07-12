@@ -6,3 +6,7 @@ __pycache__/
 *.swp
 *.swo
 runs/
+
+# Runtime leftovers accidentally written at repository root by local WarpX runs.
+/Backtrace.*
+/bmmntr.txt

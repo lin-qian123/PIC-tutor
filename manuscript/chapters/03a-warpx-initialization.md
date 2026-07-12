@@ -457,6 +457,27 @@ else
 
 物理上，restart 应该恢复一个已经离散一致的状态；fresh run 则必须从输入参数构造这种一致状态。后面讲的外部场、初始粒子、Gaussian beam、openPMD 注入和 projection cleaning，主要属于 fresh run 路径。
 
+可以把 fresh run 与 restart 的责任边界压缩成下面的读者侧流程图：
+
+```mermaid
+flowchart TD
+    A["WarpX::InitData"] --> B{"restart_chkfile empty?"}
+    B -->|"no: restart"| C["InitFromCheckpoint"]
+    C --> C1["restore AMR levels, fields, particles, time"]
+    C1 --> C2["PostRestart"]
+    C2 --> Z["initial state ready for Evolve"]
+    B -->|"yes: fresh run"| D["ComputeDt"]
+    D --> E["InitFromScratch"]
+    E --> E1["AmrCore::InitFromScratch"]
+    E1 --> E2["AllocLevelData / solver state"]
+    E2 --> E3["mypc->AllocData / InitData"]
+    E3 --> E4["external fields and PML"]
+    E4 --> F["initial diagnostics"]
+    F --> Z
+```
+
+这张图的重点不是列出每一个初始化 helper，而是固定数据来源的不可互换性：restart 路径恢复已经离散化的状态，fresh run 路径才负责从参数重新物化 AMR、solver、粒子、外部场和初始 diagnostics。后面的 `PlasmaInjector`、Gaussian beam、openPMD 文件注入和 projection cleaning 都必须放在 fresh-run 分支内理解，不能被误写成 restart 的重复初始化。
+
 ## 3A.4 `InitFromScratch()`：AMReX level 与粒子初始化
 
 源码位置：`../warpx/Source/Initialization/WarpXInitData.cpp:999-1016`。
@@ -1142,7 +1163,7 @@ WARPX_ALWAYS_ASSERT_WITH_MESSAGE (
 更关键的是，`LaserParticleContainer::InitData()` 的产物不是“初始化场”，而是人工天线粒子。它先按 finest cell 和天线平面方向计算平面 spacing `S_X/S_Y`，再建立实验室坐标与激光平面坐标之间的 `Transform/InverseTransform`，最后只在注入盒覆盖的区域生成粒子：
 
 - Cartesian / XZ / 1D：每个平面位置生成一对 `+w/-w` 粒子
-- RZ：围绕轴向展开成 spokes，并用 `2πr/n_spokes` 修正权重
+- RZ：围绕轴向展开成 spokes，并用 `2*pi*r/n_spokes` 修正权重
 
 到了 `LaserParticleContainer::Evolve()`，运行时主链是：
 
@@ -1383,11 +1404,19 @@ beam.momentum_distribution_type = "at_rest"
 - `inputs_test_3d_focusing_gaussian_beam_photons` 不是新物理 benchmark，而是把同一聚焦束斑统计合同重复到 `species_type = photon` 路径；
 - `inputs_test_3d_gaussian_beam_picmi.py` 则主要覆盖 PICMI `GaussianBunchDistribution` 前端到 runtime attributes 的接线，当前主要依赖 checksum，而不是独立理论断言。
 
-这里还要诚实记录一个当前本地 checkout 的边界：`gaussian_beam/CMakeLists.txt` 给 `test_3d_focusing_gaussian_beam_from_openpmd` 指定了 `analysis.py`，但 `Examples/Tests/gaussian_beam/` 目录下当前没有这个文件。因此对这条回归，最稳妥的说法是：
+这里还要诚实记录一个当前本地 checkout 的边界：`gaussian_beam/CMakeLists.txt` 给 `test_3d_focusing_gaussian_beam_from_openpmd` 指定了 `analysis.py`，但 `Examples/Tests/gaussian_beam/` 目录下当前没有这个文件。因此项目没有把缺失的官方文件伪装成已恢复，而是对同一个 native producer 输出执行了项目独立分析。1 rank 运行结果位于 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/`：openPMD iteration 0 读出 `1,999,966` 个宏粒子，总权重为 `1.999966e10`，81 个有效 z slice 上的最大相对束斑误差为：
 
-- openPMD 输入路径以及 `prepare -> inject -> checksum` workflow coverage 明确存在；
-- PICMI 版本有显式 `analysis_focusing_beam.py` 物理断言；
-- 原生 inputs 版本的 analysis 脚本在当前 checkout 中仍需额外核对。
+$$
+\epsilon_{\sigma_x}=3.0515\times10^{-2}<0.051,
+\qquad
+\epsilon_{\sigma_y}=3.6214\times10^{-2}<0.038.
+$$
+
+官方 `analysis_focusing_beam.py` 与项目脚本 `scripts/analyze_gaussian_beam_focus_contract.py` 均对该 producer 输出通过。因而这条线现在可以写成：
+
+- openPMD `prepare -> native external_file inject -> plotfile/openPMD` producer 链已真实运行；
+- native 变体已有独立束斑物理分析，但该脚本不是 WarpX 官方 CMake analysis，证据等级是项目级补强而非 upstream CI 已修复；
+- PICMI sibling 仍复用官方 `analysis_focusing_beam.py`，两条输入路径的物理合同已经可以直接对照。
 
 第五组是 electrostatic / EB 初始化：
 
@@ -1434,9 +1463,9 @@ beam.momentum_distribution_type = "at_rest"
 
 1. 已有显式物理量 hard assert 的路径；
 2. 当前主要靠 checksum regression 的路径；
-3. 像 `gaussian_beam` 原生 openPMD variant 这样，在本地 checkout 里还存在脚本缺口、需要后续单独核对的路径。
+3. native `gaussian_beam` openPMD variant 仍保留官方 CMake analysis 缺失这一证据边界。
 
-再补两组之后，这张验证图就不再只覆盖“场和束流自场”，也开始覆盖初始化分布 API 本身。
+这张验证图不再只覆盖“场和束流自场”，也覆盖了初始化分布 API 本身。
 
 第一组是 `initial_distribution`。它不是普通 smoke test，而是一组多 species、多分布的综合强基准：同一输入里同时覆盖
 
@@ -1450,6 +1479,8 @@ beam.momentum_distribution_type = "at_rest"
 - parser-Gaussian 动量统计
 
 analysis 脚本把 reduced histogram、束斑统计和解析分布逐条对照。这意味着它真正验证的是 `PlasmaInjector`、`SpeciesUtils` 和 momentum-dispatch 层的 built-in / parser 初始化合同，而不只是“粒子能被建出来”。
+
+当前 checkout 的重建 binary 已成功运行官方完整输入，官方 `analysis.py` 的最大相对差为 `1.8931e-2 < 0.02`。该结果修复了此前由预编译 binary 与源码 checkout 不一致造成的假阻塞；运行命令和逐项结果见 `runs/stage-c-validation/initial_distribution_full_current/contract.md`。由于初始化使用随机采样，仓库 checksum 的默认 `1e-9` 不应被当作确定性合同；本次观测最大相对差为 `3.18e-3`，仅在显式记录的 `5e-3` sampling tolerance 下通过。
 
 第二组是 `initial_plasma_profile`。这组当前没有独立 `analysis.py`，只有 checksum helper，但输入本身非常明确：
 
@@ -1736,3 +1767,9 @@ inputs
 - 把 Gaussian beam 的 emittance/focal distance 公式结合 accelerator beam optics 文献继续推导；
 - 把 openPMD 文件格式与 WarpX 单位约定加入诊断/I/O 章节；
 - 判断 initialization 验证层是否已经阶段性收口，并切回下一未完成模块。
+
+## 3A.14 练习与最小复现
+
+1. **fresh/restart 定位题**：沿 `WarpXInitData.cpp` 追踪 `InitData()`，说明 `ComputeDt()` 为什么只出现在 fresh-run 分支，以及 restart 为什么必须进入 `PostRestart()`。
+2. **初始化顺序题**：解释 `AmrCore::InitFromScratch()`、`AllocLevelData()`、`mypc->AllocData()`、`mypc->InitData()` 和 `InitPML()` 的先后关系；指出把粒子初始化提前到 AMR level 创建之前会破坏哪类对象合同。
+3. **复现实验题**：选取 `Examples/Tests/initial_distribution/` 中一个当前 binary 能运行的输入，记录 `warpx_used_inputs`、首个 diagnostics 和粒子 species 数量；若遇到 binary/input checkout 不匹配，保留 abort 位置并说明它为什么不能被当作通过证据。

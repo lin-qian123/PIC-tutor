@@ -1,41 +1,203 @@
 # 9. 文献路线与后续扩写计划
 
-本书的文献不是装饰，而是每章判断物理正确性的证据。当前本地文献来源有三层：
+本书的文献不是装饰，也不是章节末尾统一贴一串 BibTeX。它真正承担三类职责：
 
-1. `../warpx/Docs/source/refs.bib` 复制得到的 `../bibliography/warpx-refs.bib`。
-2. `../references/` 中已经下载的开放 PDF。
-3. 后续从 WarpX 官方文档、综述和章节问题继续补充的论文。
+1. 给物理结论提供一手来源。
+2. 给数值算法和代码实现提供历史与方法边界。
+3. 给 reader-side analysis、benchmark 和 regression 判据提供外部对照。
 
-第一批核心引用按主题分组如下：
+因此本章不再把文献简单列成“推荐阅读书单”，而是把当前项目里已经 materialize 的论文资产、仍未闭环的 acquisition 缺口，以及它们与各章的绑定关系写成一张可执行路线图。
 
-| 主题 | BibTeX key | 用途 |
-|---|---|---|
-| PIC 基础 | `Birdsalllangdon`, `HockneyEastwoodBook`, `DawsonRMP83`, `Birdsall1991` | 宏粒子、形函数、PIC-MCC、噪声和基础算法 |
-| Yee/FDTD | `Yee` | 交错网格 Maxwell 求解 |
-| 电流沉积 | `Villasenorcpc92`, `Esirkepovcpc01`, `VayJCP2013` | 电荷守恒沉积、谱空间 Vay deposition |
-| 粒子推进 | `HigueraPOP2017` 和 Vay pusher 相关条目 | 相对论推进器 |
-| PML | `Berengerjcp94`, `Berengerjcp96` | 开边界吸收 |
-| AMR | `Vayjcp01`, `Vaylpb2002`, `Vaycpc04` | mesh refinement interface、substitution method |
-| PSATD/NCI | `GodfreyJCP2014_PSATD`, `Lehe2016`, `GodfreyJCP2014_FDTD` | 谱求解器、数值 Cherenkov 抑制 |
-| 数据和生态 | openPMD / PICMI / AMReX / PICSAR 相关条目 | I/O 标准、接口和 HPC 生态 |
+## 9.1 当前项目的文献证据分层
 
-PDF 处理规则：只要要深入讲解一篇论文，就按 `../docs/paper-reading-workflow.md` 执行。也就是先建论文专属目录，用 MinerU 转 Markdown，保存 `images/`，再写中文讲解笔记。不能把 PDF 摘要式看完后直接把结论写进正文。
+当前本地文献证据有四层，强度不能混写：
 
-下一轮最值得处理的论文：
+| 层级 | 当前项目中的典型形态 | 可支持的写法 | 当前限制 |
+|---|---|---|---|
+| A. 已 materialize 的正文资产 | 本地 PDF + MinerU Markdown + `images/` + 中文讲解 + `reading-log.md` | 可直接作为正文一手证据 | 仍需作者自己对照具体公式、图和段落，而不是只看中文摘要 |
+| B. 已取得 PDF 但未完成精读 | 本地 PDF 存在，但还没有完整中文讲解或章节回填 | 可作为“已获取、待精读”的明确线索 | 不能把具体公式或图表当成已核实正文 |
+| C. metadata / abstract 级线索 | DOI、题名、摘要、访问审计、下载日志 | 可作为 acquisition 边界、章节缺口或后续计划 | 不能把摘要内容冒充成论文正文结论 |
+| D. 旁证或相关文献 | 主题相关但不是当前章的主引用，或并非同一 bibliographic item | 可作背景、旁证、术语线索 | 不能替代主引用本身 |
 
-1. Higuera-Cary pusher：支撑第 4 章。
-2. Esirkepov current deposition：支撑第 5 章。
-3. Yee 1966：支撑第 6 章。
-4. Berenger PML：支撑第 7 章。
-5. WarpX / AMReX / PICSAR 论文：支撑工程和性能章节。
-6. PSATD 与 Galilean PSATD：支撑数值 Cherenkov 和 boosted-frame 章节。
+当前项目的规则应保持为：
 
-扩写计划按风险排序：
+- 只有 A 层资产，才允许在正文里写成“已核实的一手证据”。
+- B 层资产只能写成“已获取但尚待逐段讲解”。
+- C 层和 D 层只能写成 acquisition / 背景边界，不能抬成正文论证。
 
-1. 补全源码行号：每章都要从 `docs/source-map.md` 扩成精确函数表。
-2. 补全参数入口：把 `Docs/source/usage/parameters.rst` 中相关参数映射到源码解析位置。
-3. 补全运行验证：至少 Langmuir wave 和 uniform plasma 要有本地输出和分析脚本。
-4. 补全论文笔记：优先处理能直接支撑核心算法的论文。
-5. 再扩展多物理：碰撞、电离、QED、hybrid PIC 和 embedded boundary。
+这条规则尤其影响当前仍未闭环的 `Hockney-Eastwood`、`Yee 1966`、`Esirkepov 2001`、`Villasenor-Buneman 1992` 和 `LeeCPC2015`。
 
-本版已经形成主线，但还不是最终可出版稿。它的价值在于把“物理方程、离散算法、WarpX 源码、示例、文献”放到同一条路径上，后续每章都可以沿这条路径加深。
+## 9.2 当前已 materialize 的核心文献树
+
+按当前 `references/` 目录，已经完成 materialization 的核心文献主要集中在三条主线。
+
+### 9.2.1 PIC foundations
+
+当前已 materialize：
+
+- `references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/`
+- `references/03_pic_foundations/1979_TajimaDawson_Laser_Electron_Accelerator/`
+- `references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/`
+
+这三条线已经足以支撑：
+
+- 第 1 章的 superparticle、weighted particles、finite-size particles、quiet start、噪声与 heating 讨论；
+- 第 2 章的最小 PIC loop、electrostatic / EM / Darwin 模型边界；
+- 第 8 章中 diagnostics、spectrum、correlation time、weak instability dynamic range 的讨论；
+- LWFA 最早 scaling baseline 的历史入口。
+
+其中 `Birdsall 1985` 因原书过长，当前项目采用分卷 PDF + 分卷 MinerU 的方式处理；这意味着它已经是 A 层资产，但仍不是“整本都已完全精读”。
+
+### 9.2.2 Particle pusher
+
+当前已 materialize：
+
+- `references/04_particle_pushers_deposition_shapes/2008_VayPOP2008_Simulation_of_beams_or_plasmas_crossing_at_relativistic_velocity/`
+- `references/04_particle_pushers_deposition_shapes/2017_HigueraPOP2017_Structure-preserving_second-order_integration_of_relativistic_charged_particle_trajectories_in_electromagnetic_fields/`
+
+这两条线当前已经足以支撑：
+
+- 第 4 章对 Vay pusher 与 Higuera-Cary pusher 的源码讲解；
+- `Source/Particles/Pusher/UpdateMomentumVay.H` 与 `UpdateMomentumHigueraCary.H` 的公式对表；
+- “相对论精度”和“结构保持”两条不同的算法卖点。
+
+但这条模块还没有完成 `Boris` 原始文献闭环，因此第 4 章仍不是“推进器历史谱系全闭环”。
+
+### 9.2.3 PSATD / Galilean / boosted-frame / NCI
+
+当前已 materialize：
+
+- `references/06_stability_filtering_nci/2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm/`
+- `references/06_stability_filtering_nci/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas/`
+- `references/06_stability_filtering_nci/2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates/`
+
+这三条线已经构成第 6 章目前最完整的一组 paper-backed 主干：
+
+- Godfrey 2014：fixed-grid PSATD 的 NCI 策略分类；
+- Lehe 2016：Galilean coordinates 消除 NCI 的核心离散论证；
+- Kirchen 2016：boosted-frame workflow 与稳定离散表示之间的应用层连接。
+
+因此第 6 章当前虽然仍有 runtime validation 和 upstream handoff 的工程缺口，但在文献层已经不再是空心章节。
+
+## 9.3 当前最突出的未闭环文献缺口
+
+如果按“哪一章会因为缺它而不够出版级”排序，当前最重要的缺口不是更多新论文，而是以下几条老而关键的 primary sources。
+
+| 缺口 | 当前状态 | 主要影响章节 | 当前可替代程度 |
+|---|---|---|---|
+| `Hockney-Eastwood` 原书 | 仅有 BibTeX 与 fallback article 线索；无本地合法 PDF | 第 1、2、5、6 章 | 只能部分由 `Birdsall 1985` 与 `Dawson 1983` 顶住 |
+| `Yee 1966` | metadata/DOI 已清楚；无本地 PDF/MinerU | 第 2、6 章 | 可暂由源码与后继 FDTD 文献支撑，但缺原始历史入口 |
+| `Esirkepov 2001` | 已建立 paper-specific 目录、access audit，并已 materialize 作者 arXiv 预印本 + MinerU + 中文讲解；仍缺出版商 CPC PDF 对照 | 第 5 章 | 已从纯源码缺口推进到 preprint-backed，但还未完成 CPC 定稿核对 |
+| `Villasenor-Buneman 1992` | 已建立 paper-specific 目录、access audit，并已 materialize 本机现成 PDF + MinerU + 中文讲解 | 第 5 章 | 已从纯源码缺口推进到 paper-backed，但中文讲解仍是第一轮结构精读 |
+| `LeeCPC2015` | 已有 access audit、公式映射准备和核对清单；仍无授权 PDF/MinerU 正文 | 第 7 章 | 源码侧 `C1-C25` 和 regression 可继续推进，但论文闭环仍缺主文 |
+
+这五条缺口里，`LeeCPC2015` 最特殊。它不是完全没工作，而是已经推进到：
+
+- `access-audit.md`
+- `公式映射准备.md`
+- `公式核对清单.md`
+
+也就是说，当前不是“不知道该怎么读”，而是“知道该对什么，但还拿不到可合法精读的正文 PDF”。
+
+## 9.4 各章当前的文献成熟度
+
+把全书按章节看，当前文献成熟度并不均匀。
+
+| 章节 | 当前文献成熟度 | 主要已闭环来源 | 主要缺口 |
+|---|---|---|---|
+| 第 1 章 动理学模型 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Hockney-Eastwood`、更细的 particle-mesh heating 原始文献 |
+| 第 2 章 PIC 总循环 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Yee 1966` 原始入口 |
+| 第 3/3A 章 主循环与初始化 | 中低 | 以源码为主 | 需要把基础文献和工程论文绑定得更明确 |
+| 第 4 章 粒子推进器 | 中高 | `Vay 2008`、`Higuera-Cary 2017` | `Boris` 历史源头仍缺 |
+| 第 5 章 沉积与形函数 | 中等 | Esirkepov 与 Villasenor 两条 charge-conserving 主线都已有第一轮 paper-backed 资产 | 仍需把两篇论文系统回写正文；Esirkepov 还缺 CPC 定稿对照 |
+| 第 6 章 场求解器 | 高 | `Godfrey 2014`、`Lehe 2016`、`Kirchen 2016` | 更多 validation/engineering 线，而不是 paper 主干 |
+| 第 7 章 边界、PML 与 AMR | 中等偏低 | `Berenger 1994/1996` 有 bibliographic anchor，源码和 regression 很强 | `LeeCPC2015` 正文仍缺 |
+| 第 8 章 诊断、验证与案例 | 中等 | `Dawson 1983` diagnostics 思路已可直接服务正文 | 还缺更多 case-specific benchmark papers |
+| 第 9 章 文献路线 | 本章即路线图 | 当前 `references/` 树和 `docs/literature-map.md` | 需要持续同步，而不是一次性写完 |
+
+这个表最重要的结论是：当前项目最缺 paper-backed 收口的不是第 6 章，而是第 5 章和第 7 章。
+
+## 9.5 acquisition 优先级的重新排序
+
+基于当前项目状态，后续 acquisition 不应再泛泛地“多找一些相关论文”，而应按成书影响排序：
+
+1. `Esirkepov 2001` 的 CPC 定稿 PDF
+   - 当前已有作者预印本，可支持第一轮论证；下一步是把预印本与 2001 CPC 发表版逐项对齐。
+2. `Yee 1966`
+   - 直接补第 2 / 6 章里的原始 FDTD 入口。
+4. `LeeCPC2015` 正文 PDF
+   - 直接补第 7 章的 PML paper closure。
+5. `Hockney-Eastwood` 或其 article-level fallback
+   - 继续补第 1 / 2 章的 particle-mesh foundations。
+6. `Boris` 原始文献
+   - 继续补第 4 章的 pusher 历史链。
+
+这个顺序和早期版本相比已经变了。原因很简单：第 6 章现在已有较强 paper 主干，而第 5 / 7 章的 paper closure 反而更薄。
+
+## 9.6 对 `docs/literature-map.md` 的使用边界
+
+当前 `docs/literature-map.md` 已经不只是“列一下 BibTeX key”，而是承担三种作用：
+
+1. 统计当前本地 PDF / topic 分布；
+2. 记录哪些核心文献已经 materialize；
+3. 记录哪些缺口当前只有 metadata / audit / fallback。
+
+但它仍然是总索引，不适合直接拿来替代章节级写作清单。章节写作时更合理的做法是：
+
+- 第 1 / 2 章先看 `docs/foundations-literature-list.md`
+- 第 6 / 7 章结合 `references/06_stability_filtering_nci/` 与 `references/08_boundaries_pml_geometry/`
+- acquisition 计划再回到 `docs/literature-map.md` 和 `references/00_index/books_to_locate.md`
+
+也就是说，`literature-map` 是总表，不是每章的最终操作手册。
+
+## 9.7 下一轮最合理的文献推进目标
+
+如果下一轮继续走“一个大模块一个版本”的节奏，那么最合理的文献模块不再是第 6 章，而是下面两条中的一条：
+
+### 方案 A：第 5 章沉积文献闭环
+
+目标：
+
+- compare the current `Esirkepov 2001` arXiv preprint against the 2001 CPC publication PDF
+- deepen the current first-round Villasenor and Esirkepov Chinese notes into fuller formula-level walkthroughs
+- 把第 5 章从源码校准推进到论文-源码-测试三线闭环
+
+适合原因：
+
+- 当前第 5 章是全书里最明显的“代码已读、文献未补”的章节之一；
+- 这条线一旦闭合，会显著提升前半本书的基础可信度。
+
+### 方案 B：第 7 章 PML 论文闭环
+
+目标：
+
+- 继续推进 `LeeCPC2015` 正文获取
+- 若正文仍不可得，则至少把 `Berenger 1994/1996` 与 WarpX `PsatdAlgorithmPml.cpp` 的公式映射继续压实
+
+适合原因：
+
+- 当前第 7 章源码和 regression 已经很强，只差 paper 正文闭环；
+- 一旦拿到 `LeeCPC2015` 正文，整章会从“强源码章”变成真正的 paper-backed 章节。
+
+在这两者之间，当前更推荐先走方案 A。原因是：
+
+- 方案 A 不强依赖外部授权状态；
+- 方案 B 仍可能被 PDF 获取问题卡住。
+
+## 9.8 本章结论
+
+当前项目的文献工作已经跨过了“只有书目，没有正文资产”的阶段，但还远未到“全书 primary sources fully closed”的阶段。可以更准确地概括成：
+
+- foundations 线已有 `Birdsall 1985`、`Dawson 1983`、`Tajima-Dawson 1979`
+- pusher 线已有 `Vay 2008`、`Higuera-Cary 2017`
+- PSATD/NCI 线已有 `Godfrey 2014`、`Lehe 2016`、`Kirchen 2016`
+- PML 线已有较强源码与审计资产，但缺 `LeeCPC2015` 正文
+- deposition 线当前已建立 `Esirkepov 2001` 与 `Villasenor-Buneman 1992` 的 paper-specific 目录与 access audit；其中 `Esirkepov 2001` 已 materialize 作者 arXiv 预印本并完成第一轮 MinerU/中文讲解，`Villasenor-Buneman 1992` 也已从本机现成 PDF/MinerU 资产 materialize 到项目目录并完成第一轮中文讲解
+
+因此，这条路线图给后续推进的核心约束不是“再多下载一些论文”，而是：
+
+1. 优先补能直接改变章节可信度的 primary sources；
+2. 严格区分 materialized 正文资产和 metadata-level 线索；
+3. 把 acquisition、MinerU、中文精读和章节回填继续绑成同一条工作流。
+
+做到这三点，第 9 章才不是一个附录式书单，而是真正控制全书证据质量的总调度章。

@@ -199,6 +199,19 @@ review 时很难判断到底是哪一处改变导致结果变化。
 
 没有 provenance note，后面就无法安全收紧容差，也无法解释 reference 为什么合理。
 
+当前仓库里，这一项已经不再只是建议。`scripts/build_comoving_first_stage_patch.py` 现在会和 first-stage helper / unified diff 一起自动生成：
+
+- `notes/code-reading/fieldsolver/comoving_first_stage_provenance_note.md`
+
+它会回填：
+
+- stable / zero-comoving ledger 路径；
+- 当前 `SPIKE_RATIO_MAX` 的推导；
+- velocity-only sibling scan 的交叉结论；
+- 为什么第一阶段 patch 仍然不带 energy gate。
+
+因此，当前缺的已经不是“有没有 provenance note”，而是“这份 note 何时足以被更强的 repeated/MPI contrast 证据升级”。
+
 ## 当前模块的闭合条件
 
 在 `PIC-tutor` 这边，comoving PSATD 模块暂时可以把闭合条件写成三步，而不是继续拆新版本号：

@@ -494,6 +494,116 @@ WarpX 在 `OneStep_nosub()` 内部把两者清楚分开：
 
 WarpX 的 `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` 正是围绕这些层次组织外层 `Evolve()` 循环。真正的主循环不是教科书五行伪代码，而是把守恒离散化、时间层一致性和大规模并行工程组合起来的控制流。
 
+### 2.6.1 AMR subcycling：两个时间步不是同一个时间步的重复调用
+
+无 subcycling 时，第 0 层和更细层使用同一个外层时间步，`OneStep_nosub()` 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。当前 WarpX 的 `OneStep_sub1()` 在 `../warpx/Source/Evolve/WarpXEvolve.cpp:1040` 附近明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
+
+令粗层时间步为 $Δt_c$，细层时间步为
+
+$$
+\Delta t_f=\frac{\Delta t_c}{2}.
+$$
+
+一个粗层周期内的基本推进结构是：
+
+| 阶段 | 细层 | 粗层/母网格 | 源项职责 |
+| --- | --- | --- | --- |
+| 第一个半周期 | 推进一次粒子和场，步长 $Δt_f$ | 暂不完成整步 | `current_fp`、`rho_fp` 先 restrict 到 coarse patch |
+| 中间同步 | 细层已到 $t+Δt_f$ | 粗层推进到相应中间时间 | `AddCurrentFromFineLevelandSumBoundary()` 与 `AddRhoFromFineLevelandSumBoundary()` 合并细层、粗层和 buffer 源 |
+| 第二个半周期 | 再推进一次粒子和场，步长 $Δt_f$ | 继续完成粗层剩余半步 | 第二次 fine source 经 restrict/add 后参与粗层后半步场更新 |
+| 粗层周期末 | 到 $t+Δt_c$ | 到 $t+Δt_c$ | 粗细层场、源项和 guard cells 重新达到可交换状态 |
+
+因此，subcycling 不是简单地把 `OneStep_nosub()` 调两次。粗层粒子只推进一次，而细层粒子推进两次；粗层场的更新还要消费两个细层时间片上累积并平均/合成后的电流。源码中的调用顺序可以压缩成：
+
+$$
+\begin{aligned}
+&\text{fine push/deposit at }t
+\rightarrow\text{restrict source}
+\rightarrow\text{fine field half/full/half},\\
+&\text{coarse push/deposit at }t
+\rightarrow\text{combine coarse+fine source}
+\rightarrow\text{coarse field advance},\\
+&\text{fine push/deposit at }t+\Delta t_f
+\rightarrow\text{restrict source}
+\rightarrow\text{fine field half/full/half},\\
+&\text{combine second fine source}
+\rightarrow\text{coarse field completion}.
+\end{aligned}
+$$
+
+这里的 `restrict` 和 `add` 不能与普通 guard-cell exchange 混为一谈：前者改变的是 coarse/fine source 的层级表示，后者只是同一层相邻 patch 间的数据可见性。对电荷来说，`rho_buf` 还可能来自 transition-zone 粒子在 coarse 几何上的直接沉积；因此 subcycling 中的 source 合成既不是“把 fine `rho` 全部平均下来”这么简单，也不是由场求解器自动补齐。
+
+当前实现还显式禁止 electrostatic solver 与 subcycling 组合。这个限制写在 `OneStep_sub1()` 的入口断言中，原因不是 electrostatic 不能使用 AMR，而是这条 subcycling 例程的时间组织只为显式 electromagnetic field advance 编写，不能把 Poisson/electrostatic 路径的源项和场解时序悄悄套进来。
+
+所以读 AMR PIC loop 时要同时检查四个不变量：
+
+1. 细层是否确实使用 $Δt_c/2$，且在一个粗层周期内推进两次；
+2. 粗层粒子是否只推进一次，避免重复计数粒子输运；
+3. 两个细层时间片的 current/rho 是否分别完成 restrict、边界合并和 coarse source add；
+4. 粗细层字段与 auxiliary/guard data 是否在下一次 gather 前重新可见。
+
+这四项共同构成 AMR subcycling 的时间合同。缺少其中任何一项，都可能得到“每个 patch 都成功更新”但跨层电荷守恒、场相位或粒子 gather 已经不一致的结果。
+
+### 2.6.2 JRhom 与 implicit：同一个外层 step 内部也可能有不同的时间合同
+
+标准 `OneStep_nosub()`、PSATD-JRhom 和 implicit solver 都可能被外层 `WarpX::OneStep()` 视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。当前源码的分派关系是：
+
+| 路径 | 外层入口 | 源项/粒子时间组织 | 场推进特点 | 当前组合边界 |
+| --- | --- | --- | --- | --- |
+| 标准显式 electromagnetic PIC | `OneStep_nosub()` | 一次粒子推进，得到 `J` 与 `rho`，随后统一 `SyncCurrentAndRho()` | FDTD 的 `B-E-B` 或一次 PSATD 推进 | 可与普通显式 collision placement 组合 |
+| PSATD-JRhom | `OneStep_JRhom()` | 先推进粒子但跳过普通沉积，再按 `rho/J` 时间依赖在 `Δt` 内做多次相对时间沉积 | 每个 deposit interval 都执行一次谱空间场推进；可选跨 `2Δt` 时间平均 | 只支持 PSATD；`current_correction` 不支持；split momentum collision push 不支持 |
+| implicit electromagnetic PIC | `ImplicitSolver::OneStep()` | 以 $E^{n+θ}$ 或中间场为猜测，在非线性/线性 RHS 评估中反复推进粒子并构造 `J^{n+1/2}` | 通过 nonlinear solver 求自洽中间电场，再完成粒子和场的后半步 | 不能把一次 RHS 评估误当成一次物理时间步；mass-matrix/JFNK 还会改变 `J` 的构造路径 |
+
+JRhom 的关键不是“PSATD 多调用几次”，而是把时间依赖的源项显式建模成一组谱空间可消费的历史量。`OneStep_JRhom()` 的顺序可以压缩为：
+
+1. 以 `skip_deposition=true` 把粒子从 $x^n,p^{n-1/2}$ 推到 $x^{n+1},p^{n+1/2}$；
+2. 把 $E/B$ 以及可选的 divergence-cleaning 场变换到谱空间；
+3. 按 `time_dependency_rho` 和 `time_dependency_J` 在相对时间上沉积 `rho_new` 与 `J`，每次执行 filter、guard/AMR 同步和 Fourier transform；
+4. 对每个子区间执行 `PSATDPushSpectralFields()`，最后把场变回实空间并处理 PML、边界和 guard cells。
+
+其中 `m_JRhom_subintervals` 把一个外层步拆成 `sub_dt = Δt / n_deposit` 的多个沉积区间；打开 time averaging 时，内部循环还会覆盖两个完整时间步的源/场积分。因而 JRhom 中的 `rho` 和 `J` 不是标准显式路径里“本步各沉积一次”的同义词，不能直接用 `OneStep_nosub()` 的单点时间图解释它。
+
+implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，程序先保存粒子和旧场，将磁场推进到半步，然后由 nonlinear solver 反复调用 `ComputeRHS()`；`ImplicitSolver::PreRHSOp()` 在每次 RHS 构造里：
+
+- 用当前猜测的中间电场推进粒子；
+- 形成半步电流；
+- 在需要时把 `current_fp_non_suborbit`、mass matrices 或 JFNK 线性阶段的贡献合并进 `J`；
+- 最后调用 `SyncCurrentAndRho()`，再把同步后的源项交给隐式残差/线性系统。
+
+所以 implicit 中必须区分三个层次：
+
+1. 物理时间步 $t^n -> t^{n+1}$；
+2. 非线性迭代中的中间场猜测 $E^{n+θ}$；
+3. 每次 RHS 或 Jacobian 评估中的粒子/source 重算。
+
+如果把第 3 层误写成“程序又推进了一个物理时间步”，就会错误理解粒子数、能量账本和 `SyncCurrentAndRho()` 的调用次数。相反，如果把 JRhom 的多个 deposit interval 当成 nonlinear iteration，也会把时间积分和求解器迭代混为一谈。
+
+本书后续章节的阅读规则因此固定为：先识别外层物理时间步，再识别内部的 source subinterval 或 nonlinear iteration，最后才判断某次 `PushParticlesandDeposit()` 是物理推进、试探性 RHS 构造，还是历史源项重建。
+
+读者可以用下面这张决策图快速定位一个输入卡实际采用的时间合同：
+
+```mermaid
+flowchart TD
+    A["WarpX::OneStep(t, dt)"] --> B{"m_implicit_solver?"}
+    B -->|"yes"| C["ImplicitSolver::OneStep"]
+    C --> C1["nonlinear iteration / RHS source rebuild"]
+    C1 --> C2["one physical step committed"]
+    B -->|"no"| D{"psatd.JRhom?"}
+    D -->|"yes"| E["OneStep_JRhom"]
+    E --> E1["multiple relative-time rho/J deposits"]
+    E1 --> E2["PSATD spectral advances"]
+    D -->|"no"| F{"AMR subcycling?"}
+    F -->|"yes"| G["OneStep_sub1"]
+    G --> G1["fine: two dt/2 advances"]
+    G1 --> G2["restrict/add fine source to coarse"]
+    G2 --> G3["coarse: one dt advance"]
+    F -->|"no"| H["OneStep_nosub"]
+    H --> H1["push/deposit -> SyncCurrentAndRho"]
+    H1 --> H2["FDTD or PSATD field advance"]
+```
+
+图中三种“内部多次执行”含义不同：implicit 的重复是求解器试探，JRhom 的重复是同一物理时间步内的源项时间积分，subcycling 的重复则是真实的细层物理推进。只有最后完成的外层调用才代表一次可提交的物理时间步。
+
 ## 2.7 本章后的源码阅读入口
 
 读者现在可以从三个源码入口继续：
@@ -503,6 +613,9 @@ WarpX 的 `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` 正是围绕这些层
 | 看外层时间步如何组织 | `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` |
 | 看显式电磁无 subcycling 的标准 step | `../warpx/Source/Evolve/WarpXEvolve.cpp:507-646` |
 | 看主循环如何进入粒子容器 | `../warpx/Source/Evolve/WarpXEvolve.cpp:1311-1415` |
+| 看两级 AMR subcycling 的细/粗层时间组织 | `../warpx/Source/Evolve/WarpXEvolve.cpp:1040-1265` |
+| 看 JRhom 的多次相对时间沉积与谱推进 | `../warpx/Source/Evolve/WarpXEvolve.cpp:843-1042` |
+| 看 implicit RHS 中的粒子推进与 source synchronization | `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:784-853` |
 
 ## 2.8 参数示例与最小运行案例
 

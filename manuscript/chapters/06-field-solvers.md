@@ -2711,6 +2711,8 @@ $$
 
 本书目前对 Hockney 1971 的使用是摘要级而不是全文级：摘要公开了 NGP/CIC/HNGP/HCIC 的比较、collision/heating time 缩放、optimum path 和 `K_2` 系数，项目内 contract 归档于 `runs/stage-c-validation/hockney-1971-abstract/`。因此这些关系可以作为第 6 章稳定性设计语言的来源边界，但不能替代原论文图表、拟合过程和完整误差预算。
 
+QPM/PPPM 与 force-shaping 两篇 1974 摘要还提供了 solver-side 的历史补充：前者说明 Gaussian cloud、potential shaping 和近邻 particle-particle correction 如何服务于低噪声或 sub-mesh resolution，后者说明 charge-sharing hierarchy 与 potential-correction coefficients 如何影响 force-law isotropy。项目内双论文 contract 位于 `runs/stage-c-validation/particle-mesh-1974-abstract/contract.{json,md}`，当前只能作为摘要级来源，不能替代原文推导和图表。
+
 ### 6.11.4 静电球：解析场 L2 误差与能量守恒
 
 `../warpx/Examples/Tests/electrostatic_sphere/analysis_electrostatic_sphere.py` 检查均匀带电电子球的库仑展开。球半径满足

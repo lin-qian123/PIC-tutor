@@ -25,8 +25,8 @@
 | `Dawson 1983` | 已 materialize；项目内已有 PDF、MinerU、`images/`、中文讲解和 `reading-log` | 第 1 章、第 2 章，以及第 4/6/8 章 | numerical experiment 视角、superparticle / weighted particles、finite-size particles、FFT-Poisson electrostatic contract、full EM / Darwin / diagnostics 哲学、quiet-start/statistical-theory 边界 | 已覆盖的重点足够支撑基础章节，但仍不是对全文所有例子的完全收口 |
 | `Hockney-Eastwood` | 原书仍缺本地合法 PDF；无项目内 MinerU 产物 | 第 1 章、第 2 章，后续还会回到第 5/6 章 | 当前只能把它写成 particle-mesh foundations 的 acquisition target，以及对 heating / optimum-path / force-anisotropy 主线的来源指向 | 不能把原书正文细节当作已核实一手证据 |
 | `Hockney 1971` fallback | 已建立论文专属目录和摘要级中文讲解；无本地 PDF/MinerU | 第 1 章优先，其次第 2/5/6 章 | `tau_coll / tau_pe = n(\\lambda_D^2+W^2)`、field fluctuation 缩放、optimum-path、`K_2` 分层 | IBM Research 作者机构页面提供摘要；仍不能替代原文逐段核实 |
-| `Hockney et al. 1974` fallback | 无本地 PDF；正式题名/DOI 已确认 | 第 1 章与后续 heating/noise 主线 | `K_4`、QPM、potential correction 的正式 bibliographic 落点 | 当前无 full text；ScienceDirect `pdf` 端点在本环境下不可直接 materialize |
-| `Eastwood and Hockney 1974` fallback | 无本地 PDF；正式题名/DOI 已确认 | 第 1 章与第 5 章 shape/force law 主线 | force anisotropy 与 shape comparison 的正式 bibliographic 落点 | 当前无 full text；不能把图和结论当作已核正文据 |
+| `Hockney et al. 1974` fallback | 已建立论文专属目录、摘要级中文讲解和 contract；无本地 PDF/MinerU | 第 1 章与后续 heating/noise 主线 | QPM/PPPM、Gaussian cloud、potential shaping、noise reduction 与 sub-mesh resolution 的摘要级证据 | 仍无 full text；不能把摘要结果扩写成正文推导或完整数值协议 |
+| `Eastwood and Hockney 1974` fallback | 已建立论文专属目录、摘要级中文讲解和 contract；无本地 PDF/MinerU | 第 1 章与第 5 章 shape/force law 主线 | NGP/CIC/九点方案层级、potential correction 与 force anisotropy 的摘要级证据 | 仍无 full text；不能把图和经验结果当作已逐图核正文据 |
 | `Yee 1966` | metadata/DOI 已确认；当前无本地 PDF / MinerU 产物 | 第 2 章优先，后续第 6 章 FDTD 主线 | staggered FDTD 的原始历史入口、`Yee` 命名与离散 Maxwell solver 谱系的 bibliographic 落点 | 当前不能把其正文细节写成已核实的一手推导 |
 
 ## 按章节的当前用法

@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.68 合订 PDF 为 314 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.68 合订 PDF 为 315 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
 v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
 
@@ -9,6 +9,8 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 2026-07-13：完成 `LeeCPC2015` accepted/submitted manuscript contract：7 页全文、13 张抽取图片、MinerU 结构、公式锚点和中文讲解均通过；第 7 章可使用第一轮 paper-backed PML 解释，但不把该资产标记为 CPC publisher-formatted 定稿。
 
 2026-07-13：完成第 5 章 Villasenor/Esirkepov 本地论文资产合同：Villasenor 11 页/27 图、Esirkepov 13 页/39 图均通过结构、公式锚点和中文讲解检查；两条线仍保留各自的 publisher provenance / CPC 定稿差异边界。
+
+2026-07-13：第 6 章新增 Birdsall 13-5 后半段的 `K_4`/QPM/`N_C`/stochastic-heating 回写；数值来自 Birdsall 对 Hockney 的历史转述，未升级为 Hockney-Eastwood 原始图表逐页证据。
 
 本轮又把第 7 章 transition-zone route-count packet 落成可执行的 schema validator 和 synthetic fixture：正例检查 route count、weight closure、`rho/J` 中间账本与显式 merge gates，负例会被拒绝；当前 WarpX 尚未接入 runtime hook，因此仍保持 `RUNTIME_LEDGER_UNPROVEN`。
 

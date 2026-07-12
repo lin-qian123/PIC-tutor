@@ -579,6 +579,8 @@ FDTD：场能增长是否被 corrector 压住</a></li>
 Gauss law</a></li>
 <li><a href="#maxwell-hybrid-qed真空修正后的相速度偏移" id="toc-maxwell-hybrid-qed真空修正后的相速度偏移">6.11.3 Maxwell hybrid
 QED：真空修正后的相速度偏移</a></li>
+<li><a href="#k_4qpm-与-thermal-plasma-长期-figure-of-merit" id="toc-k_4qpm-与-thermal-plasma-长期-figure-of-merit">6.11.3
+<code>K_4</code>、QPM 与 thermal-plasma 长期 figure of merit</a></li>
 <li><a href="#静电球解析场-l2-误差与能量守恒" id="toc-静电球解析场-l2-误差与能量守恒">6.11.4 静电球：解析场 L2
 误差与能量守恒</a></li>
 <li><a href="#隐式-em能量gauss-law-与求解器迭代数" id="toc-隐式-em能量gauss-law-与求解器迭代数">6.11.5 隐式 EM：能量、Gauss
@@ -884,6 +886,10 @@ canonical resource 已确认，但本机请求返回 Cloudflare HTTP
 <p>本版补充第 5 章 Villasenor/Esirkepov 本地论文资产合同：分别确认 11
 页/27 图与 13 页/39 图的读取包完整；这只关闭本地资产可复核性，不关闭
 publisher provenance 或 CPC 定稿逐行对照。</p>
+<p>本版补充第 6 章 Birdsall 13-5 后半段：将
+<code>K_4</code>、QPM、<code>N_C</code>/<code>1/N_C</code> field
+fluctuation 和 linear stochastic heating 写成 solver-design
+语言，并保留其来自 Hockney 历史转述而非原始图表逐页核对的边界。</p>
 <p>版本日期：2026-07-13</p>
 <p>本次新增 3D Esirkepov shape=2/3/4 refined controls：shape=2/3/4 的
 field error 分别为 <code>1.2523e-2/2.3515e-2/3.0644e-2</code>，charge
@@ -18176,6 +18182,55 @@ particle-particle correction 如何服务于低噪声或 sub-mesh
 resolution，后者说明 charge-sharing hierarchy 与 potential-correction
 coefficients 如何影响 force-law isotropy。项目内双论文 contract 位于
 <code>runs/stage-c-validation/particle-mesh-1974-abstract/contract.{json,md}</code>，当前只能作为摘要级来源，不能替代原文推导和图表。</p>
+<h3 id="k_4qpm-与-thermal-plasma-长期-figure-of-merit">6.11.3
+<code>K_4</code>、QPM 与 thermal-plasma 长期 figure of merit</h3>
+<p>Birdsall Chapter 13 对 Hockney 2d2v
+长时间实验的转述，还给出了一条比“提高 shape order
+会降低噪声”更可操作的设计语言。在 optimum path 上，heating time 与
+slowing-down time 的比值可以写成</p>
+<p><span class="math display">\[
+\left(\frac{\tau_H}{\tau_s}\right)_{\mathrm{opt}}
+=
+K_4\left(\frac{\lambda_D}{\Delta x}\right)^2.
+\]</span></p>
+<p>这里的 <code>K_4</code> 是 particle shape、Poisson operator 和
+potential correction 组合的经验 figure of merit。它不应被误读成当前
+WarpX 任意输入的 universal constant；它只描述 Birdsall 所转述的
+thermal-plasma 2d2v 参数面和 optimum-path 拟合。转述中的量级对比是：标准
+CIC 的 <code>K_4</code> 约为 <code>100</code>；QS weighting 加 9-point
+Poisson solver 时约为 <code>150</code>；再加入 potential
+correction、有效粒子半径约为 <code>1.8--3</code> 个网格尺度的 QPM
+变体时可到约 <code>3000</code>。后者的含义不是“只多一个滤波开关”，而是
+particle shape、场算子和势修正共同削弱了 mesh alias 对长期 heating
+的耦合；Birdsall 转述的估计是，计算代价约增加到两倍，但 <code>K_4</code>
+和 <code>\tau_H/\tau_{pe}</code> 的 figure of merit
+可获得数量级提升。</p>
+<p>同一组实验还把 field fluctuation 写成 mesh-aware 粒子数的缩放：</p>
+<p><span class="math display">\[
+\frac{E_x^2/8\pi}{n m v_t^2}
+\propto
+\frac{1}{N_C},
+\qquad
+N_C=n\left[\lambda_D^2+(R\Delta x)^2\right].
+\]</span></p>
+<p>因此 <code>N_C</code> 同时连接三件事：有效粒子数、有限尺寸 cloud 对
+Debye-scale physics 的替代，以及 field-noise / collision / heating
+的长期尺度。当 <code>R\Delta x&gt;\lambda_D</code> 时，cloud
+半径而不是单独的 Debye length
+主导统计误差；这也是为什么只报告宏粒子数密度或只报告
+<code>\lambda_D/\Delta x</code> 都不足以描述 thermal-plasma
+的数值健康度。</p>
+<p>最后，Hockney 观察到 kinetic-energy 增量 <code>h(t)</code>
+近似随时间线性增长。该形状应解释为 stochastic heating
+的长期积累，而不是自动解释成某个离散 mode 的瞬时爆炸。对当前
+<code>uniform_plasma</code>、<code>energy_conserving_thermal_plasma</code>
+和稳定性案例，较稳妥的 reader-side
+问题应当是：漂移是否近似线性、在多少个 <code>\tau_s</code>
+内积累到可见，以及 <code>\tau_H/\tau_s</code>
+是否足够大；不能只凭短时间总能量曲线就宣称热背景“长期稳定”。这些
+<code>K_4</code> 数值和 QPM 结构来自 Birdsall 对 Hockney
+结果的转述；Hockney-Eastwood
+原书/发表版全文仍未在本地取得，因此本节不宣称对原始图表逐页核对。</p>
 <h3 id="静电球解析场-l2-误差与能量守恒">6.11.4 静电球：解析场 L2
 误差与能量守恒</h3>
 <p><code>../warpx/Examples/Tests/electrostatic_sphere/analysis_electrostatic_sphere.py</code>

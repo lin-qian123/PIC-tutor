@@ -4466,14 +4466,9 @@
   - `13-5` 已核实部分
     - `tau_s`、`tau_H`、`N_C`、field fluctuation level
     - `tau_H/tau_s` 与 optimum path 的工程意义
-- [ ] 继续核实 `Birdsall 1985` Chapter 13 的剩余经验缩放，优先：
+- [x] 继续核实 `Birdsall 1985` Chapter 13 的剩余经验缩放，已完成 `13-5` 后半段并回写第 6 章：
   - `13-5`
-    - 与 `Hockney-Eastwood` 原书逐项核对：
-      - `K_4`
-      - QPM
-      - `E_x^2` fluctuation 的 `1/N_C` 缩放
-      - linear-in-time stochastic heating
-      - optimum-path 的设计图和边界条件
+    - 已固定 `K_4` 经验 figure of merit、QPM 的 shape/Poisson/potential-correction 组合、`E_x^2` fluctuation 的 `1/N_C` 缩放、linear-in-time stochastic heating 和 optimum-path 边界；其中 `K_4` 数值仍明确标记为 Birdsall 转述 Hockney 的历史结果，不冒充当前 WarpX universal constant，也不宣称 Hockney-Eastwood 原始图表已逐页核对。
 - [x] 开始精读 `Tajima and Dawson 1979`。当前已完成：
   - 摘要、引言与最小解析模型的第一轮中文精读
   - `driver -> wake -> trapping -> acceleration` 最小闭环

@@ -16,7 +16,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 314 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 315 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -29,6 +29,8 @@
 本版补充 `LeeCPC2015` accepted/submitted manuscript 资产合同：7 页 PDF、MinerU 结构、13 张图片、公式锚点和中文讲解全部通过；CPC publisher-formatted PDF 的版本差异仍待核对。
 
 本版补充第 5 章 Villasenor/Esirkepov 本地论文资产合同：分别确认 11 页/27 图与 13 页/39 图的读取包完整；这只关闭本地资产可复核性，不关闭 publisher provenance 或 CPC 定稿逐行对照。
+
+本版补充第 6 章 Birdsall 13-5 后半段：将 `K_4`、QPM、`N_C`/`1/N_C` field fluctuation 和 linear stochastic heating 写成 solver-design 语言，并保留其来自 Hockney 历史转述而非原始图表逐页核对的边界。
 
 版本日期：2026-07-13
 

@@ -2715,6 +2715,32 @@ $$
 
 QPM/PPPM 与 force-shaping 两篇 1974 摘要还提供了 solver-side 的历史补充：前者说明 Gaussian cloud、potential shaping 和近邻 particle-particle correction 如何服务于低噪声或 sub-mesh resolution，后者说明 charge-sharing hierarchy 与 potential-correction coefficients 如何影响 force-law isotropy。项目内双论文 contract 位于 `runs/stage-c-validation/particle-mesh-1974-abstract/contract.{json,md}`，当前只能作为摘要级来源，不能替代原文推导和图表。
 
+### 6.11.3 `K_4`、QPM 与 thermal-plasma 长期 figure of merit
+
+Birdsall Chapter 13 对 Hockney 2d2v 长时间实验的转述，还给出了一条比“提高 shape order 会降低噪声”更可操作的设计语言。在 optimum path 上，heating time 与 slowing-down time 的比值可以写成
+
+$$
+\left(\frac{\tau_H}{\tau_s}\right)_{\mathrm{opt}}
+=
+K_4\left(\frac{\lambda_D}{\Delta x}\right)^2.
+$$
+
+这里的 `K_4` 是 particle shape、Poisson operator 和 potential correction 组合的经验 figure of merit。它不应被误读成当前 WarpX 任意输入的 universal constant；它只描述 Birdsall 所转述的 thermal-plasma 2d2v 参数面和 optimum-path 拟合。转述中的量级对比是：标准 CIC 的 `K_4` 约为 `100`；QS weighting 加 9-point Poisson solver 时约为 `150`；再加入 potential correction、有效粒子半径约为 `1.8--3` 个网格尺度的 QPM 变体时可到约 `3000`。后者的含义不是“只多一个滤波开关”，而是 particle shape、场算子和势修正共同削弱了 mesh alias 对长期 heating 的耦合；Birdsall 转述的估计是，计算代价约增加到两倍，但 `K_4` 和 `\tau_H/\tau_{pe}` 的 figure of merit 可获得数量级提升。
+
+同一组实验还把 field fluctuation 写成 mesh-aware 粒子数的缩放：
+
+$$
+\frac{E_x^2/8\pi}{n m v_t^2}
+\propto
+\frac{1}{N_C},
+\qquad
+N_C=n\left[\lambda_D^2+(R\Delta x)^2\right].
+$$
+
+因此 `N_C` 同时连接三件事：有效粒子数、有限尺寸 cloud 对 Debye-scale physics 的替代，以及 field-noise / collision / heating 的长期尺度。当 `R\Delta x>\lambda_D` 时，cloud 半径而不是单独的 Debye length 主导统计误差；这也是为什么只报告宏粒子数密度或只报告 `\lambda_D/\Delta x` 都不足以描述 thermal-plasma 的数值健康度。
+
+最后，Hockney 观察到 kinetic-energy 增量 `h(t)` 近似随时间线性增长。该形状应解释为 stochastic heating 的长期积累，而不是自动解释成某个离散 mode 的瞬时爆炸。对当前 `uniform_plasma`、`energy_conserving_thermal_plasma` 和稳定性案例，较稳妥的 reader-side 问题应当是：漂移是否近似线性、在多少个 `\tau_s` 内积累到可见，以及 `\tau_H/\tau_s` 是否足够大；不能只凭短时间总能量曲线就宣称热背景“长期稳定”。这些 `K_4` 数值和 QPM 结构来自 Birdsall 对 Hockney 结果的转述；Hockney-Eastwood 原书/发表版全文仍未在本地取得，因此本节不宣称对原始图表逐页核对。
+
 ### 6.11.4 静电球：解析场 L2 误差与能量守恒
 
 `../warpx/Examples/Tests/electrostatic_sphere/analysis_electrostatic_sphere.py` 检查均匀带电电子球的库仑展开。球半径满足

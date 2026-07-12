@@ -1,6 +1,8 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.48 合订 PDF 为 309 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v48_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.49 合订 PDF 为 309 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v49_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+
+2026-07-12 又补入 3D AMR particles-in-PML 的逐分量 signed/absolute/level decomposition：初始帧全零，末态只有负向 `Ex` 峰值越过 `110`，且 coarse/fine 读取一致；正文继续把它写成官方 gate 通过、严格 absolute gate 失败的判据边界。
 
 2026-07-12 又统一收口 RZ secondary-emission 的分辨率证据：`64x64` 默认基线仍为 `3.6038% > 2%` 的 geometry boundary，`128x128` 与 `256x256` refined controls 分别为 `0.9977%` 与 `0.6646%` 并通过官方 gate；正文不修改默认输入，不放宽 tolerance，也不把 refined sibling 外推成 upstream baseline 已修复。
 

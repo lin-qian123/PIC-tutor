@@ -857,6 +857,11 @@ reproduction。</p>
 gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低于
 <code>1e-2</code>，最差 Vay
 <code>p22=7.52e-3</code>；该结果只证明解析截面一致性。</p>
+<p>本版又补入 dense <code>p_y=0.2..2.8</code> family 和 64³
+<code>p_y=1.6/1.8</code> resolution control：Vay 共振窗口
+<code>I_y</code> 漂移约 <code>6.5e-2</code>，Boris/Higuera-Cary 约
+<code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
+screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
 汇总本地 135 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
@@ -7722,63 +7727,14 @@ attractor/repeller”。作者保留了一个例外边界：若磁场在时空�
 volume-preservation，因此在 practical timestep
 和更复杂轨道拓扑下更容易暴露出 resonance-island 与 trajectory-crossing
 这类非物理后果。</p>
-<p>WarpX 参数文档把 <code>algo.particle_pusher = vay</code> 和
-<code>higuera</code> 分别列为可选 pusher，并引用
-<code>param-Vaypop2008</code> 与
-<code>param-HigueraPOP2017</code>。因此书中后续做 benchmark 时应至少比较
-Boris、Vay、Higuera-Cary 在强磁场、相对论漂移和 boosted-frame
-场景下的轨道误差。</p>
-<p>当前本地 regression 和这篇文献的配对也要写得保守。最直接能接
-Higuera-Cary 文献主线的是
-<code>Examples/Tests/particle_pusher</code>：它在
-<code>algo.particle_pusher = higuera</code>、force-free 常量外部
-<code>E/B</code> 构型下，用 <code>analysis.py</code> 强检查长时间推进后
-<code>x \approx 0</code>，因此可以当作 relativistic force-free /
-drift-preservation 的本地强断言。本轮新增的
-<code>scripts/analyze_higuera_poincare_contract.py</code> 又在 64³
-专用盒中对 Boris、Vay、Higuera-Cary 各跑 1001 帧和 5
-个初始条件，全部产生 <code>x=0, p_x&gt;0</code> 截面交叉；最大
-<code>H</code>/<code>I_y</code> 相对漂移为
-<code>1.532\times10^{-3}</code>/<code>8.206\times10^{-3}</code>。随后在
-32³、2201-frame 长轨道控制中，三种 pusher 均产生 18/19
-个截面点；<code>scripts/classify_higuera_poincare_topology.py</code> 的
-invariant-order gate 和解析 quartic reference gate
-均通过，后者全部残差低于 <code>1e-2</code>、最差 Vay
-<code>p22=7.52e-3</code>。分析器明确把 WarpX 机械 <code>p_z</code>
-映射回论文的 <code>P_z-A_z</code>，因此这是一条可复核的
-section/invariant
-consumer；候选几何仍需经验证的点序和更密参考轨道确认，不能夸写成论文
-Fig. 2 的完整 topology reproduction。</p>
-<p>本轮新增的 <code>scripts/analyze_larmor_orbit_contract.py</code> 已把
-<code>larmor</code> 的 6 个 Full plotfile
-组织成逐帧离散轨道账本，确认时间序列、1 粒子/species、有限状态和输出
-cadence，并给出由 <code>B_y</code> 与 <code>\gamma</code> 推出的 Boris
-rotation-angle 参考值。这个结果只提高了现有 checksum case
-的可观测性；由于输入仍含 AMR/PML/current correction/divergence
-cleaning，且没有 half-step velocity 输出，仍不能把它升级为 Vay Appendix
-B 的 gyroradius 复现或 Higuera-Cary 的 Poincare topology gate。报告见
-<code>runs/stage-c-validation/larmor_single_process/larmor-orbit-contract.{json,md}</code>。</p>
-<p>为把这两个边界从“没有专门 case”推进到可执行对照，本轮又用当前 WarpX
-binary 构造了窄化 uniform-<code>B</code> sibling：关闭
-AMR、PML、divergence cleaning 和自洽场演化，只保留 <code>B_y</code>
-外部粒子场，分别运行 Boris、Vay、Higuera-Cary 80
-步并逐步落盘。<code>scripts/compare_uniform_b_pushers.py</code> 对三条
-81-frame 轨道的
-cadence、粒子数、有限状态、半径和动量范数统一检查通过；半径 relative
-spread 分别为
-<code>3.889e-3</code>、<code>3.889e-3</code>、<code>3.218e-3</code>，动量范数
-relative spread 均低于 <code>1.1e-14</code>。进一步依据
-<code>../warpx/Source/Particles/Pusher/UpdatePosition.H</code> 的
-<code>x += u*gamma_inverse*dt</code>，从相邻位置差重建 position-update
-velocity：三种 pusher 的最大相对误差均低于 <code>1.34e-14</code>，对应
-gyroradius proxy 误差均低于 <code>4.8e-15</code>。这已经支持 Vay
-Appendix B 条件的 proxy 层证据，但不是直接读取的 half-step
-attribute；Higuera-Cary 的独立 Poincare section/invariant consumer 见
-<code>scripts/analyze_higuera_poincare_contract.py</code> 和
-<code>notes/code-reading/particles/64-higuera-poincare-runtime-contract.md</code>，其
-resonance-island/trajectory-crossing topology classifier
-仍未完成。报告见
-<code>runs/stage-c-validation/pusher_uniform_b_comparison/contract.{json,md}</code>。</p>
+<p>当前本地 regression
+和这篇文献的配对仍需保守表述。<code>Examples/Tests/particle_pusher</code>
+提供 force-free Higuera-Cary 强断言；Poincare 合同则验证
+<code>x=0,p_x&gt;0</code> 截面、<code>I_y</code> 顺序和解析 quartic
+reference。14-species dense family 与 64³ <code>p_y=1.6/1.8</code>
+control 进一步显示 Vay 窗口漂移约 <code>6.5e-2</code>，控制组约
+<code>1e-3</code>，但该 resonance-sensitive screen 仍不是 two-fold
+island 或 trajectory-crossing topology proof。</p>
 <h2 id="从-multiparticlecontainer-到-physicalparticlecontainer">4.6 从
 <code>MultiParticleContainer</code> 到
 <code>PhysicalParticleContainer</code></h2>

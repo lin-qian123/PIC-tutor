@@ -33,17 +33,17 @@ def plotfiles(run_dir: Path) -> list[Path]:
     )
 
 
-def load_trajectories(run_dir: Path) -> tuple[np.ndarray, dict[str, dict[str, np.ndarray]]]:
+def load_trajectories(run_dir: Path, expected_species: tuple[str, ...]) -> tuple[np.ndarray, dict[str, dict[str, np.ndarray]]]:
     files = plotfiles(run_dir)
     if len(files) < 1001:
         raise ValueError(f"expected at least 1001 plotfiles in {run_dir}, got {len(files)}")
     times: list[float] = []
-    rows = {species: {name: [] for name in ("x", "y", "px", "py", "pz")} for species in EXPECTED_SPECIES}
+    rows = {species: {name: [] for name in ("x", "y", "px", "py", "pz")} for species in expected_species}
     for path in files:
         ds = yt.load(str(path))
         ad = ds.all_data()
         times.append(float(ds.current_time))
-        for species in EXPECTED_SPECIES:
+        for species in expected_species:
             rows[species]["x"].append(float(ad[species, "particle_position_x"].to_ndarray()[0]))
             rows[species]["y"].append(float(ad[species, "particle_position_y"].to_ndarray()[0]))
             # WarpX writes physical momentum (kg m/s); the paper uses p/(m c).
@@ -118,9 +118,10 @@ def summarize_points(points: list[dict[str, float]]) -> dict:
     }
 
 
-def collect_case(run_dir: Path) -> dict:
+def collect_case(arguments: tuple[Path, tuple[str, ...]]) -> dict:
+    run_dir, expected_species = arguments
     run_dir = run_dir.resolve()
-    times, trajectories = load_trajectories(run_dir)
+    times, trajectories = load_trajectories(run_dir, expected_species)
     species = {name: summarize_points(section_points(times, data)) for name, data in trajectories.items()}
     return {"run_dir": str(run_dir), "pusher": run_dir.name.rsplit("_", 1)[-1], "frame_count": len(times), "species": species}
 
@@ -128,16 +129,18 @@ def collect_case(run_dir: Path) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("run_dirs", nargs=3, type=Path)
+    parser.add_argument("--species", nargs="+", default=list(EXPECTED_SPECIES))
     parser.add_argument("--output-json", type=Path, required=True)
     parser.add_argument("--output-md", type=Path, required=True)
     args = parser.parse_args()
 
+    expected_species = tuple(args.species)
     with ProcessPoolExecutor(max_workers=3) as executor:
-        cases = list(executor.map(collect_case, args.run_dirs))
+        cases = list(executor.map(collect_case, [(run_dir, expected_species) for run_dir in args.run_dirs]))
 
     checks = {
         "three_cases_present": len(cases) == 3,
-        "all_expected_species_present": all(set(case["species"]) == set(EXPECTED_SPECIES) for case in cases),
+        "all_expected_species_present": all(set(case["species"]) == set(expected_species) for case in cases),
         "all_species_have_sections": all(
             summary["crossing_count"] > 0 for case in cases for summary in case["species"].values()
         ),

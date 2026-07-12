@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 703,
-  "total_bytes": 27467842,
+  "entry_count": 706,
+  "total_bytes": 27467257,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1513435,
-      "sha256": "bdef417e090c566301f7bdbf6e9adf35465489f05fc33622a94c93144c9ee404"
+      "bytes": 1513729,
+      "sha256": "30d52ceb99aee94b700c3629fac581f360d1ccf4ea10282bd2554e38b3c2aeff"
     },
     {
       "path": "TODO.md",
-      "bytes": 1357010,
-      "sha256": "05f8e6a5d1460af5a81a1c6a7d527802151c9b817fc7e385264805fadd921bd6"
+      "bytes": 1357433,
+      "sha256": "4f51483a2c5fb59f1a37dc2a5967229765167ab439b22ebee03350a6fa8bdd04"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5741149,
-      "sha256": "3420eb19c990ae8622abf8d6d46df2a6c0587a8bfb8aca8d91ab1b7af094528e"
+      "bytes": 5738127,
+      "sha256": "17c2f905f0ee7978c9e1c7886ec3dda8621ada93f7e86ad6ce3de6e4842bbb4b"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1069293,
-      "sha256": "34f7fcefd053134541f2a2d38178cf56581ee6fb8cc3856fd3e29e66e8c106c7"
+      "bytes": 1066591,
+      "sha256": "35c048a1d97df44c83157dc5cbea2368635f746fe1c96947cc4258cd0938ab96"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3366372,
-      "sha256": "010db212dfcf4d7aa767baabb047f378d66829b6bb983bf78317f9c579db5965"
+      "bytes": 3363759,
+      "sha256": "33e7b20466db7899a9ed7723f620313222bda25b9b1b3daf7e73c4233c8cf3e7"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "3f3cc4e2e23d42a22be28ed36c0f521defd3a61c54c9266bc4fead62d7e7559d"
+      "sha256": "c3a95a73aae19a4e29bc1246cfc72c15acd9e067ca7d8f4b80c4f9df98b9234e"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 41129,
-      "sha256": "14a213d717ead388524640bd0a7665d71a994e30d7c77601ab9453e9fb49017a"
+      "bytes": 41393,
+      "sha256": "03c50cd2bf441110d1ba0f6639bfe01b4afae4346993f4590402fe6dacd8fab5"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 62129,
-      "sha256": "f6ce1fabb7f2f11c0afcf1c6b8c95deb13635184156a1ff140db586cd381d139"
+      "bytes": 62406,
+      "sha256": "56826410e1c289f5d24a22a0d932d638212486197ec724796f4c234dc7102c84"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 147833,
-      "sha256": "fe208459037d6c787e87d3bbf7c1771f457da987483fc9d65cf8a53f47b36edb"
+      "bytes": 144854,
+      "sha256": "1989a5a140b580a9f447012dbc1184b9ff1e4f11f67818cccd061d0ad66df15e"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -2056,6 +2056,11 @@
       "sha256": "12a0ce3d4ef31c0b21041ebeaf68c98334f5695d1558da2adfab0688bc8fd8e3"
     },
     {
+      "path": "notes/code-reading/particles/66-higuera-resonance-window-resolution-contract.md",
+      "bytes": 1112,
+      "sha256": "873c12ca688e134a26045f848eab5324109a713131dc062afc79a3bf5a2674ec"
+    },
+    {
       "path": "notes/code-reading/particles/README.md",
       "bytes": 18390,
       "sha256": "532bc03a4de781643989e76048a41bfc8812b9c000043b709f8dd7cee22d31f9"
@@ -2252,8 +2257,13 @@
     },
     {
       "path": "scripts/analyze_higuera_poincare_contract.py",
-      "bytes": 8286,
-      "sha256": "cba00f87871f242adfc6acb830a42546cf754c1f2e628b8856a304991262cfda"
+      "bytes": 8575,
+      "sha256": "1004dba5bc106887aaf987248fab309d47966225032c618e302051d7f9f1f8ab"
+    },
+    {
+      "path": "scripts/analyze_higuera_poincare_resonance_window.py",
+      "bytes": 4178,
+      "sha256": "34e123d97995f5c7c339b8d1248a93d4a9eb6b4f034fbbbc93241c7a0fd625d2"
     },
     {
       "path": "scripts/analyze_implicit_picard_energy_contract.py",
@@ -3014,6 +3024,11 @@
       "path": "scripts/compare_field_probe_resolution.py",
       "bytes": 2228,
       "sha256": "a17e1c253edcc188f6e4050213722477d637589bc6fad014748effd9b24361fc"
+    },
+    {
+      "path": "scripts/compare_higuera_resonance_window_resolution.py",
+      "bytes": 3894,
+      "sha256": "4a4378d63b9c848ff607c4e2ed2996359f7fc03472b2448e28f70e0b5da1d6ce"
     },
     {
       "path": "scripts/compare_particle_pusher_siblings.py",

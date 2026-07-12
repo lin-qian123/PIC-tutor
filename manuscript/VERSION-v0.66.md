@@ -1,4 +1,4 @@
-# PIC-tutor v0.67
+# PIC-tutor v0.66
 
 本版新增 Hockney 1971 article-level abstract contract：8 项本地检查全部通过，正式题名、DOI、作者机构摘要、摘要级中文讲解和 full-text 缺失边界均已归档。该资产支持 collision/heating scaling、optimum path 和 `K_2` 的摘要级引用，但不替代 publisher PDF、MinerU 或逐段核对。
 
@@ -8,11 +8,9 @@
 
 本版又新增 PSATD/NCI literature-to-source strategy matrix：Godfrey 2014、Lehe 2016、Kirchen 2016 三篇本地全文资产的章节映射、WarpX 源码关键词和 runtime consumer 全部通过检查；矩阵只做证据索引，不把 fixed-grid、Galilean 和 boosted-frame 三条机制合并。
 
-本版完成 public release path hygiene：合订 Markdown/HTML 不再保留本机绝对路径或绝对本地链接，项目链接改为仓库相对路径，WarpX 外部路径改为 `$WARPX_ROOT` 占位符；该边界由 `scripts/audit_public_release_paths.py` 和 `scripts/verify_v67_build.py` 覆盖。
-
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 312 页；本 v0.67 版本在 v0.66 基础上补入 public release path hygiene，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 312 页；本 v0.66 版本在 v0.65 基础上补入 PSATD/NCI literature-to-source strategy matrix，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 

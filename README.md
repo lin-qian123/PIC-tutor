@@ -4,6 +4,8 @@
 
 v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
+当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
+
 2026-07-12：新增 Hockney 1971 article-level abstract contract，8/8 检查通过；项目内已保存正式书目信息、IBM Research 作者机构摘要、摘要级中文讲解和 full-text 缺失边界，证据分类为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。
 
 2026-07-12：新增 Hockney/Goel/Eastwood 1974 的 QPM/PPPM 与 Eastwood/Hockney force-shaping 两条摘要级 contract；两篇各 8 项检查通过，补入 Gaussian cloud、potential shaping、sub-mesh resolution、charge-sharing hierarchy 和 force anisotropy 的来源边界，仍不宣称 publisher full text 已取得。
@@ -12,7 +14,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-12：新增 PSATD/NCI literature-to-source strategy matrix，Godfrey 2014、Lehe 2016、Kirchen 2016 三篇全文资产与章节/源码/runtime 对照全部通过；明确 fixed-grid、Galilean 和 boosted-frame 三条机制及其 regression 边界不应混写。
 
-2026-07-12：完成 public release path hygiene：v0.67 的本机绝对路径问题已在 v0.67 release build 层修复，Markdown/HTML 均不再包含 `/Volumes/`、`/Users/`、`file://` 或绝对本地链接。
+2026-07-12：完成 public release path hygiene：v0.67 首次发现的本机绝对路径问题已在 v0.68 release build 层持续验收，Markdown/HTML 均不再包含 `/Volumes/`、`/Users/`、`file://` 或绝对本地链接。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 

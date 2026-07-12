@@ -12,7 +12,7 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 本轮又把 Godfrey 2014、Lehe 2016、Kirchen 2016 三条 PSATD/NCI 全文证据线收成 strategy matrix contract，统一索引论文机制、WarpX 源码关键词和 runtime consumer，并保留三者不能互相替代的边界。
 
-本轮还修复了 release 产物的本机路径泄露与迁移问题：v0.67 的 Markdown/HTML 使用仓库相对链接，WarpX 外部命令使用 `$WARPX_ROOT` 占位符，并由 path-hygiene contract 覆盖。
+本轮还修复并持续验收了 release 产物的本机路径泄露与迁移问题：v0.68 的 Markdown/HTML 使用仓库相对链接，WarpX 外部命令使用 `$WARPX_ROOT` 占位符，并由 path-hygiene contract 覆盖。
 
 2026-07-12 又完成 3D Esirkepov shape=2/3/4 的 `64^3 -> 128^3` case-local resolution contrast：三档 refined field/charge 均通过，正文明确这只是分辨率敏感性证据，不是正式收敛阶。
 
@@ -176,7 +176,7 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 同日又对 Villasenor crossing-driven source skeleton 做只读 audit：当前 `CurrentDeposition.H` 的 16 个 crossing、segment、fraction 和 `this_J*` writeback 锚点全部通过，报告归档于 `runs/stage-c-validation/villasenor-source-contract/`；该证据只说明源码结构与正文映射仍成立，不替代数值 kernel regression。
 
-这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.67` 3D Esirkepov refined-resolution、RZ correction tradeoff audit、bounded compare、Hockney particle-mesh、Yee indexed-abstract 和 PSATD/NCI strategy matrix 版；它在 v0.65 的基础上把三篇 PSATD/NCI 全文论文与 WarpX 源码/runtime consumer 的关系固化到第 6 章，并继续保留 RZ charge、AMR route-count、publisher PDF 逐页对照和更多出版级图表等明确边界。当前已嵌入 12 张真实验证图，WarpX 目标 checkout staging 与 dedicated route-count regression 仍未完成。
+这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.68` 3D Esirkepov refined-resolution、RZ correction tradeoff audit、bounded compare、Hockney particle-mesh、Yee indexed-abstract、PSATD/NCI strategy matrix 和公开验证证据摘要版；它在 v0.65 的基础上把三篇 PSATD/NCI 全文论文与 WarpX 源码/runtime consumer 的关系固化到第 6 章，并继续保留 RZ charge、AMR route-count、publisher PDF 逐页对照和更多出版级图表等明确边界。当前已嵌入 12 张真实验证图，WarpX 目标 checkout staging 与 dedicated route-count regression 仍未完成。
 
 ## 版本边界
 

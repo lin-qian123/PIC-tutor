@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 680,
-  "total_bytes": 25471744,
+  "entry_count": 681,
+  "total_bytes": 25474199,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1508803,
-      "sha256": "907bb0bda9338cc1a033c7bde5b2c59563cd85e0479da0eecb19d5b3d07972bd"
+      "bytes": 1509024,
+      "sha256": "1f8d123f89b47226a3ce366115dbf77f3c145a8aabf833b4582546d1f2153296"
     },
     {
       "path": "TODO.md",
-      "bytes": 1351819,
-      "sha256": "52e9e7817e8195a68af968b998024da5a29d637be4072d39df0dde21ade882ae"
+      "bytes": 1352017,
+      "sha256": "e08139ac70f462da71f638978b90967816677b4e4b59ee48e570f0dc953c7940"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -122,8 +122,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 3866,
-      "sha256": "a76ff8012ea90edd7e4ed644f8953c6117e845df0b615686135e876ff2fb0a22"
+      "bytes": 3961,
+      "sha256": "220a6e6298889acd3c40c88b6da486ec7d9316b694a18702008d1478d3016e02"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -417,8 +417,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 37021,
-      "sha256": "677354d2072495bc9bb5bf0053749efb63925b6863faf81be2bebb86a7cf036c"
+      "bytes": 37061,
+      "sha256": "cb25adc5802ca4206c2b84e644ec295a9e55136e5a269c52cc0a660a4457639e"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -737,8 +737,8 @@
     },
     {
       "path": "manuscript/VERSION-v0.67.md",
-      "bytes": 58170,
-      "sha256": "b15a2329aec902e74ab6e60688bef61792d8c56a67b6977525051451a448982f"
+      "bytes": 57794,
+      "sha256": "59e108bfa532839fad944a96e3b1061c0552b17af84762daa94805c12cae7f9f"
     },
     {
       "path": "manuscript/VERSION-v0.7.md",
@@ -758,7 +758,7 @@
     {
       "path": "manuscript/VERSION.md",
       "bytes": 58170,
-      "sha256": "b15a2329aec902e74ab6e60688bef61792d8c56a67b6977525051451a448982f"
+      "sha256": "57c926353cb634e8a655edccd42b419b2ca789ce870d1846acd91c11614ebe6e"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -2519,6 +2519,11 @@
       "path": "scripts/audit_radial_axis_volume_contract.py",
       "bytes": 3638,
       "sha256": "be8802f721c55a90c919ecbedd4b41f8580f90a2f4068baece949bad516b4487"
+    },
+    {
+      "path": "scripts/audit_release_consistency.py",
+      "bytes": 2277,
+      "sha256": "1164a65e81276c31c5eb6ef7a65a5a6d5b3974f6a09b8a50e248ce1ba5c30d66"
     },
     {
       "path": "scripts/audit_rz_charge_diagnostic_contract.py",

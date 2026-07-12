@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+"""Audit that current release metadata points to the same published version."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+
+CURRENT_VERSION = "v0.68"
+
+
+def check(root: Path, relative: str, expected: str) -> dict[str, object]:
+    path = root / relative
+    actual = path.read_text(encoding="utf-8") if path.exists() else ""
+    passed = expected in actual
+    return {"path": relative, "expected": expected, "passed": passed}
+
+
+def build_report(root: Path) -> dict[str, object]:
+    checks = [
+        check(root, "README.md", f"当前成书版本为 `{CURRENT_VERSION}`"),
+        check(root, "manuscript/README.md", f"当前 {CURRENT_VERSION} 合订 PDF"),
+        check(root, "manuscript/VERSION.md", f"# PIC-tutor {CURRENT_VERSION}"),
+        check(root, "manuscript/VERSION.md", "scripts/verify_v68_build.py"),
+        check(root, "docs/public-repo-release-audit.md", f"dist/pic-tutor-{CURRENT_VERSION}.pdf"),
+        check(root, "docs/v0.68-release-manifest.json", f'"release": "PIC-tutor {CURRENT_VERSION}"'),
+        check(root, "scripts/build_v68.py", f"pic-tutor-{CURRENT_VERSION}"),
+        check(root, "scripts/verify_v68_build.py", f"v0.68 artifact verification"),
+    ]
+    forbidden_current_refs = []
+    for relative in ("README.md", "manuscript/README.md", "manuscript/VERSION.md"):
+        text = (root / relative).read_text(encoding="utf-8")
+        if "当前收束版本是 `v0.67`" in text or "scripts/verify_v67_build.py` 覆盖" in text:
+            forbidden_current_refs.append(relative)
+    return {
+        "contract": "current release metadata consistency",
+        "current_version": CURRENT_VERSION,
+        "checks": checks,
+        "forbidden_current_reference_files": forbidden_current_refs,
+        "passed": all(item["passed"] for item in checks) and not forbidden_current_refs,
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
+    args = parser.parse_args()
+    report = build_report(args.root.resolve())
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return 0 if report["passed"] else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

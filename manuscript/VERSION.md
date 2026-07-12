@@ -10,7 +10,7 @@
 
 本版又新增 PSATD/NCI literature-to-source strategy matrix：Godfrey 2014、Lehe 2016、Kirchen 2016 三篇本地全文资产的章节映射、WarpX 源码关键词和 runtime consumer 全部通过检查；矩阵只做证据索引，不把 fixed-grid、Galilean 和 boosted-frame 三条机制合并。
 
-本版完成 public release path hygiene：合订 Markdown/HTML 不再保留本机绝对路径或绝对本地链接，项目链接改为仓库相对路径，WarpX 外部路径改为 `$WARPX_ROOT` 占位符；该边界由 `scripts/audit_public_release_paths.py` 和 `scripts/verify_v67_build.py` 覆盖。
+本版完成 public release path hygiene：合订 Markdown/HTML 不再保留本机绝对路径或绝对本地链接，项目链接改为仓库相对路径，WarpX 外部路径改为 `$WARPX_ROOT` 占位符；该边界由 `scripts/audit_public_release_paths.py` 和 `scripts/verify_v68_build.py` 覆盖。
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 

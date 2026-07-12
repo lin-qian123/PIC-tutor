@@ -35,7 +35,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 135 条 `contrac
 
 - `AGENTS.md`、`README.md`、`TODO.md`；
 - `manuscript/` 书稿源、`manuscript/assets/figures/` 12 张验证图和 `manuscript/VERSION.md`；
-- `scripts/build_v68.py`、`scripts/verify_v68_build.py` 及书稿引用的项目分析脚本；
+- `scripts/build_v68.py`、`scripts/verify_v68_build.py`、`scripts/audit_release_consistency.py` 及书稿引用的项目分析脚本；
 - `docs/` 中的项目说明、验证矩阵和本发布审计；
 - `docs/public-evidence-index.{json,md}`；
 - `dist/pic-tutor-v0.68.md`、`dist/pic-tutor-v0.68.html`、`dist/pic-tutor-v0.68.pdf`，前提是维护者确认生成物的发布策略。
@@ -52,11 +52,12 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 135 条 `contrac
 ```bash
 python scripts/build_v68.py
 python scripts/verify_v68_build.py --build-log /tmp/pic-tutor-build-v68-final.log
+python scripts/audit_release_consistency.py
 git status --short
 ```
 
 当前 v0.68 构建验收结果：`pdf_pages=312`、源/合订图片链接均为 `12`、HTML 内嵌图片和图号范围检查全部通过。
 
-v0.68 发布 allowlist 另见 `docs/v0.68-release-manifest.{json,md}`：当前包含 680 个项目文件、总计 `25,471,744` bytes；`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
+v0.68 发布 allowlist 另见 `docs/v0.68-release-manifest.{json,md}`：当前包含 681 个项目文件、总计 `25,473,911` bytes；`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
 
 验收脚本证明的是成书构建和资源合同，不替代第三方材料的版权审计，也不替代 GitHub 仓库最终 staged 文件清单审阅。

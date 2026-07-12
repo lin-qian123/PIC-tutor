@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-12：完成 RZ `256x512` correction-on/off shape=1/2/3/4 双侧 family：field gate 8/8 全通过；correction-on charge 全为 BOUNDARY，correction-off shape=3/4 通过 `1e-11`，shape=1/2 分别为 `1.639e-11/1.020e-11`，不把 correction-off 局部 PASS 外推为通用修复。新增 `scripts/summarize_rz_esirkepov_highres_correction_family.py`。
 - [x] 2026-07-12：完成 RZ correction-on `256x512` shape=1/2/3/4 high-resolution family：field gate 全通过，charge residual 为 `7.554e-4/8.990e-4/9.289e-4/9.729e-4`，均由 axis cell 主导并保留 BOUNDARY；新增 `scripts/summarize_rz_esirkepov_highres_shape_family.py`，不宣称完整 Gauss-law 或正式 convergence order。
 - [x] 2026-07-12：完成 RZ shape=1 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`；官方 field analysis 全通过，但最高分辨率 correction-off charge 越过 `1e-11`，因此只记录为 resolution trend/非单调 boundary，不把 correction-off 写成通用修复。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_resolution-trend/`。
 - [x] 2026-07-12：完成 v0.54 3D Esirkepov shape=2/3/4 refined-resolution family：`128^3` case-local controls 的 field error 为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 为 `5.4174e-12/4.3288e-12/3.0001e-12`，三档官方 field 与独立 charge gate 均通过；不宣称正式 convergence order。

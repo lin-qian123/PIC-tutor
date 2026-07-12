@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.60 合订 PDF 为 310 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v60_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.61 合订 PDF 为 310 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v61_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
 2026-07-12 又完成 3D Esirkepov shape=2/3/4 的 `64^3 -> 128^3` case-local resolution contrast：三档 refined field/charge 均通过，正文明确这只是分辨率敏感性证据，不是正式收敛阶。
 
@@ -25,6 +25,7 @@
 2026-07-12 又完成 RZ Esirkepov `particle_shape=1` 的轴修正/分辨率四格对照：默认 correction-on 的 axis residual 随 `64x128 -> 128x256` 下降约 `2.36x`，correction-off 两档 field/charge 双 gate 均通过；shape=2/3/4 的 correction-off field 边界仍单独保留，不把这一结果写成全局参数修复。
 2026-07-12 又完成 RZ shape=1 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`；该三档结果保留 correction-on 趋势与 correction-off 非单调 boundary 的分层结论。
 2026-07-12 又完成 RZ correction-on `256x512` shape=1/2/3/4 high-resolution family：field gate 全通过，charge residual 为 `7.554e-4/8.990e-4/9.289e-4/9.729e-4`，均由 axis cell 主导并保留 BOUNDARY。
+2026-07-12 又完成 RZ `256x512` correction-on/off shape=1/2/3/4 双侧 family：field gate 8/8 全通过；correction-on charge 全为 BOUNDARY，correction-off shape=3/4 通过 `1e-11`，shape=1/2 分别为 `1.639e-11/1.020e-11`，保留为 charge/field tradeoff。
 
 2026-07-12 又完成 `particles_in_pml` signed-vs-absolute analysis source audit：上游 consumer 使用有符号 component max，项目独立 contract 使用全场绝对值 max；3D AMR sibling 的官方 gate 通过而强化 gate 失败，因此正文只保留为判据边界，不把它升级为 AMR 强验证。
 
@@ -163,7 +164,7 @@
 
 同日又对 Villasenor crossing-driven source skeleton 做只读 audit：当前 `CurrentDeposition.H` 的 16 个 crossing、segment、fraction 和 `this_J*` writeback 锚点全部通过，报告归档于 `runs/stage-c-validation/villasenor-source-contract/`；该证据只说明源码结构与正文映射仍成立，不替代数值 kernel regression。
 
-这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.60` 3D Esirkepov refined-resolution 与 RZ 高分辨率 shape family 版；它在 v0.59 的基础上补入 shape=1/2/3/4 的 `256x512` correction-on family，并保留 RZ charge、AMR route-count、publisher PDF 逐页对照和更多出版级图表等明确边界。当前已嵌入 12 张真实验证图，WarpX 目标 checkout staging 与 dedicated route-count regression 仍未完成。
+这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.61` 3D Esirkepov refined-resolution 与 RZ correction tradeoff audit 版；它在 v0.60 的基础上补入 `256x512` correction-on/off 双侧 family，并保留 RZ charge、AMR route-count、publisher PDF 逐页对照和更多出版级图表等明确边界。当前已嵌入 12 张真实验证图，WarpX 目标 checkout staging 与 dedicated route-count regression 仍未完成。
 
 ## 版本边界
 

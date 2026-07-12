@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 699,
-  "total_bytes": 27432656,
+  "entry_count": 701,
+  "total_bytes": 27448159,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1512131,
-      "sha256": "04769cd24d5991cc13003fb05f300378139f2438c940bd13c77479ac4a84dc16"
+      "bytes": 1512584,
+      "sha256": "81bfefdc9d3cc4a14a7228d06cf5c5ddfc299a42e6b496e7040bf93c02499b2e"
     },
     {
       "path": "TODO.md",
-      "bytes": 1355492,
-      "sha256": "e789852270f7e76126e397f5bacdb78f7fccb2def33bb3d06acfa5caa5237463"
+      "bytes": 1355968,
+      "sha256": "b524e6e5714901e00131f652a295fa33ad828bb1ff64d6558bbe5c97f62f94fa"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5739060,
-      "sha256": "0feab3df869bbd65e53fc55f515a326e7226e331717dabc0ee9e113cf1e8f1db"
+      "bytes": 5740040,
+      "sha256": "be10761a84a45d994a8ea8db29fa0d3ec54a2e1ed6cf9b8f21555cf7a8165746"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1067496,
-      "sha256": "3369d9a1e042533d3abe6d7596d59eb536d296d8d6a3487cf9973db92e996f05"
+      "bytes": 1068313,
+      "sha256": "dbdcc0ac8ef313f8d3a44690712563ced7e9d65119903976727b9afcf85b87e8"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3362985,
-      "sha256": "868fed0e679be32a319d978ed36a3f35f07ebab349e0049d8d9df5bb1aa3744b"
+      "bytes": 3363888,
+      "sha256": "371cd1b916f12ec822ef132d5fe051700aadf395f0d6de8806de59aa2be373d2"
     },
     {
       "path": "docs/chapter-template.md",
@@ -72,8 +72,8 @@
     },
     {
       "path": "docs/example-regression-map.md",
-      "bytes": 1844782,
-      "sha256": "60a167e504244cbc326391ecc826c31d86e2ce56b797fefbfb167ff63540231d"
+      "bytes": 1844962,
+      "sha256": "b619d68badb261413c127bcd5f0dd9d5b200e7b23d4fa3c7ee0c663557b92f74"
     },
     {
       "path": "docs/foundations-literature-list.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "8294a8fb9e6ac6a5cd21ea0d7678b1d7da637969c547f131208b043a11d1295b"
+      "sha256": "72571d654cc9ca9a66a62e0a6bd14fa71e205c2b41caf56b5803dd72a331d943"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 39965,
-      "sha256": "8e5d7f8c3aa15ed1c952d82ec8d3ee04e6c2f27df1271659958c238805879041"
+      "bytes": 40367,
+      "sha256": "d9cf9f132b12beabe8edafa43278a40fc3149821464be8eb14b9451118871600"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 60986,
-      "sha256": "95a24e74c1aeeeda19bb54379b5777c952236d0bd01d46cc5b0fdf54f6a436f6"
+      "bytes": 61403,
+      "sha256": "bf9b6cb7c86edc34f12838303790525148f1252da8390a233926573c1fa46ffa"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 147179,
-      "sha256": "a13184cb3238c10b88bab052d1b753af0313db61521a4418ea6495514573ed61"
+      "bytes": 147579,
+      "sha256": "598e70e692b44413efbd6bcfb1c167a864e0fc1d25d3bcfba347a966b236054b"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -2046,6 +2046,11 @@
       "sha256": "dcf9f89b399f7b815a670b41893e2dec144325405026ca0b44b8eccbb2833405"
     },
     {
+      "path": "notes/code-reading/particles/64-higuera-poincare-runtime-contract.md",
+      "bytes": 2198,
+      "sha256": "f2827ac936f01a5903477de80e70beadb579337931fe904f7a0df28563de1968"
+    },
+    {
       "path": "notes/code-reading/particles/README.md",
       "bytes": 18390,
       "sha256": "532bc03a4de781643989e76048a41bfc8812b9c000043b709f8dd7cee22d31f9"
@@ -2239,6 +2244,11 @@
       "path": "scripts/analyze_gaussian_beam_focus_contract.py",
       "bytes": 4228,
       "sha256": "4f06000b50f7f20936fd001d55b4a5986764706da5deb0d835a141a6c72c63ac"
+    },
+    {
+      "path": "scripts/analyze_higuera_poincare_contract.py",
+      "bytes": 8277,
+      "sha256": "0ec9dc20492b3cb9bd431be114d1e51e099b38cb9fba1a6bef13d2fee099fb59"
     },
     {
       "path": "scripts/analyze_implicit_picard_energy_contract.py",

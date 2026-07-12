@@ -20,9 +20,11 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：完成 Vay 2008 与 Higuera-Cary 2017 第 4 章论文资产合同：分别验收 7 页/38 图和 9 页/44 图的 PDF、MinerU、中文讲解、README、access audit、源码映射与 runtime boundary；合同报告位于 `runs/stage-c-validation/{vay-2008-paper-asset,higuera-2017-paper-asset}/`。
 
-2026-07-13：将现有 `larmor` checksum surface 扩展为逐帧离散轨道合同：6 个 Full plotfile 的时间序列、粒子数、有限性、输出 cadence 和 Boris rotation-angle 参考量均可重复提取；仍明确不将 AMR/PML/div-cleaning 组合 case 升级为 Vay Appendix B 或 Higuera-Cary Poincare runtime reproduction。
+2026-07-13：将现有 `larmor` checksum surface 扩展为逐帧离散轨道合同：6 个 Full plotfile 的时间序列、粒子数、有限性、输出 cadence 和 Boris rotation-angle 参考量均可重复提取；仍明确不将 AMR/PML/div-cleaning 组合 case 升级为 Vay Appendix B 或 Higuera-Cary 完整 topology reproduction。
 
 2026-07-13：完成窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：移除 AMR/PML/场演化，三条 case 各输出 81 个 Full plotfile，统一轨道合同通过；由 `UpdatePosition.H` 和相邻位置差重建的 position-update velocity proxy 最大误差均低于 `1.34e-14`，gyroradius proxy 误差均低于 `4.8e-15`。该结果支持 Vay Appendix B 条件的 proxy 层证据，但直接 half-step attribute 和 Poincare consumer 仍未完成。
+
+2026-07-13：完成 Higuera-Cary Poincare section runtime contract：64³ 专用盒中 Boris/Vay/Higuera-Cary 各运行 1001 帧、5 个初始条件，`x=0` 正向 `p_x` 截面结构检查全部通过；最大 `H`/`I_y` 相对漂移分别为 `1.532e-3`/`8.206e-3`。论文规范动量与 WarpX 机械动量的转换已写入分析器和报告；resonance-island/trajectory-crossing topology classifier 仍未自动化，不宣称完整 Fig. 2 复现。
 
 AMR transition-zone 的下一阶段接口已落成可执行设计合同：`python scripts/validate_transition_zone_route_contract.py --input docs/transition-zone-route-contract-example.json` 正例通过、破坏 route count 的负例被拒绝；这仍是 schema/analysis 层验证，不是当前 WarpX runtime route proof。
 

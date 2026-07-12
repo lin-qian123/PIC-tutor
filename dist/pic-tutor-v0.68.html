@@ -822,8 +822,9 @@ boosted-frame / NCI</a></li>
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
 <p>本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38
 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access
-audit、章节/源码映射均通过；Appendix B 圆轨道和 Poincare topology 的专门
-runtime 复现仍作为边界。</p>
+audit、章节/源码映射均通过；Vay Appendix B 圆轨道仍是边界，Higuera
+Poincare section/invariant consumer 已补入，但 topology classifier
+尚未自动化。</p>
 <p>本版又新增 <code>larmor</code> 逐帧离散轨道合同：6 个 Full plotfile
 的时间序列和粒子状态检查通过，报告记录了
 <code>B_y</code>、<code>gamma</code> 与每个输出间隔的 Boris
@@ -836,6 +837,13 @@ proxy；最大相对误差分别低于 <code>1.34e-14/4.8e-15</code>。该结果
 Vay Appendix B 的 proxy 层条件，同时修正 2D XZ 面内动量读取路径为
 <code>particle_momentum_x/z</code>；直接 half-step attribute 与 Poincare
 topology 仍作为边界。</p>
+<p>本版又新增 Higuera-Cary Poincare section runtime contract：64³
+专用盒中三种 pusher 各输出 1001 帧，5 个初始条件均产生正向
+<code>p_x</code> 的 <code>x=0</code> 截面交叉；最大
+<code>H</code>/<code>I_y</code> 相对漂移为
+<code>1.532e-3/8.206e-3</code>。该证据建立 section/invariant
+consumer，但不宣称 resonance-island 或 trajectory-crossing topology
+已自动分类。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
 汇总本地 135 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
@@ -7713,12 +7721,16 @@ Higuera-Cary 文献主线的是
 <code>algo.particle_pusher = higuera</code>、force-free 常量外部
 <code>E/B</code> 构型下，用 <code>analysis.py</code> 强检查长时间推进后
 <code>x \approx 0</code>，因此可以当作 relativistic force-free /
-drift-preservation
-的本地强断言。相反，<code>Examples/Tests/larmor</code> 目前仍只有
-checksum，没有按 Poincare section 或 invariant drift 去复现论文第 VI 节
-practical-timestep topology / resonance-island 的专门
-analysis，所以不能把这组本地 test 夸写成 Higuera-Cary
-论文数值部分的完整本地再现。</p>
+drift-preservation 的本地强断言。本轮新增的
+<code>scripts/analyze_higuera_poincare_contract.py</code> 又在 64³
+专用盒中对 Boris、Vay、Higuera-Cary 各跑 1001 帧和 5
+个初始条件，全部产生 <code>x=0, p_x&gt;0</code> 截面交叉；最大
+<code>H</code>/<code>I_y</code> 相对漂移为
+<code>1.532\times10^{-3}</code>/<code>8.206\times10^{-3}</code>。分析器明确把
+WarpX 机械 <code>p_z</code> 映射回论文的
+<code>P_z-A_z</code>，因此这是一条可复核的 section/invariant
+consumer；但 nested surfaces、trajectory crossings 和 resonance island
+尚未自动分类，不能夸写成论文 Fig. 2 的完整 topology reproduction。</p>
 <p>本轮新增的 <code>scripts/analyze_larmor_orbit_contract.py</code> 已把
 <code>larmor</code> 的 6 个 Full plotfile
 组织成逐帧离散轨道账本，确认时间序列、1 粒子/species、有限状态和输出
@@ -7743,8 +7755,11 @@ relative spread 均低于 <code>1.1e-14</code>。进一步依据
 velocity：三种 pusher 的最大相对误差均低于 <code>1.34e-14</code>，对应
 gyroradius proxy 误差均低于 <code>4.8e-15</code>。这已经支持 Vay
 Appendix B 条件的 proxy 层证据，但不是直接读取的 half-step
-attribute；同样，它没有论文第 VI 节的 Poincare-section
-consumer，不能替代 Higuera-Cary topology reproduction。报告见
+attribute；Higuera-Cary 的独立 Poincare section/invariant consumer 见
+<code>scripts/analyze_higuera_poincare_contract.py</code> 和
+<code>notes/code-reading/particles/64-higuera-poincare-runtime-contract.md</code>，其
+resonance-island/trajectory-crossing topology classifier
+仍未完成。报告见
 <code>runs/stage-c-validation/pusher_uniform_b_comparison/contract.{json,md}</code>。</p>
 <h2 id="从-multiparticlecontainer-到-physicalparticlecontainer">4.6 从
 <code>MultiParticleContainer</code> 到

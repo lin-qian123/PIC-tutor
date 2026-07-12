@@ -1,10 +1,12 @@
 # PIC-tutor v0.68
 
-本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access audit、章节/源码映射均通过；Appendix B 圆轨道和 Poincare topology 的专门 runtime 复现仍作为边界。
+本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access audit、章节/源码映射均通过；Vay Appendix B 圆轨道仍是边界，Higuera Poincare section/invariant consumer 已补入，但 topology classifier 尚未自动化。
 
 本版又新增 `larmor` 逐帧离散轨道合同：6 个 Full plotfile 的时间序列和粒子状态检查通过，报告记录了 `B_y`、`gamma` 与每个输出间隔的 Boris rotation-angle；当前仍不把该 AMR/PML/div-cleaning case 升级为论文专门 runtime reproduction。
 
 本版又完成窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：三条 case 各有 81 个 Full plotfile，并依据 `UpdatePosition.H` 重建 position-update velocity/gyroradius proxy；最大相对误差分别低于 `1.34e-14/4.8e-15`。该结果支持 Vay Appendix B 的 proxy 层条件，同时修正 2D XZ 面内动量读取路径为 `particle_momentum_x/z`；直接 half-step attribute 与 Poincare topology 仍作为边界。
+
+本版又新增 Higuera-Cary Poincare section runtime contract：64³ 专用盒中三种 pusher 各输出 1001 帧，5 个初始条件均产生正向 `p_x` 的 `x=0` 截面交叉；最大 `H`/`I_y` 相对漂移为 `1.532e-3/8.206e-3`。该证据建立 section/invariant consumer，但不宣称 resonance-island 或 trajectory-crossing topology 已自动分类。
 
 本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 135 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 

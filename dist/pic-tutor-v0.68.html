@@ -849,6 +849,10 @@ classifier：它会计算截面多边形候选自交和轨道间交叉；32³、
 长轨道已达到 18/19 点/轨道阈值，但三种 pusher 的候选签名一致，结果保持
 <code>REVIEW_REQUIRED</code>，不提升为论文 Fig. 2 topology
 reproduction。</p>
+<p>本版又补入 Poincare invariant-order gate：长轨道三种 pusher 的
+<code>I_y</code> 区间均互不重叠且保持
+<code>p05 &lt; p10 &lt; p17 &lt; p22 &lt; p27</code> 顺序；该窄 gate
+通过，但完整 topology gate 仍关闭。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
 汇总本地 135 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
@@ -7733,10 +7737,12 @@ drift-preservation 的本地强断言。本轮新增的
 <code>H</code>/<code>I_y</code> 相对漂移为
 <code>1.532\times10^{-3}</code>/<code>8.206\times10^{-3}</code>。随后在
 32³、2201-frame 长轨道控制中，三种 pusher 均产生 18/19
-个截面点；<code>scripts/classify_higuera_poincare_topology.py</code>
-已进入 <code>REVIEW_REQUIRED</code>，但三种 pusher
-的候选自交/交叉签名完全一致。分析器明确把 WarpX 机械 <code>p_z</code>
-映射回论文的 <code>P_z-A_z</code>，因此这是一条可复核的
+个截面点；<code>scripts/classify_higuera_poincare_topology.py</code> 的
+invariant-order gate 通过，五条轨道 <code>I_y</code>
+区间均互不重叠且保持
+<code>p05 &lt; p10 &lt; p17 &lt; p22 &lt; p27</code>
+顺序，但候选自交/交叉签名完全一致。分析器明确把 WarpX 机械
+<code>p_z</code> 映射回论文的 <code>P_z-A_z</code>，因此这是一条可复核的
 section/invariant
 consumer；候选几何仍需经验证的点序和更密参考轨道确认，不能夸写成论文
 Fig. 2 的完整 topology reproduction。</p>

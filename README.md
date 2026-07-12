@@ -28,6 +28,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：新增 sampled Poincare topology classifier：`scripts/classify_higuera_poincare_topology.py` 已能计算候选自交、轨道间线段交叉和多边形面积；32³、2201-frame 长轨道已达到 18/19 点/轨道的采样阈值，但三种 pusher 的候选签名完全一致，合同保持 `REVIEW_REQUIRED`，未提升为 topology PASS。
 
+2026-07-13：同一分类器新增 invariant-order gate：三种 pusher 的五条轨道 `I_y` 区间均互不重叠，并保持 `p05 < p10 < p17 < p22 < p27` 顺序；该窄 gate 通过，但完整 resonance-island/trajectory-crossing gate 仍关闭。
+
 AMR transition-zone 的下一阶段接口已落成可执行设计合同：`python scripts/validate_transition_zone_route_contract.py --input docs/transition-zone-route-contract-example.json` 正例通过、破坏 route count 的负例被拒绝；这仍是 schema/analysis 层验证，不是当前 WarpX runtime route proof。
 
 2026-07-12：新增 Hockney 1971 article-level abstract contract，8/8 检查通过；项目内已保存正式书目信息、IBM Research 作者机构摘要、摘要级中文讲解和 full-text 缺失边界，证据分类为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。

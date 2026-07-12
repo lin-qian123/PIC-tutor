@@ -47,6 +47,24 @@ def polygon_area(points: list[tuple[float, float]]) -> float:
     return float(0.5 * np.sum(x * np.roll(y, -1) - y * np.roll(x, -1)))
 
 
+def invariant_band_order(case: dict) -> dict:
+    bands = {
+        species: (
+            min(float(point["I_y"]) for point in data["points"]),
+            max(float(point["I_y"]) for point in data["points"]),
+        )
+        for species, data in case["species"].items()
+    }
+    ordered = sorted(bands, key=lambda species: sum(bands[species]) / 2.0)
+    adjacent_disjoint = all(bands[first][1] < bands[second][0] for first, second in zip(ordered, ordered[1:]))
+    return {
+        "bands": bands,
+        "order": ordered,
+        "adjacent_bands_disjoint": adjacent_disjoint,
+        "invariant_order_gate_passed": adjacent_disjoint,
+    }
+
+
 def classify_case(case: dict) -> dict:
     polygons = {
         species: [(float(point["y_over_L0"]), float(point["py"])) for point in data["points"]]
@@ -72,6 +90,7 @@ def classify_case(case: dict) -> dict:
         "point_counts": point_counts,
         "minimum_points_for_topology": MIN_POINTS_FOR_TOPOLOGY,
         "sampling_sufficient": enough_points,
+        "invariant_order": invariant_band_order(case),
         "signed_polygon_area": {
             species: polygon_area(points) if len(points) >= 3 else None for species, points in polygons.items()
         },
@@ -97,6 +116,7 @@ def main() -> int:
         "topology_classifier_executed": True,
     }
     sampling_sufficient = all(case["sampling_sufficient"] for case in cases)
+    invariant_order_gate_passed = all(case["invariant_order"]["invariant_order_gate_passed"] for case in cases)
     signatures = [
         (
             tuple(sorted(case["self_intersection_candidates"].items())),
@@ -107,7 +127,7 @@ def main() -> int:
     candidate_signature_consistent = len(set(signatures)) == 1
     if sampling_sufficient:
         status = "REVIEW_REQUIRED"
-        reason = "Sampling threshold is met, but time-ordered polyline intersections need a validated section-point ordering and denser reference orbit before they can be promoted to resonance-island or trajectory-crossing evidence."
+        reason = "The invariant-order gate passes, but time-ordered polyline intersections need a validated section-point ordering and denser reference orbit before they can be promoted to resonance-island or trajectory-crossing evidence."
         next_required_evidence = "Review the section-point ordering against a denser reference orbit and add a validated topology definition before enabling the physical gate."
     else:
         status = "INSUFFICIENT_SAMPLING"
@@ -118,6 +138,7 @@ def main() -> int:
         "passed": all(checks.values()),
         "checks": checks,
         "topology_gate_passed": False,
+        "invariant_order_gate_passed": invariant_order_gate_passed,
         "status": status,
         "minimum_points_for_topology": MIN_POINTS_FOR_TOPOLOGY,
         "candidate_signature_consistent_across_pushers": candidate_signature_consistent,
@@ -146,7 +167,7 @@ def main() -> int:
         lines.append(
             f"| `{case['pusher']}` | `{min(counts)}/{max(counts)}` | `{'READY' if case['sampling_sufficient'] else 'INSUFFICIENT'}` | `{case['self_intersection_candidates']}` |"
         )
-    lines += ["", result["evidence_boundary"]["reason"], "", result["evidence_boundary"]["next_required_evidence"]]
+    lines += ["", f"Invariant-order gate: `{'PASS' if result['invariant_order_gate_passed'] else 'FAIL'}`.", result["evidence_boundary"]["reason"], "", result["evidence_boundary"]["next_required_evidence"]]
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2))
     return 0 if result["passed"] else 1

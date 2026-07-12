@@ -28,10 +28,10 @@ CASES = [
     {
         "family": "Esirkepov",
         "geometry": "3D",
-        "shape_order": "1",
-        "evidence": "field + charge PASS",
-        "scope": "Langmuir",
-        "contract": "runs/stage-c-validation/esirkepov_langmuir_3d_mpi2/contract.json",
+        "shape_order": "1/2/3/4",
+        "evidence": "shape1/2 field + charge PASS; shape3/4 charge PASS, field BOUNDARY",
+        "scope": "64^3 3D Langmuir shape matrix",
+        "contract": "runs/stage-c-validation/esirkepov_langmuir_3d_shape-matrix/contract.json",
     },
     {
         "family": "Esirkepov",

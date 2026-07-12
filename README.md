@@ -1,12 +1,13 @@
 # PIC-tutor
 
-当前成书版本为 `v0.51`，对应 309 页 deposition geometry/order coverage matrix 与 Esirkepov notation matrix 版；历史 `v0.50` 仍由 `manuscript/VERSION-v0.50.md` 保留。
+当前成书版本为 `v0.52`，对应 310 页 3D Esirkepov shape=2/3/4 runtime matrix 与 deposition coverage matrix 版；历史 `v0.51` 仍由 `manuscript/VERSION-v0.51.md` 保留。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+- 2026-07-12：进入 v0.52 3D Esirkepov shape runtime matrix 阶段：新增 `scripts/summarize_esirkepov_3d_shape_contract.py` 与 `notes/code-reading/particles/60-esirkepov-3d-shape-runtime-contract.md`；在 `64^3`、2-rank case 中 shape=2 field/charge 均通过，shape=3/4 charge 通过但 field error 分别为 `6.7792%/8.7344% > 5%`，保留为 field boundary，不修改默认值。
 - 2026-07-12：进入 v0.51 第 5 章 deposition geometry/order coverage matrix 阶段：新增 `scripts/summarize_deposition_geometry_order_coverage.py` 与 `notes/code-reading/particles/59-deposition-geometry-order-coverage-matrix.md`，把 1D/2D/3D、2D MR、RZ、RCYLINDER/RSPHERE 和 implicit Villasenor 的现有证据与明确缺口并排整理；不把局部 PASS 外推成全组合验证。
 - 2026-07-12：进入 v0.50 第 5 章 Esirkepov notation matrix 阶段：新增 `scripts/audit_esirkepov_notation_contract.py` 与 `notes/code-reading/particles/58-esirkepov-paper-warpX-notation-matrix.md`，14 个当前 `CurrentDeposition.H` 源码锚点全部通过；正文固定 `W^1/W^2/W^3 -> sdxi/sdyj/sdzk -> Jx/Jy/Jz`、`one_third/one_sixth` 横向混合平均和 `invdtd` 横截面积归一化的对应关系，不把它误写成 publisher-PDF 已逐页核对。
 - 2026-07-12：进入 v0.49 3D AMR particles-in-PML 判据分解阶段：新增 `scripts/analyze_particles_in_pml_signed_absolute_levels.py` 与 `notes/code-reading/particles/57-particles-in-pml-signed-absolute-level-contract.md`；初始帧全零，末态唯一越过 `110` 的是边界侧 PML 区域负向 `Ex=-110.3994`，`Ey/Ez` 绝对峰均约 `102.5971`，level 0/1 读取一致；该结果定位 signed/absolute 差异，不修改 `../warpx` 或上游容差。

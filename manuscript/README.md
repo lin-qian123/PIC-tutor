@@ -1,6 +1,8 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.51 合订 PDF 为 309 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v51_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.52 合订 PDF 为 310 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v52_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+
+2026-07-12 又补入 3D Esirkepov shape=2/3/4 runtime matrix：shape=2 双 gate 通过，shape=3/4 只在 charge 层通过，field 层保留分辨率边界。
 
 2026-07-12 又补入 deposition geometry/order coverage matrix：把已验证组合和明确缺口并排写入第 5 章，防止把局部 shape/geometry contract 误读成完整 Cartesian product 覆盖。
 

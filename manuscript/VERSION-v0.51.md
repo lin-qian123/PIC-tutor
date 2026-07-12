@@ -1,6 +1,6 @@
 # PIC-tutor v0.52
 
-当前合订 PDF 为 310 页；本 v0.52 版本在 v0.51 基础上补入 3D Esirkepov particle-shape runtime matrix，明确 shape=2 的 field/charge 双通过和 shape=3/4 的 charge PASS、field BOUNDARY 分层。
+当前合订 PDF 为 309 页；本 v0.52 版本在 v0.51 基础上补入 3D Esirkepov particle-shape runtime matrix，明确 shape=2 的 field/charge 双通过和 shape=3/4 的 charge PASS、field BOUNDARY 分层。
 
 版本日期：2026-07-12
 

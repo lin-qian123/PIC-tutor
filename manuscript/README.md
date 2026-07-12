@@ -1,8 +1,8 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.53 合订 PDF 为 310 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v53_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.54 合订 PDF 为 310 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v54_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
-2026-07-12 又完成 3D Esirkepov shape=3/4 的 `64^3 -> 128^3` case-local resolution contrast：两档 refined field/charge 均通过，正文明确这只是分辨率敏感性证据，不是正式收敛阶。
+2026-07-12 又完成 3D Esirkepov shape=2/3/4 的 `64^3 -> 128^3` case-local resolution contrast：三档 refined field/charge 均通过，正文明确这只是分辨率敏感性证据，不是正式收敛阶。
 
 2026-07-12 又补入 3D Esirkepov shape=2/3/4 runtime matrix：shape=2 双 gate 通过，shape=3/4 只在 charge 层通过，field 层保留分辨率边界。
 

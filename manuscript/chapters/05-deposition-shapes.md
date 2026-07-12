@@ -2072,6 +2072,8 @@ $$
 
 这些证据把第 5 章的 Esirkepov 运行覆盖推进到 **1D/2D/3D + 2D shape=1/2/3/4 + 3D shape=1/2/3/4**。2D shape=4 的 `0.07` 场误差阈值来自官方 `analysis_2d.py` 对测试名中 `particle_shape_4` 的分支，而不是本项目临时放宽；2D shape=1/2/3 仍使用 `0.0503`，3D shape=1/2/3/4 使用官方 `0.05` field gate，所有 shape 都使用独立 `1e-11` charge residual gate。3D shape=2 的 field error 为 `3.5970e-2` 并通过；shape=3/4 在 `64^3` 的 field error 为 `6.7792e-2/8.7344e-2`，但同一输入的 `128^3` refined sibling 降至 `2.3515e-2/3.0644e-2` 并通过 field gate，charge residual 分别为 `4.3288e-12/3.0001e-12`。因此当前最准确的表述是：shape=3/4 的低分辨率 field boundary 具有分辨率敏感性，尚不足以包装成正式 convergence order。shape=0 的尝试在当前 `WarpX.cpp:1450` 初始化断言处拒绝，源码合同只允许 `particle_shape=1..4`，因此记录为 unsupported boundary，而不是失败的 physics case。MR overlay 的理论场 gate通过，但逐层 reader contract 在 L0/L1 分别得到 `0.8828/1.2005`，故当前只标记为 `BOUNDARY`，不把它升级成 AMR 守恒通过；新增的 15-anchor AMR source contract 已证明路由/同步源码骨架存在，新增的 7-anchor Python observability audit 也证明 generic register API 存在，但两者都不能替代中间场与 route-count 专门验证。当前 1–4 阶运行证据仍不能推出 AMR buffer、边界裁剪、RZ/RCYLINDER/RSPHERE 或 implicit 分支都已逐项等价，也不能替代尚未取得的 CPC publisher-PDF bounded compare。2D case 的 `direct -> esirkepov` 覆盖和 `rho/divE` 诊断字段只存在于本项目 case-local 输入副本中，不能写成上游官方注册回归；3D shape=2/3/4 及 refined siblings 也是 case-local override，不改变上游测试注册。独立 contract 的 JSON/Markdown 结果分别归档在各 case-local 目录中，汇总见 `runs/stage-c-validation/esirkepov_langmuir_3d_shape-matrix/contract.{json,md}`。
 
+本版又补入 shape=2 的 `128^3` refined sibling：field error 为 `1.2523e-2`，charge residual 为 `5.4174e-12`，同样通过双 gate。三种 shape 的 refined controls 均通过，但这仍是 case-local 分辨率证据，不足以包装成正式 convergence order。
+
 ## 5.12 沉积不只回 `rho/J`：WarpX 还把线性响应矩阵和统计矩交回网格
 
 如果只盯 `DepositCharge()` 和 `DepositCurrent()`，会把本章的边界讲窄。WarpX 里至少还有两条同样属于 particle-to-grid deposition 的源项支线：
@@ -2478,7 +2480,7 @@ RSPHERE 的 64/128 resolution paired control 进一步显示：correction on 的
 |---|---|---:|---|---|
 | Esirkepov | `1D_Z` | 1 | field + charge PASS | Langmuir |
 | Esirkepov | `XZ` | 1/2/3/4 | field + charge PASS | 2D Langmuir siblings |
-| Esirkepov | `3D` | 1/2/3/4 | `64^3` shape=1/2 field + charge PASS、shape=3/4 field BOUNDARY；`128^3` refined shape=3/4 field + charge PASS | Langmuir base + refined controls |
+| Esirkepov | `3D` | 1/2/3/4 | `64^3` shape=1/2 field + charge PASS、shape=3/4 field BOUNDARY；`128^3` refined shape=2/3/4 field + charge PASS | Langmuir base + refined controls |
 | Esirkepov | `XZ + AMR` | 1 | field PASS；level charge BOUNDARY | 2D MR overlay |
 | Esirkepov | `RZ` | 1/2/3/4 | field PASS；correction-on charge BOUNDARY；correction-off refined PASS | axis correction/resolution family |
 | Esirkepov | `RCYLINDER/RSPHERE` | 1/2/3/4 | radial `Er` PASS | 不含完整 charge/Gauss-law |

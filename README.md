@@ -1,12 +1,13 @@
 # PIC-tutor
 
-当前成书版本为 `v0.53`，对应 310 页 3D Esirkepov base/refined shape matrix 与 deposition coverage matrix 版；历史 `v0.52` 仍由 `manuscript/VERSION-v0.52.md` 保留。
+当前成书版本为 `v0.54`，对应 310 页 3D Esirkepov shape=2/3/4 refined matrix 与 deposition coverage matrix 版；历史 `v0.53` 由 `manuscript/VERSION-v0.53.md` 保留。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+- 2026-07-12：完成 v0.54 3D Esirkepov refined-resolution family：shape=2/3/4 的 `128^3` controls 均通过官方 `5%` field gate 和独立 `1e-11` charge gate，field error 为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 为 `5.4174e-12/4.3288e-12/3.0001e-12`；该结果仍只作为 case-local 分辨率证据，不宣称正式收敛阶。
 - 2026-07-12：进入 v0.53 3D Esirkepov refined-resolution 阶段：shape=3/4 的 `64^3` field boundary 在 `128^3` case-local controls 中分别降至 `2.3515%/3.0644%` 并通过官方 `5%` field gate，charge residual 为 `4.3288e-12/3.0001e-12`；该结果支持分辨率敏感性解释，不包装成正式收敛阶或全局默认建议。
 - 2026-07-12：进入 v0.52 3D Esirkepov shape runtime matrix 阶段：新增 `scripts/summarize_esirkepov_3d_shape_contract.py` 与 `notes/code-reading/particles/60-esirkepov-3d-shape-runtime-contract.md`；在 `64^3`、2-rank case 中 shape=2 field/charge 均通过，shape=3/4 charge 通过但 field error 分别为 `6.7792%/8.7344% > 5%`，保留为 field boundary，不修改默认值。
 - 2026-07-12：进入 v0.51 第 5 章 deposition geometry/order coverage matrix 阶段：新增 `scripts/summarize_deposition_geometry_order_coverage.py` 与 `notes/code-reading/particles/59-deposition-geometry-order-coverage-matrix.md`，把 1D/2D/3D、2D MR、RZ、RCYLINDER/RSPHERE 和 implicit Villasenor 的现有证据与明确缺口并排整理；不把局部 PASS 外推成全组合验证。

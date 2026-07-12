@@ -1,10 +1,10 @@
-# PIC-tutor v0.54
+# PIC-tutor v0.53
 
-当前合订 PDF 为 310 页；本 v0.54 版本在 v0.53 基础上补入 3D Esirkepov shape=2/3/4 refined-resolution controls，明确 64³ shape=3/4 field boundary 在 128³ case-local sibling 中消失，但不把单组 refined pair 写成正式收敛阶。
+当前合订 PDF 为 310 页；本 v0.53 版本在 v0.52 基础上补入 3D Esirkepov shape=3/4 refined-resolution controls，明确 64³ field boundary 在 128³ case-local sibling 中消失，但不把单组 refined pair 写成正式收敛阶。
 
 版本日期：2026-07-12
 
-本次新增 3D Esirkepov shape=2/3/4 refined controls：shape=2/3/4 的 field error 分别为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 分别为 `5.4174e-12/4.3288e-12/3.0001e-12`。三档 `128^3` sibling 均通过官方 `0.05` field gate 和独立 `1e-11` charge gate。该结果支持分辨率敏感性解释，不修改全局默认值，也不宣称正式 convergence order。
+本次新增 3D Esirkepov shape=3/4 refined controls：shape=3 的 field error 从 `6.7792e-2` 降至 `2.3515e-2`，charge residual 为 `4.3288e-12`；shape=4 的 field error 从 `8.7344e-2` 降至 `3.0644e-2`，charge residual 为 `3.0001e-12`。两档 `128^3` sibling 均通过官方 `0.05` field gate 和独立 `1e-11` charge gate。该结果支持分辨率敏感性解释，不修改全局默认值，也不宣称正式 convergence order。
 
 本次新增 3D Esirkepov Langmuir shape=2/3/4 runtime：在 `64^3`、2-rank 周期 Yee case 中，shape=2 的官方 field error 为 `3.5970e-2 < 0.05`、独立 charge residual 为 `1.3914e-12`；shape=3/4 的 charge residual 为 `9.2043e-13/7.2393e-13`，但 field error 为 `6.7792e-2/8.7344e-2`，超过官方 `0.05` field gate。该结果补足 3D 高阶 shape 的运行证据，但不宣称 refined convergence、AMR 或全 geometry/order 覆盖。
 

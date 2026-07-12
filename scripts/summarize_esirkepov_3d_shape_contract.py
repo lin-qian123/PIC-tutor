@@ -41,8 +41,6 @@ def main() -> int:
                 "run_dir": str(case_dir),
             }
         )
-        if shape not in (3, 4):
-            continue
         refined_dir = args.root / f"esirkepov_langmuir_3d_shape{shape}_resolution128_mpi2"
         refined_contract = json.loads((refined_dir / "contract.json").read_text(encoding="utf-8"))
         refined_log = (refined_dir / "official-analysis.log").read_text(encoding="utf-8")
@@ -77,11 +75,11 @@ def main() -> int:
         "refined_all_field_pass": all(row["official_field_pass"] for row in refined_rows),
         "refined_all_charge_pass": all(row["independent_charge_pass"] for row in refined_rows),
         "passed": True,
-        "scope": "2-rank periodic Yee Langmuir; 64^3 base plus 128^3 shape=3/4 refined controls; no formal convergence-order claim",
+        "scope": "2-rank periodic Yee Langmuir; 64^3 base plus 128^3 shape=2/3/4 refined controls; no formal convergence-order claim",
         "interpretation": (
             "All sampled shapes close the independent charge gate. At 64^3, shape 2 closes the "
-            "official field gate while shapes 3 and 4 are field boundaries; the 128^3 refined "
-            "shape 3/4 siblings close both gates."
+            "official field gate while shapes 3 and 4 are field boundaries; all 128^3 refined "
+            "shape 2/3/4 siblings close both gates."
         ),
     }
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -94,7 +92,7 @@ def main() -> int:
         "- geometry: `3D`, periodic Yee, `64^3`, 2 MPI ranks",
         "- independent charge gate: all sampled shapes PASS",
         "- `64^3` field gate: shape 2 PASS; shape 3/4 FIELD_BOUNDARY",
-        "- `128^3` refined shape 3/4 field and charge gates: PASS",
+        "- `128^3` refined shape 2/3/4 field and charge gates: PASS",
         "",
         "| shape | official field error | field gate | independent charge residual | charge gate | classification |",
         "|---:|---:|:---:|---:|:---:|:---:|",

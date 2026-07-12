@@ -2536,11 +2536,10 @@ flowchart TD
     K --> L["field solver"]
 ```
 
-对当前项目推进而言，本章已经可以用这张责任矩阵把 current kernel、charge kernel 和同步层的边界稳定地交给读者；`DepositCharge()` / ABLASTR / `ChargeDeposition.H` 的主要职责边界也已达到 `v0.40` 内部阶段闭合。剩余工作应集中在出版级证据和表达，而不是继续扩大局部 kernel 的职责：
+对当前项目推进而言，本章已经可以用这张责任矩阵把 current kernel、charge kernel 和同步层的边界稳定地交给读者；`DepositCharge()` / ABLASTR / `ChargeDeposition.H` 的主要职责边界也已在当前 v0.68 源码基线上阶段闭合。剩余工作应集中在出版级证据和表达，而不是继续扩大局部 kernel 的职责：
 
-1. 取得合法的 CPC publisher PDF 后，完成 `Esirkepov 2001` 的 abstract、section numbering、`Eq.(23)` 和二阶 spline 段落的 bounded compare；
-2. 在取得合法 CPC publisher PDF 后，完成 `Esirkepov 2001` 与预印本的 bounded compare；
-3. 对本章源码路径、公式编号和宽表格做最终出版级精修，并继续补足尚未覆盖的 geometry/order 分支，再转向后续尚未闭合的成书模块。
+1. 取得合法的 CPC publisher PDF 后，完成 `Esirkepov 2001` 与预印本在 title、abstract、section numbering、`Eq.(23)` 和二阶 spline 段落上的 bounded compare；
+2. 对本章源码路径、公式编号和宽表格做最终出版级精修，并继续补足尚未覆盖的 geometry/order 分支，再转向后续尚未闭合的成书模块。
 
 ## 5.16 练习与源码定位
 

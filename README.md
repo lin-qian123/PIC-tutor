@@ -6,6 +6,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
+2026-07-13：精修第 5 章结论段：删除重复的 Esirkepov publisher-PDF 待办，修正过期的 `v0.40` 阶段口径为当前 v0.68 源码基线；未改变 publisher compare、geometry/order 和 AMR 边界。
+
 2026-07-13：RZ JRhom 第一阶段 patch 决策已收敛为 `finite + energy`：MPI=2 ledger 与 helper 直接正负执行均通过，spike gate 明确延期；决策记录见 `notes/code-reading/fieldsolver/42-rz-jrhom-first-stage-decision.md`。目标 WarpX 仍保持 `unstaged`。
 
 2026-07-13：完成 RZ JRhom first-stage helper 直接执行 contract：生成 helper 接受 MPI=2 baseline、拒绝 `ll2-no-timeavg-cleaning` reference，且拒绝来自 energy ceiling；新增脚本和笔记，保留“project-level helper execution，不是 upstream CI”边界。

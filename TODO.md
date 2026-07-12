@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-12：完成 RZ shape=1 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`；官方 field analysis 全通过，但最高分辨率 correction-off charge 越过 `1e-11`，因此只记录为 resolution trend/非单调 boundary，不把 correction-off 写成通用修复。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_resolution-trend/`。
 - [x] 2026-07-12：完成 v0.54 3D Esirkepov shape=2/3/4 refined-resolution family：`128^3` case-local controls 的 field error 为 `1.2523e-2/2.3515e-2/3.0644e-2`，charge residual 为 `5.4174e-12/4.3288e-12/3.0001e-12`，三档官方 field 与独立 charge gate 均通过；不宣称正式 convergence order。
 - [x] 2026-07-12：统一收口 RCYLINDER/RSPHERE Esirkepov shape=1/2/3/4 径向 `rho/divE` charge observation：八条 field gate 全通过，RCYLINDER charge residual 为 `4.711e-3/7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `4.166e-2/6.269e-2/6.928e-2/8.003e-2`，均保留 charge BOUNDARY；新增 `scripts/summarize_radial_charge_shape_contract.py`，不把局部观测写成完整 Gauss-law 闭环。
 - [x] 2026-07-12：完成 RSPHERE Esirkepov `256` paired controls：改用专用 `warpx.rsphere` binary 后 producer、官方 case-local `analysis_r1d.py` 与独立 radial charge contract 均完成。correction-on 的 `Er/charge` 为 `9.422e-3/4.142e-3`，correction-off 为 `1.117e-2/7.461e-11`；field 全通过，charge 仍保留 BOUNDARY。此前用 `warpx.3d` 触发的 boundary-array parser 异常已定位为 executable/geometry 不匹配，不是物理失败。

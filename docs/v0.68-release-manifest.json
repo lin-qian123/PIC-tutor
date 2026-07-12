@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 709,
-  "total_bytes": 27478768,
+  "entry_count": 711,
+  "total_bytes": 27487995,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1514684,
-      "sha256": "e329274e9b2d8d1a323ded52d1e0e810a23ac665684296ffcb4ba1232cc7b3f0"
+      "bytes": 1515024,
+      "sha256": "f33caba40fcf60cf6145cdd7e6a8fbb9ac55353523d4380faf6aec5e146e5a9a"
     },
     {
       "path": "TODO.md",
-      "bytes": 1358047,
-      "sha256": "9298c5281de28a4e6b286a649eb61666acb036722ee2b80aab6e28bc2f3f004b"
+      "bytes": 1358582,
+      "sha256": "74545b835784e79413e27f6beec516aacdeb07ef37ccdbf16fc0ad5f2735c55a"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "c3a95a73aae19a4e29bc1246cfc72c15acd9e067ca7d8f4b80c4f9df98b9234e"
+      "sha256": "69a28b98eeee31ce229521fbff7313128a2be169978a709410063350e37e19fd"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -2046,6 +2046,11 @@
       "sha256": "536e36b9d8124cdde77f560c0c73647cda8b919f22a58b5be5781a4e84507325"
     },
     {
+      "path": "notes/code-reading/particles/62-esirkepov-paper-source-runtime-crosswalk.md",
+      "bytes": 1796,
+      "sha256": "d64575e97f110525f2b2df75cc2ad51b3d0ff46faf19003a12b6d55791e57925"
+    },
+    {
       "path": "notes/code-reading/particles/62-larmor-discrete-orbit-contract.md",
       "bytes": 1443,
       "sha256": "535708b8c1703353a9afab445f56b6058a971f47b62454956cb844585300ebde"
@@ -2564,6 +2569,11 @@
       "path": "scripts/audit_esirkepov_notation_contract.py",
       "bytes": 4180,
       "sha256": "5f96d16287e1a40d56663d7a4faa845d6f662418336ce593c48b66aa55900d75"
+    },
+    {
+      "path": "scripts/audit_esirkepov_paper_source_runtime_crosswalk.py",
+      "bytes": 6556,
+      "sha256": "28908c5d2d0ad95ef1f615e9a8a955950900ed0edfe0ba489b28d059ef3a2db4"
     },
     {
       "path": "scripts/audit_esirkepov_source_contract.py",

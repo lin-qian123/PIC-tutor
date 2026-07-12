@@ -32,6 +32,7 @@ Date: 2026-07-13
 | CiNii Research metadata re-check | Confirms CPC 135(2), 144-153, DOI `10.1016/S0010-4655(00)00228-9` and Elsevier rights metadata; no publisher full-text PDF is exposed on the record | web search on 2026-07-12 |
 | ResearchGate record re-check | Record exposes abstract and a `Request full-text` path, but not a downloadable full-text PDF | web search on 2026-07-12 |
 | ScienceDirect PDF endpoint re-check | Current local `curl -L -I` still returns HTTP 403; response advertises TDM policy but does not provide PDF bytes | local command on 2026-07-12 |
+| ScienceDirect PDF endpoint current re-check | Search-discovered publisher PDF URL was tested with `curl -I -L` on 2026-07-13; response is HTTP/2 403 with `content-type: text/html`, Cloudflare headers and no PDF bytes | local command on 2026-07-13 |
 | Local paper-asset contract | `scripts/audit_deposition_paper_asset_contract.py` checks the 13-page arXiv PDF, 39 images, MinerU structure, Chinese note and publisher-PDF boundary | contract run on 2026-07-13; all checks pass |
 
 ## Current decision

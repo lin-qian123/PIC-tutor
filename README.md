@@ -8,6 +8,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：精修第 5 章结论段：删除重复的 Esirkepov publisher-PDF 待办，修正过期的 `v0.40` 阶段口径为当前 v0.68 源码基线；未改变 publisher compare、geometry/order 和 AMR 边界。
 
+2026-07-13：将 LeeCPC2015 accepted manuscript 的 paper/source/regression crosswalk 接入第 7 章 `7.5.8`；正文现在可直接定位三方合同，同时保留 publisher-formatted PDF 和 `C1-C25` 逐系数等价尚未完成的边界。
+
 2026-07-13：RZ JRhom 第一阶段 patch 决策已收敛为 `finite + energy`：MPI=2 ledger 与 helper 直接正负执行均通过，spike gate 明确延期；决策记录见 `notes/code-reading/fieldsolver/42-rz-jrhom-first-stage-decision.md`。目标 WarpX 仍保持 `unstaged`。
 
 2026-07-13：完成 RZ JRhom first-stage helper 直接执行 contract：生成 helper 接受 MPI=2 baseline、拒绝 `ll2-no-timeavg-cleaning` reference，且拒绝来自 energy ceiling；新增脚本和笔记，保留“project-level helper execution，不是 upstream CI”边界。

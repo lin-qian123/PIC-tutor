@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 719,
-  "total_bytes": 27519424,
+  "total_bytes": 27520639,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1517135,
-      "sha256": "5b5c81fb94dcdc388b1f1d79cb3e04d2cb3c0f6e1482493b2c811b8dc61a4160"
+      "bytes": 1517380,
+      "sha256": "1f057b44ce0c05777ae25d407995c26e11b2c45ef99c46eae78deedf841be6ce"
     },
     {
       "path": "TODO.md",
-      "bytes": 1360712,
-      "sha256": "bc42fb9d274c80edd4882f4a55d43575285d37d040685708822728613271c90f"
+      "bytes": 1360939,
+      "sha256": "4260e2e04d5328346d4cc8d9006f2f0fa28118cfad271dcfdf40af5e7a7086fb"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5738320,
-      "sha256": "f36d38ba0d0d858863dfc9722e62bd0a7a4e31846fc645d6d58f5332d407dfe2"
+      "bytes": 5738516,
+      "sha256": "bebf81a40b750467a08b0c86461af61784035ac62cbb21e909a31447fee0279e"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1066779,
-      "sha256": "387a48904efa2021f9d9598c608061d68e33fcc9c451763831b99e63fad929c2"
+      "bytes": 1066953,
+      "sha256": "6fb5dce28061fe7382724959338ed3703da873862f5fc439f47561599ff2aa4d"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3363953,
-      "sha256": "966f8604b7ec32d411bd7f1d8fe947e646fb1a90685c3173be5bdce822f9a8c8"
+      "bytes": 3364152,
+      "sha256": "31d432acdf8ed6b2dda37181ebd72b88cf354dd8be5228435182387c4acbc79b"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "54b1fb85e5cbae15bf6e909397f4c567cc45dea8d1f8aad4b567bbb99262aacb"
+      "sha256": "0a12570f75c222e418c8b9726a3f4d971108f94bc17bd13797fc8c4d27759847"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -907,8 +907,8 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 165560,
-      "sha256": "be51413c1eb4675c96962278c1a7b7c2a8961cea131cedbb982c1e0cc632ea51"
+      "bytes": 165734,
+      "sha256": "341f616586a942ded88867fec01ea29f94f3928730edff34758e2bdcbaedbd40"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",

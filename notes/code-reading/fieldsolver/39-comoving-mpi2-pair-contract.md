@@ -4,9 +4,10 @@
 
 ## 运行结果
 
-在真实 MPICH 2-rank launcher 下，固定 `inputs_test_2d_comoving_psatd_hybrid`，分别运行默认 comoving selector 与反号 `v_comoving=+beta` sibling。两个 `diag1000400` plotfile 均完整落盘，所有字段有限；MPI 进程只在 AMReX finalize 后出现已知尾部挂起/OFI finalize 噪声，未影响 plotfile 读取。
+在真实 MPICH 2-rank launcher 下，固定 `inputs_test_2d_comoving_psatd_hybrid`，分别运行默认 selector、显式 `v_comoving=-beta` 和反号 `v_comoving=+beta` sibling。三个 `diag1000400` plotfile 均完整落盘，所有字段有限；MPI 进程只在 AMReX finalize 后出现已知尾部挂起/OFI finalize 噪声，未影响 plotfile 读取。
 
 - MPI=2 stable：electric energy `8.166055351004438e14`，spike ratio `1.111713589404735`；相对既有 1-rank stable 的 energy/spike 差分别约 `1.72e-3/1.21e-3`，均低于 1%。
+- MPI=2 explicit-default：electric energy `8.166055351004536e14`，spike ratio `1.111713589404690`；相对 MPI=2 stable 的 energy/spike 差均约 `1e-14`，直接验证默认 selector 与显式 `-beta` 等价。
 - MPI=2 positive-sign：electric energy `6.536505608465998e14`，spike ratio `1.1824991395788464`。
 - positive/stable spike ratio 为约 `1.0637`，满足 sign-sensitivity screen；但 positive sibling 的 energy 更低，因此不能作为 unstable-energy oracle。
 
@@ -19,6 +20,7 @@
 ```bash
 python scripts/analyze_comoving_mpi2_pair.py \
   --stable-plotfile runs/fieldsolver-validation/comoving-mpi2/stable-default-selector/diags/diag1000400 \
+  --explicit-plotfile runs/fieldsolver-validation/comoving-mpi2/explicit-default-beta/diags/diag1000400 \
   --positive-plotfile runs/fieldsolver-validation/comoving-mpi2/positive-default-beta/diags/diag1000400 \
   --one-rank-ledger runs/fieldsolver-validation/comoving-reference-ledgers/comoving-velocity-scan.json \
   --output-dir runs/fieldsolver-validation/comoving-reference-ledgers/comoving-mpi2-pair-contract

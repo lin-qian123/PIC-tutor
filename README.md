@@ -6,7 +6,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
-2026-07-13：完成 comoving 真实 MPI=2 stable/sign pair：两路 plotfile 均完整且 fields finite，stable 与既有 1-rank 的 energy/spike 差低于 1%，反号 sibling 的 spike ratio 为 stable 的约 `1.0637` 倍；MPI finalize 尾噪声不计入 plotfile contract，energy gate 仍关闭。
+2026-07-13：完成 comoving 真实 MPI=2 stable/sign pair：默认 selector、显式 `-beta` 和反号 sibling 三路 plotfile 均完整且 fields finite，显式/default 的 energy/spike 差约 `1e-14`，stable 与既有 1-rank 的差低于 1%，反号 sibling 的 spike ratio 为 stable 的约 `1.0637` 倍；MPI finalize 尾噪声不计入 plotfile contract，energy gate 仍关闭。
 
 2026-07-13：完成 comoving velocity selector/sign sibling contract：默认 selector 与显式 `-beta` 的 energy/spike 相对差均约 `1e-14`，反号 sibling 的 spike ratio 为 stable 的 `1.0622` 倍，no-comoving 越过当前 spike ceiling；修复 scan ledger 使用相对输出路径时的工具 bug。该证据仍不足以启用 energy gate。
 

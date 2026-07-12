@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 715,
-  "total_bytes": 27500787,
+  "total_bytes": 27502520,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1515684,
-      "sha256": "0ec464b3a396cc60ec71c0e104f0fc0a95f216ab798c2414fd3babe79c343d2e"
+      "bytes": 1515770,
+      "sha256": "caee71219f5fe09904ff6299d69f718ea7e9e3e76640587bd003c4be4f76e9ed"
     },
     {
       "path": "TODO.md",
-      "bytes": 1359634,
-      "sha256": "80f7786b0d36dd941ad0f8719b844c675415b392181315acc1ebfaa7182dc009"
+      "bytes": 1359703,
+      "sha256": "61d83c96caa3846200b0b1ee450a760011b54fc11b405f8d84fc9e1f54e45489"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "2697cb2c4a37014a8cdddba35bbb0bd1b3a57aeea8bb78f21fd569ed33cdbea1"
+      "sha256": "f6360238acaa0d6ce3c3de0a8856eade413c7111889f71566b5f183124ea753a"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -1352,8 +1352,8 @@
     },
     {
       "path": "notes/code-reading/fieldsolver/39-comoving-mpi2-pair-contract.md",
-      "bytes": 1689,
-      "sha256": "5decce2ff1ef90a985c1e9706661003a30e5dc9deea927523dab84bdedfd3baf"
+      "bytes": 2029,
+      "sha256": "8846e79db14e1319bef336cad4b3be1cd7a1bdf45e2ab16a03fc1fa8168f21bf"
     },
     {
       "path": "notes/code-reading/fieldsolver/README.md",
@@ -2237,8 +2237,8 @@
     },
     {
       "path": "scripts/analyze_comoving_mpi2_pair.py",
-      "bytes": 4425,
-      "sha256": "0450dd0008c1a7ea84a856a66ffc5616e92a956fb3dfc81f95aef162bc0c22a7"
+      "bytes": 5663,
+      "sha256": "54ccd850846838492ccaa6624aef56e84a3784dc8350d2202bcb5dd14124b711"
     },
     {
       "path": "scripts/analyze_comoving_velocity_scan_contract.py",

@@ -18460,20 +18460,20 @@ nonphysical heating、drift drag 和 velocity diffusion
 damping、uniform-plasma noise floor 或 NCI/stability
 时，都不该只问“色散关系对不对”，还要追问这套离散合同在
 <code>(\rho^2)_{k,\omega}</code>、<code>1/2\,\rho\phi</code>、drift /
-diffusion 和 entropy production 这几类观测量上会留下什么数值病灶。</p>
-<p>Chapter 13 则把这条统计图像压成了更直接的工程尺度。第一，thermal
-plasma 的 heating/cooling 不能只按 <code>N_D</code> 或 CFL
-粗略估；它还显式依赖
+diffusion 和 entropy production 这几类观测量上会留下什么数值病灶。
+Chapter 13 则把这条统计图像压成了更直接的工程尺度。第一，thermal plasma
+的 heating/cooling 不能只按 <code>N_D</code> 或 CFL 粗略估；它还显式依赖
 <code>\lambda_D/\Delta x</code>、<code>v_t\Delta t/\Delta x</code>、shape
 order，以及 mover 自身的 phase error。第二，damped equations of motion
 既可能抑制某些高频 branch，也可能通过 nonresonant drag term 制造
 nonphysical cooling，所以“总能量下降”并不自动代表数值健康。第三，Hockney
-的 2d2v 长时间实验说明：真正有设计价值的量往往不是单独的 collision time
+的 2d2v 长时间实验和 Abe 的摘要级
+<code>sigma(K_g)</code>/correlation-time
+观测说明：真正有设计价值的量往往不是单独的 collision time
 <code>\tau_s</code> 或 heating time <code>\tau_H</code>，而是二者的比值
-<code>\tau_H/\tau_s</code>，以及它如何沿着
-<code>v_t\Delta t \approx \Delta x/2</code> 这类 optimum path 随
-<code>\lambda_D/\Delta x</code> 和 particle shape
-改变。也就是说，本章后面只写“某求解器稳定”还不够；更严谨的说法应当是，它把
+<code>\tau_H/\tau_s</code> 及其短时 fluctuation
+边界；这些历史结果不能直接变成当前 WarpX solver
+的定量预测。也就是说，本章后面只写“某求解器稳定”还不够；更严谨的说法应当是，它把
 thermal-plasma 观测窗口放在了多少个 collision times 之前，或者把
 nonphysical heating / cooling 推迟到了多久之后。</p>
 <p><code>Dawson 1983</code> 对本章的补充则更偏“为什么 electrostatic

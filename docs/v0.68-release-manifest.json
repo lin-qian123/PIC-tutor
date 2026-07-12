@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 724,
-  "total_bytes": 27564787,
+  "total_bytes": 27565000,
   "entries": [
     {
       "path": ".gitignore",
@@ -52,18 +52,18 @@
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5739811,
-      "sha256": "9dfa9bb4dd3279dc62ba71093b41dc00eb036b4a31ba73174e74840e690c5a20"
+      "bytes": 5739828,
+      "sha256": "58d7da95a24c087667461f9f36e8d21d205188903a8acd1c4fa83751e7f75667"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1068171,
-      "sha256": "507b30279f82358a4e40847d6b7e94d0cf4d7884fc45aa616116d6f28374a3f5"
+      "bytes": 1068205,
+      "sha256": "68b8e3bcf876e1ba89baf1bc024e61033576f297ff4757a8512104fadd4fce14"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3365642,
-      "sha256": "e11598101b5849211ec4a2224b6a5a91b0ca52b72878aacd4e77798d86637116"
+      "bytes": 3365770,
+      "sha256": "be508a5a46817ec841c073a333c4433ac749f47d68b0c803cd90aee307fabddd"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "4e87416a27336ab7bd80121a844aff6837c191320dc7045677e6188b2fd95f6b"
+      "sha256": "e3c2f44e9e8dfd539985da3a3d7d8c8ebad520b9c9923bcf254bb00c85838906"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -902,8 +902,8 @@
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
-      "bytes": 185714,
-      "sha256": "e0cf7511d1588c7a35138396db64d981f82b2a9b4722b15e8e3bca121d20d077"
+      "bytes": 185748,
+      "sha256": "ad4b4c3199f26157ef4413f373557ecb17307bcfbf5cb9dc761a5c92f0c72e14"
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",

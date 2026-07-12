@@ -1,6 +1,8 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.42 合订 PDF 为 307 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v42_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.43 合订 PDF 为 307 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v43_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+
+2026-07-12 又完成 RZ Esirkepov `particle_shape=1` 的轴修正/分辨率四格对照：默认 correction-on 的 axis residual 随 `64x128 -> 128x256` 下降约 `2.36x`，correction-off 两档 field/charge 双 gate 均通过；shape=2/3/4 的 correction-off field 边界仍单独保留，不把这一结果写成全局参数修复。
 
 2026-07-12 又完成 `particles_in_pml` signed-vs-absolute analysis source audit：上游 consumer 使用有符号 component max，项目独立 contract 使用全场绝对值 max；3D AMR sibling 的官方 gate 通过而强化 gate 失败，因此正文只保留为判据边界，不把它升级为 AMR 强验证。
 

@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-12：完成 RZ Esirkepov `particle_shape=1` axis-correction/resolution paired runtime：`64x128` 与 `128x256` 默认 correction-on 的 charge residual 为 `3.593e-3/1.520e-3`，两个 correction-off sibling 的 field/charge gate 均通过，新增四格汇总脚本与报告；结果仅说明 resolution/axis-correction/shape 交互，不修改全局默认值。
 - [x] 2026-07-12：进入 v0.42 边界判据审计阶段：新增 `scripts/audit_particles_in_pml_analysis_contract.py`，对上游 `analysis_particles_in_pml.py` 与项目独立绝对值 contract 的 5 个关键锚点审计通过；确认 3D AMR `particles_in_pml` 的官方 signed gate 与强化 absolute gate 差异，新增 `notes/code-reading/particles/51-particles-in-pml-signed-vs-absolute-contract.md`，不修改 `../warpx`。
 - [x] 2026-07-12：新增 `scripts/prepare_v41_release_manifest.py`，生成 v0.41 公共发布 allowlist：484 个项目文件、`20,385,796` bytes，明确排除 `runs/`、`references/`、历史 `dist/` 和调试残留；不执行自动 staging/commit。报告见 `docs/v0.41-release-manifest.{json,md}`。
 - [x] 2026-07-12：新增 RZ Langmuir PSATD family matrix，统一收录 standard/current-correction/JRhom `CL4` 三条 runtime contract：三者 field gate 均通过，只有 current-correction sibling 额外通过 `1e-9` charge gate；报告见 `runs/stage-c-validation/rz_langmuir_psatd-family/contract.{json,md}`。

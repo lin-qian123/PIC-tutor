@@ -2437,11 +2437,13 @@ RZ + Esirkepov 还需要单独保留一个诊断边界：当前 2-rank case 的 
 
 同一条证据又做了 `warpx.do_dive_cleaning=1/0` 的 paired control：全局 charge residual 从 `3.593e-3` 增至 `9.693e-2`，约为 `26.98` 倍；第一径向 cell 之外的 residual 则为 `4.293e-4/6.540e-12`。两个 case 的全局最大值都由 axis cell 主导，`Er/Ez` field error 也改变为 `2.427e-2/4.941e-3`。这说明边界同时对 axis treatment 和 cleaning 路径敏感，但不能据此把 cleaning 认定为唯一根因；比较结果归档为 `AXIS_DOMINATED_CLEANING_SENSITIVE_DIAGNOSTIC_BOUNDARY`。
 
-进一步只切换 `boundary.verboncoeur_axis_correction`：开启时 charge residual 为 `3.593e-3`，关闭时降为 `5.513e-12`，且 off-axis residual 为 `1.720e-12`；两者 `Er/Ez` field error 都低于 `0.12`。因此本 case 的 charge boundary 已定位到 axis volume correction 与诊断 surface 的耦合。这个结果只证明 case-local control 可以恢复 gate，不足以要求修改 WarpX 默认值；完整对照和参数语义见 `notes/code-reading/particles/46-rz-esirkepov-charge-boundary.md`。
+进一步只切换 `boundary.verboncoeur_axis_correction`：在 `64x128`、`particle_shape=1` case 中，开启时 charge residual 为 `3.593e-3`，关闭时降为 `5.513e-12`，且 off-axis residual 为 `1.720e-12`；两者 `Er/Ez` field error 都低于 `0.12`。因此这个 shape=1 case-local control 可以恢复双 gate，但不足以要求修改 WarpX 默认值；完整低分辨率对照和参数语义见 `notes/code-reading/particles/46-rz-esirkepov-charge-boundary.md`。
 
 在默认轴修正保持开启的条件下，RZ Esirkepov Langmuir 的 shape=1/2/3/4 field runtime coverage 也已补齐：`Er` 最大相对误差分别为 `1.075e-2/5.703e-2/8.694e-2/1.167e-1`，全部低于 `0.12`；对应 charge residual 为 `3.593e-3/4.306e-3/4.341e-3/4.433e-3`，且最大值均由 axis cell 主导。汇总报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_shape-matrix/contract.{json,md}`；因此这里关闭的是 field shape coverage 缺口，不是 RZ charge boundary。
 
 将同样的 shape=2/3/4 case 切换到 `verboncoeur_axis_correction=false` 后，charge residual 降到 `2.202e-12/2.103e-12/2.063e-12`，但 `Er` field error 升到 `0.132/0.173/0.213`，超过 `0.12`。因此轴修正对照不是一个可以全局套用的“修复开关”，而是随 shape 改变的 charge/field tradeoff；矩阵归档于 `runs/stage-c-validation/esirkepov_langmuir_rz_shape-axis-matrix/contract.{json,md}`。
+
+随后把 shape=1 的同一 paired case 加密到 `128x256`：correction-on 的 `Er/Ez` field error 为 `2.797e-2/3.049e-2`，axis charge residual 降至 `1.520e-3`；correction-off 的 `Er/Ez` 为 `2.809e-2/3.662e-2`，charge residual 为 `9.353e-12`，field/charge 双 gate 均通过。四格汇总见 `runs/stage-c-validation/esirkepov_langmuir_rz_axis-resolution-comparison/contract.{json,md}`，脚本为 `scripts/summarize_rz_esirkepov_axis_resolution_contract.py`。这组结果只支持 resolution/axis-correction/shape interaction 的分层解释，不替代跨 geometry/order 的统一强守恒合同。
 
 同一诊断也已扩展到 RCYLINDER/RSPHERE shape=1：默认 correction 下 charge residual 为 `4.711e-3/4.166e-2`，关闭后为 `3.505e-12/2.420e-11`。这表明 RCYLINDER 的 axis correction off 可以恢复当前强 gate，而 RSPHERE 虽明显改善仍略超 `1e-11`；两者均不支持直接修改全局默认值，完整对照见 `runs/stage-c-validation/esirkepov_radial_charge_axis-comparison/contract.{json,md}`。
 

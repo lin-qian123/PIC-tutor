@@ -1,10 +1,8 @@
-# PIC-tutor v0.43
+# PIC-tutor v0.42
 
-当前合订 PDF 为 307 页；本 v0.43 版本在 v0.42 基础上补入 RZ Esirkepov 轴修正与分辨率四格对照，明确 `particle_shape=1` 的 correction-on/off 结果，以及 shape=2/3/4 的外推边界。
+当前合订 PDF 为 307 页；本 v0.42 版本在 v0.41 基础上补入边界判据审计，明确 3D AMR `particles_in_pml` 上游有符号 gate 与项目强化绝对值 gate 的证据分层。
 
 版本日期：2026-07-12
-
-本次新增 RZ Esirkepov `particle_shape=1` 的 `64x128/128x256` paired runtime：默认 correction-on 的 axis charge residual 从 `3.593e-3` 降至 `1.520e-3`，correction-off 在两档分辨率均通过 field/charge 双 gate，`128x256` 的 charge residual 为 `9.353e-12`。既有 shape=2/3/4 correction-off 的 `Er` field 边界仍保留，不能把 shape=1 结果外推为全局默认建议；未修改 `../warpx`。
 
 本次新增 `particles_in_pml` analysis source contract：审计确认上游 `analysis_particles_in_pml.py` 使用 `max(Ex.max(), Ey.max(), Ez.max())`，而项目独立 contract 使用逐分量 `max(abs(field))`；3D AMR sibling 的官方 `106.43539539129057 < 110` 与强化 `110.3993781372607 > 110` 因此不能合并成同一个“通过”结论。该审计只修改 PIC-tutor 文档和脚本，不修改 `../warpx`。
 

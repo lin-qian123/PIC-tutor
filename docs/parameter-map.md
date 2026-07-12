@@ -4,7 +4,7 @@
 
 - 参数条目数：352
 - 源码命中是自动文本检索结果，只作为起点；正式章节必须重新读取解析函数确认。
-- 本表的 `计划章节` 列仍在逐步从早期阶段编号迁到当前书稿章节语义；当前已优先清理运行控制、solver/ES、boundary/PML、reduced diagnostics 与 restart 这几组高频参数，剩余尾项仍以 [parameter-chapter-index.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/docs/parameter-chapter-index.md) 的人工语义为准。
+- 本表的 `计划章节` 列仍在逐步从早期阶段编号迁到当前书稿章节语义；当前已优先清理运行控制、solver/ES、boundary/PML、reduced diagnostics 与 restart 这几组高频参数，剩余尾项仍以 [parameter-chapter-index.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/docs/parameter-chapter-index.md) 的人工语义为准。结构面可用 `python scripts/audit_parameter_map_surface.py` 复核；该合同不替代逐条 `ParmParse` 解析函数的人工复核。
 
 | 参数 | 文档行 | 类型 | 默认值 | 可选 | 计划章节 | 初步源码命中 | 摘要 |
 |---|---:|---|---|---|---|---|---|

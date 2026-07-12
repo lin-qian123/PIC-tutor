@@ -6,6 +6,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
+2026-07-13：comoving PSATD 第一阶段决策已收敛为 `finite + spike`：1-rank 与真实 MPI=2 selector/sign evidence 均已接入 handoff builder，energy gate 明确延期；决策记录见 `notes/code-reading/fieldsolver/40-comoving-first-stage-decision.md`。目标 WarpX 仍保持 `unstaged`。
+
 2026-07-13：将真实 MPI=2 pair contract 接入 comoving first-stage handoff builder；provenance、submission packet、PR draft 和 staging bundle 已从 MPI=2 ledger 自动重建，目标 WarpX 仍通过只读 audit/preview/stage dry-run 且保持 `unstaged`。
 
 2026-07-13：完成 comoving 真实 MPI=2 stable/sign pair：默认 selector、显式 `-beta` 和反号 sibling 三路 plotfile 均完整且 fields finite，显式/default 的 energy/spike 差约 `1e-14`，stable 与既有 1-rank 的差低于 1%，反号 sibling 的 spike ratio 为 stable 的约 `1.0637` 倍；MPI finalize 尾噪声不计入 plotfile contract，energy gate 仍关闭。

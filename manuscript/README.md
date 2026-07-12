@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.56 合订 PDF 为 310 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v56_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.57 合订 PDF 为 310 页；页数、图表资源、关键标记和构建警告均由 `scripts/verify_v57_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
 2026-07-12 又完成 3D Esirkepov shape=2/3/4 的 `64^3 -> 128^3` case-local resolution contrast：三档 refined field/charge 均通过，正文明确这只是分辨率敏感性证据，不是正式收敛阶。
 
@@ -148,6 +148,7 @@
 同日又将 RCYLINDER/RSPHERE 的 Esirkepov radial `Er` runtime coverage 扩展到 shape=1/2/3/4，8 个 geometry×shape contract 全部通过；charge/Gauss-law 仍不由此推断。
 同日又补做 RCYLINDER/RSPHERE shape=1 的 `rho/divE` 对照：关闭 axis correction 后 RCYLINDER charge gate 通过，RSPHERE residual 显著下降但仍保留为边界。
 同日又完成 RSPHERE 64/128/256 resolution 与 axis correction paired control；field 全通过，correction-on charge residual 为 `4.166e-2/1.390e-2/4.142e-3`，correction-off 为 `2.420e-11/9.843e-11/7.461e-11`，仍保持为 resolution-sensitive BOUNDARY，不宣称收敛阶。
+同日又补齐 RCYLINDER/RSPHERE shape=2/3/4 的径向 `rho/divE` charge observation：六条 field gate 全通过，RCYLINDER charge residual 为 `7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `6.269e-2/6.928e-2/8.003e-2`，均保留为 charge BOUNDARY。
 同日又完成 radial axis-volume correction source contract：10 个参数、体积因子、缩放定义和调用时机锚点全部通过，作为 RCYLINDER/RSPHERE runtime 边界的源码依据。
 同日又复核 Esirkepov CPC 定稿的替代访问路径：元数据可核实，但 publisher-formatted PDF 仍不可取得，因此第 5 章继续保持 preprint-backed、publisher-PDF compare 未完成的边界。
 同日又补做官方 RZ Esirkepov Langmuir 2-rank producer：独立 `Er/Ez` field contract 通过，但同面 `divE-rho/epsilon0` 残差为 `3.593e-3`，高于 `1e-11` 强守恒 gate，因此当前分类为 field PASS、charge BOUNDARY。
@@ -160,7 +161,7 @@
 
 同日又对 Villasenor crossing-driven source skeleton 做只读 audit：当前 `CurrentDeposition.H` 的 16 个 crossing、segment、fraction 和 `this_J*` writeback 锚点全部通过，报告归档于 `runs/stage-c-validation/villasenor-source-contract/`；该证据只说明源码结构与正文映射仍成立，不替代数值 kernel regression。
 
-这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.56` 3D Esirkepov refined-resolution 与径向 charge-resolution 审计版；它在 v0.55 的基础上补入 RSPHERE `256` paired controls，并保留 RZ charge、AMR route-count、publisher PDF 逐页对照和更多出版级图表等明确边界。当前已嵌入 12 张真实验证图，WarpX 目标 checkout staging 与 dedicated route-count regression 仍未完成。
+这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.57` 3D Esirkepov refined-resolution 与径向高阶 shape charge 审计版；它在 v0.56 的基础上补入 RCYLINDER/RSPHERE shape=2/3/4 的 `rho/divE` 观测矩阵，并保留 RZ charge、AMR route-count、publisher PDF 逐页对照和更多出版级图表等明确边界。当前已嵌入 12 张真实验证图，WarpX 目标 checkout staging 与 dedicated route-count regression 仍未完成。
 
 ## 版本边界
 

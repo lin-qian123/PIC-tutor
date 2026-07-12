@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 697,
-  "total_bytes": 27413010,
+  "entry_count": 699,
+  "total_bytes": 27428883,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1511599,
-      "sha256": "fb357130851dd1cb324ff56dcb2d1c1488b6c8d57b734037a603bae169044797"
+      "bytes": 1511995,
+      "sha256": "384147aaa2606ebecc22b4792ff42f6e11e824c85058f4e93f0b87ad07ee5e6b"
     },
     {
       "path": "TODO.md",
-      "bytes": 1354856,
-      "sha256": "2cf031cbe47c61a72545c19156949f44c7c79cb2d80654fc68ad5becd381a31b"
+      "bytes": 1355350,
+      "sha256": "d7ae3120ba048977e51626fffb93d3512c96d0d1d359899b7ae42df45ec8f435"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5737210,
-      "sha256": "d954397e76483f59e47a252ca98f0d10e66bfdea140cf9e27fe7f47a82ab275b"
+      "bytes": 5738651,
+      "sha256": "7622328677ff9d2d0e0d8801efe635e6e64f9e84ee5c64009da2faa703f604ff"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1065845,
-      "sha256": "afd8028e6fd556e9933f3017cda808672eac6555ca896bb6148eb3a013ef3c8a"
+      "bytes": 1067153,
+      "sha256": "8ecaefd12d54f55c2f7f0bb7af1fde4e5fd5191f270dd9208fab289a0a6e6cb7"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3361255,
-      "sha256": "1b3a95579a162e8812d652db5783c0d730a8a39671022e81aeee2e1b9737544b"
+      "bytes": 3362639,
+      "sha256": "4b6f7534ad1e8222b05fe3277d772681cfaf9cc352366821e7b3b60e78a93d02"
     },
     {
       "path": "docs/chapter-template.md",
@@ -72,8 +72,8 @@
     },
     {
       "path": "docs/example-regression-map.md",
-      "bytes": 1844566,
-      "sha256": "48c96ccf98a3b74bacc716a4419a37b113868c8630cf769f9ae030fe444fb0e0"
+      "bytes": 1844649,
+      "sha256": "899436d56ed37dbc638b59126b1c637254443e1f96502075e8d880d24682d6d4"
     },
     {
       "path": "docs/foundations-literature-list.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "aa7143ee90b447e512f9783a24abecf70fe86219cca009532a92e03cfa916327"
+      "sha256": "0b0ea50ed2796056a9c7259625cefff68607c9c926a0e87495610cc2c6c25223"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 39504,
-      "sha256": "1c52e4dc102c3d0052c442580f01a6b9b8e7c12aecd6e5a9a843cdd061c18dbf"
+      "bytes": 39828,
+      "sha256": "a41931aa02ffa13e696ae8d51af626a3f5c941fe1ba8d090d6086e7939e21963"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 60543,
-      "sha256": "9f5637fb3b0884a99d47dedfce9426f8f92c6625824abd2b6b8268a8538b564f"
+      "bytes": 60847,
+      "sha256": "076687fa4e1247045221931e97faeadedab645ad138186bc38d1424c4ae6c7d8"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 145971,
-      "sha256": "32bdc4fa54cb1245e6a5e3142ed2f66df8c10bb7bbe1b60a48869e5d4df31f8b"
+      "bytes": 146975,
+      "sha256": "95af6b10fc56877fa08a635f566b2c933e3775525e104dc1665e8846574a8dd3"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -2041,6 +2041,11 @@
       "sha256": "535708b8c1703353a9afab445f56b6058a971f47b62454956cb844585300ebde"
     },
     {
+      "path": "notes/code-reading/particles/63-uniform-b-pusher-runtime-contract.md",
+      "bytes": 1870,
+      "sha256": "0092501bc378e669382c1524f5305b923178bd716b93dcac3a04a885e154b49d"
+    },
+    {
       "path": "notes/code-reading/particles/README.md",
       "bytes": 18390,
       "sha256": "532bc03a4de781643989e76048a41bfc8812b9c000043b709f8dd7cee22d31f9"
@@ -2258,12 +2263,12 @@
     {
       "path": "scripts/analyze_larmor_continuum_audit.py",
       "bytes": 3372,
-      "sha256": "51368a887926c57885971f97d523d1000b947267ac50a3ebbc6f6a4e70f38156"
+      "sha256": "58f45968e58394ad238089f733fc9f4b10f536e6b6b2a351a126e5a268545ab0"
     },
     {
       "path": "scripts/analyze_larmor_orbit_contract.py",
-      "bytes": 6085,
-      "sha256": "7902eb89328b8d703a2a51d028a370bf64804fd06da0c3dcd7fd169b7a702d24"
+      "bytes": 6190,
+      "sha256": "1d7dc6a6a26b90ede359cac7a70c6384d2b0482948656046049bfcd18bbfa4d1"
     },
     {
       "path": "scripts/analyze_load_balance_costs_contract.py",
@@ -3019,6 +3024,11 @@
       "path": "scripts/compare_rz_esirkepov_shape_axis_matrix.py",
       "bytes": 3073,
       "sha256": "8fb371349a26a7f31e0082fd096b49918cd3be0cfe6947f56e50dc7f619dd083"
+    },
+    {
+      "path": "scripts/compare_uniform_b_pushers.py",
+      "bytes": 7160,
+      "sha256": "d133c8e5fa40ef9da0b4c8b8e6acda736cc5bbe2329bf0e3739b646d38ca5f5f"
     },
     {
       "path": "scripts/download_open_references.py",

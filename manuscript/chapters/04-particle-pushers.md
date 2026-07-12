@@ -492,6 +492,8 @@ WarpX 参数文档把 `algo.particle_pusher = vay` 和 `higuera` 分别列为可
 
 本轮新增的 `scripts/analyze_larmor_orbit_contract.py` 已把 `larmor` 的 6 个 Full plotfile 组织成逐帧离散轨道账本，确认时间序列、1 粒子/species、有限状态和输出 cadence，并给出由 `B_y` 与 `\gamma` 推出的 Boris rotation-angle 参考值。这个结果只提高了现有 checksum case 的可观测性；由于输入仍含 AMR/PML/current correction/divergence cleaning，且没有 half-step velocity 输出，仍不能把它升级为 Vay Appendix B 的 gyroradius 复现或 Higuera-Cary 的 Poincare topology gate。报告见 `runs/stage-c-validation/larmor_single_process/larmor-orbit-contract.{json,md}`。
 
+为把这两个边界从“没有专门 case”推进到可执行对照，本轮又用当前 WarpX binary 构造了窄化 uniform-`B` sibling：关闭 AMR、PML、divergence cleaning 和自洽场演化，只保留 `B_y` 外部粒子场，分别运行 Boris、Vay、Higuera-Cary 80 步并逐步落盘。`scripts/compare_uniform_b_pushers.py` 对三条 81-frame 轨道的 cadence、粒子数、有限状态、半径和动量范数统一检查通过；半径 relative spread 分别为 `3.889e-3`、`3.889e-3`、`3.218e-3`，动量范数 relative spread 均低于 `1.1e-14`。这条证据已经是专门 pusher runtime 对照，但因为 plotfile 仍没有 half-step velocity，不能把它写成 Vay Appendix B 的最终 gyroradius gate；同样，它没有论文第 VI 节的 Poincare-section consumer，不能替代 Higuera-Cary topology reproduction。报告见 `runs/stage-c-validation/pusher_uniform_b_comparison/contract.{json,md}`。
+
 ## 4.6 从 `MultiParticleContainer` 到 `PhysicalParticleContainer`
 
 主循环的入口是 `../warpx/Source/Evolve/WarpXEvolve.cpp:1324-1428` 的 `WarpX::PushParticlesandDeposit()`。它选择 current 字段名后调用 `mypc->Evolve(...)`。
@@ -1937,7 +1939,7 @@ $$
 - 这是一个 charged-particle gyro-motion 与 external-particle-field、MR、PML、div-cleaning 组合稳定性的应用级 checksum 基线
 - 不是已经有独立解析半径/回旋频率对照的强单粒子 analysis
 
-本项目也运行了该 case 的单进程版本，并新增 `scripts/analyze_larmor_continuum_audit.py` 做 uniform-(B_y) 连续轨道审计。末态位于 `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/larmor_single_process/diags/diag1000010`，电子/正电子的轨迹相对位移误差均为 `1.28285096e-2`，动量相对误差均为 `3.44029897e-2`。这不是一个失败的官方 regression：checksum 仍是当前官方合同；它说明在 MR/PML/div-cleaning 组合下，直接把连续 uniform-(B) 解析轨道当成严格 gate 并不成立。因此本章继续把 larmor 标为 checksum-only，并把该审计报告定位为“为什么暂不升级强物理 gate”的证据。
+本项目也运行了该 case 的单进程版本，并新增 `scripts/analyze_larmor_continuum_audit.py` 做 uniform-(B_y) 连续轨道审计。末态位于 `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/larmor_single_process/diags/diag1000010`，修正 2D XZ 面内动量读取为 `particle_momentum_x/z` 后，电子/正电子的轨迹相对位移误差均为 `1.28285096e-2`，动量相对误差均为 `9.69641193e-2`。这不是一个失败的官方 regression：checksum 仍是当前官方合同；它说明在 MR/PML/div-cleaning 组合下，直接把连续 uniform-(B) 解析轨道当成严格 gate 并不成立。因此本章继续把 larmor 标为 checksum-only，并把该审计报告定位为“为什么暂不升级强物理 gate”的证据。
 
 这组 regression 目前能明确支持的结论是：
 

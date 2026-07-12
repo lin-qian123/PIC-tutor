@@ -49,7 +49,7 @@ def main() -> None:
         ])
         actual_mom = np.array([
             ad[species, "particle_momentum_x"].to_ndarray()[0],
-            ad[species, "particle_momentum_y"].to_ndarray()[0],
+            ad[species, "particle_momentum_z"].to_ndarray()[0],
         ])
         displacement_error = float(np.linalg.norm(actual_pos - expected_pos))
         trajectory_scale = float(np.linalg.norm(expected_pos - np.array([0.0, Z0])))

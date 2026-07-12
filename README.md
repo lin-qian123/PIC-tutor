@@ -22,6 +22,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：将现有 `larmor` checksum surface 扩展为逐帧离散轨道合同：6 个 Full plotfile 的时间序列、粒子数、有限性、输出 cadence 和 Boris rotation-angle 参考量均可重复提取；仍明确不将 AMR/PML/div-cleaning 组合 case 升级为 Vay Appendix B 或 Higuera-Cary Poincare runtime reproduction。
 
+2026-07-13：完成窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：移除 AMR/PML/场演化，三条 case 各输出 81 个 Full plotfile，统一轨道合同通过；半径 spread 为 `3.889e-3/3.889e-3/3.218e-3`，动量范数 drift 均低于 `1.1e-14`。half-step velocity 与 Poincare consumer 仍是明确缺口。
+
 AMR transition-zone 的下一阶段接口已落成可执行设计合同：`python scripts/validate_transition_zone_route_contract.py --input docs/transition-zone-route-contract-example.json` 正例通过、破坏 route count 的负例被拒绝；这仍是 schema/analysis 层验证，不是当前 WarpX runtime route proof。
 
 2026-07-12：新增 Hockney 1971 article-level abstract contract，8/8 检查通过；项目内已保存正式书目信息、IBM Research 作者机构摘要、摘要级中文讲解和 full-text 缺失边界，证据分类为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。
@@ -166,7 +168,7 @@ AMR transition-zone 的下一阶段接口已落成可执行设计合同：`pytho
 - 2026-07-12：完成官方 `test_1d_semi_implicit_picard` 单进程复现：101 个 reduced-energy 样本的最大总能量相对漂移为 `2.2569031493993572e-06 < 2.5e-05`；新增通用 `scripts/analyze_implicit_picard_energy_contract.py`，并与 theta-implicit sibling 共同通过独立合同分析。
 - 2026-07-12：第 6 章 implicit theta-Picard 运行级证据回填后，v0.40 PDF 当前为 286 页；已重新生成并通过验收。
 - 2026-07-12：完成官方 `test_1d_theta_implicit_picard` 单进程复现：101 个 reduced-energy 样本的最大总能量相对漂移 `3.4784001e-15 < 1e-14`，新增 `scripts/analyze_implicit_theta_picard_contract.py` 和 case-local JSON/Markdown 报告。
-- 2026-07-12：运行官方 `larmor` 单进程 case 并完成 continuum orbit audit：轨迹相对位移误差 `1.28285096e-2`、动量相对误差 `3.44029897e-2`；确认 checksum 合同仍成立，但 MR/PML/div-cleaning 组合下不升级为强解析 gate，新增 `scripts/analyze_larmor_continuum_audit.py`。
+- 2026-07-12：运行官方 `larmor` 单进程 case 并完成 continuum orbit audit：修正 2D XZ 面内动量读取为 `particle_momentum_x/z` 后，轨迹相对位移误差 `1.28285096e-2`、动量相对误差 `9.69641193e-2`；确认 checksum 合同仍成立，但 MR/PML/div-cleaning 组合下不升级为强解析 gate，新增 `scripts/analyze_larmor_continuum_audit.py`。
 - 2026-07-12：完成官方 `photon_pusher` 单进程复现：16 个 photon species 位置最大相对误差 `6.0986372e-16 < 1e-14`，动量最大相对误差 `1.7217530e-16 < 2.2204460e-16`，新增 `scripts/analyze_photon_pusher_contract.py` 和 case-local JSON/Markdown 报告。
 - 2026-07-12：第 4 章 pusher sibling 对照回填后，v0.40 PDF 当前为 285 页；已重新生成并通过验收。
 - 2026-07-12：完成统一 force-free pusher sibling 对照：Boris `2.3213958529e3`、Vay `1.0795497978e-4`、Higuera-Cary `1.1430664324e-4`；新增 `scripts/compare_particle_pusher_siblings.py`，明确该结果是 pusher-only override 的项目级对照，不是独立官方 regression。

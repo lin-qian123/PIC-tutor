@@ -23,6 +23,9 @@ B_Y = 0.00078110417851950768
 U0 = 0.45825756949558416
 GAMMA = np.sqrt(1.0 + U0 * U0)
 Z0 = -1.25
+OMEGA_C = e * B_Y / (GAMMA * m_e)
+RADIUS = (U0 * c / GAMMA) / OMEGA_C
+CENTER_Z = Z0 + RADIUS
 
 
 def read_particle(ds, species: str) -> tuple[np.ndarray, np.ndarray]:
@@ -37,7 +40,7 @@ def read_particle(ds, species: str) -> tuple[np.ndarray, np.ndarray]:
     momentum = np.array(
         [
             ad[species, "particle_momentum_x"].to_ndarray()[0],
-            ad[species, "particle_momentum_y"].to_ndarray()[0],
+            ad[species, "particle_momentum_z"].to_ndarray()[0],
         ],
         dtype=float,
     )
@@ -78,8 +81,8 @@ def main() -> int:
     for species in positions:
         pos = np.asarray(positions[species])
         mom = np.asarray(momenta[species])
-        radius = np.linalg.norm(pos - np.array([0.0, Z0]), axis=1)
-        phase = np.unwrap(np.arctan2(pos[:, 0], pos[:, 1] - Z0))
+        radius = np.linalg.norm(pos - np.array([0.0, CENTER_Z]), axis=1)
+        phase = np.unwrap(np.arctan2(pos[:, 0], pos[:, 1] - CENTER_Z))
         phase_increment = np.diff(phase)
         momentum_norm = np.linalg.norm(mom, axis=1)
         species_rows.append(
@@ -115,7 +118,7 @@ def main() -> int:
         "physics": {
             "B_y": B_Y,
             "gamma": float(GAMMA),
-            "omega_c": float(omega_c),
+            "omega_c": float(OMEGA_C),
             "expected_boris_rotation_angle": float(expected_dt_angle),
         },
         "species": species_rows,

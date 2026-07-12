@@ -20,6 +20,8 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 2026-07-13：新增 `larmor` 逐帧离散轨道合同：6 个 Full plotfile 的时间、粒子数、有限状态、cadence 和 Boris rotation-angle 参考量均通过独立脚本提取；该增强仍不等价于 Vay Appendix B 或 Higuera-Cary Poincare topology 专门复现。
 
+2026-07-13：新增窄化 uniform-`B` Boris/Vay/Higuera-Cary runtime 对照：三条无 AMR/PML/场演化 sibling 各输出 81 个 Full plotfile，统一轨道合同通过；该证据仍不宣称取得 half-step velocity 或 Poincare topology 专门 gate。
+
 本轮又把第 7 章 transition-zone route-count packet 落成可执行的 schema validator 和 synthetic fixture：正例检查 route count、weight closure、`rho/J` 中间账本与显式 merge gates，负例会被拒绝；当前 WarpX 尚未接入 runtime hook，因此仍保持 `RUNTIME_LEDGER_UNPROVEN`。
 
 本轮又补入 Hockney 1971 的摘要级 article asset：8 项本地 contract 全部通过，正文只使用摘要支持的 collision/heating scaling、optimum path 和 `K_2` 关系，继续明确 publisher full text、PDF、MinerU 和逐段核对尚未完成。
@@ -113,7 +115,7 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 2026-07-12 又完成官方 `photon_pusher` 单进程复现：16 个 photon species 的位置/动量最大相对误差分别为 `6.0986372e-16` 和 `1.7217530e-16`，并将无质量粒子路径的合同报告接回第 4 章。
 
-2026-07-12 又运行官方 `larmor` 单进程 case 并完成 continuum orbit audit：轨迹相对位移误差 `1.28285096e-2`、动量相对误差 `3.44029897e-2`；书稿保留 checksum-only 边界，并明确该结果不能直接作为强解析 gate。
+2026-07-12 又运行官方 `larmor` 单进程 case 并完成 continuum orbit audit：修正 2D XZ 面内动量读取为 `particle_momentum_x/z` 后，轨迹相对位移误差 `1.28285096e-2`、动量相对误差 `9.69641193e-2`；书稿保留 checksum-only 边界，并明确该结果不能直接作为强解析 gate。
 
 2026-07-12 又完成官方 `test_1d_theta_implicit_picard` 单进程复现：101 个 reduced-energy 样本最大总能量相对漂移为 `3.4784001e-15 < 1e-14`，并将 implicit total-energy 合同报告接回第 6 章。
 

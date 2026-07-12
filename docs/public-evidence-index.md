@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `148`
-- PASS: `105`
+- records: `149`
+- PASS: `106`
 - FAIL: `28`
 - UNKNOWN: `15`
 - boundary-classified: `20`
@@ -128,6 +128,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `pec_insulator_implicit_2d_mpi2` | `PASS` | `PASS` | test_2d_pec_field_insulator_implicit | `` |  | `contract_pass=True`, `energy_gate=True`, `fieldenergy_samples=21`, `final_field_energy=8.55178514965408e-05`, `initial_field_energy=0.0`, `max_normalized_energy_difference=1.2678080114411674e-15` |
 | `pec_insulator_implicit_restart_2d_mpi2` | `PASS` | `PASS` | test_2d_pec_field_insulator_implicit_restart | `` |  | `contract_pass=True`, `energy_gate=True`, `fieldenergy_samples=10`, `final_field_energy=8.55178514965408e-05`, `initial_field_energy=3.63323638730053e-05`, `max_normalized_energy_difference=1.2678080114411674e-15` |
 | `pec_particle_3d_mpi2` | `PASS` | `PASS` | 3D PEC near-boundary field suppression relative to periodic control | `` | official PEC input plus local periodic-field control; 2-rank reader-side comparison; not direct particle-gather instrumentation | `Ey_max_abs_ratio=0.0022796202594083776`, `max_abs_E_ratio=0.0070491256177838395`, `passed=True`, `ratio_tolerance=0.01` |
+| `peiravi-birdsall-1978` | `PASS` | `PASS` | Peiravi and Birdsall 1978 local full-text technical-report asset contract | `INSTITUTIONAL_FULL_TEXT_MINERU_VERIFIED_JOURNAL_VERSION_NOT_ESTABLISHED` | technical-report full text and figures available; no publisher-journal equivalence claim | `passed=True` |
 | `pmc_field_3d_mpi2` | `PASS` | `PASS` | test_3d_pmc_field | `` |  | `contract_pass=True`, `max_relative_error=0.006153430381301878`, `min_relative_error=0.006901308573957358`, `reflection_gate=True` |
 | `pml_psatd_2d_mpi2` | `PASS` | `PASS` | Cartesian PSATD-PML initial-energy and low-reflectivity contract | `` | 2-rank project-level independent reader-side summary; official analysis separately rerun | `expected_initial_energy=7.282940112203595e-08`, `final_energy=6.897268359469654e-14`, `initial_energy=7.282940112203606e-08`, `initial_reference_relative_error=1.453796362122656e-15`, `passed=True` |
 | `pml_rz_psatd_mpi2` | `PASS` | `PASS` | RZ PSATD radial-PML residual-field contract | `` | independent reader-side RZ residual-field check on the official 2-rank producer | `max_abs_field=1.0315718696300396`, `passed=True` |

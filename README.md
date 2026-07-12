@@ -2,7 +2,7 @@
 
 当前成书版本为 `v0.68`，对应 316 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract contract、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 148 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
+v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 149 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
@@ -11,6 +11,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 148 条 `contrac
 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将“线性稳定不等于非线性无扰动”、相空间 clump/density hole 诊断和相对漂移自由能边界写入中文讲解笔记，并最小回填第 8 章；该结论不升格为 NCI 或 WarpX runtime physics gate。
 
 2026-07-13：整理 `Birdsall 1985` `3A ES1` 的最小程序骨架与 WarpX `InitData()`/`Evolve()` 阶段边界，补充不可等同说明和 Langmuir/初始化验证入口，作为下一次第 3A 章正文回填依据；当前 v0.68 继续保持 316 页。
+
+2026-07-13：materialize `Peiravi and Birdsall (1978)` Berkeley technical report，完成 40 页 PDF、MinerU Markdown、52 张图、中文讲解和独立 asset contract；第 5/6/8 章仍只保留摘要/文献边界回链，不把技术报告升格为 publisher journal 证据。
 
 2026-07-13：将 LeeCPC2015 accepted manuscript 的 paper/source/regression crosswalk 接入第 7 章 `7.5.8`；正文现在可直接定位三方合同，同时保留 publisher-formatted PDF 和 `C1-C25` 逐系数等价尚未完成的边界。
 

@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 148,
+  "record_count": 149,
   "status_counts": {
-    "PASS": 105,
+    "PASS": 106,
     "FAIL": 28,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 94,
+    "PASS": 95,
     "FAIL": 27,
     "UNKNOWN": 7,
     "BOUNDARY": 20
@@ -1723,6 +1723,17 @@
         "max_abs_E_ratio": 0.0070491256177838395,
         "passed": true,
         "ratio_tolerance": 0.01
+      }
+    },
+    {
+      "case": "peiravi-birdsall-1978",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Peiravi and Birdsall 1978 local full-text technical-report asset contract",
+      "classification": "INSTITUTIONAL_FULL_TEXT_MINERU_VERIFIED_JOURNAL_VERSION_NOT_ESTABLISHED",
+      "scope": "technical-report full text and figures available; no publisher-journal equivalence claim",
+      "metrics": {
+        "passed": true
       }
     },
     {

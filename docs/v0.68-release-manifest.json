@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 716,
-  "total_bytes": 27510519,
+  "entry_count": 718,
+  "total_bytes": 27515427,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1516344,
-      "sha256": "bc657743290f93e37fed3e03bdde5af660e11c554e39322dde59a04e6625b228"
+      "bytes": 1516630,
+      "sha256": "3153448ec3f13adbeb0c2265bf169568a66e13e22d9aa1b6040d4e9a70f7339f"
     },
     {
       "path": "TODO.md",
-      "bytes": 1359682,
-      "sha256": "ad5e581b15741ccc2f7cc66e4a43a0e2de6990678100e0c7a4907c3d6e58c2da"
+      "bytes": 1360117,
+      "sha256": "b1158356f85384f063d73fbac9830c7f1a9606cc62d1f9d47b80d53a9bfc4cb5"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "d36751112c64682fa20a0d9f0a114067beea700b87df0af141bb7d89a1fce34b"
+      "sha256": "8b37f8e4a543f57815cb3613c373027edd8db5218fa424221835e9f640c37ca2"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -1359,6 +1359,11 @@
       "path": "notes/code-reading/fieldsolver/40-comoving-first-stage-decision.md",
       "bytes": 2137,
       "sha256": "135ec3a9dbf7426b41a7f0dc809cc1c8e56e9170ca98eac3735dedc06f922f7f"
+    },
+    {
+      "path": "notes/code-reading/fieldsolver/41-rz-jrhom-helper-execution-contract.md",
+      "bytes": 1288,
+      "sha256": "cc7ca379806518c841ac86de085c27e97ff0d0e1c94139a9d9f1090f244b0811"
     },
     {
       "path": "notes/code-reading/fieldsolver/README.md",
@@ -3459,6 +3464,11 @@
       "path": "scripts/verify_esirkepov_density_decomposition.py",
       "bytes": 2530,
       "sha256": "712c0117d609e177c8e219b7c9515cd60739c6f6ebd1ada40e15207fa5f2892a"
+    },
+    {
+      "path": "scripts/verify_rz_jrhom_first_stage_helper.py",
+      "bytes": 2899,
+      "sha256": "621636d376ffa742159fffe10e68e099b73f5d03afa6b1fb5e91ba5795918db6"
     },
     {
       "path": "scripts/verify_v40_build.py",

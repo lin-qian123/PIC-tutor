@@ -23,6 +23,8 @@
 
 - [x] 2026-07-13：完成 RZ JRhom first-stage handoff 的当前目标 checkout 只读验收：`audit/report/preview/stage --dry-run` 全部成功，目标 `/Volumes/PHILIPS/programs/PIC/warpx` 保持 `unstaged`；planned write surface 仅为新增 `analysis_rz_jrhom.py` 和一处 CMake analysis wiring。MPI=2 ledger 的 `finite + energy` contract 继续通过，正式 staging 仍需 WarpX 维护者明确允许。决策记录见 `notes/code-reading/fieldsolver/36-rz-jrhom-first-stage-decision.md`。
 
+- [x] 2026-07-13：完成 RZ JRhom first-stage helper 直接执行 contract：生成的 `analysis_rz_jrhom_first_stage_draft.py` 对 MPI=2 baseline 返回 `0`，对 `ll2-no-timeavg-cleaning` reference 返回 `1`，且 reference rejection 明确来自 energy ceiling 而非 finite/runtime failure。新增 `scripts/verify_rz_jrhom_first_stage_helper.py` 与 `notes/code-reading/fieldsolver/41-rz-jrhom-helper-execution-contract.md`。
+
 - [x] 2026-07-13：完成 comoving velocity sibling scan 的可复现 contract：修复 `scripts/scan_comoving_velocity_candidates.py` 在相对 ledger path 下的输出 bug，生成默认 selector / 显式 `-beta` / half-beta / 反号 / no-comoving 五路 ledger；显式/default energy 与 spike 相对差均约 `1e-14`，反号 sibling spike ratio 为 stable 的 `1.0622` 倍，no-comoving 继续越过当前 spike ceiling。新增 `scripts/analyze_comoving_velocity_scan_contract.py` 与 `notes/code-reading/fieldsolver/38-comoving-velocity-scan-contract.md`；energy gate 仍关闭。
 
 - [x] 2026-07-13：完成 comoving 真实 MPI=2 stable/sign pair：默认 selector、显式 `-beta` 和反号 `v_comoving=+beta` 三个 plotfile 均完整落盘且 fields finite；显式/default 的 energy/spike 差均约 `1e-14`，MPI=2 stable 相对既有 1-rank stable 的 energy/spike 差低于 1%，positive/stable spike ratio 约 `1.0637`。新增 `scripts/analyze_comoving_mpi2_pair.py` 与 `notes/code-reading/fieldsolver/39-comoving-mpi2-pair-contract.md`；MPI finalize 尾噪声单独记录，energy gate 仍关闭。

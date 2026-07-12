@@ -14,6 +14,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：为 Poincare classifier 新增确定性回归合同 `scripts/test_higuera_poincare_topology.py`，覆盖时间排序伪影、嵌套角排序候选和不足采样边界；该测试只保护分析器机械逻辑，不提升物理 topology gate。
 
+2026-07-13：新增 `scripts/audit_ionization_dsmc_source_contract.py`，以 10 个锚点固定 3D electron-impact / ion-impact DSMC 的 CMake、输入截面/物种和 analysis 分叉；ion-impact 仍是 checksum-only，contract 不替代其 runtime physics validation。
+
 2026-07-13：RZ JRhom 第一阶段 patch 决策已收敛为 `finite + energy`：MPI=2 ledger 与 helper 直接正负执行均通过，spike gate 明确延期；决策记录见 `notes/code-reading/fieldsolver/42-rz-jrhom-first-stage-decision.md`。目标 WarpX 仍保持 `unstaged`。
 
 2026-07-13：完成 RZ JRhom first-stage helper 直接执行 contract：生成 helper 接受 MPI=2 baseline、拒绝 `ll2-no-timeavg-cleaning` reference，且拒绝来自 energy ceiling；新增脚本和笔记，保留“project-level helper execution，不是 upstream CI”边界。

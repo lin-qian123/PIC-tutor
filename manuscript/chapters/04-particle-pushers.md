@@ -1474,10 +1474,11 @@ $$
 在 regression 层，这三条分叉也看完全不同的量：
 
 - `analysis_collision_3d_pulsed_decay.py` 比的是最终 ion 总权重和 0D 衰变模型；
-- `analysis_ionization_dsmc_3d.py` 比的是 `n_e`、`n_n` 和 `n_eT_e` 的全局模型；
+- `analysis_ionization_dsmc_3d.py` 比的是 `n_e`、`n_n` 和 `n_eT_e` 的全局模型；3D ion-impact sibling 则是 `ion_impact_ionization.dat + ions neutrals` 的 checksum-only 分叉。
 - `analysis_charge_exchange_dsmc_1d.py` 比的是通量指数衰减；
 - `analysis_two_product_reaction_dsmc_1d.py` 比的是 products 的理论速度；
 - `analysis_photoneutralization_dsmc_1d.py` 还把快电子的产物验证接到了 `BoundaryScraping` diagnostics。
+
 
 ### 4.13.3 `pairwisecoulomb`、`bremsstrahlung`、`background_stopping` 与 `nuclearfusion`
 

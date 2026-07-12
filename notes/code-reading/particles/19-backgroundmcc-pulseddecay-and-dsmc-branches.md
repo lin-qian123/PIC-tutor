@@ -301,6 +301,8 @@ DSMC 依然属于 `BinaryCollision` 家族，但它在后半段没有继续复�
 - source/neutral 数守恒
 - 电离能损失进入电子能量方程
 
+当前 3D electron-impact / ion-impact sibling 的 wiring 又由 `scripts/audit_ionization_dsmc_source_contract.py` 固定成 10 个源码锚点：electron-impact 分支启用 `analysis_ionization_dsmc_3d.py`，ion-impact 分支切换为 `ion_impact_ionization.dat` 与 `ions neutrals`，并在 CMake 中明确关闭该 electron-impact analysis，只保留 `diag1000250` checksum。该 contract 是 CMake/input/analysis 的只读审计，不是已经执行的 ion-impact physics validation；报告位于 `runs/stage-c-validation/ionization-dsmc-source-contract/contract.{json,md}`。
+
 而不是只验证“是否多出了一个电子 species”。
 
 ### 4.3 `analysis_charge_exchange_dsmc_1d.py`

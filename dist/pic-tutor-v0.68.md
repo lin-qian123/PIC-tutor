@@ -12,7 +12,7 @@
 
 本版又新增 PSATD/NCI literature-to-source strategy matrix：Godfrey 2014、Lehe 2016、Kirchen 2016 三篇本地全文资产的章节映射、WarpX 源码关键词和 runtime consumer 全部通过检查；矩阵只做证据索引，不把 fixed-grid、Galilean 和 boosted-frame 三条机制合并。
 
-本版完成 public release path hygiene：合订 Markdown/HTML 不再保留本机绝对路径或绝对本地链接，项目链接改为仓库相对路径，WarpX 外部路径改为 `$WARPX_ROOT` 占位符；该边界由 `scripts/audit_public_release_paths.py` 和 `scripts/verify_v67_build.py` 覆盖。
+本版完成 public release path hygiene：合订 Markdown/HTML 不再保留本机绝对路径或绝对本地链接，项目链接改为仓库相对路径，WarpX 外部路径改为 `$WARPX_ROOT` 占位符；该边界由 `scripts/audit_public_release_paths.py` 和 `scripts/verify_v68_build.py` 覆盖。
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
@@ -9113,6 +9113,10 @@ J_{x1}+J_{x2}=\Delta x,\qquad J_{y1}+J_{y2}=\Delta y,
 $$
 
 再把任意轨迹按所有 cell crossing 切成 segment，验证各段位移之和仍恢复整条轨迹；同时验证 Eq.(36) 四个 face contribution 的三维交叉项和体积分数差分闭合。二维残差最大为 `4.440892098500626e-16`，三维 face-sum 与 volume-closure 残差最大为 `1.7763568394002505e-15`，最大 crossing 数为 `6`。报告位于 `runs/stage-c-validation/villasenor_formula_contract/contract.{json,md}`。它把 `Eq.(6)-(9)`、Eq.(36) 与 repeated segmentation 的代数/几何层落成了可重复证据，但仍不替代 WarpX kernel 的 bitwise、边界或全量 Gauss-law regression。
+
+![](manuscript/assets/figures/villasenor-formula-contract.png)
+
+图 5-1：Villasenor 公式合同的两层证据。左侧把一条跨越多个 cell 的轨迹按 earliest crossing 切成局部 segment；右侧汇总四边界、segment、3D face 和 3D volume closure 的最大残差。该图只展示论文/几何层闭合，不把它升级为 WarpX kernel 等价或全 geometry/order 回归。
 
 在公式审计之外，本轮又对当前 `../warpx` checkout 做了只读源码合同核对。`scripts/audit_villasenor_source_contract.py` 的 16 个锚点全部通过，覆盖 `VillasenorDepositionShapeNKernel`、explicit/implicit entrypoint、三方向 `cell_crossings_*` 计数、`num_segments` 循环、final-segment/continuation 分支、`seg_factor_*` 和 `this_Jx/this_Jy/this_Jz` 写回。报告位于 `runs/stage-c-validation/villasenor-source-contract/contract.{json,md}`；它说明正文中的 crossing-driven segment skeleton 与当前源码仍一致，但仍不替代数值 kernel regression。
 

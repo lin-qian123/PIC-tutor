@@ -2,7 +2,7 @@
 
 审计日期：2026-07-12
 
-当前 `dist/pic-tutor-v0.68.pdf` 为 312 页，内含 12 张书稿验证图；v0.67 及此前的构建记录均属于历史构建快照。
+当前 `dist/pic-tutor-v0.68.pdf` 为 312 页，内含 13 张书稿验证图；v0.67 及此前的构建记录均属于历史构建快照。
 
 v0.66 审计发现合订 Markdown/HTML 含本机绝对路径和不可随公共仓库迁移的绝对链接；v0.67 已在 release 构建层修复，v0.68 延续该检查，并将验证合同摘要纳入公共 allowlist。
 
@@ -17,9 +17,9 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 135 条 `contrac
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.68.pdf` | 2,837,133 bytes | 当前 312 页成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.68.html` | 4,969,833 bytes | 自包含 MathJax + 12 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.68.md` | 1,050,228 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.68.pdf` | 2,969,258 bytes | 当前 312 页成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.68.html` | 5,169,517 bytes | 自包含 MathJax + 13 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.68.md` | 1,050,623 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 
@@ -34,7 +34,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 135 条 `contrac
 建议纳入公共仓库的项目内资产：
 
 - `AGENTS.md`、`README.md`、`TODO.md`；
-- `manuscript/` 书稿源、`manuscript/assets/figures/` 12 张验证图和 `manuscript/VERSION.md`；
+- `manuscript/` 书稿源、`manuscript/assets/figures/` 13 张验证图和 `manuscript/VERSION.md`；
 - `scripts/build_v68.py`、`scripts/verify_v68_build.py`、`scripts/audit_release_consistency.py` 及书稿引用的项目分析脚本；
 - `docs/` 中的项目说明、验证矩阵和本发布审计；
 - `docs/public-evidence-index.{json,md}`；

@@ -176,7 +176,7 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 135 条验
 
 同日又对 Villasenor crossing-driven source skeleton 做只读 audit：当前 `CurrentDeposition.H` 的 16 个 crossing、segment、fraction 和 `this_J*` writeback 锚点全部通过，报告归档于 `runs/stage-c-validation/villasenor-source-contract/`；该证据只说明源码结构与正文映射仍成立，不替代数值 kernel regression。
 
-这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.68` 3D Esirkepov refined-resolution、RZ correction tradeoff audit、bounded compare、Hockney particle-mesh、Yee indexed-abstract、PSATD/NCI strategy matrix 和公开验证证据摘要版；它在 v0.65 的基础上把三篇 PSATD/NCI 全文论文与 WarpX 源码/runtime consumer 的关系固化到第 6 章，并继续保留 RZ charge、AMR route-count、publisher PDF 逐页对照和更多出版级图表等明确边界。当前已嵌入 12 张真实验证图，WarpX 目标 checkout staging 与 dedicated route-count regression 仍未完成。
+这是 `PIC-tutor` 的 Markdown-first 书稿。当前收束版本是 `v0.68` 3D Esirkepov refined-resolution、RZ correction tradeoff audit、bounded compare、Hockney particle-mesh、Yee indexed-abstract、PSATD/NCI strategy matrix 和公开验证证据摘要版；它在 v0.65 的基础上把三篇 PSATD/NCI 全文论文与 WarpX 源码/runtime consumer 的关系固化到第 6 章，并继续保留 RZ charge、AMR route-count、publisher PDF 逐页对照和更多出版级图表等明确边界。当前已嵌入 13 张真实验证图，其中新增 Villasenor 公式合同图；WarpX 目标 checkout staging 与 dedicated route-count regression 仍未完成。
 
 ## 版本边界
 

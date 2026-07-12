@@ -13,7 +13,7 @@ from audit_public_release_paths import inspect
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_CHAPTER = ROOT / "manuscript" / "chapters" / "08-diagnostics-cases.md"
+SOURCE_CHAPTERS = sorted((ROOT / "manuscript" / "chapters").glob("*.md"))
 MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.68.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.68.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.68.pdf"
@@ -29,7 +29,7 @@ def main() -> None:
     parser.add_argument("--build-log", type=Path)
     args = parser.parse_args()
 
-    source = SOURCE_CHAPTER.read_text(encoding="utf-8")
+    source = "\n".join(path.read_text(encoding="utf-8") for path in SOURCE_CHAPTERS)
     merged = MERGED_MARKDOWN.read_text(encoding="utf-8")
     html = HTML.read_text(encoding="utf-8", errors="ignore")
     reader = PdfReader(str(PDF))
@@ -37,12 +37,12 @@ def main() -> None:
 
     checks = {
         "pdf_pages": len(reader.pages) == EXPECTED_PDF_PAGES,
-        "source_image_links": len(image_links(source)) == 12,
-        "merged_image_links": len(image_links(merged)) == 12,
+        "source_image_links": len(image_links(source)) == 13,
+        "merged_image_links": len(image_links(merged)) == 13,
         "image_links_relative": all(
             not link.startswith("/") for link in image_links(source) + image_links(merged)
         ),
-        "html_embedded_images": html.count("data:image/png;base64,") >= 12,
+        "html_embedded_images": html.count("data:image/png;base64,") >= 13,
         "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],

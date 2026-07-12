@@ -2030,6 +2030,10 @@ $$
 
 再把任意轨迹按所有 cell crossing 切成 segment，验证各段位移之和仍恢复整条轨迹；同时验证 Eq.(36) 四个 face contribution 的三维交叉项和体积分数差分闭合。二维残差最大为 `4.440892098500626e-16`，三维 face-sum 与 volume-closure 残差最大为 `1.7763568394002505e-15`，最大 crossing 数为 `6`。报告位于 `runs/stage-c-validation/villasenor_formula_contract/contract.{json,md}`。它把 `Eq.(6)-(9)`、Eq.(36) 与 repeated segmentation 的代数/几何层落成了可重复证据，但仍不替代 WarpX kernel 的 bitwise、边界或全量 Gauss-law regression。
 
+![](../assets/figures/villasenor-formula-contract.png)
+
+图 5-1：Villasenor 公式合同的两层证据。左侧把一条跨越多个 cell 的轨迹按 earliest crossing 切成局部 segment；右侧汇总四边界、segment、3D face 和 3D volume closure 的最大残差。该图只展示论文/几何层闭合，不把它升级为 WarpX kernel 等价或全 geometry/order 回归。
+
 在公式审计之外，本轮又对当前 `../warpx` checkout 做了只读源码合同核对。`scripts/audit_villasenor_source_contract.py` 的 16 个锚点全部通过，覆盖 `VillasenorDepositionShapeNKernel`、explicit/implicit entrypoint、三方向 `cell_crossings_*` 计数、`num_segments` 循环、final-segment/continuation 分支、`seg_factor_*` 和 `this_Jx/this_Jy/this_Jz` 写回。报告位于 `runs/stage-c-validation/villasenor-source-contract/contract.{json,md}`；它说明正文中的 crossing-driven segment skeleton 与当前源码仍一致，但仍不替代数值 kernel regression。
 
 本轮又把 implicit Villasenor 从源码和公式层推进到官方 2-rank 运行级证据。官方 `test_2d_theta_implicit_jfnk_vandb` 使用 `shape=2`、周期边界和 theta-implicit Newton/JFNK；上游 `analysis_vandb_jfnk_2d.py` 与独立 `scripts/analyze_implicit_villasenor_contract.py` 均通过，最大总能量相对变化为 `4.0980e-15 < 2e-14`，Gauss-law RMS 为 `9.2951e-16 < 2e-15`，末态网格为 `40x40`，所有输出字段有限。报告归档于 `runs/stage-c-validation/implicit_villasenor_2d_jfnk_mpi2/contract.{json,md}`。

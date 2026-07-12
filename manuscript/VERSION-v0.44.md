@@ -1,10 +1,8 @@
-# PIC-tutor v0.45
+# PIC-tutor v0.44
 
-当前合订 PDF 为 307 页；本 v0.45 版本在 v0.44 基础上补入 RZ Esirkepov shape=2/3/4 correction-off 的高阶 shape 分辨率族对照，统一解释粗网格 `Er` field boundary 的分辨率依赖。
+当前合订 PDF 为 307 页；本 v0.44 版本在 v0.43 基础上补入 RZ Esirkepov `particle_shape=2` 的分辨率四格对照，解释 correction-off 粗网格 field boundary 的分辨率依赖。
 
 版本日期：2026-07-12
-
-本次新增 shape=2/3/4 的 `64x128 -> 128x256` correction-off refined siblings：粗网格 `Er` error 为 `0.1323/0.1734/0.2134`，细网格降至 `9.318e-3/1.113e-2/1.365e-2`；三档 charge residual 均低于 `1e-11`，field/charge 双 gate 全部通过。该族结果仍限定为 RZ、单层、固定 Langmuir 输入，不改变全局轴修正默认值。
 
 本次新增 shape=2 的 `64x128/128x256` paired runtime：correction-off 的 `Er` field error 从 `0.1323` 降至 `0.0093`，charge residual 为 `2.202e-12/9.644e-12`，高分辨率 field/charge 双 gate 通过；correction-on 高分辨率 field error 为 `9.321e-3/5.154e-3`，axis charge residual 为 `2.177e-3`，因此仍保留 charge boundary。该结果仅支持 shape/resolution/axis-correction 交互解释。
 

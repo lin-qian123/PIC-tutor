@@ -1,12 +1,13 @@
 # PIC-tutor
 
-当前成书版本为 `v0.44`，对应 307 页 RZ Esirkepov shape=2 分辨率边界版；历史 `v0.43` 仍由 `manuscript/VERSION-v0.43.md` 保留。
+当前成书版本为 `v0.45`，对应 307 页 RZ Esirkepov 高阶 shape 分辨率族版；历史 `v0.44` 仍由 `manuscript/VERSION-v0.44.md` 保留。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+- 2026-07-12：进入 v0.45 高阶 shape resolution family 阶段：新增 `scripts/summarize_rz_esirkepov_shape_resolution_family.py` 与 `notes/code-reading/particles/54-rz-esirkepov-shape-resolution-family.md`；shape=2/3/4 correction-off 粗网格均有 `Er` field boundary，而 `128x256` refined sibling 的 field/charge 双 gate 全部通过，不修改 `../warpx`。
 - 2026-07-12：进入 v0.44 shape=2 resolution boundary 阶段：新增 `notes/code-reading/particles/53-rz-esirkepov-shape2-resolution-contract.md`，`Er` field error 在 correction-off 下由 `0.1323` 降至 `0.0093`，高分辨率 correction-off field/charge 双 gate 通过；correction-on 的 axis charge residual 仍为 `2.177e-3`，不修改 `../warpx`。
 - 2026-07-12：进入 v0.43 RZ Esirkepov axis-resolution contract 阶段：新增 `scripts/summarize_rz_esirkepov_axis_resolution_contract.py` 和 `notes/code-reading/particles/52-rz-esirkepov-axis-resolution-contract.md`；`particle_shape=1` 的 `64x128/128x256` paired evidence 显示 correction-on charge residual `3.593e-3 -> 1.520e-3`，correction-off 两档均通过 field/charge 双 gate；shape=2/3/4 的 off-case field 边界仍单独保留，不修改 `../warpx`。
 - 2026-07-12：进入 v0.42 边界判据审计阶段：新增 `scripts/audit_particles_in_pml_analysis_contract.py` 与 `notes/code-reading/particles/51-particles-in-pml-signed-vs-absolute-contract.md`，源码审计确认上游 `analysis_particles_in_pml.py` 使用有符号 component max，而项目独立 contract 使用全场绝对值 max；3D AMR sibling 因 `106.435 < 110` 与 `110.399 > 110` 的差异继续保留为判据边界，未修改 `../warpx`。

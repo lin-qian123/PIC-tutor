@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-12：完成 RZ Esirkepov shape=2/3/4 correction-off 高阶 shape resolution family：粗网格 `Er` error 为 `0.1323/0.1734/0.2134`，细网格降至 `0.0093/0.0111/0.0137`；三档 refined charge residual `9.644e-12/6.086e-12/6.724e-12`，field/charge 双 gate 全部通过。新增 family 汇总脚本与 note，不外推到 correction-on、其他 geometry 或 AMR。
 - [x] 2026-07-12：完成 RZ Esirkepov `particle_shape=2` 高分辨率 paired runtime：`64x128` correction-off 的 `Er=0.1323` field boundary 在 `128x256` 降至 `0.0093`，同时 charge residual 为 `9.644e-12`；新增 shape 参数化汇总脚本和 `53-rz-esirkepov-shape2-resolution-contract.md`，仍不外推到 shape=3/4 或修改默认轴修正。
 - [x] 2026-07-12：完成 RZ Esirkepov `particle_shape=1` axis-correction/resolution paired runtime：`64x128` 与 `128x256` 默认 correction-on 的 charge residual 为 `3.593e-3/1.520e-3`，两个 correction-off sibling 的 field/charge gate 均通过，新增四格汇总脚本与报告；结果仅说明 resolution/axis-correction/shape 交互，不修改全局默认值。
 - [x] 2026-07-12：进入 v0.42 边界判据审计阶段：新增 `scripts/audit_particles_in_pml_analysis_contract.py`，对上游 `analysis_particles_in_pml.py` 与项目独立绝对值 contract 的 5 个关键锚点审计通过；确认 3D AMR `particles_in_pml` 的官方 signed gate 与强化 absolute gate 差异，新增 `notes/code-reading/particles/51-particles-in-pml-signed-vs-absolute-contract.md`，不修改 `../warpx`。

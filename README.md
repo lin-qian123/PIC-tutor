@@ -1,12 +1,13 @@
 # PIC-tutor
 
-当前成书版本为 `v0.41`，对应 307 页 RZ PSATD validation closure 版；历史 `v0.40` 仍由 `manuscript/VERSION-v0.40.md` 保留。
+当前成书版本为 `v0.42`，对应 307 页边界判据审计版；历史 `v0.41` 仍由 `manuscript/VERSION-v0.41.md` 保留。
 
 `PIC-tutor` 是一本面向深入学习 Particle-In-Cell 程序的书稿项目。核心目标是从同级目录 `../warpx` 的真实代码、官方文档、示例和参考文献出发，事无巨细地讲解 PIC 程序的物理基础、理论推导、数值算法、代码实现、模块架构、HPC 优化、多物理扩展、诊断分析和典型应用。
 
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+- 2026-07-12：进入 v0.42 边界判据审计阶段：新增 `scripts/audit_particles_in_pml_analysis_contract.py` 与 `notes/code-reading/particles/51-particles-in-pml-signed-vs-absolute-contract.md`，源码审计确认上游 `analysis_particles_in_pml.py` 使用有符号 component max，而项目独立 contract 使用全场绝对值 max；3D AMR sibling 因 `106.435 < 110` 与 `110.399 > 110` 的差异继续保留为判据边界，未修改 `../warpx`。
 - 2026-07-12：新增 v0.41 release manifest：allowlist 共 484 个项目文件、`20,385,796` bytes，明确排除 `runs/`、`references/`、历史 `dist/` 和本地调试残留；manifest 只生成审计清单，不自动 staging/commit。报告见 `docs/v0.41-release-manifest.{json,md}`。
 - 2026-07-12：新增 RZ Langmuir PSATD family matrix，统一核对 standard/current-correction/JRhom `CL4` 三条 official-input contract：三者均通过 `<0.12` `Er/Ez` field gate，只有 current-correction sibling 通过并启用 `1e-9` charge gate。报告见 `runs/stage-c-validation/rz_langmuir_psatd-family/contract.{json,md}`，脚本为 `scripts/summarize_rz_langmuir_psatd_family.py`。
 - 2026-07-12：完成 v0.41 版本收口：冻结 `manuscript/VERSION-v0.40.md`，新增 `scripts/build_v41.py` 与 `scripts/verify_v41_build.py`，生成 `dist/pic-tutor-v0.41.{md,html,pdf}`；当前成书为 307 页/12 图。

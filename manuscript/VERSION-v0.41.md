@@ -1,10 +1,8 @@
-# PIC-tutor v0.42
+# PIC-tutor v0.41
 
-当前合订 PDF 为 307 页；本 v0.42 版本在 v0.41 基础上补入边界判据审计，明确 3D AMR `particles_in_pml` 上游有符号 gate 与项目强化绝对值 gate 的证据分层。
+当前合订 PDF 为 307 页；本 v0.41 版本在 v0.40 基础上正式收口 RZ PSATD validation closure，包括 standard/current-correction/JRhom Langmuir 三 sibling、RZ Galilean current-correction paired contract、官方 2-rank RZ PML residual-field contract 和 secondary-emission EB source audit。
 
 版本日期：2026-07-12
-
-本次新增 `particles_in_pml` analysis source contract：审计确认上游 `analysis_particles_in_pml.py` 使用 `max(Ex.max(), Ey.max(), Ez.max())`，而项目独立 contract 使用逐分量 `max(abs(field))`；3D AMR sibling 的官方 `106.43539539129057 < 110` 与强化 `110.3993781372607 > 110` 因此不能合并成同一个“通过”结论。该审计只修改 PIC-tutor 文档和脚本，不修改 `../warpx`。
 
 本次增量完成 RZ JRhom first-stage handoff asset 的可重复重建与目标 checkout dry-run 验收：bundle、helper、unified diff、provenance、submission packet 和 PR draft 均由 MPI=2 ledger 重建；目标 WarpX 保持 `unstaged`，未写入上游源码。baseline helper 通过，`ll2-no-timeavg-cleaning` 负对照按预期拒绝，独立 contract 继续为 `passed=true`。
 

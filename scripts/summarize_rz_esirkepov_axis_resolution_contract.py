@@ -33,30 +33,34 @@ def main() -> int:
     parser.add_argument("--baseline-off", type=Path, required=True)
     parser.add_argument("--refined-on", type=Path, required=True)
     parser.add_argument("--refined-off", type=Path, required=True)
+    parser.add_argument("--particle-shape", type=int, default=1)
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
 
     rows = [
-        row("64x128 correction-on", load(args.baseline_on)),
-        row("64x128 correction-off", load(args.baseline_off)),
-        row("128x256 correction-on", load(args.refined_on)),
-        row("128x256 correction-off", load(args.refined_off)),
+        row(f"64x128 shape={args.particle_shape} correction-on", load(args.baseline_on)),
+        row(f"64x128 shape={args.particle_shape} correction-off", load(args.baseline_off)),
+        row(f"128x256 shape={args.particle_shape} correction-on", load(args.refined_on)),
+        row(f"128x256 shape={args.particle_shape} correction-off", load(args.refined_off)),
     ]
     baseline_on, baseline_off, refined_on, refined_off = rows
     result = {
         "contract": "RZ Esirkepov axis-correction resolution comparison",
+        "particle_shape": args.particle_shape,
         "rows": rows,
+        "baseline_off_all_gates_pass": bool(baseline_off["passed"]),
         "refined_off_all_gates_pass": bool(refined_off["passed"]),
         "correction_on_axis_residual_reduction": baseline_on["axis_charge_relative_residual"]
         / refined_on["axis_charge_relative_residual"],
         "interpretation": (
-            "For particle_shape=1, correction-off passes both field and charge gates at "
-            "both sampled resolutions, while correction-on preserves the field gate but "
-            "retains a nonzero axis charge residual. The separate shape=2/3/4 controls "
-            "show that turning correction off can fail the Er field gate for higher "
-            "shapes. Together these results support a resolution/axis-correction/shape "
-            "interaction; they do not justify changing the global default without "
-            "broader geometry and shape coverage."
+            f"For particle_shape={args.particle_shape}, correction-off baseline status is "
+            f"{'PASS' if baseline_off['passed'] else 'BOUNDARY'} and refined status is "
+            f"{'PASS' if refined_off['passed'] else 'BOUNDARY'}, while correction-on "
+            "preserves the field gate but retains a nonzero axis charge residual. The "
+            "separate shape=2/3/4 controls show that turning correction off can fail the "
+            "Er field gate at the coarse resolution. Together these results support a "
+            "resolution/axis-correction/shape interaction; they do not justify changing "
+            "the global default without broader geometry and shape coverage."
         ),
     }
     result["passed"] = bool(result["refined_off_all_gates_pass"])

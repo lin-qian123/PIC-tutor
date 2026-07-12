@@ -2445,6 +2445,8 @@ RZ + Esirkepov 还需要单独保留一个诊断边界：当前 2-rank case 的 
 
 随后把 shape=1 的同一 paired case 加密到 `128x256`：correction-on 的 `Er/Ez` field error 为 `2.797e-2/3.049e-2`，axis charge residual 降至 `1.520e-3`；correction-off 的 `Er/Ez` 为 `2.809e-2/3.662e-2`，charge residual 为 `9.353e-12`，field/charge 双 gate 均通过。四格汇总见 `runs/stage-c-validation/esirkepov_langmuir_rz_axis-resolution-comparison/contract.{json,md}`，脚本为 `scripts/summarize_rz_esirkepov_axis_resolution_contract.py`。这组结果只支持 resolution/axis-correction/shape interaction 的分层解释，不替代跨 geometry/order 的统一强守恒合同。
 
+同一汇总脚本随后参数化到 shape=2。`64x128` correction-off 的 `Er/Ez` field error 为 `0.1323/1.445e-2`，charge residual 为 `2.202e-12`；加密到 `128x256` 后，correction-off 的 `Er/Ez` 降至 `9.318e-3/7.775e-3`，charge residual 为 `9.644e-12`，field/charge 双 gate 均通过。correction-on 的高分辨率 field error 为 `9.321e-3/5.154e-3`，但 axis charge residual 仍为 `2.177e-3`。因此 shape=2 的 coarse field failure 可以归为分辨率边界，但 correction-on charge boundary 仍未闭合；报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_shape2_axis-resolution-comparison/contract.{json,md}`，详细说明见 `notes/code-reading/particles/53-rz-esirkepov-shape2-resolution-contract.md`。
+
 同一诊断也已扩展到 RCYLINDER/RSPHERE shape=1：默认 correction 下 charge residual 为 `4.711e-3/4.166e-2`，关闭后为 `3.505e-12/2.420e-11`。这表明 RCYLINDER 的 axis correction off 可以恢复当前强 gate，而 RSPHERE 虽明显改善仍略超 `1e-11`；两者均不支持直接修改全局默认值，完整对照见 `runs/stage-c-validation/esirkepov_radial_charge_axis-comparison/contract.{json,md}`。
 
 RSPHERE 的 64/128 resolution paired control 进一步显示：correction on 的 residual 为 `4.166e-2/1.390e-2`，correction off 为 `2.420e-11/9.843e-11`；四个 field gate 都通过，但四个 charge gate 都未闭合。因此这条证据只能说明 axis/resolution 组合敏感，不能替代正式收敛研究或作为全局默认参数修改依据。

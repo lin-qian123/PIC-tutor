@@ -1,10 +1,8 @@
-# PIC-tutor v0.44
+# PIC-tutor v0.43
 
-当前合订 PDF 为 307 页；本 v0.44 版本在 v0.43 基础上补入 RZ Esirkepov `particle_shape=2` 的分辨率四格对照，解释 correction-off 粗网格 field boundary 的分辨率依赖。
+当前合订 PDF 为 307 页；本 v0.43 版本在 v0.42 基础上补入 RZ Esirkepov 轴修正与分辨率四格对照，明确 `particle_shape=1` 的 correction-on/off 结果，以及 shape=2/3/4 的外推边界。
 
 版本日期：2026-07-12
-
-本次新增 shape=2 的 `64x128/128x256` paired runtime：correction-off 的 `Er` field error 从 `0.1323` 降至 `0.0093`，charge residual 为 `2.202e-12/9.644e-12`，高分辨率 field/charge 双 gate 通过；correction-on 高分辨率 field error 为 `9.321e-3/5.154e-3`，axis charge residual 为 `2.177e-3`，因此仍保留 charge boundary。该结果仅支持 shape/resolution/axis-correction 交互解释。
 
 本次新增 RZ Esirkepov `particle_shape=1` 的 `64x128/128x256` paired runtime：默认 correction-on 的 axis charge residual 从 `3.593e-3` 降至 `1.520e-3`，correction-off 在两档分辨率均通过 field/charge 双 gate，`128x256` 的 charge residual 为 `9.353e-12`。既有 shape=2/3/4 correction-off 的 `Er` field 边界仍保留，不能把 shape=1 结果外推为全局默认建议；未修改 `../warpx`。
 

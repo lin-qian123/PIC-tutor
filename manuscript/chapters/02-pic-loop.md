@@ -10,7 +10,9 @@
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.2 校准说明：本章已把主循环相关源码路径同步到当前 WarpX 目录结构 `Source/Evolve/`，并重核 `Evolve()`、`OneStep_nosub()` 与 FDTD/PSATD 分支的关键行号。章节仍保留基础文献缺口；Hockney-Eastwood、Yee 1966 等一手材料的 MinerU 笔记尚未完成，暂不把这些缺口伪装成已闭环引用。
+v0.2 校准说明：本章已把主循环相关源码路径同步到当前 WarpX 目录结构 `Source/Evolve/`，并重核 `Evolve()`、`OneStep_nosub()` 与 FDTD/PSATD 分支的关键行号。Yee 1966 现在已有 indexed-abstract-backed 资产和 9 项本地 contract，但 IEEE 原文 PDF/MinerU 仍未取得；Hockney-Eastwood 原书及其完整正文也仍未 materialize，因此本章继续不把这些缺口伪装成全文闭环引用。
+
+Yee 1966 的 indexed abstract 只支持一个窄的历史来源结论：Maxwell 方程可以被替换成有限差分方程，适当的 field-point placement 能处理 perfectly conducting surfaces，并以 conducting-cylinder scattering 作为例子。它足以解释为什么本章把 Yee 的空间交错和 PEC 边界放在同一条历史主线上，但不足以替代论文原始 stencil、时间层、色散推导或图表；对应 contract 见 `runs/stage-c-validation/yee-1966-indexed-abstract/contract.{json,md}`。
 
 ## 2.1 连续模型：Vlasov-Maxwell 系统
 

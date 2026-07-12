@@ -1,14 +1,12 @@
-# PIC-tutor v0.65
+# PIC-tutor v0.64
 
 本版新增 Hockney 1971 article-level abstract contract：8 项本地检查全部通过，正式题名、DOI、作者机构摘要、摘要级中文讲解和 full-text 缺失边界均已归档。该资产支持 collision/heating scaling、optimum path 和 `K_2` 的摘要级引用，但不替代 publisher PDF、MinerU 或逐段核对。
 
 本版又新增两篇 1974 particle-mesh 摘要级 contract：QPM/PPPM 与 force-shaping 各 8 项检查通过，补入 Gaussian cloud、potential shaping、sub-mesh resolution、charge-sharing hierarchy 和 force anisotropy 的来源边界；两篇 publisher full text 仍未 materialize。
 
-本版又新增 Yee 1966 indexed-abstract contract：9 项检查全部通过，固定 finite-difference Maxwell、field-point placement、PEC boundary 和 conducting-cylinder example 的窄证据范围，并保留 IEEE full text、PDF、MinerU 和逐式核对缺失边界。
-
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 311 页；本 v0.65 版本在 v0.63 基础上补入 Hockney/Goel/Eastwood 1974 两篇 particle-mesh 摘要级 contract，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 311 页；本 v0.64 版本在 v0.63 基础上补入 Hockney/Goel/Eastwood 1974 两篇 particle-mesh 摘要级 contract，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 

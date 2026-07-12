@@ -72,6 +72,7 @@
 - `Hockney 1971` 现已建立论文专属目录、access audit、摘要级中文讲解和 8 项本地 contract；两篇 1974 fallback 也已建立论文专属目录、摘要级中文讲解和 16/16 子检查 contract，三者证据分类均为 `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING`。其余 fallback article 在本机常用文献目录里仍未发现现成 PDF/MinerU 产物。
 - 当前 web 证据层级已进一步明确：
   - `Hockney 1971 / Hockney et al. 1974 / Eastwood-Hockney 1974` 已有正式题名、DOI、外部摘要和本地 abstract contract，但三者 full text 均未 materialize
+  - `Yee 1966` 已有正式题名、DOI、OpenAIRE/Crossref indexed abstract 和本地 9 项 contract；IEEE full text 端点当前返回 HTML access response，未 materialize 为 PDF
   - 但项目内仍未建立可直接走 MinerU 的本地 full-text PDF
   - `Hockney et al. 1974` 虽然能搜到 ScienceDirect `.../pdf` 端点，但当前环境实际落到 download-preparation / browser-compatibility 页面，不能当成已可 materialize 的正文
 

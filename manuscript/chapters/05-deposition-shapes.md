@@ -2472,6 +2472,22 @@ RSPHERE 的 64/128 resolution paired control 进一步显示：correction on 的
 
 这组径向结果的源码合同现在也已单独验收：`scripts/audit_radial_axis_volume_contract.py` 固定了 `boundary.verboncoeur_axis_correction` 的默认值和解析入口，确认 RZ/RCYLINDER 使用 `1/3` 对 `1/4`、RSPHERE 使用 `1/4` 对 `1/8` 的轴体积因子，并确认 `ApplyInverseVolumeScalingToChargeDensity()` 在 `rho_fp` 与 `rho_buf` 路径中的调用时机。因而本节的准确边界是：径向 field shape coverage 已有运行证据，charge residual 的轴体积/诊断耦合也有源码映射，但尚未形成跨 geometry、shape、resolution 的统一强守恒合同。
 
+在已有源码分派表之外，还需要一张“证据覆盖表”，因为 geometry、shape/order、AMR、axis correction 和 implicit solver 是相互独立的维度。当前最强的运行级覆盖可压缩为：
+
+| family | geometry | shape/order | 当前证据 | 证据范围 |
+|---|---|---:|---|---|
+| Esirkepov | `1D_Z` | 1 | field + charge PASS | Langmuir |
+| Esirkepov | `XZ` | 1/2/3/4 | field + charge PASS | 2D Langmuir siblings |
+| Esirkepov | `3D` | 1 | field + charge PASS | Langmuir |
+| Esirkepov | `XZ + AMR` | 1 | field PASS；level charge BOUNDARY | 2D MR overlay |
+| Esirkepov | `RZ` | 1/2/3/4 | field PASS；correction-on charge BOUNDARY；correction-off refined PASS | axis correction/resolution family |
+| Esirkepov | `RCYLINDER/RSPHERE` | 1/2/3/4 | radial `Er` PASS | 不含完整 charge/Gauss-law |
+| Villasenor implicit | `XZ` | 2 | energy + Gauss-law PASS | native/filtered/PICMI siblings |
+| Villasenor implicit | `XZ` | 4 | cropping Gauss-law PASS | near-boundary cropping |
+| Villasenor implicit | `RZ` | 2 | build/runtime BOUNDARY | 未进入物理计算 |
+
+这张矩阵由 `scripts/summarize_deposition_geometry_order_coverage.py` 从现有 contract/reference 生成，报告见 `runs/stage-c-validation/deposition-geometry-order-coverage-matrix/coverage-matrix.{json,md}`。它明确关闭的是“证据在哪里、证据能支持什么”的索引缺口，不是所有 Cartesian product 的回归缺口。当前仍不能声明：RZ correction-on charge 已闭合、RCYLINDER/RSPHERE 已有完整 charge contract、2D MR 已完成 route-count/intermediate-field 证明、RZ implicit Villasenor 已进入物理计算，或 3D Esirkepov shape=2/3/4 已有端到端 runtime coverage。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

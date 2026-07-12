@@ -845,9 +845,9 @@ topology 仍作为边界。</p>
 consumer，但不宣称 resonance-island 或 trajectory-crossing topology
 已自动分类。</p>
 <p>本版又加入 sampled Poincare topology
-classifier：它会计算截面多边形候选自交和轨道间交叉，但当前 8
-点/轨道采样未达到 16 点最低阈值，结果保持
-<code>INSUFFICIENT_SAMPLING</code>，不提升为论文 Fig. 2 topology
+classifier：它会计算截面多边形候选自交和轨道间交叉；32³、2201-frame
+长轨道已达到 18/19 点/轨道阈值，但三种 pusher 的候选签名一致，结果保持
+<code>REVIEW_REQUIRED</code>，不提升为论文 Fig. 2 topology
 reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
 汇总本地 135 条 <code>contract.json</code>，保留原始
@@ -7731,15 +7731,15 @@ drift-preservation 的本地强断言。本轮新增的
 专用盒中对 Boris、Vay、Higuera-Cary 各跑 1001 帧和 5
 个初始条件，全部产生 <code>x=0, p_x&gt;0</code> 截面交叉；最大
 <code>H</code>/<code>I_y</code> 相对漂移为
-<code>1.532\times10^{-3}</code>/<code>8.206\times10^{-3}</code>。分析器明确把
-WarpX 机械 <code>p_z</code> 映射回论文的
-<code>P_z-A_z</code>，因此这是一条可复核的 section/invariant
-consumer。新增的
-<code>scripts/classify_higuera_poincare_topology.py</code>
-已实现候选自交和轨道间线段交叉计算，但当前每条轨道只有 8
-个截面点，合同返回
-<code>INSUFFICIENT_SAMPLING</code>；粗采样自交不被解释为 resonance
-island，不能夸写成论文 Fig. 2 的完整 topology reproduction。</p>
+<code>1.532\times10^{-3}</code>/<code>8.206\times10^{-3}</code>。随后在
+32³、2201-frame 长轨道控制中，三种 pusher 均产生 18/19
+个截面点；<code>scripts/classify_higuera_poincare_topology.py</code>
+已进入 <code>REVIEW_REQUIRED</code>，但三种 pusher
+的候选自交/交叉签名完全一致。分析器明确把 WarpX 机械 <code>p_z</code>
+映射回论文的 <code>P_z-A_z</code>，因此这是一条可复核的
+section/invariant
+consumer；候选几何仍需经验证的点序和更密参考轨道确认，不能夸写成论文
+Fig. 2 的完整 topology reproduction。</p>
 <p>本轮新增的 <code>scripts/analyze_larmor_orbit_contract.py</code> 已把
 <code>larmor</code> 的 6 个 Full plotfile
 组织成逐帧离散轨道账本，确认时间序列、1 粒子/species、有限状态和输出

@@ -97,18 +97,35 @@ def main() -> int:
         "topology_classifier_executed": True,
     }
     sampling_sufficient = all(case["sampling_sufficient"] for case in cases)
+    signatures = [
+        (
+            tuple(sorted(case["self_intersection_candidates"].items())),
+            tuple(sorted(case["pairwise_intersection_candidates"].items())),
+        )
+        for case in cases
+    ]
+    candidate_signature_consistent = len(set(signatures)) == 1
+    if sampling_sufficient:
+        status = "REVIEW_REQUIRED"
+        reason = "Sampling threshold is met, but time-ordered polyline intersections need a validated section-point ordering and denser reference orbit before they can be promoted to resonance-island or trajectory-crossing evidence."
+        next_required_evidence = "Review the section-point ordering against a denser reference orbit and add a validated topology definition before enabling the physical gate."
+    else:
+        status = "INSUFFICIENT_SAMPLING"
+        reason = "The available runtime contract contains too few section points per orbit. Polygon crossings at this sampling density are candidates, not a reliable resonance-island or trajectory-crossing classification."
+        next_required_evidence = "Rerun the three pushers with enough positive-p_x crossings to meet the minimum point threshold, then review self- and pairwise-intersection candidates against a denser reference orbit."
     result = {
         "contract": "Higuera-Cary sampled Poincare topology classifier",
         "passed": all(checks.values()),
         "checks": checks,
         "topology_gate_passed": False,
-        "status": "INSUFFICIENT_SAMPLING" if not sampling_sufficient else "REVIEW_REQUIRED",
+        "status": status,
         "minimum_points_for_topology": MIN_POINTS_FOR_TOPOLOGY,
+        "candidate_signature_consistent_across_pushers": candidate_signature_consistent,
         "cases": cases,
         "evidence_boundary": {
             "topology_gate_promoted": False,
-            "reason": "The available runtime contract contains only 8 section points per orbit. Polygon crossings at this sampling density are candidates, not a reliable resonance-island or trajectory-crossing classification.",
-            "next_required_evidence": "Rerun the three pushers with enough positive-p_x crossings to meet the minimum point threshold, then review self- and pairwise-intersection candidates against a denser reference orbit.",
+            "reason": reason,
+            "next_required_evidence": next_required_evidence,
         },
     }
     args.output_json.parent.mkdir(parents=True, exist_ok=True)

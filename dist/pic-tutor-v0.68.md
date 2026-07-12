@@ -10,7 +10,7 @@
 
 本版又新增 Higuera-Cary Poincare section runtime contract：64³ 专用盒中三种 pusher 各输出 1001 帧，5 个初始条件均产生正向 `p_x` 的 `x=0` 截面交叉；最大 `H`/`I_y` 相对漂移为 `1.532e-3/8.206e-3`。该证据建立 section/invariant consumer，但不宣称 resonance-island 或 trajectory-crossing topology 已自动分类。
 
-本版又加入 sampled Poincare topology classifier：它会计算截面多边形候选自交和轨道间交叉，但当前 8 点/轨道采样未达到 16 点最低阈值，结果保持 `INSUFFICIENT_SAMPLING`，不提升为论文 Fig. 2 topology reproduction。
+本版又加入 sampled Poincare topology classifier：它会计算截面多边形候选自交和轨道间交叉；32³、2201-frame 长轨道已达到 18/19 点/轨道阈值，但三种 pusher 的候选签名一致，结果保持 `REVIEW_REQUIRED`，不提升为论文 Fig. 2 topology reproduction。
 
 本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 135 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
@@ -4753,7 +4753,7 @@ $$
 
 WarpX 参数文档把 `algo.particle_pusher = vay` 和 `higuera` 分别列为可选 pusher，并引用 `param-Vaypop2008` 与 `param-HigueraPOP2017`。因此书中后续做 benchmark 时应至少比较 Boris、Vay、Higuera-Cary 在强磁场、相对论漂移和 boosted-frame 场景下的轨道误差。
 
-当前本地 regression 和这篇文献的配对也要写得保守。最直接能接 Higuera-Cary 文献主线的是 `Examples/Tests/particle_pusher`：它在 `algo.particle_pusher = higuera`、force-free 常量外部 `E/B` 构型下，用 `analysis.py` 强检查长时间推进后 `x \approx 0`，因此可以当作 relativistic force-free / drift-preservation 的本地强断言。本轮新增的 `scripts/analyze_higuera_poincare_contract.py` 又在 64³ 专用盒中对 Boris、Vay、Higuera-Cary 各跑 1001 帧和 5 个初始条件，全部产生 `x=0, p_x>0` 截面交叉；最大 `H`/`I_y` 相对漂移为 `1.532\times10^{-3}`/`8.206\times10^{-3}`。分析器明确把 WarpX 机械 `p_z` 映射回论文的 `P_z-A_z`，因此这是一条可复核的 section/invariant consumer。新增的 `scripts/classify_higuera_poincare_topology.py` 已实现候选自交和轨道间线段交叉计算，但当前每条轨道只有 8 个截面点，合同返回 `INSUFFICIENT_SAMPLING`；粗采样自交不被解释为 resonance island，不能夸写成论文 Fig. 2 的完整 topology reproduction。
+当前本地 regression 和这篇文献的配对也要写得保守。最直接能接 Higuera-Cary 文献主线的是 `Examples/Tests/particle_pusher`：它在 `algo.particle_pusher = higuera`、force-free 常量外部 `E/B` 构型下，用 `analysis.py` 强检查长时间推进后 `x \approx 0`，因此可以当作 relativistic force-free / drift-preservation 的本地强断言。本轮新增的 `scripts/analyze_higuera_poincare_contract.py` 又在 64³ 专用盒中对 Boris、Vay、Higuera-Cary 各跑 1001 帧和 5 个初始条件，全部产生 `x=0, p_x>0` 截面交叉；最大 `H`/`I_y` 相对漂移为 `1.532\times10^{-3}`/`8.206\times10^{-3}`。随后在 32³、2201-frame 长轨道控制中，三种 pusher 均产生 18/19 个截面点；`scripts/classify_higuera_poincare_topology.py` 已进入 `REVIEW_REQUIRED`，但三种 pusher 的候选自交/交叉签名完全一致。分析器明确把 WarpX 机械 `p_z` 映射回论文的 `P_z-A_z`，因此这是一条可复核的 section/invariant consumer；候选几何仍需经验证的点序和更密参考轨道确认，不能夸写成论文 Fig. 2 的完整 topology reproduction。
 
 本轮新增的 `scripts/analyze_larmor_orbit_contract.py` 已把 `larmor` 的 6 个 Full plotfile 组织成逐帧离散轨道账本，确认时间序列、1 粒子/species、有限状态和输出 cadence，并给出由 `B_y` 与 `\gamma` 推出的 Boris rotation-angle 参考值。这个结果只提高了现有 checksum case 的可观测性；由于输入仍含 AMR/PML/current correction/divergence cleaning，且没有 half-step velocity 输出，仍不能把它升级为 Vay Appendix B 的 gyroradius 复现或 Higuera-Cary 的 Poincare topology gate。报告见 `runs/stage-c-validation/larmor_single_process/larmor-orbit-contract.{json,md}`。
 

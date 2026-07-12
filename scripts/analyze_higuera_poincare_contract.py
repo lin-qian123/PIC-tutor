@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -131,7 +132,8 @@ def main() -> int:
     parser.add_argument("--output-md", type=Path, required=True)
     args = parser.parse_args()
 
-    cases = [collect_case(run_dir) for run_dir in args.run_dirs]
+    with ProcessPoolExecutor(max_workers=3) as executor:
+        cases = list(executor.map(collect_case, args.run_dirs))
 
     checks = {
         "three_cases_present": len(cases) == 3,

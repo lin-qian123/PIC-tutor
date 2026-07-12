@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 703,
-  "total_bytes": 27457914,
+  "total_bytes": 27459686,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1512925,
-      "sha256": "ae37602d60600c1fd1805dd5850c5ab0f25716c7cdee233d071d3d03479ce3ad"
+      "bytes": 1512929,
+      "sha256": "4dba405818473d3e6a944073fe337c5c1a772dba447344456f4f9fd874b29d4c"
     },
     {
       "path": "TODO.md",
-      "bytes": 1356396,
-      "sha256": "c779584a7adf580c27798c7bb54a5b0e3fca777fca863ac1b035d1c3567f0e5e"
+      "bytes": 1356439,
+      "sha256": "0bdeb3bfb056d298f02c5f5e8bee0f99d6472b5d02b4e1a62c1db15dcc07d342"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5740505,
-      "sha256": "7430e70ba064025cb3562db4378662e99445ee23579de685264265e56389b81c"
+      "bytes": 5740595,
+      "sha256": "946624a02b75fe507a4ae1369d8dd84587f18e9f361ff153d6f30cb1c5ebbea1"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1068739,
-      "sha256": "dc34eca23ef584ae52543d7d841c38051c358149c923d32cde8dfd33414b7876"
+      "bytes": 1068829,
+      "sha256": "63f382f30911e3c1161ccb55365eed3b5a8886aa8ca179024964efadab49ba62"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3364354,
-      "sha256": "23704091d05c07b0e660e9f75af14738137581aab466614aeba695ebc8bf189d"
+      "bytes": 3364454,
+      "sha256": "e51d7367e687fdfded0f4bf8c825d75310459f8e86f4f22671384f31f6a1b3c5"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "cda540a67fe3437455b40cf36b27f4f4ee74997dac684dbefcea6f7bdc6741dc"
+      "sha256": "1ebf6f749e3e9efbd021f89023bb33bd330181945a6f3a5254bd9b464a7f274e"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 40636,
-      "sha256": "479e0577810394839663ad5d4c995042e8a9597605252f624da4ca3366c55705"
+      "bytes": 40673,
+      "sha256": "aaecdbe8c44abf151b3442996f10ac77aa1bcda96a6e861d77fd6c539e26d01a"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 61668,
-      "sha256": "b05eafc1279fcde68167dc4c41205bfa5a1cc34ece6a6b6ec9b61d1c1fcbb97f"
+      "bytes": 61706,
+      "sha256": "df3d69f2c5380731fbffef54b6eb652265e8243e6fbddc909a0b226ca3d1e464"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 147740,
-      "sha256": "689352d84e0756905e86aa9751c68db895cb93c09902b32a4c1b727743dfd8cd"
+      "bytes": 147792,
+      "sha256": "b88b108b71e987787340155286163c19937dfec596b33f0d8c72cfcee0959419"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -2052,8 +2052,8 @@
     },
     {
       "path": "notes/code-reading/particles/65-higuera-poincare-topology-classifier.md",
-      "bytes": 1036,
-      "sha256": "37f08ff41c421ac6ec666c3592bb2a3cb517fdec31d0abd7502e8ea44073805e"
+      "bytes": 1335,
+      "sha256": "c64907cc668e5a1cb3f65f721c27f2412fd1a333427d4ad68f23e00cb5c63f12"
     },
     {
       "path": "notes/code-reading/particles/README.md",
@@ -2252,8 +2252,8 @@
     },
     {
       "path": "scripts/analyze_higuera_poincare_contract.py",
-      "bytes": 8179,
-      "sha256": "3f0c8c65baf4d3054ac44be92a402a9e8d9fde2560803ffc95d7c8a266cc03a0"
+      "bytes": 8286,
+      "sha256": "cba00f87871f242adfc6acb830a42546cf754c1f2e628b8856a304991262cfda"
     },
     {
       "path": "scripts/analyze_implicit_picard_energy_contract.py",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "scripts/classify_higuera_poincare_topology.py",
-      "bytes": 5951,
-      "sha256": "0bcf223d7f67dcc7100f227b0c2911c209315f9c2bcca298dd26d650eea15aa3"
+      "bytes": 6863,
+      "sha256": "9dfdecd2f20c1e5b3db268c7e28ea9a8bac911567d841c8d452c8e70c3c349f3"
     },
     {
       "path": "scripts/compare_energy_conserving_thermal_plasma_family.py",

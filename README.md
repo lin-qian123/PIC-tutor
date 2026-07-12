@@ -26,7 +26,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 135 条 `contrac
 
 2026-07-13：完成 Higuera-Cary Poincare section runtime contract：64³ 专用盒中 Boris/Vay/Higuera-Cary 各运行 1001 帧、5 个初始条件，`x=0` 正向 `p_x` 截面结构检查全部通过；最大 `H`/`I_y` 相对漂移分别为 `1.532e-3`/`8.206e-3`。论文规范动量与 WarpX 机械动量的转换已写入分析器和报告；topology classifier 已有执行入口但当前采样不足，不宣称完整 Fig. 2 复现。
 
-2026-07-13：新增 sampled Poincare topology classifier：`scripts/classify_higuera_poincare_topology.py` 已能计算候选自交、轨道间线段交叉和多边形面积，但当前 8 点/轨道采样不足，合同状态为 `INSUFFICIENT_SAMPLING`，未提升为 topology PASS；下一步需重跑至少 16 个截面点/轨道的长轨道数据。
+2026-07-13：新增 sampled Poincare topology classifier：`scripts/classify_higuera_poincare_topology.py` 已能计算候选自交、轨道间线段交叉和多边形面积；32³、2201-frame 长轨道已达到 18/19 点/轨道的采样阈值，但三种 pusher 的候选签名完全一致，合同保持 `REVIEW_REQUIRED`，未提升为 topology PASS。
 
 AMR transition-zone 的下一阶段接口已落成可执行设计合同：`python scripts/validate_transition_zone_route_contract.py --input docs/transition-zone-route-contract-example.json` 正例通过、破坏 route count 的负例被拒绝；这仍是 schema/analysis 层验证，不是当前 WarpX runtime route proof。
 

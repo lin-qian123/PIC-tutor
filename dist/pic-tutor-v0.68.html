@@ -848,6 +848,10 @@ acquisition 排序练习</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版又补齐 Vay Cartesian shape family 的 2-rank case-local runtime
+contract：2D/3D × shape=1/2/3/4 共 8 个 producer 均通过官方
+<code>divE-rho/epsilon_0</code> 的 <code>1e-3</code> gate；shape=1/2/4
+是本地 sibling，不写成上游 CMake 新注册项。</p>
 <p>本版又补齐官方 Vay 2-rank runtime consumer：2D/3D shape=3 按 CMake
 注册规模运行并通过 <code>divE-rho/epsilon_0</code> 的 <code>1e-3</code>
 gate，结果为 <code>4.0411e-4/6.0266e-4</code>；shape family 的 2-rank
@@ -895,7 +899,7 @@ verification。</p>
 <code>177</code> 条。</p>
 <p>本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖
 <code>FieldProbe</code>、<code>ParticleHistogram2D</code>、<code>LoadBalanceCosts</code>
-的官方输入和 analysis consumer；公开证据索引当前为 <code>185</code>
+的官方输入和 analysis consumer；公开证据索引当前为 <code>186</code>
 条。</p>
 <p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
 组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
@@ -15575,6 +15579,16 @@ Cartesian shape family 单进程证据缺口；shape family 的 2-rank
 shape=3 Cartesian case 的 2-rank producer/consumer 缺口；它不外推到
 shape family 的 2-rank 全组合、AMR、边界裁剪或正式收敛阶。详见
 <code>notes/code-reading/particles/76-vay-mpi2-runtime-contract.md</code>。</p>
+<p>最后将 shape=1/2/4 的 2-rank sibling 补齐，并与 shape=3 官方 case
+合并成 8-case family：2D
+<code>error_rel=4.6717e-4/3.8191e-4/4.0411e-4/4.2829e-4</code>，3D
+<code>5.9792e-4/5.7441e-4/6.0266e-4/6.3559e-4</code>，均低于
+<code>1e-3</code>。该结果分类为
+<code>RUNTIME_2RANK_VAY_SHAPE_FAMILY_PASS_2D_3D_CASE_LOCAL</code>，关闭的是
+Cartesian shape=1..4 的两进程 case-local family 缺口；shape=1/2/4
+尚未成为上游 CMake 注册项，AMR、边界裁剪、RZ/1D、非 Cartesian geometry
+和正式收敛阶仍保持边界。详见
+<code>notes/code-reading/particles/77-vay-mpi2-shape-family-contract.md</code>。</p>
 <p>维护台账见
 <code>notes/code-reading/particles/72-deposition-geometry-order-gap-register.md</code>，由
 <code>scripts/audit_deposition_geometry_order_gap_register.py</code>

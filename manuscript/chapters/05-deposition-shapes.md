@@ -2572,6 +2572,8 @@ Vay 这一行现在有了更具体的正向边界。`scripts/audit_vay_geometry_
 
 随后补做了官方 CMake 注册规模的 2-rank replay：2D 使用 `warpx.numprocs=2 1`，3D 使用 `warpx.numprocs=2 1 1`，最终 `divE-rho/epsilon_0` 相对误差分别为 `4.0411e-4` 和 `6.0266e-4`，均通过 `1e-3` gate。该结果分类为 `RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D`，关闭的是已注册 shape=3 Cartesian case 的 2-rank producer/consumer 缺口；它不外推到 shape family 的 2-rank 全组合、AMR、边界裁剪或正式收敛阶。详见 `notes/code-reading/particles/76-vay-mpi2-runtime-contract.md`。
 
+最后将 shape=1/2/4 的 2-rank sibling 补齐，并与 shape=3 官方 case 合并成 8-case family：2D `error_rel=4.6717e-4/3.8191e-4/4.0411e-4/4.2829e-4`，3D `5.9792e-4/5.7441e-4/6.0266e-4/6.3559e-4`，均低于 `1e-3`。该结果分类为 `RUNTIME_2RANK_VAY_SHAPE_FAMILY_PASS_2D_3D_CASE_LOCAL`，关闭的是 Cartesian shape=1..4 的两进程 case-local family 缺口；shape=1/2/4 尚未成为上游 CMake 注册项，AMR、边界裁剪、RZ/1D、非 Cartesian geometry 和正式收敛阶仍保持边界。详见 `notes/code-reading/particles/77-vay-mpi2-shape-family-contract.md`。
+
 维护台账见 `notes/code-reading/particles/72-deposition-geometry-order-gap-register.md`，由 `scripts/audit_deposition_geometry_order_gap_register.py` 验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。
 
 ## 5.15 本章结论

@@ -15,7 +15,7 @@
 | `amr_route_count` | `UNPROVEN` | 接入真实 intermediate-field/route ledger |
 | `rz_implicit_villasenor` | `PRE_PHYSICS_BOUNDARY` | 取得兼容 PETSc/AMReX build 后重跑 |
 | `villasenor_geometry_order` | `PARTIAL` | 每次增加一个带独立 consumer 的 sibling |
-| `vay_geometry_order` | `PARTIAL` | 已完成 2D/3D shape=1..4 单进程 family 与官方 2D/3D shape=3 2-rank consumer；AMR/边界和完整几何组合仍待补 |
+| `vay_geometry_order` | `PARTIAL` | 已完成 2D/3D shape=1..4 的 2-rank Cartesian case-local family；AMR/边界和完整几何组合仍待补 |
 | `formal_convergence_order` | `UNPROVEN` | 固定 observable、误差范数和 resolution family 后做 study |
 
 ## 使用边界

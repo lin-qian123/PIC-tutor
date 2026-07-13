@@ -2,6 +2,8 @@
 
 # PIC-tutor v0.68
 
+本版又补齐 Vay Cartesian shape family 的 2-rank case-local runtime contract：2D/3D × shape=1/2/3/4 共 8 个 producer 均通过官方 `divE-rho/epsilon_0` 的 `1e-3` gate；shape=1/2/4 是本地 sibling，不写成上游 CMake 新注册项。
+
 本版又补齐官方 Vay 2-rank runtime consumer：2D/3D shape=3 按 CMake 注册规模运行并通过 `divE-rho/epsilon_0` 的 `1e-3` gate，结果为 `4.0411e-4/6.0266e-4`；shape family 的 2-rank 全组合、AMR/边界和正式收敛阶仍保持边界。
 
 本版又补入 Vay Cartesian shape-family runtime contract：2D/3D 的 `particle_shape=1/2/3/4` 共 8 个单进程 producer 均通过官方 `divE-rho/epsilon_0` analysis 的 `1e-3` gate；其中 6 个为新增 sibling。该证据不替代官方 2-rank CMake 回归、AMR/边界组合或正式收敛阶研究。
@@ -22,7 +24,7 @@
 
 本版又修正第 8 章 `8.14.1` 孤立标题层级为正式 `8.14` 小节，并将正文验证矩阵的合同数口径更新为当前 `177` 条。
 
-本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `185` 条。
+本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `186` 条。
 
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 
@@ -9847,6 +9849,8 @@ Vay 这一行现在有了更具体的正向边界。`scripts/audit_vay_geometry_
 在此基础上，又对同一组官方 2D/3D Cartesian 输入分别切换 `particle_shape=1/2/3/4`，八个单进程 producer（其中六个为本轮新增 sibling）均写出最终 plotfile，官方 analysis 的 `error_rel` 分别为 2D `1.4635e-4/1.4689e-4/1.5543e-4/1.6473e-4`、3D `2.8824e-4/2.7647e-4/2.9007e-4/3.0592e-4`，全部低于 `1e-3`。该结果分类为 `RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D`，只关闭支持的 Cartesian shape family 单进程证据缺口；shape family 的 2-rank 全组合、AMR、边界裁剪、RZ/1D 和正式收敛阶仍保持边界。详见 `notes/code-reading/particles/75-vay-shape-family-runtime-contract.md`。
 
 随后补做了官方 CMake 注册规模的 2-rank replay：2D 使用 `warpx.numprocs=2 1`，3D 使用 `warpx.numprocs=2 1 1`，最终 `divE-rho/epsilon_0` 相对误差分别为 `4.0411e-4` 和 `6.0266e-4`，均通过 `1e-3` gate。该结果分类为 `RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D`，关闭的是已注册 shape=3 Cartesian case 的 2-rank producer/consumer 缺口；它不外推到 shape family 的 2-rank 全组合、AMR、边界裁剪或正式收敛阶。详见 `notes/code-reading/particles/76-vay-mpi2-runtime-contract.md`。
+
+最后将 shape=1/2/4 的 2-rank sibling 补齐，并与 shape=3 官方 case 合并成 8-case family：2D `error_rel=4.6717e-4/3.8191e-4/4.0411e-4/4.2829e-4`，3D `5.9792e-4/5.7441e-4/6.0266e-4/6.3559e-4`，均低于 `1e-3`。该结果分类为 `RUNTIME_2RANK_VAY_SHAPE_FAMILY_PASS_2D_3D_CASE_LOCAL`，关闭的是 Cartesian shape=1..4 的两进程 case-local family 缺口；shape=1/2/4 尚未成为上游 CMake 注册项，AMR、边界裁剪、RZ/1D、非 Cartesian geometry 和正式收敛阶仍保持边界。详见 `notes/code-reading/particles/77-vay-mpi2-shape-family-contract.md`。
 
 维护台账见 `notes/code-reading/particles/72-deposition-geometry-order-gap-register.md`，由 `scripts/audit_deposition_geometry_order_gap_register.py` 验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。
 

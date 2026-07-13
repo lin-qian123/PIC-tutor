@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 185,
+  "record_count": 186,
   "status_counts": {
-    "PASS": 133,
+    "PASS": 134,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 112,
+    "PASS": 113,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 33
@@ -2532,6 +2532,17 @@
       "contract": "official Vay deposition 2D/3D 2-rank runtime consumer",
       "classification": "RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D",
       "scope": "official vay_deposition CMake entries, official 2D/3D inputs, two-rank producers and upstream divE-rho/epsilon_0 analysis; not full geometry/order Cartesian product, AMR, non-Cartesian geometry, or formal convergence order",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "vay-mpi2-shape-family",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Vay deposition 2D/3D 2-rank shape-family runtime consumer",
+      "classification": "RUNTIME_2RANK_VAY_SHAPE_FAMILY_PASS_2D_3D_CASE_LOCAL",
+      "scope": "2D/3D Cartesian Vay inputs with particle_shape 1..4, two-rank producers and upstream divE-rho/epsilon_0 analysis; shape 1/2/4 are case-local siblings and shape 3 is the registered official case; not AMR, non-Cartesian geometry, boundary cropping, or formal convergence order",
       "metrics": {
         "passed": true
       }

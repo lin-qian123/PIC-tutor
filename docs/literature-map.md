@@ -5,6 +5,7 @@
 - BibTeX 条目数：251
 - 本地 PDF 数：42
 - 分类为自动初筛；正式章节必须阅读论文或官方文档后再引用。
+- 仍标记为 `待分类` 的 83 条条目已有独立的保守 acquisition triage：见 `docs/literature-pending-triage.md`；该文件不把关键词候选主题升级为论文证据。
 
 ## 基础章节优先清单
 

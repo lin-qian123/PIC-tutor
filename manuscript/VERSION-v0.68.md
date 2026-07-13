@@ -1,8 +1,4 @@
-# PIC-tutor v0.69
-
-本版为第 9 章补入 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 83 条 BibTeX 条目生成保守的候选主题、章节入口、P1/P2/P3 优先级和获取动作。该 triage 只服务于 acquisition/read queue，不把标题关键词、metadata 或建议章节升级为全文阅读或正文证据。
-
-本版由 `scripts/verify_v69_build.py` 验收，当前合订 PDF 为 326 页。
+# PIC-tutor v0.68
 
 本版又固化 Vay + AMR 的 source guard：当前 `WarpX.cpp` 在 `Vay && maxLevel() > 0` 时于初始化阶段拒绝运行，分类为 `SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED`；不把该支持边界写成 AMR physics PASS/FAIL。
 
@@ -108,7 +104,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前 v0.69 合订 PDF 为 326 页；本版在 v0.68 基础上补入第 9 章待分类文献的保守 acquisition/read triage，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 325 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同、LeeCPC2015 publisher-abstract boundary、第 6 章 FieldSolver source crosswalk 和第 7 章 boundary/AMR source crosswalk，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 

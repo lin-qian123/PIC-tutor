@@ -8,7 +8,9 @@
 
 2026-07-13：第 5 章新增 Vay Cartesian shape-family runtime contract：2D/3D 的 shape=1/2/3/4 共 8 个单进程 producer 均通过官方 `divE-rho/epsilon_0` analysis；该结果不替代 2-rank 官方回归或正式收敛阶证明。
 
-当前 v0.68 合订 PDF 为 325 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-9 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.69 合订 PDF 为 326 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v69_build.py` 验收。第 1-9 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+
+2026-07-13：第 9 章新增 `docs/literature-pending-triage.md`，对 83 条仍待分类 BibTeX 条目给出保守候选主题、章节入口、优先级和获取动作；该 triage 是 acquisition/read queue，不是全文阅读或正文证据。
 
 2026-07-13：第 5 章新增 geometry/order coverage gap register，统一登记 7 项已知缺口及其下一步证据入口；该 negative-space contract 不替代 runtime physics proof。
 

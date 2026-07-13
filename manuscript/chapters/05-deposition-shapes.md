@@ -2669,6 +2669,12 @@ v0.84 将“下一步要做什么”进一步固定成预注册，而不是在�
 
 当前机器的二进制和 12 组输入模板均存在，但没有 `mpiexec`/`mpirun`，所以 preflight 分类为 `REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING`。单进程替代被脚本明确禁止；这是一条执行环境边界，不是第二 family 的结果，也不改变正式收敛阶仍未关闭的判断。报告见 `docs/formal-convergence-repeat-preflight.md` 和 `runs/stage-c-validation/formal-convergence-repeat-preflight/contract.json`。
 
+### 5.14.9 v0.86 第二组 family 的输入与产物合同
+
+v0.86 将 runner 的“可启动”与“产物可用”分开检查。执行前，脚本逐个核对 12 个模板的 `inputs`、`FILE = ...` 引用文件、`diag_type = Full` 和 diagnostics `intervals`；因此目录存在不再等价于输入可运行。执行时仍固定使用 `mpiexec -n 2` 或等价的 `mpirun -n 2`，不允许降级为单进程。执行后，每个 producer 必须同时满足退出码为 0、生成 `producer.log`、生成 `warpx_used_inputs`，并在 `diags/` 下至少出现一个 `diag*` 目录。任何一项缺失都分类为 `REPEAT_FAMILY_RUNNER_BLOCKED_INPUT_OR_OUTPUT_CONTRACT`，而不是把命令启动成功写成有效 runtime evidence。
+
+当前机器仍在执行前阶段被缺少 MPI launcher 阻断，因此本节只关闭复现链的输入/产物判据，不关闭第二组 family、正式收敛阶或 charge boundary。合同实现见 `scripts/run_formal_convergence_repeat_family.py`，原始 preflight 见 `runs/stage-c-validation/formal-convergence-repeat-preflight/contract.json`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

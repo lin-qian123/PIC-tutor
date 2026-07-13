@@ -61,6 +61,44 @@ def specs() -> list[dict[str, str]]:
     return rows
 
 
+def input_contract(root: Path, template: Path) -> dict[str, object]:
+    input_path = template / "inputs"
+    if not input_path.is_file():
+        return {
+            "inputs_present": False,
+            "referenced_files_present": False,
+            "diagnostics_configured": False,
+            "input_files": [],
+        }
+    text = input_path.read_text(encoding="utf-8")
+    referenced = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("FILE ="):
+            referenced.append(stripped.split("=", 1)[1].strip())
+    input_files = [input_path]
+    input_files.extend(template / name for name in referenced)
+    return {
+        "inputs_present": input_path.stat().st_size > 0,
+        "referenced_files_present": all(path.is_file() for path in input_files),
+        "diagnostics_configured": all(
+            marker in "\n".join(path.read_text(encoding="utf-8") for path in input_files)
+            for marker in ("diag_type = Full", "intervals")
+        ),
+        "input_files": [str(path.relative_to(root)) for path in input_files],
+    }
+
+
+def output_contract(run_dir: Path) -> dict[str, bool]:
+    diagnostic_dirs = [path for path in (run_dir / "diags").glob("diag*") if path.is_dir()]
+    return {
+        "producer_log_present": (run_dir / "producer.log").is_file(),
+        "used_inputs_present": (run_dir / "warpx_used_inputs").is_file(),
+        "diagnostics_present": (run_dir / "diags").is_dir(),
+        "diagnostic_dirs_present": bool(diagnostic_dirs),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=ROOT)
@@ -75,11 +113,28 @@ def main() -> int:
         template = root / item["template"]
         binary = (root / item["binary"]).resolve()
         run_name = f"formal-repeat-{item['geometry'].lower()}-{item['resolution']}-{item['correction']}"
-        planned.append({**item, "run": f"runs/stage-c-validation/{run_name}", "binary_exists": binary.is_file(), "template_exists": template.is_dir()})
-    checks = {
+        contract = input_contract(root, template) if template.is_dir() else {
+            "inputs_present": False,
+            "referenced_files_present": False,
+            "diagnostics_configured": False,
+            "input_files": [],
+        }
+        planned.append(
+            {
+                **item,
+                "run": f"runs/stage-c-validation/{run_name}",
+                "binary_exists": binary.is_file(),
+                "template_exists": template.is_dir(),
+                **contract,
+            }
+        )
+    prerequisite_checks = {
         "twelve_runs_declared": len(planned) == 12,
         "templates_present": all(item["template_exists"] for item in planned),
         "binaries_present": all(item["binary_exists"] for item in planned),
+        "inputs_present": all(item["inputs_present"] for item in planned),
+        "referenced_input_files_present": all(item["referenced_files_present"] for item in planned),
+        "diagnostics_configured": all(item["diagnostics_configured"] for item in planned),
         "mpi_launcher_present": bool(launcher),
         "fixed_rank_count": EXPECTED_RANKS == 2,
         "single_rank_substitute_forbidden": True,
@@ -87,7 +142,7 @@ def main() -> int:
     commands = []
     executions = []
     if args.execute:
-        if not all(checks.values()):
+        if not all(prerequisite_checks.values()):
             raise SystemExit("repeat-family preflight failed; use the report to resolve prerequisites")
         for item in planned:
             template = root / item["template"]
@@ -102,13 +157,34 @@ def main() -> int:
             commands.append(command)
             with (run_dir / "producer.log").open("w", encoding="utf-8") as log:
                 completed = subprocess.run(command, cwd=run_dir, stdout=log, stderr=subprocess.STDOUT, check=False)
-            executions.append({"run": item["run"], "returncode": completed.returncode})
-        checks["all_producers_exit_zero"] = all(item["returncode"] == 0 for item in executions)
+            executions.append(
+                {
+                    "run": item["run"],
+                    "returncode": completed.returncode,
+                    "output_contract": output_contract(run_dir),
+                }
+            )
+    execution_checks = {}
+    if args.execute:
+        execution_checks = {
+            "all_producers_exit_zero": all(item["returncode"] == 0 for item in executions),
+            **{
+                name: all(item["output_contract"][name] for item in executions)
+                for name in ("producer_log_present", "used_inputs_present", "diagnostics_present", "diagnostic_dirs_present")
+            },
+        }
+    checks = {**prerequisite_checks, **execution_checks}
+    if all(checks.values()):
+        classification = "REPEAT_FAMILY_RUNNER_READY" if not args.execute else "REPEAT_FAMILY_RUNNER_EXECUTION_PASS"
+    elif not prerequisite_checks["mpi_launcher_present"]:
+        classification = "REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING"
+    else:
+        classification = "REPEAT_FAMILY_RUNNER_BLOCKED_INPUT_OR_OUTPUT_CONTRACT"
     result = {
         "contract": "formal convergence repeat-family runner preflight",
         "passed": all(checks.values()),
-        "ready_to_execute": all(checks.values()),
-        "classification": "REPEAT_FAMILY_RUNNER_READY" if all(checks.values()) else "REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING",
+        "ready_to_execute": all(prerequisite_checks.values()),
+        "classification": classification,
         "scope": "twelve independent 2-rank producers: RZ/RSPHERE x 64/128/256 x correction on/off",
         "expected_ranks": EXPECTED_RANKS,
         "mpi_launcher": launcher or None,
@@ -116,6 +192,7 @@ def main() -> int:
         "planned": planned,
         "commands": commands,
         "executions": executions,
+        "execution_requested": args.execute,
         "single_rank_substitute": "forbidden",
     }
     args.output_dir.mkdir(parents=True, exist_ok=True)

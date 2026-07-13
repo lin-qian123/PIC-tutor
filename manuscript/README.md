@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.85 合订 PDF 的页数以实际构建结果为准；本版新增正式收敛第二组 family 的 2-rank runner 与 preflight，并保留正式收敛预注册、RZ/RSPHERE 独立几何趋势、页面布局修复、项目级当前成书缺口登记、第 5 章收敛研究就绪合同、沉积证据梯度、第 7 章 PML 证据梯度与 Esirkepov 2001 CPC bounded compare。
+当前 v0.86 合订 PDF 的页数以实际构建结果为准；本版将正式收敛第二组 family runner 的输入引用、诊断配置和执行后产物检查固化为合同，并保留正式收敛预注册、RZ/RSPHERE 独立几何趋势、页面布局修复、项目级当前成书缺口登记、第 5 章收敛研究就绪合同、沉积证据梯度、第 7 章 PML 证据梯度与 Esirkepov 2001 CPC bounded compare。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 

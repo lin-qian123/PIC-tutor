@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.85`：新增正式收敛第二组 family 的 12 组 2-rank runner 与 preflight；当前本机缺少 `mpiexec/mpirun`，因此正式收敛阶仍未关闭，人工全书通读、许可和公开再分发仍是开放项。
+当前成书版本为 `v0.86`：将正式收敛第二组 family runner 的输入引用、诊断配置和执行后产物检查固化为合同；当前本机缺少 `mpiexec/mpirun`，因此正式收敛阶仍未关闭，人工全书通读、许可和公开再分发仍是开放项。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

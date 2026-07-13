@@ -213,7 +213,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ## 9.8 当前成书缺口登记
 
-v0.85 已把第二组 formal convergence family 的 12 组固定 2-rank producer runner 和 preflight 接入项目；当前本机缺少 `mpiexec/mpirun`，分类为 `REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING`。v0.84 的 norm、observable、拟合区间、负对照和重复 family 预注册继续保留。当前每种 geometry 仍只有一组独立 family，correction-on axis charge 仍是 boundary，因此不把 descriptive slope 写成 formal order，也不把不同 geometry pooled。正式收敛阶、人工全书通读、第三方材料许可和公开再分发仍需单独签收。
+v0.86 已把第二组 formal convergence family 的 12 组固定 2-rank producer runner 的输入引用、diagnostics 配置和执行后产物检查接入项目；当前本机缺少 `mpiexec/mpirun`，分类为 `REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING`。v0.84 的 norm、observable、拟合区间、负对照和重复 family 预注册继续保留。当前每种 geometry 仍只有一组独立 family，correction-on axis charge 仍是 boundary，因此不把 descriptive slope 写成 formal order，也不把不同 geometry pooled。正式收敛阶、人工全书通读、第三方材料许可和公开再分发仍需单独签收。
 
 文献路线图需要和运行/编辑缺口分开管理，否则“论文缺全文”和“代码没有 route ledger”会在 TODO 中互相遮蔽。当前项目把缺口登记在 `docs/current-book-gap-register.md`，每一行绑定证据、分类、下一步动作和关闭条件。当前八项缺口分别覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条 release editorial gate。
 

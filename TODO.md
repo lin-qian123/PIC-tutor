@@ -2,6 +2,7 @@
 
 ## 2026-07-14
 
+- [x] v0.86 补强第二组 family runner：执行前检查 `inputs`/`FILE` 引用和 `Full` diagnostics，执行后检查退出码、`warpx_used_inputs` 和 `diags/diag*` 产物；当前仍因缺少 `mpiexec/mpirun` 停在真实 2-rank 执行前。
 - [x] v0.84 预注册正式收敛 study：固定 RZ/RSPHERE 独立 geometry、field/charge norm、primary/secondary observable、全部相邻拟合区间、correction-off negative control 和每种 geometry 至少两组独立 family 的关闭条件；当前数据明确仍不足以关闭 formal order。
 - [ ] 按预注册合同补齐每种 geometry 的第二组独立 refinement family，并重新执行重复 family slope 与 charge boundary gate。
 - [x] v0.85 固化第二组 family 的 12 组 2-rank producer runner 与 preflight；当前输入模板和二进制存在，但本机缺少 `mpiexec/mpirun`，单进程替代被明确禁止。

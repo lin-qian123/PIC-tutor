@@ -39,6 +39,8 @@
 - `references/03_pic_foundations/1979_TajimaDawson_Laser_Electron_Accelerator/`
 - `references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/`
 
+其中 `TajimaDawson1979` 现已通过独立的 `runs/stage-c-validation/tajima-dawson-1979-asset/contract.{json,md}` 收口为 paper-backed full-text asset：4 页 PDF、MinerU Markdown、11 张图和中文精读均已存在。它支撑的是最早期 `driver -> wake -> trapping -> acceleration` 与 LWFA scaling；合同同时保留“不替代现代 WarpX regression”的边界。
+
 这三条线已经足以支撑：
 
 - 第 1 章的 superparticle、weighted particles、finite-size particles、quiet start、噪声与 heating 讨论；

@@ -4513,8 +4513,7 @@
   - `\gamma_{\max} \simeq 2\omega^2/\omega_p^2`
   - `l_a \cong 2\omega^2 c/\omega_p^3`
   - 已最小回填到 `notes/code-reading/applications/02-lwfa-pwfa.md` 与第 8 章
-- [ ] 继续精读 `Tajima and Dawson 1979`，优先：
-  - 这篇的第一轮精读主线已基本收口；若再补，优先做图 1 / 图 2 的最终图注级整理
+- [x] 完成 `Tajima and Dawson 1979` 论文资产收口：补齐 README、access audit 和 `scripts/audit_tajima_dawson_1979_asset_contract.py`；4 页 PDF、MinerU、11 张图、中文精读和图 1/图 2 机制对应全部通过，明确其是 early LWFA scaling baseline，不是现代 WarpX regression contract。
 - [x] 开始精读 `Dawson 1983`。当前已完成：
   - 引言、particle models 总述与 electrostatic particle models 的第一轮中文精读
   - 把 computer simulation 明确写成 experiment / analytic theory 之外的第三种研究手段

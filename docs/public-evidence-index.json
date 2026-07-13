@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 151,
+  "record_count": 152,
   "status_counts": {
-    "PASS": 108,
+    "PASS": 109,
     "FAIL": 28,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 96,
+    "PASS": 97,
     "FAIL": 27,
     "UNKNOWN": 7,
     "BOUNDARY": 21
@@ -2125,6 +2125,17 @@
       "contract": "Tajima 1982 related FNAL conference note full-text asset contract",
       "classification": "RELATED_SINGLE_AUTHOR_CONFERENCE_NOTE_FULL_TEXT_MINERU_VERIFIED_FORMAL_TAJIMA_DAWSON_ITEM_NOT_SUBSTITUTED",
       "scope": null,
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "tajima-dawson-1979-asset",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Tajima and Dawson 1979 paper-level full-text asset contract",
+      "classification": "FULL_TEXT_MINERU_VERIFIED_EARLY_LWFA_SCALING_BASELINE_MODERN_WARPX_RUNTIME_NOT_SUBSTITUTED",
+      "scope": "paper-backed early LWFA mechanism and scaling; not a current WarpX regression contract",
       "metrics": {
         "passed": true
       }

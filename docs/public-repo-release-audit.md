@@ -2,7 +2,7 @@
 
 审计日期：2026-07-12
 
-当前 `dist/pic-tutor-v0.68.pdf` 为 316 页，内含 16 张书稿验证图；v0.67 及此前的构建记录均属于历史构建快照。
+当前 `dist/pic-tutor-v0.68.pdf` 为 317 页，内含 16 张书稿验证图；v0.67 及此前的构建记录均属于历史构建快照。
 
 v0.66 审计发现合订 Markdown/HTML 含本机绝对路径和不可随公共仓库迁移的绝对链接；v0.67 已在 release 构建层修复，v0.68 延续该检查，并将验证合同摘要纳入公共 allowlist。
 
@@ -17,9 +17,9 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 135 条 `contrac
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.68.pdf` | 3,367,057 bytes | 当前 316 页成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.68.html` | 5,740,779 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.68.md` | 1,069,121 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.68.pdf` | 3,368,363 bytes | 当前 317 页成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.68.html` | 5,741,457 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.68.md` | 1,069,745 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 
@@ -57,8 +57,8 @@ python scripts/audit_release_consistency.py
 git status --short
 ```
 
-当前 v0.68 构建验收结果：`pdf_pages=316`、源/合订图片链接均为 `16`、HTML 内嵌图片和图号范围检查全部通过。
+当前 v0.68 构建验收结果：`pdf_pages=317`、源/合订图片链接均为 `16`、HTML 内嵌图片和图号范围检查全部通过。
 
-v0.68 发布 allowlist 另见 `docs/v0.68-release-manifest.{json,md}`：当前包含 725 个项目文件、总计 `27,574,678` bytes；`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
+v0.68 发布 allowlist 另见 `docs/v0.68-release-manifest.{json,md}`：当前包含 726 个项目文件、总计 `27,583,184` bytes；`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
 
 验收脚本证明的是成书构建和资源合同，不替代第三方材料的版权审计，也不替代 GitHub 仓库最终 staged 文件清单审阅。

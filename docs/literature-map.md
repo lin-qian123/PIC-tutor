@@ -39,6 +39,7 @@
   - `images/`
   - 中文讲解笔记骨架
   - `reading-log.md`
+- `1979_TajimaDawson_Laser_Electron_Accelerator` 现已补齐 README、access audit 和独立 asset contract；4 页全文、11 张图和第一轮中文精读可复核，分类为 early LWFA scaling baseline，不替代现代 WarpX runtime evidence。
 - 现已额外 materialize 两份 particle-pusher 核心文献：
   - `references/04_particle_pushers_deposition_shapes/2008_VayPOP2008_Simulation_of_beams_or_plasmas_crossing_at_relativistic_velocity/`
   - `references/04_particle_pushers_deposition_shapes/2017_HigueraPOP2017_Structure-preserving_second-order_integration_of_relativistic_charged_particle_trajectories_in_electromagnetic_fields/`

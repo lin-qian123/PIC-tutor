@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `151`
-- PASS: `108`
+- records: `152`
+- PASS: `109`
 - FAIL: `28`
 - UNKNOWN: `15`
 - boundary-classified: `21`
@@ -157,6 +157,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `spacecraft_charging_rz_mpi2` | `PASS` | `PASS` | test_rz_spacecraft_charging_picmi | `` |  | `contract_pass=True`, `first_iteration=0`, `iterations=101`, `last_iteration=1000`, `relative_tau_error=0.16560622302810388`, `relative_v0_error=0.03551248747438835`, `tau_pass=True`, `v0_pass=True` |
 | `subcycling_2d_mr_mpi2` | `PASS` | `PASS` | 2D AMR subcycling output completeness and moving-window geometry | `` | official WarpX input; 2-rank producer; independent yt reader; not a transition-zone route-count or conservation proof | `finite_fields=True`, `moving_window_gate=True`, `moving_window_shift_error=7.617187499991694e-08`, `particle_presence_gate=True`, `passed=True` |
 | `tajima-1982-related-note` | `PASS` | `PASS` | Tajima 1982 related FNAL conference note full-text asset contract | `RELATED_SINGLE_AUTHOR_CONFERENCE_NOTE_FULL_TEXT_MINERU_VERIFIED_FORMAL_TAJIMA_DAWSON_ITEM_NOT_SUBSTITUTED` |  | `passed=True` |
+| `tajima-dawson-1979-asset` | `PASS` | `PASS` | Tajima and Dawson 1979 paper-level full-text asset contract | `FULL_TEXT_MINERU_VERIFIED_EARLY_LWFA_SCALING_BASELINE_MODERN_WARPX_RUNTIME_NOT_SUBSTITUTED` | paper-backed early LWFA mechanism and scaling; not a current WarpX regression contract | `passed=True` |
 | `test_2d_pml_x_psatd` | `PASS` | `PASS` | Cartesian PSATD-PML initial-energy and low-reflectivity contract | `` | 2-rank project-level independent reader-side summary; official analysis separately rerun | `expected_initial_energy=7.282940112203595e-08`, `final_energy=6.897268359469654e-14`, `initial_energy=7.282940112203606e-08`, `initial_reference_relative_error=1.453796362122656e-15`, `passed=True` |
 | `vay-2008-paper-asset` | `PASS` | `BOUNDARY` | Vay 2008 Chapter 4 pusher paper asset contract | `FULLTEXT_SOURCE_GROUNDED_FRAME_CONSISTENCY_APPENDIX_BOUNDARY` | local full-text PDF and MinerU package support Vay frame-consistency, explicit-gamma and gyroradius explanations; dedicated Appendix-B runtime reproduction remains open | `passed=True` |
 | `villasenor-1992-paper-asset` | `PASS` | `PASS` | Villasenor-Buneman 1992 Chapter 5 deposition paper asset contract | `LOCAL_FULLTEXT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_PROVENANCE_PENDING` | local full-text PDF and MinerU package support a first-round formula/source walkthrough; publisher provenance and final-formula transcription remain open | `passed=True` |

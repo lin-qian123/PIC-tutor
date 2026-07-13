@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 725,
-  "total_bytes": 27574678,
+  "entry_count": 726,
+  "total_bytes": 27583184,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1520064,
-      "sha256": "5e8e1268c4b9dd8597e3b24a17f61e73cad80a278b691440f76d641e49c4be83"
+      "bytes": 1520321,
+      "sha256": "db55340fd0b39ace436c07b0ae16ff7c1e9cfd7492d9564342ed3ac5036e5132"
     },
     {
       "path": "TODO.md",
-      "bytes": 1363966,
-      "sha256": "d31ac5c08a6aeb19a94c07dc1f7edc4951412dfe7c996cadc53a4f2cf2c78382"
+      "bytes": 1364117,
+      "sha256": "782cd8e3304ee0603cf8d5db1899be697302732bcd301ca4cc240960a25c5f63"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5740779,
-      "sha256": "9e7ae6a97c1c2558e78bcc21c93a6a4af8984836bb11b01c4ecddddcc06113aa"
+      "bytes": 5741457,
+      "sha256": "9721875abf76284a7cdc014ddf9f755a9e64a1d9184e85f59114d34b82bbd057"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1069121,
-      "sha256": "089fc5b1f83b43aa661e991a719a86d321ecdb8e951ceaeb38c55cf960aadebc"
+      "bytes": 1069745,
+      "sha256": "304a041b33771e1fca800361076c4196c17747265a587c327fdbb2e428b2f76e"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3367057,
-      "sha256": "0850760d74266676e5257d887bd87807bc3d9ddf96fc98121f9d01e03b0ac367"
+      "bytes": 3368363,
+      "sha256": "df9cd8c81db9751d164aabc1bc7d585a1b77058cfce2b82111212dd26745224f"
     },
     {
       "path": "docs/chapter-template.md",
@@ -82,8 +82,8 @@
     },
     {
       "path": "docs/literature-map.md",
-      "bytes": 76641,
-      "sha256": "bf4a036211a8addd2f2940646fdddd6273e03da2f942cdd3c07babc826bb2668"
+      "bytes": 76893,
+      "sha256": "4d3a74744e60ad4f763ddd4674611af85cae9a810b192f8c7a09141d3ab8ab53"
     },
     {
       "path": "docs/master-plan.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 81632,
-      "sha256": "90b7b3798666a720db14e112f27aaf66d84d9cc64e3487cab1fa21929bcc40d8"
+      "bytes": 82096,
+      "sha256": "e8bffbd8d719c8904ffa0fdee3e84759f72949986ad330e7d2428f51d80d2503"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 53484,
-      "sha256": "d974f70454bafb85304daa4a04860043881dd7bd965619296f63a8fe6bbb1589"
+      "bytes": 53795,
+      "sha256": "a2c9759d534444c4fd0a45391b84ea3ab9b62545b48080230f18e91fe15851e3"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "e3c2f44e9e8dfd539985da3a3d7d8c8ebad520b9c9923bcf254bb00c85838906"
+      "sha256": "37a0a260f9bbb8fe62ed2db6626b67d77e9f47ee71c27f0473afd770d4aadbca"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 42297,
-      "sha256": "0b3cef4bafdfde2785a5dd7f9482482652736fa6147d40480e5495357ac82623"
+      "bytes": 42537,
+      "sha256": "59c012419f0434aaab5752906e286271bc887f5e526a216c2cd9f5e2691c6a52"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 62643,
-      "sha256": "cb6d4b10f29133b57194cb2a3bae937b1e094e44838af3b11f759b2cf874b775"
+      "bytes": 62915,
+      "sha256": "99b92346f7491e539a4e330dcacc915c3f0c2ff8085b0b3e9ded53126d158fd0"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -913,12 +913,12 @@
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
       "bytes": 111665,
-      "sha256": "796466390697f008feb774838b902409fd099a4450b6eb0f47a65cb8527aa787"
+      "sha256": "b4c58de36189dbbfd1f1e8ca5668cbed1fc28563bf03632845d4ee0d0abea045"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
-      "bytes": 13441,
-      "sha256": "7cb4a004e8ea645b823732a50a4e6fe5deb693959622ce968e4cbcc7c1d93399"
+      "bytes": 13828,
+      "sha256": "7972f9ff7a585bf0d0b69f28298dda0ee2e1e687b01bcc69432574c48c120198"
     },
     {
       "path": "notes/code-reading/README.md",
@@ -2711,6 +2711,11 @@
       "sha256": "8fc09caf905cc2c77c5ee67c5bc9972077809d0e807cdd3b09b1f910b5944e86"
     },
     {
+      "path": "scripts/audit_tajima_dawson_1979_asset_contract.py",
+      "bytes": 3564,
+      "sha256": "60b185d27b939e9ff7a03dfc0bb843d285aeacd054057685da3efc53922a7a22"
+    },
+    {
       "path": "scripts/audit_transition_zone_source_contract.py",
       "bytes": 5406,
       "sha256": "3f1adf6670b4a4210acabf46305a8cad3f1174513064a12b8914a88700d6f99c"
@@ -3648,7 +3653,7 @@
     {
       "path": "scripts/verify_v68_build.py",
       "bytes": 2518,
-      "sha256": "fb1afa7f6f4b45f3b3932e27380b19957487ef989ab543e2745803b60ed5262e"
+      "sha256": "6f5565a88ee747f25e635bd530995db116992cf300eda17b7905c921e5ad6715"
     },
     {
       "path": "scripts/verify_villasenor_formula_contract.py",

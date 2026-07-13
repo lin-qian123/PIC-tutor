@@ -2756,6 +2756,21 @@ v0.93 的 repeat stability 只能说明 axis observable 在独立 producer 间�
 
 因此本版进一步使用 `RZ_AXIS_STENCIL_FIT_COEFFICIENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN` 分类：独立拟合支持 source-defined axis operator，而不是普通 `2*Er/dr` 连续近似。它仍只是 solver-native operator alignment，不关闭 rho-side scaling、deposition kernel、diagnostic location/mode 或完整 charge closure。合同由 `scripts/analyze_rz_axis_divergence_fit_contract.py` 生成，报告见 `runs/stage-c-validation/rz-axis-divergence-fit-v0.100/contract.{json,md}`，说明见 `notes/code-reading/particles/81-rz-axis-divergence-fitted-coefficient.md`。
 
+### 5.14.17 v0.101 rho-side axis correction ratio boundary
+
+本版把问题继续移到 rho-side：读取既有三档 resolution 的 correction-on/off `diag1000000`，比较 `rho_electrons` 与 `rho_ions` 的轴和 off-axis 比值。6 个 field/case 组合的 off-axis 比值严格为 `1`，而 axis 比值严格稳定为 `0.85`。源码 `ApplyInverseVolumeScalingToChargeDensity` 对 RZ axis 使用 correction-on `1/3`、correction-off `1/4`；只按这两个外层体积因子预测的 ratio 是 `0.75`。
+
+| correction pair | grid | field | axis on/off | off-axis max deviation |
+|---|---:|---|---:|---:|
+| on/off | `64x128` | `rho_electrons` | `0.850000` | `0` |
+| on/off | `64x128` | `rho_ions` | `0.850000` | `0` |
+| on/off | `128x256` | `rho_electrons` | `0.850000` | `0` |
+| on/off | `128x256` | `rho_ions` | `0.850000` | `0` |
+| on/off | `256x512` | `rho_electrons` | `0.850000` | `0` |
+| on/off | `256x512` | `rho_ions` | `0.850000` | `0` |
+
+因此本版新增 `RZ_RHO_AXIS_CORRECTION_RATIO_MISMATCH_BOUNDARY_OPEN`：axis rho 的 correction-on/off 比值跨分辨率稳定，但不能由 `1/3` 与 `1/4` 外层体积因子单独解释。这个结果将剩余诊断边界进一步压到轴向沉积/镜像、rho 重建、mode/位置转换或输出时序；它仍不是 charge closure，也不是 deposition-kernel root-cause 证明。合同由 `scripts/analyze_rz_rho_axis_correction_ratio_contract.py` 生成，报告见 `runs/stage-c-validation/rz-rho-axis-correction-ratio-v0.101/contract.{json,md}`，说明见 `notes/code-reading/particles/82-rz-rho-axis-correction-ratio-boundary.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

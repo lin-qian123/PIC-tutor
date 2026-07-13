@@ -41,6 +41,7 @@ def main() -> int:
         "runs/stage-c-validation/rz-axis-charge-source-diagnostic-crosswalk-v0.94/contract.json",
         "runs/stage-c-validation/rz-axis-divergence-resolution-v0.99/contract.json",
         "runs/stage-c-validation/rz-axis-divergence-fit-v0.100/contract.json",
+        "runs/stage-c-validation/rz-rho-axis-correction-ratio-v0.101/contract.json",
         "runs/stage-c-validation/formal-convergence-repeat-slope-gate-v0.95/contract.json",
     )
     checks = {
@@ -56,14 +57,17 @@ def main() -> int:
             "80-rz-axis-divergence-resolution-alignment.md",
             "81-rz-axis-divergence-fitted-coefficient.md",
             "RZ_AXIS_STENCIL_FIT_COEFFICIENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN",
+            "RZ_RHO_AXIS_CORRECTION_RATIO_MISMATCH_BOUNDARY_OPEN",
+            "rz-rho-axis-correction-ratio-v0.101/contract.json",
+            "82-rz-rho-axis-correction-ratio-boundary.md",
         )),
         "editorial_audit_evidence": all(
             (root / path).is_file()
             for path in (
-                "docs/pdf-layout-audit-v0.100.md",
-                "runs/stage-c-validation/pdf-layout-v0.100/contract.json",
-                "docs/editorial-quality-audit-v0.100.md",
-                "runs/stage-c-validation/editorial-quality-v0.100/contract.json",
+                "docs/pdf-layout-audit-v0.101.md",
+                "runs/stage-c-validation/pdf-layout-v0.101/contract.json",
+                "docs/editorial-quality-audit-v0.101.md",
+                "runs/stage-c-validation/editorial-quality-v0.101/contract.json",
                 "runs/stage-c-validation/cross-geometry-convergence-trends/contract.json",
                 "docs/formal-convergence-preregistration.json",
                 "runs/stage-c-validation/formal-convergence-preregistration/contract.json",

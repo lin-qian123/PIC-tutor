@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.100`：在 v0.99 跨分辨率 RMSE 对照基础上，对同一 6 个 correction-on/off case 做独立最小二乘轴向系数拟合，6/6 个拟合系数都更接近源码 `4` 而非 naive `2`。该结果进一步强化 solver-native axis stencil 边界，但不关闭 formal numerical order、axis charge correctness、RZ implicit runtime 和人工编辑缺口。
+当前成书版本为 `v0.101`：在 v0.100 轴向系数拟合基础上，对同一 64/128/256 correction-on/off 初始帧的 `rho_electrons/rho_ions` 做 rho-side 轴修正比例合同。6/6 个 field-case 的 off-axis 比值为 `1`，axis 比值稳定为 `0.85`；源码体积因子单独预测为 `0.75`。该结果定位了仍需拆分的 axis scaling/deposition/diagnostic 边界，但不宣称 root cause、charge closure 或正式收敛阶已完成。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

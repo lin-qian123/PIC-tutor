@@ -7,6 +7,7 @@
 - [x] v0.98 继续拆分 RZ axis charge 边界：读取现有 correction-on/off axis `Er/Ez/divE`，对照源码 `4*Er/dr + DownwardDz(Ez)` 与 naive `2*Er/dr`，两个 case 的 source coefficient RMSE 均更低；分类为 `RZ_AXIS_STENCIL_ALIGNMENT_OBSERVED_CHARGE_BOUNDARY_OPEN`，不把 stencil alignment 写成 charge closure。
 - [x] v0.99 将 axis divergence stencil 对照扩展到既有 `64x128`、`128x256`、`256x512` correction-on/off family，6/6 case 的 source `4*Er/dr` RMSE 均低于 naive `2*Er/dr`；分类为 `RZ_AXIS_STENCIL_ALIGNMENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN`，仍不把它写成 charge closure。
 - [x] v0.100 对同一 6 个 case 做独立最小二乘轴向系数拟合，6/6 个拟合系数均更接近源码 `4` 而非 naive `2`；分类为 `RZ_AXIS_STENCIL_FIT_COEFFICIENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN`，仍不把 operator alignment 写成 charge closure。
+- [x] v0.101 对既有 `64/128/256` correction-on/off 初始帧建立 rho-side axis/off-axis ratio contract：6/6 个 field-case 的 off-axis 比值为 `1`，axis 比值稳定为 `0.85`，源码体积因子单独预测 `0.75`；分类为 `RZ_RHO_AXIS_CORRECTION_RATIO_MISMATCH_BOUNDARY_OPEN`，仅定位剩余边界，不宣称 root cause 或 charge closure。
 - [ ] 在取得合法 publisher PDF 后，完成 Esirkepov 2001 与 LeeCPC2015 的逐页/逐项定稿差异合同；在此之前保持 `OPEN_EXTERNAL_ACCESS`。
 
 ## 2026-07-14

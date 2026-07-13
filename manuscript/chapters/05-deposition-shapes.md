@@ -2667,7 +2667,7 @@ AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在�
 
 v0.84 将“下一步要做什么”进一步固定成预注册，而不是在观察到 slope 后再选择解释。`RZ` 与 `RSPHERE` 是两个独立 geometry unit；每个 unit 分别保留 `correction=on/off`、`64/128/256` 三档、全部相邻 pairwise fit interval，以及 axis/off-axis charge residual 的分层。field norm 固定为 `max(abs(numerical - analytic)) / max(abs(analytic))`，charge norm 固定为 `max(abs(divE - rho/epsilon_0)) / max(abs(rho/epsilon_0))`，不允许用 all-cell residual 替代 axis residual。
 
-预注册关闭条件还要求每种 geometry 至少有两组独立产生的 family，并固定 density、`epsilon`、`w0`、domain、final time、particle shape、deposition、MPI layout 和 reader-side norm。`correction=off` 只能作为负对照，不能用来事后挑选有利的拟合区间；两种 geometry 禁止 pooled fit。当前每种 geometry 只有一组 materialized family，且 correction-on axis charge 仍是 boundary，因此合同已预注册但 formal closure 仍为 `OPEN`，分类为 `FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT`。
+预注册关闭条件还要求每种 geometry 至少有两组独立产生的 family，并固定 density、`epsilon`、`w0`、domain、final time、particle shape、deposition、MPI layout 和 reader-side norm。`correction=off` 只能作为负对照，不能用来事后挑选有利的拟合区间；两种 geometry 禁止 pooled fit。两组 family 已 materialize，v0.95 又为 correction-on 的 repeat slope 固定 `1e-8` 容差，但 axis charge 仍是 boundary，因此 formal closure 仍为 `OPEN`，分类为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PREREGISTERED_CHARGE_CLOSURE_OPEN`。
 
 预注册文件见 [formal convergence specification](docs/formal-convergence-preregistration.json)，原始报告见 [preregistration raw contract](runs/stage-c-validation/formal-convergence-preregistration/contract.json)。
 
@@ -2693,7 +2693,7 @@ v0.92 已将第二组 family 实际执行结果与第一组 materialized family 
 
 第二组 family 的 12 个 2-rank producer 已经真实落盘并通过退出码、used-inputs 与 diagnostics 三层合同。RZ/RSPHERE 各自保留 `correction=on/off`，每种 geometry 的两个 family 都覆盖 `64/128/256`，因此“第二组尚未 materialize”这一前置缺口已经关闭。reader-side 分析没有把两种 geometry 合并：RZ 继续使用 `Er/Ez/axis/off-axis`，RSPHERE 使用 `Er/axis/off-axis`，全部相邻 pair 都保留。
 
-这一步仍不是正式收敛阶闭合。第一、第二 family 的 slope 对照已写入合同，但 `docs/formal-convergence-preregistration.json` 原始预注册没有定义一个数值化的 repeat-slope comparison tolerance；同时 correction-on axis charge 在两种 geometry 中仍保持独立 boundary。因而当前最准确的分类是 `FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN`：执行链与两组数据已完成，正式 order 解释和 charge correctness 仍开放。
+这一步仍不是正式收敛阶闭合。v0.95 已在 `docs/formal-convergence-preregistration.json` 中固定 `1e-8` 的 absolute slope-delta tolerance，并对 correction-on 的全部 14 个 RZ/RSPHERE comparisons 执行 gate；correction-off 因接近 numerical/reader floor 继续只作 descriptive negative control。正式 order 解释和 correction-on axis charge correctness 仍保持独立开放。
 
 ### 5.14.11 v0.94 axis charge repeat stability
 
@@ -2701,7 +2701,13 @@ v0.92 已将第二组 family 实际执行结果与第一组 materialized family 
 
 correction-off 的 RZ residual 已接近数值地板，因此该负对照只报告绝对值与放大的相对差，不把它混入 correction-on stability gate。这个合同只证明 correction-on axis boundary 在两组 family 中可重复、且仍高于 off-axis；它不识别 kernel root cause，不关闭 current closure，也不把稳定 boundary 改写成正式收敛阶。
 
-### 5.14.12 v0.94 axis charge 源码-诊断交叉审计
+### 5.14.12 v0.95 repeat-slope comparison gate
+
+v0.95 将“两个 family 的 slope 几乎重合”改写成可执行的预注册比较：对 RZ/RSPHERE、correction-on、每个声明的 field/axis/off-axis observable 和 `64->128`、`128->256` 两个区间，逐项计算第一、第二 family 的 pairwise `log2` slope 绝对差。这里的 repeat-slope comparison tolerance 固定为 `1e-8`。14 项全部通过，最大差为 `2.587e-11`。报告见 `runs/stage-c-validation/formal-convergence-repeat-slope-gate-v0.95/contract.{json,md}`，说明见 `notes/code-reading/particles/77-formal-convergence-repeat-slope-gate.md`。
+
+这里的 PASS 只表示 repeat-family consistency。correction-off 的最大 slope 差为 `1.996e-3`，但其 residual 已接近 numerical/reader floor，因此不进入 gate，只保留为负对照。该合同不宣称唯一 formal numerical order，也不关闭 axis charge correctness；当前分类为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`。
+
+### 5.14.13 v0.95 axis charge 源码-诊断交叉审计
 
 v0.93 的 repeat stability 只能说明 axis observable 在独立 producer 间稳定；v0.94 继续沿源码路径拆分它的消费者边界。`PhysicalParticleContainer` 将粒子写入 `rho_fp`，transition-zone 粒子直接写入 coarse-geometry 的 `rho_buf`；完成 deposition 后，`WarpXEvolve.cpp` 才调用 `ApplyInverseVolumeScalingToChargeDensity(...)`，而 `WarpXPushFieldsEM.cpp` 根据 `verboncoeur_axis_correction` 选择 RZ axis volume factor。该步骤属于沉积后的外层几何归一化，不是 `ChargeDeposition.H` 内部的局部 shape 写入。
 

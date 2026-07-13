@@ -1,0 +1,36 @@
+{
+  "contract": "editorial quality audit",
+  "version": "v0.95",
+  "checks": {
+    "files_present": true,
+    "merged_heading_duplicates": true,
+    "markdown_tables_consistent": true,
+    "chapter_heading_order": true,
+    "html_title_and_heading_count": true,
+    "html_key_sections": true,
+    "pdf_page_count_positive": true,
+    "pdf_key_sections": true,
+    "no_build_warning_markers": true
+  },
+  "passed": true,
+  "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
+  "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
+  "heading_count": 326,
+  "html_heading_count": 326,
+  "pdf_pages": 331,
+  "table_issues": [],
+  "artifacts": {
+    "pic-tutor-v0.95.md": {
+      "bytes": 1164044,
+      "sha256": "84b1387c552bad6ee37d7c613e317ba78fd6cf640546b7dfab827a8cad48fc4e"
+    },
+    "pic-tutor-v0.95.html": {
+      "bytes": 5851988,
+      "sha256": "f451f7a184b97695a0ffc1a61c0d65a158db922b7ad203ff2d7ae6c2bbc355b2"
+    },
+    "pic-tutor-v0.95.pdf": {
+      "bytes": 3477482,
+      "sha256": "923f981a844a9df2d917272ff8d0719026ef4a616e220956bea656d177192bc3"
+    }
+  }
+}

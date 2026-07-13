@@ -2,7 +2,7 @@
 
 审计日期：2026-07-13
 
-当前 release 为 v0.95；本版在 v0.94 RZ source-diagnostic crosswalk 基础上新增 correction-on repeat-slope comparison gate：14 项 RZ/RSPHERE slope comparison 全部通过 `1e-8` absolute slope-delta tolerance，correction-off 继续作为 numerical-floor negative control。当前 axis charge correctness、正式 order closure、人工全书通读、许可和公开再分发仍保持开放。
+当前 release 为 v0.95；本版在 v0.92 两组独立 2-rank family 基础上完成 correction-on axis charge repeat stability contract：6 个 correction-on level 全部通过 `1e-10` 相对重复容差，且 axis residual 持续高于 off-axis。当前 kernel root-cause、正式 order closure、人工全书通读、许可和公开再分发仍保持开放。
 
 v0.78 完成 Esirkepov 2001 CPC indexed abstract 与 arXiv 预印本的 bounded compare；该 contract 只确认发表版 metadata/abstract 级算法主张已归类，不把 publisher-PDF 缺口写成已关闭。
 
@@ -21,9 +21,9 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.95.pdf` | 3,483,380 bytes / 333 页 | 当前成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.95.html` | 5,857,289 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.95.md` | 1,168,403 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.95.pdf` | 3,477,482 bytes / 331 页 | 当前成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.95.html` | 5,851,988 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.95.md` | 1,164,044 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 
@@ -61,7 +61,7 @@ python scripts/audit_release_consistency.py
 git status --short
 ```
 
-当前 v0.95 构建验收结果以 `scripts/verify_v95_build.py`、`scripts/audit_editorial_quality.py`、`scripts/audit_pdf_layout.py`、`scripts/audit_formal_convergence_preregistration.py`、`scripts/audit_formal_convergence_repeat_slope_gate.py`、`scripts/run_formal_convergence_repeat_family.py`、`scripts/analyze_formal_convergence_repeat_family.py` 和 `scripts/analyze_rz_axis_charge_repeat_stability.py` 为准；axis charge correctness、正式收敛阶、人工全书通读、许可和公开再分发仍保持开放。
+当前 v0.95 构建验收结果以 `scripts/verify_v95_build.py`、`scripts/audit_editorial_quality.py`、`scripts/audit_pdf_layout.py`、`scripts/audit_formal_convergence_preregistration.py`、`scripts/run_formal_convergence_repeat_family.py`、`scripts/analyze_formal_convergence_repeat_family.py` 和 `scripts/analyze_rz_axis_charge_repeat_stability.py` 为准；kernel root-cause、正式收敛阶、人工全书通读、许可和公开再分发仍保持开放。
 
 v0.95 发布 allowlist 另见 `docs/v0.95-release-manifest.{json,md}`；总字节数以 manifest 的 `total_bytes` 为准，`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
 

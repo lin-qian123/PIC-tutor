@@ -38,6 +38,7 @@ def main() -> int:
         "runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.json",
         "runs/stage-c-validation/deposition-convergence-readiness/contract.json",
         "runs/stage-c-validation/rz-axis-charge-source-diagnostic-crosswalk-v0.94/contract.json",
+        "runs/stage-c-validation/formal-convergence-repeat-slope-gate-v0.95/contract.json",
     )
     checks = {
         "register_heading": register.startswith("# PIC-tutor 当前成书缺口登记"),
@@ -48,22 +49,22 @@ def main() -> int:
         "editorial_audit_evidence": all(
             (root / path).is_file()
             for path in (
-                "docs/pdf-layout-audit-v0.94.md",
-                "runs/stage-c-validation/pdf-layout-v0.94/contract.json",
-                "docs/editorial-quality-audit-v0.94.md",
-                "runs/stage-c-validation/editorial-quality-v0.94/contract.json",
+                "docs/pdf-layout-audit-v0.95.md",
+                "runs/stage-c-validation/pdf-layout-v0.95/contract.json",
+                "docs/editorial-quality-audit-v0.95.md",
+                "runs/stage-c-validation/editorial-quality-v0.95/contract.json",
                 "runs/stage-c-validation/cross-geometry-convergence-trends/contract.json",
                 "docs/formal-convergence-preregistration.json",
                 "runs/stage-c-validation/formal-convergence-preregistration/contract.json",
             )
         ) and all(marker in register for marker in (
             "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
-            "FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN",
+            "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN",
             "SOURCE_DIAGNOSTIC_DISCRETIZATION_BOUNDARY",
         )),
         "classification_boundaries": all(marker in register for marker in (
             "OPEN_EXTERNAL_ACCESS", "RUNTIME_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
-            "FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN", "RELEASE-EDITORIAL",
+            "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN", "RELEASE-EDITORIAL",
         )),
         "closure_language": all(marker in register for marker in ("关闭条件", "真实 `current_buf/rho_buf`", "publisher PDF")),
         "exercise_renumbering": all(marker in chapter for marker in ("## 9.10 练习与复核", "### 9.10.1", "### 9.10.2", "### 9.10.3")),

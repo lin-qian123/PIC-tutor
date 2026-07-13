@@ -1,12 +1,4 @@
-# PIC-tutor v0.95
-
-本版新增正式收敛 study 的 repeat-slope comparison gate：预注册 `1e-8` absolute slope-delta tolerance，仅对 correction-on 的 RZ/RSPHERE、全部声明 field/axis/off-axis observable 与两个相邻 refinement interval 执行。14 项比较全部通过，最大绝对 slope 差为 `2.587e-11`；correction-off 因接近 numerical/reader floor 保留为 descriptive negative control，最大差 `1.996e-3` 不进入 gate。
-
-该 gate 分类为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`。它只证明两个独立 family 的 slope consistency，不宣称唯一 formal numerical order，也不关闭 correction-on axis charge correctness、RZ source-diagnostic boundary、publisher PDF、人工编辑和公开许可缺口。
-
-报告见 `runs/stage-c-validation/formal-convergence-repeat-slope-gate-v0.95/contract.{json,md}`，说明见 `notes/code-reading/particles/77-formal-convergence-repeat-slope-gate.md`。
-
----
+# PIC-tutor v0.94
 
 本版新增 RZ axis charge 的源码-诊断交叉审计：13/13 个 WarpX 当前 checkout 源码锚点通过，确认 particle rho 沉积后的 inverse-volume scaling、`rho_buf` coarse-level scaling、solver-native `divE` 计算、Rho/DivE diagnostic functor 的独立路径与 FullDiagnostics 的分离注册。该合同把 v0.93 的跨 family repeat stability 从“稳定 observable”进一步约束到“稳定但未归因的 source/diagnostic boundary”，不把 residual 升级成 deposition kernel root cause。
 
@@ -55,7 +47,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v95_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v94_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

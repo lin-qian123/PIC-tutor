@@ -1,7 +1,7 @@
 {
   "contract": "PIC-tutor formal convergence study preregistration",
-  "version": "v0.93-pre",
-  "classification": "FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN",
+  "version": "v0.95-pre",
+  "classification": "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PREREGISTERED_CHARGE_CLOSURE_OPEN",
   "scope": "RZ and RSPHERE Esirkepov Langmuir resolution families; independent geometry fits only",
   "data_sources": {
     "rz": "runs/stage-c-validation/esirkepov_langmuir_rz_resolution-trend/contract.json",
@@ -9,7 +9,16 @@
   },
   "repeat_execution_preflight": "runs/stage-c-validation/formal-convergence-repeat-family-v0.92-tcp/contract.json",
   "repeat_slope_comparison": "runs/stage-c-validation/formal-convergence-second-family-v0.92/contract.json",
-  "axis_charge_repeat_stability": "runs/stage-c-validation/rz-axis-charge-repeat-stability-v0.93/contract.json",
+  "axis_charge_repeat_stability": "runs/stage-c-validation/rz-axis-charge-repeat-stability-v0.95/contract.json",
+  "repeat_slope_comparison": {
+    "metric": "absolute difference between first- and second-family pairwise log2 slopes",
+    "absolute_slope_delta_tolerance": 1.0e-8,
+    "comparison_scope": "RZ/RSPHERE x correction-on x every declared observable x 64->128 and 128->256",
+    "gated_corrections": ["on"],
+    "negative_control": "correction-off remains reported descriptively but is excluded from the repeat-slope gate because its residual is near the numerical/reader floor",
+    "gate_script": "scripts/audit_formal_convergence_repeat_slope_gate.py",
+    "interpretation": "This gate tests repeat-family slope consistency only; it is not a formal order claim and cannot close the independent axis-charge correctness gate."
+  },
   "design": {
     "geometry_units": ["RZ", "RSPHERE"],
     "correction_controls": ["on", "off"],
@@ -60,7 +69,7 @@
     "preregistration_complete": true,
     "current_data_meets_formal_closure": false,
     "blocking_gates": [
-      "field and charge slopes are now repeat-materialized but no numerical repeat-slope comparison tolerance was declared",
+      "repeat-slope comparison gate is now numerically preregistered; its result must remain separate from formal-order and charge-correctness closure",
       "correction-on axis charge remains a boundary in both geometry families",
       "the default MPICH provider selects utun6 and fails during finalize; current execution requires explicit FI_PROVIDER=tcp"
     ]

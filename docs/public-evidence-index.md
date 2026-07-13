@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `190`
-- PASS: `138`
+- records: `191`
+- PASS: `139`
 - FAIL: `30`
 - UNKNOWN: `22`
-- boundary-classified: `34`
+- boundary-classified: `35`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -15,6 +15,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `2d_flux_injection_from_eb_mpi2` | `PASS` | `PASS` | test_2d_flux_injection_from_eb | `` |  | `contract_pass=True`, `eb_outside_pass=True`, `expected_weight=6.283185307179586e-08`, `min_radius_ratio=0.9986533355394428`, `particle_count=50235`, `total_weight=6.279375000000002e-08`, `total_weight_pass=True`, `total_weight_relative_error=0.0006064292223293722` |
 | `3d_flux_injection_from_eb_mpi2` | `PASS` | `PASS` | test_3d_flux_injection_from_eb | `` |  | `contract_pass=True`, `eb_outside_pass=True`, `expected_weight=2.5132741228718345e-07`, `min_radius_ratio=0.9963803673196601`, `particle_count=801308`, `total_weight=2.504087500000001e-07`, `total_weight_pass=True`, `total_weight_relative_error=0.003655241100933395` |
 | `abe-1975-abstract` | `PASS` | `BOUNDARY` | Abe et al. 1975 bounded abstract-level literature contract | `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING` | abstract-level evidence only; no publisher-PDF or line-by-line claim | `passed=True` |
+| `andriyash-2016-paper-asset` | `PASS` | `BOUNDARY` | Andriyash 2016 Fourier-Bessel PIC paper asset | `FULL_TEXT_MINERU_CHINESE_NOTE_VERIFIED_WARPX_EQUIVALENCE_BOUNDARY` | local paper asset, formula/figure reading and PLARES-PIC versus WarpX evidence boundary; not a WarpX runtime reproduction | `passed=True` |
 | `birdsall-3a-warpx-crosswalk` | `PASS` | `PASS` | Chapter 3A Birdsall ES1 to WarpX source crosswalk | `CHAPTER_3A_HISTORICAL_MODERN_MAPPING_SOURCE_ANCHORS_VERIFIED` | Verifies representative historical-stage, modern lifecycle, and validation-layer anchors; not a function-by-function equivalence proof or a new runtime physics regression. | `passed=True` |
 | `boris-1970-metadata` | `PASS` | `BOUNDARY` | Boris 1970 metadata and access-boundary contract | `METADATA_BACKED_HISTORICAL_SOURCE_FULL_TEXT_MISSING_SECONDARY_DERIVATION_AVAILABLE` | bibliographic identity and access boundary only; no original proceedings PDF or line-by-line claim | `passed=True` |
 | `boris-source-crosswalk` | `PASS` | `BOUNDARY` | WarpX Boris kernel/source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING` | read-only current WarpX source mapping; not a line-by-line reconstruction of the 1970 proceedings paper | `passed=True` |

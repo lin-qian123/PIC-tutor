@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 190,
+  "record_count": 191,
   "status_counts": {
-    "PASS": 138,
+    "PASS": 139,
     "FAIL": 30,
     "UNKNOWN": 22
   },
@@ -11,7 +11,7 @@
     "PASS": 116,
     "FAIL": 27,
     "UNKNOWN": 13,
-    "BOUNDARY": 34
+    "BOUNDARY": 35
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -58,6 +58,17 @@
       "contract": "Abe et al. 1975 bounded abstract-level literature contract",
       "classification": "ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING",
       "scope": "abstract-level evidence only; no publisher-PDF or line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "andriyash-2016-paper-asset",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Andriyash 2016 Fourier-Bessel PIC paper asset",
+      "classification": "FULL_TEXT_MINERU_CHINESE_NOTE_VERIFIED_WARPX_EQUIVALENCE_BOUNDARY",
+      "scope": "local paper asset, formula/figure reading and PLARES-PIC versus WarpX evidence boundary; not a WarpX runtime reproduction",
       "metrics": {
         "passed": true
       }

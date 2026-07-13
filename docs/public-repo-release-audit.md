@@ -2,13 +2,13 @@
 
 审计日期：2026-07-13
 
-v0.72 新增 Esirkepov 2001 publication-boundary contract；该 contract 只确认预印本公式、当前 WarpX 源码/runtime 证据和 CPC publisher-PDF 缺失边界可复查，不替代出版社定稿逐行核对。
+v0.73 新增 Andriyash 2016 Fourier-Bessel PIC 全文资产；该 contract 确认 9 页 PDF、MinerU、26 张图片、中文精读和 PLARES-PIC/WarpX 证据边界，不替代 WarpX runtime reproduction 或函数级等价证明。
 
-当前 `dist/pic-tutor-v0.72.pdf` 为 327 页，内含 16 张书稿验证图；v0.71 及此前的构建记录均属于历史构建快照。
+当前 `dist/pic-tutor-v0.73.pdf` 为 328 页，内含 16 张书稿验证图；v0.72 及此前的构建记录均属于历史构建快照。
 
-v0.66 审计发现合订 Markdown/HTML 含本机绝对路径和不可随公共仓库迁移的绝对链接；v0.67 已在 release 构建层修复，v0.72 延续该检查，并将验证合同摘要、文献 triage、Muraviev/Vranic 章节映射和 Esirkepov publication-boundary contract 纳入公共 allowlist；论文 `references/` 原始资产仍按逐篇许可边界排除。
+v0.66 审计发现合订 Markdown/HTML 含本机绝对路径和不可随公共仓库迁移的绝对链接；v0.67 已在 release 构建层修复，v0.73 延续该检查，并将验证合同摘要、文献 triage、Andriyash 章节映射和 paper asset contract 纳入公共 allowlist；论文 `references/` 原始资产仍按逐篇许可边界排除。
 
-v0.72 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成去路径摘要，并加入 `docs/literature-pending-triage.md` 的 acquisition/read queue。摘要保留原始合同状态，并将 boundary、unproven、missing 分类单独标记；原始 `runs/` 仍排除，因此该摘要是公共证据目录，不是运行产物替代品。
+v0.73 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成去路径摘要，并加入 `docs/literature-pending-triage.md` 的 acquisition/read queue。摘要保留原始合同状态，并将 boundary、unproven、missing 分类单独标记；原始 `runs/` 仍排除，因此该摘要是公共证据目录，不是运行产物替代品。
 
 本文件只记录发布边界和体积证据，不自动删除或移动工作区文件。真正 push 前仍需由维护者确认论文 PDF、图片和其他第三方材料的授权状态。
 
@@ -19,29 +19,29 @@ v0.72 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.72.pdf` | 3,430,706 bytes | 当前 327 页成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.72.html` | 5,803,060 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.72.md` | 1,120,893 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.73.pdf` | 3,438,083 bytes | 当前 328 页成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.73.html` | 5,807,298 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.73.md` | 1,124,480 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 
 - `runs/` 已加入忽略规则；本轮又忽略了根目录运行残留 `Backtrace.*` 和 `bmmntr.txt`。
 - 当前书稿图表位于 `manuscript/assets/figures/`，源章节使用相对路径；`scripts/build_v68.py` 会在合订阶段解析资源。
-- `dist/` 当前仍保留历史版本产物，发布时应明确选择 `v0.72`，不要按目录整体上传。
+- `dist/` 当前仍保留历史版本产物，发布时应明确选择 `v0.73`，不要按目录整体上传。
 - `references/` 中的论文 PDF、MinerU 图片和讲解笔记应按论文逐项确认公开许可；本审计不把“本机可读”当作“可公开分发”。
 - `README.md`、`TODO.md`、`manuscript/VERSION.md` 和本文件应在 push 前再次同步当前 release 选择。
 
-## v0.72 建议发布清单
+## v0.73 建议发布清单
 
 建议纳入公共仓库的项目内资产：
 
 - `AGENTS.md`、`README.md`、`TODO.md`；
 - `manuscript/` 书稿源、`manuscript/assets/figures/` 16 张验证图和 `manuscript/VERSION.md`；
-- `scripts/build_v72.py`、`scripts/verify_v72_build.py`、`scripts/audit_release_consistency.py`、`scripts/audit_esirkepov_publication_boundary_contract.py` 及书稿引用的项目分析脚本；
+- `scripts/build_v73.py`、`scripts/verify_v73_build.py`、`scripts/audit_release_consistency.py`、`scripts/audit_andriyash_2016_asset_contract.py` 及书稿引用的项目分析脚本；
 - `docs/` 中的项目说明、验证矩阵和本发布审计；
 - `docs/public-evidence-index.{json,md}`；
 - `docs/transition-zone-route-contract.{json,md}` 与 `scripts/validate_transition_zone_route_contract.py`；
-- `dist/pic-tutor-v0.72.md`、`dist/pic-tutor-v0.72.html`、`dist/pic-tutor-v0.72.pdf`，前提是维护者确认生成物的发布策略。
+- `dist/pic-tutor-v0.73.md`、`dist/pic-tutor-v0.73.html`、`dist/pic-tutor-v0.73.pdf`，前提是维护者确认生成物的发布策略。
 
 明确排除：
 
@@ -53,14 +53,14 @@ v0.72 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 ## 发布前命令
 
 ```bash
-python scripts/build_v72.py
-python scripts/verify_v72_build.py --build-log /tmp/pic-tutor-build-v72-final.log
+python scripts/build_v73.py
+python scripts/verify_v73_build.py --build-log /tmp/pic-tutor-build-v73-final.log
 python scripts/audit_release_consistency.py
 git status --short
 ```
 
-当前 v0.72 构建验收结果：`pdf_pages=327`、源/合订图片链接均为 `16`、HTML 内嵌图片和图号范围检查全部通过。
+当前 v0.73 构建验收结果：`pdf_pages=328`、源/合订图片链接均为 `16`、HTML 内嵌图片和图号范围检查全部通过。
 
-v0.72 发布 allowlist 另见 `docs/v0.72-release-manifest.{json,md}`；总字节数以 manifest 的 `total_bytes` 为准，`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
+v0.73 发布 allowlist 另见 `docs/v0.73-release-manifest.{json,md}`；总字节数以 manifest 的 `total_bytes` 为准，`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
 
 验收脚本证明的是成书构建和资源合同，不替代第三方材料的版权审计，也不替代 GitHub 仓库最终 staged 文件清单审阅。

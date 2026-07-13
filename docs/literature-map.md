@@ -376,7 +376,7 @@
 | `references/02_books_lecture_notes/no-year_ComputationalMethodsPlasmaPhysicsNotes_Computational_Methods_in_Plasma_Physics_lecture_notes.pdf` | 待分类 | 待定 | 待 MinerU |
 | `references/02_books_lecture_notes/no-year_PICSimulationNotesYoujunHu2019_Particle_In_Cell_PIC_simulation.pdf` | 待分类 | 待定 | 待 MinerU |
 | `references/03_pic_foundations/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes.pdf` | particle pusher / resampling | 4, 8 | 已有 Markdown |
-| `references/03_pic_foundations/2016_AndriyashPoP2016_Laser-plasma_interactions_with_a_Fourier-Bessel_particle-in-cell_method.pdf` | laser/plasma acceleration | 87-89, 125 | 待 MinerU |
+| `references/03_pic_foundations/2016_AndriyashPoP2016_Laser-plasma_interactions_with_a_Fourier-Bessel_particle-in-cell_method/` | quasi-cylindrical Fourier-Bessel PSATD / laser-plasma acceleration | 第 6 章 RZ PSATD、 第 9 章文献路线 | 已 materialize：9 页 PDF、MinerU、26 图、中文精读、asset contract |
 | `references/03_pic_foundations/2020_Stanier2020_A_cancellation_problem_in_hybrid_particle-in-cell_schemes_due_to_finite_particle_size.pdf` | hybrid/fluid | 101-104 | 待 MinerU |
 | `references/03_pic_foundations/2021_MuravievCPC2021_Strategies_for_particle_resampling_in_PIC_simulations/2021_MuravievCPC2021_Strategies_for_particle_resampling_in_PIC_simulations.pdf` | particle pusher / resampling | 4, 8 | 已有 Markdown / 中文精读 |
 | `references/03_pic_foundations/2024_SandbergPASC24_Synthesizing_Particle-In-Cell_Simulations_through_Learning_and_GPU_Computing_for_Hybrid_Particle_Accelerator_Beamlines.pdf` | HPC / AMReX / performance | 71-79, 121-123 | 待 MinerU |

@@ -87,6 +87,8 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 - Lehe 2016：Galilean coordinates 消除 NCI 的核心离散论证；
 - Kirchen 2016：boosted-frame workflow 与稳定离散表示之间的应用层连接。
 
+本版又 materialize `Andriyash 2016`：`references/03_pic_foundations/2016_AndriyashPoP2016_Laser-plasma_interactions_with_a_Fourier-Bessel_particle-in-cell_method/` 保存 9 页 PDF、MinerU Markdown、26 张图片、论文顺序中文精读和 asset contract。它把 quasi-cylindrical Fourier-Bessel basis、PSATD 解析时间推进、`m±1` 横向 mode coupling 和 current-correction 公式从 PDF-only 线索推进为可引用的全文资产；但 PLARES-PIC 与 WarpX 的函数级等价、WarpX runtime reproduction 和论文图逐点复现仍保持边界。
+
 因此第 6 章当前虽然仍有 runtime validation 和 upstream handoff 的工程缺口，但在文献层已经不再是空心章节。
 
 ## 9.3 当前最突出的未闭环文献缺口
@@ -103,6 +105,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 | `Yee 1966` | metadata/DOI 已清楚；无本地 PDF/MinerU | 第 2、6 章 | 可暂由源码与后继 FDTD 文献支撑，但缺原始历史入口 |
 | `Esirkepov 2001` | 已建立 paper-specific 目录、access audit，并已 materialize 作者 arXiv 预印本 + MinerU + 中文讲解；仍缺出版商 CPC PDF 对照 | 第 5 章 | 已从纯源码缺口推进到 preprint-backed，但还未完成 CPC 定稿核对 |
 | `Villasenor-Buneman 1992` | 已建立 paper-specific 目录、access audit，并已 materialize 本机现成 PDF + MinerU + 中文讲解 | 第 5 章 | 已从纯源码缺口推进到 paper-backed，但中文讲解仍是第一轮结构精读 |
+| `Andriyash 2016` | 已 materialize 9 页 PDF、MinerU、26 张图、中文精读和 asset contract；来源是 quasi-cylindrical Fourier-Bessel PSATD | 第 6 章 RZ PSATD | 已从 PDF-only 推进到 full-text formula-backed；PLARES-PIC/WarpX 等价和 runtime reproduction 仍未完成 |
 | `LeeCPC2015` | 已有 7 页 eScholarship accepted/submitted manuscript、MinerU、13 张图、中文讲解和 source crosswalk；仍缺 publisher-formatted CPC PDF | 第 7 章 | accepted-manuscript-backed + source-grounded 已成立，但发表版差异和逐系数等价仍未完成 |
 
 这五条缺口里，`LeeCPC2015` 最特殊。它不是完全没工作，而是已经推进到：

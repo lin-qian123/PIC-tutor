@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：materialize Andriyash 2016 Fourier-Bessel PIC 论文：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 均已完成；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步更新路线图。明确保留 PLARES-PIC 与 WarpX 函数级等价、WarpX runtime reproduction 和论文图逐点复现边界。报告见 `runs/stage-c-validation/andriyash-2016-paper-asset/contract.{json,md}`。
+
 - [x] 2026-07-13：新增 `scripts/audit_esirkepov_publication_boundary_contract.py` 和 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`；将 Esirkepov 2001 的预印本公式、WarpX 源码/runtime 交叉证据、CPC 发表元数据与 publisher-PDF 缺失边界固化为可重复契约，并回填第 5 章。该项确认正文可以使用三层交叉复核，但不把 CPC 定稿写成已完成逐式核对。
 
 - [x] 2026-07-13：materialize Muraviev 2021 粒子重采样论文：50 页 PDF、MinerU Markdown、38 个图像资源、中文精读、README/access audit/reading log 和 `scripts/audit_muraviev_2021_asset_contract.py` 均已完成；第 4 章已接入 agnostic down-sampling、局部权重噪声和 WarpX `Resampling` 的有界映射，PICADOR/hi-chi 案例不升级为 WarpX runtime PASS。报告见 `runs/stage-c-validation/muraviev-2021-paper-asset/contract.{json,md}`。

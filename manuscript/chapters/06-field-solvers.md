@@ -1900,6 +1900,32 @@ $$
 
 本轮又把这条 helper 收成独立的正/负 contract：`scripts/analyze_rz_jrhom_first_stage_contract.py` 直接读取真实 2-rank repeated/MPI 末态 plotfile，要求 baseline 被 energy ceiling 接受、`ll2-no-timeavg-cleaning` reference 被同一 ceiling 拒绝。实际 baseline energy ratio 为 `0.9770894022295227`，reference ratio 为 `1.0`，由 `1.001` safety factor 导出的阈值为 `0.9780664916317521`；六个字段 `Er/Ez/Bt/jr/jz/rho` 在两组 plotfile 中均 finite。报告位于 `runs/fieldsolver-validation/rz-reference-ledgers/rz-jrhom-first-stage-contract.{json,md}`。这仍是 project-level repeated/MPI validation，不等于 WarpX upstream CMake 已经接入 analysis；spike 只记录、不作为第一阶段主 gate。
 
+### 6.8.6 v0.73 文献闭环：Andriyash 2016 Fourier-Bessel PSATD
+
+本版新增 `references/03_pic_foundations/2016_AndriyashPoP2016_Laser-plasma_interactions_with_a_Fourier-Bessel_particle-in-cell_method/`：本地 9 页 PDF 已经完成 MinerU、26 张图片提取、按论文顺序中文精读和 `scripts/audit_andriyash_2016_asset_contract.py` 资产合同。它补的是 RZ/准柱坐标谱求解器的 primary-source 背景，而不是再增加一条泛泛的 PSATD 书目。
+
+论文把空间坐标写为 `(x,r,theta)`，用角向 Fourier mode 和径向 Bessel/Hankel transform 构造柱谐基；Laplace 算子满足
+
+$$
+\widehat{\nabla^2 f}=-\omega^2\widehat f,
+\qquad
+\omega=\sqrt{k_x^2+k_r^2},
+$$
+
+所以 `epsilon` 和辅助场 `g` 可以在谱空间中按受迫振子解析推进，而一阶 `gradient/div/curl` 只在每步投影和粒子通信时重新计算。论文的时间步顺序是“粒子位置推进 -> 按 angular mode 沉积 `n/J` -> 谱投影 -> 解析场推进 -> 回投影 -> Lorentz force”，这与本章当前强调的 RZ 源项/场推进分层相互印证。
+
+更重要的是，论文没有把 charge continuity 当作 Maxwell 时间积分自动解决的问题。它显式写出
+
+$$
+\partial_t n+\nabla\cdot\mathbf{j}=0
+$$
+
+并给出在 Fourier-Bessel 矩阵导数上执行的 current correction。这个来源可以帮助读者理解 WarpX RZ PSATD 中 `rho`、`Jp/Jm/Jz`、`Ep/Em/Ez` 和 current correction 为什么必须单独成层；但论文实现是 PLARES-PIC，不能直接声称与 `PsatdAlgorithmRZ` 逐函数等价。
+
+论文 benchmark 的两条结论也保持窄化：线性激光传播中，PSATD 在较粗网格上更接近群速度理论；密度 shock 注入中，PSATD 与 FDTD 的 wake 结构接近，但电子束细结构和横向速度受到 FDTD 数值色散、数值 Cherenkov 与 Lorentz force 投影误差影响。对应的 PLARES-PIC/CALDER-CIRC 图和 `33 pC/28 pC` 电荷对照属于论文级证据，不是 WarpX plotfile 或官方 regression。
+
+本论文包的分类是 `FULL_TEXT_MINERU_CHINESE_NOTE_VERIFIED_WARPX_EQUIVALENCE_BOUNDARY`：它关闭了“该 RZ/准柱坐标谱方法只有书目线索”的缺口，但没有关闭 WarpX runtime reproduction、PLARES-PIC 函数级映射或论文 benchmark 逐图复现。
+
 ## 6.9 静电与静磁求解器
 
 绑定精读笔记：`notes/code-reading/fieldsolver/09-electrostatic-magnetostatic.md`。

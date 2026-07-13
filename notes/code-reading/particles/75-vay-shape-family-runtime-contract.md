@@ -22,4 +22,4 @@ python scripts/analyze_vay_shape_family_runtime.py \
 
 ## 证据边界
 
-该 contract 分类为 `RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D`。它关闭的是支持的 Cartesian shape=1..4 单进程 runtime family 缺口；不能替代官方 CMake 要求的 2-rank 回归，也不外推到 RZ/1D source guard、AMR/边界裁剪或正式收敛阶。原始日志和 plotfile 保留在 `runs/`，不进入 public release。
+该 contract 分类为 `RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D`。它关闭的是支持的 Cartesian shape=1..4 单进程 runtime family 缺口；不能替代 shape family 的 2-rank 全组合回归，也不外推到 RZ/1D source guard、AMR/边界裁剪或正式收敛阶。已注册 shape=3 2-rank case 由独立 contract 覆盖。原始日志和 plotfile 保留在 `runs/`，不进入 public release。

@@ -1,5 +1,7 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
+2026-07-13：第 5 章补齐官方 Vay 2-rank runtime consumer：2D/3D shape=3 的 CMake 注册路径均通过官方 `divE-rho/epsilon_0` analysis；该结果不外推到 shape family 全组合、AMR 或正式收敛阶。
+
 2026-07-13：第 5 章新增 Vay Cartesian shape-family runtime contract：2D/3D 的 shape=1/2/3/4 共 8 个单进程 producer 均通过官方 `divE-rho/epsilon_0` analysis；该结果不替代 2-rank 官方回归或正式收敛阶证明。
 
 当前 v0.68 合订 PDF 为 325 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-9 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
@@ -10,13 +12,13 @@
 
 2026-07-13：第 5 章补入 Vay 2D/3D 单进程 runtime consumer contract，官方 analysis 的 `divE-rho/epsilon_0` gate 在两条 case 上均通过；2-rank 回归边界继续保留。
 
-2026-07-13：第 9 章新增文献路线资产合同，12 项检查绑定证据层、核心文献树、literature map、inventory 与 publisher/metadata 缺口；当前公开证据索引为 184 条，合同不替代论文逐式审校或 runtime physics proof。
+2026-07-13：第 9 章新增文献路线资产合同，12 项检查绑定证据层、核心文献树、literature map、inventory 与 publisher/metadata 缺口；当前公开证据索引为 185 条，合同不替代论文逐式审校或 runtime physics proof。
 
 2026-07-13：第 4 章新增显式 leapfrog position source crosswalk，核对 momentum-then-position 顺序、时间中心速度公式、维度分支和 Higuera-Cary split-push 边界；直接 half-step attribute 与 Vay Appendix B 专门圆轨道仍保留为后续验证项。
 
 2026-07-13：第 4 章新增 Vay Appendix B 窄化 uniform-B runtime proxy contract；三种 pusher 各 81 帧，离散 phase、速度 proxy、gyroradius proxy 和动量范数 gate 通过，finalize tail 与 physics data contract 分开记录。
 
-v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 184 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
+v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 185 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
 
 2026-07-13：第 7 章新增 LeeCPC2015 paper/source/regression crosswalk：accepted manuscript 的 PSTD 与 reflection recurrence、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 的实现表面、以及官方 `<1e-6` reflectivity consumer 均由只读 contract 交叉验收；仍保留 publisher-formatted CPC PDF 和逐系数等价缺失边界。
 

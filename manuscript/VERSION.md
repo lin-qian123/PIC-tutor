@@ -1,5 +1,7 @@
 # PIC-tutor v0.68
 
+本版又补齐官方 Vay 2-rank runtime consumer：2D/3D shape=3 按 CMake 注册规模运行并通过 `divE-rho/epsilon_0` 的 `1e-3` gate，结果为 `4.0411e-4/6.0266e-4`；shape family 的 2-rank 全组合、AMR/边界和正式收敛阶仍保持边界。
+
 本版又补入 Vay Cartesian shape-family runtime contract：2D/3D 的 `particle_shape=1/2/3/4` 共 8 个单进程 producer 均通过官方 `divE-rho/epsilon_0` analysis 的 `1e-3` gate；其中 6 个为新增 sibling。该证据不替代官方 2-rank CMake 回归、AMR/边界组合或正式收敛阶研究。
 
 本版又补入第 5 章 geometry/order coverage gap register：7 项已知缺口被统一登记为 `BOUNDARY`、`UNPROVEN`、`PRE_PHYSICS_BOUNDARY` 或 `PARTIAL`，并分别绑定下一步证据入口。该 negative-space contract 只关闭缺口登记的文档歧义，不把未覆盖组合升级为 PASS。报告见 `runs/stage-c-validation/deposition-geometry-order-gap-register/contract.{json,md}`。
@@ -18,7 +20,7 @@
 
 本版又修正第 8 章 `8.14.1` 孤立标题层级为正式 `8.14` 小节，并将正文验证矩阵的合同数口径更新为当前 `177` 条。
 
-本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `184` 条。
+本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `185` 条。
 
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 

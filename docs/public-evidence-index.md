@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `184`
-- PASS: `132`
+- records: `185`
+- PASS: `133`
 - FAIL: `30`
 - UNKNOWN: `22`
 - boundary-classified: `33`
@@ -188,6 +188,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `vay-2008-paper-asset` | `PASS` | `BOUNDARY` | Vay 2008 Chapter 4 pusher paper asset contract | `FULLTEXT_SOURCE_GROUNDED_FRAME_CONSISTENCY_APPENDIX_BOUNDARY` | local full-text PDF and MinerU package support Vay frame-consistency, explicit-gamma and gyroradius explanations; dedicated Appendix-B runtime reproduction remains open | `passed=True` |
 | `vay-appendix-b-runtime-proxy` | `PASS` | `BOUNDARY` | Vay Appendix-B bounded uniform-B runtime proxy | `VAY_APPENDIX_B_RUNTIME_PROXY_PASS_DIRECT_HALF_STEP_ATTRIBUTE_BOUNDARY` | 81-frame case-local uniform-B orbit; discrete phase, position-update velocity, and gyroradius proxy; not a direct half-step attribute or publisher-figure reproduction | `max_gyroradius_proxy_relative_error=4.773959097091316e-15`, `max_momentum_norm_relative_spread=1.0520084362000346e-14`, `max_phase_error_rad=4.198436629071489e-05`, `max_position_update_velocity_proxy_relative_error=1.3362892364672708e-14`, `passed=True` |
 | `vay-geometry-order-wiring` | `PASS` | `PASS` | Vay deposition geometry/order official wiring | `SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY` | official 2D/3D shape-3 cases, 2D shape-4 sibling, analysis consumers and source guards; not full Cartesian-product runtime proof | `passed=True` |
+| `vay-mpi2` | `PASS` | `PASS` | official Vay deposition 2D/3D 2-rank runtime consumer | `RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D` | official vay_deposition CMake entries, official 2D/3D inputs, two-rank producers and upstream divE-rho/epsilon_0 analysis; not full geometry/order Cartesian product, AMR, non-Cartesian geometry, or formal convergence order | `passed=True` |
 | `vay-runtime` | `PASS` | `PASS` | official Vay deposition 2D/3D runtime consumer | `RUNTIME_SINGLE_RANK_OFFICIAL_ANALYSIS_PASS_2D_3D` | official Vay inputs, single-rank producers, final plotfiles and upstream divE-rho/epsilon_0 analysis; not the official 2-rank Cartesian-product regression | `passed=True` |
 | `vay-shape-family` | `PASS` | `PASS` | Vay deposition 2D/3D shape-family runtime consumer | `RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D` | single-rank case-local probes using official 2D/3D Vay inputs with particle_shape 1..4 and the upstream divE-rho/epsilon_0 analysis; not official 2-rank CMake regression, AMR, non-Cartesian geometry, or formal convergence order | `passed=True` |
 | `vay_appendix_b_orbit` | `PASS` | `PASS` | dedicated uniform-B Boris/Vay/Higuera-Cary orbit comparison | `` |  | `passed=True` |

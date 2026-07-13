@@ -848,6 +848,15 @@ acquisition 排序练习</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版又补齐官方 Vay 2-rank runtime consumer：2D/3D shape=3 按 CMake
+注册规模运行并通过 <code>divE-rho/epsilon_0</code> 的 <code>1e-3</code>
+gate，结果为 <code>4.0411e-4/6.0266e-4</code>；shape family 的 2-rank
+全组合、AMR/边界和正式收敛阶仍保持边界。</p>
+<p>本版又补入 Vay Cartesian shape-family runtime contract：2D/3D 的
+<code>particle_shape=1/2/3/4</code> 共 8 个单进程 producer 均通过官方
+<code>divE-rho/epsilon_0</code> analysis 的 <code>1e-3</code> gate；其中
+6 个为新增 sibling。该证据不替代官方 2-rank CMake
+回归、AMR/边界组合或正式收敛阶研究。</p>
 <p>本版又补入第 5 章 geometry/order coverage gap register：7
 项已知缺口被统一登记为
 <code>BOUNDARY</code>、<code>UNPROVEN</code>、<code>PRE_PHYSICS_BOUNDARY</code>
@@ -886,7 +895,7 @@ verification。</p>
 <code>177</code> 条。</p>
 <p>本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖
 <code>FieldProbe</code>、<code>ParticleHistogram2D</code>、<code>LoadBalanceCosts</code>
-的官方输入和 analysis consumer；公开证据索引当前为 <code>183</code>
+的官方输入和 analysis consumer；公开证据索引当前为 <code>185</code>
 条。</p>
 <p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
 组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
@@ -15554,9 +15563,18 @@ producer（其中六个为本轮新增 sibling）均写出最终 plotfile，官�
 <code>2.8824e-4/2.7647e-4/2.9007e-4/3.0592e-4</code>，全部低于
 <code>1e-3</code>。该结果分类为
 <code>RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D</code>，只关闭支持的
-Cartesian shape family 单进程证据缺口；2-rank、AMR、边界裁剪、RZ/1D
-和正式收敛阶仍保持边界。详见
+Cartesian shape family 单进程证据缺口；shape family 的 2-rank
+全组合、AMR、边界裁剪、RZ/1D 和正式收敛阶仍保持边界。详见
 <code>notes/code-reading/particles/75-vay-shape-family-runtime-contract.md</code>。</p>
+<p>随后补做了官方 CMake 注册规模的 2-rank replay：2D 使用
+<code>warpx.numprocs=2 1</code>，3D 使用
+<code>warpx.numprocs=2 1 1</code>，最终 <code>divE-rho/epsilon_0</code>
+相对误差分别为 <code>4.0411e-4</code> 和 <code>6.0266e-4</code>，均通过
+<code>1e-3</code> gate。该结果分类为
+<code>RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D</code>，关闭的是已注册
+shape=3 Cartesian case 的 2-rank producer/consumer 缺口；它不外推到
+shape family 的 2-rank 全组合、AMR、边界裁剪或正式收敛阶。详见
+<code>notes/code-reading/particles/76-vay-mpi2-runtime-contract.md</code>。</p>
 <p>维护台账见
 <code>notes/code-reading/particles/72-deposition-geometry-order-gap-register.md</code>，由
 <code>scripts/audit_deposition_geometry_order_gap_register.py</code>

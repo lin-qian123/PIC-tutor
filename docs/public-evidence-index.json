@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 184,
+  "record_count": 185,
   "status_counts": {
-    "PASS": 132,
+    "PASS": 133,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 111,
+    "PASS": 112,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 33
@@ -2521,6 +2521,17 @@
       "contract": "Vay deposition geometry/order official wiring",
       "classification": "SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY",
       "scope": "official 2D/3D shape-3 cases, 2D shape-4 sibling, analysis consumers and source guards; not full Cartesian-product runtime proof",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "vay-mpi2",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "official Vay deposition 2D/3D 2-rank runtime consumer",
+      "classification": "RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D",
+      "scope": "official vay_deposition CMake entries, official 2D/3D inputs, two-rank producers and upstream divE-rho/epsilon_0 analysis; not full geometry/order Cartesian product, AMR, non-Cartesian geometry, or formal convergence order",
       "metrics": {
         "passed": true
       }

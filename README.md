@@ -2,6 +2,8 @@
 
 当前 v0.68 又补入 RZ Esirkepov charge/field tradeoff summary contract：对 7 组既有 RZ evidence family 做 12 项统一交叉检查，确认默认 axis correction 下 field gate 通过而 axis charge 仍为 `BOUNDARY`，correction-off 仅在局部 sibling 上恢复 charge；该结果不修改 WarpX 默认参数，也不宣称正式收敛阶。脚本为 `scripts/summarize_rz_esirkepov_charge_field_tradeoff.py`，报告见 `runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}`。
 
+当前 v0.68 又补入第 5 章 deposition 证据层导航表：将 Esirkepov 的论文/索引摘要、WarpX 当前源码、代数/源码合同和 runtime consumer 分层，明确 publisher-PDF 逐行对照、完整 geometry/order product 与 AMR 强 runtime 闭环仍未完成。crosswalk 脚本为 `scripts/audit_esirkepov_paper_source_runtime_crosswalk.py`，当前 15 项检查全部通过。
+
 当前 v0.68 又补入 position-update output-staggering contract：`UpdatePosition.H` 与 `PhysicalParticleContainer.cpp` 的源码锚点通过，Boris/Vay/Higuera-Cary 三组各 81 帧 Full plotfile 的单帧动量配对误差约为 `6.242e-2`，相邻帧中点 proxy 最大误差约为 `1.609e-3`；该结果确认输出时间层边界，不把 plotfile 机械动量冒充直接 half-step attribute。脚本为 `scripts/audit_position_update_runtime_contract.py`，报告见 `runs/stage-c-validation/position-update-runtime-contract/contract.{json,md}`。
 
 当前 v0.68 又统一 Higuera-Cary Poincare evidence boundary：短轨道采样不足，长轨道 invariant/reference 和 angular-order candidate 通过但 topology 未升级，密集族 resonance screen 通过而解析 reference/candidate signature 保留边界；不宣称论文等价 two-fold island 或 trajectory-crossing proof。脚本为 `scripts/summarize_higuera_poincare_evidence.py`，报告见 `runs/stage-c-validation/higuera-poincare-evidence-summary/contract.{json,md}`。

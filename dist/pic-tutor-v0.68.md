@@ -2,6 +2,8 @@
 
 # PIC-tutor v0.68
 
+本版又补入第 5 章 deposition 证据层导航表：将 Esirkepov 的论文/索引摘要、当前源码、代数/源码合同和 runtime consumer 分开列出，明确每层能支持与不能支持的结论；`scripts/audit_esirkepov_paper_source_runtime_crosswalk.py` 当前 15 项检查全部通过，但仍保留 publisher-PDF 逐行对照、完整 geometry/order product 和 AMR 强 runtime 闭环边界。
+
 本版新增 RZ Esirkepov charge/field tradeoff summary contract：对 7 组既有 RZ evidence family 做 12 项统一交叉检查，确认默认 axis correction 下 field gate 通过而 axis charge 仍为 `BOUNDARY`，correction-off 只在局部 sibling 上恢复 charge；该结果不修改 WarpX 默认参数，也不宣称正式收敛阶。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}`。
 
 本版新增 RCYLINDER/RSPHERE species-rho decomposition observable：通过为 RCYLINDER shape=1 增加物种 rho 诊断字段，径向 Esirkepov shape=1/2/3/4 共 8 个案例、81 个当前编号帧合计 648/648 通过；按参与相加字段幅值归一化的 `rho-(rho_electrons+rho_ions)` 最大相对差为 `2.295e-16`。该 observable 不替代 radial `divE-rho` 或 current-closure proof。报告见 `runs/stage-c-validation/radial-rho-decomposition-observable/contract.{json,md}`。

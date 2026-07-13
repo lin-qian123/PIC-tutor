@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 198,
+  "record_count": 201,
   "status_counts": {
-    "PASS": 146,
+    "PASS": 149,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 120,
+    "PASS": 123,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 38
@@ -144,6 +144,18 @@
       }
     },
     {
+      "case": "current-book-gap-register-v0.81",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "current book gap register",
+      "classification": "CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA",
+      "scope": "project-level gap inventory; does not close any listed gap",
+      "metrics": {
+        "gap_count": 8,
+        "passed": true
+      }
+    },
+    {
       "case": "deposition-algorithm-selection",
       "status": "PASS",
       "evidence_kind": "PASS",
@@ -257,6 +269,34 @@
       "metrics": {
         "check_count": 13,
         "pass_count": 13
+      }
+    },
+    {
+      "case": "editorial-quality-v0.80",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "editorial quality audit",
+      "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
+      "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
+      "metrics": {
+        "heading_count": 320,
+        "html_heading_count": 320,
+        "passed": true,
+        "pdf_pages": 332
+      }
+    },
+    {
+      "case": "editorial-quality-v0.81",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "editorial quality audit",
+      "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
+      "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
+      "metrics": {
+        "heading_count": 320,
+        "html_heading_count": 320,
+        "passed": true,
+        "pdf_pages": 332
       }
     },
     {

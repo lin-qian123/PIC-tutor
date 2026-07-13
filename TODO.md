@@ -2,6 +2,9 @@
 
 ## 2026-07-14
 
+- [x] 新增 v0.81 自动编辑质量审计：校验合订 Markdown 标题/表格结构、HTML 标题一致性、PDF 关键章节、页数和构建警告；结果为 `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN`。
+- [ ] 继续完成当前候选版人工通读、HTML/PDF 版式复核、第三方材料许可确认和公开再分发签收。
+
 - [x] 新增 v0.80 `docs/current-book-gap-register.md`：将 publisher access、transition-zone ledger、RZ implicit Villasenor、Vay+AMR、RZ axis charge、formal convergence 和 release editorial gate 八项开放问题绑定到证据、分类、动作和关闭条件。
 - [x] 新增 `scripts/audit_current_gap_register.py` 与第 9 章 `9.8` 登记表合同；分类为 `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA`，只确认状态口径一致，不关闭任何开放项。
 

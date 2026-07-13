@@ -44,6 +44,13 @@ def main() -> int:
         "evidence_paths_present": all((root / path).is_file() for path in evidence_paths),
         "chapter_section": "## 9.8 当前成书缺口登记" in chapter,
         "chapter_link": "docs/current-book-gap-register.md" in chapter and "scripts/audit_current_gap_register.py" in chapter,
+        "editorial_audit_evidence": all(
+            (root / path).is_file()
+            for path in (
+                "docs/editorial-quality-audit-v0.81.md",
+                "runs/stage-c-validation/editorial-quality-v0.81/contract.json",
+            )
+        ) and "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN" in register,
         "classification_boundaries": all(marker in register for marker in (
             "OPEN_EXTERNAL_ACCESS", "RUNTIME_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
             "CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN", "RELEASE-EDITORIAL",

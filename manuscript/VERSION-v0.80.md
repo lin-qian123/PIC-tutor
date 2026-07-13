@@ -1,6 +1,4 @@
-# PIC-tutor v0.81
-
-本版新增可重复的自动编辑质量审计：对合订 Markdown 的标题与表格结构、HTML 标题数与关键章节、PDF 页数与关键章节以及构建警告进行一致性检查。当前结果为 `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN`；自动检查通过，但人工通读、HTML/PDF 版式检查、第三方材料许可和公开再分发审查仍未关闭。
+# PIC-tutor v0.80
 
 本版新增项目级当前成书缺口登记：八项开放项分别绑定当前证据、分类、下一步动作和可验收关闭条件，覆盖 publisher access、transition-zone route ledger、RZ implicit Villasenor、Vay+AMR、RZ axis charge、formal convergence 和 release editorial gate。新增 `scripts/audit_current_gap_register.py` 与 `docs/current-book-gap-register.md`，分类为 `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA`；登记表用于防止历史 TODO 漂移，不把任何开放项写成已完成。
 
@@ -18,7 +16,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v81_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v80_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

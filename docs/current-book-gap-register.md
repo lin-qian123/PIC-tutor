@@ -1,6 +1,6 @@
 # PIC-tutor 当前成书缺口登记
 
-本表是 v0.80 的当前状态快照，不是历史 TODO 的完整替代品。每一项都必须同时有：当前证据、明确分类、下一步动作和可验收的关闭条件。`OPEN_EXTERNAL_ACCESS`、`RUNTIME_LEDGER_UNPROVEN`、`PRE_PHYSICS_BOUNDARY` 和 `UNPROVEN` 都表示尚未完成，不是 PASS。
+本表是 v0.81 的当前状态快照，不是历史 TODO 的完整替代品。每一项都必须同时有：当前证据、明确分类、下一步动作和可验收的关闭条件。`OPEN_EXTERNAL_ACCESS`、`RUNTIME_LEDGER_UNPROVEN`、`PRE_PHYSICS_BOUNDARY` 和 `UNPROVEN` 都表示尚未完成，不是 PASS。
 
 | ID | 缺口 | 当前分类 | 当前证据 | 下一步动作 | 关闭条件 |
 |---|---|---|---|---|---|
@@ -11,6 +11,6 @@
 | `RUNTIME-VAY-AMR` | Vay + AMR 运行覆盖 | `SOURCE_GUARD_RUNTIME_INTENTIONALLY_REJECTED` | `runs/stage-c-validation/vay-amr-guard/contract.json` | 由上游决定支持/继续拒绝；本项目不修改相邻 WarpX | 支持路径进入官方测试，或正式文档明确将其列为不支持范围 |
 | `PHYSICS-RZ-AXIS-CHARGE` | 默认 axis correction 下 RZ charge residual | `BOUNDARY` | `runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.json` | 固定 axis observable、默认参数和 resolution family，继续查明误差来源 | 默认配置下 charge gate 有稳定解释和独立 runtime 证据 |
 | `STUDY-FORMAL-CONVERGENCE` | 跨 resolution/observable 的正式收敛阶 | `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` | `runs/stage-c-validation/deposition-convergence-readiness/contract.json` | 预注册 norm、控制变量、拟合区间，补独立 refinement family | 重复/独立 family 的 order 在预注册 gate 内稳定 |
-| `RELEASE-EDITORIAL` | 最终人工通读、HTML/PDF 排版和公开再分发审计 | `OPEN` | `docs/public-repo-release-audit.md`、各版本 manifest | 对当前候选版做人工阅读和许可/公开性复核 | 编辑问题、宽表格、公开许可和 release checklist 全部签收 |
+| `RELEASE-EDITORIAL` | 最终人工通读、HTML/PDF 排版和公开再分发审计 | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | `docs/editorial-quality-audit-v0.81.md`、`runs/stage-c-validation/editorial-quality-v0.81/contract.json`、`docs/public-repo-release-audit.md` | 对当前候选版做人工阅读和许可/公开性复核 | 编辑问题、宽表格、公开许可和 release checklist 全部签收 |
 
 本表由 `scripts/audit_current_gap_register.py` 验收。合同通过只表示登记项、分类和证据路径没有漂移，不表示任何一项缺口已经关闭。

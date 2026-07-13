@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `198`
-- PASS: `146`
+- records: `201`
+- PASS: `149`
 - FAIL: `30`
 - UNKNOWN: `22`
 - boundary-classified: `38`
@@ -22,6 +22,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `boundary-amr-chapter-source-crosswalk` | `UNKNOWN` | `BOUNDARY` | Chapter 7 boundary AMR source crosswalk | `CHAPTER_7_BOUNDARY_AMR_SOURCE_ANCHORS_VERIFIED` | Representative chapter/source anchors; transition-zone runtime route ledger remains explicitly unproven. | `check_count=13`, `pass_count=13` |
 | `charge-deposition-bridge-source` | `PASS` | `PASS` | ABLASTR charge-deposition bridge source contract | `` | source mapping only; not a numerical charge-deposition regression | `anchor_count=13`, `missing_count=0`, `passed=True` |
 | `current-book-gap-register` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
+| `current-book-gap-register-v0.81` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `deposition-algorithm-selection` | `PASS` | `PASS` | chapter-5 deposition algorithm selection matrix | `SOURCE_AND_RUNTIME_SELECTION_MATRIX_WITH_EXPLICIT_BOUNDARIES` | read-only chapter/source/runtime linkage; not equal physics coverage across algorithms | `passed=True` |
 | `deposition-chapter-source-crosswalk` | `PASS` | `PASS` | Chapter 5 deposition source crosswalk | `CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED` | Checks representative Chapter 5 claims against current WarpX source markers; not a semantic proof or runtime regression. | `passed=True` |
 | `deposition-convergence-readiness` | `PASS` | `BOUNDARY` | deposition convergence readiness | `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` | existing RZ Esirkepov shape=1 three-resolution controls; descriptive pairwise order only | `passed=True` |
@@ -32,6 +33,8 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `diagnostics-chapter-source-crosswalk` | `UNKNOWN` | `UNKNOWN` | Chapter 8 diagnostics source crosswalk | `CHAPTER_8_DIAGNOSTICS_SOURCE_ANCHORS_VERIFIED` | Representative producer/consumer/source anchors; this is not a runtime physics proof or complete diagnostics inventory. | `check_count=13`, `pass_count=13` |
 | `diagnostics-minimal-inputs` | `UNKNOWN` | `UNKNOWN` | chapter-8-diagnostics-minimal-inputs | `` |  | `passed=12` |
 | `diagnostics-source-crosswalk` | `UNKNOWN` | `UNKNOWN` | Chapter 8 diagnostics source crosswalk | `CHAPTER_8_DIAGNOSTICS_SOURCE_ANCHORS_VERIFIED` | Representative producer/consumer/source anchors; this is not a runtime physics proof or complete diagnostics inventory. | `check_count=13`, `pass_count=13` |
+| `editorial-quality-v0.80` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=320`, `html_heading_count=320`, `passed=True`, `pdf_pages=332` |
+| `editorial-quality-v0.81` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=320`, `html_heading_count=320`, `passed=True`, `pdf_pages=332` |
 | `esirkepov-2001-paper-asset` | `PASS` | `BOUNDARY` | Esirkepov 1999/2001 Chapter 5 deposition paper asset contract | `PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING` | author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open | `passed=True` |
 | `esirkepov-bounded-compare` | `PASS` | `BOUNDARY` | Esirkepov 2001 bounded preprint/publication comparison | `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING` | bounded structural and abstract-level compare only; no publisher-PDF line-by-line claim | `passed=True` |
 | `esirkepov-density-decomposition` | `PASS` | `PASS` | Esirkepov second-order density decomposition identity | `` | paper formula / algebra layer; not a WarpX kernel or end-to-end regression | `max_residual=8.881784197001252e-16`, `passed=True`, `sample_count=10000` |

@@ -2726,6 +2726,21 @@ v0.93 的 repeat stability 只能说明 axis observable 在独立 producer 间�
 
 两个 case 都支持更窄的 `RZ_AXIS_STENCIL_ALIGNMENT_OBSERVED_CHARGE_BOUNDARY_OPEN` 结论：axis `divE` 的数值语义确实包含源码定义的 `4*Er/dr` 正则化，朴素 `2*Er/dr` 不能作为 residual root-cause oracle。这个结果仍不是 charge PASS，也不能单独证明 rho-side inverse-volume scaling、mode/interpolation 或 deposition kernel 没有误差；它只是把 solver-native axis stencil 从“可能因素”推进为“已由 source + reader 对齐观察到的因素”。报告见 `runs/stage-c-validation/rz-axis-divergence-stencil-v0.98/contract.{json,md}`，说明见 `notes/code-reading/particles/79-rz-axis-divergence-stencil-alignment.md`。
 
+### 5.14.15 v0.99 axis stencil cross-resolution alignment
+
+为了避免把 v0.98 的两个 `256x512` 末态误读成单一分辨率现象，本版对已有的 `64x128`、`128x256` 和 `256x512` correction-on/off family 重复相同的独立 reader 算子。6/6 个 case 中，源码 `4*Er/dr` 的 RMSE 都低于 naive `2*Er/dr`：
+
+| correction | grid | naive RMSE | source RMSE |
+|---|---:|---:|---:|
+| on | `64x128` | `2.7752e14` | `3.7296e13` |
+| off | `64x128` | `2.7615e14` | `1.6705e14` |
+| on | `128x256` | `2.2645e14` | `6.6455e13` |
+| off | `128x256` | `2.2721e14` | `2.9943e13` |
+| on | `256x512` | `2.5968e14` | `1.7287e13` |
+| off | `256x512` | `2.5999e14` | `1.2638e14` |
+
+因此本版把结论收窄为 `RZ_AXIS_STENCIL_ALIGNMENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN`：source-defined axis stencil 的对齐观察跨这三档 resolution 保持，但 residual 仍混合 longitudinal stencil、location/mode、rho-side scaling 与 diagnostic conversion，不能升级为 charge closure 或 deposition-kernel root cause。合同由 `scripts/analyze_rz_axis_divergence_resolution_contract.py` 生成，报告见 `runs/stage-c-validation/rz-axis-divergence-resolution-v0.99/contract.{json,md}`，说明见 `notes/code-reading/particles/80-rz-axis-divergence-resolution-alignment.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

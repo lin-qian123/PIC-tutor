@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.98 合订 PDF 的页数以实际构建结果为准；本版在 v0.97 transition-zone 分支激活证据基础上补入 RZ axis divergence stencil alignment contract。正文继续区分“solver-native axis stencil 已对齐观察”与“rho/deposition charge closure 已完成”，不把独立 reader 对照升级为完整物理通过。
+当前 v0.99 合订 PDF 的页数以实际构建结果为准；本版将 v0.98 的 RZ axis divergence stencil alignment 扩展到 `64x128`、`128x256`、`256x512` 三档 correction-on/off family，6/6 case 均支持源码 `4*Er/dr`。正文继续区分“solver-native axis stencil 已跨分辨率对齐观察”与“rho/deposition charge closure 已完成”，不把独立 reader 对照升级为完整物理通过。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 

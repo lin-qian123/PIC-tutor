@@ -39,6 +39,7 @@ def main() -> int:
         "runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.json",
         "runs/stage-c-validation/deposition-convergence-readiness/contract.json",
         "runs/stage-c-validation/rz-axis-charge-source-diagnostic-crosswalk-v0.94/contract.json",
+        "runs/stage-c-validation/rz-axis-divergence-resolution-v0.99/contract.json",
         "runs/stage-c-validation/formal-convergence-repeat-slope-gate-v0.95/contract.json",
     )
     checks = {
@@ -49,16 +50,17 @@ def main() -> int:
         "chapter_link": "docs/current-book-gap-register.md" in chapter and "scripts/audit_current_gap_register.py" in chapter,
         "rz_axis_stencil_evidence": all(marker in register for marker in (
             "rz-axis-divergence-stencil-v0.98/contract.json",
-            "79-rz-axis-divergence-stencil-alignment.md",
-            "RZ_AXIS_STENCIL_ALIGNMENT_OBSERVED_CHARGE_BOUNDARY_OPEN",
+            "rz-axis-divergence-resolution-v0.99/contract.json",
+            "80-rz-axis-divergence-resolution-alignment.md",
+            "RZ_AXIS_STENCIL_ALIGNMENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN",
         )),
         "editorial_audit_evidence": all(
             (root / path).is_file()
             for path in (
-                "docs/pdf-layout-audit-v0.98.md",
-                "runs/stage-c-validation/pdf-layout-v0.98/contract.json",
-                "docs/editorial-quality-audit-v0.98.md",
-                "runs/stage-c-validation/editorial-quality-v0.98/contract.json",
+                "docs/pdf-layout-audit-v0.99.md",
+                "runs/stage-c-validation/pdf-layout-v0.99/contract.json",
+                "docs/editorial-quality-audit-v0.99.md",
+                "runs/stage-c-validation/editorial-quality-v0.99/contract.json",
                 "runs/stage-c-validation/cross-geometry-convergence-trends/contract.json",
                 "docs/formal-convergence-preregistration.json",
                 "runs/stage-c-validation/formal-convergence-preregistration/contract.json",

@@ -11,6 +11,7 @@
 - [x] v0.102 按 `GetChargeDensity -> DepositCharge -> ApplyInverseVolumeScalingToChargeDensity` 源码调用链反推 scaling 前 axis 输入：三档 resolution、两种 species 的最终 axis 比值为 `0.85`，还原后为 `1.133333`，off-axis 比值为 `1`；分类为 `RZ_RHO_AXIS_PRESCALE_INPUT_BOUNDARY_OPEN`，仍不宣称 kernel root cause 或 charge closure。
 - [x] v0.103 对三档 resolution 的 on/off 初始帧按 particle ID 对齐，电子/离子的位置、角度、权重和动量逐项完全一致，但 species-rho axis 比值仍为 `0.85`、off-axis 比值为 `1`；分类为 `RZ_RHO_AXIS_DIAGNOSTIC_CONSUMER_BOUNDARY_OPEN`，排除粒子状态差异但不宣称 kernel root cause 或 charge closure。
 - [x] v0.104 真实运行 64x128 RZ default-true 与 explicit-true sibling：`rho_electrons/rho_ions/rho/Er/Ez/divE` 和粒子状态逐项完全一致，explicit false 只在 species axis rho 上产生差异；分类为 `RZ_AXIS_CORRECTION_DEFAULT_EXPLICIT_TRUE_EQUIVALENT_FALSE_BOUNDARY_OPEN`，排除参数默认值/解析路径。
+- [x] v0.105 增加非中性 RZ on/off sibling（`ions.density = 0.5*n0`）：species rho axis 比值仍为 `0.85`，总 rho axis 比值也为 `0.85`，且 `delta(rho)` 与 species delta 之和逐数组一致；分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_REVEALS_TOTAL_RHO_CONTRIBUTION_BOUNDARY_OPEN`，证明中性 case 的 total-rho 不变来自电子/离子抵消，但不宣称 kernel root cause 或 charge closure。
 - [ ] 在取得合法 publisher PDF 后，完成 Esirkepov 2001 与 LeeCPC2015 的逐页/逐项定稿差异合同；在此之前保持 `OPEN_EXTERNAL_ACCESS`。
 
 ## 2026-07-14

@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.104`：在 v0.103 粒子状态不变量基础上，新增真实 2-rank default-true 与 explicit-true sibling 对照。两者的 species rho、总 rho、场变量和粒子状态逐项完全一致；explicit false 只在 species axis rho 上产生差异。该结果排除了参数默认值/解析路径，把剩余问题收窄到 axis correction 参与的 diagnostic/deposition/wrap/scaling consumer，但不宣称 root cause、charge closure 或正式收敛阶已完成。
+当前成书版本为 `v0.105`：在 v0.104 default-true/explicit-true 对照基础上，新增非中性 RZ sibling。species rho 与总 rho 的 axis on/off 比值均为 `0.85`，中性 case 的 total-rho 不变被证明来自电子/离子抵消；该结果仍不宣称 root cause、charge closure 或正式收敛阶已完成。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

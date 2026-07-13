@@ -1,6 +1,4 @@
-# PIC-tutor v0.105
-
-本版新增非中性 RZ axis correction runtime contract：保持 `64x128` RZ 几何、算法和电子分布不变，只把 `ions.density` 改为 `0.5*n0`，比较 default-true/on 与 explicit false sibling。species `rho_electrons/rho_ions` 的 axis on/off 比值仍为 `0.85`、off-axis 比值为 `1`；总 `rho` 的 axis 比值也为 `0.85`，且 `delta(rho)` 与 species delta 之和逐数组一致。电子/离子粒子状态逐项一致，初始 `Er/Ez/divE` 不变。分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_REVEALS_TOTAL_RHO_CONTRIBUTION_BOUNDARY_OPEN`。该结果证明中性 case 的 total-rho 不变来自电子/离子抵消，但不宣称具体 kernel root cause、charge closure 或正式收敛阶。报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-control-v0.105/contract.{json,md}`，说明见 `notes/code-reading/particles/86-rz-axis-correction-nonneutral-control.md`。
+# PIC-tutor v0.104
 
 本版新增 axis correction default-versus-explicit-true runtime contract：64x128 RZ 的 default-true on case 省略 `boundary.verboncoeur_axis_correction`，显式 true sibling 写入该参数，另与显式 false case 对照。default-true 与 explicit-true 的 `rho_electrons/rho_ions/rho/Er/Ez/divE` 数组及电子/离子粒子状态逐项完全一致；explicit false 只在 species axis rho 上产生差异。分类为 `RZ_AXIS_CORRECTION_DEFAULT_EXPLICIT_TRUE_EQUIVALENT_FALSE_BOUNDARY_OPEN`。该结果排除默认值解析和显式 true 分支，把剩余问题收窄到 axis correction 参与的 species-rho diagnostic/deposition/wrap/scaling consumer，但不宣称 root cause、charge closure 或正式收敛阶已关闭。报告见 `runs/stage-c-validation/rz-axis-correction-default-explicit-true-v0.104/contract.{json,md}`，说明见 `notes/code-reading/particles/85-rz-axis-correction-default-explicit-true.md`。
 
@@ -75,7 +73,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v105_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v104_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

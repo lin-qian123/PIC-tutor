@@ -2812,6 +2812,12 @@ v0.104 对参数解析做真实 runtime 对照：64x128 RZ 的 default-true on c
 
 因此新增 `RZ_AXIS_CORRECTION_DEFAULT_EXPLICIT_TRUE_EQUIVALENT_FALSE_BOUNDARY_OPEN`：默认值解析和显式 true 分支已被排除，剩余问题集中在 axis correction 参与的 species-rho diagnostic/deposition/wrap/scaling consumer。该合同仍不是具体 kernel root-cause 证明、charge closure 或正式收敛阶。合同由 `scripts/audit_rz_axis_correction_default_explicit_true.py` 生成，报告见 `runs/stage-c-validation/rz-axis-correction-default-explicit-true-v0.104/contract.{json,md}`，说明见 `notes/code-reading/particles/85-rz-axis-correction-default-explicit-true.md`。
 
+### 5.14.21 v0.105 non-neutral control exposes total-rho contribution
+
+v0.105 继续用真实 2-rank RZ sibling 检查中性背景是否掩盖了 axis species-rho 差异：保持电子分布不变，只把 `ions.density` 改为 `0.5*n0`，再比较 correction-on/default 与显式 false。两种设置的电子/离子 particle ID、位置、角度、权重和动量逐项一致；`rho_electrons` 与 `rho_ions` 的 axis on/off 比值仍为 `0.85`，off-axis 比值仍为 `1`，总 `rho` 的 axis 比值也变为 `0.85`，最大差为 `30040.81188750008`。
+
+该结果由 `delta(rho) - [delta(rho_electrons)+delta(rho_ions)] = 0` 逐数组验证：中性 case 中 total-rho 没有显示 axis 差异，是电子/离子电荷贡献相互抵消，而不是 species-rho 差异不存在。该非中性控制把边界从“可能被中性抵消掩盖”推进为“axis correction 参与的 species-rho consumer 差异会进入 total-rho”；但初始帧 `Er/Ez/divE` 仍未改变，且该合同仍不识别具体 deposition kernel root cause、不关闭 charge closure 或正式收敛阶。分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_REVEALS_TOTAL_RHO_CONTRIBUTION_BOUNDARY_OPEN`。报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-control-v0.105/contract.{json,md}`，说明见 `notes/code-reading/particles/86-rz-axis-correction-nonneutral-control.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

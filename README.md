@@ -6,7 +6,9 @@
 
 当前 v0.68 又补入第 7 章边界/PML/AMR 正文-源码 crosswalk：13 组检查覆盖 field/particle 边界顺序、PEC/PMC/Silver-Mueller、PML 生命周期、guard-cell/通信、AMR 重建、moving window 和 scraping；transition-zone route ledger 仍明确保持未完成。报告见 `runs/stage-c-validation/boundary-amr-chapter-source-crosswalk/contract.{json,md}`。
 
-当前公开证据索引已更新为 175 条合同；README 中较早的历史日志保留当时的条数，不代表当前索引快照。
+当前 v0.68 又补入第 8 章诊断/验证正文-源码 crosswalk：13 组检查覆盖主循环调度、Full/BTD/BoundaryScraping、ComputeDiagFunctors/FlushFormats、OpenPMD 生命周期、reduced diagnostics 注册/写盘和官方 analysis consumer；该合同不替代 case-local physics gate。报告见 `runs/stage-c-validation/diagnostics-chapter-source-crosswalk/contract.{json,md}`。
+
+当前公开证据索引已更新为 176 条合同；README 中较早的历史日志保留当时的条数，不代表当前索引快照。
 
 当前 v0.68 又为第 5 章补入正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface。该合同用于防止源码演进造成正文漂移，不替代物理 runtime 或论文逐行证据。
 
@@ -38,7 +40,7 @@
 
 当前 v0.68 又新增 RZ secondary-emission resolution-aware public contract：默认 `64x64` 仍为 raw `FAIL`/`BOUNDARY`，`128x128` 与 `256x256` refined controls 通过官方 `2%` EB impact-point gate；三档误差 `3.6038%/0.9977%/0.6646%` 单调下降，支持分辨率敏感性诊断，但不把默认 upstream regression 改写成通过，也不宣称正式 convergence order。合同见 `runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}`。
 
-当前成书版本为 `v0.68`，对应 323 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、FieldSolver 与 boundary/AMR source crosswalk、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
+当前成书版本为 `v0.68`，对应 323 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、FieldSolver、boundary/AMR 与 diagnostics source crosswalk、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
 v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 173 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 

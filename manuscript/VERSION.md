@@ -4,6 +4,8 @@
 
 本版又补入第 7 章边界/PML/AMR 正文-源码 crosswalk：13 组代表性锚点覆盖 field/particle 边界顺序、场边界分派、PML 生命周期、guard-cell/通信、AMR 重建、moving window 和 scraping consumer；transition-zone route ledger 仍保持 `RUNTIME_LEDGER_UNPROVEN`。该合同只防止正文漂移，不替代 runtime route-count proof。报告见 `runs/stage-c-validation/boundary-amr-chapter-source-crosswalk/contract.{json,md}`。
 
+本版又补入第 8 章诊断/验证正文-源码 crosswalk：13 组代表性锚点覆盖主循环调度、Full/BTD/BoundaryScraping 类型分派、`ComputeDiagFunctors`/flush、OpenPMD iteration 生命周期、reduced diagnostics 注册/写盘和官方 analysis consumer。该合同只防止章节 wiring 漂移，不替代 case-local physics gate。报告见 `runs/stage-c-validation/diagnostics-chapter-source-crosswalk/contract.{json,md}`。
+
 本版又完成 Birdsall `3A ES1` 章节回填的 source crosswalk：11 组代表性锚点核对历史阶段链、WarpX fresh/restart 初始化、粒子生命周期、`Evolve()` 分派和 Langmuir/初始化验证层。该合同不宣称历史程序与现代 WarpX 逐函数等价。报告见 `runs/stage-c-validation/birdsall-3a-warpx-crosswalk/contract.{json,md}`。
 
 本版又为第 5 章新增 deposition 正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface；该 contract 只防止正文随源码漂移，不升级为 C++ 语义证明、完整 geometry/order runtime 覆盖或论文逐行复现。报告见 `runs/stage-c-validation/deposition-chapter-source-crosswalk/contract.{json,md}`。
@@ -60,7 +62,7 @@
 
 本版又补入 dense `p_y=0.2..2.8` family 和 64³ `p_y=1.6/1.8` resolution control：Vay 共振窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，但仍只标记为 resonance-sensitive invariant screen，不提升为 two-fold island topology reproduction。
 
-本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 175 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
+本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 176 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
 

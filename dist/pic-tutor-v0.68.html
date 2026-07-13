@@ -781,6 +781,7 @@ openPMD writer 合同</a></li>
 external-file Gaussian beam：输入文件路径与束斑物理合同</a></li>
 <li><a href="#第-8-章验证矩阵命令产物与-gate" id="toc-第-8-章验证矩阵命令产物与-gate">第 8 章验证矩阵：命令、产物与
 gate</a></li>
+<li><a href="#本章正文与源码同步合同-2" id="toc-本章正文与源码同步合同-2">8.14.1 本章正文与源码同步合同</a></li>
 </ul></li>
 <li><a href="#练习与复现实验-1" id="toc-练习与复现实验-1">8.15
 练习与复现实验</a></li>
@@ -843,6 +844,13 @@ consumer；transition-zone route ledger 仍保持
 <code>RUNTIME_LEDGER_UNPROVEN</code>。该合同只防止正文漂移，不替代
 runtime route-count proof。报告见
 <code>runs/stage-c-validation/boundary-amr-chapter-source-crosswalk/contract.{json,md}</code>。</p>
+<p>本版又补入第 8 章诊断/验证正文-源码 crosswalk：13
+组代表性锚点覆盖主循环调度、Full/BTD/BoundaryScraping
+类型分派、<code>ComputeDiagFunctors</code>/flush、OpenPMD iteration
+生命周期、reduced diagnostics 注册/写盘和官方 analysis
+consumer。该合同只防止章节 wiring 漂移，不替代 case-local physics
+gate。报告见
+<code>runs/stage-c-validation/diagnostics-chapter-source-crosswalk/contract.{json,md}</code>。</p>
 <p>本版又完成 Birdsall <code>3A ES1</code> 章节回填的 source
 crosswalk：11 组代表性锚点核对历史阶段链、WarpX fresh/restart
 初始化、粒子生命周期、<code>Evolve()</code> 分派和
@@ -1018,7 +1026,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 175 条 <code>contract.json</code>，保留原始
+汇总本地 176 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
@@ -26340,7 +26348,7 @@ reconstruction <code>&lt; 3.1e-16</code></td>
 也不等价于确定性 <code>1e-9</code>
 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema
 contract、性能 gate 和采样统计边界。公开仓库中的
-<code>docs/public-evidence-index.{json,md}</code> 进一步提供 168
+<code>docs/public-evidence-index.{json,md}</code> 进一步提供当前 175
 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。</p>
 <p>当前证据等级应写成：Langmuir
 已有运行级解析频率、场误差和最终守恒证据；uniform plasma
@@ -26368,6 +26376,22 @@ registration 缺口；RZ electrostatic sphere 又补充了官方场/能量 gate
 project-level case-local evidence，不能替代官方单模 CMake
 analysis。JSON/Markdown 报告和脚本都保存在项目内，运行产物仍按
 case-local 目录归档。</p>
+<h3 id="本章正文与源码同步合同-2">8.14.1 本章正文与源码同步合同</h3>
+<p>本章的 producer/consumer/source 对应关系由
+<code>scripts/audit_diagnostics_chapter_source_crosswalk.py</code>
+维护。它把主循环调度、Full/BTD/BoundaryScraping
+类型分派、<code>ComputeDiagFunctors</code> 与 flush、OpenPMD iteration
+生命周期、reduced diagnostics 注册/写盘以及官方 analysis consumer 固定成
+13 组检查。该合同只防止章节随源码和案例 wiring 漂移，不替代任何
+case-local runtime physics gate、schema contract 或性能结论。</p>
+<p>后续修改本章时，应同步更新
+<code>notes/code-reading/diagnostics/01-diagnostics-chapter-source-crosswalk.md</code>
+和生成的
+<code>contract.json</code>/<code>contract.md</code>。验证矩阵中的
+physics analysis、writer/schema、checksum、performance 和 boundary
+证据仍必须分栏表达；<code>MultiDiagnostics</code> 或
+<code>WarpXOpenPMD</code>
+的入口存在，也不能反向证明所有下游案例已经通过。</p>
 <h2 id="练习与复现实验-1">8.15 练习与复现实验</h2>
 <ol type="1">
 <li><strong>证据分层题</strong>：从验证矩阵中各选一个 physics

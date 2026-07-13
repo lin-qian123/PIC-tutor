@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 758,
-  "total_bytes": 27904086,
+  "entry_count": 760,
+  "total_bytes": 27920960,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1531964,
-      "sha256": "79fc1cd09b439c072d46a390a7595444afcc6e0688bb4f9bafa14bb38cbf6a66"
+      "bytes": 1532374,
+      "sha256": "f71923214c6584571f6cc5885cf4367a9ac0d4cd6debf3faa286dca66b0f282f"
     },
     {
       "path": "TODO.md",
-      "bytes": 1379670,
-      "sha256": "172325ff868eb098d96b8eaf46bb33444b2bb4c709bda24abf5e10be6d889251"
+      "bytes": 1380078,
+      "sha256": "911710837f54ec4b4ddf3a29790ea12b0a0a939555be8d59a6524cea37f7d543"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5776028,
-      "sha256": "a5fc2383458597b4d7b19b531f29bb84a5bdc44a31adda67807c1c8ee45e9719"
+      "bytes": 5777711,
+      "sha256": "2eee144e4f5245a695a81963e918b226969f1c77004e33212786a03b7d2c20af"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1098991,
-      "sha256": "b490d280dcc3ced0213f76f5341d2de23e06a296d3ed8b363fefe81e402316ac"
+      "bytes": 1100366,
+      "sha256": "a725c04751ef0dd2424ba72b926e3661d3cd21e4377a90c067b13eaf5ca5460e"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3403158,
-      "sha256": "513760a43eb3675ae4db9f42826d1d75099d41e44f83bf19bfb5a9c5a59b4caf"
+      "bytes": 3405923,
+      "sha256": "dbae8c0bdbcaa2e194603ff8c7d58a47d46143b74ad2954d289bc1ec896fd71e"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 95381,
-      "sha256": "85fbe8365ad6f4de240564f54dbb61c5b2688bd06576a03cdc299e62a93f2dcf"
+      "bytes": 95859,
+      "sha256": "ae2b517a2d7b9339c2352ffe6166d4e9edfd80ed2dc425f5d1bb0d0b38848be7"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 63095,
-      "sha256": "d50566cca23c3ddd4d6689468470a1cd5b3443084b344c1d534f5624892725ad"
+      "bytes": 63411,
+      "sha256": "05f1c3eb6af046016bc5edaebd3a57ae9f97429a2fd1f9899772bc864b4a8a30"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4243,
-      "sha256": "be87f0be1cae5367999e501c2421c9d189ea70eb1497634668fdb89409e4cc41"
+      "sha256": "108f8aa858acf85e6366c1ce5975e28db00b47c6c21af401561f84ae268519a0"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44575,
-      "sha256": "61b309a5d5070d6be0420406a10965ffe0680af5ccdfdb80760ad2a34e678b8d"
+      "sha256": "830217c6921692b492c637d0f0a3bf526a95d2363a7844791953618310499ded"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 73968,
-      "sha256": "f9296ef4ae8500ca91b3af4db02a6630bff31292d121f5dd1e19801fe525ffda"
+      "bytes": 74416,
+      "sha256": "0a7b5ee0878ce718ce45b2075c49b2b57b620a778f5f65f21c8a4573a394b49b"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -912,8 +912,8 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 111833,
-      "sha256": "068bea34a4f754c3318d06397b2403fc9ca5df5cd411ee03870211fa864c374e"
+      "bytes": 112760,
+      "sha256": "cf8f2475ed867a23b0ec7fb745b9c3c2e9f86e77430a18e9f54dfbf627280932"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -1054,6 +1054,11 @@
       "path": "notes/code-reading/diagnostics/00-boundary-scraping-diagnostics-python.md",
       "bytes": 10972,
       "sha256": "5a8ab39e0ab4a044c805505894eca0937c849aad3145f4614d8d5b6bb23a686d"
+    },
+    {
+      "path": "notes/code-reading/diagnostics/01-diagnostics-chapter-source-crosswalk.md",
+      "bytes": 2072,
+      "sha256": "6edfdf4f3a7176715fc6c7d2f2adf30e67bff05df7300c08038f01c09ddc7c66"
     },
     {
       "path": "notes/code-reading/diagnostics/01-diagnostics-dispatch.md",
@@ -2679,6 +2684,11 @@
       "path": "scripts/audit_deposition_paper_asset_contract.py",
       "bytes": 6032,
       "sha256": "efa489cfde81375e88dc9fba7fdabcb94410cd85f8ea0736bd4af14fc7125467"
+    },
+    {
+      "path": "scripts/audit_diagnostics_chapter_source_crosswalk.py",
+      "bytes": 5992,
+      "sha256": "8b7c4ed603c2479178d1476fdb3eab2e3a61b516bc69ea35db21b804d1b940e7"
     },
     {
       "path": "scripts/audit_esirkepov_bounded_compare.py",

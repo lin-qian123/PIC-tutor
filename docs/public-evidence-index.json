@@ -1,16 +1,16 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 175,
+  "record_count": 176,
   "status_counts": {
     "PASS": 128,
     "FAIL": 30,
-    "UNKNOWN": 17
+    "UNKNOWN": 18
   },
   "evidence_kind_counts": {
     "PASS": 107,
     "FAIL": 27,
-    "UNKNOWN": 8,
+    "UNKNOWN": 9,
     "BOUNDARY": 33
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
@@ -155,6 +155,18 @@
         "anchor_count": 69,
         "passed": true,
         "passed_anchor_count": 69
+      }
+    },
+    {
+      "case": "diagnostics-chapter-source-crosswalk",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "Chapter 8 diagnostics source crosswalk",
+      "classification": "CHAPTER_8_DIAGNOSTICS_SOURCE_ANCHORS_VERIFIED",
+      "scope": "Representative producer/consumer/source anchors; this is not a runtime physics proof or complete diagnostics inventory.",
+      "metrics": {
+        "check_count": 13,
+        "pass_count": 13
       }
     },
     {

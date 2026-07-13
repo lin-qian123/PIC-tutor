@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：新增第 8 章诊断/验证正文-源码 crosswalk：13 组检查覆盖主循环调度、Full/BTD/BoundaryScraping、`ComputeDiagFunctors`/flush、OpenPMD 生命周期、reduced diagnostics 注册/写盘和官方 analysis consumer；同步修正章节内过期的 168 条公开合同口径。报告见 `runs/stage-c-validation/diagnostics-chapter-source-crosswalk/contract.{json,md}`。
+
 - [x] 2026-07-13：新增第 7 章边界/PML/AMR 正文-源码 crosswalk：13 组检查覆盖 field/particle 边界顺序、PEC/PMC/Silver-Mueller、PML 生命周期、guard-cell/通信、AMR 重建、moving window、scraping consumer 和 transition-zone 未完成边界；新增 `scripts/audit_boundary_amr_chapter_source_crosswalk.py` 与对应维护笔记。该合同不替代 runtime route-count proof。报告见 `runs/stage-c-validation/boundary-amr-chapter-source-crosswalk/contract.{json,md}`。
 
 - [x] 2026-07-13：新增第 6 章 FieldSolver 正文-源码 crosswalk：12 组检查覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML、Cartesian/RZ spectral 分派和 regression 证据边界；同步正文、维护笔记和 `scripts/audit_field_solver_chapter_source_crosswalk.py`。该合同只防止正文漂移，不替代 runtime physics proof。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。

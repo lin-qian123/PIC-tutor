@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 768,
-  "total_bytes": 27994772,
+  "entry_count": 770,
+  "total_bytes": 28008116,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1534421,
-      "sha256": "b49249ff62d36d357fe23073fe0e594dadf4cb5a860a323e1ef2bdd2e71d4a68"
+      "bytes": 1534814,
+      "sha256": "115079acf47c1a9e96a3bcb1f7602d6401ce80b13d852c56725ad48282561b6c"
     },
     {
       "path": "TODO.md",
-      "bytes": 1382611,
-      "sha256": "3f51a053fc52899602a9c0eb4c768180584a90cea0d2415908887157e91ff92b"
+      "bytes": 1382987,
+      "sha256": "f50c87cf43d904e1442d3030c4392b42cb239d97eeaad8fb6364521c0c884a28"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5788618,
-      "sha256": "387ecb4416bc512e9634ffc8f4167dfd316633b1e69ad3febbe960267635cabe"
+      "bytes": 5789920,
+      "sha256": "d78dcc50e8b77df01cf3f713daf842959278d782bc41086540fe6b59ab404ab4"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1108219,
-      "sha256": "d962785e4f700096f2875ad346c9fc753f805c23495ebff8af8fdfd6eb3cb975"
+      "bytes": 1109294,
+      "sha256": "49aaf4f19c2ddb7739633731662d40f7b0b1d1ce3d444caf3c53f6fa4ce78009"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3415482,
-      "sha256": "ca99467c6fb54fa5989ecb49f687c45086bf6efb2f79a0634f99ec967d8e22f8"
+      "bytes": 3417661,
+      "sha256": "be6b33d044a5c1f7a1c3fe460154ecc2c2b5ea95e38d2c2c1e970c6f5a533d70"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 97986,
-      "sha256": "5b27df2e0549279d82a6a71abb9a1e06e38bd74e07ff5b1e9562273fd915a931"
+      "bytes": 98450,
+      "sha256": "c7a7194f4293037e861b1702e8b1bc5df782bc5249e8e0f9026ba8e3164a603e"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 64598,
-      "sha256": "5f75c8535466fd1d157d67052cbc5f5cf3c1a268276ed1d2bca712083f6dccf6"
+      "bytes": 64909,
+      "sha256": "6913cffa15f17963b37796ff6282df386cd3ca1e2cfc386f2a636dc8661c435d"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4282,
-      "sha256": "14a6daf761e56788214ffbcf1a1867f3cf83c9947c09ccd58f88e03771f43435"
+      "sha256": "3eeff3b89f85bb1ed7cc6b3d6aea900175683760a2249b8e8b61a450444170e9"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 45265,
-      "sha256": "b05eb534b72f803739b9b017f03f74eb32133589b49aaf7416f1538dc2f29e9c"
+      "bytes": 45454,
+      "sha256": "f645012c2f00853f7081aaa72aa7110d168aa61d88c74cdab757ccc255825cd8"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 76530,
-      "sha256": "2626aefb7e195a4c75eac9234c997e8816af992ff2e9ab14fcac8ed40225e8a5"
+      "bytes": 76908,
+      "sha256": "a7e6dc0a2947ae5e81facc4a5167156670cebd012b3401a970312672fdeaeb7a"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -897,8 +897,8 @@
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
-      "bytes": 187546,
-      "sha256": "dcc3228ac4c2f845fc54be37c8e27634a288fa317741125df531f0aedf5834ee"
+      "bytes": 188243,
+      "sha256": "a9ddd63e92f9c5653f53c4edf54a63ef8acc45e728204171203878641caecad6"
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
@@ -2167,13 +2167,18 @@
     },
     {
       "path": "notes/code-reading/particles/72-deposition-geometry-order-gap-register.md",
-      "bytes": 1985,
-      "sha256": "a0e67c58ac89d6ac43d50abc0ee502c6e79462b640dae951c0be97028899ee5d"
+      "bytes": 2028,
+      "sha256": "579723742ecd85b3e344f535221ac9d59b46fe94b0a9f68d0c06a1623414a356"
     },
     {
       "path": "notes/code-reading/particles/73-vay-geometry-order-wiring-contract.md",
       "bytes": 2006,
       "sha256": "a82f87bcbc468a76cd93f166f34d7b6e2d33d6f39327db61e04209d3cdff49b1"
+    },
+    {
+      "path": "notes/code-reading/particles/74-vay-runtime-consumer-contract.md",
+      "bytes": 1946,
+      "sha256": "ec9b622eeedc943f2cbaae3a728de7a4d692526980a980b317e840a30fb8527e"
     },
     {
       "path": "notes/code-reading/particles/README.md",
@@ -2656,6 +2661,11 @@
       "sha256": "2329caa2ef3839663bc180005c6bee527110dfae75135cd7515bf2ce0b142ee5"
     },
     {
+      "path": "scripts/analyze_vay_runtime_contract.py",
+      "bytes": 3911,
+      "sha256": "c587e11a116acf767c1d4347177a86ed9b6ac0480f547e170bc32c6695375b44"
+    },
+    {
       "path": "scripts/audit_3a_birdsall_warpx_crosswalk.py",
       "bytes": 4441,
       "sha256": "5cea0ac28d30378828fdf766f2c817199bec6488aee0e0beb3b3d2edf733210b"
@@ -2702,8 +2712,8 @@
     },
     {
       "path": "scripts/audit_deposition_geometry_order_gap_register.py",
-      "bytes": 4857,
-      "sha256": "4c5a2778e66a0aee3e35e4baae750999ba936fb0a1bce4cd9e81c6a4c1a4f2bf"
+      "bytes": 4869,
+      "sha256": "1f6497a125d19b4fa27d704560c63e77f16c9035763a7af116cd2fe7ce975dab"
     },
     {
       "path": "scripts/audit_deposition_paper_asset_contract.py",
@@ -3862,8 +3872,8 @@
     },
     {
       "path": "scripts/verify_v68_build.py",
-      "bytes": 4446,
-      "sha256": "8f0c2b947150558e7c8195e5f4cc32940c91f56cbd7cb375a8da3a18eafa6f25"
+      "bytes": 4514,
+      "sha256": "832b352cba4f57fdff84c5e0d83a1e88abbdda987c00a77a9865d0e74f9d1abf"
     },
     {
       "path": "scripts/verify_villasenor_formula_contract.py",

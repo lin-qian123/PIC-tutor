@@ -1,10 +1,12 @@
 # TODO
 
-- [x] 2026-07-13：新增第 8 章 reduced diagnostics 最小输入合同：12 项检查绑定官方 `FieldProbe` point/line/plane、`ParticleHistogram2D` `z`--`uz` openPMD mesh、`LoadBalanceCosts` efficiency analysis 与章节边界；公开证据索引当前为 182 条。报告见 `runs/stage-c-validation/diagnostics-minimal-inputs/contract.{json,md}`。
+- [x] 2026-07-13：新增第 8 章 reduced diagnostics 最小输入合同：12 项检查绑定官方 `FieldProbe` point/line/plane、`ParticleHistogram2D` `z`--`uz` openPMD mesh、`LoadBalanceCosts` efficiency analysis 与章节边界；公开证据索引当前为 183 条。报告见 `runs/stage-c-validation/diagnostics-minimal-inputs/contract.{json,md}`。
 
 - [x] 2026-07-13：新增第 5 章 geometry/order coverage gap register：将 RZ correction-on charge、RCYLINDER/RSPHERE Gauss-law、2D MR route-count、RZ implicit Villasenor、Villasenor/Vay partial family 和 formal convergence order 共 7 项缺口统一登记为负空间合同，绑定分类与下一步证据入口；该合同不把未覆盖组合写成 PASS。报告见 `runs/stage-c-validation/deposition-geometry-order-gap-register/contract.{json,md}`。
 
 - [x] 2026-07-13：补入 Vay deposition geometry/order official wiring contract：18 项检查确认官方 2D/3D Cartesian shape=3、2D Langmuir shape=4、`divE-rho/epsilon_0` analysis 和 RZ/1D/implicit guard；分类仍为 `SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY`，不把 wiring 写成完整 runtime product。报告见 `runs/stage-c-validation/vay-geometry-order-wiring/contract.{json,md}`。
+
+- [x] 2026-07-13：完成 Vay 2D/3D 单进程 runtime consumer contract：使用当前 `build_full` binary 重放官方输入，`analysis.py` 的 `divE-rho/epsilon_0` 相对误差为 `1.5543e-4/2.9007e-4`，均通过 `1e-3`；明确保留官方 CMake 2-rank 回归和完整 geometry/order family 边界。报告见 `runs/stage-c-validation/vay-runtime/contract.{json,md}`。
 
 - [x] 2026-07-13：修正第 8 章孤立的 `8.14.1` 标题层级为正式 `8.14` 小节，并将验证矩阵的历史 `175` 条公开合同口径更新为当前 `177` 条；同步纳入 `scripts/verify_v68_build.py`。
 

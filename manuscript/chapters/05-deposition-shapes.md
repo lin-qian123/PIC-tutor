@@ -2566,6 +2566,8 @@ Vay 这一行现在有了更具体的正向边界。`scripts/audit_vay_geometry_
 
 这项结果关闭的是“Vay 官方 wiring 没有被统一登记”的索引缺口，分类仍是 `SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY`：它不等于 Vay 全部 geometry/order 的独立 runtime product，也不等于正式收敛阶。详细边界见 `notes/code-reading/particles/73-vay-geometry-order-wiring-contract.md`。
 
+随后使用当前 `build_full` 的 `warpx.2d`/`warpx.3d` 在 case-local 目录中实际重放两张官方输入卡，并运行官方 `vay_deposition/analysis.py`。单进程 2D `diag1000050` 的 `divE-rho/epsilon_0` 相对误差为 `1.5542590389041434e-4 < 1e-3`，3D `diag1000025` 为 `2.9007226763170857e-4 < 1e-3`；`warpx_used_inputs` 和最终 plotfile 也均通过独立 contract。该结果分类为 `RUNTIME_SINGLE_RANK_OFFICIAL_ANALYSIS_PASS_2D_3D`，证明的是官方 analysis 的单进程 producer/consumer 复现，不把 CMake 要求的 2-rank 回归或完整 geometry/order product 偷换成已完成。详见 `notes/code-reading/particles/74-vay-runtime-consumer-contract.md`。
+
 维护台账见 `notes/code-reading/particles/72-deposition-geometry-order-gap-register.md`，由 `scripts/audit_deposition_geometry_order_gap_register.py` 验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。
 
 ## 5.15 本章结论

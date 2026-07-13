@@ -81,6 +81,7 @@ def main() -> None:
                 "跨 geometry/shape 的正式收敛阶",
                 "Vay 官方 wiring",
                 "SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY",
+                "RUNTIME_SINGLE_RANK_OFFICIAL_ANALYSIS_PASS_2D_3D",
             )
         ),
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],

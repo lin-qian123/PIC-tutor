@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 189,
+  "record_count": 190,
   "status_counts": {
-    "PASS": 137,
+    "PASS": 138,
     "FAIL": 30,
     "UNKNOWN": 22
   },
@@ -11,7 +11,7 @@
     "PASS": 116,
     "FAIL": 27,
     "UNKNOWN": 13,
-    "BOUNDARY": 33
+    "BOUNDARY": 34
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -269,6 +269,17 @@
       "contract": "Esirkepov paper/source/runtime crosswalk",
       "classification": "PREPRINT_SOURCE_RUNTIME_CROSSWALK_PUBLISHER_PDF_MISSING",
       "scope": "paper anchors, current-deposition source surfaces, geometry-family runtime contracts, and active Langmuir wiring; no publisher-PDF line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov-publication-boundary",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Esirkepov 2001 publication boundary contract",
+      "classification": "PREPRINT_FORMULA_SOURCE_RUNTIME_PUBLISHER_BOUNDARY_EXPLICIT",
+      "scope": "preprint formula/source/runtime evidence and explicit CPC publisher-PDF negative-space boundary; no publisher-PDF line-by-line claim",
       "metrics": {
         "passed": true
       }

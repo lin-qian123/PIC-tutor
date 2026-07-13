@@ -1719,6 +1719,12 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 这张表是本章当前的证据边界：前三行可以直接进入成书正文，第四行只能用于出版身份和引用信息，第五行不能写成已完成。
 
+#### 发表版缺口审计契约
+
+本章把 Esirkepov 2001 的剩余缺口单独固化为 `scripts/audit_esirkepov_publication_boundary_contract.py`。它检查四件容易被版本漂移破坏的事情：本地 13 页预印本及其 39 张 MinerU 图片仍在，`Eq.(23)` 到 `one_third/one_sixth`、`sdxi/sdyj/sdzk` 的公式-源码映射仍在，CPC 题名/DOI/卷页信息和 `HTTP 403` 的 publisher-PDF 访问边界仍被记录，以及本章仍明确写出 **不能把它写成 CPC 定稿逐式已核对**。
+
+因此，当前成书可以安全使用下面这条最强但不过度的结论：**Esirkepov 的守恒分解已达到预印本公式 + 当前 WarpX 源码 + 既有 runtime consumer 的三层交叉复核；CPC 发表版身份和摘要级事实已核实，但 publisher-PDF line-by-line compare 仍未完成。** 这个契约的分类是 `PREPRINT_FORMULA_SOURCE_RUNTIME_PUBLISHER_BOUNDARY_EXPLICIT`，通过只表示证据边界没有被误写，不表示出版社全文已经取得。
+
 为避免这条边界只停留在叙述层，本版新增 `scripts/audit_esirkepov_bounded_compare.py`，对本地预印本、`access-audit.md` 和五项 bounded compare 目标做可重复检查。当前报告 `runs/stage-c-validation/esirkepov-bounded-compare/contract.{json,md}` 的 8 项检查全部通过：预印本资产、发表版题名、DOI、Section 1--5、Eq.(23)、二阶 spline 线索和 publisher PDF 缺失状态均与当前项目材料一致。这个 contract 的分类仍是 `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING`，因此它完成的是“证据边界可审计化”，不是 CPC 定稿的逐行核对。
 
 配套的本地读取包合同 `runs/stage-c-validation/esirkepov-2001-paper-asset/contract.{json,md}` 又确认了 13 页 arXiv PDF、39 张图片、MinerU 结构和第一轮中文讲解均完整。它补强的是“当前预印本资产可读且可复核”，不改变 publisher-formatted CPC PDF 仍缺失的判断。

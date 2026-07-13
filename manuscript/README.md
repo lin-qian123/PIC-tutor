@@ -1,5 +1,7 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
+当前 v0.72 合订 PDF 的页数以实际构建结果为准；本版新增 Esirkepov 2001 发表版缺口审计契约，保持预印本公式、当前源码和 runtime consumer 的证据分层。
+
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 
 2026-07-13：第 5 章补齐 Vay Cartesian shape family 的 2-rank case-local runtime contract：2D/3D × shape=1/2/3/4 共 8 个 producer 均通过官方 analysis；shape=1/2/4 不写成上游 CMake 新注册项。
@@ -8,7 +10,7 @@
 
 2026-07-13：第 5 章新增 Vay Cartesian shape-family runtime contract：2D/3D 的 shape=1/2/3/4 共 8 个单进程 producer 均通过官方 `divE-rho/epsilon_0` analysis；该结果不替代 2-rank 官方回归或正式收敛阶证明。
 
-当前 v0.71 合订 PDF 为 327 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v71_build.py` 验收。第 1-9 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.72 合订 PDF 为 327 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v72_build.py` 验收。第 1-9 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
 2026-07-13：第 4 章新增 Muraviev 2021 重采样论文资产和 paper-to-WarpX 有界映射；50 页 PDF、38 个图像资源及 `10/10` asset contract 通过，论文 PICADOR/hi-chi QED cascade 案例不当作 WarpX runtime 结果。
 
@@ -22,7 +24,7 @@
 
 2026-07-13：第 5 章补入 Vay 2D/3D 单进程 runtime consumer contract，官方 analysis 的 `divE-rho/epsilon_0` gate 在两条 case 上均通过；2-rank 回归边界继续保留。
 
-2026-07-13：第 9 章新增文献路线资产合同，12 项检查绑定证据层、核心文献树、literature map、inventory 与 publisher/metadata 缺口；当前公开证据索引为 189 条，合同不替代论文逐式审校或 runtime physics proof。
+2026-07-13：第 9 章新增文献路线资产合同，12 项检查绑定证据层、核心文献树、literature map、inventory 与 publisher/metadata 缺口；当前公开证据索引为 190 条，合同不替代论文逐式审校或 runtime physics proof。
 
 2026-07-13：第 4 章新增显式 leapfrog position source crosswalk，核对 momentum-then-position 顺序、时间中心速度公式、维度分支和 Higuera-Cary split-push 边界；直接 half-step attribute 与 Vay Appendix B 专门圆轨道仍保留为后续验证项。
 

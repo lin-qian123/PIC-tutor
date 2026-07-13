@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `189`
-- PASS: `137`
+- records: `190`
+- PASS: `138`
 - FAIL: `30`
 - UNKNOWN: `22`
-- boundary-classified: `33`
+- boundary-classified: `34`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -33,6 +33,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `esirkepov-notation-source-contract` | `PASS` | `PASS` | Esirkepov paper-to-WarpX notation bridge | `` | source mapping only; does not claim publisher-PDF line-by-line equivalence or all geometry/order runtime coverage | `anchor_count=14`, `passed=True`, `passed_anchor_count=14` |
 | `esirkepov-paper-asset-contract` | `PASS` | `BOUNDARY` | Esirkepov 1999/2001 Chapter 5 deposition paper asset contract | `PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING` | author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open | `passed=True` |
 | `esirkepov-paper-source-runtime-crosswalk` | `PASS` | `BOUNDARY` | Esirkepov paper/source/runtime crosswalk | `PREPRINT_SOURCE_RUNTIME_CROSSWALK_PUBLISHER_PDF_MISSING` | paper anchors, current-deposition source surfaces, geometry-family runtime contracts, and active Langmuir wiring; no publisher-PDF line-by-line claim | `passed=True` |
+| `esirkepov-publication-boundary` | `PASS` | `BOUNDARY` | Esirkepov 2001 publication boundary contract | `PREPRINT_FORMULA_SOURCE_RUNTIME_PUBLISHER_BOUNDARY_EXPLICIT` | preprint formula/source/runtime evidence and explicit CPC publisher-PDF negative-space boundary; no publisher-PDF line-by-line claim | `passed=True` |
 | `esirkepov-source-contract` | `PASS` | `PASS` | explicit Esirkepov old/new-shape source skeleton | `` | read-only source audit; not a runtime or kernel numerical regression | `anchor_count=14`, `passed=True`, `passed_anchor_count=14` |
 | `esirkepov_langmuir_1d_mpi2` | `PASS` | `PASS` | Esirkepov Langmuir reader-side runtime contract | `` | reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof | `charge_relative_residual=8.34503170903001e-12`, `charge_residual_max=3981.65625`, `charge_scale_max=477128953948913.25`, `charge_tolerance=1e-11`, `passed=True` |
 | `esirkepov_langmuir_2d_mpi2` | `PASS` | `PASS` | Esirkepov Langmuir reader-side runtime contract | `` | reader-side runtime fields and discrete divE-rho/epsilon0; not a bitwise kernel proof | `charge_relative_residual=3.5650106081703597e-12`, `charge_residual_max=1280.375`, `charge_scale_max=359150403947077.2`, `charge_tolerance=1e-11`, `passed=True` |

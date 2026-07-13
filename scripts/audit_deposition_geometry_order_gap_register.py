@@ -49,7 +49,7 @@ def main() -> int:
                 "真实 intermediate-field/route ledger",
                 "兼容 PETSc/AMReX build",
                 "独立 consumer 的 sibling",
-                "official-analysis runtime contract",
+                "official-analysis runtime family",
                 "resolution family",
             )
         ),

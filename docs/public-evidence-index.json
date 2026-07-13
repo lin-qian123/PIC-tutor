@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 183,
+  "record_count": 184,
   "status_counts": {
-    "PASS": 131,
+    "PASS": 132,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 110,
+    "PASS": 111,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 33
@@ -2532,6 +2532,17 @@
       "contract": "official Vay deposition 2D/3D runtime consumer",
       "classification": "RUNTIME_SINGLE_RANK_OFFICIAL_ANALYSIS_PASS_2D_3D",
       "scope": "official Vay inputs, single-rank producers, final plotfiles and upstream divE-rho/epsilon_0 analysis; not the official 2-rank Cartesian-product regression",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "vay-shape-family",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Vay deposition 2D/3D shape-family runtime consumer",
+      "classification": "RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D",
+      "scope": "single-rank case-local probes using official 2D/3D Vay inputs with particle_shape 1..4 and the upstream divE-rho/epsilon_0 analysis; not official 2-rank CMake regression, AMR, non-Cartesian geometry, or formal convergence order",
       "metrics": {
         "passed": true
       }

@@ -82,6 +82,7 @@ def main() -> None:
                 "Vay 官方 wiring",
                 "SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY",
                 "RUNTIME_SINGLE_RANK_OFFICIAL_ANALYSIS_PASS_2D_3D",
+                "RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D",
             )
         ),
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],

@@ -886,7 +886,7 @@ verification。</p>
 <code>177</code> 条。</p>
 <p>本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖
 <code>FieldProbe</code>、<code>ParticleHistogram2D</code>、<code>LoadBalanceCosts</code>
-的官方输入和 analysis consumer；公开证据索引当前为 <code>182</code>
+的官方输入和 analysis consumer；公开证据索引当前为 <code>183</code>
 条。</p>
 <p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
 组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
@@ -15546,6 +15546,17 @@ product，也不等于正式收敛阶。详细边界见
 analysis 的单进程 producer/consumer 复现，不把 CMake 要求的 2-rank
 回归或完整 geometry/order product 偷换成已完成。详见
 <code>notes/code-reading/particles/74-vay-runtime-consumer-contract.md</code>。</p>
+<p>在此基础上，又对同一组官方 2D/3D Cartesian 输入分别切换
+<code>particle_shape=1/2/3/4</code>，八个单进程
+producer（其中六个为本轮新增 sibling）均写出最终 plotfile，官方 analysis
+的 <code>error_rel</code> 分别为 2D
+<code>1.4635e-4/1.4689e-4/1.5543e-4/1.6473e-4</code>、3D
+<code>2.8824e-4/2.7647e-4/2.9007e-4/3.0592e-4</code>，全部低于
+<code>1e-3</code>。该结果分类为
+<code>RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D</code>，只关闭支持的
+Cartesian shape family 单进程证据缺口；2-rank、AMR、边界裁剪、RZ/1D
+和正式收敛阶仍保持边界。详见
+<code>notes/code-reading/particles/75-vay-shape-family-runtime-contract.md</code>。</p>
 <p>维护台账见
 <code>notes/code-reading/particles/72-deposition-geometry-order-gap-register.md</code>，由
 <code>scripts/audit_deposition_geometry_order_gap_register.py</code>

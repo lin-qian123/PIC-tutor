@@ -18,7 +18,7 @@
 
 本版又修正第 8 章 `8.14.1` 孤立标题层级为正式 `8.14` 小节，并将正文验证矩阵的合同数口径更新为当前 `177` 条。
 
-本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `182` 条。
+本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `183` 条。
 
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 
@@ -9839,6 +9839,8 @@ Vay 这一行现在有了更具体的正向边界。`scripts/audit_vay_geometry_
 这项结果关闭的是“Vay 官方 wiring 没有被统一登记”的索引缺口，分类仍是 `SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY`：它不等于 Vay 全部 geometry/order 的独立 runtime product，也不等于正式收敛阶。详细边界见 `notes/code-reading/particles/73-vay-geometry-order-wiring-contract.md`。
 
 随后使用当前 `build_full` 的 `warpx.2d`/`warpx.3d` 在 case-local 目录中实际重放两张官方输入卡，并运行官方 `vay_deposition/analysis.py`。单进程 2D `diag1000050` 的 `divE-rho/epsilon_0` 相对误差为 `1.5542590389041434e-4 < 1e-3`，3D `diag1000025` 为 `2.9007226763170857e-4 < 1e-3`；`warpx_used_inputs` 和最终 plotfile 也均通过独立 contract。该结果分类为 `RUNTIME_SINGLE_RANK_OFFICIAL_ANALYSIS_PASS_2D_3D`，证明的是官方 analysis 的单进程 producer/consumer 复现，不把 CMake 要求的 2-rank 回归或完整 geometry/order product 偷换成已完成。详见 `notes/code-reading/particles/74-vay-runtime-consumer-contract.md`。
+
+在此基础上，又对同一组官方 2D/3D Cartesian 输入分别切换 `particle_shape=1/2/3/4`，八个单进程 producer（其中六个为本轮新增 sibling）均写出最终 plotfile，官方 analysis 的 `error_rel` 分别为 2D `1.4635e-4/1.4689e-4/1.5543e-4/1.6473e-4`、3D `2.8824e-4/2.7647e-4/2.9007e-4/3.0592e-4`，全部低于 `1e-3`。该结果分类为 `RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D`，只关闭支持的 Cartesian shape family 单进程证据缺口；2-rank、AMR、边界裁剪、RZ/1D 和正式收敛阶仍保持边界。详见 `notes/code-reading/particles/75-vay-shape-family-runtime-contract.md`。
 
 维护台账见 `notes/code-reading/particles/72-deposition-geometry-order-gap-register.md`，由 `scripts/audit_deposition_geometry_order_gap_register.py` 验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。
 

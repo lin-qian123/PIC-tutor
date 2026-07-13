@@ -1,6 +1,8 @@
 # TODO
 
-- [x] 2026-07-13：新增第 8 章 reduced diagnostics 最小输入合同：12 项检查绑定官方 `FieldProbe` point/line/plane、`ParticleHistogram2D` `z`--`uz` openPMD mesh、`LoadBalanceCosts` efficiency analysis 与章节边界；公开证据索引当前为 183 条。报告见 `runs/stage-c-validation/diagnostics-minimal-inputs/contract.{json,md}`。
+- [x] 2026-07-13：新增 Vay Cartesian shape-family runtime contract：2D/3D 的 `particle_shape=1/2/3/4` 共 8 个单进程 producer 均生成官方最终 plotfile，官方 `divE-rho/epsilon_0` analysis 的 `1e-3` gate 全部通过；其中 6 个为本轮新增 sibling。2-rank、AMR/边界、RZ/1D 和正式收敛阶仍保持边界。报告见 `runs/stage-c-validation/vay-shape-family/contract.{json,md}`。
+
+- [x] 2026-07-13：新增第 8 章 reduced diagnostics 最小输入合同：12 项检查绑定官方 `FieldProbe` point/line/plane、`ParticleHistogram2D` `z`--`uz` openPMD mesh、`LoadBalanceCosts` efficiency analysis 与章节边界；公开证据索引随后更新为 184 条。报告见 `runs/stage-c-validation/diagnostics-minimal-inputs/contract.{json,md}`。
 
 - [x] 2026-07-13：新增第 5 章 geometry/order coverage gap register：将 RZ correction-on charge、RCYLINDER/RSPHERE Gauss-law、2D MR route-count、RZ implicit Villasenor、Villasenor/Vay partial family 和 formal convergence order 共 7 项缺口统一登记为负空间合同，绑定分类与下一步证据入口；该合同不把未覆盖组合写成 PASS。报告见 `runs/stage-c-validation/deposition-geometry-order-gap-register/contract.{json,md}`。
 

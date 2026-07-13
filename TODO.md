@@ -306,6 +306,8 @@
 - [x] 2026-07-02：完成 `v0.37` deposition primary-literature access-audit 版：冻结 `manuscript/VERSION-v0.36.md`，把当前版本说明切到 `manuscript/VERSION.md` 的 v0.37，新增 `scripts/build_v37.py`，生成 `dist/pic-tutor-v0.37.md` 与 `dist/pic-tutor-v0.37.html`；为 `Esirkepov 2001` 与 `Villasenor-Buneman 1992` 建立 paper-specific 目录、`access-audit.md` 和源码映射准备笔记，并把第 5 章“源码已核、主文未闭环”的边界与第 9 章文献优先级路线图同步收口为可接续版本资产。
 - [ ] 2026-07-02：继续推进第 5 章 deposition 文献闭环：`Esirkepov 2001` 仍只有作者 arXiv 预印本与第一轮中文讲解，publisher-formatted CPC PDF 在当前环境中仍不可取得；取得后按 title / abstract / section numbering / `Eq.(23)` / second-order spline algorithm 五项做差异核对。Villasenor-Buneman 论文-源码-测试主线已阶段性收口，后续转为文字精修与分支覆盖。
 - [ ] 2026-07-02：继续推进第 5 章细修，沿 `CurrentDeposition.H` 与 `ChargeDeposition.H` 把 ABLASTR 模板、Villasenor/Esirkepov implicit 路径和 `ComputeShapeFactor` 邻接段继续逐行展开，主要目标从“补齐缺口”转成“压缩冗余、提高正文密度、减少对 notes 跳转的依赖”。
+
+- [x] 2026-07-13：新增 `scripts/audit_radial_rho_decomposition.py` 与 `notes/code-reading/particles/70-radial-rho-decomposition-observable.md`：对既有 RCYLINDER/RSPHERE Esirkepov 2-rank plotfile 做物种 rho 分解检查，7 个可读 runtime rows 的最大相对残差均低于 `9.1e-15`；RCYLINDER shape=1 因历史输出缺少 `rho_electrons/rho_ions` 明确保留 export boundary。该结果只补齐 species-rho observable，不关闭 radial `divE-rho`、current closure 或完整 geometry/order 笛卡尔积。
 - [x] 2026-07-13：完成第 5 章结论段的当前版本口径精修：删除重复的 Esirkepov publisher-PDF 待办，把 `v0.40` 过期阶段表述更新为当前 v0.68 源码基线，并保持 publisher compare、geometry/order 覆盖和出版级表格精修的真实边界。
 - [x] 2026-07-02：评估第 5 章 current deposition 模块是否可冻结成下一版本：已确认正文重复段已压到可接受水平、`dist/pic-tutor-v0.37.md/html` 中 current deposition 主线结构稳定、README/TODO 能清楚交代模块边界，而且当前最大的剩余缺口主要收缩到 primary 文献 PDF/MinerU，而不是源码主文仍未成形。
 

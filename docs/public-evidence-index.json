@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 168,
+  "record_count": 169,
   "status_counts": {
-    "PASS": 123,
+    "PASS": 124,
     "FAIL": 30,
     "UNKNOWN": 15
   },
@@ -11,7 +11,7 @@
     "PASS": 103,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 31
+    "BOUNDARY": 32
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -1991,6 +1991,19 @@
         "anchor_count": 10,
         "passed": true,
         "passed_anchor_count": 10
+      }
+    },
+    {
+      "case": "radial-rho-decomposition-observable",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "RCYLINDER/RSPHERE rho species decomposition observable",
+      "classification": "RADIAL_RHO_DECOMPOSITION_OBSERVABLE_VERIFIED_SHAPE1_EXPORT_BOUNDARY",
+      "scope": "rho equals rho_electrons plus rho_ions on archived radial plotfiles; not a full Gauss-law or current-closure proof",
+      "metrics": {
+        "missing_species_export_count": 1,
+        "passed": true,
+        "runtime_row_count": 7
       }
     },
     {

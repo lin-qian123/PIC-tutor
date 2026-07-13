@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 746,
-  "total_bytes": 27794704,
+  "entry_count": 748,
+  "total_bytes": 27805211,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1528160,
-      "sha256": "fae084c2c4a16ab1148f6703ea8b2300527fdf2d57d7a7980ece751b6b438384"
+      "bytes": 1528669,
+      "sha256": "bdbdc8ab05a00d355937acb3444577c8a518f37d18e02dac2fafbe0f39ff9a9f"
     },
     {
       "path": "TODO.md",
-      "bytes": 1375367,
-      "sha256": "fb317fe872deeea74338c8854773ab85f98bea6545f2a41f0362ed6c4a740e64"
+      "bytes": 1375895,
+      "sha256": "9d3f3be60974a076428eb9caac38504796d911395a75b4ee4a161f78822e73d6"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5762644,
-      "sha256": "cc1d0ddd83426813cdaee20a3c168f0806d990b3266c59dc22f5dfea0ebf18e3"
+      "bytes": 5763274,
+      "sha256": "e0fe2bc1135572bcaf4ebe4564ff55a4c2261cb72b1d9dda1a2fddd8f546bd2c"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1088154,
-      "sha256": "e62ca22210f2b4f389829459c5f34f8dcb63527661206558d49b1e0f2b59967c"
+      "bytes": 1088723,
+      "sha256": "db87a52ecaa32dae8cee1740129c306b7c79904cbb84ca36ed40b797fb0d2b28"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3392277,
-      "sha256": "753d01ca8dae42504e4d8b856fbc9cbcb3de620c6116fff088129c4e1e9a1f0f"
+      "bytes": 3392718,
+      "sha256": "f37013f32bcc1451cc74aae4e90631c305a14087c072b8a817eeb0a180881562"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 91694,
-      "sha256": "2b95b718c085b819d2396009dfe91adcd5ee0b094e290b2b875af485d1fe0707"
+      "bytes": 92248,
+      "sha256": "6a0aa70a7746289b0c60fd083839d0fc1e10c6f5de24f47b373b2b44e8c32086"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 60580,
-      "sha256": "fdcadbd15806fcc9d153553337cfc52f67cdba6853b41927884076762bc8f6de"
+      "bytes": 60963,
+      "sha256": "88b705ab09099e70612d1519e2ff204586e0828b3e64d47efd7c8160b6e2e835"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "68a3d00a2ba7e62258407e44b8b45edf8075ade9f2107a235bb4b19b4609bcf1"
+      "sha256": "f314d86e03980f50ae34c6b4c63b1f1a6224982a649457c9e05986d6a418078f"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 70000,
-      "sha256": "c2b2bd1af60ab18c20ba13a39015a0edbd15c548e9b0acf0bfa83a8b24c87b18"
+      "bytes": 70569,
+      "sha256": "8194c9681d43adb9d577ae3ae7b488ed8a332ded66983161e758b82e7aa80359"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -2121,6 +2121,11 @@
       "sha256": "9cd45965e48964392a136b5059209fa7298d8fb995f82aea97afee291ebc7e75"
     },
     {
+      "path": "notes/code-reading/particles/70-radial-rho-decomposition-observable.md",
+      "bytes": 1310,
+      "sha256": "43fdcb721bf3708cc4c3bf1539b49c7c70aeffd2c30c37c9c591b336e54a0e7e"
+    },
+    {
       "path": "notes/code-reading/particles/README.md",
       "bytes": 18390,
       "sha256": "532bc03a4de781643989e76048a41bfc8812b9c000043b709f8dd7cee22d31f9"
@@ -2764,6 +2769,11 @@
       "path": "scripts/audit_radial_axis_volume_contract.py",
       "bytes": 3638,
       "sha256": "be8802f721c55a90c919ecbedd4b41f8580f90a2f4068baece949bad516b4487"
+    },
+    {
+      "path": "scripts/audit_radial_rho_decomposition.py",
+      "bytes": 5014,
+      "sha256": "98da08c3ba16266426282e6ede0e93198afa38f8ec5e3ae7813c91e3774db22a"
     },
     {
       "path": "scripts/audit_release_consistency.py",

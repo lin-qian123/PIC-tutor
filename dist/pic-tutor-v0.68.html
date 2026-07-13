@@ -828,6 +828,13 @@ boosted-frame / NCI</a></li>
 <code>BOUNDARY</code>，correction-off 只在局部 sibling 上恢复
 charge；该结果不修改 WarpX 默认参数，也不宣称正式收敛阶。报告见
 <code>runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}</code>。</p>
+<p>本版新增 RCYLINDER/RSPHERE species-rho decomposition
+observable：既有径向 Esirkepov plotfile 中 7 个可读 runtime rows 的
+<code>rho-(rho_electrons+rho_ions)</code> 最大相对差均低于
+<code>9.1e-15</code>，RCYLINDER shape=1 因旧输出未包含物种 rho 字段保留
+export boundary；该 observable 不替代 radial <code>divE-rho</code> 或
+current-closure proof。报告见
+<code>runs/stage-c-validation/radial-rho-decomposition-observable/contract.{json,md}</code>。</p>
 <p>本版新增 position-update output-staggering contract：源码确认
 <code>UpdatePosition.H</code> 的 <code>u*inv_gamma*dt</code> 公式和
 <code>PhysicalParticleContainer.cpp</code> 的 <code>Full</code>
@@ -851,10 +858,12 @@ AST、完整默认值矩阵和 runtime value execution 边界。报告见
 <code>runs/stage-c-validation/parameter-map-semantic-anchor-contract/contract.{json,md}</code>。</p>
 <p>本版新增 parameter-map runtime coverage contract：case-local smoke
 实际验证用户属性粒子字段、15 个 particle-field reduction 输出、openPMD
-HDF5 和一个 scalar <code>amr.ref_ratio</code> MR 输入；DSMC 仅有
-input-level coverage，ADIOS2 arbitrary suffix 与
-<code>ref_ratio_vect</code> 仍无 runtime
-case。该结果明确扩展了运行覆盖，但不宣称完整参数回归。报告见
+HDF5、scalar <code>amr.ref_ratio</code>、2D
+<code>amr.ref_ratio_vect</code> level 0/1 物化，以及 3D BP5 的 ADIOS2
+engine/operator suffix 与 openPMD-api 读回；当前合同包含 5 个 runtime
+case，DSMC 仍因本机缺少 <code>warpx-data</code> 截面文件保留
+input-only/data
+boundary。该结果明确扩展了运行覆盖，但不宣称完整参数回归。报告见
 <code>runs/stage-c-validation/parameter-map-runtime-coverage/contract.{json,md}</code>。</p>
 <p>本版新增 parameter-map structured review contract：parser-anchor
 之外的 10 条参数已逐项核对，8 条 dynamic-key constructor 和 2 条 AMReX

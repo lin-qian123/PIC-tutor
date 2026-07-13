@@ -41,6 +41,7 @@
 - `references/03_pic_foundations/1979_TajimaDawson_Laser_Electron_Accelerator/`
 - `references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/`
 - `references/03_pic_foundations/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes/`
+- `references/03_pic_foundations/2021_MuravievCPC2021_Strategies_for_particle_resampling_in_PIC_simulations/`
 
 其中 `TajimaDawson1979` 现已通过独立的 `runs/stage-c-validation/tajima-dawson-1979-asset/contract.{json,md}` 收口为 paper-backed full-text asset：4 页 PDF、MinerU Markdown、11 张图和中文精读均已存在。它支撑的是最早期 `driver -> wake -> trapping -> acceleration` 与 LWFA scaling；合同同时保留“不替代现代 WarpX regression”的边界。
 
@@ -52,6 +53,8 @@
 - LWFA 最早 scaling baseline 的历史入口。
 
 Vranic 2015 进一步补上了粒子 merge/resampling 这条应用线：论文专属目录、24 页 PDF、MinerU Markdown、32 张图、中文讲解和独立 asset contract 均已存在。它支撑第 4 章对“两粒子局部守恒 merge”的 paper-backed 解释，但不替代 WarpX `VelocityCoincidenceThinning` 的逐行等价或 dedicated runtime consumer。
+
+Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论文专属目录、50 页 PDF、MinerU Markdown、38 个图像资源、中文精读和独立 asset contract 均已存在。它支撑第 4 章对 agnostic down-sampling、局部权重噪声、严格守恒 thinning 和 merge/cluster 权衡的 paper-backed 解释，但论文的 PICADOR/hi-chi QED cascade 结果不替代 WarpX runtime evidence。
 
 其中 `Birdsall 1985` 因原书过长，当前项目采用分卷 PDF + 分卷 MinerU 的方式处理；这意味着它已经是 A 层资产，但仍不是“整本都已完全精读”。
 
@@ -165,7 +168,7 @@ Vranic 2015 进一步补上了粒子 merge/resampling 这条应用线：论文�
 
 ## 9.7 下一轮最合理的文献推进目标
 
-如果下一轮继续走“一个大模块一个版本”的节奏，那么最合理的文献模块不再是第 6 章，而是下面两条中的一条：
+如果下一轮继续走“一个大模块一个版本”的节奏，那么在本轮闭合 Muraviev resampling 资产后，最合理的文献模块不再是第 6 章，而是下面两条中的一条：
 
 ### 方案 A：第 5 章沉积文献闭环
 
@@ -199,7 +202,7 @@ Vranic 2015 进一步补上了粒子 merge/resampling 这条应用线：论文�
 
 ### 9.7.1 文献资产与路线图同步合同
 
-本章的路线图现在由 `scripts/audit_literature_roadmap_asset_contract.py` 做仓库内一致性检查。当前合同共 12 项，覆盖 A/B/C/D 证据层定义、八条核心文献目录、`docs/literature-map.md` 与生成式 inventory 的锚点，以及 `TajimaDawson1982`、`Esirkepov 2001`、`LeeCPC2015`、`Yee 1966`、`Hockney-Eastwood` 的缺口声明。报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}`。
+本章的路线图现在由 `scripts/audit_literature_roadmap_asset_contract.py` 做仓库内一致性检查。当前合同覆盖 A/B/C/D 证据层定义、核心文献目录、`docs/literature-map.md` 与生成式 inventory 的锚点，以及 `TajimaDawson1982`、`Esirkepov 2001`、`LeeCPC2015`、`Yee 1966`、`Hockney-Eastwood` 的缺口声明。Muraviev 2021 的专属资产合同另行检查全文、公式、图像和第 4 章映射。报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}` 与 `runs/stage-c-validation/muraviev-2021-paper-asset/contract.{json,md}`。
 
 这个合同只说明“路线图与项目内资产状态一致”，不证明中文讲解已经逐式审校，不证明预印本与出版社排版版逐页等价，也不把 WarpX runtime 结果升级为论文全部物理结论的验证。后续新增或替换 primary source 时，应先更新合同，再同步本章与 `references/00_index`。
 

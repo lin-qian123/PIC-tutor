@@ -5,7 +5,7 @@
 - BibTeX 条目数：251
 - 本地 PDF 数：42
 - 分类为自动初筛；正式章节必须阅读论文或官方文档后再引用。
-- 仍标记为 `待分类` 的 82 条条目已有独立的保守 acquisition triage：见 `docs/literature-pending-triage.md`；该文件不把关键词候选主题升级为论文证据。
+- 仍标记为 `待分类` 的 81 条条目已有独立的保守 acquisition triage：见 `docs/literature-pending-triage.md`；该文件不把关键词候选主题升级为论文证据。
 
 ## 基础章节优先清单
 
@@ -104,7 +104,7 @@
 | laser/plasma acceleration | 42 |
 | particle pusher | 5 |
 | particle-mesh foundations | 1 |
-| 待分类 | 83 |
+| 待分类 | 81 |
 
 ## BibTeX 条目映射
 
@@ -138,7 +138,7 @@
 | `PerezPOP2012` | 待分类 | 待定 | 2012 | Pérez, F. and Gremillet, L. and Decoster, A. and Drouin, M. and Lefebvre, E. | Improved modeling of relativistic collisions and collisional ionization in particle-in-cell codes | 10.1063/1.4742167 |
 | `HigginsonJCP2019` | 待分类 | 待定 | 2019 | Drew Pitney Higginson and Anthony Link and Andrea Schmidt | A pairwise nuclear fusion algorithm for weighted particle-in-cell plasma simulations | 10.1016/j.jcp.2019.03.020 |
 | `VerboncoeurJCP2001` | 待分类 | 待定 | 2001 | J.P. Verboncoeur | Symmetric Spline Weighting for Charge and Current Density in Particle Simulation | 10.1006/jcph.2001.6923 |
-| `MuravievCPC2021` | 待分类 | 待定 | 2021 | A. Muraviev and A. Bashinov and E. Efimenko and V. Volokitin and I. Meyerov and A. Gonoskov | Strategies for particle resampling in PIC simulations | 10.1016/j.cpc.2021.107826 |
+| `MuravievCPC2021` | particle pusher / resampling | 4, 8 | 2021 | A. Muraviev and A. Bashinov and E. Efimenko and V. Volokitin and I. Meyerov and A. Gonoskov | Strategies for particle resampling in PIC simulations | 10.1016/j.cpc.2021.107826 |
 | `AkturkOE2004` | 待分类 | 待定 | 2004 | Selcuk Akturk and Xun Gu and Erik Zeek and Rick Trebino | Pulse-front tilt caused by spatial and temporal chirp | 10.1364/OPEX.12.004399 |
 | `XiaoIEEE2005` | 待分类 | 待定 | 2005 | Tian Xiao and Qing Huo Liu | 2005 IEEE Antennas and Propagation Society International Symposium | 10.1109/APS.2005.1551259 |
 | `GrismayerNJP2021` | 待分类 | 待定 | 2021 | T Grismayer and R Torres and P Carneiro and F Cruz and R A Fonseca and L O Silva | Quantum Electrodynamics vacuum polarization solver | 10.1088/1367-2630/ac2004 |
@@ -378,7 +378,7 @@
 | `references/03_pic_foundations/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes.pdf` | particle pusher / resampling | 4, 8 | 已有 Markdown |
 | `references/03_pic_foundations/2016_AndriyashPoP2016_Laser-plasma_interactions_with_a_Fourier-Bessel_particle-in-cell_method.pdf` | laser/plasma acceleration | 87-89, 125 | 待 MinerU |
 | `references/03_pic_foundations/2020_Stanier2020_A_cancellation_problem_in_hybrid_particle-in-cell_schemes_due_to_finite_particle_size.pdf` | hybrid/fluid | 101-104 | 待 MinerU |
-| `references/03_pic_foundations/2021_MuravievCPC2021_Strategies_for_particle_resampling_in_PIC_simulations.pdf` | 待分类 | 待定 | 待 MinerU |
+| `references/03_pic_foundations/2021_MuravievCPC2021_Strategies_for_particle_resampling_in_PIC_simulations/2021_MuravievCPC2021_Strategies_for_particle_resampling_in_PIC_simulations.pdf` | particle pusher / resampling | 4, 8 | 已有 Markdown / 中文精读 |
 | `references/03_pic_foundations/2024_SandbergPASC24_Synthesizing_Particle-In-Cell_Simulations_through_Learning_and_GPU_Computing_for_Hybrid_Particle_Accelerator_Beamlines.pdf` | HPC / AMReX / performance | 71-79, 121-123 | 待 MinerU |
 | `references/03_pic_foundations/no-year_KineticTheoryPICEnsembleAveraging2022_Kinetic_theory_of_particle-in-cell_simulation_plasma_and_the_ensemble_averaging_technique.pdf` | 待分类 | 待定 | 待 MinerU |
 | `references/04_particle_pushers_deposition_shapes/2017_HigueraPOP2017_Structure-preserving_second-order_integration_of_relativistic_charged_particle_trajectories_in_electromagnetic_fields/2017_HigueraPOP2017_Structure-preserving_second-order_integration_of_relativistic_charged_particle_trajectories_in_electromagnetic_fields.pdf` | Higuera-Cary pusher | 25 | 已 materialize / 已 MinerU |

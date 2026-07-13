@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 188,
+  "record_count": 189,
   "status_counts": {
-    "PASS": 136,
+    "PASS": 137,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 115,
+    "PASS": 116,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 33
@@ -1657,6 +1657,19 @@
       "scope": null,
       "metrics": {
         "passed": 12
+      }
+    },
+    {
+      "case": "muraviev-2021-paper-asset",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Muraviev 2021 particle-resampling paper asset contract",
+      "classification": "FULLTEXT_PAPER_BACKED_RESAMPLING_METHODS_WARPX_MAPPING_RUNTIME_SEPARATE",
+      "scope": null,
+      "metrics": {
+        "image_count": 38,
+        "paper_pages": 50,
+        "passed": true
       }
     },
     {

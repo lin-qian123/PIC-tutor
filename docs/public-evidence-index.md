@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `188`
-- PASS: `136`
+- records: `189`
+- PASS: `137`
 - FAIL: `30`
 - UNKNOWN: `22`
 - boundary-classified: `33`
@@ -125,6 +125,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `leecpc2015-source-crosswalk` | `PASS` | `BOUNDARY` | LeeCPC2015 paper/source/regression crosswalk | `ACCEPTED_MANUSCRIPT_SOURCE_CROSSWALK_PUBLISHER_PDF_STILL_MISSING` | paper anchors, WarpX implementation surfaces, and official regression wiring; no publisher-PDF or coefficient-equivalence claim | `passed=True` |
 | `literature-roadmap` | `UNKNOWN` | `UNKNOWN` | literature-roadmap | `` |  | `passed=12` |
 | `literature-roadmap-asset-contract` | `UNKNOWN` | `UNKNOWN` | literature-roadmap-asset-contract | `` |  | `passed=12` |
+| `muraviev-2021-paper-asset` | `PASS` | `PASS` | Muraviev 2021 particle-resampling paper asset contract | `FULLTEXT_PAPER_BACKED_RESAMPLING_METHODS_WARPX_MAPPING_RUNTIME_SEPARATE` |  | `image_count=38`, `paper_pages=50`, `passed=True` |
 | `parameter-map-parser-anchor-contract` | `PASS` | `PASS` | WarpX parameter-map parser-anchor review surface | `PARSER_LITERAL_ANCHOR_SURFACE_AND_STRUCTURED_NONLITERAL_REVIEW_VERIFIED_RUNTIME_VALUE_SEMANTICS_REMAINS` | cited-source text, exact parser-call/literal anchors and structured dynamic/owner review; not C++ AST or runtime value semantics | `contract_pass=True`, `dynamic_key_constructor_count=0`, `external_owner_count=0`, `manual_review_count=0`, `parser_anchor_count=435`, `parser_call_anchor_count=269`, `parser_literal_anchor_count=166`, `row_count=445`, `structured_review_verified_count=10`, `unclassified_count=0` |
 | `parameter-map-runtime-coverage` | `PASS` | `BOUNDARY` | structured parameter-map runtime coverage | `STRUCTURED_PARAMETER_MAP_RUNTIME_COVERAGE_ATTRIBUTE_PARTICLE_FIELD_VECTOR_RATIO_AND_ADIOS2_BP5_SMOKE_DSMC_DATA_BOUNDARY` | case-local runtime/input/source coverage inventory; not a full parameter semantic or physics regression | `input_only_case_count=1`, `passed=True`, `runtime_case_count=5`, `source_only_case_count=0` |
 | `parameter-map-semantic-anchor-contract` | `PASS` | `PASS` | parameter-map semantic consumer/default/validation anchors | `STRUCTURED_PARAMETER_MAP_SEMANTIC_ANCHORS_VERIFIED_RUNTIME_VALUE_EXECUTION_REMAINS` | 10 structured parameter rows; source-level semantic anchors, not C++ AST, runtime value execution, or all defaults | `case_count=10`, `passed=True` |

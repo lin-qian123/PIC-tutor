@@ -1817,6 +1817,16 @@ $$
 
 当前 WarpX `resampling` regression 仍主要提供粒子数、权重或 checksum 层证据，缺少与论文 two-stream、magnetic-shower、QED-cascade 案例一一对应的 dedicated consumer。因此本节的准确分类是 `FULLTEXT_PAPER_BACKED_PARTICLE_MERGING_WARPX_MAPPING_RUNTIME_SEPARATE`：论文资产已经闭合，论文到 WarpX 的语义映射已建立，但 runtime 等价和 speed-up 仍保持边界。合同见 `runs/stage-c-validation/vranic-2015-paper-asset/contract.{json,md}`。
 
+#### Muraviev 2021：agnostic down-sampling 的论文-源码边界
+
+Vranic 2015 解释了“一个 cluster 压成两个粒子时如何同时保持局部动量和能量”；Muraviev 等人进一步把重采样问题拆成 merging、thinning 和 complete resampling，并提出 agnostic down-sampling 原则：至少一个粒子的权重变为零，同时每个原粒子的期望新权重仍等于旧权重。由此得到的不是单次 realization 的严格局部不变，而是任意由位置、动量或其他粒子状态定义的分布在 ensemble average 下保持不变。
+
+论文比较了 `simple`、`leveling`、`globalLev`、`numberT`、`energyT`、`conserv`、`mergeAv` 和 `merge`。其中 `numberT` 严格保持 cell 总权重，`energyT` 严格保持 cell 总能量，`conserv` 可以把能量、三分量动量、总权重和空间中心矩组成线性不变量；反过来，`simple` 虽然最容易实现，却会产生很宽的局部权重尾，在 QED cascade 中可能制造无法被时间步解析的局部等离子体频率和非物理场增长。
+
+这篇论文与当前 WarpX 有三条可用的概念连接：一是 `LevelingThinning` 对低权重粒子的 leveling 思路；二是 `VelocityCoincidenceThinning` 在 velocity bin 内把 cluster 压成两个粒子的 merge 结构；三是“只看 checksum 不足以证明重采样物理质量”的验证要求。论文的 PICADOR/hi-chi 运行使用了自己的 QED cascade、Weibel 和 k-means 实验，不能把其 growth rate、运行时间、权重尾或图 1--12 数值直接写成 WarpX 结果。
+
+因此本节新增文献资产的准确分类是 `FULLTEXT_PAPER_BACKED_RESAMPLING_METHODS_WARPX_MAPPING_RUNTIME_SEPARATE`：论文全文、MinerU、中文精读和图像资产已闭合，算法概念映射已建立，但 WarpX 仍缺少同时读取重采样前后局部总权重、能量/动量、density variance 与 weight-tail ceiling 的 dedicated consumer。资产合同见 `runs/stage-c-validation/muraviev-2021-paper-asset/contract.{json,md}`。
+
 ### 4.13.8 `particle_pusher`、`single_particle`、`larmor`、`photon_pusher` 的真实验证边界
 
 `Particles` 目录里还有一组很容易被简单统称为“单粒子 test”的 regression：

@@ -3,7 +3,7 @@
 This is an acquisition and reading queue for entries still marked `待分类` in `docs/literature-map.md`.
 Keyword-derived topics and chapter suggestions are planning metadata only; they do not prove that a paper was read, downloaded, converted by MinerU, or suitable as primary evidence.
 
-- pending entries: **82**
+- pending entries: **81**
 - classification: conservative title/key triage
 - P1: likely useful for the current book's core algorithm or application routes
 - P2: useful for a later chapter or a narrower source comparison
@@ -24,7 +24,6 @@ Keyword-derived topics and chapter suggestions are planning metadata only; they 
 | `PerezPOP2012` | general acquisition / manual review | 1-9 | P3 | keep metadata only until a chapter need is identified | Improved modeling of relativistic collisions and collisional ionization in particle-in-cell codes | 10.1063/1.4742167 |
 | `HigginsonJCP2019` | collisions / MCC / particle processes | 90-92 | P1 | metadata first; MinerU if a lawful PDF is acquired | A pairwise nuclear fusion algorithm for weighted particle-in-cell plasma simulations | 10.1016/j.jcp.2019.03.020 |
 | `VerboncoeurJCP2001` | particle-mesh / deposition | 5-6 | P1 | MinerU if a lawful PDF is acquired | Symmetric Spline Weighting for Charge and Current Density in Particle Simulation | 10.1006/jcph.2001.6923 |
-| `MuravievCPC2021` | collisions / MCC / particle processes | 90-92 | P1 | metadata first; MinerU if a lawful PDF is acquired | Strategies for particle resampling in PIC simulations | 10.1016/j.cpc.2021.107826 |
 | `AkturkOE2004` | general acquisition / manual review | 1-9 | P3 | keep metadata only until a chapter need is identified | Pulse-front tilt caused by spatial and temporal chirp | 10.1364/OPEX.12.004399 |
 | `XiaoIEEE2005` | general acquisition / manual review | 1-9 | P3 | keep metadata only until a chapter need is identified | 2005 IEEE Antennas and Propagation Society International Symposium | 10.1109/APS.2005.1551259 |
 | `GrismayerNJP2021` | QED / strong-field processes | 96-100 | P1 | metadata first; MinerU if a lawful PDF is acquired | Quantum Electrodynamics vacuum polarization solver | 10.1088/1367-2630/ac2004 |

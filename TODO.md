@@ -1,5 +1,9 @@
 # TODO
 
+- [x] 2026-07-13：materialize Muraviev 2021 粒子重采样论文：50 页 PDF、MinerU Markdown、38 个图像资源、中文精读、README/access audit/reading log 和 `scripts/audit_muraviev_2021_asset_contract.py` 均已完成；第 4 章已接入 agnostic down-sampling、局部权重噪声和 WarpX `Resampling` 的有界映射，PICADOR/hi-chi 案例不升级为 WarpX runtime PASS。报告见 `runs/stage-c-validation/muraviev-2021-paper-asset/contract.{json,md}`。
+
+- [x] 2026-07-13：将仍待分类文献 triage 从 82 条更新为 81 条，并将公开证据索引更新为 189 条（PASS 137 / FAIL 30 / UNKNOWN 22）。
+
 - [x] 2026-07-13：materialize Vranic 2015 粒子合并论文：24 页 PDF、MinerU Markdown、32 张图、中文精读、README/access audit/reading log 和 `scripts/audit_vranic_2015_asset_contract.py` 均已完成；第 4 章已接入“两粒子局部守恒 merge”与 WarpX `VelocityCoincidenceThinning` 的有界映射，论文案例不升级为 WarpX runtime PASS。报告见 `runs/stage-c-validation/vranic-2015-paper-asset/contract.{json,md}`。
 
 - [x] 2026-07-13：为 `docs/literature-map.md` 中仍待分类的 82 条 BibTeX 条目生成保守 triage：逐条给出候选主题、章节入口、P1/P2/P3 优先级和 MinerU/metadata 后续动作；报告见 `docs/literature-pending-triage.md`，不把标题关键词升级为论文正文证据。

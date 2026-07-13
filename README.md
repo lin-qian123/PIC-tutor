@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.106`：在 v0.105 非中性 RZ sibling 基础上，将控制扩展到 shape=1/2/3/4，axis 比值随 shape 单调变化而 off-axis 保持不变；该结果进一步收窄了 shape deposition 与 axis wrap/scaling 的耦合边界，但仍不宣称 root cause、charge closure 或正式收敛阶已完成。
+当前成书版本为 `v0.107`：将 v0.106 非中性 RZ shape family 复核扩展到 `64x128` 与 `128x256`。species rho 的 axis 比值在两套分辨率上完全一致且随 shape 单调下降，但 total-rho 在高分辨率的 shape=2/3/4 出现 species cancellation，最大跨分辨率差为 `0.168327256`；因此新增跨分辨率开放边界，不宣称 root cause、charge closure 或正式收敛阶已完成。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

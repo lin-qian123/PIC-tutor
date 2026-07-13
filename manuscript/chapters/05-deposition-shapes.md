@@ -2824,6 +2824,12 @@ v0.105 继续用真实 2-rank RZ sibling 检查中性背景是否掩盖了 axis 
 
 源码交叉检查进一步把路径拆开：`ChargeDeposition.H` 在 RZ 中用粒子半径 `sqrt(xp*xp + yp*yp)` 和 `sx[ix]*sz[iz]*wq` 写入 shape-specific raw charge，但不读取 `verboncoeur_axis_correction`；axis toggle 在后续 `ApplyInverseVolumeScalingToChargeDensity` 的轴向 wrap/scaling 路径中才出现。因此当前最窄的可证边界是 **RZ shape deposition 与 axis wrap/scaling 的耦合**，而不是默认值解析或单一外层体积因子。该分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_SHAPE_DEPENDENT_AXIS_BOUNDARY_OPEN`；报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-shape-family-v0.106/contract.{json,md}`，说明见 `notes/code-reading/particles/87-rz-axis-correction-nonneutral-shape-family.md`。该结果仍不识别具体 kernel root cause、不关闭 charge closure 或正式收敛阶。
 
+### 5.14.23 v0.107 non-neutral shape behavior across resolution
+
+为检查上一节的 shape 结论是否能直接跨分辨率复用，将同一非中性 RZ on/off sibling 扩展到 `128x256`。两套分辨率的初始化帧都保持 particle state、off-axis rho 和初始 field 不变，`delta(rho)` 与 species delta 逐数组相符。更细的结果是：species rho 的 axis on/off 比值在 `64x128` 与 `128x256` 上完全一致，均为 `0.850000000/0.843478261/0.836500221/0.831672744`，因此 shape-dependent species behavior 在本实验的两套网格上稳定。
+
+但不能把这组稳定性升级为 total-rho 结论。`64x128` 的 total-rho 保持上述单调比值，而 `128x256` 的 shape=2/3/4 在 sampled axis cells 发生电子/离子贡献近乎抵消，total-rho 比值变为 `1/1/1`；最大跨分辨率差为 `0.168327256`。这说明 total-rho 的可见性不仅取决于 axis scaling，还取决于 species cancellation 与网格/shape 组合。当前分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_SHAPE_DEPENDENT_CROSS_RESOLUTION_BOUNDARY_OPEN`：species-level 现象已获得跨分辨率复现，total-rho 仍是开放边界，且不关闭 charge closure、正式收敛阶或具体 kernel root cause。报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-shape-resolution-family-v0.107/contract.{json,md}`，说明见 `notes/code-reading/particles/88-rz-axis-correction-nonneutral-shape-resolution-family.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 748,
-  "total_bytes": 27808303,
+  "total_bytes": 27813830,
   "entries": [
     {
       "path": ".gitignore",
@@ -43,27 +43,27 @@
     {
       "path": "README.md",
       "bytes": 1528698,
-      "sha256": "5cd8705092951dd2a22fdeac42ae922984956bbc94bb21b1fb6980636c31a626"
+      "sha256": "297f7d84505ef8009ce234118dec6954c1bc3e6081239bf0b473285f1d4c34ee"
     },
     {
       "path": "TODO.md",
-      "bytes": 1375920,
-      "sha256": "bdd9ae47375cbb6da85017610f42012c362c1c539accd32fb6a4800c9a703b76"
+      "bytes": 1376338,
+      "sha256": "6dcdcd5da2bf16dd8d1b4ed4e61a492de9e2cf162cbe571d0ab56e68f86bec2a"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5763318,
-      "sha256": "c2b7c0b9227dd49c75a7d5742fe58245b698456e5a23807b1ce000b11d61d8f0"
+      "bytes": 5765950,
+      "sha256": "4d1877c8bb8d7f41c0dcb1819d44d42454b44b927ff96d88ea9f4f19dd0b360e"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1088767,
-      "sha256": "6316a927381417b2189e168c0ba2013e67220204bc74b3b1796a0e70cabf822b"
+      "bytes": 1090622,
+      "sha256": "76c8bf6a918e7ee8ef11da2acc379ebfca1464504050666164515b00fe02a3bb"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3392764,
-      "sha256": "0959a9de109ac93d5f75e727bb47c7dbb847c1af739c3a5ae4962479d9bd576c"
+      "bytes": 3391531,
+      "sha256": "623e4b4e49f79ea18bb9502d2624e11b7b0863a1f32755fe22794b008c89c246"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "f8f0614b065248ac290ddfd51a6dd4f3c8ed6c4d9892520278a749e1c9427d7c"
+      "sha256": "43a2257c5c21b3b92c92077b2698e40b68063744feda9e82c4395eaa58024a4d"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44575,
-      "sha256": "35d99a86ec55b0243695772e433d4017b3f6e71a07a2348147baa7a9f684b276"
+      "sha256": "2c49efb5cc207707bbe0514096abadc244360e080a36299871aa77a3c55fda66"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -897,8 +897,8 @@
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
-      "bytes": 180652,
-      "sha256": "58d6fa5b7ae5231c3e8d0d594ef615cde9b9b3f4c75ed6c29d6b1e7d2d2b1a1e"
+      "bytes": 182507,
+      "sha256": "5e5e0bdcfe1b36b528e808a2f524cbb23dc15ba48e35738f7f14adf69bddb785"
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",

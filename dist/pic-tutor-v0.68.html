@@ -458,6 +458,8 @@ current deposition：非守恒但直观的速度加权沉积</a></li>
 <li><a href="#esirkepov-current-deposition用新旧形函数差构造连续性方程" id="toc-esirkepov-current-deposition用新旧形函数差构造连续性方程">5.11
 Esirkepov current deposition：用新旧形函数差构造连续性方程</a>
 <ul>
+<li><a href="#论文源码代数合同与-runtime-证据的分层" id="toc-论文源码代数合同与-runtime-证据的分层">5.11.3
+论文、源码、代数合同与 runtime 证据的分层</a></li>
 <li><a href="#villasenor-buneman-公式级审计四边界重复分段与三维交叉项" id="toc-villasenor-buneman-公式级审计四边界重复分段与三维交叉项">5.11.1
 Villasenor-Buneman 公式级审计：四边界、重复分段与三维交叉项</a></li>
 <li><a href="#esirkepov-运行级维度证据1d2d-与-3d-langmuir" id="toc-esirkepov-运行级维度证据1d2d-与-3d-langmuir">5.11.2 Esirkepov
@@ -13418,6 +13420,65 @@ bounded compare
 <code>Exact charge conservation scheme for Particle-in-Cell simulation with an arbitrary form-factor</code>，DOI
 为
 <code>10.1016/S0010-4655(00)00228-9</code>。这已经足以把“发表版身份”和“当前本地全文资产”分开记录，但仍不足以推出发表版正文的逐式编辑差异。</p>
+<h3 id="论文源码代数合同与-runtime-证据的分层">5.11.3
+论文、源码、代数合同与 runtime 证据的分层</h3>
+<p>为了避免把不同强度的证据压成一句“Esirkepov
+已验证”，本章把当前可复核材料分成四层：</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>证据层</th>
+<th>当前材料</th>
+<th>可以支持的结论</th>
+<th>不能支持的结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>论文/索引摘要</td>
+<td>作者 arXiv 预印本、CPC 书目信息与 indexed abstract</td>
+<td><code>W^1/W^2/W^3</code>、<code>Eq.(23)</code>、arbitrary
+form-factor、直线轨迹、无需 Poisson solve 的 paper-level 叙述</td>
+<td>CPC 定稿的逐页排版、section 编号和逐式编辑差异</td>
+</tr>
+<tr>
+<td>当前源码</td>
+<td><code>ShapeFactors.H</code>、<code>CurrentDeposition.H</code>、<code>WarpXParticleContainer.cpp</code></td>
+<td>old/new shape 对齐、<code>sdxi/sdyj/sdzk</code>
+前缀循环、<code>1/3/1/6</code> 混合平均、几何/执行分支</td>
+<td>所有 geometry/order 组合都已端到端等价</td>
+</tr>
+<tr>
+<td>代数/源码合同</td>
+<td><code>audit_esirkepov_notation_contract.py</code>、<code>verify_esirkepov_density_decomposition.py</code>
+与 bounded compare</td>
+<td>记号映射、密度分解和有限样本公式恒等式在当前定义下成立</td>
+<td>公式恒等式自动等价于 GPU kernel 或 AMR source synchronization</td>
+</tr>
+<tr>
+<td>runtime consumer</td>
+<td>1D/2D/3D Langmuir、RZ、RCYLINDER/RSPHERE 与 MR contracts</td>
+<td>指定案例和边界下的 field/charge/observable 结果及其
+<code>PASS/BOUNDARY</code> 分类</td>
+<td>从局部案例外推完整 Cartesian product、默认参数修复或正式收敛阶</td>
+</tr>
+</tbody>
+</table>
+<p>因此，本节后文的 “paper-backed + source-grounded + runtime-backed”
+是证据层叠加，不是把最弱层自动升级成最强层。尤其是
+<code>runtime consumer</code>
+只能回答某个输入、几何和诊断合同是否成立；它不能反向证明 CPC
+发表版逐式一致，也不能替代 <code>SyncCurrentAndRho()</code>
+的独立同步合同。该分层与
+<code>notes/code-reading/particles/44-esirkepov-cpc-bounded-comparison.md</code>
+及 <code>docs/public-evidence-index.md</code> 的 boundary
+分类保持一致。</p>
 <p>本项目把这次 bounded compare 单独记在
 <code>notes/code-reading/particles/44-esirkepov-cpc-bounded-comparison.md</code>。因此，本章当前可以更准确地写成：发表版书目信息已核实，ScienceDirect
 索引摘要还可以支持“任意 form-factor、直线轨迹假设、无需 Poisson

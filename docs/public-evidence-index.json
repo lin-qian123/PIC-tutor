@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 167,
+  "record_count": 168,
   "status_counts": {
-    "PASS": 122,
+    "PASS": 123,
     "FAIL": 30,
     "UNKNOWN": 15
   },
@@ -11,7 +11,7 @@
     "PASS": 103,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 30
+    "BOUNDARY": 31
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -1547,6 +1547,20 @@
         "parser_anchor_count": 435,
         "row_count": 445,
         "unclassified_count": 0
+      }
+    },
+    {
+      "case": "parameter-map-runtime-coverage",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "structured parameter-map runtime coverage",
+      "classification": "STRUCTURED_PARAMETER_MAP_RUNTIME_COVERAGE_BOUNDARY_ATTRIBUTE_AND_PARTICLE_FIELD_SMOKE_ADIOS2_VECTOR_RATIO_GAPS",
+      "scope": "case-local runtime/input/source coverage inventory; not a full parameter semantic or physics regression",
+      "metrics": {
+        "input_only_case_count": 1,
+        "passed": true,
+        "runtime_case_count": 3,
+        "source_only_case_count": 2
       }
     },
     {

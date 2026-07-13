@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 744,
-  "total_bytes": 27778336,
+  "entry_count": 745,
+  "total_bytes": 27788486,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,23 +42,23 @@
     },
     {
       "path": "README.md",
-      "bytes": 1527522,
-      "sha256": "61ca53843aa000d9f063fa1eadc2278ccd97d45e4958d9fcc2cbf4b0d747f449"
+      "bytes": 1528064,
+      "sha256": "0cda536592c1d3d45f335a0dcc696cb6f897a86e9675a55f27b0e8bd9da7e785"
     },
     {
       "path": "TODO.md",
-      "bytes": 1373461,
-      "sha256": "d7d038f5506f26d65c55f54c8ec200bce059146ced6e9c8ff9fca7cef4b9931b"
+      "bytes": 1373978,
+      "sha256": "22cff719ca4573e8757b5b4cdf17e95913b1ecd96b3c5dbefd43f793ce9bdac9"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5762131,
-      "sha256": "3f08d3e26ef13c2b819246959d816d938fa3ec6730092b2a2de5f573855a0087"
+      "bytes": 5762644,
+      "sha256": "cc1d0ddd83426813cdaee20a3c168f0806d990b3266c59dc22f5dfea0ebf18e3"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1087680,
-      "sha256": "9f8a7d34db796b8a6c4ac455be4302449d6b5f5524402c26f8ddfe9e4d0f6152"
+      "bytes": 1088154,
+      "sha256": "e62ca22210f2b4f389829459c5f34f8dcb63527661206558d49b1e0f2b59967c"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 91086,
-      "sha256": "87f417cfc546dd2756015b002e77db5cc3a5b8da612a27b024141c8bd9548db4"
+      "bytes": 91685,
+      "sha256": "ebae9ac577f024527fe57441c8bb0c4545ebc8fd51bfe241d21adf0ef7ae0d20"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 60152,
-      "sha256": "0cbe71a14c4edd3a94f1397a7474413c7fe0fbb0a6509b241037e676619e7eec"
+      "bytes": 60571,
+      "sha256": "7c7539a29c0758f3821d5719444189c916ff73d3a5eb4cc7e7477163f42438b8"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "5f6601468a1938c08bc63568f36eb18156beb596358dd45a84ed37af073da8bf"
+      "sha256": "17548f4620f06396ef86cca1c8a00eaf022f7ac8f67625313980ceafac532172"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44575,
-      "sha256": "9b3ca367d9beb1238053579051b373619446b434b7b5889047a526c87bee9c49"
+      "sha256": "35d99a86ec55b0243695772e433d4017b3f6e71a07a2348147baa7a9f684b276"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 69526,
-      "sha256": "4ee5fa1256442da5b77ec017e3f096b3240650507fd4ca59df20e77c55ff4b2b"
+      "bytes": 70000,
+      "sha256": "c2b2bd1af60ab18c20ba13a39015a0edbd15c548e9b0acf0bfa83a8b24c87b18"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -913,7 +913,7 @@
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
       "bytes": 111833,
-      "sha256": "7abce49d3836ffa5c3dfcce35f9f465a915f6055e77539e8ab324e86f561104c"
+      "sha256": "068bea34a4f754c3318d06397b2403fc9ca5df5cd411ee03870211fa864c374e"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -2679,6 +2679,11 @@
       "path": "scripts/audit_parameter_map_parser_anchors.py",
       "bytes": 8232,
       "sha256": "fc6e82ba7b3469c2e2bd5b7151913d0f8c6686ddd8726f6e643d41864a5942d0"
+    },
+    {
+      "path": "scripts/audit_parameter_map_runtime_coverage.py",
+      "bytes": 6612,
+      "sha256": "4b8d456ecfb6608c62d4b69660b21e6d6766489f0b60acfb0b7327b186401b03"
     },
     {
       "path": "scripts/audit_parameter_map_semantic_anchors.py",

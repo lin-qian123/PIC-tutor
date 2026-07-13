@@ -8,6 +8,8 @@
 
 当前 v0.68 又补入 parameter-map semantic anchor contract：对 parser-anchor 之外的 10 条结构化参数逐项核对 consumer/default/validation 锚点，用户属性、碰撞动态键、ADIOS2 参数 map、particle-field averaging/filter 和 AMReX ratio owner 全部通过；该结果仍不替代 C++ AST、完整默认值矩阵或 runtime value execution。脚本为 `scripts/audit_parameter_map_semantic_anchors.py`，报告见 `runs/stage-c-validation/parameter-map-semantic-anchor-contract/contract.{json,md}`。
 
+当前 v0.68 又补入 parameter-map runtime coverage contract：真实 case-local smoke 已验证用户属性 `particle_orig_z/particle_regionofinterest`、particle-fields 的 15 个 species reduction 字段及 openPMD HDF5 输出，另有 scalar `amr.ref_ratio` MR 输入覆盖；DSMC 目前为 input-only，ADIOS2 arbitrary parameter suffix 与 `ref_ratio_vect` 仍是 source-only gap。脚本为 `scripts/audit_parameter_map_runtime_coverage.py`，报告见 `runs/stage-c-validation/parameter-map-runtime-coverage/contract.{json,md}`。
+
 当前 v0.68 又完成 parameter-map structured review contract：parser-anchor 之外的 10 条参数已逐项核对，8 条 dynamic-key constructor 和 2 条 AMReX owner 全部通过；这关闭了“非固定键仅按类别记录、没有逐项源码锚点”的缺口，但不替代完整 C++ AST、默认值/校验或 runtime value semantics 审计。脚本为 `scripts/audit_parameter_map_structured_review.py`，报告见 `runs/stage-c-validation/parameter-map-structured-review-contract/contract.{json,md}`。
 
 当前 v0.68 又补入 parameter-map parser-anchor review surface：排除通用 `type/field/x/y/z` token，限制为普通单行 C++ literal，并覆盖 `query_enum_sloppy`、`queryArrWithParser`、`getWithParser`、`getArrWithParser`、`Store_parserString`、`getEntries` 后，445 条参数中 435 条找到固定 parser anchor，8 条确认是 dynamic-key constructor，2 条确认是 AMReX owner 参数，没有未分类项；该审计仍不冒充 C++ AST 或完整 ParmParse 语义证明。脚本为 `scripts/audit_parameter_map_parser_anchors.py`，报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
@@ -18,7 +20,7 @@
 
 当前成书版本为 `v0.68`，对应 321 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 167 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
+v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 168 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 

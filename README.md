@@ -12,6 +12,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 155 条 `contrac
 
 2026-07-13：新增 Yee 当前 WarpX FDTD source crosswalk contract，锁定 `CartesianYeeAlgorithm.H` 的 CFL/交错差分、FDTD solver selection 以及 `EvolveB/E` 模板路径；该 contract 是现代实现证据，不升级为 IEEE 1966 原文逐式证据。
 
+2026-07-13：修正 `docs/parameter-map.md` 的旧计数口径：当前结构审计确认 445 条数据行，新增 header-count contract 并同步 `parameter-chapter-index.md`；逐条 `ParmParse` 语义复核仍未宣称完成。
+
 2026-07-13：精修第 5 章结论段：删除重复的 Esirkepov publisher-PDF 待办，修正过期的 `v0.40` 阶段口径为当前 v0.68 源码基线；未改变 publisher compare、geometry/order 和 AMR 边界。
 
 2026-07-13：materialize Tajima 1982 FNAL 相关会议稿的 26 页 PDF、MinerU Markdown、67 张图、中文讲解、access audit、reading log 和独立 asset contract；该单作者会议稿作为 beat-wave 主题旁证纳入索引，但不替代正式 Tajima-Dawson AIP 条目。

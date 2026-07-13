@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 
@@ -33,7 +34,10 @@ def source_exists(reference: str) -> bool:
 
 
 def main() -> None:
-    lines = MAP.read_text(encoding="utf-8").splitlines()
+    text = MAP.read_text(encoding="utf-8")
+    lines = text.splitlines()
+    declared_match = re.search(r"参数条目数：`?(\d+)`?", text)
+    declared_data_row_count = int(declared_match.group(1)) if declared_match else None
     rows = []
     for line_number, line in enumerate(lines[10:], 11):
         if not line.startswith("|"):
@@ -70,11 +74,13 @@ def main() -> None:
         "contract": "WarpX parameter-map structural surface",
         "parameter_map": str(MAP),
         "data_row_count": len(rows),
+        "declared_data_row_count": declared_data_row_count,
         "placeholder_cells": placeholder_cells,
         "missing_source_references": missing_references,
         "resolved_aliases": alias_hits,
         "wildcard_references": wildcard_hits,
-        "passed": not placeholder_cells and not missing_references,
+        "header_count_matches": declared_data_row_count == len(rows),
+        "passed": not placeholder_cells and not missing_references and declared_data_row_count == len(rows),
         "classification": "STRUCTURAL_SURFACE_PASS_MANUAL_PARSER_REVIEW_REMAINS",
         "scope": "row shape, current chapter labels, and source-path existence; not semantic parser-function verification",
     }
@@ -86,10 +92,12 @@ def main() -> None:
         "",
         f"- status: `{'PASS' if result['passed'] else 'FAIL'}`",
         f"- data rows: `{result['data_row_count']}`",
+        f"- declared data rows: `{result['declared_data_row_count']}`",
+        f"- header count matches: `{'PASS' if result['header_count_matches'] else 'FAIL'}`",
         f"- resolved legacy aliases: `{len(alias_hits)}`",
         f"- wildcard references: `{len(wildcard_hits)}`",
         f"- missing source references: `{len(missing_references)}`",
-        "- scope: structural audit only; it does not replace manual ParmParse parser review",
+        "- scope: structural audit and row-count consistency only; it does not replace manual ParmParse parser review",
         "",
     ]
     for item in alias_hits:

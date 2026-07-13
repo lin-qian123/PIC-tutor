@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 729,
-  "total_bytes": 27639472,
+  "total_bytes": 27640740,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1521911,
-      "sha256": "7e4539e1cf435f2f70b44300e13d3731785dc82ce6732b5b4562c03a12a009bc"
+      "bytes": 1522144,
+      "sha256": "d71e926b4f93dc6ff0314980a71e6063733f3a983c77f23adcea525e5389ccb3"
     },
     {
       "path": "TODO.md",
-      "bytes": 1366356,
-      "sha256": "665ffce2fa01208bd24bb8828a5d08ce39359ed82aff4e693e983d6d9e6f64b9"
+      "bytes": 1366707,
+      "sha256": "2191f164c3243bfba3cb23ffafa2eec3765db0c35f672dfb8e6aa96f5d9ac2eb"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -102,13 +102,13 @@
     },
     {
       "path": "docs/parameter-chapter-index.md",
-      "bytes": 31357,
-      "sha256": "66c49a1d240fe5a5df9bccb872c95ca24daa226feebc8534ad142498a2171db4"
+      "bytes": 31497,
+      "sha256": "f15ad25ee8cc87731a0b685affdb8958dfdaf03302b4760dfa02708e693895cc"
     },
     {
       "path": "docs/parameter-map.md",
       "bytes": 1048674,
-      "sha256": "76b66b8b0c1552b6b004d8c5426c403712da9ee10b169fc38b4c8e4663ea07c5"
+      "sha256": "e1e6ee26c142477d4a5ad99bab775c692ddf9ec7e96b9573116cdad049200cc2"
     },
     {
       "path": "docs/public-evidence-index.json",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "89d9c82d0daef4f2719f83e567c6b7ba13c8c11c5a0d92046a26499acd6d2187"
+      "sha256": "13b06a5e856a221f49ad2b1d5a122a09dd9db32ae0f94bba80e8ac20d881a535"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -2652,8 +2652,8 @@
     },
     {
       "path": "scripts/audit_parameter_map_surface.py",
-      "bytes": 4130,
-      "sha256": "7f59567f10e5399a7144df2d15a8c5f1a6ef9a58887d6f5d9d261e5b1367c20f"
+      "bytes": 4674,
+      "sha256": "e381f760bad33047739d32b5e71f40a927a400b43e8f61b1b7d1c1b11f3d51ba"
     },
     {
       "path": "scripts/audit_particle_mesh_1974_abstract_contract.py",

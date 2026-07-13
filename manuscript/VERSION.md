@@ -1,5 +1,7 @@
 # PIC-tutor v0.68
 
+本版新增显式 leapfrog position source crosswalk：只读核对 `PhysicalParticleContainer::Evolve()` 的 momentum-then-position 顺序、`UpdatePosition.H` 的时间中心速度公式、维度条件，以及 `PushSelector.H` / Higuera-Cary 接口的 split-push 边界。正文明确相邻 Full plotfile 位置差只能构造 velocity proxy，不能冒充直接 half-step attribute；Vay Appendix B 专门圆轨道输出仍未接入。
+
 本版新增 Boris 1970 论文专属 metadata/access contract：DTIC `ADA023511` 的书目身份已固定，PDF 限流响应和原始 proceedings 全文缺失边界已记录；第 4 章以 Birdsall 1985 二手全文推导和 WarpX `UpdateMomentumBoris.H` 源码支撑算法解释，不宣称完成 Boris 1970 原文逐页核对。
 
 本版又新增 Boris 当前 WarpX source crosswalk contract：只读核对 `UpdateMomentumBoris.H` 的 half-push、gamma/磁旋转、半角重标定以及 `PushSelector.H` 的 Boris/辐射反作用分派；这是当前实现证据，不替代原始 proceedings 全文。
@@ -22,7 +24,7 @@
 
 本版又补入 dense `p_y=0.2..2.8` family 和 64³ `p_y=1.6/1.8` resolution control：Vay 共振窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，但仍只标记为 resonance-sensitive invariant screen，不提升为 two-fold island topology reproduction。
 
-本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 155 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
+本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 156 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
 

@@ -2,6 +2,8 @@
 
 # PIC-tutor v0.68
 
+本版新增显式 leapfrog position source crosswalk：只读核对 `PhysicalParticleContainer::Evolve()` 的 momentum-then-position 顺序、`UpdatePosition.H` 的时间中心速度公式、维度条件，以及 `PushSelector.H` / Higuera-Cary 接口的 split-push 边界。正文明确相邻 Full plotfile 位置差只能构造 velocity proxy，不能冒充直接 half-step attribute；Vay Appendix B 专门圆轨道输出仍未接入。
+
 本版新增 Boris 1970 论文专属 metadata/access contract：DTIC `ADA023511` 的书目身份已固定，PDF 限流响应和原始 proceedings 全文缺失边界已记录；第 4 章以 Birdsall 1985 二手全文推导和 WarpX `UpdateMomentumBoris.H` 源码支撑算法解释，不宣称完成 Boris 1970 原文逐页核对。
 
 本版又新增 Boris 当前 WarpX source crosswalk contract：只读核对 `UpdateMomentumBoris.H` 的 half-push、gamma/磁旋转、半角重标定以及 `PushSelector.H` 的 Boris/辐射反作用分派；这是当前实现证据，不替代原始 proceedings 全文。
@@ -4313,7 +4315,7 @@ inputs
 
 粒子推进器负责把单个宏粒子从一个时间层推进到下一个时间层。它表面上是局部单粒子算法，实际上依赖上一章建立的主循环条件：场必须已经填好 gather guard cells，粒子位置和动量必须处在正确 leapfrog 时间层，外场、电离电荷态、辐射反作用和 QED 选项也必须在进入 pusher 前准备好。
 
-本章对应源码笔记见 `notes/code-reading/particles/00-particle-evolve-callchain.md`、`notes/code-reading/particles/01-pusher-and-deposition-evidence.md`、`notes/code-reading/particles/02-gather-shape-deposition-kernels.md`、`notes/code-reading/particles/03-vay-higuera-cary-pushers.md`、`notes/code-reading/particles/24-thermalizer-validation-and-checksum-boundaries.md`、`notes/code-reading/particles/25-gather-variants-and-external-particle-fields.md`、`notes/code-reading/particles/26-pusher-single-particle-and-photon-validation-map.md`、`notes/code-reading/particles/27-particle-fields-plasma-lens-and-mpi-validation-map.md`、`notes/code-reading/particles/28-particle-diagnostics-python-interface-validation-map.md`、`notes/code-reading/particles/29-boundary-and-python-front-end-validation-map.md` 和 `notes/code-reading/particles/30-pml-eb-contact-and-mr-validation-map.md`。
+本章对应源码笔记见 `notes/code-reading/particles/00-particle-evolve-callchain.md`、`notes/code-reading/particles/01-pusher-and-deposition-evidence.md`、`notes/code-reading/particles/02-gather-shape-deposition-kernels.md`、`notes/code-reading/particles/03-vay-higuera-cary-pushers.md`、`notes/code-reading/particles/24-thermalizer-validation-and-checksum-boundaries.md`、`notes/code-reading/particles/25-gather-variants-and-external-particle-fields.md`、`notes/code-reading/particles/26-pusher-single-particle-and-photon-validation-map.md`、`notes/code-reading/particles/27-particle-fields-plasma-lens-and-mpi-validation-map.md`、`notes/code-reading/particles/28-particle-diagnostics-python-interface-validation-map.md`、`notes/code-reading/particles/29-boundary-and-python-front-end-validation-map.md`、`notes/code-reading/particles/30-pml-eb-contact-and-mr-validation-map.md` 和 `notes/code-reading/particles/66-explicit-leapfrog-position-source-crosswalk.md`。
 
 本章当前依据的 WarpX 源码版本是：
 
@@ -5328,7 +5330,7 @@ $$
 
 ## 4.10 位置推进与无质量粒子
 
-显式位置推进在 `../warpx/Source/Particles/Pusher/UpdatePosition.H:19-70`。对有质量粒子，源码先计算
+显式位置推进在 `../warpx/Source/Particles/Pusher/UpdatePosition.H:19-70`。`PhysicalParticleContainer::Evolve()` 的顺序是先调用 `doParticleMomentumPush(...)`，再在 `PositionPushType::Full` 分支调用 `UpdatePosition(...)`；因此这里消费的是推进后的时间中心动量，而不是另一个独立导出的速度数组。对有质量粒子，源码先计算
 
 $$
 \gamma^{-1}=\frac{1}{\sqrt{1+|\mathbf{u}|^2/c^2}},
@@ -5351,6 +5353,8 @@ $$
 $$
 
 更新位置，见 `UpdatePosition.H:52-69`。因此 photon container 可以复用位置推进形式，但动量和沉积行为不同；光子容器的专门逻辑后续多物理章节再展开。
+
+这个调用顺序也限定了“半步速度”的证据边界：`UpdatePosition.H` 的注释明确把显式位置更新写成 `x(t+dt)=x(t)+v(t+dt/2)dt`，而公共 Full plotfile 只稳定提供位置和机械动量。相邻 plotfile 的位置差可以构造 position-update velocity proxy，但不能冒充直接读取的 half-step attribute。另一个容易忽略的分叉是 `PushSelector.H`：Boris 接受 `FirstHalf/SecondHalf/Full` 的 `momentum_push_type`，当前 Higuera-Cary 接口没有这一参数，因此不能把两者写成完全相同的 split-half 输出合同。该源码 crosswalk 由 `scripts/audit_position_leapfrog_source_crosswalk.py` 固化；当前结论是“时间中心位置更新已由源码证明，直接半步速度属性和 Vay Appendix B 专门圆轨道输出仍未接入”。
 
 ## 4.11 RR、implicit 与 photon path
 

@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 729,
-  "total_bytes": 27645595,
+  "entry_count": 731,
+  "total_bytes": 27661223,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1522317,
-      "sha256": "ede3006b7a1322aa60e5475fad89d175407fc48227bd7a8715c63817084306b7"
+      "bytes": 1522716,
+      "sha256": "1b2630172a05526f3adaa7d7f020580dd453841ebf1716b9725ee735de26c3f1"
     },
     {
       "path": "TODO.md",
-      "bytes": 1367586,
-      "sha256": "e005179cc630a71d33235adbf1b5991cf3e5bc11288aacc423bd6cf6fab9efcb"
+      "bytes": 1368097,
+      "sha256": "3e586c1ef2a61caf1906421895b92f6230c3ef41a93168c8cca8661e7076b486"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5751885,
-      "sha256": "48949f4aa760d54603d8d1a042cde2d05c188bd5ddedc8ca3cfbf2a0a002f95a"
+      "bytes": 5753660,
+      "sha256": "023f5521cb479fd375b0e65bf5ddca0810929b351747be45bf105f7d1661196f"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1078355,
-      "sha256": "5381e29df9a531bec78d01b3b5dd2b3136967cf43d4c3d237e28b12ecf03b3b1"
+      "bytes": 1079964,
+      "sha256": "8c4cd90ea91291cdb294cdf5924ff04fe8f0b8579db16ccce25f90f37f427be9"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3377705,
-      "sha256": "6fd51388585453c9ae0ede77d1d66e89d17856f01cdd854dbaa0b277ce14b5b9"
+      "bytes": 3379390,
+      "sha256": "ac9b519808f0bb90fa837744852a76e8cb1441667d369716d48367c5b8ee4072"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 83501,
-      "sha256": "deae04ada9e4fdd7870aeb37e17851b950fea332cbef20ed515b969be4ecabcc"
+      "bytes": 84128,
+      "sha256": "2c025b1409d5779f0c7dfc77b0dffd9ff38381f93941c3e665625f6276e0a433"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 54741,
-      "sha256": "414dab4c8f55b86be9929cfa0fc556a1cf5c1d8a098675fd71b43420193ff42e"
+      "bytes": 55197,
+      "sha256": "2ccf31e9060693aeabc0d290a3db1531b789afb37d921139d90d886b556d718a"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "1cac4a226b6e09c23a49e5ae569ea19f98904c8cd1ff3496f2efc8914ddceb64"
+      "sha256": "5cd7a89602111a34f836fd7f3cf99426e9bd5c034758ae3c9c528007fa60618b"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 43938,
-      "sha256": "99d01047662e810244ae70d0216b02d1470beb9553253c21db17578d11ee00a5"
+      "bytes": 44218,
+      "sha256": "b8b70863ed6af04725b25bb2c3a3243501de173cbc6a42c54bbd02b87348f649"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 64770,
-      "sha256": "102ca6e071a20b447a1bdcc8ecb98d27be40155fa6a4488f5225d7d11fe05631"
+      "bytes": 65212,
+      "sha256": "896ce36b46712f8afad1f449d9324dea6a899fd89d4c9f399b18dd3559fd079d"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 145970,
-      "sha256": "bbef902f6b74b2087f86e25558a97f71fe7a83c0a8c8762c1a7916c6ac39917c"
+      "bytes": 147137,
+      "sha256": "8c46f5eace34014a51d0299a5216c2db3b6fc70c734d05f0177a8235d120873e"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -2096,6 +2096,11 @@
       "sha256": "4f3a463a54abc816d81b08c4c375912e5efcbdcd19cd277548cba13f8b15d459"
     },
     {
+      "path": "notes/code-reading/particles/66-explicit-leapfrog-position-source-crosswalk.md",
+      "bytes": 1772,
+      "sha256": "42d0dfd99c49ae7caf9fbb68e8e4f88bb769294d0cd159f0360af117d1d9d9e3"
+    },
+    {
       "path": "notes/code-reading/particles/66-higuera-resonance-window-resolution-contract.md",
       "bytes": 1112,
       "sha256": "873c12ca688e134a26045f848eab5324109a713131dc062afc79a3bf5a2674ec"
@@ -2669,6 +2674,11 @@
       "path": "scripts/audit_peiravi_birdsall_1978_asset_contract.py",
       "bytes": 4151,
       "sha256": "201dd85168ff00accc3a5bd2aa4d87dca9968a4279652e40e410cb5268a3cb54"
+    },
+    {
+      "path": "scripts/audit_position_leapfrog_source_crosswalk.py",
+      "bytes": 4905,
+      "sha256": "f0168a41f4013b33086342a7bffa9ad181ba324c93f579fd4d619130f5171c79"
     },
     {
       "path": "scripts/audit_psatd_literature_strategy_contract.py",

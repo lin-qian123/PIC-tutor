@@ -2,13 +2,15 @@
 
 当前成书版本为 `v0.68`，对应 319 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 155 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
+v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 156 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
 2026-07-13：新增 Boris 1970 论文专属 metadata/access contract，记录 DTIC `ADA023511` 的书目身份和 PDF 限流边界；第 4 章采用 Birdsall 1985 二手推导与 WarpX `UpdateMomentumBoris.H` 源码解释，未把原始 proceedings 全文缺口隐藏为已完成精读。
 
 2026-07-13：新增 Boris 当前 WarpX source crosswalk contract，逐项锁定 `UpdateMomentumBoris.H` 的 half-push、磁旋转、半角重标定与 `PushSelector.H` 分派边界；该 contract 是当前源码证据，不升级为 Boris 1970 原文证据。
+
+2026-07-13：新增显式 leapfrog position source crosswalk，固定 `PhysicalParticleContainer::Evolve()` 的 momentum-then-position 顺序、`UpdatePosition.H` 的时间中心速度公式、维度条件和 Higuera-Cary 不支持 split momentum push 的接口边界；相邻 Full plotfile 速度明确降级为 proxy，直接 half-step attribute 与 Vay Appendix B 专门圆轨道仍未完成。
 
 2026-07-13：新增 Yee 当前 WarpX FDTD source crosswalk contract，锁定 `CartesianYeeAlgorithm.H` 的 CFL/交错差分、FDTD solver selection 以及 `EvolveB/E` 模板路径；该 contract 是现代实现证据，不升级为 IEEE 1966 原文逐式证据。
 

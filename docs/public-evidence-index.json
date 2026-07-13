@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 155,
+  "record_count": 156,
   "status_counts": {
-    "PASS": 112,
+    "PASS": 113,
     "FAIL": 28,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 97,
+    "PASS": 98,
     "FAIL": 27,
     "UNKNOWN": 7,
     "BOUNDARY": 24
@@ -1509,10 +1509,12 @@
       "status": "PASS",
       "evidence_kind": "PASS",
       "contract": "WarpX parameter-map structural surface",
-      "classification": "STRUCTURAL_SURFACE_PASS_MANUAL_PARSER_REVIEW_REMAINS",
-      "scope": "row shape, current chapter labels, and source-path existence; not semantic parser-function verification",
+      "classification": "STRUCTURAL_SOURCE_TOKEN_SURFACE_PASS_MANUAL_PARSER_REVIEW_REMAINS",
+      "scope": "row shape, current chapter labels, source-path existence and parameter-token coverage; not semantic parser-function verification",
       "metrics": {
         "data_row_count": 445,
+        "declared_data_row_count": 445,
+        "header_count_matches": true,
         "passed": true
       }
     },
@@ -1807,6 +1809,17 @@
       "scope": "independent reader-side RZ residual-field check on the official 2-rank producer",
       "metrics": {
         "max_abs_field": 1.0315718696300396,
+        "passed": true
+      }
+    },
+    {
+      "case": "position-leapfrog-source-crosswalk",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "WarpX explicit leapfrog position/source crosswalk",
+      "classification": "CURRENT_WARPX_SOURCE_GROUNDED_TIME_CENTERED_POSITION_DIRECT_HALF_STEP_ATTRIBUTE_NOT_EXPORTED",
+      "scope": "read-only source mapping; adjacent Full plotfiles provide a velocity proxy but do not prove a direct half-step diagnostic attribute",
+      "metrics": {
         "passed": true
       }
     },

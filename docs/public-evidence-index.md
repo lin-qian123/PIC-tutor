@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `155`
-- PASS: `112`
+- records: `156`
+- PASS: `113`
 - FAIL: `28`
 - UNKNOWN: `15`
 - boundary-classified: `24`
@@ -112,7 +112,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `ionization-dsmc-source-contract` | `PASS` | `PASS` | 3D DSMC electron/ion-impact source and regression wiring | `ION_IMPACT_CHECKSUM_ONLY_ELECTRON_IMPACT_ANALYSIS_ACTIVE` | CMake/input/analysis source wiring; no runtime physics claim | `anchor_count=10`, `passed=True`, `passed_anchor_count=10` |
 | `leecpc2015-accepted-manuscript-contract` | `PASS` | `BOUNDARY` | LeeCPC2015 accepted-manuscript source-grounded literature contract | `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING` | seven-page accepted/submitted manuscript plus indexed publisher abstract support first-round PML formula and source mapping; publisher-formatted CPC comparison remains open | `passed=True` |
 | `leecpc2015-source-crosswalk` | `PASS` | `BOUNDARY` | LeeCPC2015 paper/source/regression crosswalk | `ACCEPTED_MANUSCRIPT_SOURCE_CROSSWALK_PUBLISHER_PDF_STILL_MISSING` | paper anchors, WarpX implementation surfaces, and official regression wiring; no publisher-PDF or coefficient-equivalence claim | `passed=True` |
-| `parameter-map-surface-contract` | `PASS` | `PASS` | WarpX parameter-map structural surface | `STRUCTURAL_SURFACE_PASS_MANUAL_PARSER_REVIEW_REMAINS` | row shape, current chapter labels, and source-path existence; not semantic parser-function verification | `data_row_count=445`, `passed=True` |
+| `parameter-map-surface-contract` | `PASS` | `PASS` | WarpX parameter-map structural surface | `STRUCTURAL_SOURCE_TOKEN_SURFACE_PASS_MANUAL_PARSER_REVIEW_REMAINS` | row shape, current chapter labels, source-path existence and parameter-token coverage; not semantic parser-function verification | `data_row_count=445`, `declared_data_row_count=445`, `header_count_matches=True`, `passed=True` |
 | `particle-mesh-1974-abstract` | `PASS` | `BOUNDARY` | 1974 particle-mesh bounded abstract-level literature contracts | `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING` | abstract-level evidence only; no publisher-PDF or line-by-line claim | `passed=True` |
 | `particle_absorbing_boundary_1d` | `PASS` | `PASS` | test_1d_particle_absorbing_boundary | `` |  | `iteration=8000`, `passed=True`, `region_weight=2.150955858923628e+20`, `region_weight_limit=3.2e+20`, `total_histogram_weight=8.253966129697429e+23` |
 | `particle_boundaries_mpi2` | `PASS` | `PASS` | test_3d_particle_boundaries | `` |  | `passed=True` |
@@ -135,6 +135,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `pmc_field_3d_mpi2` | `PASS` | `PASS` | test_3d_pmc_field | `` |  | `contract_pass=True`, `max_relative_error=0.006153430381301878`, `min_relative_error=0.006901308573957358`, `reflection_gate=True` |
 | `pml_psatd_2d_mpi2` | `PASS` | `PASS` | Cartesian PSATD-PML initial-energy and low-reflectivity contract | `` | 2-rank project-level independent reader-side summary; official analysis separately rerun | `expected_initial_energy=7.282940112203595e-08`, `final_energy=6.897268359469654e-14`, `initial_energy=7.282940112203606e-08`, `initial_reference_relative_error=1.453796362122656e-15`, `passed=True` |
 | `pml_rz_psatd_mpi2` | `PASS` | `PASS` | RZ PSATD radial-PML residual-field contract | `` | independent reader-side RZ residual-field check on the official 2-rank producer | `max_abs_field=1.0315718696300396`, `passed=True` |
+| `position-leapfrog-source-crosswalk` | `PASS` | `PASS` | WarpX explicit leapfrog position/source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_TIME_CENTERED_POSITION_DIRECT_HALF_STEP_ATTRIBUTE_NOT_EXPORTED` | read-only source mapping; adjacent Full plotfiles provide a velocity proxy but do not prove a direct half-step diagnostic attribute | `passed=True` |
 | `psatd-literature-strategy` | `PASS` | `PASS` | PSATD/NCI literature-to-source strategy matrix | `FULL_TEXT_SOURCE_GROUNDED_RUNTIME_STRATEGY_MATRIX` | indexing contract across Godfrey fixed-grid PSATD, Lehe Galilean PSATD, and Kirchen boosted-frame application; not a new physics regression | `passed=True` |
 | `pusher_uniform_b_comparison` | `PASS` | `PASS` | dedicated uniform-B Boris/Vay/Higuera-Cary orbit comparison | `` |  | `passed=True` |
 | `python-mr-observability` | `UNKNOWN` | `BOUNDARY` | Python MR intermediate-field observability audit | `INTERFACE_PRESENT_RUNTIME_LEDGER_UNPROVEN` | source/API observability boundary; not a runtime current_buf/rho_buf proof | `missing_count=0` |

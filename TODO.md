@@ -3236,7 +3236,7 @@
 
 - [x] 创建 `scripts/generate_stage_a_maps.py`，用于生成阶段 A 的四张索引表。
 - [x] 生成 `docs/module-inventory.md`：覆盖 `Source/` 下 707 个目标源码/构建文件。
-- [x] 生成 `docs/parameter-map.md`：覆盖 `Docs/source/usage/parameters.rst` 中 352 个 `pp:param` 参数。
+- [x] 生成 `docs/parameter-map.md`：覆盖 `Docs/source/usage/parameters.rst` 中 352 个 `pp:param` 源条目，并在后续源码检索中扩展为当前 445 条数据行；扩展行的 companion/AMReX 邻接边界已在文档中注明。
 - [x] 生成 `docs/example-regression-map.md`：覆盖 657 个 Examples 输入/脚本和 356 个 checksum benchmark。
 - [x] 生成 `docs/literature-map.md`：覆盖 251 条 BibTeX 和 35 个本地 PDF。
 - [x] 更新 `docs/source-map.md`，加入阶段 A 索引产物说明。

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 729,
-  "total_bytes": 27640740,
+  "total_bytes": 27640955,
   "entries": [
     {
       "path": ".gitignore",
@@ -43,12 +43,12 @@
     {
       "path": "README.md",
       "bytes": 1522144,
-      "sha256": "d71e926b4f93dc6ff0314980a71e6063733f3a983c77f23adcea525e5389ccb3"
+      "sha256": "257d92f079e469c0dd9c6fc4926bbd9729dcea453fc30c3d08422abb28301792"
     },
     {
       "path": "TODO.md",
-      "bytes": 1366707,
-      "sha256": "2191f164c3243bfba3cb23ffafa2eec3765db0c35f672dfb8e6aa96f5d9ac2eb"
+      "bytes": 1366837,
+      "sha256": "27169f12eb33145f05cb36df960eee05930c48080a1d1f5b458a568953515172"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "13b06a5e856a221f49ad2b1d5a122a09dd9db32ae0f94bba80e8ac20d881a535"
+      "sha256": "fb6ea9d45dbc66c935f284d83c93e9a844e302149a8e6f2ca29ab14de004c9e6"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -132,8 +132,8 @@
     },
     {
       "path": "docs/source-map.md",
-      "bytes": 53679,
-      "sha256": "e01b0b3986634e369290bf58dec4ecfa8132c2f672e5095c16a855996647eccc"
+      "bytes": 53764,
+      "sha256": "5c17cab1b5f4a4a1450bdb861d8ec60b19706a67c4db91c615051f414ba80d8e"
     },
     {
       "path": "docs/transition-zone-route-contract-example.json",

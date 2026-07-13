@@ -113,7 +113,7 @@
 | 文件 | 覆盖范围 | 当前用途 |
 |---|---|---|
 | `docs/module-inventory.md` | `../warpx/Source` 下 707 个目标源码/构建文件 | 给每个文件标注模块、物理主题、计划章节和讲解深度 |
-| `docs/parameter-map.md` | `Docs/source/usage/parameters.rst` 中 352 个 `pp:param` 参数 | 建立参数、文档行号、初步源码命中和章节的映射 |
+| `docs/parameter-map.md` | `Docs/source/usage/parameters.rst` 中 352 个 `pp:param` 源条目；当前映射表扩展为 445 条数据行 | 建立参数、文档行号、源码命中和章节的映射；扩展行包含 companion/AMReX 邻接项 |
 | `docs/parameter-chapter-index.md` | `parameters.rst`、`WarpX.cpp`、`WarpXInit.cpp`、`Utils/Parser/*` | 对高频参数做人工章节校正，并按 `species / laser / diagnostics / collision` 建立对象前缀导航，同时把 `boundary / solver / psatd / implicit` 的入口接回源码图 |
 | `notes/code-reading/utils/02-parameter-family-entrypoints.md` | `WarpX.cpp`、`Initialization/WarpXAMReXInit.cpp`、`BoundaryConditions/FieldBoundaries.cpp`、`Particles/MultiParticleContainer.cpp`、`Particles/WarpXParticleContainer.cpp`、`Diagnostics/MultiDiagnostics.cpp`、`Diagnostics/ReducedDiags/MultiReducedDiags.cpp`、`Particles/Collision/CollisionHandler.cpp`、`FieldSolver/ImplicitSolvers/ThetaImplicitEM.cpp` | 把高频参数族的真实读取入口压成源码图，区分 `global gate / factory dispatch / instance-local parse` 三层壳，并补 `boundary / solver / psatd / implicit` 四组入口 |
 | `notes/code-reading/utils/05-deep-solver-object-parameter-families.md` | `WarpX.cpp`、`Fluids/MultiFluidContainer.cpp`、`Fluids/WarpXFluidContainer.cpp`、`FieldSolver/FiniteDifferenceSolver/HybridPICModel/HybridPICModel.cpp`、`FieldSolver/FiniteDifferenceSolver/MacroscopicProperties/MacroscopicProperties.cpp`、`FieldSolver/ElectrostaticSolvers/ElectrostaticSolver.cpp`、`FieldSolver/ElectrostaticSolvers/EffectivePotentialES.*` | 把 `fluids / hybrid_pic_model / macroscopic / effective potential` 四组更深的 solver-object 参数入口压成源码图，区分 existence gate、object creation、instance-local parse 和 runtime materialization |

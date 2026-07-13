@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.101 合订 PDF 的页数以实际构建结果为准；本版在 v0.100 轴向系数拟合基础上，新增 `rho_electrons/rho_ions` 的 axis/off-axis correction ratio boundary：off-axis 比值为 `1`，axis 比值为 `0.85`，而源码外层体积因子单独预测 `0.75`。正文继续区分“定位到 rho-side axis boundary”与“root cause/charge closure 已完成”，不把 reader 对照升级为完整物理通过。
+当前 v0.102 合订 PDF 的页数以实际构建结果为准；本版在 v0.101 rho-side ratio boundary 基础上，按 WarpX 的 species charge-density call chain 反推 scaling 前 axis 输入：最终 axis 比值为 `0.85`，还原后为 `1.133333`，off-axis 比值为 `1`。正文继续区分“定位到 scaling 前 axis 输入边界”与“root cause/charge closure 已完成”，不把 reader 对照升级为完整物理通过。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 

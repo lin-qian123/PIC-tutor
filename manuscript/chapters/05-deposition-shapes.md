@@ -2771,6 +2771,21 @@ v0.93 的 repeat stability 只能说明 axis observable 在独立 producer 间�
 
 因此本版新增 `RZ_RHO_AXIS_CORRECTION_RATIO_MISMATCH_BOUNDARY_OPEN`：axis rho 的 correction-on/off 比值跨分辨率稳定，但不能由 `1/3` 与 `1/4` 外层体积因子单独解释。这个结果将剩余诊断边界进一步压到轴向沉积/镜像、rho 重建、mode/位置转换或输出时序；它仍不是 charge closure，也不是 deposition-kernel root-cause 证明。合同由 `scripts/analyze_rz_rho_axis_correction_ratio_contract.py` 生成，报告见 `runs/stage-c-validation/rz-rho-axis-correction-ratio-v0.101/contract.{json,md}`，说明见 `notes/code-reading/particles/82-rz-rho-axis-correction-ratio-boundary.md`。
 
+### 5.14.18 v0.102 rho-side scaling 前 axis 输入边界
+
+v0.102 继续展开 `0.85`/`0.75` 差异，而不是把它直接归因于体积因子。WarpX 当前源码显示，species `rho` 诊断经 `RhoFunctor` 请求 `WarpXParticleContainer::GetChargeDensity`，该路径以 `apply_boundary_and_scale_volume=true` 调用 `DepositCharge`；`ApplyInverseVolumeScalingToChargeDensity` 在轴上先执行负半径 guard-cell wrap，再除以 `pi*dr*axis_volume_factor`。因此最终 on/off 比值满足 `R_final = R_pre * ((1/3)/(1/4))`，现有 `R_final=0.85` 反推出 scaling 前 axis 输入比值为 `1.133333`。
+
+| grid | field | final axis on/off | inferred pre-scaling axis on/off | off-axis max deviation |
+|---:|---|---:|---:|---:|
+| `64x128` | `rho_electrons` | `0.850000` | `1.133333` | `0` |
+| `64x128` | `rho_ions` | `0.850000` | `1.133333` | `0` |
+| `128x256` | `rho_electrons` | `0.850000` | `1.133333` | `0` |
+| `128x256` | `rho_ions` | `0.850000` | `1.133333` | `0` |
+| `256x512` | `rho_electrons` | `0.850000` | `1.133333` | `0` |
+| `256x512` | `rho_ions` | `0.850000` | `1.133333` | `0` |
+
+因此新增 `RZ_RHO_AXIS_PRESCALE_INPUT_BOUNDARY_OPEN`：三档 resolution 的最终 axis ratio 和 scaling 前反推 ratio 均稳定，且 on/off 输入除显式 correction toggle 外一致。该合同把剩余边界进一步收窄到 scaling 前 axis deposition、负半径 wrap 或其输入状态，但仍不是 kernel root-cause 证明、charge closure 或正式收敛阶。合同由 `scripts/audit_rz_rho_axis_prescale_boundary.py` 生成，报告见 `runs/stage-c-validation/rz-rho-axis-prescale-boundary-v0.102/contract.{json,md}`，说明见 `notes/code-reading/particles/83-rz-rho-axis-prescale-boundary.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

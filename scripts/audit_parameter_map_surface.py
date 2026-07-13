@@ -11,6 +11,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 WARPX = ROOT.parent / "warpx"
 MAP = ROOT / "docs/parameter-map.md"
+EXTERNAL_ROOTS = {
+    "amrex": ROOT.parent / "amrex",
+    "warpx": ROOT.parent / "warpx",
+}
 
 ALIASES = {
     "Source/AcceleratorLattice/LatticeElementBase.cpp":
@@ -35,6 +39,9 @@ def source_exists(reference: str) -> bool:
 
 def source_paths(reference: str) -> list[Path]:
     reference = reference.strip().strip("`")
+    external_matches = re.findall(r"(?:\.\.?/)+(?:PIC/)?(amrex|warpx)/([^,;\s`]+)", reference)
+    if external_matches:
+        return [EXTERNAL_ROOTS[name] / suffix for name, suffix in external_matches if (EXTERNAL_ROOTS[name] / suffix).is_file()]
     if not reference.startswith(("Source/", "Docs/")):
         return []
     if reference in ALIASES:
@@ -56,6 +63,16 @@ def parameter_tokens(parameter: str) -> list[str]:
             segment = re.sub(r"\[[^]]+\]", "", segment)
             if segment and segment not in {"*", "..."}:
                 tokens.append(segment)
+    if "momentum_function_ux_" in value:
+        tokens.append("momentum_function_ux")
+    if "momentum_function_uy_" in value:
+        tokens.append("momentum_function_uy")
+    if "momentum_function_uz_" in value:
+        tokens.append("momentum_function_uz")
+    if "_cross_section" in value:
+        tokens.append("kw_cross_section")
+    if "_energy" in value:
+        tokens.append("kw_energy")
     return tokens
 
 

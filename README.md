@@ -44,7 +44,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 155 条 `contrac
 
 2026-07-13：新增 `scripts/audit_ionization_dsmc_source_contract.py`，以 10 个锚点固定 3D electron-impact / ion-impact DSMC 的 CMake、输入截面/物种和 analysis 分叉；ion-impact 仍是 checksum-only，contract 不替代其 runtime physics validation。
 
-2026-07-13：增强 `scripts/audit_parameter_map_surface.py`：除审计 `docs/parameter-map.md` 的 445 条数据行、空占位、当前章节标签和 WarpX 源路径外，又对声明源码面执行参数 token 覆盖统计；当前 429 行有源码 token 命中、16 行保留为模板/AMReX/TinyProfiler 等人工 review queue，逐条 `ParmParse` 人工复核仍未宣称完成。
+2026-07-13：增强 `scripts/audit_parameter_map_surface.py`：除审计 `docs/parameter-map.md` 的 445 条数据行、空占位、当前章节标签和 WarpX 源路径外，又对 WarpX/AMReX 声明源码面执行参数 token 覆盖统计；通过外部仓库路径解析、模板函数名归一化和动态 key alias，当前 445/445 行命中，逐条 `ParmParse` 语义复核仍未宣称完成。
 
 2026-07-13：RZ JRhom 第一阶段 patch 决策已收敛为 `finite + energy`：MPI=2 ledger 与 helper 直接正负执行均通过，spike gate 明确延期；决策记录见 `notes/code-reading/fieldsolver/42-rz-jrhom-first-stage-decision.md`。目标 WarpX 仍保持 `unstaged`。
 

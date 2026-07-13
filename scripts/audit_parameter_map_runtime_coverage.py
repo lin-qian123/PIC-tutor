@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import openpmd_api
 import yt
 
 
@@ -18,16 +19,28 @@ def text(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="ignore")
 
 
+def readable_bp5(path: Path) -> bool:
+    try:
+        series = openpmd_api.Series(str(path), openpmd_api.Access.read_only)
+        iterations = list(series.iterations)
+        series.close()
+        return iterations == [0]
+    except Exception:
+        return False
+
+
 def main() -> int:
     attrs = RUNS / "attributes"
     fields = RUNS / "particle-fields"
     dsmc = RUNS / "dsmc"
     adios2 = RUNS / "adios2"
+    adios2_operator = RUNS / "adios2-operator"
     ref_ratio_vect = RUNS / "ref-ratio-vect"
     attr_plotfile = attrs / "diags/diag1000001"
     field_plotfile = fields / "diags/diag1000000"
     ref_ratio_input = text(ref_ratio_vect / "warpx_used_inputs")
     adios2_input = text(adios2 / "warpx_used_inputs")
+    adios2_operator_input = text(adios2_operator / "warpx_used_inputs")
 
     attr_input = text(attrs / "warpx_used_inputs")
     field_input = text(fields / "warpx_used_inputs")
@@ -76,9 +89,21 @@ def main() -> int:
                 "openpmd.adios2_engine.parameters.NumAggregators = 1",
             ))
             and (adios2 / "diags/openpmd/openpmd_000000.bp5/data.0").is_file()
-            and "Writing openPMD file diags/openpmd000000" in text(adios2 / "run.log"),
-            "evidence": "adios2/warpx_used_inputs + adios2/run.log + adios2/diags/openpmd/openpmd_000000.bp5",
-            "boundary": "3D max_step=0 BP5 output smoke; engine parameter forwarding is exercised, but compression operators and multi-rank engine semantics are not promoted",
+            and readable_bp5(adios2 / "diags/openpmd/openpmd_000000.bp5")
+            and "Writing openPMD file diags/openpmd000000" in text(adios2 / "run.log")
+            and all(token in adios2_operator_input for token in (
+                "openpmd.openpmd_backend = \"bp5\"",
+                "openpmd.adios2_operator.type = blosc",
+                "openpmd.adios2_operator.parameters.compressor = zstd",
+                "openpmd.adios2_operator.parameters.clevel = 1",
+                "openpmd.adios2_operator.parameters.doshuffle = BLOSC_BITSHUFFLE",
+                "openpmd.adios2_operator.parameters.threshold = 2048",
+            ))
+            and (adios2_operator / "diags/openpmd/openpmd_000000.bp5/data.0").is_file()
+            and readable_bp5(adios2_operator / "diags/openpmd/openpmd_000000.bp5")
+            and "Writing openPMD file diags/openpmd000000" in text(adios2_operator / "run.log"),
+            "evidence": "adios2 and adios2-operator warpx_used_inputs + run.log + BP5 series",
+            "boundary": "3D max_step=0 BP5 engine/operator smoke; multi-rank engine semantics and compression numerical fidelity are not promoted",
         },
         {
             "parameter_group": "amr.ref_ratio",

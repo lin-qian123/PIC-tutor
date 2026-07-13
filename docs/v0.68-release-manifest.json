@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 746,
-  "total_bytes": 27792882,
+  "total_bytes": 27794704,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1528154,
-      "sha256": "c1eb318614be2e2bbd5d31d9b353bf037bb0bda344af46a3c502b1e21d6c985a"
+      "bytes": 1528160,
+      "sha256": "fae084c2c4a16ab1148f6703ea8b2300527fdf2d57d7a7980ece751b6b438384"
     },
     {
       "path": "TODO.md",
-      "bytes": 1375002,
-      "sha256": "dde343bb4e7a16798ff6ca528568ed3a893dc4043fbbbbcb8a1701cb2aeaa198"
+      "bytes": 1375367,
+      "sha256": "fb317fe872deeea74338c8854773ab85f98bea6545f2a41f0362ed6c4a740e64"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3392292,
-      "sha256": "04def6ab2119ef8c189d3c700d555e49ea385b6945533dbc64da458d205b1698"
+      "bytes": 3392277,
+      "sha256": "753d01ca8dae42504e4d8b856fbc9cbcb3de620c6116fff088129c4e1e9a1f0f"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "dfc9ca46c88b79abe1651ed585fca3255c7cd4b1cb61f3917b6f027e47bc2d8b"
+      "sha256": "68a3d00a2ba7e62258407e44b8b45edf8075ade9f2107a235bb4b19b4609bcf1"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -2197,8 +2197,8 @@
     },
     {
       "path": "notes/code-reading/utils/03-parameter-runtime-coverage-followup.md",
-      "bytes": 1760,
-      "sha256": "8a88d4e22002093697d762be3f5a604aa449c52012e6cabdbf6ea470e1580fe2"
+      "bytes": 2040,
+      "sha256": "e612344e8e39982569fe9c9c9baa0ed2ccaf84ccea38b69c321b2616360d85cf"
     },
     {
       "path": "notes/code-reading/utils/05-deep-solver-object-parameter-families.md",
@@ -2687,8 +2687,8 @@
     },
     {
       "path": "scripts/audit_parameter_map_runtime_coverage.py",
-      "bytes": 7698,
-      "sha256": "8b9d333aed6d8fd08596e4791c1f4aa38377381dbd06981421639ecb05d94785"
+      "bytes": 8884,
+      "sha256": "6d6585b185510c13dc6dd97fd9111e7c69021de8aeabee6f0c83f49ba2eceb87"
     },
     {
       "path": "scripts/audit_parameter_map_semantic_anchors.py",

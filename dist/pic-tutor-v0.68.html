@@ -822,8 +822,9 @@ boosted-frame / NCI</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
-<p>本版新增 parameter-map parser-anchor review surface：445 条参数中 349
-条在引用源码中找到 parser-like literal anchor，96 条保留为
+<p>本版新增 parameter-map parser-anchor review surface：排除通用
+<code>type/field/x/y/z</code> token 后，445 条参数中 339
+条在引用源码中找到 parser-like literal anchor，106 条保留为
 dynamic/consumer 手工复核队列；该结果不替代 C++ AST、默认值/校验或
 runtime value semantics 审计。报告见
 <code>runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}</code>。</p>

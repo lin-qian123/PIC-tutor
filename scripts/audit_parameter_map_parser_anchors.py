@@ -15,9 +15,13 @@ from audit_parameter_map_surface import MAP, parameter_tokens, source_paths
 
 
 PARSER_WORDS = re.compile(
-    r"\b(?:query|queryarr|queryWithParser|queryWithParserWithDefault|"
+    r"\b(?:query|queryAdd|queryarr|queryWithParser|queryWithParserWithDefault|"
     r"queryWithParserAndValidate|contains|add|get|getarr)\b"
 )
+GENERIC_KEYS = {
+    "abs", "amr", "boundary", "field", "hi", "lo", "name", "ord", "psatd",
+    "r", "t", "theta", "type", "ux", "uy", "uz", "value", "warpx", "w", "x", "y", "z",
+}
 
 
 def candidate_keys(parameter: str) -> list[str]:
@@ -26,7 +30,11 @@ def candidate_keys(parameter: str) -> list[str]:
     if "." in value:
         keys.append(value.rsplit(".", 1)[1])
     keys.extend(parameter_tokens(value))
-    return sorted({key for key in keys if key and key not in {"*", "..."}}, key=len, reverse=True)
+    return sorted(
+        {key for key in keys if key and key not in {"*", "..."} and key not in GENERIC_KEYS},
+        key=len,
+        reverse=True,
+    )
 
 
 def parser_literals(text: str) -> set[str]:
@@ -93,6 +101,8 @@ def main() -> None:
         "category_counts": counts,
         "parser_anchor_rows": counts["parser_literal_anchor"],
         "manual_review_rows": len(records) - counts["parser_literal_anchor"],
+        "parser_anchor_count": counts["parser_literal_anchor"],
+        "manual_review_count": len(records) - counts["parser_literal_anchor"],
         "contract_pass": True,
         "classification": "PARSER_LITERAL_ANCHOR_SURFACE_AUDITED_MANUAL_VALUE_SEMANTICS_REMAINS",
         "scope": "cited-source text, parser-like API adjacency and explicit review queue; not C++ AST or runtime value semantics",

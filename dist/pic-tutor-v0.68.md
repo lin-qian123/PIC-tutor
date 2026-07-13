@@ -2,7 +2,7 @@
 
 # PIC-tutor v0.68
 
-本版新增 parameter-map parser-anchor review surface：445 条参数中 349 条在引用源码中找到 parser-like literal anchor，96 条保留为 dynamic/consumer 手工复核队列；该结果不替代 C++ AST、默认值/校验或 runtime value semantics 审计。报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
+本版新增 parameter-map parser-anchor review surface：排除通用 `type/field/x/y/z` token 后，445 条参数中 339 条在引用源码中找到 parser-like literal anchor，106 条保留为 dynamic/consumer 手工复核队列；该结果不替代 C++ AST、默认值/校验或 runtime value semantics 审计。报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
 
 本版又将 3D AMR `particles_in_pml` signed/absolute 分解提升为公开 boundary contract：官方 signed gate 为 `106.4354 < 110`，严格 absolute gate 为 `110.3994 > 110`，唯一越界项是负向 `Ex`，coarse/fine 读取一致。该结果只关闭“判据差异未被结构化索引”的缺口，不关闭 AMR/PML 强残余场验证，也不修改上游阈值。
 

@@ -1,6 +1,6 @@
 # TODO
 
-- [x] 2026-07-13：新增 `scripts/audit_parameter_map_parser_anchors.py`，把 `docs/parameter-map.md` 的 445 条参数逐条对照引用源码中的 parser-like literal 邻接：349 条找到 parser anchor，96 条进入 `consumer_or_dynamic_review` 手工队列；contract 明确不把字符串邻接升级成 C++ AST、默认值/校验或 runtime value semantics 证明。报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
+- [x] 2026-07-13：新增 `scripts/audit_parameter_map_parser_anchors.py`，把 `docs/parameter-map.md` 的 445 条参数逐条对照引用源码中的 parser-like literal 邻接：在排除通用 `type/field/x/y/z` token 后，339 条找到 parser anchor，106 条进入 `consumer_or_dynamic_review` 手工队列；contract 明确不把字符串邻接升级成 C++ AST、默认值/校验或 runtime value semantics 证明。报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
 - [x] 2026-07-13：将 3D AMR `particles_in_pml` 的 signed/absolute 分解提升为独立公开 boundary contract：新增 `scripts/audit_particles_in_pml_signed_absolute_boundary.py` 与 `runs/stage-c-validation/particles-in-pml-3d-mr-boundary/contract.{json,md}`；验证官方 signed `106.4354 < 110`、严格 absolute `110.3994 > 110`、唯一越界项为负向 `Ex`，并确认 coarse/fine absolute 极值一致。该 contract 不修改 `../warpx`、上游 analysis 或阈值。
 - [x] 2026-07-13：将 RZ secondary-emission `64/128/256` resolution trend 提升为独立公开 contract：新增 `scripts/audit_rz_secondary_emission_resolution_contract.py` 与 `runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}`；明确默认 `64x64` 为 raw `FAIL`/`BOUNDARY`，`128x128` 与 `256x256` refined controls 通过官方 `2%` gate，且三档误差单调下降。该 contract 不关闭默认回归，也不宣称正式 convergence order。
 

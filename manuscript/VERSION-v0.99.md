@@ -1,8 +1,6 @@
-# PIC-tutor v0.100
+# PIC-tutor v0.99
 
-本版在 v0.99 跨分辨率 RMSE 对照基础上，对同一 6 个 correction-on/off case 做独立最小二乘轴向系数拟合。6/6 个拟合系数都更接近源码 `4` 而非 naive `2`；分类为 `RZ_AXIS_STENCIL_FIT_COEFFICIENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN`。该证据进一步强化 solver-native axis stencil 边界，但不关闭 rho scaling、deposition kernel 或 charge closure。报告见 `runs/stage-c-validation/rz-axis-divergence-fit-v0.100/contract.{json,md}`，说明见 `notes/code-reading/particles/81-rz-axis-divergence-fitted-coefficient.md`。
-
-本版将 v0.99 的 RZ axis divergence stencil alignment 扩展到既有 `64x128`、`128x256`、`256x512` correction-on/off family。6/6 个 case 中，源码 `4*Er/dr` 的 RMSE 均低于 naive `2*Er/dr`；分类为 `RZ_AXIS_STENCIL_ALIGNMENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN`。该证据强化跨分辨率的 solver-native axis stencil 解释，但不关闭 rho scaling、deposition kernel 或 charge closure。报告见 `runs/stage-c-validation/rz-axis-divergence-resolution-v0.99/contract.{json,md}`，说明见 `notes/code-reading/particles/80-rz-axis-divergence-resolution-alignment.md`。
+本版将 v0.98 的 RZ axis divergence stencil alignment 扩展到既有 `64x128`、`128x256`、`256x512` correction-on/off family。6/6 个 case 中，源码 `4*Er/dr` 的 RMSE 均低于 naive `2*Er/dr`；分类为 `RZ_AXIS_STENCIL_ALIGNMENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN`。该证据强化跨分辨率的 solver-native axis stencil 解释，但不关闭 rho scaling、deposition kernel 或 charge closure。报告见 `runs/stage-c-validation/rz-axis-divergence-resolution-v0.99/contract.{json,md}`，说明见 `notes/code-reading/particles/80-rz-axis-divergence-resolution-alignment.md`。
 
 本版新增 RZ axis divergence stencil alignment contract：对当前 correction-on/off 的 `256x512` 末态读取 axis `Er/Ez/divE`，用相同纵向 reader 近似比较源码 `4*Er/dr` 与 naive `2*Er/dr`，两个 case 的 source coefficient 均更贴近输出。该证据只缩小 solver-native axis stencil 边界，不关闭 rho scaling、deposition kernel 或 charge closure。
 
@@ -65,7 +63,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v100_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v99_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

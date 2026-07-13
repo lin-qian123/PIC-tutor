@@ -2741,6 +2741,21 @@ v0.93 的 repeat stability 只能说明 axis observable 在独立 producer 间�
 
 因此本版把结论收窄为 `RZ_AXIS_STENCIL_ALIGNMENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN`：source-defined axis stencil 的对齐观察跨这三档 resolution 保持，但 residual 仍混合 longitudinal stencil、location/mode、rho-side scaling 与 diagnostic conversion，不能升级为 charge closure 或 deposition-kernel root cause。合同由 `scripts/analyze_rz_axis_divergence_resolution_contract.py` 生成，报告见 `runs/stage-c-validation/rz-axis-divergence-resolution-v0.99/contract.{json,md}`，说明见 `notes/code-reading/particles/80-rz-axis-divergence-resolution-alignment.md`。
 
+### 5.14.16 v0.100 axis divergence fitted coefficient
+
+本版再对同一组 6 个 correction-on/off resolution case 做无偏最小二乘拟合，令 reader-side longitudinal subtraction 后的 axis radial term 满足 `D_r^obs ~= a*Er/dr`。6/6 个拟合系数均更接近源码系数 `a=4` 而非 naive `a=2`：
+
+| correction | grid | fitted `a` | `|a-2|` | `|a-4|` |
+|---|---:|---:|---:|---:|
+| on | `64x128` | `4.308992` | `2.308992` | `0.308992` |
+| off | `64x128` | `3.246228` | `1.246228` | `0.753772` |
+| on | `128x256` | `3.550571` | `1.550571` | `0.449429` |
+| off | `128x256` | `3.773158` | `1.773158` | `0.226842` |
+| on | `256x512` | `3.886482` | `1.886482` | `0.113518` |
+| off | `256x512` | `3.346320` | `1.346320` | `0.653680` |
+
+因此本版进一步使用 `RZ_AXIS_STENCIL_FIT_COEFFICIENT_CROSS_RESOLUTION_OBSERVED_CHARGE_BOUNDARY_OPEN` 分类：独立拟合支持 source-defined axis operator，而不是普通 `2*Er/dr` 连续近似。它仍只是 solver-native operator alignment，不关闭 rho-side scaling、deposition kernel、diagnostic location/mode 或完整 charge closure。合同由 `scripts/analyze_rz_axis_divergence_fit_contract.py` 生成，报告见 `runs/stage-c-validation/rz-axis-divergence-fit-v0.100/contract.{json,md}`，说明见 `notes/code-reading/particles/81-rz-axis-divergence-fitted-coefficient.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

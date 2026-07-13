@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.99`：在 v0.98 axis divergence stencil alignment 基础上，将独立 reader 对照扩展到 `64x128`、`128x256`、`256x512` 三档 correction-on/off family，6/6 case 都显示源码 `4*Er/dr` 比 naive `2*Er/dr` 更贴近 `divE` 输出。该结果强化跨分辨率的 solver-native axis stencil 边界，但不关闭 formal numerical order、axis charge correctness、RZ implicit runtime 和人工编辑缺口。
+当前成书版本为 `v0.100`：在 v0.99 跨分辨率 RMSE 对照基础上，对同一 6 个 correction-on/off case 做独立最小二乘轴向系数拟合，6/6 个拟合系数都更接近源码 `4` 而非 naive `2`。该结果进一步强化 solver-native axis stencil 边界，但不关闭 formal numerical order、axis charge correctness、RZ implicit runtime 和人工编辑缺口。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

@@ -192,7 +192,7 @@ $$
 
 因此同一个 `EvolveB.cpp` 模板 kernel 在传入 `CartesianYeeAlgorithm`、`CartesianNodalAlgorithm` 或 `CartesianCKCAlgorithm` 时，会得到不同的离散 curl。
 
-本章当前引用的核心文献线索是 `Yee`、`GodfreyJCP2014_PSATD`、`Lehe2016`、`VayJCP2013`。Yee 1966 已补入 indexed-abstract-backed 资产：摘要支持 finite-difference Maxwell、field-point placement、PEC boundary 和 conducting-cylinder example，但 IEEE full text/MinerU 仍未取得，因此不能把当前 WarpX 的完整 Yee stencil 写成已逐式来自 Yee 原文。后续仍需要将 PSATD 相关论文用 MinerU 转换成 Markdown，并补一节 Galilean PSATD 与数值 Cherenkov 不稳定性的推导。
+本章当前引用的核心文献线索是 `Yee`、`GodfreyJCP2014_PSATD`、`Lehe2016`、`VayJCP2013`。Yee 1966 已补入 indexed-abstract-backed 资产：摘要支持 finite-difference Maxwell、field-point placement、PEC boundary 和 conducting-cylinder example，但 IEEE full text/MinerU 仍未取得，因此不能把当前 WarpX 的完整 Yee stencil 写成已逐式来自 Yee 原文。当前 WarpX 的 `CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 和 `EvolveE.cpp` 之间的 source crosswalk 已由 `scripts/audit_yee_source_crosswalk.py` 固化；它验证的是现代 FDTD 实现和章节路径的连通性，不是历史论文逐式等价。后续仍需要将 PSATD 相关论文用 MinerU 转换成 Markdown，并补一节 Galilean PSATD 与数值 Cherenkov 不稳定性的推导。
 
 ## 6.2 FDTD PML split-field 更新
 

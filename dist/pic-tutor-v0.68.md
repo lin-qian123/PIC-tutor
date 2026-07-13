@@ -6,6 +6,8 @@
 
 本版又新增 Boris 当前 WarpX source crosswalk contract：只读核对 `UpdateMomentumBoris.H` 的 half-push、gamma/磁旋转、半角重标定以及 `PushSelector.H` 的 Boris/辐射反作用分派；这是当前实现证据，不替代原始 proceedings 全文。
 
+本版又新增 Yee 当前 WarpX FDTD source crosswalk contract：只读核对 `CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp`、`EvolveE.cpp` 的 CFL、交错差分和 solver dispatch；这是现代实现证据，不替代 IEEE 1966 原文。
+
 本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access audit、章节/源码映射均通过；Vay Appendix B 圆轨道仍是边界，Higuera Poincare section/invariant consumer 已补入，但 topology classifier 尚未自动化。
 
 本版又新增 `larmor` 逐帧离散轨道合同：6 个 Full plotfile 的时间序列和粒子状态检查通过，报告记录了 `B_y`、`gamma` 与每个输出间隔的 Boris rotation-angle；当前仍不把该 AMR/PML/div-cleaning case 升级为论文专门 runtime reproduction。
@@ -22,7 +24,7 @@
 
 本版又补入 dense `p_y=0.2..2.8` family 和 64³ `p_y=1.6/1.8` resolution control：Vay 共振窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，但仍只标记为 resonance-sensitive invariant screen，不提升为 two-fold island topology reproduction。
 
-本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 154 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
+本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 155 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
 
@@ -857,7 +859,7 @@ $$
 
 v0.2 校准说明：本章已把主循环相关源码路径同步到当前 WarpX 目录结构 `Source/Evolve/`，并重核 `Evolve()`、`OneStep_nosub()` 与 FDTD/PSATD 分支的关键行号。Yee 1966 现在已有 indexed-abstract-backed 资产和 9 项本地 contract，但 IEEE 原文 PDF/MinerU 仍未取得；Hockney-Eastwood 原书及其完整正文也仍未 materialize，因此本章继续不把这些缺口伪装成全文闭环引用。
 
-Yee 1966 的 indexed abstract 只支持一个窄的历史来源结论：Maxwell 方程可以被替换成有限差分方程，适当的 field-point placement 能处理 perfectly conducting surfaces，并以 conducting-cylinder scattering 作为例子。它足以解释为什么本章把 Yee 的空间交错和 PEC 边界放在同一条历史主线上，但不足以替代论文原始 stencil、时间层、色散推导或图表；对应 contract 见 `runs/stage-c-validation/yee-1966-indexed-abstract/contract.{json,md}`。
+Yee 1966 的 indexed abstract 只支持一个窄的历史来源结论：Maxwell 方程可以被替换成有限差分方程，适当的 field-point placement 能处理 perfectly conducting surfaces，并以 conducting-cylinder scattering 作为例子。它足以解释为什么本章把 Yee 的空间交错和 PEC 边界放在同一条历史主线上，但不足以替代论文原始 stencil、时间层、色散推导或图表；对应 contract 见 `runs/stage-c-validation/yee-1966-indexed-abstract/contract.{json,md}`。当前 WarpX 的 `CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 和 `EvolveE.cpp` 之间的实现映射由 `scripts/audit_yee_source_crosswalk.py` 只读核对，但这仍是现代源码证据，不是 IEEE 原文逐式证明。
 
 ## 2.1 连续模型：Vlasov-Maxwell 系统
 
@@ -9950,7 +9952,7 @@ $$
 
 因此同一个 `EvolveB.cpp` 模板 kernel 在传入 `CartesianYeeAlgorithm`、`CartesianNodalAlgorithm` 或 `CartesianCKCAlgorithm` 时，会得到不同的离散 curl。
 
-本章当前引用的核心文献线索是 `Yee`、`GodfreyJCP2014_PSATD`、`Lehe2016`、`VayJCP2013`。Yee 1966 已补入 indexed-abstract-backed 资产：摘要支持 finite-difference Maxwell、field-point placement、PEC boundary 和 conducting-cylinder example，但 IEEE full text/MinerU 仍未取得，因此不能把当前 WarpX 的完整 Yee stencil 写成已逐式来自 Yee 原文。后续仍需要将 PSATD 相关论文用 MinerU 转换成 Markdown，并补一节 Galilean PSATD 与数值 Cherenkov 不稳定性的推导。
+本章当前引用的核心文献线索是 `Yee`、`GodfreyJCP2014_PSATD`、`Lehe2016`、`VayJCP2013`。Yee 1966 已补入 indexed-abstract-backed 资产：摘要支持 finite-difference Maxwell、field-point placement、PEC boundary 和 conducting-cylinder example，但 IEEE full text/MinerU 仍未取得，因此不能把当前 WarpX 的完整 Yee stencil 写成已逐式来自 Yee 原文。当前 WarpX 的 `CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 和 `EvolveE.cpp` 之间的 source crosswalk 已由 `scripts/audit_yee_source_crosswalk.py` 固化；它验证的是现代 FDTD 实现和章节路径的连通性，不是历史论文逐式等价。后续仍需要将 PSATD 相关论文用 MinerU 转换成 Markdown，并补一节 Galilean PSATD 与数值 Cherenkov 不稳定性的推导。
 
 ## 6.2 FDTD PML split-field 更新
 
@@ -16454,7 +16456,7 @@ $$
 | RZ electrostatic sphere | 官方 RZ，1 rank | `python scripts/analyze_rz_charge_volume_contract.py ...` | 官方轴向场 L2 gate；全域 rho-volume/particle-charge mismatch `< 1%` | `runs/stage-c-validation/rz_electrostatic_sphere/` |
 | RZ Langmuir multimode | case-local RZ sibling，1 rank，3 modes | `python scripts/analyze_rz_langmuir_multimode_contract.py ...` | `m=1/2` 实虚分量非零；theta=0 native-field/writeback reconstruction `< 3.1e-16` | `runs/stage-c-validation/rz_langmuir_multimode/` |
 
-这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供 154 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
+这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供 155 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
 
 当前证据等级应写成：Langmuir 已有运行级解析频率、场误差和最终守恒证据；uniform plasma 已有粒子数、能量统计和 checkpoint/restart 逐字段证据，但短时运行的总能量变化不能直接升级成热平衡守恒通过；FieldProbe 已确认 1/2-rank 输出一致，并通过 `lambda/32` 的 matched-time 解析 gate，但官方 `lambda/16` coarse case 仍失败；`reduced_diags` 已有 60 项 compact observable 与 full-state reference 的 2-rank 逐项通过证据，并有 Heuristic/Timers 两条 `LoadBalanceCosts` efficiency improvement 证据；`ColliderRelevant` 已有 2-rank 的 chi/角度/ParticleExtrema/dL/dt 聚合合同证据；`DifferentialLuminosity` 已有 leptons、AMR 和 photons 三组 1D/2D 解析谱通过证据；laser-ion 已有 `ParticleHistogram2D` 的 2-rank openPMD writer 合同证据；`BeamRelevant` 已有最小 3D 的 schema/截断高斯束统计合同证据；完整 initial-distribution family 已有当前 checkout 的官方分布 analysis 通过证据，并在显式 `5e-3` sampling tolerance 下通过 checksum，但不宣称 `1e-9` 确定性相等；native Gaussian external-file 变体已有 1-rank 项目级束斑物理合同，但官方 CMake analysis 缺失仍保留为 upstream registration 缺口；RZ electrostatic sphere 又补充了官方场/能量 gate 与独立 rho-volume charge closure；RZ 三模 Langmuir sibling 又补充了 `m>0` diagnostics writeback 和 theta=0 重建合同，但它是 project-level case-local evidence，不能替代官方单模 CMake analysis。JSON/Markdown 报告和脚本都保存在项目内，运行产物仍按 case-local 目录归档。
 

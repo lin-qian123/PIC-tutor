@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 154,
+  "record_count": 155,
   "status_counts": {
-    "PASS": 111,
+    "PASS": 112,
     "FAIL": 28,
     "UNKNOWN": 15
   },
@@ -11,7 +11,7 @@
     "PASS": 97,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 23
+    "BOUNDARY": 24
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -2236,6 +2236,17 @@
       "contract": "Yee 1966 bounded indexed-abstract literature contract",
       "classification": "INDEXED_ABSTRACT_BACKED_METADATA_VERIFIED_IEEE_FULL_TEXT_MISSING",
       "scope": "indexed abstract-level evidence only; no IEEE publisher-PDF or line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "yee-source-crosswalk",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "WarpX Yee/FDTD source crosswalk",
+      "classification": "CURRENT_WARPX_SOURCE_GROUNDED_YEE_CROSSWALK_INDEXED_ABSTRACT_HISTORICAL_FULL_TEXT_MISSING",
+      "scope": "read-only current FDTD source mapping; not a line-by-line reconstruction of the 1966 IEEE paper",
       "metrics": {
         "passed": true
       }

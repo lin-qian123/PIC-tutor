@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 728,
-  "total_bytes": 27629207,
+  "entry_count": 729,
+  "total_bytes": 27638043,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1521638,
-      "sha256": "1933063da3c945780170ca05960b342dbfc301f4cf05bcac0e3faf3a7cffe1ae"
+      "bytes": 1521911,
+      "sha256": "7e4539e1cf435f2f70b44300e13d3731785dc82ce6732b5b4562c03a12a009bc"
     },
     {
       "path": "TODO.md",
-      "bytes": 1365685,
-      "sha256": "88c3378596c53d4d618956c8c78fd22f71dc0f76bc488fafd578c49fb29f02a1"
+      "bytes": 1366036,
+      "sha256": "df87be7d732ea3fff189eb563d00a9a70bda084d2042cd2f5a78aeac1d97b934"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5750617,
-      "sha256": "ac5e54b2fbabf985d238d774115f392b8366be4ee5d95ccf8a85d53714472ab4"
+      "bytes": 5751588,
+      "sha256": "499c49a8ae83a53a5e323b587c55dde5370f310601952f474cb159d5be3569e2"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1077342,
-      "sha256": "01f8f608b9cf571a67e244859a8f4d6da1bf3e263d704f82eff692294797dca8"
+      "bytes": 1078153,
+      "sha256": "5a8198e80b1e339c8241c819d1b1347ecde90328dc72e79912af86f56557100c"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3376513,
-      "sha256": "f66416dd6b5e8d36ea03ff1a4a4a73eb92bae63d8352f7b56a5e84fdea2f2b44"
+      "bytes": 3377297,
+      "sha256": "3712f83ce19e0218a3a4e9f4b0b2752b3dfd079f274ca9a537c84474244f2d83"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 83057,
-      "sha256": "fa56dd618751ff8c77b415d7ac2e6854cd93f1bf7e83f1763317855683e3562d"
+      "bytes": 83501,
+      "sha256": "deae04ada9e4fdd7870aeb37e17851b950fea332cbef20ed515b969be4ecabcc"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 54450,
-      "sha256": "abf5a8da87f1f99554a7513bb6f6f4f39c77fe2d427e5282a79cbfa0f0a5a149"
+      "bytes": 54741,
+      "sha256": "414dab4c8f55b86be9929cfa0fc556a1cf5c1d8a098675fd71b43420193ff42e"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "21b1c1f71294084924d79cb8943eacc780871c60e2634496e81d33f161bb09df"
+      "sha256": "f462f94e1b7aec315c24ea8c5a69bf623b04cc86e63cfff1bc02f62776306b0b"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 43670,
-      "sha256": "a12f5e5e03fc643931ffd91ace4d4b2eae0ee4df99fb99d2e57cb2394c53970b"
+      "bytes": 43938,
+      "sha256": "99d01047662e810244ae70d0216b02d1470beb9553253c21db17578d11ee00a5"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 64481,
-      "sha256": "b9691ce2b49d430b42096e45b34518947d01e003a5762abd29c1eddc0ffea977"
+      "bytes": 64751,
+      "sha256": "344a18be60efb6a65e3d8c2a4328b191d99e6dcf085551df34de999d9babfe74"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -877,8 +877,8 @@
     },
     {
       "path": "manuscript/chapters/02-pic-loop.md",
-      "bytes": 33764,
-      "sha256": "cbc6c0cc47f8ba655143acd69943374c7bb79b4a921537d040c147dcace985d6"
+      "bytes": 34018,
+      "sha256": "0027c3b34bd953947eba8f08b1c9d33f9e6d01878c12fd7bb2afc1d9af3f5e2c"
     },
     {
       "path": "manuscript/chapters/03-warpx-evolve.md",
@@ -902,8 +902,8 @@
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
-      "bytes": 185748,
-      "sha256": "ad4b4c3199f26157ef4413f373557ecb17307bcfbf5cb9dc761a5c92f0c72e14"
+      "bytes": 186035,
+      "sha256": "56b1a67c53bf2e931cf6bc063ec9fca70564e5282acc33a102a0bee4c2285a66"
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
@@ -913,7 +913,7 @@
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
       "bytes": 111665,
-      "sha256": "3c186d49de873e6a3d4c7045afbffbe790176e5414ce8b831b077383d64fd4c1"
+      "sha256": "b2dd1a7871c2bc35778844ba43d3622b7a7f814f60163d440ee952dabd5966d3"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -2739,6 +2739,11 @@
       "path": "scripts/audit_yee_1966_indexed_abstract_contract.py",
       "bytes": 3196,
       "sha256": "0cfa00029fd8d59ac0701de61b3976efef0ec76faa8b19ce24137daf5abc65b2"
+    },
+    {
+      "path": "scripts/audit_yee_source_crosswalk.py",
+      "bytes": 3832,
+      "sha256": "a9f038cf2c5af4e44aec1f489c93f6ad88ee3cf9a36fc35c400bd5559e83c16e"
     },
     {
       "path": "scripts/build_comoving_first_stage_patch.py",

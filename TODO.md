@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-13：新增 `scripts/audit_boris_source_crosswalk.py`，只读核对当前 WarpX `UpdateMomentumBoris.H` 与 `PushSelector.H` 的 half-push、相对论 gamma、磁旋转、半角重标定、Boris/辐射反作用分派；报告为 `CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING`，不替代 Boris 1970 原始 proceedings 全文。
 - [x] 2026-07-13：建立 Boris 1970 原始文献的 metadata/access contract，固定 DTIC `ADA023511`、书目范围和限流响应；第 4 章已接入三层证据边界，原始 proceedings PDF/MinerU/逐页核对仍保留为后续 acquisition。
 - [x] 2026-07-13：将 `Birdsall 1985` `3A ES1` 的 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 正式回填第 3A 章，新增与 `WarpX::InitData()`/`Evolve()` 的阶段映射表、不可等同边界和 Langmuir/初始化 regression 分层说明。
 - [x] 2026-07-13：补强 `LeeCPC2015` 资产合同和第 7/9 章边界：accepted manuscript 仍为 7 页全文资产，新增 ScienceDirect indexed abstract 的高阶/PSTD 极限摘要证据与 publisher PDF 缺失检查；合同全部通过，不把摘要或 accepted manuscript 升格为 CPC 定稿逐式核对。

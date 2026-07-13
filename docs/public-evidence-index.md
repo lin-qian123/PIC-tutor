@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `153`
-- PASS: `110`
+- records: `154`
+- PASS: `111`
 - FAIL: `28`
 - UNKNOWN: `15`
-- boundary-classified: `22`
+- boundary-classified: `23`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -16,6 +16,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `3d_flux_injection_from_eb_mpi2` | `PASS` | `PASS` | test_3d_flux_injection_from_eb | `` |  | `contract_pass=True`, `eb_outside_pass=True`, `expected_weight=2.5132741228718345e-07`, `min_radius_ratio=0.9963803673196601`, `particle_count=801308`, `total_weight=2.504087500000001e-07`, `total_weight_pass=True`, `total_weight_relative_error=0.003655241100933395` |
 | `abe-1975-abstract` | `PASS` | `BOUNDARY` | Abe et al. 1975 bounded abstract-level literature contract | `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING` | abstract-level evidence only; no publisher-PDF or line-by-line claim | `passed=True` |
 | `boris-1970-metadata` | `PASS` | `BOUNDARY` | Boris 1970 metadata and access-boundary contract | `METADATA_BACKED_HISTORICAL_SOURCE_FULL_TEXT_MISSING_SECONDARY_DERIVATION_AVAILABLE` | bibliographic identity and access boundary only; no original proceedings PDF or line-by-line claim | `passed=True` |
+| `boris-source-crosswalk` | `PASS` | `BOUNDARY` | WarpX Boris kernel/source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING` | read-only current WarpX source mapping; not a line-by-line reconstruction of the 1970 proceedings paper | `passed=True` |
 | `charge-deposition-bridge-source` | `PASS` | `PASS` | ABLASTR charge-deposition bridge source contract | `` | source mapping only; not a numerical charge-deposition regression | `anchor_count=13`, `missing_count=0`, `passed=True` |
 | `deposition-geometry-order-source` | `PASS` | `PASS` | deposition geometry/order source dispatch | `` | read-only source audit; does not claim runtime coverage for every geometry/order combination | `anchor_count=53`, `passed=True`, `passed_anchor_count=53` |
 | `esirkepov-2001-paper-asset` | `PASS` | `BOUNDARY` | Esirkepov 1999/2001 Chapter 5 deposition paper asset contract | `PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING` | author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open | `passed=True` |

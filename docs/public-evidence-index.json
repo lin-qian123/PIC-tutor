@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 153,
+  "record_count": 154,
   "status_counts": {
-    "PASS": 110,
+    "PASS": 111,
     "FAIL": 28,
     "UNKNOWN": 15
   },
@@ -11,7 +11,7 @@
     "PASS": 97,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 22
+    "BOUNDARY": 23
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -69,6 +69,17 @@
       "contract": "Boris 1970 metadata and access-boundary contract",
       "classification": "METADATA_BACKED_HISTORICAL_SOURCE_FULL_TEXT_MISSING_SECONDARY_DERIVATION_AVAILABLE",
       "scope": "bibliographic identity and access boundary only; no original proceedings PDF or line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "boris-source-crosswalk",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "WarpX Boris kernel/source crosswalk",
+      "classification": "CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING",
+      "scope": "read-only current WarpX source mapping; not a line-by-line reconstruction of the 1970 proceedings paper",
       "metrics": {
         "passed": true
       }

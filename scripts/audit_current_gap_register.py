@@ -32,7 +32,7 @@ def main() -> int:
     evidence_paths = (
         "runs/stage-c-validation/esirkepov-publication-boundary/contract.json",
         "runs/stage-c-validation/leecpc2015-accepted-manuscript-contract/contract.json",
-        "runs/stage-c-validation/transition-zone-runtime-activation-v0.97/contract.json",
+        "runs/stage-c-validation/transition-zone-runtime-activation-v0.98/contract.json",
         "runs/stage-c-validation/transition-zone-source-contract.json",
         "runs/stage-c-validation/rz-implicit-villasenor-build-boundary/contract.json",
         "runs/stage-c-validation/vay-amr-guard/contract.json",
@@ -47,13 +47,18 @@ def main() -> int:
         "evidence_paths_present": all((root / path).is_file() for path in evidence_paths),
         "chapter_section": "## 9.8 当前成书缺口登记" in chapter,
         "chapter_link": "docs/current-book-gap-register.md" in chapter and "scripts/audit_current_gap_register.py" in chapter,
+        "rz_axis_stencil_evidence": all(marker in register for marker in (
+            "rz-axis-divergence-stencil-v0.98/contract.json",
+            "79-rz-axis-divergence-stencil-alignment.md",
+            "RZ_AXIS_STENCIL_ALIGNMENT_OBSERVED_CHARGE_BOUNDARY_OPEN",
+        )),
         "editorial_audit_evidence": all(
             (root / path).is_file()
             for path in (
-                "docs/pdf-layout-audit-v0.96.md",
-                "runs/stage-c-validation/pdf-layout-v0.96/contract.json",
-                "docs/editorial-quality-audit-v0.96.md",
-                "runs/stage-c-validation/editorial-quality-v0.96/contract.json",
+                "docs/pdf-layout-audit-v0.98.md",
+                "runs/stage-c-validation/pdf-layout-v0.98/contract.json",
+                "docs/editorial-quality-audit-v0.98.md",
+                "runs/stage-c-validation/editorial-quality-v0.98/contract.json",
                 "runs/stage-c-validation/cross-geometry-convergence-trends/contract.json",
                 "docs/formal-convergence-preregistration.json",
                 "runs/stage-c-validation/formal-convergence-preregistration/contract.json",

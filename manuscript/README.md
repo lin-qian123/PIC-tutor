@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.97 合订 PDF 的页数以实际构建结果为准；本版在 v0.96 论文访问边界审计基础上补入真实 2-rank 两层 AMR subcycling 运行中的 transition-zone 分区/同步路径激活证据。正文继续区分“路径已调用”与“route-count ledger 已闭合”，不把 profiling marker 升级为逐粒子路由证明。
+当前 v0.98 合订 PDF 的页数以实际构建结果为准；本版在 v0.97 transition-zone 分支激活证据基础上补入 RZ axis divergence stencil alignment contract。正文继续区分“solver-native axis stencil 已对齐观察”与“rho/deposition charge closure 已完成”，不把独立 reader 对照升级为完整物理通过。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 

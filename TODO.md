@@ -4,6 +4,7 @@
 
 - [x] v0.96 完成论文正式来源访问边界复核：Esirkepov 2001 与 LeeCPC2015 的 DOI/PII、publisher record、PDF 路由和当前可获得版本已登记；accepted manuscript/预印本、出版社元数据/索引摘要与 publisher-formatted PDF 继续分层，不把访问限制写成论文缺失或定稿对照已完成。同步修正当前缺口登记、release audit、manifest 和 v0.96 构建验收链。
 - [x] 补入 transition-zone runtime activation contract：对既有 2-rank、两层 AMR subcycling 运行核对 `PartitionParticlesInBuffers` 与 `OwnerMask()` profiling marker、buffer 输入、source contract 和 workflow contract，分类为 `RUNTIME_TRANSITION_ZONE_BRANCH_ACTIVATION_OBSERVED_ROUTE_LEDGER_UNPROVEN`；确认分区/同步路径被调用过，但不伪造 route-count ledger。
+- [x] v0.98 继续拆分 RZ axis charge 边界：读取现有 correction-on/off axis `Er/Ez/divE`，对照源码 `4*Er/dr + DownwardDz(Ez)` 与 naive `2*Er/dr`，两个 case 的 source coefficient RMSE 均更低；分类为 `RZ_AXIS_STENCIL_ALIGNMENT_OBSERVED_CHARGE_BOUNDARY_OPEN`，不把 stencil alignment 写成 charge closure。
 - [ ] 在取得合法 publisher PDF 后，完成 Esirkepov 2001 与 LeeCPC2015 的逐页/逐项定稿差异合同；在此之前保持 `OPEN_EXTERNAL_ACCESS`。
 
 ## 2026-07-14

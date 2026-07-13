@@ -1,6 +1,4 @@
-# PIC-tutor v0.98
-
-本版新增 RZ axis divergence stencil alignment contract：对当前 correction-on/off 的 `256x512` 末态读取 axis `Er/Ez/divE`，用相同纵向 reader 近似比较源码 `4*Er/dr` 与 naive `2*Er/dr`，两个 case 的 source coefficient 均更贴近输出。该证据只缩小 solver-native axis stencil 边界，不关闭 rho scaling、deposition kernel 或 charge closure。
+# PIC-tutor v0.97
 
 本版新增 transition-zone runtime activation contract：对现有 2-rank、两层 AMR subcycling 运行的 `warpx_used_inputs`、producer log、workflow contract 和只读 source contract 做交叉审计，确认 `PartitionParticlesInBuffers` 与 `OwnerMask()` 路径被实际调用。该证据仍不包含逐粒子 route id、fine/coarse route count 或 `current_buf/rho_buf` pre/post-sync 账本，因此 route-ledger closure 保持开放。
 
@@ -61,7 +59,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v98_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v97_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

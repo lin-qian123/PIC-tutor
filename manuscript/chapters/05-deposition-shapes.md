@@ -2715,6 +2715,17 @@ v0.93 的 repeat stability 只能说明 axis observable 在独立 producer 间�
 
 当前 13/13 个源码锚点通过，分类为 `SOURCE_DIAGNOSTIC_DISCRETIZATION_BOUNDARY`。这条证据支持“稳定的 axis/diagnostic boundary”，但不支持 `KERNEL_ROOT_CAUSE`；在没有 raw rho、volume-scaled rho、solver-native divE 和 converted divE 四类中间量前，本章不把 residual 归因到 deposition kernel。合同见 `runs/stage-c-validation/rz-axis-charge-source-diagnostic-crosswalk-v0.94/contract.{json,md}`，源码说明见 `notes/code-reading/particles/76-rz-axis-charge-source-diagnostic-crosswalk.md`。
 
+### 5.14.14 v0.98 axis divergence stencil alignment
+
+为了继续拆开 `divE` 这一侧，本版直接读取当前 RZ CKC/Yee 末态的 axis `Er/Ez/divE`，并回到 `../warpx/Source/FieldSolver/FiniteDifferenceSolver/ComputeDivE.cpp` 的 axis 分支。源码在 `r=0` 对 mode-0 明确写入 `4._rt*Er(i,j,0,0)/dr + DownwardDz(Ez,...)`，也就是 `4*Er/dr + DownwardDz(Ez)`；因此这里不能用普通 cell-centered 的 `2*Er/dr` 作为对照算子。独立 reader 先用同一阶的纵向差分从 `divE` 中减去 `Dz(Ez)`，再比较 `2*Er/dr` 与源码的 `4*Er/dr`。
+
+| case | naive `2*Er/dr` RMSE | source `4*Er/dr` RMSE | 结论 |
+|---|---:|---:|---|
+| correction-on | `2.5968e14` | `1.7287e13` | source coefficient closer |
+| correction-off | `2.5999e14` | `1.2638e14` | source coefficient closer |
+
+两个 case 都支持更窄的 `RZ_AXIS_STENCIL_ALIGNMENT_OBSERVED_CHARGE_BOUNDARY_OPEN` 结论：axis `divE` 的数值语义确实包含源码定义的 `4*Er/dr` 正则化，朴素 `2*Er/dr` 不能作为 residual root-cause oracle。这个结果仍不是 charge PASS，也不能单独证明 rho-side inverse-volume scaling、mode/interpolation 或 deposition kernel 没有误差；它只是把 solver-native axis stencil 从“可能因素”推进为“已由 source + reader 对齐观察到的因素”。报告见 `runs/stage-c-validation/rz-axis-divergence-stencil-v0.98/contract.{json,md}`，说明见 `notes/code-reading/particles/79-rz-axis-divergence-stencil-alignment.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

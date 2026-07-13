@@ -2818,6 +2818,12 @@ v0.105 继续用真实 2-rank RZ sibling 检查中性背景是否掩盖了 axis 
 
 该结果由 `delta(rho) - [delta(rho_electrons)+delta(rho_ions)] = 0` 逐数组验证：中性 case 中 total-rho 没有显示 axis 差异，是电子/离子电荷贡献相互抵消，而不是 species-rho 差异不存在。该非中性控制把边界从“可能被中性抵消掩盖”推进为“axis correction 参与的 species-rho consumer 差异会进入 total-rho”；但初始帧 `Er/Ez/divE` 仍未改变，且该合同仍不识别具体 deposition kernel root cause、不关闭 charge closure 或正式收敛阶。分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_REVEALS_TOTAL_RHO_CONTRIBUTION_BOUNDARY_OPEN`。报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-control-v0.105/contract.{json,md}`，说明见 `notes/code-reading/particles/86-rz-axis-correction-nonneutral-control.md`。
 
+### 5.14.22 v0.106 non-neutral shape family narrows the axis boundary
+
+将上一节的非中性控制扩展到 `particle_shape=1/2/3/4` 后，四个 shape 的 correction-on/off 总 `rho` axis 比值分别为 `0.850000000`、`0.843478261`、`0.836500221` 和 `0.831672744`，严格随 shape 增大而下降；所有 off-axis 比值仍为 `1`，电子/离子粒子状态逐项一致，`delta(rho)` 与 species delta 之和逐数组相符。该现象不是 shape=1 的单一特例，也不是可由 `1/3` 与 `1/4` 两个外层体积因子解释的统一比例。
+
+源码交叉检查进一步把路径拆开：`ChargeDeposition.H` 在 RZ 中用粒子半径 `sqrt(xp*xp + yp*yp)` 和 `sx[ix]*sz[iz]*wq` 写入 shape-specific raw charge，但不读取 `verboncoeur_axis_correction`；axis toggle 在后续 `ApplyInverseVolumeScalingToChargeDensity` 的轴向 wrap/scaling 路径中才出现。因此当前最窄的可证边界是 **RZ shape deposition 与 axis wrap/scaling 的耦合**，而不是默认值解析或单一外层体积因子。该分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_SHAPE_DEPENDENT_AXIS_BOUNDARY_OPEN`；报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-shape-family-v0.106/contract.{json,md}`，说明见 `notes/code-reading/particles/87-rz-axis-correction-nonneutral-shape-family.md`。该结果仍不识别具体 kernel root cause、不关闭 charge closure 或正式收敛阶。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

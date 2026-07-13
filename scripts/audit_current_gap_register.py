@@ -46,6 +46,7 @@ def main() -> int:
         "runs/stage-c-validation/rz-rho-particle-state-invariant-v0.103/contract.json",
         "runs/stage-c-validation/rz-axis-correction-default-explicit-true-v0.104/contract.json",
         "runs/stage-c-validation/rz-axis-correction-nonneutral-control-v0.105/contract.json",
+        "runs/stage-c-validation/rz-axis-correction-nonneutral-shape-family-v0.106/contract.json",
         "runs/stage-c-validation/formal-convergence-repeat-slope-gate-v0.95/contract.json",
     )
     checks = {
@@ -76,14 +77,17 @@ def main() -> int:
             "RZ_NONNEUTRAL_AXIS_CORRECTION_REVEALS_TOTAL_RHO_CONTRIBUTION_BOUNDARY_OPEN",
             "rz-axis-correction-nonneutral-control-v0.105/contract.json",
             "86-rz-axis-correction-nonneutral-control.md",
+            "RZ_NONNEUTRAL_AXIS_CORRECTION_SHAPE_DEPENDENT_AXIS_BOUNDARY_OPEN",
+            "rz-axis-correction-nonneutral-shape-family-v0.106/contract.json",
+            "87-rz-axis-correction-nonneutral-shape-family.md",
         )),
         "editorial_audit_evidence": all(
             (root / path).is_file()
             for path in (
-                "docs/pdf-layout-audit-v0.105.md",
-                "runs/stage-c-validation/pdf-layout-v0.105/contract.json",
-                "docs/editorial-quality-audit-v0.105.md",
-                "runs/stage-c-validation/editorial-quality-v0.105/contract.json",
+                "docs/pdf-layout-audit-v0.106.md",
+                "runs/stage-c-validation/pdf-layout-v0.106/contract.json",
+                "docs/editorial-quality-audit-v0.106.md",
+                "runs/stage-c-validation/editorial-quality-v0.106/contract.json",
                 "runs/stage-c-validation/cross-geometry-convergence-trends/contract.json",
                 "docs/formal-convergence-preregistration.json",
                 "runs/stage-c-validation/formal-convergence-preregistration/contract.json",

@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `186`
-- PASS: `134`
+- records: `187`
+- PASS: `135`
 - FAIL: `30`
 - UNKNOWN: `22`
 - boundary-classified: `33`
@@ -186,6 +186,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `tajima-dawson-1979-asset` | `PASS` | `PASS` | Tajima and Dawson 1979 paper-level full-text asset contract | `FULL_TEXT_MINERU_VERIFIED_EARLY_LWFA_SCALING_BASELINE_MODERN_WARPX_RUNTIME_NOT_SUBSTITUTED` | paper-backed early LWFA mechanism and scaling; not a current WarpX regression contract | `passed=True` |
 | `test_2d_pml_x_psatd` | `PASS` | `PASS` | Cartesian PSATD-PML initial-energy and low-reflectivity contract | `` | 2-rank project-level independent reader-side summary; official analysis separately rerun | `expected_initial_energy=7.282940112203595e-08`, `final_energy=6.897268359469654e-14`, `initial_energy=7.282940112203606e-08`, `initial_reference_relative_error=1.453796362122656e-15`, `passed=True` |
 | `vay-2008-paper-asset` | `PASS` | `BOUNDARY` | Vay 2008 Chapter 4 pusher paper asset contract | `FULLTEXT_SOURCE_GROUNDED_FRAME_CONSISTENCY_APPENDIX_BOUNDARY` | local full-text PDF and MinerU package support Vay frame-consistency, explicit-gamma and gyroradius explanations; dedicated Appendix-B runtime reproduction remains open | `passed=True` |
+| `vay-amr-guard` | `PASS` | `PASS` | Vay deposition mesh-refinement source guard | `SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED` | read-only WarpX initialization/source guards; no AMR producer is interpreted as a physics runtime failure or pass | `passed=True` |
 | `vay-appendix-b-runtime-proxy` | `PASS` | `BOUNDARY` | Vay Appendix-B bounded uniform-B runtime proxy | `VAY_APPENDIX_B_RUNTIME_PROXY_PASS_DIRECT_HALF_STEP_ATTRIBUTE_BOUNDARY` | 81-frame case-local uniform-B orbit; discrete phase, position-update velocity, and gyroradius proxy; not a direct half-step attribute or publisher-figure reproduction | `max_gyroradius_proxy_relative_error=4.773959097091316e-15`, `max_momentum_norm_relative_spread=1.0520084362000346e-14`, `max_phase_error_rad=4.198436629071489e-05`, `max_position_update_velocity_proxy_relative_error=1.3362892364672708e-14`, `passed=True` |
 | `vay-geometry-order-wiring` | `PASS` | `PASS` | Vay deposition geometry/order official wiring | `SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY` | official 2D/3D shape-3 cases, 2D shape-4 sibling, analysis consumers and source guards; not full Cartesian-product runtime proof | `passed=True` |
 | `vay-mpi2` | `PASS` | `PASS` | official Vay deposition 2D/3D 2-rank runtime consumer | `RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D` | official vay_deposition CMake entries, official 2D/3D inputs, two-rank producers and upstream divE-rho/epsilon_0 analysis; not full geometry/order Cartesian product, AMR, non-Cartesian geometry, or formal convergence order | `passed=True` |

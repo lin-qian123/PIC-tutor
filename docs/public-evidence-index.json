@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 186,
+  "record_count": 187,
   "status_counts": {
-    "PASS": 134,
+    "PASS": 135,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 113,
+    "PASS": 114,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 33
@@ -2495,6 +2495,17 @@
       "contract": "Vay 2008 Chapter 4 pusher paper asset contract",
       "classification": "FULLTEXT_SOURCE_GROUNDED_FRAME_CONSISTENCY_APPENDIX_BOUNDARY",
       "scope": "local full-text PDF and MinerU package support Vay frame-consistency, explicit-gamma and gyroradius explanations; dedicated Appendix-B runtime reproduction remains open",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "vay-amr-guard",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Vay deposition mesh-refinement source guard",
+      "classification": "SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED",
+      "scope": "read-only WarpX initialization/source guards; no AMR producer is interpreted as a physics runtime failure or pass",
       "metrics": {
         "passed": true
       }

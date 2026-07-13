@@ -85,6 +85,7 @@ def main() -> None:
                 "RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D",
                 "RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D",
                 "RUNTIME_2RANK_VAY_SHAPE_FAMILY_PASS_2D_3D_CASE_LOCAL",
+                "SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED",
             )
         ),
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],

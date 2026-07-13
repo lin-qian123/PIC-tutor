@@ -1,5 +1,7 @@
 # PIC-tutor v0.68
 
+本版又固化 Vay + AMR 的 source guard：当前 `WarpX.cpp` 在 `Vay && maxLevel() > 0` 时于初始化阶段拒绝运行，分类为 `SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED`；不把该支持边界写成 AMR physics PASS/FAIL。
+
 本版又补齐 Vay Cartesian shape family 的 2-rank case-local runtime contract：2D/3D × shape=1/2/3/4 共 8 个 producer 均通过官方 `divE-rho/epsilon_0` 的 `1e-3` gate；shape=1/2/4 是本地 sibling，不写成上游 CMake 新注册项。
 
 本版又补齐官方 Vay 2-rank runtime consumer：2D/3D shape=3 按 CMake 注册规模运行并通过 `divE-rho/epsilon_0` 的 `1e-3` gate，结果为 `4.0411e-4/6.0266e-4`；shape family 的 2-rank 全组合、AMR/边界和正式收敛阶仍保持边界。
@@ -22,7 +24,7 @@
 
 本版又修正第 8 章 `8.14.1` 孤立标题层级为正式 `8.14` 小节，并将正文验证矩阵的合同数口径更新为当前 `177` 条。
 
-本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `186` 条。
+本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `187` 条。
 
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 

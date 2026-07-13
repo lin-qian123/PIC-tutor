@@ -848,6 +848,11 @@ acquisition 排序练习</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版又固化 Vay + AMR 的 source guard：当前 <code>WarpX.cpp</code> 在
+<code>Vay &amp;&amp; maxLevel() &gt; 0</code>
+时于初始化阶段拒绝运行，分类为
+<code>SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED</code>；不把该支持边界写成
+AMR physics PASS/FAIL。</p>
 <p>本版又补齐 Vay Cartesian shape family 的 2-rank case-local runtime
 contract：2D/3D × shape=1/2/3/4 共 8 个 producer 均通过官方
 <code>divE-rho/epsilon_0</code> 的 <code>1e-3</code> gate；shape=1/2/4
@@ -899,7 +904,7 @@ verification。</p>
 <code>177</code> 条。</p>
 <p>本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖
 <code>FieldProbe</code>、<code>ParticleHistogram2D</code>、<code>LoadBalanceCosts</code>
-的官方输入和 analysis consumer；公开证据索引当前为 <code>186</code>
+的官方输入和 analysis consumer；公开证据索引当前为 <code>187</code>
 条。</p>
 <p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
 组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
@@ -15589,6 +15594,15 @@ Cartesian shape=1..4 的两进程 case-local family 缺口；shape=1/2/4
 尚未成为上游 CMake 注册项，AMR、边界裁剪、RZ/1D、非 Cartesian geometry
 和正式收敛阶仍保持边界。详见
 <code>notes/code-reading/particles/77-vay-mpi2-shape-family-contract.md</code>。</p>
+<p>AMR 边界则不能按同一方式继续外推。当前 <code>Source/WarpX.cpp</code>
+在初始化阶段对 <code>Vay &amp;&amp; maxLevel() &gt; 0</code> 直接触发
+<code>Vay deposition not implemented with mesh refinement</code>，并另有
+PSATD-only、RZ 和 1D guard。因此这里的准确结论不是“Vay AMR runtime
+失败”，而是“当前 checkout 在进入物理推进前显式拒绝 Vay + mesh
+refinement”；该源码边界由
+<code>scripts/audit_vay_amr_guard_contract.py</code> 固化为
+<code>SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED</code>。详见
+<code>notes/code-reading/particles/78-vay-amr-guard-contract.md</code>。</p>
 <p>维护台账见
 <code>notes/code-reading/particles/72-deposition-geometry-order-gap-register.md</code>，由
 <code>scripts/audit_deposition_geometry_order_gap_register.py</code>

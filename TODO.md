@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：将 Vay + AMR 边界固化为独立 source contract：当前 `WarpX.cpp` 对 `Vay && maxLevel() > 0` 在初始化阶段直接拒绝，并保留 PSATD-only、RZ/1D guards；该结果分类为 `SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED`，不写成 AMR physics PASS/FAIL。报告见 `runs/stage-c-validation/vay-amr-guard/contract.{json,md}`。
+
 - [x] 2026-07-13：补齐 Vay Cartesian shape family 的 2-rank case-local runtime contract：2D/3D × shape=1/2/3/4 共 8 个 producer 均通过官方 `divE-rho/epsilon_0` 的 `1e-3` gate；shape=1/2/4 保持为独立 sibling，不写成上游 CMake 新注册项。报告见 `runs/stage-c-validation/vay-mpi2-shape-family/contract.{json,md}`。
 
 - [x] 2026-07-13：补齐官方 Vay 2-rank runtime consumer：2D/3D shape=3 按 CMake 注册规模运行，官方 `divE-rho/epsilon_0` analysis 误差为 `4.0411e-4/6.0266e-4`，均通过 `1e-3`；shape family 的 2-rank 全组合、AMR/边界和正式收敛阶仍保持边界。报告见 `runs/stage-c-validation/vay-mpi2/contract.{json,md}`。

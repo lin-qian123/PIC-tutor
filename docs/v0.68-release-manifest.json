@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 746,
-  "total_bytes": 27791675,
+  "total_bytes": 27792882,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1528138,
-      "sha256": "8a41ff1b1fd0b86ca6bf5a7905b69fb50074979687098a7c9a3d6a5e30024099"
+      "bytes": 1528154,
+      "sha256": "c1eb318614be2e2bbd5d31d9b353bf037bb0bda344af46a3c502b1e21d6c985a"
     },
     {
       "path": "TODO.md",
-      "bytes": 1374499,
-      "sha256": "4b18fecb7d4277d4d2d316a28bdc545f66a90b378052de042a2bd8f2043c8c56"
+      "bytes": 1375002,
+      "sha256": "dde343bb4e7a16798ff6ca528568ed3a893dc4043fbbbbcb8a1701cb2aeaa198"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3392282,
-      "sha256": "351eb86658b713bbb13efd6eb69b5fd2da5a476db75331568f31c67459b84201"
+      "bytes": 3392292,
+      "sha256": "04def6ab2119ef8c189d3c700d555e49ea385b6945533dbc64da458d205b1698"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 91685,
-      "sha256": "ebae9ac577f024527fe57441c8bb0c4545ebc8fd51bfe241d21adf0ef7ae0d20"
+      "bytes": 91694,
+      "sha256": "2b95b718c085b819d2396009dfe91adcd5ee0b094e290b2b875af485d1fe0707"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 60571,
-      "sha256": "7c7539a29c0758f3821d5719444189c916ff73d3a5eb4cc7e7477163f42438b8"
+      "bytes": 60580,
+      "sha256": "fdcadbd15806fcc9d153553337cfc52f67cdba6853b41927884076762bc8f6de"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "0fd83ed10179e77010c0addbb4f66fa4d7816c9b33884092428af9f04db4c29a"
+      "sha256": "dfc9ca46c88b79abe1651ed585fca3255c7cd4b1cb61f3917b6f027e47bc2d8b"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -2197,8 +2197,8 @@
     },
     {
       "path": "notes/code-reading/utils/03-parameter-runtime-coverage-followup.md",
-      "bytes": 1615,
-      "sha256": "5a95f131d128463d6f27d684bb9aea4c74e61e55255303aa0b79d159528f3f39"
+      "bytes": 1760,
+      "sha256": "8a88d4e22002093697d762be3f5a604aa449c52012e6cabdbf6ea470e1580fe2"
     },
     {
       "path": "notes/code-reading/utils/05-deep-solver-object-parameter-families.md",
@@ -2687,8 +2687,8 @@
     },
     {
       "path": "scripts/audit_parameter_map_runtime_coverage.py",
-      "bytes": 7183,
-      "sha256": "12a1cbf22a262b412c6dc6c437ed4b6d6d761775da36e2058bf67eaff0797ac6"
+      "bytes": 7698,
+      "sha256": "8b9d333aed6d8fd08596e4791c1f4aa38377381dbd06981421639ecb05d94785"
     },
     {
       "path": "scripts/audit_parameter_map_semantic_anchors.py",

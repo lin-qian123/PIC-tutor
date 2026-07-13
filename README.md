@@ -8,7 +8,7 @@
 
 当前 v0.68 又补入 parameter-map semantic anchor contract：对 parser-anchor 之外的 10 条结构化参数逐项核对 consumer/default/validation 锚点，用户属性、碰撞动态键、ADIOS2 参数 map、particle-field averaging/filter 和 AMReX ratio owner 全部通过；该结果仍不替代 C++ AST、完整默认值矩阵或 runtime value execution。脚本为 `scripts/audit_parameter_map_semantic_anchors.py`，报告见 `runs/stage-c-validation/parameter-map-semantic-anchor-contract/contract.{json,md}`。
 
-当前 v0.68 又补入 parameter-map runtime coverage contract：真实 case-local smoke 已验证用户属性 `particle_orig_z/particle_regionofinterest`、particle-fields 的 15 个 species reduction 字段、openPMD HDF5 输出、scalar `amr.ref_ratio` 和 2D `amr.ref_ratio_vect = 2 1` 的 level 0/1 物化；DSMC 仍因本机缺少官方 `warpx-data` 截面文件停留在 input-only/data boundary，ADIOS2 arbitrary parameter suffix 仍是 source-only gap。脚本为 `scripts/audit_parameter_map_runtime_coverage.py`，报告见 `runs/stage-c-validation/parameter-map-runtime-coverage/contract.{json,md}`。
+当前 v0.68 又补入 parameter-map runtime coverage contract：真实 case-local smoke 已验证用户属性 `particle_orig_z/particle_regionofinterest`、particle-fields 的 15 个 species reduction 字段、openPMD HDF5 输出、scalar `amr.ref_ratio`、2D `amr.ref_ratio_vect = 2 1` 的 level 0/1 物化，以及 3D BP5 `openpmd.adios2_engine.parameters.NumAggregators = 1` 输出；DSMC 仍因本机缺少官方 `warpx-data` 截面文件停留在 input-only/data boundary。脚本为 `scripts/audit_parameter_map_runtime_coverage.py`，报告见 `runs/stage-c-validation/parameter-map-runtime-coverage/contract.{json,md}`。
 
 当前 v0.68 又完成 parameter-map structured review contract：parser-anchor 之外的 10 条参数已逐项核对，8 条 dynamic-key constructor 和 2 条 AMReX owner 全部通过；这关闭了“非固定键仅按类别记录、没有逐项源码锚点”的缺口，但不替代完整 C++ AST、默认值/校验或 runtime value semantics 审计。脚本为 `scripts/audit_parameter_map_structured_review.py`，报告见 `runs/stage-c-validation/parameter-map-structured-review-contract/contract.{json,md}`。
 

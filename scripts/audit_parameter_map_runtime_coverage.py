@@ -22,10 +22,12 @@ def main() -> int:
     attrs = RUNS / "attributes"
     fields = RUNS / "particle-fields"
     dsmc = RUNS / "dsmc"
+    adios2 = RUNS / "adios2"
     ref_ratio_vect = RUNS / "ref-ratio-vect"
     attr_plotfile = attrs / "diags/diag1000001"
     field_plotfile = fields / "diags/diag1000000"
     ref_ratio_input = text(ref_ratio_vect / "warpx_used_inputs")
+    adios2_input = text(adios2 / "warpx_used_inputs")
 
     attr_input = text(attrs / "warpx_used_inputs")
     field_input = text(fields / "warpx_used_inputs")
@@ -67,10 +69,16 @@ def main() -> int:
         },
         {
             "parameter_group": "<diag_name>.adios2_{operator,engine}.parameters.*",
-            "coverage": "source_only",
-            "passed": False,
-            "evidence": "Source/Diagnostics/FlushFormats/FlushFormatOpenPMD.cpp semantic contract",
-            "boundary": "no checked-in example or case-local runtime currently exercises arbitrary ADIOS2 parameter suffixes",
+            "coverage": "runtime",
+            "passed": all(token in adios2_input for token in (
+                "openpmd.openpmd_backend = \"bp5\"",
+                "openpmd.adios2_engine.type = bp5",
+                "openpmd.adios2_engine.parameters.NumAggregators = 1",
+            ))
+            and (adios2 / "diags/openpmd/openpmd_000000.bp5/data.0").is_file()
+            and "Writing openPMD file diags/openpmd000000" in text(adios2 / "run.log"),
+            "evidence": "adios2/warpx_used_inputs + adios2/run.log + adios2/diags/openpmd/openpmd_000000.bp5",
+            "boundary": "3D max_step=0 BP5 output smoke; engine parameter forwarding is exercised, but compression operators and multi-rank engine semantics are not promoted",
         },
         {
             "parameter_group": "amr.ref_ratio",
@@ -93,7 +101,7 @@ def main() -> int:
     result = {
         "contract": "structured parameter-map runtime coverage",
         "passed": all(record["passed"] or record["coverage"] == "source_only" for record in records),
-        "classification": "STRUCTURED_PARAMETER_MAP_RUNTIME_COVERAGE_BOUNDARY_ATTRIBUTE_PARTICLE_FIELD_AND_VECTOR_RATIO_SMOKE_ADIOS2_SUFFIX_GAP_DSMC_DATA_BOUNDARY",
+        "classification": "STRUCTURED_PARAMETER_MAP_RUNTIME_COVERAGE_ATTRIBUTE_PARTICLE_FIELD_VECTOR_RATIO_AND_ADIOS2_BP5_SMOKE_DSMC_DATA_BOUNDARY",
         "records": records,
         "checks": checks,
         "runtime_case_count": sum(record["coverage"] == "runtime" for record in records),

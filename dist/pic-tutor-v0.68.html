@@ -782,7 +782,11 @@ external-file Gaussian beam：输入文件路径与束斑物理合同</a></li>
 <li><a href="#第-8-章验证矩阵命令产物与-gate" id="toc-第-8-章验证矩阵命令产物与-gate">第 8 章验证矩阵：命令、产物与
 gate</a></li>
 </ul></li>
-<li><a href="#本章正文与源码同步合同-2" id="toc-本章正文与源码同步合同-2">8.14 本章正文与源码同步合同</a></li>
+<li><a href="#本章正文与源码同步合同-2" id="toc-本章正文与源码同步合同-2">8.14 本章正文与源码同步合同</a>
+<ul>
+<li><a href="#reduced-diagnostics-最小输入合同" id="toc-reduced-diagnostics-最小输入合同">8.14.1 reduced diagnostics
+最小输入合同</a></li>
+</ul></li>
 <li><a href="#练习与复现实验-1" id="toc-练习与复现实验-1">8.15
 练习与复现实验</a></li>
 <li><a href="#本章后续扩写" id="toc-本章后续扩写">本章后续扩写</a></li>
@@ -858,6 +862,10 @@ verification。</p>
 <p>本版又修正第 8 章 <code>8.14.1</code> 孤立标题层级为正式
 <code>8.14</code> 小节，并将正文验证矩阵的合同数口径更新为当前
 <code>177</code> 条。</p>
+<p>本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖
+<code>FieldProbe</code>、<code>ParticleHistogram2D</code>、<code>LoadBalanceCosts</code>
+的官方输入和 analysis consumer；公开证据索引更新为 <code>178</code>
+条。</p>
 <p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
 组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
 kernel、Cartesian/RZ spectral 分派和 regression
@@ -26375,7 +26383,7 @@ reconstruction <code>&lt; 3.1e-16</code></td>
 也不等价于确定性 <code>1e-9</code>
 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema
 contract、性能 gate 和采样统计边界。公开仓库中的
-<code>docs/public-evidence-index.{json,md}</code> 进一步提供当前 177
+<code>docs/public-evidence-index.{json,md}</code> 进一步提供当前 178
 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。</p>
 <p>当前证据等级应写成：Langmuir
 已有运行级解析频率、场误差和最终守恒证据；uniform plasma
@@ -26419,6 +26427,24 @@ physics analysis、writer/schema、checksum、performance 和 boundary
 证据仍必须分栏表达；<code>MultiDiagnostics</code> 或
 <code>WarpXOpenPMD</code>
 的入口存在，也不能反向证明所有下游案例已经通过。</p>
+<h3 id="reduced-diagnostics-最小输入合同">8.14.1 reduced diagnostics
+最小输入合同</h3>
+<p>本章将三类 reduced diagnostics
+的最小输入入口单独收口：<code>FieldProbe</code> 使用官方
+<code>reduced_diags/inputs_test_3d_reduced_diags</code> 的
+point/line/plane 骨架，<code>ParticleHistogram2D</code> 使用
+<code>laser_ion/inputs_test_2d_laser_ion_acc</code> 的
+<code>z</code>–<code>uz</code> openPMD mesh
+配置，<code>LoadBalanceCosts</code> 使用
+<code>LBC.type = LoadBalanceCosts</code> 和官方 efficiency
+analysis。对应的 12 项只读检查由
+<code>scripts/audit_diagnostics_minimal_inputs.py</code> 完成，报告见
+<code>runs/stage-c-validation/diagnostics-minimal-inputs/contract.{json,md}</code>。</p>
+<p>这项合同只验证“最小输入、官方 consumer
+和正文边界仍相互对应”。它不替代 <code>FieldProbe</code> 解析 diffraction
+gate，不把 <code>ParticleHistogram2D</code> writer/schema
+变成物理收敛证明，也不把 <code>LoadBalanceCosts</code>
+的效率比较与场精度混为同一类 physics gate。</p>
 <h2 id="练习与复现实验-1">8.15 练习与复现实验</h2>
 <ol type="1">
 <li><strong>证据分层题</strong>：从验证矩阵中各选一个 physics

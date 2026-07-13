@@ -17,7 +17,7 @@ SOURCE_CHAPTERS = sorted((ROOT / "manuscript" / "chapters").glob("*.md"))
 MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.68.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.68.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.68.pdf"
-EXPECTED_PDF_PAGES = 323
+EXPECTED_PDF_PAGES = 324
 
 
 def image_links(text: str) -> list[str]:
@@ -71,6 +71,7 @@ def main() -> None:
         ),
         "chapter_8_source_contract_heading": "## 8.14 本章正文与源码同步合同" in source
         and "### 8.14.1 本章正文与源码同步合同" not in source,
+        "chapter_8_minimal_diagnostics_section": "### 8.14.1 reduced diagnostics 最小输入合同" in source,
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],
         "public_path_hygiene_html": inspect(HTML)["passed"],
     }

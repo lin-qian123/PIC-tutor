@@ -1,16 +1,16 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 177,
+  "record_count": 178,
   "status_counts": {
     "PASS": 128,
     "FAIL": 30,
-    "UNKNOWN": 19
+    "UNKNOWN": 20
   },
   "evidence_kind_counts": {
     "PASS": 107,
     "FAIL": 27,
-    "UNKNOWN": 10,
+    "UNKNOWN": 11,
     "BOUNDARY": 33
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
@@ -167,6 +167,17 @@
       "metrics": {
         "check_count": 13,
         "pass_count": 13
+      }
+    },
+    {
+      "case": "diagnostics-minimal-inputs",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "chapter-8-diagnostics-minimal-inputs",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": 12
       }
     },
     {

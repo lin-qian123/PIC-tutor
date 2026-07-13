@@ -1726,7 +1726,7 @@ $$
 | RZ electrostatic sphere | 官方 RZ，1 rank | `python scripts/analyze_rz_charge_volume_contract.py ...` | 官方轴向场 L2 gate；全域 rho-volume/particle-charge mismatch `< 1%` | `runs/stage-c-validation/rz_electrostatic_sphere/` |
 | RZ Langmuir multimode | case-local RZ sibling，1 rank，3 modes | `python scripts/analyze_rz_langmuir_multimode_contract.py ...` | `m=1/2` 实虚分量非零；theta=0 native-field/writeback reconstruction `< 3.1e-16` | `runs/stage-c-validation/rz_langmuir_multimode/` |
 
-这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供当前 177 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
+这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供当前 178 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
 
 当前证据等级应写成：Langmuir 已有运行级解析频率、场误差和最终守恒证据；uniform plasma 已有粒子数、能量统计和 checkpoint/restart 逐字段证据，但短时运行的总能量变化不能直接升级成热平衡守恒通过；FieldProbe 已确认 1/2-rank 输出一致，并通过 `lambda/32` 的 matched-time 解析 gate，但官方 `lambda/16` coarse case 仍失败；`reduced_diags` 已有 60 项 compact observable 与 full-state reference 的 2-rank 逐项通过证据，并有 Heuristic/Timers 两条 `LoadBalanceCosts` efficiency improvement 证据；`ColliderRelevant` 已有 2-rank 的 chi/角度/ParticleExtrema/dL/dt 聚合合同证据；`DifferentialLuminosity` 已有 leptons、AMR 和 photons 三组 1D/2D 解析谱通过证据；laser-ion 已有 `ParticleHistogram2D` 的 2-rank openPMD writer 合同证据；`BeamRelevant` 已有最小 3D 的 schema/截断高斯束统计合同证据；完整 initial-distribution family 已有当前 checkout 的官方分布 analysis 通过证据，并在显式 `5e-3` sampling tolerance 下通过 checksum，但不宣称 `1e-9` 确定性相等；native Gaussian external-file 变体已有 1-rank 项目级束斑物理合同，但官方 CMake analysis 缺失仍保留为 upstream registration 缺口；RZ electrostatic sphere 又补充了官方场/能量 gate 与独立 rho-volume charge closure；RZ 三模 Langmuir sibling 又补充了 `m>0` diagnostics writeback 和 theta=0 重建合同，但它是 project-level case-local evidence，不能替代官方单模 CMake analysis。JSON/Markdown 报告和脚本都保存在项目内，运行产物仍按 case-local 目录归档。
 
@@ -1735,6 +1735,12 @@ $$
 本章的 producer/consumer/source 对应关系由 `scripts/audit_diagnostics_chapter_source_crosswalk.py` 维护。它把主循环调度、Full/BTD/BoundaryScraping 类型分派、`ComputeDiagFunctors` 与 flush、OpenPMD iteration 生命周期、reduced diagnostics 注册/写盘以及官方 analysis consumer 固定成 13 组检查。该合同只防止章节随源码和案例 wiring 漂移，不替代任何 case-local runtime physics gate、schema contract 或性能结论。
 
 后续修改本章时，应同步更新 `notes/code-reading/diagnostics/01-diagnostics-chapter-source-crosswalk.md` 和生成的 `contract.json`/`contract.md`。验证矩阵中的 physics analysis、writer/schema、checksum、performance 和 boundary 证据仍必须分栏表达；`MultiDiagnostics` 或 `WarpXOpenPMD` 的入口存在，也不能反向证明所有下游案例已经通过。
+
+### 8.14.1 reduced diagnostics 最小输入合同
+
+本章将三类 reduced diagnostics 的最小输入入口单独收口：`FieldProbe` 使用官方 `reduced_diags/inputs_test_3d_reduced_diags` 的 point/line/plane 骨架，`ParticleHistogram2D` 使用 `laser_ion/inputs_test_2d_laser_ion_acc` 的 `z`--`uz` openPMD mesh 配置，`LoadBalanceCosts` 使用 `LBC.type = LoadBalanceCosts` 和官方 efficiency analysis。对应的 12 项只读检查由 `scripts/audit_diagnostics_minimal_inputs.py` 完成，报告见 `runs/stage-c-validation/diagnostics-minimal-inputs/contract.{json,md}`。
+
+这项合同只验证“最小输入、官方 consumer 和正文边界仍相互对应”。它不替代 `FieldProbe` 解析 diffraction gate，不把 `ParticleHistogram2D` writer/schema 变成物理收敛证明，也不把 `LoadBalanceCosts` 的效率比较与场精度混为同一类 physics gate。
 
 ## 8.15 练习与复现实验
 

@@ -10,6 +10,8 @@
 
 本版又修正第 8 章 `8.14.1` 孤立标题层级为正式 `8.14` 小节，并将正文验证矩阵的合同数口径更新为当前 `177` 条。
 
+本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引更新为 `178` 条。
+
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 
 本版又补入第 7 章边界/PML/AMR 正文-源码 crosswalk：13 组代表性锚点覆盖 field/particle 边界顺序、场边界分派、PML 生命周期、guard-cell/通信、AMR 重建、moving window 和 scraping consumer；transition-zone route ledger 仍保持 `RUNTIME_LEDGER_UNPROVEN`。该合同只防止正文漂移，不替代 runtime route-count proof。报告见 `runs/stage-c-validation/boundary-amr-chapter-source-crosswalk/contract.{json,md}`。
@@ -88,7 +90,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 323 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同、LeeCPC2015 publisher-abstract boundary、第 6 章 FieldSolver source crosswalk 和第 7 章 boundary/AMR source crosswalk，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 324 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同、LeeCPC2015 publisher-abstract boundary、第 6 章 FieldSolver source crosswalk 和第 7 章 boundary/AMR source crosswalk，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 

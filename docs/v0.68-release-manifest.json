@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 762,
-  "total_bytes": 27949637,
+  "entry_count": 764,
+  "total_bytes": 27962180,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1533420,
-      "sha256": "bc5a9c4d2f084d93075bc41f11f54ad574d73ff6c5507a1d8010aaa9891e02d6"
+      "bytes": 1533649,
+      "sha256": "2b67a8159c4f7313bea96c29ddd99992fa0665b3ecb8be233a3be2f7be294f13"
     },
     {
       "path": "TODO.md",
-      "bytes": 1381375,
-      "sha256": "0a950a38154ed8c18d03b62fd371d23a3fade12f2f278bb53bd67f6091618279"
+      "bytes": 1381736,
+      "sha256": "f1c1cd55f467d11747ec506b9c9dc60c1381456cfa3657ab16adb938d2802124"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5782923,
-      "sha256": "c04f7a3b447f73d9453819cb2ee664ab77614f2cc77d56f808269e6d6966856e"
+      "bytes": 5784462,
+      "sha256": "90d06ee306517c847ad91ea71611c027f8d5fff19ce07019b5507447d62c21cb"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1103861,
-      "sha256": "45bd0aaa6451c4a9579c4c45b4be1e1c5efd1c823f9c787bc7476c785fda2de3"
+      "bytes": 1104978,
+      "sha256": "80ffa864a6d35523a546de4301591f6cc7fafe88bebe20734ebca6cc9c1b19d3"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3410704,
-      "sha256": "70d531ad5ea494d1c6cb95046708864e4f3b1b11350d47007629bab8f3064cb4"
+      "bytes": 3412055,
+      "sha256": "7180b101494fbd177220850c23151a98c0474a615df05f86fe89ff622c374409"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 96139,
-      "sha256": "3a2e719752f8c6926047bd83b1e2d3fc186e03041c96747e8fc733787460c33f"
+      "bytes": 96414,
+      "sha256": "667118786914567067fa0fe8655915082f045dd1a0bc40df7ad2e91e5d4bde75"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 63533,
-      "sha256": "e7627d7581812ed70eefd970b57520477518f6d704afb9d1bef2b4b2f755c48a"
+      "bytes": 63651,
+      "sha256": "d78cce0951de09cd6e3c5de1e4fc68202b9adaa2565351aaf4eb58c1d3eb4749"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4243,
-      "sha256": "5759939d35ffc59ed684ac607c0ba518eb13cda1c72de54c221d8762ad65b6a4"
+      "sha256": "ec1756ba5181de8669957277c563683498e62345c7c01e7b70b8e9763622405b"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44838,
-      "sha256": "0fd82e0ea3f9437b52ee93fa447d686d75c4faa9d45e96f0bfcd4e590075195d"
+      "sha256": "37afa8fa494a3f2385429df744adac69096cc792b2acfea5d2defe506a3ca190"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 75503,
-      "sha256": "f285f54e9a1c826f480907e6f21c51e4dbf45605b1f09c320d1d4b6cb260a813"
+      "bytes": 75727,
+      "sha256": "78e70e1844a456d7677fc67abcadbd5edbefd7753515d26d067f87d7455d430c"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -912,8 +912,8 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 112757,
-      "sha256": "0048b85786282ab105f7b6151fd56ac1385766aa461c61d27a0013a77bb308a2"
+      "bytes": 113650,
+      "sha256": "ca4d0cf41c671ecda28442e2786a1fee66a0359e1f5e867d585ccc54b6fbc57b"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -1069,6 +1069,11 @@
       "path": "notes/code-reading/diagnostics/02-field-and-particle-functors.md",
       "bytes": 11727,
       "sha256": "2aa242f449017cf4a8f62aac6dc7b91ffb2d7205398ad46031a9787c957edeb1"
+    },
+    {
+      "path": "notes/code-reading/diagnostics/02-minimal-reduced-diagnostics-inputs.md",
+      "bytes": 2604,
+      "sha256": "afdbfea9634b99bec3b0482a498d169939e0da1e3098688343751ecd40e51034"
     },
     {
       "path": "notes/code-reading/diagnostics/03-reduced-diagnostics.md",
@@ -2696,6 +2701,11 @@
       "sha256": "8b7c4ed603c2479178d1476fdb3eab2e3a61b516bc69ea35db21b804d1b940e7"
     },
     {
+      "path": "scripts/audit_diagnostics_minimal_inputs.py",
+      "bytes": 3720,
+      "sha256": "8eb7a1e1de709d7f989d68b2890b7474beb16f7009ee1fb129cd4db46a19de6b"
+    },
+    {
       "path": "scripts/audit_esirkepov_bounded_compare.py",
       "bytes": 3903,
       "sha256": "266c20b61d33eaf16f33786f28ebe24ace32f499d34bbe6ba6bc1e922a0660c4"
@@ -3832,8 +3842,8 @@
     },
     {
       "path": "scripts/verify_v68_build.py",
-      "bytes": 3859,
-      "sha256": "109df34114d1b330dbdfe43ed064500b94a0e9c64221ac05a9cbe3c68eaa2a99"
+      "bytes": 3971,
+      "sha256": "5184866855f38601a08ded71fea281bab3f2d62961f21d414a4ce3c4bfae76f5"
     },
     {
       "path": "scripts/verify_villasenor_formula_contract.py",

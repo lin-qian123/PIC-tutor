@@ -34,6 +34,7 @@ Date: 2026-07-13
 | ScienceDirect PDF endpoint re-check | Current local `curl -L -I` still returns HTTP 403; response advertises TDM policy but does not provide PDF bytes | local command on 2026-07-12 |
 | ScienceDirect PDF endpoint current re-check | Search-discovered publisher PDF URL was tested with `curl -L` on 2026-07-13; response is HTTP/2 403 with `content-type: text/html`, Cloudflare headers and no PDF bytes. The browser-facing page likewise shows “Preparing your download” and “A problem was encountered” rather than a PDF. | local `curl` plus ScienceDirect page check on 2026-07-13 |
 | ScienceDirect indexed abstract current re-check | Search result exposes the published abstract: arbitrary quasi-particle form-factor, straight-line trajectory assumption, no Poisson solve, and 2D/3D demonstration. This is abstract-level evidence only, not a publisher-PDF reading. | ScienceDirect indexed result on 2026-07-13 |
+| Publisher/preprint abstract compare | The indexed publisher abstract and the arXiv abstract were compared by topic; aligned claims and wording differences are recorded in `notes/code-reading/particles/63-esirkepov-publisher-abstract-compare.md`. This upgrades only the abstract-level classification, not the missing publisher PDF. | local bounded-compare audit on 2026-07-13 |
 | Local paper-asset contract | `scripts/audit_deposition_paper_asset_contract.py` checks the 13-page arXiv PDF, 39 images, MinerU structure, Chinese note and publisher-PDF boundary | contract run on 2026-07-13; all checks pass |
 
 ## Current decision

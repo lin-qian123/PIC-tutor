@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：完成 Esirkepov 2001 CPC indexed abstract 与 arXiv 预印本的 bounded compare；发表版 metadata/abstract 已核实，publisher PDF 仍因访问限制未取得。报告见 `runs/stage-c-validation/esirkepov-publisher-abstract-compare/contract.{json,md}`。
+
 - [x] 2026-07-13：完成第 5 章沉积算法选择矩阵的 v0.75 成书接入，并把 Direct/Esirkepov/Villasenor/Vay 的几何、时间层和证据边界纳入构建验收；报告见 `runs/stage-c-validation/deposition-algorithm-selection/contract.{json,md}`。
 
 - [x] 2026-07-13：materialize Andriyash 2016 Fourier-Bessel PIC 论文：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 均已完成；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步更新路线图。明确保留 PLARES-PIC 与 WarpX 函数级等价、WarpX runtime reproduction 和论文图逐点复现边界。报告见 `runs/stage-c-validation/andriyash-2016-paper-asset/contract.{json,md}`。

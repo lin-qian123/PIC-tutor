@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 193,
+  "record_count": 194,
   "status_counts": {
-    "PASS": 141,
+    "PASS": 142,
     "FAIL": 30,
     "UNKNOWN": 22
   },
@@ -11,7 +11,7 @@
     "PASS": 117,
     "FAIL": 27,
     "UNKNOWN": 13,
-    "BOUNDARY": 36
+    "BOUNDARY": 37
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -302,6 +302,17 @@
       "contract": "Esirkepov 2001 publication boundary contract",
       "classification": "PREPRINT_FORMULA_SOURCE_RUNTIME_PUBLISHER_BOUNDARY_EXPLICIT",
       "scope": "preprint formula/source/runtime evidence and explicit CPC publisher-PDF negative-space boundary; no publisher-PDF line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov-publisher-abstract-compare",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Esirkepov publisher indexed abstract compare",
+      "classification": "PUBLISHER_METADATA_ABSTRACT_VERIFIED_PREPRINT_SOURCE_RUNTIME_PDF_MISSING",
+      "scope": "indexed abstract versus arXiv preprint; no publisher-PDF line-by-line claim",
       "metrics": {
         "passed": true
       }

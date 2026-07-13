@@ -1715,9 +1715,11 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 | Section 3：`W^1/W^2/W^3` density decomposition | 预印本公式与中文讲解 | `sx_old-sx_new`、`sy_old-sy_new`、`sz_old-sz_new` | preprint-backed + source-grounded |
 | Section 4：二阶 spline 算法骨架 | 预印本算法段落 | `compute_shifted_shape_factor`、`sdxi/sdyj/sdzk` prefix loops | preprint-backed + source-grounded |
 | CPC 发表版题名、卷期、页码、DOI和公开摘要 | ScienceDirect/公开书目元数据 | `Esirkepovcpc01` bibliography key | publication-metadata verified |
-| CPC 发表版 abstract、section numbering、`Eq.(23)` 排版、二阶 spline 文字 | 当前环境未取得 publisher PDF | 暂无可绑定的逐页证据 | open compare |
+| CPC 发表版 abstract、section numbering、`Eq.(23)` 排版、二阶 spline 文字 | indexed abstract compare 已完成；publisher PDF 仍未取得 | 摘要级主张可绑定，逐页公式仍无证据 | abstract verified / PDF open |
 
-这张表是本章当前的证据边界：前三行可以直接进入成书正文，第四行只能用于出版身份和引用信息，第五行不能写成已完成。
+这张表是本章当前的证据边界：前三行可以直接进入成书正文，第四行用于出版身份和引用信息，第五行现在可以支持摘要级算法主张，但不能写成发表版全文逐页核对。
+
+本版新增 `notes/code-reading/particles/63-esirkepov-publisher-abstract-compare.md` 与 `scripts/audit_esirkepov_publisher_abstract_compare.py`。该 bounded compare 将发表版公开索引摘要中的 Cartesian geometry、arbitrary quasi-particle form-factor、straight-line trajectory、无需 Poisson solve、唯一线性组合和 2D/3D demonstration，与 arXiv 预印本摘要中的 density decomposition、product-form n-dimensional form-factor 和 parabolic spline demonstration 逐项对齐。其证据等级为 `publication-metadata + indexed-abstract verified`，分类为 `PUBLISHER_METADATA_ABSTRACT_VERIFIED_PREPRINT_SOURCE_RUNTIME_PDF_MISSING`：摘要级证据已从“未分类”推进为可审计状态，但 `Eq.(23)` 排版、section numbering、发表版图表和二阶 spline 正文仍保持 PDF 缺口。
 
 #### 发表版缺口审计契约
 

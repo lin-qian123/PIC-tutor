@@ -2,6 +2,7 @@
 
 ## 2026-07-14
 
+- [x] v0.89 对 RZ Esirkepov correction-on/off、shape=1/2/3/4 的 8 个 `256x512` 2-rank sibling 增加 reader-side 径向 residual profile；8/8 的最大值位于 `r=0`，分类为 `AXIS_DOMINATED_READER_SIDE_RESIDUAL_PROFILE`，明确不替代 kernel root-cause 或 formal convergence。
 - [x] v0.88 将 RZ Esirkepov correction-on rho-side observable 扩展到 shape=1/2/3/4：四个 shape 的末态 species decomposition 均通过约 `1e-14` reader-side gate；明确不替代 `divE-rho`、current closure 或正式 convergence。
 - [x] v0.87 完成 v0.86 新增收敛执行页的 PDF 视觉抽查：发现并修复长分类标识和 raw path 截断；封面、第 5 章边界页和第 9 章缺口页重新纳入 spotcheck。
 - [x] v0.86 补强第二组 family runner：执行前检查 `inputs`/`FILE` 引用和 `Full` diagnostics，执行后检查退出码、`warpx_used_inputs` 和 `diags/diag*` 产物；当前仍因缺少 `mpiexec/mpirun` 停在真实 2-rank 执行前。

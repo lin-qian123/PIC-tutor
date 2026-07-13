@@ -1,4 +1,4 @@
-# PIC-tutor v0.89
+# PIC-tutor v0.88
 
 本版补齐 RZ Esirkepov correction-on shape=1/2/3/4 的 rho-side species decomposition 观测 family：四个 shape 的末态 `rho-(rho_electrons+rho_ions)` 均达到约 `1e-14` reader-side 一致性，integrated-rho 漂移也被逐 shape 记录；该 family 不关闭同面 `divE-rho` axis charge boundary、正式收敛阶或 current-conservation contract。v0.87 的第二组 formal convergence runner、输入/产物合同和 PDF 长 token 修复继续保留；当前机器仍缺少 `mpiexec/mpirun`。
 
@@ -26,7 +26,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v89_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v88_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

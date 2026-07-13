@@ -1998,12 +1998,14 @@
       "status": "PASS",
       "evidence_kind": "PASS",
       "contract": "RCYLINDER/RSPHERE rho species decomposition observable",
-      "classification": "RADIAL_RHO_DECOMPOSITION_OBSERVABLE_VERIFIED_SHAPE1_EXPORT_COMPLETED",
-      "scope": "rho equals rho_electrons plus rho_ions on archived radial plotfiles; not a full Gauss-law or current-closure proof",
+      "classification": "RADIAL_RHO_DECOMPOSITION_TIME_SERIES_VERIFIED_SHAPE1_EXPORT_COMPLETED",
+      "scope": "rho equals rho_electrons plus rho_ions on every current numbered radial plotfile frame; not a full Gauss-law or current-closure proof",
       "metrics": {
         "missing_species_export_count": 0,
         "passed": true,
-        "runtime_row_count": 8
+        "passed_frame_count": 648,
+        "runtime_row_count": 8,
+        "total_frame_count": 648
       }
     },
     {

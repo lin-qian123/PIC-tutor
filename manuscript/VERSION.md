@@ -2,7 +2,7 @@
 
 本版新增 RZ Esirkepov charge/field tradeoff summary contract：对 7 组既有 RZ evidence family 做 12 项统一交叉检查，确认默认 axis correction 下 field gate 通过而 axis charge 仍为 `BOUNDARY`，correction-off 只在局部 sibling 上恢复 charge；该结果不修改 WarpX 默认参数，也不宣称正式收敛阶。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}`。
 
-本版新增 RCYLINDER/RSPHERE species-rho decomposition observable：通过为 RCYLINDER shape=1 增加物种 rho 诊断字段，径向 Esirkepov shape=1/2/3/4 共 8 个 runtime rows 的 `rho-(rho_electrons+rho_ions)` 最大相对差均低于 `9.1e-14`；该 observable 不替代 radial `divE-rho` 或 current-closure proof。报告见 `runs/stage-c-validation/radial-rho-decomposition-observable/contract.{json,md}`。
+本版新增 RCYLINDER/RSPHERE species-rho decomposition observable：通过为 RCYLINDER shape=1 增加物种 rho 诊断字段，径向 Esirkepov shape=1/2/3/4 共 8 个案例、81 个当前编号帧合计 648/648 通过；按参与相加字段幅值归一化的 `rho-(rho_electrons+rho_ions)` 最大相对差为 `2.295e-16`。该 observable 不替代 radial `divE-rho` 或 current-closure proof。报告见 `runs/stage-c-validation/radial-rho-decomposition-observable/contract.{json,md}`。
 
 本版新增 position-update output-staggering contract：源码确认 `UpdatePosition.H` 的 `u*inv_gamma*dt` 公式和 `PhysicalParticleContainer.cpp` 的 `Full` dispatch；三组 uniform-`B` Full plotfile 的单帧动量配对误差约 `6.242e-2`，相邻帧中点 proxy 最大误差约 `1.609e-3`。该证据确认输出时间层边界，不把机械动量字段升级为直接 half-step velocity attribute。报告见 `runs/stage-c-validation/position-update-runtime-contract/contract.{json,md}`。
 

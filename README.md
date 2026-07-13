@@ -10,7 +10,7 @@
 
 当前 v0.68 又补入 parameter-map runtime coverage contract：真实 case-local smoke 已验证用户属性 `particle_orig_z/particle_regionofinterest`、particle-fields 的 15 个 species reduction 字段、openPMD HDF5 输出、scalar `amr.ref_ratio`、2D `amr.ref_ratio_vect = 2 1` 的 level 0/1 物化，以及 3D BP5 engine `NumAggregators = 1` 和 `blosc/zstd` operator 参数输出；DSMC 仍因本机缺少官方 `warpx-data` 截面文件停留在 input-only/data boundary。脚本为 `scripts/audit_parameter_map_runtime_coverage.py`，报告见 `runs/stage-c-validation/parameter-map-runtime-coverage/contract.{json,md}`。
 
-当前 v0.68 又补入 RCYLINDER/RSPHERE species-rho decomposition observable：RCYLINDER 与 RSPHERE 的 shape=1/2/3/4 共 8 个 runtime rows 均已导出 `rho/rho_electrons/rho_ions`，`rho-(rho_electrons+rho_ions)` 最大相对差低于 `9.1e-14`；该 observable 不替代 radial `divE-rho` 或 current-closure gate。脚本为 `scripts/audit_radial_rho_decomposition.py`，报告见 `runs/stage-c-validation/radial-rho-decomposition-observable/contract.{json,md}`。
+当前 v0.68 又补入 RCYLINDER/RSPHERE species-rho decomposition observable：shape=1/2/3/4 共 8 个案例的 81 个当前编号帧全部导出 `rho/rho_electrons/rho_ions`，648/648 帧通过 `rho-(rho_electrons+rho_ions)` 分解检查；按参与相加字段幅值归一化的最大相对残差为 `2.295e-16`。该 observable 不替代 radial `divE-rho` 或 current-closure gate。脚本为 `scripts/audit_radial_rho_decomposition.py`，报告见 `runs/stage-c-validation/radial-rho-decomposition-observable/contract.{json,md}`。
 
 当前 v0.68 又完成 parameter-map structured review contract：parser-anchor 之外的 10 条参数已逐项核对，8 条 dynamic-key constructor 和 2 条 AMReX owner 全部通过；这关闭了“非固定键仅按类别记录、没有逐项源码锚点”的缺口，但不替代完整 C++ AST、默认值/校验或 runtime value semantics 审计。脚本为 `scripts/audit_parameter_map_structured_review.py`，报告见 `runs/stage-c-validation/parameter-map-structured-review-contract/contract.{json,md}`。
 

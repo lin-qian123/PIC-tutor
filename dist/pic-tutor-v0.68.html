@@ -830,10 +830,11 @@ charge；该结果不修改 WarpX 默认参数，也不宣称正式收敛阶。�
 <code>runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}</code>。</p>
 <p>本版新增 RCYLINDER/RSPHERE species-rho decomposition
 observable：通过为 RCYLINDER shape=1 增加物种 rho 诊断字段，径向
-Esirkepov shape=1/2/3/4 共 8 个 runtime rows 的
-<code>rho-(rho_electrons+rho_ions)</code> 最大相对差均低于
-<code>9.1e-14</code>；该 observable 不替代 radial <code>divE-rho</code>
-或 current-closure proof。报告见
+Esirkepov shape=1/2/3/4 共 8 个案例、81 个当前编号帧合计 648/648
+通过；按参与相加字段幅值归一化的
+<code>rho-(rho_electrons+rho_ions)</code> 最大相对差为
+<code>2.295e-16</code>。该 observable 不替代 radial
+<code>divE-rho</code> 或 current-closure proof。报告见
 <code>runs/stage-c-validation/radial-rho-decomposition-observable/contract.{json,md}</code>。</p>
 <p>本版新增 position-update output-staggering contract：源码确认
 <code>UpdatePosition.H</code> 的 <code>u*inv_gamma*dt</code> 公式和

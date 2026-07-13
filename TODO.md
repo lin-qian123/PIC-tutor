@@ -307,7 +307,7 @@
 - [ ] 2026-07-02：继续推进第 5 章 deposition 文献闭环：`Esirkepov 2001` 仍只有作者 arXiv 预印本与第一轮中文讲解，publisher-formatted CPC PDF 在当前环境中仍不可取得；取得后按 title / abstract / section numbering / `Eq.(23)` / second-order spline algorithm 五项做差异核对。Villasenor-Buneman 论文-源码-测试主线已阶段性收口，后续转为文字精修与分支覆盖。
 - [ ] 2026-07-02：继续推进第 5 章细修，沿 `CurrentDeposition.H` 与 `ChargeDeposition.H` 把 ABLASTR 模板、Villasenor/Esirkepov implicit 路径和 `ComputeShapeFactor` 邻接段继续逐行展开，主要目标从“补齐缺口”转成“压缩冗余、提高正文密度、减少对 notes 跳转的依赖”。
 
-- [x] 2026-07-13：扩展 `scripts/audit_radial_rho_decomposition.py` 与 `notes/code-reading/particles/70-radial-rho-decomposition-observable.md`：为 RCYLINDER shape=1 只增加 `rho_electrons/rho_ions` 诊断字段并完成窄重跑，RCYLINDER/RSPHERE shape=1/2/3/4 共 8 个 runtime rows 全部通过，最大相对分解残差低于 `9.1e-14`。该结果关闭 species-rho export boundary，但不关闭 radial `divE-rho`、current closure 或完整 geometry/order 笛卡尔积。
+- [x] 2026-07-13：扩展 `scripts/audit_radial_rho_decomposition.py` 与 `notes/code-reading/particles/70-radial-rho-decomposition-observable.md`：为 RCYLINDER shape=1 只增加 `rho_electrons/rho_ions` 诊断字段并完成窄重跑，RCYLINDER/RSPHERE shape=1/2/3/4 共 8 个案例的 81 个当前编号帧合计 648/648 通过，按参与相加字段幅值归一化的最大相对分解残差为 `2.295e-16`。该结果关闭 species-rho export boundary，但不关闭 radial `divE-rho`、current closure 或完整 geometry/order 笛卡尔积。
 - [x] 2026-07-13：完成第 5 章结论段的当前版本口径精修：删除重复的 Esirkepov publisher-PDF 待办，把 `v0.40` 过期阶段表述更新为当前 v0.68 源码基线，并保持 publisher compare、geometry/order 覆盖和出版级表格精修的真实边界。
 - [x] 2026-07-02：评估第 5 章 current deposition 模块是否可冻结成下一版本：已确认正文重复段已压到可接受水平、`dist/pic-tutor-v0.37.md/html` 中 current deposition 主线结构稳定、README/TODO 能清楚交代模块边界，而且当前最大的剩余缺口主要收缩到 primary 文献 PDF/MinerU，而不是源码主文仍未成形。
 

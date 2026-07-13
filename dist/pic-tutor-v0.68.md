@@ -4,13 +4,15 @@
 
 本版新增显式 leapfrog position source crosswalk：只读核对 `PhysicalParticleContainer::Evolve()` 的 momentum-then-position 顺序、`UpdatePosition.H` 的时间中心速度公式、维度条件，以及 `PushSelector.H` / Higuera-Cary 接口的 split-push 边界。正文明确相邻 Full plotfile 位置差只能构造 velocity proxy，不能冒充直接 half-step attribute；Vay Appendix B 专门圆轨道输出仍未接入。
 
+本版又补入 Vay Appendix B 窄化 uniform-B runtime proxy：三种 pusher 各生成 81 个 Full plotfile，离散 phase、position-update velocity proxy、gyroradius proxy 和动量范数均通过窄 gate；报告分开记录最终 plotfile 写出后的 `ComputeDivE` finalize tail，不把它误读成 pusher 物理失败。该结果仍是 proxy-level bounded reproduction，不是直接 half-step attribute 或论文图形逐点复现。
+
 本版新增 Boris 1970 论文专属 metadata/access contract：DTIC `ADA023511` 的书目身份已固定，PDF 限流响应和原始 proceedings 全文缺失边界已记录；第 4 章以 Birdsall 1985 二手全文推导和 WarpX `UpdateMomentumBoris.H` 源码支撑算法解释，不宣称完成 Boris 1970 原文逐页核对。
 
 本版又新增 Boris 当前 WarpX source crosswalk contract：只读核对 `UpdateMomentumBoris.H` 的 half-push、gamma/磁旋转、半角重标定以及 `PushSelector.H` 的 Boris/辐射反作用分派；这是当前实现证据，不替代原始 proceedings 全文。
 
 本版又新增 Yee 当前 WarpX FDTD source crosswalk contract：只读核对 `CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp`、`EvolveE.cpp` 的 CFL、交错差分和 solver dispatch；这是现代实现证据，不替代 IEEE 1966 原文。
 
-本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access audit、章节/源码映射均通过；Vay Appendix B 圆轨道仍是边界，Higuera Poincare section/invariant consumer 已补入，但 topology classifier 尚未自动化。
+本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access audit、章节/源码映射均通过；Vay Appendix B 已补入 bounded proxy-level uniform-B contract，但直接 half-step attribute 与论文图形逐点复现仍是边界，Higuera Poincare section/invariant consumer 和 sampled topology classifier 已接入但不构成完整 Fig. 2 gate。
 
 本版又新增 `larmor` 逐帧离散轨道合同：6 个 Full plotfile 的时间序列和粒子状态检查通过，报告记录了 `B_y`、`gamma` 与每个输出间隔的 Boris rotation-angle；当前仍不把该 AMR/PML/div-cleaning case 升级为论文专门 runtime reproduction。
 
@@ -26,7 +28,7 @@
 
 本版又补入 dense `p_y=0.2..2.8` family 和 64³ `p_y=1.6/1.8` resolution control：Vay 共振窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，但仍只标记为 resonance-sensitive invariant screen，不提升为 two-fold island topology reproduction。
 
-本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 155 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
+本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 158 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
 
@@ -4666,7 +4668,7 @@ R=\frac{\|\mathbf v^{i+1/2}\|}{\omega_c}
 =\left[1+\left(\frac{\omega_c\Delta t}{2}\right)^2\right]^{1/2}\frac{\|\mathbf v^i\|}{\omega_c}.
 $$
 
-所以“Vay 在任意时间步都给出正确 gyroradius”必须加限定：若用于位置推进的半步速度满足 `\|\mathbf v^{i+1/2}\|=v_0`，则 `R=v_0/\omega_c`；若把整数时刻速度直接当作 `v_0`，仍会出现与 Boris 类似的放大因子。pusher 的动量更新、半步速度定义和位置更新必须一起检查。当前 WarpX `particle_pusher` 强 analysis 主要覆盖 force-free/drift-preservation，并没有按 Appendix B 的圆轨道、半步速度和 gyroradius 单独输出，因此不能声称已完成该论文附录的 runtime reproduction。
+所以“Vay 在任意时间步都给出正确 gyroradius”必须加限定：若用于位置推进的半步速度满足 `\|\mathbf v^{i+1/2}\|=v_0`，则 `R=v_0/\omega_c`；若把整数时刻速度直接当作 `v_0`，仍会出现与 Boris 类似的放大因子。pusher 的动量更新、半步速度定义和位置更新必须一起检查。当前已新增 `scripts/analyze_vay_appendix_b_runtime_contract.py`：在无 AMR/PML/自洽场的 81 帧 uniform-`B` case 上，Boris/Vay 的离散 phase、position-update velocity proxy、gyroradius proxy 和动量范数均通过窄 gate；Higuera-Cary 的 phase 偏差作为独立观测保留。这个结果是 bounded proxy-level reproduction，仍不等价于直接读取 half-step velocity 或论文图形逐点复现。
 
 本章两条核心 pusher 论文资产也已形成可重复合同：Vay 2008 的结果见 `runs/stage-c-validation/vay-2008-paper-asset/contract.{json,md}`，Higuera-Cary 2017 的结果见 `runs/stage-c-validation/higuera-2017-paper-asset/contract.{json,md}`。两者均通过全文、MinerU、中文讲解、章节/源码映射和 access boundary；后文涉及论文专门图形时，仍须遵守各自的 runtime reproduction 边界。
 
@@ -5354,7 +5356,7 @@ $$
 
 更新位置，见 `UpdatePosition.H:52-69`。因此 photon container 可以复用位置推进形式，但动量和沉积行为不同；光子容器的专门逻辑后续多物理章节再展开。
 
-这个调用顺序也限定了“半步速度”的证据边界：`UpdatePosition.H` 的注释明确把显式位置更新写成 `x(t+dt)=x(t)+v(t+dt/2)dt`，而公共 Full plotfile 只稳定提供位置和机械动量。相邻 plotfile 的位置差可以构造 position-update velocity proxy，但不能冒充直接读取的 half-step attribute。另一个容易忽略的分叉是 `PushSelector.H`：Boris 接受 `FirstHalf/SecondHalf/Full` 的 `momentum_push_type`，当前 Higuera-Cary 接口没有这一参数，因此不能把两者写成完全相同的 split-half 输出合同。该源码 crosswalk 由 `scripts/audit_position_leapfrog_source_crosswalk.py` 固化；当前结论是“时间中心位置更新已由源码证明，直接半步速度属性和 Vay Appendix B 专门圆轨道输出仍未接入”。
+这个调用顺序也限定了“半步速度”的证据边界：`UpdatePosition.H` 的注释明确把显式位置更新写成 `x(t+dt)=x(t)+v(t+dt/2)dt`，而公共 Full plotfile 只稳定提供位置和机械动量。相邻 plotfile 的位置差可以构造 position-update velocity proxy，但不能冒充直接读取的 half-step attribute。另一个容易忽略的分叉是 `PushSelector.H`：Boris 接受 `FirstHalf/SecondHalf/Full` 的 `momentum_push_type`，当前 Higuera-Cary 接口没有这一参数，因此不能把两者写成完全相同的 split-half 输出合同。该源码 crosswalk 由 `scripts/audit_position_leapfrog_source_crosswalk.py` 固化，Appendix-B 的 bounded runtime contract 由 `scripts/analyze_vay_appendix_b_runtime_contract.py` 固化；当前结论是“时间中心位置更新和 proxy-level Appendix-B evidence 已建立，直接半步速度属性和论文图形逐点复现仍未完成”。
 
 ## 4.11 RR、implicit 与 photon path
 

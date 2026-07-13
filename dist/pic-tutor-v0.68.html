@@ -829,6 +829,12 @@ momentum-then-position 顺序、<code>UpdatePosition.H</code>
 Higuera-Cary 接口的 split-push 边界。正文明确相邻 Full plotfile
 位置差只能构造 velocity proxy，不能冒充直接 half-step attribute；Vay
 Appendix B 专门圆轨道输出仍未接入。</p>
+<p>本版又补入 Vay Appendix B 窄化 uniform-B runtime proxy：三种 pusher
+各生成 81 个 Full plotfile，离散 phase、position-update velocity
+proxy、gyroradius proxy 和动量范数均通过窄 gate；报告分开记录最终
+plotfile 写出后的 <code>ComputeDivE</code> finalize tail，不把它误读成
+pusher 物理失败。该结果仍是 proxy-level bounded reproduction，不是直接
+half-step attribute 或论文图形逐点复现。</p>
 <p>本版新增 Boris 1970 论文专属 metadata/access contract：DTIC
 <code>ADA023511</code> 的书目身份已固定，PDF 限流响应和原始 proceedings
 全文缺失边界已记录；第 4 章以 Birdsall 1985 二手全文推导和 WarpX
@@ -845,9 +851,10 @@ Boris/辐射反作用分派；这是当前实现证据，不替代原始 proceed
 原文。</p>
 <p>本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38
 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access
-audit、章节/源码映射均通过；Vay Appendix B 圆轨道仍是边界，Higuera
-Poincare section/invariant consumer 已补入，但 topology classifier
-尚未自动化。</p>
+audit、章节/源码映射均通过；Vay Appendix B 已补入 bounded proxy-level
+uniform-B contract，但直接 half-step attribute
+与论文图形逐点复现仍是边界，Higuera Poincare section/invariant consumer
+和 sampled topology classifier 已接入但不构成完整 Fig. 2 gate。</p>
 <p>本版又新增 <code>larmor</code> 逐帧离散轨道合同：6 个 Full plotfile
 的时间序列和粒子状态检查通过，报告记录了
 <code>B_y</code>、<code>gamma</code> 与每个输出间隔的 Boris
@@ -886,7 +893,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 155 条 <code>contract.json</code>，保留原始
+汇总本地 158 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
@@ -7692,11 +7699,14 @@ gyroradius”必须加限定：若用于位置推进的半步速度满足
 <code>\|\mathbf v^{i+1/2}\|=v_0</code>，则
 <code>R=v_0/\omega_c</code>；若把整数时刻速度直接当作
 <code>v_0</code>，仍会出现与 Boris 类似的放大因子。pusher
-的动量更新、半步速度定义和位置更新必须一起检查。当前 WarpX
-<code>particle_pusher</code> 强 analysis 主要覆盖
-force-free/drift-preservation，并没有按 Appendix B 的圆轨道、半步速度和
-gyroradius 单独输出，因此不能声称已完成该论文附录的 runtime
-reproduction。</p>
+的动量更新、半步速度定义和位置更新必须一起检查。当前已新增
+<code>scripts/analyze_vay_appendix_b_runtime_contract.py</code>：在无
+AMR/PML/自洽场的 81 帧 uniform-<code>B</code> case 上，Boris/Vay 的离散
+phase、position-update velocity proxy、gyroradius proxy
+和动量范数均通过窄 gate；Higuera-Cary 的 phase
+偏差作为独立观测保留。这个结果是 bounded proxy-level
+reproduction，仍不等价于直接读取 half-step velocity
+或论文图形逐点复现。</p>
 <p>本章两条核心 pusher 论文资产也已形成可重复合同：Vay 2008 的结果见
 <code>runs/stage-c-validation/vay-2008-paper-asset/contract.{json,md}</code>，Higuera-Cary
 2017 的结果见
@@ -8649,8 +8659,10 @@ attribute。另一个容易忽略的分叉是 <code>PushSelector.H</code>：Bori
 接口没有这一参数，因此不能把两者写成完全相同的 split-half
 输出合同。该源码 crosswalk 由
 <code>scripts/audit_position_leapfrog_source_crosswalk.py</code>
-固化；当前结论是“时间中心位置更新已由源码证明，直接半步速度属性和 Vay
-Appendix B 专门圆轨道输出仍未接入”。</p>
+固化，Appendix-B 的 bounded runtime contract 由
+<code>scripts/analyze_vay_appendix_b_runtime_contract.py</code>
+固化；当前结论是“时间中心位置更新和 proxy-level Appendix-B evidence
+已建立，直接半步速度属性和论文图形逐点复现仍未完成”。</p>
 <h2 id="rrimplicit-与-photon-path">4.11 RR、implicit 与 photon path</h2>
 <p>前面 4.1 到 4.10 主要还是显式带电粒子的主线，但 WarpX
 的粒子推进并不只有这一条路径。至少还有三条不能忽略的分支：</p>

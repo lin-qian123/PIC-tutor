@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `156`
-- PASS: `113`
+- records: `158`
+- PASS: `115`
 - FAIL: `28`
 - UNKNOWN: `15`
-- boundary-classified: `24`
+- boundary-classified: `25`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -163,6 +163,8 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `tajima-dawson-1979-asset` | `PASS` | `PASS` | Tajima and Dawson 1979 paper-level full-text asset contract | `FULL_TEXT_MINERU_VERIFIED_EARLY_LWFA_SCALING_BASELINE_MODERN_WARPX_RUNTIME_NOT_SUBSTITUTED` | paper-backed early LWFA mechanism and scaling; not a current WarpX regression contract | `passed=True` |
 | `test_2d_pml_x_psatd` | `PASS` | `PASS` | Cartesian PSATD-PML initial-energy and low-reflectivity contract | `` | 2-rank project-level independent reader-side summary; official analysis separately rerun | `expected_initial_energy=7.282940112203595e-08`, `final_energy=6.897268359469654e-14`, `initial_energy=7.282940112203606e-08`, `initial_reference_relative_error=1.453796362122656e-15`, `passed=True` |
 | `vay-2008-paper-asset` | `PASS` | `BOUNDARY` | Vay 2008 Chapter 4 pusher paper asset contract | `FULLTEXT_SOURCE_GROUNDED_FRAME_CONSISTENCY_APPENDIX_BOUNDARY` | local full-text PDF and MinerU package support Vay frame-consistency, explicit-gamma and gyroradius explanations; dedicated Appendix-B runtime reproduction remains open | `passed=True` |
+| `vay-appendix-b-runtime-proxy` | `PASS` | `BOUNDARY` | Vay Appendix-B bounded uniform-B runtime proxy | `VAY_APPENDIX_B_RUNTIME_PROXY_PASS_DIRECT_HALF_STEP_ATTRIBUTE_BOUNDARY` | 81-frame case-local uniform-B orbit; discrete phase, position-update velocity, and gyroradius proxy; not a direct half-step attribute or publisher-figure reproduction | `max_gyroradius_proxy_relative_error=4.773959097091316e-15`, `max_momentum_norm_relative_spread=1.0520084362000346e-14`, `max_phase_error_rad=4.198436629071489e-05`, `max_position_update_velocity_proxy_relative_error=1.3362892364672708e-14`, `passed=True` |
+| `vay_appendix_b_orbit` | `PASS` | `PASS` | dedicated uniform-B Boris/Vay/Higuera-Cary orbit comparison | `` |  | `passed=True` |
 | `villasenor-1992-paper-asset` | `PASS` | `PASS` | Villasenor-Buneman 1992 Chapter 5 deposition paper asset contract | `LOCAL_FULLTEXT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_PROVENANCE_PENDING` | local full-text PDF and MinerU package support a first-round formula/source walkthrough; publisher provenance and final-formula transcription remain open | `passed=True` |
 | `villasenor-source-contract` | `PASS` | `PASS` | Villasenor crossing-driven segment source skeleton | `` | read-only source audit; not a runtime or kernel numerical regression | `anchor_count=16`, `passed=True`, `passed_anchor_count=16` |
 | `villasenor_formula_contract` | `PASS` | `PASS` | 2D four-boundary and 3D cross-term flux/volume identities plus arbitrary crossing-split displacement closure | `` | paper formula and geometric segmentation identities; not a WarpX kernel equivalence or end-to-end regression | `max_3d_face_sum_residual=1.7763568394002505e-15`, `max_3d_volume_closure_residual=1.7763568394002505e-15`, `max_crossing_count=6`, `max_flux_sum_residual=4.440892098500626e-16`, `max_four_boundary_residual=4.440892098500626e-16`, `max_segment_sum_residual=4.440892098500626e-16`, `passed=True` |

@@ -4,7 +4,9 @@
 
 2026-07-13：第 4 章新增显式 leapfrog position source crosswalk，核对 momentum-then-position 顺序、时间中心速度公式、维度分支和 Higuera-Cary split-push 边界；直接 half-step attribute 与 Vay Appendix B 专门圆轨道仍保留为后续验证项。
 
-v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 156 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
+2026-07-13：第 4 章新增 Vay Appendix B 窄化 uniform-B runtime proxy contract；三种 pusher 各 81 帧，离散 phase、速度 proxy、gyroradius proxy 和动量范数 gate 通过，finalize tail 与 physics data contract 分开记录。
+
+v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 158 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
 
 2026-07-13：第 7 章新增 LeeCPC2015 paper/source/regression crosswalk：accepted manuscript 的 PSTD 与 reflection recurrence、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 的实现表面、以及官方 `<1e-6` reflectivity consumer 均由只读 contract 交叉验收；仍保留 publisher-formatted CPC PDF 和逐系数等价缺失边界。
 
@@ -35,7 +37,7 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 156 条验
 
 2026-07-13：第 4 章补入 Vay 2008 Appendix A/B 的显式 `\gamma` 求解和 gyroradius 边界，并明确当前 WarpX `particle_pusher` analysis 尚未覆盖 Appendix B 的专门圆轨道复现。
 
-2026-07-13：完成第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：分别为 7 页/38 图和 9 页/44 图，包含全文、MinerU、中文讲解、源码映射、access audit 和 runtime boundary；Vay Appendix B 专门圆轨道仍未完成，Higuera Poincare section/invariant consumer 已完成，但 topology classifier 仍未自动化。
+2026-07-13：完成第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：分别为 7 页/38 图和 9 页/44 图，包含全文、MinerU、中文讲解、源码映射、access audit 和 runtime boundary；Vay Appendix B 已有 bounded proxy-level uniform-B contract，但直接 half-step attribute 与论文图形逐点复现仍未完成，Higuera Poincare section/invariant consumer 和 sampled topology classifier 已接入但不构成完整 Fig. 2 gate。
 
 2026-07-13：新增 `larmor` 逐帧离散轨道合同：6 个 Full plotfile 的时间、粒子数、有限状态、cadence 和 Boris rotation-angle 参考量均通过独立脚本提取；该增强仍不等价于 Vay Appendix B 或 Higuera-Cary Poincare topology 专门复现。
 

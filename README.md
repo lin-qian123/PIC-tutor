@@ -1,10 +1,12 @@
 # PIC-tutor
 
-当前成书版本为 `v0.68`，对应 319 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract contract、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
+当前成书版本为 `v0.68`，对应 319 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract contract、Boris 1970 metadata/access contract、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 152 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
+v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 153 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
+
+2026-07-13：新增 Boris 1970 论文专属 metadata/access contract，记录 DTIC `ADA023511` 的书目身份和 PDF 限流边界；第 4 章采用 Birdsall 1985 二手推导与 WarpX `UpdateMomentumBoris.H` 源码解释，未把原始 proceedings 全文缺口隐藏为已完成精读。
 
 2026-07-13：精修第 5 章结论段：删除重复的 Esirkepov publisher-PDF 待办，修正过期的 `v0.40` 阶段口径为当前 v0.68 源码基线；未改变 publisher compare、geometry/order 和 AMR 边界。
 

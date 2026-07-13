@@ -823,6 +823,11 @@ boosted-frame / NCI</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版新增 Boris 1970 论文专属 metadata/access contract：DTIC
+<code>ADA023511</code> 的书目身份已固定，PDF 限流响应和原始 proceedings
+全文缺失边界已记录；第 4 章以 Birdsall 1985 二手全文推导和 WarpX
+<code>UpdateMomentumBoris.H</code> 源码支撑算法解释，不宣称完成 Boris
+1970 原文逐页核对。</p>
 <p>本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38
 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access
 audit、章节/源码映射均通过；Vay Appendix B 圆轨道仍是边界，Higuera
@@ -866,7 +871,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 152 条 <code>contract.json</code>，保留原始
+汇总本地 153 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
@@ -905,7 +910,7 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 发表元数据、Section 1–5、Eq.(23)、二阶 spline 线索与 publisher PDF
 缺失状态共 8 项检查全部通过。该 contract
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
-<p>当前合订 PDF 为 318 页；本 v0.68 版本在 v0.67
+<p>当前合订 PDF 为 319 页；本 v0.68 版本在 v0.67
 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015
 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整
 Gauss-law 闭环。</p>
@@ -7459,6 +7464,15 @@ impulse，磁场部分是速度空间旋转；随后再把旋转压成
 <code>1d2v/1d3v</code>
 和真正的一维动力学，这正好解释了为什么即使空间维数较低，本章后面讨论的
 mover 仍必须保留多速度分量与磁旋转结构。</p>
+<p>Boris 1970 的原始历史位置需要单独标注边界：项目已固定 J. P. Boris
+的会议论文书目和 DTIC <code>ADA023511</code> 入口，但 2026-07-13 的 PDF
+请求被限流，当前没有可逐页核对的会议论文 PDF、MinerU
+或图集。因此本章的算法推导明确来自 Birdsall-Langdon 1985
+的二手全文讲解，当前实现则回到
+<code>../warpx/Source/Particles/Pusher/UpdateMomentumBoris.H</code>
+和已有 runtime contract；这三层证据不应合并成“已完成 Boris 1970
+原文精读”。边界由
+<code>scripts/audit_boris_1970_metadata_contract.py</code> 固化。</p>
 <p>物理上可以先记住：</p>
 <ul>
 <li>Boris：经典、鲁棒、磁场部分近似旋转，长期性质好。</li>
@@ -25924,7 +25938,7 @@ reconstruction <code>&lt; 3.1e-16</code></td>
 也不等价于确定性 <code>1e-9</code>
 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema
 contract、性能 gate 和采样统计边界。公开仓库中的
-<code>docs/public-evidence-index.{json,md}</code> 进一步提供 152
+<code>docs/public-evidence-index.{json,md}</code> 进一步提供 153
 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。</p>
 <p>当前证据等级应写成：Langmuir
 已有运行级解析频率、场误差和最终守恒证据；uniform plasma
@@ -26236,8 +26250,9 @@ PDF + MinerU + 中文讲解</td>
 <tr>
 <td>第 4 章 粒子推进器</td>
 <td>中高</td>
-<td><code>Vay 2008</code>、<code>Higuera-Cary 2017</code></td>
-<td><code>Boris</code> 历史源头仍缺</td>
+<td><code>Boris 1970</code> metadata
+contract、<code>Birdsall 1985</code>、<code>Vay 2008</code>、<code>Higuera-Cary 2017</code></td>
+<td>原始 Boris 1970 会议论文 PDF 仍缺</td>
 </tr>
 <tr>
 <td>第 5 章 沉积与形函数</td>
@@ -26300,6 +26315,13 @@ regression 很强</td>
 </ul></li>
 <li><code>Boris</code> 原始文献
 <ul>
+<li>已建立
+<code>1970_Boris_Relativistic_plasma_simulation_optimization_of_a_hybrid_code</code>
+的 metadata/access contract；DTIC PDF
+仍受限流，当前只把书目身份固定下来。</li>
+<li>下一步是通过 DTIC 重试、机构访问或合法镜像获取原始 proceedings
+PDF，再补 MinerU 和逐页核对；在此之前不把 Birdsall 二手推导写成 Boris
+原文证据。</li>
 <li>继续补第 4 章的 pusher 历史链。</li>
 </ul></li>
 </ol>

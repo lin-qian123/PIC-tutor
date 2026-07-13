@@ -114,7 +114,7 @@
 | 第 1 章 动理学模型 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Hockney-Eastwood`、更细的 particle-mesh heating 原始文献 |
 | 第 2 章 PIC 总循环 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Yee 1966` 原始入口 |
 | 第 3/3A 章 主循环与初始化 | 中低 | 以源码为主 | 需要把基础文献和工程论文绑定得更明确 |
-| 第 4 章 粒子推进器 | 中高 | `Vay 2008`、`Higuera-Cary 2017` | `Boris` 历史源头仍缺 |
+| 第 4 章 粒子推进器 | 中高 | `Boris 1970` metadata contract、`Birdsall 1985`、`Vay 2008`、`Higuera-Cary 2017` | 原始 Boris 1970 会议论文 PDF 仍缺 |
 | 第 5 章 沉积与形函数 | 中等 | Esirkepov 与 Villasenor 两条 charge-conserving 主线都已有第一轮 paper-backed 资产 | 仍需把两篇论文系统回写正文；Esirkepov 还缺 CPC 定稿对照 |
 | 第 6 章 场求解器 | 高 | `Godfrey 2014`、`Lehe 2016`、`Kirchen 2016` | 更多 validation/engineering 线，而不是 paper 主干 |
 | 第 7 章 边界、PML 与 AMR | 中等偏低 | `Berenger 1994/1996` 有 bibliographic anchor，源码和 regression 很强 | `LeeCPC2015` 正文仍缺 |
@@ -136,6 +136,8 @@
 5. `Hockney-Eastwood` 或其 article-level fallback
    - 继续补第 1 / 2 章的 particle-mesh foundations。
 6. `Boris` 原始文献
+   - 已建立 `1970_Boris_Relativistic_plasma_simulation_optimization_of_a_hybrid_code` 的 metadata/access contract；DTIC PDF 仍受限流，当前只把书目身份固定下来。
+   - 下一步是通过 DTIC 重试、机构访问或合法镜像获取原始 proceedings PDF，再补 MinerU 和逐页核对；在此之前不把 Birdsall 二手推导写成 Boris 原文证据。
    - 继续补第 4 章的 pusher 历史链。
 
 这个顺序和早期版本相比已经变了。原因很简单：第 6 章现在已有较强 paper 主干，而第 5 / 7 章的 paper closure 反而更薄。

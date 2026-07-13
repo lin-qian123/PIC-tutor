@@ -194,6 +194,8 @@ WarpX 的单粒子动量推进分派在 `../warpx/Source/Particles/Pusher/PushSe
 
 这一节背后的经典来源可以直接回到 Birdsall-Langdon 1985 第一分卷 `4-3` 到 `4-5`。那里把磁推进的核心先写成几何分裂：电场部分是半步 impulse，磁场部分是速度空间旋转；随后再把旋转压成 `t=\tan(\theta/2)`、`s=2t/(1+t^2)`、`c=(1-t^2)/(1+t^2)` 这组半角变量，并进一步给出向量 Boris 形式。对本章来说，这个来源有两个价值。第一，WarpX 的 Boris 更新不是孤立经验公式，而是这条 “half-accel + rotation + half-accel” 离散合同的现代实现。第二，Birdsall 在 `4-5` 里明确区分了 `1d2v/1d3v` 和真正的一维动力学，这正好解释了为什么即使空间维数较低，本章后面讨论的 mover 仍必须保留多速度分量与磁旋转结构。
 
+Boris 1970 的原始历史位置需要单独标注边界：项目已固定 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但 2026-07-13 的 PDF 请求被限流，当前没有可逐页核对的会议论文 PDF、MinerU 或图集。因此本章的算法推导明确来自 Birdsall-Langdon 1985 的二手全文讲解，当前实现则回到 `../warpx/Source/Particles/Pusher/UpdateMomentumBoris.H` 和已有 runtime contract；这三层证据不应合并成“已完成 Boris 1970 原文精读”。边界由 `scripts/audit_boris_1970_metadata_contract.py` 固化。
+
 物理上可以先记住：
 
 - Boris：经典、鲁棒、磁场部分近似旋转，长期性质好。

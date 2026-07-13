@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `152`
-- PASS: `109`
+- records: `153`
+- PASS: `110`
 - FAIL: `28`
 - UNKNOWN: `15`
-- boundary-classified: `21`
+- boundary-classified: `22`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -15,10 +15,11 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `2d_flux_injection_from_eb_mpi2` | `PASS` | `PASS` | test_2d_flux_injection_from_eb | `` |  | `contract_pass=True`, `eb_outside_pass=True`, `expected_weight=6.283185307179586e-08`, `min_radius_ratio=0.9986533355394428`, `particle_count=50235`, `total_weight=6.279375000000002e-08`, `total_weight_pass=True`, `total_weight_relative_error=0.0006064292223293722` |
 | `3d_flux_injection_from_eb_mpi2` | `PASS` | `PASS` | test_3d_flux_injection_from_eb | `` |  | `contract_pass=True`, `eb_outside_pass=True`, `expected_weight=2.5132741228718345e-07`, `min_radius_ratio=0.9963803673196601`, `particle_count=801308`, `total_weight=2.504087500000001e-07`, `total_weight_pass=True`, `total_weight_relative_error=0.003655241100933395` |
 | `abe-1975-abstract` | `PASS` | `BOUNDARY` | Abe et al. 1975 bounded abstract-level literature contract | `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING` | abstract-level evidence only; no publisher-PDF or line-by-line claim | `passed=True` |
+| `boris-1970-metadata` | `PASS` | `BOUNDARY` | Boris 1970 metadata and access-boundary contract | `METADATA_BACKED_HISTORICAL_SOURCE_FULL_TEXT_MISSING_SECONDARY_DERIVATION_AVAILABLE` | bibliographic identity and access boundary only; no original proceedings PDF or line-by-line claim | `passed=True` |
 | `charge-deposition-bridge-source` | `PASS` | `PASS` | ABLASTR charge-deposition bridge source contract | `` | source mapping only; not a numerical charge-deposition regression | `anchor_count=13`, `missing_count=0`, `passed=True` |
 | `deposition-geometry-order-source` | `PASS` | `PASS` | deposition geometry/order source dispatch | `` | read-only source audit; does not claim runtime coverage for every geometry/order combination | `anchor_count=53`, `passed=True`, `passed_anchor_count=53` |
 | `esirkepov-2001-paper-asset` | `PASS` | `BOUNDARY` | Esirkepov 1999/2001 Chapter 5 deposition paper asset contract | `PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING` | author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open | `passed=True` |
-| `esirkepov-bounded-compare` | `PASS` | `BOUNDARY` | Esirkepov 2001 bounded preprint/publication comparison | `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING` | bounded structural compare only; no publisher-PDF line-by-line claim | `passed=True` |
+| `esirkepov-bounded-compare` | `PASS` | `BOUNDARY` | Esirkepov 2001 bounded preprint/publication comparison | `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING` | bounded structural and abstract-level compare only; no publisher-PDF line-by-line claim | `passed=True` |
 | `esirkepov-density-decomposition` | `PASS` | `PASS` | Esirkepov second-order density decomposition identity | `` | paper formula / algebra layer; not a WarpX kernel or end-to-end regression | `max_residual=8.881784197001252e-16`, `passed=True`, `sample_count=10000` |
 | `esirkepov-notation-source-contract` | `PASS` | `PASS` | Esirkepov paper-to-WarpX notation bridge | `` | source mapping only; does not claim publisher-PDF line-by-line equivalence or all geometry/order runtime coverage | `anchor_count=14`, `passed=True`, `passed_anchor_count=14` |
 | `esirkepov-paper-asset-contract` | `PASS` | `BOUNDARY` | Esirkepov 1999/2001 Chapter 5 deposition paper asset contract | `PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING` | author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open | `passed=True` |
@@ -108,7 +109,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `implicit_villasenor_2d_picmi_mpi2` | `PASS` | `PASS` | implicit Villasenor reader-side energy/Gauss-law contract; not bitwise kernel equivalence | `` |  | `fields_finite=True`, `passed=True` |
 | `initial_distribution_full_current` | `UNKNOWN` | `UNKNOWN` | test_3d_initial_distribution | `` |  | `default_checksum_max_relative_difference=0.00318`, `max_official_analysis_relative_difference=0.018930689633379655`, `status=pass_with_sampling_tolerance` |
 | `ionization-dsmc-source-contract` | `PASS` | `PASS` | 3D DSMC electron/ion-impact source and regression wiring | `ION_IMPACT_CHECKSUM_ONLY_ELECTRON_IMPACT_ANALYSIS_ACTIVE` | CMake/input/analysis source wiring; no runtime physics claim | `anchor_count=10`, `passed=True`, `passed_anchor_count=10` |
-| `leecpc2015-accepted-manuscript-contract` | `PASS` | `BOUNDARY` | LeeCPC2015 accepted-manuscript source-grounded literature contract | `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING` | seven-page accepted/submitted manuscript supports first-round PML formula and source mapping; publisher-formatted CPC comparison remains open | `passed=True` |
+| `leecpc2015-accepted-manuscript-contract` | `PASS` | `BOUNDARY` | LeeCPC2015 accepted-manuscript source-grounded literature contract | `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING` | seven-page accepted/submitted manuscript plus indexed publisher abstract support first-round PML formula and source mapping; publisher-formatted CPC comparison remains open | `passed=True` |
 | `leecpc2015-source-crosswalk` | `PASS` | `BOUNDARY` | LeeCPC2015 paper/source/regression crosswalk | `ACCEPTED_MANUSCRIPT_SOURCE_CROSSWALK_PUBLISHER_PDF_STILL_MISSING` | paper anchors, WarpX implementation surfaces, and official regression wiring; no publisher-PDF or coefficient-equivalence claim | `passed=True` |
 | `parameter-map-surface-contract` | `PASS` | `PASS` | WarpX parameter-map structural surface | `STRUCTURAL_SURFACE_PASS_MANUAL_PARSER_REVIEW_REMAINS` | row shape, current chapter labels, and source-path existence; not semantic parser-function verification | `data_row_count=445`, `passed=True` |
 | `particle-mesh-1974-abstract` | `PASS` | `BOUNDARY` | 1974 particle-mesh bounded abstract-level literature contracts | `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING` | abstract-level evidence only; no publisher-PDF or line-by-line claim | `passed=True` |

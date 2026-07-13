@@ -2,7 +2,7 @@
 
 当前 v0.68 合订 PDF 为 319 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
-v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 152 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
+v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 153 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
 
 2026-07-13：第 7 章新增 LeeCPC2015 paper/source/regression crosswalk：accepted manuscript 的 PSTD 与 reflection recurrence、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 的实现表面、以及官方 `<1e-6` reflectivity consumer 均由只读 contract 交叉验收；仍保留 publisher-formatted CPC PDF 和逐系数等价缺失边界。
 
@@ -19,6 +19,7 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 152 条验
 2026-07-13：第 7 章补入 LeeCPC2015 的 publisher abstract boundary：高阶 solver 到无限阶 pseudo-spectral limit 的摘要事实可引用，但 accepted manuscript 与 publisher-formatted CPC PDF 仍严格分层。
 
 2026-07-13：第 3A 章新增 Birdsall `3A ES1` 到 WarpX `InitData()/Evolve()` 的阶段映射表，连接历史 PIC 最小程序语义与现代 AMR/solver/diagnostics 对象图，同时保留不可等同边界。
+2026-07-13：第 4 章新增 Boris 1970 metadata/access boundary：固定 DTIC `ADA023511` 书目身份，记录 PDF 限流和原始全文缺失；算法推导与当前实现分别回链 Birdsall 1985 和 WarpX 源码。
 
 2026-07-13：完成 `LeeCPC2015` accepted/submitted manuscript contract：7 页全文、13 张抽取图片、MinerU 结构、公式锚点和中文讲解均通过；第 7 章可使用第一轮 paper-backed PML 解释，但不把该资产标记为 CPC publisher-formatted 定稿。
 

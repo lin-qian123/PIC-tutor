@@ -2,6 +2,8 @@
 
 # PIC-tutor v0.68
 
+本版新增 Boris 1970 论文专属 metadata/access contract：DTIC `ADA023511` 的书目身份已固定，PDF 限流响应和原始 proceedings 全文缺失边界已记录；第 4 章以 Birdsall 1985 二手全文推导和 WarpX `UpdateMomentumBoris.H` 源码支撑算法解释，不宣称完成 Boris 1970 原文逐页核对。
+
 本版新增第 4 章 Vay 2008/Higuera-Cary 2017 论文资产合同：Vay 7 页/38 图、Higuera-Cary 9 页/44 图，全文、MinerU、中文讲解、README、access audit、章节/源码映射均通过；Vay Appendix B 圆轨道仍是边界，Higuera Poincare section/invariant consumer 已补入，但 topology classifier 尚未自动化。
 
 本版又新增 `larmor` 逐帧离散轨道合同：6 个 Full plotfile 的时间序列和粒子状态检查通过，报告记录了 `B_y`、`gamma` 与每个输出间隔的 Boris rotation-angle；当前仍不把该 AMR/PML/div-cleaning case 升级为论文专门 runtime reproduction。
@@ -18,7 +20,7 @@
 
 本版又补入 dense `p_y=0.2..2.8` family 和 64³ `p_y=1.6/1.8` resolution control：Vay 共振窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，但仍只标记为 resonance-sensitive invariant screen，不提升为 two-fold island topology reproduction。
 
-本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 152 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
+本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 153 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
 
@@ -34,7 +36,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 318 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 319 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -4498,6 +4500,8 @@ WarpX 的单粒子动量推进分派在 `../warpx/Source/Particles/Pusher/PushSe
 这说明输入参数选择的不是一个高层“粒子模块”，而是每个粒子在 `PushPX()` device loop 内调用的单粒子 momentum update。下面继续展开 Vay 与 Higuera-Cary 的源码。
 
 这一节背后的经典来源可以直接回到 Birdsall-Langdon 1985 第一分卷 `4-3` 到 `4-5`。那里把磁推进的核心先写成几何分裂：电场部分是半步 impulse，磁场部分是速度空间旋转；随后再把旋转压成 `t=\tan(\theta/2)`、`s=2t/(1+t^2)`、`c=(1-t^2)/(1+t^2)` 这组半角变量，并进一步给出向量 Boris 形式。对本章来说，这个来源有两个价值。第一，WarpX 的 Boris 更新不是孤立经验公式，而是这条 “half-accel + rotation + half-accel” 离散合同的现代实现。第二，Birdsall 在 `4-5` 里明确区分了 `1d2v/1d3v` 和真正的一维动力学，这正好解释了为什么即使空间维数较低，本章后面讨论的 mover 仍必须保留多速度分量与磁旋转结构。
+
+Boris 1970 的原始历史位置需要单独标注边界：项目已固定 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但 2026-07-13 的 PDF 请求被限流，当前没有可逐页核对的会议论文 PDF、MinerU 或图集。因此本章的算法推导明确来自 Birdsall-Langdon 1985 的二手全文讲解，当前实现则回到 `../warpx/Source/Particles/Pusher/UpdateMomentumBoris.H` 和已有 runtime contract；这三层证据不应合并成“已完成 Boris 1970 原文精读”。边界由 `scripts/audit_boris_1970_metadata_contract.py` 固化。
 
 物理上可以先记住：
 
@@ -16448,7 +16452,7 @@ $$
 | RZ electrostatic sphere | 官方 RZ，1 rank | `python scripts/analyze_rz_charge_volume_contract.py ...` | 官方轴向场 L2 gate；全域 rho-volume/particle-charge mismatch `< 1%` | `runs/stage-c-validation/rz_electrostatic_sphere/` |
 | RZ Langmuir multimode | case-local RZ sibling，1 rank，3 modes | `python scripts/analyze_rz_langmuir_multimode_contract.py ...` | `m=1/2` 实虚分量非零；theta=0 native-field/writeback reconstruction `< 3.1e-16` | `runs/stage-c-validation/rz_langmuir_multimode/` |
 
-这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供 152 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
+这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供 153 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
 
 当前证据等级应写成：Langmuir 已有运行级解析频率、场误差和最终守恒证据；uniform plasma 已有粒子数、能量统计和 checkpoint/restart 逐字段证据，但短时运行的总能量变化不能直接升级成热平衡守恒通过；FieldProbe 已确认 1/2-rank 输出一致，并通过 `lambda/32` 的 matched-time 解析 gate，但官方 `lambda/16` coarse case 仍失败；`reduced_diags` 已有 60 项 compact observable 与 full-state reference 的 2-rank 逐项通过证据，并有 Heuristic/Timers 两条 `LoadBalanceCosts` efficiency improvement 证据；`ColliderRelevant` 已有 2-rank 的 chi/角度/ParticleExtrema/dL/dt 聚合合同证据；`DifferentialLuminosity` 已有 leptons、AMR 和 photons 三组 1D/2D 解析谱通过证据；laser-ion 已有 `ParticleHistogram2D` 的 2-rank openPMD writer 合同证据；`BeamRelevant` 已有最小 3D 的 schema/截断高斯束统计合同证据；完整 initial-distribution family 已有当前 checkout 的官方分布 analysis 通过证据，并在显式 `5e-3` sampling tolerance 下通过 checksum，但不宣称 `1e-9` 确定性相等；native Gaussian external-file 变体已有 1-rank 项目级束斑物理合同，但官方 CMake analysis 缺失仍保留为 upstream registration 缺口；RZ electrostatic sphere 又补充了官方场/能量 gate 与独立 rho-volume charge closure；RZ 三模 Langmuir sibling 又补充了 `m>0` diagnostics writeback 和 theta=0 重建合同，但它是 project-level case-local evidence，不能替代官方单模 CMake analysis。JSON/Markdown 报告和脚本都保存在项目内，运行产物仍按 case-local 目录归档。
 
@@ -16585,7 +16589,7 @@ $$
 | 第 1 章 动理学模型 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Hockney-Eastwood`、更细的 particle-mesh heating 原始文献 |
 | 第 2 章 PIC 总循环 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Yee 1966` 原始入口 |
 | 第 3/3A 章 主循环与初始化 | 中低 | 以源码为主 | 需要把基础文献和工程论文绑定得更明确 |
-| 第 4 章 粒子推进器 | 中高 | `Vay 2008`、`Higuera-Cary 2017` | `Boris` 历史源头仍缺 |
+| 第 4 章 粒子推进器 | 中高 | `Boris 1970` metadata contract、`Birdsall 1985`、`Vay 2008`、`Higuera-Cary 2017` | 原始 Boris 1970 会议论文 PDF 仍缺 |
 | 第 5 章 沉积与形函数 | 中等 | Esirkepov 与 Villasenor 两条 charge-conserving 主线都已有第一轮 paper-backed 资产 | 仍需把两篇论文系统回写正文；Esirkepov 还缺 CPC 定稿对照 |
 | 第 6 章 场求解器 | 高 | `Godfrey 2014`、`Lehe 2016`、`Kirchen 2016` | 更多 validation/engineering 线，而不是 paper 主干 |
 | 第 7 章 边界、PML 与 AMR | 中等偏低 | `Berenger 1994/1996` 有 bibliographic anchor，源码和 regression 很强 | `LeeCPC2015` 正文仍缺 |
@@ -16607,6 +16611,8 @@ $$
 5. `Hockney-Eastwood` 或其 article-level fallback
    - 继续补第 1 / 2 章的 particle-mesh foundations。
 6. `Boris` 原始文献
+   - 已建立 `1970_Boris_Relativistic_plasma_simulation_optimization_of_a_hybrid_code` 的 metadata/access contract；DTIC PDF 仍受限流，当前只把书目身份固定下来。
+   - 下一步是通过 DTIC 重试、机构访问或合法镜像获取原始 proceedings PDF，再补 MinerU 和逐页核对；在此之前不把 Birdsall 二手推导写成 Boris 原文证据。
    - 继续补第 4 章的 pusher 历史链。
 
 这个顺序和早期版本相比已经变了。原因很简单：第 6 章现在已有较强 paper 主干，而第 5 / 7 章的 paper closure 反而更薄。

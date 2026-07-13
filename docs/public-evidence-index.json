@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 152,
+  "record_count": 153,
   "status_counts": {
-    "PASS": 109,
+    "PASS": 110,
     "FAIL": 28,
     "UNKNOWN": 15
   },
@@ -11,7 +11,7 @@
     "PASS": 97,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 21
+    "BOUNDARY": 22
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -63,6 +63,17 @@
       }
     },
     {
+      "case": "boris-1970-metadata",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Boris 1970 metadata and access-boundary contract",
+      "classification": "METADATA_BACKED_HISTORICAL_SOURCE_FULL_TEXT_MISSING_SECONDARY_DERIVATION_AVAILABLE",
+      "scope": "bibliographic identity and access boundary only; no original proceedings PDF or line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
       "case": "charge-deposition-bridge-source",
       "status": "PASS",
       "evidence_kind": "PASS",
@@ -105,7 +116,7 @@
       "evidence_kind": "BOUNDARY",
       "contract": "Esirkepov 2001 bounded preprint/publication comparison",
       "classification": "PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING",
-      "scope": "bounded structural compare only; no publisher-PDF line-by-line claim",
+      "scope": "bounded structural and abstract-level compare only; no publisher-PDF line-by-line claim",
       "metrics": {
         "passed": true
       }
@@ -1466,7 +1477,7 @@
       "evidence_kind": "BOUNDARY",
       "contract": "LeeCPC2015 accepted-manuscript source-grounded literature contract",
       "classification": "ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING",
-      "scope": "seven-page accepted/submitted manuscript supports first-round PML formula and source mapping; publisher-formatted CPC comparison remains open",
+      "scope": "seven-page accepted/submitted manuscript plus indexed publisher abstract support first-round PML formula and source mapping; publisher-formatted CPC comparison remains open",
       "metrics": {
         "passed": true
       }

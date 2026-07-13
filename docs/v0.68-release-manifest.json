@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 726,
-  "total_bytes": 27614934,
+  "entry_count": 727,
+  "total_bytes": 27622004,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1521041,
-      "sha256": "50ed15548516ee7547ac67f65ff755ceb5ef5d0fd6eb059045afdd9f7b5f32f4"
+      "bytes": 1521369,
+      "sha256": "3259d663141273b1f9e7203b1084a4cb23a3f328764171e4c527728a55296e4b"
     },
     {
       "path": "TODO.md",
-      "bytes": 1365049,
-      "sha256": "f54608825534366cd0138ce4587dc22108a77428fe0595539f53037c4063cad3"
+      "bytes": 1365300,
+      "sha256": "e14c6a257470b279351f657f4ac4ded2cbb63598709e75033e99d0ce693200c4"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5748708,
-      "sha256": "de53b2b19f033d337bc9deb4f8ad9ef95660672133e78b54ff034b35f449f353"
+      "bytes": 5750166,
+      "sha256": "7394a811313097a00c1f7f6987c5569dedc3f878eda6f3035ede2f32dbac926e"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1075569,
-      "sha256": "e3ffef26f02c681f0420de0235fec9abd5ec1296951a01e38e75efc8072df352"
+      "bytes": 1076930,
+      "sha256": "baa0ec33f8919688a21262b3d78e498499814a5f4da3c6b7a4ef7708d29c433c"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3378104,
-      "sha256": "3729fdb43b59ed0fec798dc5879a07441111edf9044b45204ff6b126604a21c0"
+      "bytes": 3375966,
+      "sha256": "83f66fd8d2890e845ecd1ae10cc10ce5138a853bd9d1ebb52f6ca488b61c2f36"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 82096,
-      "sha256": "e8bffbd8d719c8904ffa0fdee3e84759f72949986ad330e7d2428f51d80d2503"
+      "bytes": 82602,
+      "sha256": "97fa681ec9af36cfe7c60dd2b4ca24fe3561e2856957302bc00e4dc15bbb7894"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 53795,
-      "sha256": "a2c9759d534444c4fd0a45391b84ea3ab9b62545b48080230f18e91fe15851e3"
+      "bytes": 54148,
+      "sha256": "198a4bc0ec5491fc02d82f41bda4ef211b1b103a4845b59f9be65cffc94eb56b"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "e3c3b33602ae87cff7b92709842a66ade12d39c63301d3950e359a4e11deb5fa"
+      "sha256": "4877be23356525ff4dca2c0840b8ad1ea57c581a1e7bd6ac4b7c08b52ae82f34"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 43206,
-      "sha256": "cb5db5d3c7acd287da01108cfb1e140d0aa2725bb08d80c39ca09b5065b754b2"
+      "bytes": 43427,
+      "sha256": "69764ab7c61a7cb754d77c7b7365f1e6da8e1546c5e39589480572efab1d0882"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 63876,
-      "sha256": "88756f9f18662315ffc60ad595b73dd04e3b5b8666ab58a9c2603ac1d0c91ab8"
+      "bytes": 64208,
+      "sha256": "60a0b7f18c24bc0e0a749214d861ac16c93c08c8f8ace78ea984d54aeee3040a"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 145249,
-      "sha256": "57e65c4b7f5d370533a814801fc2ddaa03afaa7c1f6640133ebabeb24bc2c75d"
+      "bytes": 145831,
+      "sha256": "d96bf07458ce64f5736c58bc400e554d7d4b469c9946235ce0779fbca702c2cf"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -913,12 +913,12 @@
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
       "bytes": 111665,
-      "sha256": "b4c58de36189dbbfd1f1e8ca5668cbed1fc28563bf03632845d4ee0d0abea045"
+      "sha256": "ff332b260e0a4eb8b920d4d5099d0d8bd6b9b70f2ab185034b5ce22b23b4be09"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
-      "bytes": 13941,
-      "sha256": "bd7675234e02de6b82ad67fb20735854aaa404b38b349485bc78899b5be26e4d"
+      "bytes": 14388,
+      "sha256": "ff89667fb3cf43637c46cc16ceebbd682a7f83d36771336fe6a34d4ab6cba677"
     },
     {
       "path": "notes/code-reading/README.md",
@@ -2574,6 +2574,11 @@
       "path": "scripts/audit_abe_1975_abstract_contract.py",
       "bytes": 3064,
       "sha256": "fd109eb4fa67765164960c74e6d0f51d67b77109d2024a8c850277a5b5956cc7"
+    },
+    {
+      "path": "scripts/audit_boris_1970_metadata_contract.py",
+      "bytes": 3369,
+      "sha256": "724ea43fe6561aa46eac6558503979a983ff8381d83f1d39e97b7dece30dc2ef"
     },
     {
       "path": "scripts/audit_charge_deposition_bridge_contract.py",

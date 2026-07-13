@@ -2,6 +2,8 @@
 
 本版又补入第 5 章 geometry/order coverage gap register：7 项已知缺口被统一登记为 `BOUNDARY`、`UNPROVEN`、`PRE_PHYSICS_BOUNDARY` 或 `PARTIAL`，并分别绑定下一步证据入口。该 negative-space contract 只关闭缺口登记的文档歧义，不把未覆盖组合升级为 PASS。报告见 `runs/stage-c-validation/deposition-geometry-order-gap-register/contract.{json,md}`。
 
+本版又补入 Vay deposition geometry/order official wiring contract：18 项检查确认官方 2D/3D shape=3、2D shape=4、`divE-rho/epsilon_0` analysis consumer 和 RZ/1D/implicit source guard；分类为 `SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY`，不宣称完整 geometry/order runtime product。报告见 `runs/stage-c-validation/vay-geometry-order-wiring/contract.{json,md}`。
+
 本版又补入第 9 章文献路线资产合同：12 组检查绑定 A/B/C/D 证据层、八条核心文献目录、全局 literature map、生成式 inventory 以及 `TajimaDawson1982`、`Esirkepov 2001`、`LeeCPC2015`、`Yee 1966`、`Hockney-Eastwood` 的缺口声明。该合同只确认路线图与仓库资产一致，不替代论文逐式审校或 runtime physics proof。报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}`。
 
 本版又修正第 5 章 `5.11.1/5.11.2/5.11.3` 小节错序，并把小节单调性与重复编号纳入 v0.68 artifact verification。
@@ -12,7 +14,7 @@
 
 本版又修正第 8 章 `8.14.1` 孤立标题层级为正式 `8.14` 小节，并将正文验证矩阵的合同数口径更新为当前 `177` 条。
 
-本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `181` 条。
+本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `182` 条。
 
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 

@@ -4,6 +4,8 @@
 
 本版又补入第 5 章 geometry/order coverage gap register：7 项已知缺口被统一登记为 `BOUNDARY`、`UNPROVEN`、`PRE_PHYSICS_BOUNDARY` 或 `PARTIAL`，并分别绑定下一步证据入口。该 negative-space contract 只关闭缺口登记的文档歧义，不把未覆盖组合升级为 PASS。报告见 `runs/stage-c-validation/deposition-geometry-order-gap-register/contract.{json,md}`。
 
+本版又补入 Vay deposition geometry/order official wiring contract：18 项检查确认官方 2D/3D shape=3、2D shape=4、`divE-rho/epsilon_0` analysis consumer 和 RZ/1D/implicit source guard；分类为 `SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY`，不宣称完整 geometry/order runtime product。报告见 `runs/stage-c-validation/vay-geometry-order-wiring/contract.{json,md}`。
+
 本版又补入第 9 章文献路线资产合同：12 组检查绑定 A/B/C/D 证据层、八条核心文献目录、全局 literature map、生成式 inventory 以及 `TajimaDawson1982`、`Esirkepov 2001`、`LeeCPC2015`、`Yee 1966`、`Hockney-Eastwood` 的缺口声明。该合同只确认路线图与仓库资产一致，不替代论文逐式审校或 runtime physics proof。报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}`。
 
 本版又修正第 5 章 `5.11.1/5.11.2/5.11.3` 小节错序，并把小节单调性与重复编号纳入 v0.68 artifact verification。
@@ -14,7 +16,7 @@
 
 本版又修正第 8 章 `8.14.1` 孤立标题层级为正式 `8.14` 小节，并将正文验证矩阵的合同数口径更新为当前 `177` 条。
 
-本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引更新为 `178` 条。
+本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `181` 条。
 
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 
@@ -94,7 +96,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 324 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同、LeeCPC2015 publisher-abstract boundary、第 6 章 FieldSolver source crosswalk 和第 7 章 boundary/AMR source crosswalk，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 325 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同、LeeCPC2015 publisher-abstract boundary、第 6 章 FieldSolver source crosswalk 和第 7 章 boundary/AMR source crosswalk，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -9829,6 +9831,10 @@ RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on
 | Villasenor 非 XZ geometry/order family | `PARTIAL` | 每次增加一个带独立 consumer 的 sibling |
 | Vay geometry/order family | `PARTIAL` | 将支持路径与 RZ/1D source guard 分开逐项补证据 |
 | 跨 geometry/shape 的正式收敛阶 | `UNPROVEN` | 固定 observable、误差范数和 resolution family 后再做 study |
+
+Vay 这一行现在有了更具体的正向边界。`scripts/audit_vay_geometry_order_wiring.py` 对当前官方测试目录做 `18/18` 项只读核对：`vay_deposition` 提供 2D Cartesian/shape=3 和 3D Cartesian/shape=3 两条 `divE-rho/epsilon_0` analysis + checksum 入口，Langmuir 目录另有 2D/shape=4 sibling；源码同时保留 `doVayDepositionShapeN<1..4>` 分派和 RZ/1D/implicit guard。报告见 `runs/stage-c-validation/vay-geometry-order-wiring/contract.{json,md}`。
+
+这项结果关闭的是“Vay 官方 wiring 没有被统一登记”的索引缺口，分类仍是 `SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY`：它不等于 Vay 全部 geometry/order 的独立 runtime product，也不等于正式收敛阶。详细边界见 `notes/code-reading/particles/73-vay-geometry-order-wiring-contract.md`。
 
 维护台账见 `notes/code-reading/particles/72-deposition-geometry-order-gap-register.md`，由 `scripts/audit_deposition_geometry_order_gap_register.py` 验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。
 

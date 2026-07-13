@@ -49,7 +49,7 @@ def main() -> int:
                 "真实 intermediate-field/route ledger",
                 "兼容 PETSc/AMReX build",
                 "独立 consumer 的 sibling",
-                "RZ/1D source guard",
+                "官方 wiring contract",
                 "resolution family",
             )
         ),

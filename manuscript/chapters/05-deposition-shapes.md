@@ -2562,6 +2562,10 @@ RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on
 | Vay geometry/order family | `PARTIAL` | 将支持路径与 RZ/1D source guard 分开逐项补证据 |
 | 跨 geometry/shape 的正式收敛阶 | `UNPROVEN` | 固定 observable、误差范数和 resolution family 后再做 study |
 
+Vay 这一行现在有了更具体的正向边界。`scripts/audit_vay_geometry_order_wiring.py` 对当前官方测试目录做 `18/18` 项只读核对：`vay_deposition` 提供 2D Cartesian/shape=3 和 3D Cartesian/shape=3 两条 `divE-rho/epsilon_0` analysis + checksum 入口，Langmuir 目录另有 2D/shape=4 sibling；源码同时保留 `doVayDepositionShapeN<1..4>` 分派和 RZ/1D/implicit guard。报告见 `runs/stage-c-validation/vay-geometry-order-wiring/contract.{json,md}`。
+
+这项结果关闭的是“Vay 官方 wiring 没有被统一登记”的索引缺口，分类仍是 `SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY`：它不等于 Vay 全部 geometry/order 的独立 runtime product，也不等于正式收敛阶。详细边界见 `notes/code-reading/particles/73-vay-geometry-order-wiring-contract.md`。
+
 维护台账见 `notes/code-reading/particles/72-deposition-geometry-order-gap-register.md`，由 `scripts/audit_deposition_geometry_order_gap_register.py` 验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。
 
 ## 5.15 本章结论

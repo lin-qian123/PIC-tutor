@@ -79,6 +79,8 @@ def main() -> None:
                 "negative-space contract",
                 "RZ 默认 axis correction 下的 charge residual",
                 "跨 geometry/shape 的正式收敛阶",
+                "Vay 官方 wiring",
+                "SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY",
             )
         ),
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],

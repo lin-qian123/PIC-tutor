@@ -854,6 +854,13 @@ acquisition 排序练习</a></li>
 或 <code>PARTIAL</code>，并分别绑定下一步证据入口。该 negative-space
 contract 只关闭缺口登记的文档歧义，不把未覆盖组合升级为 PASS。报告见
 <code>runs/stage-c-validation/deposition-geometry-order-gap-register/contract.{json,md}</code>。</p>
+<p>本版又补入 Vay deposition geometry/order official wiring contract：18
+项检查确认官方 2D/3D shape=3、2D
+shape=4、<code>divE-rho/epsilon_0</code> analysis consumer 和
+RZ/1D/implicit source guard；分类为
+<code>SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY</code>，不宣称完整
+geometry/order runtime product。报告见
+<code>runs/stage-c-validation/vay-geometry-order-wiring/contract.{json,md}</code>。</p>
 <p>本版又补入第 9 章文献路线资产合同：12 组检查绑定 A/B/C/D
 证据层、八条核心文献目录、全局 literature map、生成式 inventory 以及
 <code>TajimaDawson1982</code>、<code>Esirkepov 2001</code>、<code>LeeCPC2015</code>、<code>Yee 1966</code>、<code>Hockney-Eastwood</code>
@@ -872,7 +879,7 @@ verification。</p>
 <code>177</code> 条。</p>
 <p>本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖
 <code>FieldProbe</code>、<code>ParticleHistogram2D</code>、<code>LoadBalanceCosts</code>
-的官方输入和 analysis consumer；公开证据索引更新为 <code>178</code>
+的官方输入和 analysis consumer；公开证据索引当前为 <code>181</code>
 条。</p>
 <p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
 组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
@@ -1108,7 +1115,7 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 发表元数据、Section 1–5、Eq.(23)、二阶 spline 线索与 publisher PDF
 缺失状态共 8 项检查全部通过。该 contract
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
-<p>当前合订 PDF 为 324 页；本 v0.68 版本在 v0.67
+<p>当前合订 PDF 为 325 页；本 v0.68 版本在 v0.67
 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同、LeeCPC2015
 publisher-abstract boundary、第 6 章 FieldSolver source crosswalk 和第 7
 章 boundary/AMR source crosswalk，并保留强守恒
@@ -15505,6 +15512,20 @@ runtime proof</td>
 </tr>
 </tbody>
 </table>
+<p>Vay
+这一行现在有了更具体的正向边界。<code>scripts/audit_vay_geometry_order_wiring.py</code>
+对当前官方测试目录做 <code>18/18</code>
+项只读核对：<code>vay_deposition</code> 提供 2D Cartesian/shape=3 和 3D
+Cartesian/shape=3 两条 <code>divE-rho/epsilon_0</code> analysis +
+checksum 入口，Langmuir 目录另有 2D/shape=4 sibling；源码同时保留
+<code>doVayDepositionShapeN&lt;1..4&gt;</code> 分派和 RZ/1D/implicit
+guard。报告见
+<code>runs/stage-c-validation/vay-geometry-order-wiring/contract.{json,md}</code>。</p>
+<p>这项结果关闭的是“Vay 官方 wiring 没有被统一登记”的索引缺口，分类仍是
+<code>SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY</code>：它不等于
+Vay 全部 geometry/order 的独立 runtime
+product，也不等于正式收敛阶。详细边界见
+<code>notes/code-reading/particles/73-vay-geometry-order-wiring-contract.md</code>。</p>
 <p>维护台账见
 <code>notes/code-reading/particles/72-deposition-geometry-order-gap-register.md</code>，由
 <code>scripts/audit_deposition_geometry_order_gap_register.py</code>

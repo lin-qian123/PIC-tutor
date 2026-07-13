@@ -6,7 +6,7 @@
 
 v0.66 审计发现合订 Markdown/HTML 含本机绝对路径和不可随公共仓库迁移的绝对链接；v0.67 已在 release 构建层修复，v0.68 延续该检查，并将验证合同摘要纳入公共 allowlist。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 181 条 `contract.json` 生成去路径摘要（`PASS 129 / FAIL 30 / UNKNOWN 22`）。摘要保留原始合同状态，并将 boundary、unproven、missing 分类单独标记；原始 `runs/` 仍排除，因此该摘要是公共证据目录，不是运行产物替代品。
+v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 182 条 `contract.json` 生成去路径摘要（`PASS 130 / FAIL 30 / UNKNOWN 22`）。摘要保留原始合同状态，并将 boundary、unproven、missing 分类单独标记；原始 `runs/` 仍排除，因此该摘要是公共证据目录，不是运行产物替代品。
 
 本文件只记录发布边界和体积证据，不自动删除或移动工作区文件。真正 push 前仍需由维护者确认论文 PDF、图片和其他第三方材料的授权状态。
 
@@ -17,9 +17,9 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 181 条 `contrac
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.68.pdf` | 3,414,156 bytes | 当前 325 页成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.68.html` | 5,787,245 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.68.md` | 1,106,991 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.68.pdf` | 3,415,482 bytes | 当前 325 页成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.68.html` | 5,788,618 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.68.md` | 1,108,219 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 

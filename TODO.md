@@ -2,6 +2,11 @@
 
 ## 2026-07-14
 
+- [x] v0.84 预注册正式收敛 study：固定 RZ/RSPHERE 独立 geometry、field/charge norm、primary/secondary observable、全部相邻拟合区间、correction-off negative control 和每种 geometry 至少两组独立 family 的关闭条件；当前数据明确仍不足以关闭 formal order。
+- [ ] 按预注册合同补齐每种 geometry 的第二组独立 refinement family，并重新执行重复 family slope 与 charge boundary gate。
+
+## 2026-07-14
+
 - [x] 新增 v0.83 RZ/RSPHERE 独立几何趋势合同：分别计算三档 resolution family 的 `Er`、axis 和 off-axis observable slope，保留 correction-off negative control；分类为 `EXPLORATORY_CROSS_GEOMETRY_RESOLUTION_TRENDS_FORMAL_ORDER_UNPROVEN`，不做跨几何 pooled formal-order claim。
 - [ ] 继续预注册 norm、控制变量、拟合区间并补重复 refinement family，直到正式收敛阶满足关闭条件。
 

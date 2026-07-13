@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 208,
+  "record_count": 212,
   "status_counts": {
-    "PASS": 156,
+    "PASS": 160,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 129,
+    "PASS": 133,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 39
@@ -191,6 +191,18 @@
       }
     },
     {
+      "case": "current-book-gap-register-v0.84",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "current book gap register",
+      "classification": "CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA",
+      "scope": "project-level gap inventory; does not close any listed gap",
+      "metrics": {
+        "gap_count": 8,
+        "passed": true
+      }
+    },
+    {
       "case": "deposition-algorithm-selection",
       "status": "PASS",
       "evidence_kind": "PASS",
@@ -358,6 +370,20 @@
       "metrics": {
         "heading_count": 321,
         "html_heading_count": 321,
+        "passed": true,
+        "pdf_pages": 330
+      }
+    },
+    {
+      "case": "editorial-quality-v0.84",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "editorial quality audit",
+      "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
+      "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
+      "metrics": {
+        "heading_count": 322,
+        "html_heading_count": 322,
         "passed": true,
         "pdf_pages": 330
       }
@@ -1646,6 +1672,17 @@
       }
     },
     {
+      "case": "formal-convergence-preregistration",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "formal convergence study preregistration",
+      "classification": "FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT",
+      "scope": "RZ and RSPHERE Esirkepov Langmuir resolution families; independent geometry fits only",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
       "case": "higuera-2017-paper-asset",
       "status": "PASS",
       "evidence_kind": "BOUNDARY",
@@ -2118,6 +2155,18 @@
     },
     {
       "case": "pdf-layout-v0.83",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "PDF layout risk audit",
+      "classification": "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
+      "scope": "page text coverage and known wide-table regression; not a substitute for full human reading",
+      "metrics": {
+        "passed": true,
+        "pdf_pages": 330
+      }
+    },
+    {
+      "case": "pdf-layout-v0.84",
       "status": "PASS",
       "evidence_kind": "PASS",
       "contract": "PDF layout risk audit",

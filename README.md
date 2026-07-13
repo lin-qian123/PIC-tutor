@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.83`：新增 RZ/RSPHERE 独立几何分辨率趋势合同，推进正式收敛 study 的 independent family 设计；正式收敛阶、人工全书通读、许可和公开再分发仍是开放项。
+当前成书版本为 `v0.84`：新增正式收敛 study 预注册合同，固定 norm、observable、拟合区间、负对照和重复 family 要求；当前数据仍不足以关闭正式收敛阶，人工全书通读、许可和公开再分发仍是开放项。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

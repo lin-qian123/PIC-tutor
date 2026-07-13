@@ -213,7 +213,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ## 9.8 当前成书缺口登记
 
-v0.83 已将 RZ/RSPHERE 三档分辨率数据纳入独立几何趋势合同，分类为 `EXPLORATORY_CROSS_GEOMETRY_RESOLUTION_TRENDS_FORMAL_ORDER_UNPROVEN`；v0.82 的 PDF 宽表修复和代表页复核继续有效。该增量不把不同几何 pooled 成一个 formal order；正式收敛阶、人工全书通读、第三方材料许可和公开再分发仍需单独签收。
+v0.84 已把正式收敛 study 的 norm、observable、拟合区间、负对照和重复 family 要求写入 `docs/formal-convergence-preregistration.{json,md}`，分类为 `FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT`；v0.83 的 RZ/RSPHERE 独立趋势合同继续保留。当前每种 geometry 仍只有一组独立 family，correction-on axis charge 仍是 boundary，因此不把 descriptive slope 写成 formal order，也不把不同 geometry pooled。正式收敛阶、人工全书通读、第三方材料许可和公开再分发仍需单独签收。
 
 文献路线图需要和运行/编辑缺口分开管理，否则“论文缺全文”和“代码没有 route ledger”会在 TODO 中互相遮蔽。当前项目把缺口登记在 `docs/current-book-gap-register.md`，每一行绑定证据、分类、下一步动作和关闭条件。当前八项缺口分别覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条 release editorial gate。
 

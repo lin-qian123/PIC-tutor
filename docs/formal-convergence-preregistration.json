@@ -1,0 +1,65 @@
+{
+  "contract": "PIC-tutor formal convergence study preregistration",
+  "version": "v0.84-pre",
+  "classification": "FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT",
+  "scope": "RZ and RSPHERE Esirkepov Langmuir resolution families; independent geometry fits only",
+  "data_sources": {
+    "rz": "runs/stage-c-validation/esirkepov_langmuir_rz_resolution-trend/contract.json",
+    "rsphere": "runs/stage-c-validation/esirkepov_rsphere_charge_resolution-comparison/contract.json"
+  },
+  "design": {
+    "geometry_units": ["RZ", "RSPHERE"],
+    "correction_controls": ["on", "off"],
+    "resolution_levels": [64, 128, 256],
+    "required_refinement_ratio": 2,
+    "fit_interval": "all adjacent pairs from the declared 64/128/256 levels; no post-hoc omission",
+    "minimum_independent_families_per_geometry": 2,
+    "current_independent_families_per_geometry": 1,
+    "pooled_geometry_fit": false,
+    "repeat_requirement": "A second independently produced family with the same declared physics and observable contract is required before formal-order closure."
+  },
+  "norms": {
+    "field": {
+      "name": "relative_Linf_to_analytic_field",
+      "formula": "max(abs(numerical - analytic)) / max(abs(analytic))",
+      "fields": ["relative_er_error", "relative_ez_error"]
+    },
+    "charge": {
+      "name": "relative_Linf_divE_minus_rho_over_epsilon0",
+      "formula": "max(abs(divE - rho/epsilon_0)) / max(abs(rho/epsilon_0))",
+      "fields": ["charge_relative_residual", "axis_charge_relative_residual", "off_axis_charge_relative_residual"]
+    }
+  },
+  "contract_metric_fields": {
+    "RZ": ["er_error", "ez_error", "charge_residual", "axis_residual", "off_axis_residual"],
+    "RSPHERE": ["relative_er_error", "charge_residual", "axis_residual", "off_axis_residual"]
+  },
+  "observables": {
+    "primary": ["axis_residual", "off_axis_residual"],
+    "secondary": ["er_error", "ez_error", "relative_er_error", "charge_residual"],
+    "rule": "Primary and secondary observables are reported separately; no universal order or geometry pooling is permitted."
+  },
+  "controls": {
+    "must_hold_fixed": ["density", "epsilon", "w0", "domain", "final_time", "particle_shape", "deposition", "MPI layout", "analysis norm"],
+    "negative_control": "correction=off is reported as a control and cannot be used to repair or select the correction=on fit interval",
+    "axis_boundary": "axis and off-axis charge residuals remain separate; axis residual is not replaced by all-cell residual"
+  },
+  "closure_gates": [
+    "all declared levels and adjacent refinement ratios are present",
+    "all primary and secondary observables are finite at every level",
+    "both independent families per geometry are present",
+    "all adjacent pairwise slopes are computed without selective omission",
+    "repeat-family slopes remain within the preregistered comparison tolerance",
+    "the result is still reported separately for RZ and RSPHERE",
+    "formal closure does not imply default axis-charge correctness unless the independent charge gate also passes"
+  ],
+  "current_status": {
+    "preregistration_complete": true,
+    "current_data_meets_formal_closure": false,
+    "blocking_gates": [
+      "only one independent family is currently materialized per geometry",
+      "correction-on axis charge remains a boundary in the source contracts",
+      "field and charge slopes are descriptive and are not yet repeat-validated"
+    ]
+  }
+}

@@ -2,7 +2,7 @@
 
 审计日期：2026-07-13
 
-当前 release 为 v0.83；本版新增 RZ/RSPHERE 独立几何分辨率趋势合同。正式收敛阶、人工全书通读、许可和公开再分发仍保持开放。
+当前 release 为 v0.84；本版新增正式收敛 study 预注册合同。当前第二组独立 family、正式收敛阶、人工全书通读、许可和公开再分发仍保持开放。
 
 v0.78 完成 Esirkepov 2001 CPC indexed abstract 与 arXiv 预印本的 bounded compare；该 contract 只确认发表版 metadata/abstract 级算法主张已归类，不把 publisher-PDF 缺口写成已关闭。
 
@@ -21,14 +21,14 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.83.pdf` | 3,458,580 bytes / 330 页 | 当前成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.83.html` | 5,834,317 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.83.md` | 1,149,154 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.84.pdf` | 3,462,931 bytes / 330 页 | 当前成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.84.html` | 5,837,122 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.84.md` | 1,151,528 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 
 - `runs/` 已加入忽略规则；本轮又忽略了根目录运行残留 `Backtrace.*` 和 `bmmntr.txt`。
-- 当前书稿图表位于 `manuscript/assets/figures/`，源章节使用相对路径；`scripts/build_v81.py` 会在合订阶段解析资源。
+- 当前书稿图表位于 `manuscript/assets/figures/`，源章节使用相对路径；`scripts/build_v84.py` 会在合订阶段解析资源。
 - `dist/` 当前仍保留历史版本产物，发布时应明确选择 `v0.78`，不要按目录整体上传。
 - `references/` 中的论文 PDF、MinerU 图片和讲解笔记应按论文逐项确认公开许可；本审计不把“本机可读”当作“可公开分发”。
 - `README.md`、`TODO.md`、`manuscript/VERSION.md` 和本文件应在 push 前再次同步当前 release 选择。
@@ -39,7 +39,7 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 
 - `AGENTS.md`、`README.md`、`TODO.md`；
 - `manuscript/` 书稿源、`manuscript/assets/figures/` 16 张验证图和 `manuscript/VERSION.md`；
-- `scripts/build_v81.py`、`scripts/verify_v81_build.py`、`scripts/audit_release_consistency.py`、`scripts/audit_esirkepov_publisher_abstract_compare.py` 及书稿引用的项目分析脚本；
+- `scripts/build_v84.py`、`scripts/verify_v84_build.py`、`scripts/audit_release_consistency.py`、`scripts/audit_formal_convergence_preregistration.py` 及书稿引用的项目分析脚本；
 - `docs/` 中的项目说明、验证矩阵和本发布审计；
 - `docs/public-evidence-index.{json,md}`；
 - `docs/transition-zone-route-contract.{json,md}` 与 `scripts/validate_transition_zone_route_contract.py`；
@@ -55,13 +55,13 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 ## 发布前命令
 
 ```bash
-python scripts/build_v81.py
-python scripts/verify_v81_build.py --build-log /tmp/pic-tutor-build-v81-final.log
+python scripts/build_v84.py
+python scripts/verify_v84_build.py --build-log /tmp/pic-tutor-build-v84-final.log
 python scripts/audit_release_consistency.py
 git status --short
 ```
 
-当前 v0.83 构建验收结果以 `scripts/verify_v83_build.py`、`scripts/audit_editorial_quality.py`、`scripts/audit_pdf_layout.py` 和 `scripts/audit_cross_geometry_convergence_trends.py` 为准；正式收敛阶、人工全书通读、许可和公开再分发仍保持开放。
+当前 v0.84 构建验收结果以 `scripts/verify_v84_build.py`、`scripts/audit_editorial_quality.py`、`scripts/audit_pdf_layout.py`、`scripts/audit_cross_geometry_convergence_trends.py` 和 `scripts/audit_formal_convergence_preregistration.py` 为准；第二组独立 family、正式收敛阶、人工全书通读、许可和公开再分发仍保持开放。
 
 v0.78 发布 allowlist 另见 `docs/v0.78-release-manifest.{json,md}`；总字节数以 manifest 的 `total_bytes` 为准，`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
 

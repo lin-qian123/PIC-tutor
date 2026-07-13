@@ -2635,7 +2635,9 @@ AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在�
 | charge observable | all-cell、axis、off-axis residual | 能识别 axis correction 与 off-axis 行为的分离 | correction-on 的 axis residual 仍远高于 `1e-11`，charge 不能被 field PASS 代替 |
 | formal-order claim | 当前未成立 | 合同把“可计算”与“可宣称”分开 | 需要预注册 observable、误差范数、控制变量、拟合区间和重复/独立 family |
 
-因此本节分类为 `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN`。`scripts/audit_deposition_convergence_readiness_contract.py` 从既有三档合同计算 pairwise order，并检查 refinement ratio、observable 分层、axis-charge 边界和正文负面声明。输出是研究入口，不是新的 physics PASS；尤其不能把 `correction-on` field trend 写成默认 axis charge 已修复，也不能把经验 order 当作论文或 WarpX 的正式收敛阶。
+因此本节分类为 `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN`。该合同从既有三档数据计算 pairwise order，并检查 refinement ratio、observable 分层、axis-charge 边界和正文负面声明。
+
+合同脚本：`scripts/audit_deposition_convergence_readiness_contract.py`。输出是研究入口，不是新的 physics PASS；尤其不能把 `correction-on` field trend 写成默认 axis charge 已修复，也不能把经验 order 当作论文或 WarpX 的正式收敛阶。
 
 ### 5.14.6 v0.83 独立几何趋势合同：RZ 与 RSPHERE 分开拟合
 
@@ -2647,7 +2649,19 @@ AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在�
 | RSPHERE | `64 -> 128 -> 256` | correction-on axis residual slope 为 `1.583/1.747`；off-axis slope 为 `1.413/1.778` | spherical geometry 与 RZ 共享一个 universal order |
 | cross-geometry | 两个独立 family，分开拟合 | 增加了独立 resolution-sensitive evidence，并保留 negative control | 把两种几何的数据 pooled 成一个收敛阶 |
 
-该合同分类为 `EXPLORATORY_CROSS_GEOMETRY_RESOLUTION_TRENDS_FORMAL_ORDER_UNPROVEN`，由 `scripts/audit_cross_geometry_convergence_trends.py` 验收，报告见 `runs/stage-c-validation/cross-geometry-convergence-trends/contract.{json,md}`。它推进的是正式 study 的独立 family 设计和负对照边界，不关闭 `STUDY-FORMAL-CONVERGENCE`，也不改变默认 axis correction 或任何 WarpX 参数。
+该合同分类为 `EXPLORATORY_CROSS_GEOMETRY_RESOLUTION_TRENDS_FORMAL_ORDER_UNPROVEN`，报告见 [cross-geometry raw contract](runs/stage-c-validation/cross-geometry-convergence-trends/contract.json)。
+
+合同脚本：`scripts/audit_cross_geometry_convergence_trends.py`。它推进的是正式 study 的独立 family 设计和负对照边界，不关闭 `STUDY-FORMAL-CONVERGENCE`，也不改变默认 axis correction 或任何 WarpX 参数。
+
+### 5.14.7 v0.84 正式收敛 study 预注册合同
+
+v0.84 将“下一步要做什么”进一步固定成预注册，而不是在观察到 slope 后再选择解释。`RZ` 与 `RSPHERE` 是两个独立 geometry unit；每个 unit 分别保留 `correction=on/off`、`64/128/256` 三档、全部相邻 pairwise fit interval，以及 axis/off-axis charge residual 的分层。field norm 固定为 `max(abs(numerical - analytic)) / max(abs(analytic))`，charge norm 固定为 `max(abs(divE - rho/epsilon_0)) / max(abs(rho/epsilon_0))`，不允许用 all-cell residual 替代 axis residual。
+
+预注册关闭条件还要求每种 geometry 至少有两组独立产生的 family，并固定 density、`epsilon`、`w0`、domain、final time、particle shape、deposition、MPI layout 和 reader-side norm。`correction=off` 只能作为负对照，不能用来事后挑选有利的拟合区间；两种 geometry 禁止 pooled fit。当前每种 geometry 只有一组 materialized family，且 correction-on axis charge 仍是 boundary，因此合同已预注册但 formal closure 仍为 `OPEN`，分类为 `FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT`。
+
+预注册文件见 [formal convergence specification](docs/formal-convergence-preregistration.json)，原始报告见 [preregistration raw contract](runs/stage-c-validation/formal-convergence-preregistration/contract.json)。
+
+合同脚本：`scripts/audit_formal_convergence_preregistration.py`。该合同推进实验设计的可重复性，不把现有 descriptive slope 升格为正式收敛阶，也不改变任何 WarpX 源码或默认参数。
 
 ## 5.15 本章结论
 

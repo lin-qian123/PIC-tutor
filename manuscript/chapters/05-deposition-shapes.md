@@ -2637,6 +2637,18 @@ AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在�
 
 因此本节分类为 `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN`。`scripts/audit_deposition_convergence_readiness_contract.py` 从既有三档合同计算 pairwise order，并检查 refinement ratio、observable 分层、axis-charge 边界和正文负面声明。输出是研究入口，不是新的 physics PASS；尤其不能把 `correction-on` field trend 写成默认 axis charge 已修复，也不能把经验 order 当作论文或 WarpX 的正式收敛阶。
 
+### 5.14.6 v0.83 独立几何趋势合同：RZ 与 RSPHERE 分开拟合
+
+为避免把单一 RZ family 的趋势误读成通用规律，本版又把既有 `RSPHERE` 64/128/256 三档 paired controls 纳入独立几何对照。`RZ` 与 `RSPHERE` 分别计算 `Er`/`relative Er`、axis residual 和 off-axis residual 的两段描述性 slope；两条 `correction-on` axis residual 都随分辨率下降，而 correction-off 对照保留非单调或边界行为。
+
+| 几何 | refinement family | 当前观察 | 不能写成 |
+|---|---|---|---|
+| RZ | `64x128 -> 128x256 -> 256x512` | correction-on axis residual slope 为 `1.241/1.008`；field slope 仍不稳定 | RZ 默认 charge 已闭合或已有正式 order |
+| RSPHERE | `64 -> 128 -> 256` | correction-on axis residual slope 为 `1.583/1.747`；off-axis slope 为 `1.413/1.778` | spherical geometry 与 RZ 共享一个 universal order |
+| cross-geometry | 两个独立 family，分开拟合 | 增加了独立 resolution-sensitive evidence，并保留 negative control | 把两种几何的数据 pooled 成一个收敛阶 |
+
+该合同分类为 `EXPLORATORY_CROSS_GEOMETRY_RESOLUTION_TRENDS_FORMAL_ORDER_UNPROVEN`，由 `scripts/audit_cross_geometry_convergence_trends.py` 验收，报告见 `runs/stage-c-validation/cross-geometry-convergence-trends/contract.{json,md}`。它推进的是正式 study 的独立 family 设计和负对照边界，不关闭 `STUDY-FORMAL-CONVERGENCE`，也不改变默认 axis correction 或任何 WarpX 参数。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

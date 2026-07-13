@@ -1,17 +1,17 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 204,
+  "record_count": 208,
   "status_counts": {
-    "PASS": 152,
+    "PASS": 156,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 126,
+    "PASS": 129,
     "FAIL": 27,
     "UNKNOWN": 13,
-    "BOUNDARY": 38
+    "BOUNDARY": 39
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -132,6 +132,17 @@
       }
     },
     {
+      "case": "cross-geometry-convergence-trends",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "cross-geometry exploratory convergence trends",
+      "classification": "EXPLORATORY_CROSS_GEOMETRY_RESOLUTION_TRENDS_FORMAL_ORDER_UNPROVEN",
+      "scope": "existing 2-rank RZ and RSPHERE three-resolution controls; separate slopes, no pooled formal order",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
       "case": "current-book-gap-register",
       "status": "PASS",
       "evidence_kind": "PASS",
@@ -157,6 +168,18 @@
     },
     {
       "case": "current-book-gap-register-v0.82",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "current book gap register",
+      "classification": "CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA",
+      "scope": "project-level gap inventory; does not close any listed gap",
+      "metrics": {
+        "gap_count": 8,
+        "passed": true
+      }
+    },
+    {
+      "case": "current-book-gap-register-v0.83",
       "status": "PASS",
       "evidence_kind": "PASS",
       "contract": "current book gap register",
@@ -323,6 +346,20 @@
         "html_heading_count": 320,
         "passed": true,
         "pdf_pages": 329
+      }
+    },
+    {
+      "case": "editorial-quality-v0.83",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "editorial quality audit",
+      "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
+      "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
+      "metrics": {
+        "heading_count": 321,
+        "html_heading_count": 321,
+        "passed": true,
+        "pdf_pages": 330
       }
     },
     {
@@ -2077,6 +2114,18 @@
       "metrics": {
         "passed": true,
         "pdf_pages": 329
+      }
+    },
+    {
+      "case": "pdf-layout-v0.83",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "PDF layout risk audit",
+      "classification": "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
+      "scope": "page text coverage and known wide-table regression; not a substitute for full human reading",
+      "metrics": {
+        "passed": true,
+        "pdf_pages": 330
       }
     },
     {

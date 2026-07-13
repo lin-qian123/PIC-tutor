@@ -1,8 +1,6 @@
-# PIC-tutor v0.83
+# PIC-tutor v0.82
 
-本版新增第 5 章独立几何趋势合同：将现有 RZ 与 RSPHERE 三档 2-rank resolution family 分开计算 `Er`/axis/off-axis observable 的描述性 slope，保留 correction-off negative control，并明确不做跨几何 pooled fit。分类为 `EXPLORATORY_CROSS_GEOMETRY_RESOLUTION_TRENDS_FORMAL_ORDER_UNPROVEN`；该增量推进正式收敛 study 的独立 family 设计，但不关闭正式收敛阶缺口。
-
-本版修复第 7 章边界 regression 五列表格在 PDF 中的列重叠：将渲染正文改为窄索引，并保留原始宽表为源码注释证据。新增 `scripts/audit_pdf_layout.py`，对页面文本覆盖、已知宽表风险、关键章节和注释结构进行自动检查；代表页 1、101、250、251、330 已实际渲染复核。当前分类为 `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED`，人工全书通读、许可和公开再分发审查仍未关闭。
+本版修复第 7 章边界 regression 五列表格在 PDF 中的列重叠：将渲染正文改为窄索引，并保留原始宽表为源码注释证据。新增 `scripts/audit_pdf_layout.py`，对页面文本覆盖、已知宽表风险、关键章节和注释结构进行自动检查；代表页 1、101、250、251、329 已实际渲染复核。当前分类为 `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED`，人工全书通读、许可和公开再分发审查仍未关闭。
 
 本版新增可重复的自动编辑质量审计：对合订 Markdown 的标题与表格结构、HTML 标题数与关键章节、PDF 页数与关键章节以及构建警告进行一致性检查。当前结果为 `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN`；自动检查通过，但人工通读、HTML/PDF 版式检查、第三方材料许可和公开再分发审查仍未关闭。
 
@@ -22,7 +20,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v83_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v82_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

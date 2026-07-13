@@ -47,15 +47,19 @@ def main() -> int:
         "editorial_audit_evidence": all(
             (root / path).is_file()
             for path in (
-                "docs/pdf-layout-audit-v0.82.md",
-                "runs/stage-c-validation/pdf-layout-v0.82/contract.json",
-                "docs/editorial-quality-audit-v0.82.md",
-                "runs/stage-c-validation/editorial-quality-v0.82/contract.json",
+                "docs/pdf-layout-audit-v0.83.md",
+                "runs/stage-c-validation/pdf-layout-v0.83/contract.json",
+                "docs/editorial-quality-audit-v0.83.md",
+                "runs/stage-c-validation/editorial-quality-v0.83/contract.json",
+                "runs/stage-c-validation/cross-geometry-convergence-trends/contract.json",
             )
-        ) and "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED" in register,
+        ) and all(marker in register for marker in (
+            "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
+            "EXPLORATORY_CROSS_GEOMETRY_RESOLUTION_TRENDS_FORMAL_ORDER_UNPROVEN",
+        )),
         "classification_boundaries": all(marker in register for marker in (
             "OPEN_EXTERNAL_ACCESS", "RUNTIME_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
-            "CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN", "RELEASE-EDITORIAL",
+            "EXPLORATORY_CROSS_GEOMETRY_RESOLUTION_TRENDS_FORMAL_ORDER_UNPROVEN", "RELEASE-EDITORIAL",
         )),
         "closure_language": all(marker in register for marker in ("关闭条件", "真实 `current_buf/rho_buf`", "publisher PDF")),
         "exercise_renumbering": all(marker in chapter for marker in ("## 9.10 练习与复核", "### 9.10.1", "### 9.10.2", "### 9.10.3")),

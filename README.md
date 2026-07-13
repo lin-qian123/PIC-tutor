@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.82`：修复第 7 章边界 regression 宽表在 PDF 中的列重叠，并新增页面布局风险审计；代表页已实际渲染复核，但人工全书通读、许可和公开再分发仍是开放项。
+当前成书版本为 `v0.83`：新增 RZ/RSPHERE 独立几何分辨率趋势合同，推进正式收敛 study 的 independent family 设计；正式收敛阶、人工全书通读、许可和公开再分发仍是开放项。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 
@@ -78,7 +78,7 @@
 
 v0.76 延续 `docs/public-evidence-index.{json,md}`：从本地 contract 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据；同时公开 `docs/literature-pending-triage.md` 的 acquisition/read queue。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
-当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.82，并拒绝 README 中已知的旧当前版本口径。
+当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.83，并拒绝 README 中已知的旧当前版本口径。
 
 2026-07-13：新增 Boris 1970 论文专属 metadata/access contract，记录 DTIC `ADA023511` 的书目身份和 PDF 限流边界；第 4 章采用 Birdsall 1985 二手推导与 WarpX `UpdateMomentumBoris.H` 源码解释，未把原始 proceedings 全文缺口隐藏为已完成精读。
 

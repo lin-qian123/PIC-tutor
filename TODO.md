@@ -2,6 +2,9 @@
 
 ## 2026-07-14
 
+- [x] 新增 v0.83 RZ/RSPHERE 独立几何趋势合同：分别计算三档 resolution family 的 `Er`、axis 和 off-axis observable slope，保留 correction-off negative control；分类为 `EXPLORATORY_CROSS_GEOMETRY_RESOLUTION_TRENDS_FORMAL_ORDER_UNPROVEN`，不做跨几何 pooled formal-order claim。
+- [ ] 继续预注册 norm、控制变量、拟合区间并补重复 refinement family，直到正式收敛阶满足关闭条件。
+
 - [x] 新增 v0.82 页面布局风险审计：修复第 7 章边界 regression 五列表格的 PDF 列重叠，新增 `scripts/audit_pdf_layout.py`，并实际渲染复核第 1、101、250、251、329 页。
 - [ ] 继续完成全书人工通读、第三方材料许可确认和公开再分发签收。
 

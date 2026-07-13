@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 230,
+  "record_count": 234,
   "status_counts": {
-    "PASS": 177,
+    "PASS": 181,
     "FAIL": 31,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 150,
+    "PASS": 154,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 40
@@ -263,6 +263,18 @@
       }
     },
     {
+      "case": "current-book-gap-register-v0.90",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "current book gap register",
+      "classification": "CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA",
+      "scope": "project-level gap inventory; does not close any listed gap",
+      "metrics": {
+        "gap_count": 8,
+        "passed": true
+      }
+    },
+    {
       "case": "deposition-algorithm-selection",
       "status": "PASS",
       "evidence_kind": "PASS",
@@ -506,6 +518,20 @@
     },
     {
       "case": "editorial-quality-v0.89",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "editorial quality audit",
+      "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
+      "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
+      "metrics": {
+        "heading_count": 324,
+        "html_heading_count": 324,
+        "passed": true,
+        "pdf_pages": 331
+      }
+    },
+    {
+      "case": "editorial-quality-v0.90",
       "status": "PASS",
       "evidence_kind": "PASS",
       "contract": "editorial quality audit",
@@ -1113,6 +1139,20 @@
       "scope": "reader-side same-surface divE-rho/epsilon0 profile; not a kernel root-cause proof or formal convergence study",
       "metrics": {
         "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_axis-residual-time-profile",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ Esirkepov time-resolved radial divE-rho residual profile",
+      "classification": "POST_INITIAL_AXIS_DOMINATED_READER_SIDE_RESIDUAL_TIME_PROFILE",
+      "scope": "reader-side same-surface divE-rho/epsilon0 profile over saved times; not a kernel root-cause proof or formal convergence study",
+      "metrics": {
+        "case_count": 8,
+        "frame_count": 24,
+        "passed": true,
+        "post_initial_frame_count": 16
       }
     },
     {
@@ -2391,6 +2431,18 @@
     },
     {
       "case": "pdf-layout-v0.89",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "PDF layout risk audit",
+      "classification": "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
+      "scope": "page text coverage and known wide-table regression; not a substitute for full human reading",
+      "metrics": {
+        "passed": true,
+        "pdf_pages": 331
+      }
+    },
+    {
+      "case": "pdf-layout-v0.90",
       "status": "PASS",
       "evidence_kind": "PASS",
       "contract": "PDF layout risk audit",

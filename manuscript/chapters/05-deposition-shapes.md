@@ -2518,6 +2518,8 @@ v0.88 将同一 reader-side observable 扩展到 shape=1/2/3/4 的统一 family�
 
 v0.89 对同一批 `256x512`、2-rank RZ sibling 进一步做径向 profile：把同面 `abs(divE-rho/epsilon_0)` 按 `r=0`、`r=1` 和 `r>=2` 分层。correction-on/default 的 shape=1/2/3/4 最大值分别为 `7.554e-4/8.990e-4/9.289e-4/9.729e-4`，而 correction-off 为 `1.639e-11/1.020e-11/8.399e-12/6.669e-12`；8 个 case 的全局 profile maximum 都落在 `r=0`，且 `r=0` 高于近轴与 off-axis 分层。这个结果的分类为 `AXIS_DOMINATED_READER_SIDE_RESIDUAL_PROFILE`，把当前 reader-side 观测定位为 axis-dominated，但不区分 axis volume scaling、staggering/interpolation、mode handling 和 deposition kernel，也不关闭默认 correction-on 的 `divE-rho` boundary。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_axis-residual-profile/contract.{json,md}`，说明见 `notes/code-reading/particles/71-rz-esirkepov-axis-residual-profile.md`。
 
+v0.90 将该 profile 扩展到相同 8 个 case 的全部数值 plotfile：`diag1000000` 初始化帧、`diag1000040` 中间帧和 `diag1000080` 末帧共 24 帧。初始化帧保留在合同中但排除 evolved-time 分类，因为 `t=0` 的零场基线不适合与推进后的 `divE-rho` 残差使用同一解释。排除初始化帧后，16 个 evolved frames 的最大值全部仍在 `r=0`，因此 axis dominance 不是单一末帧偶然现象。该时间合同分类为 `POST_INITIAL_AXIS_DOMINATED_READER_SIDE_RESIDUAL_TIME_PROFILE`，报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_axis-residual-time-profile/contract.{json,md}`，说明见 `notes/code-reading/particles/72-rz-esirkepov-axis-residual-time-profile.md`。这仍不能区分轴体积缩放、staggering/interpolation、mode handling 与 deposition kernel，也不关闭 `divE-rho`、current closure 或 formal convergence boundary。
+
 同一诊断也已扩展到 RCYLINDER/RSPHERE shape=1：默认 correction 下 charge residual 为 `4.711e-3/4.166e-2`，关闭后为 `3.505e-12/2.420e-11`。这表明 RCYLINDER 的 axis correction off 可以恢复当前强 gate，而 RSPHERE 虽明显改善仍略超 `1e-11`；两者均不支持直接修改全局默认值，完整对照见 `runs/stage-c-validation/esirkepov_radial_charge_axis-comparison/contract.{json,md}`。
 
 RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on 的 residual 为 `4.166e-2/1.390e-2/4.142e-3`，correction off 为 `2.420e-11/9.843e-11/7.461e-11`；六个 field gate 都通过，但六个 charge gate 都未闭合。因此这条证据只能说明 axis/resolution 组合敏感，不能替代正式收敛研究或作为全局默认参数修改依据。该组 `256` case 必须使用专用 `warpx.rsphere` executable；若误用 `warpx.3d`，会在 boundary-array parser 阶段失败，不能作为物理结论。
@@ -2674,7 +2676,7 @@ v0.84 将“下一步要做什么”进一步固定成预注册，而不是在�
 当前机器的二进制和 12 组输入模板均存在，但没有 `mpiexec`/`mpirun`，所以 preflight 保持为“MPI launcher 缺失”边界。单进程替代被脚本明确禁止；这是一条执行环境边界，不是第二 family 的结果，也不改变正式收敛阶仍未关闭的判断。报告见 [preflight summary](../../docs/formal-convergence-repeat-preflight.md) 和 [raw contract](../../runs/stage-c-validation/formal-convergence-repeat-preflight/contract.json)。
 <!-- REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING -->
 
-### 5.14.9 v0.89 第二组 family 的输入与产物合同
+### 5.14.9 v0.90 第二组 family 的输入与产物合同
 
 v0.86 将 runner 的“可启动”与“产物可用”分开检查。执行前，脚本逐个核对 12 个模板的 `inputs`、`FILE = ...` 引用文件、`diag_type = Full` 和 diagnostics `intervals`；因此目录存在不再等价于输入可运行。执行时仍固定使用 `mpiexec -n 2` 或等价的 `mpirun -n 2`，不允许降级为单进程。执行后，每个 producer 必须同时满足退出码为 0、生成 `producer.log`、生成 `warpx_used_inputs`，并在 `diags/` 下至少出现一个 `diag*` 目录。任何一项缺失都分类为“输入或产物合同不通过”，而不是把命令启动成功写成有效 runtime evidence。
 <!-- REPEAT_FAMILY_RUNNER_BLOCKED_INPUT_OR_OUTPUT_CONTRACT -->

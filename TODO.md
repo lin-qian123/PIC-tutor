@@ -2,6 +2,7 @@
 
 ## 2026-07-14
 
+- [x] v0.90 将 RZ axis residual profile 扩展到 8 个 `256x512`、2-rank sibling 的 24 个数值 plotfile；排除 `t=0` 初始化基线后，16 个 evolved frames 的最大值全部位于 `r=0`，分类为 `POST_INITIAL_AXIS_DOMINATED_READER_SIDE_RESIDUAL_TIME_PROFILE`，明确不替代 kernel root-cause 或 formal convergence。
 - [x] v0.89 对 RZ Esirkepov correction-on/off、shape=1/2/3/4 的 8 个 `256x512` 2-rank sibling 增加 reader-side 径向 residual profile；8/8 的最大值位于 `r=0`，分类为 `AXIS_DOMINATED_READER_SIDE_RESIDUAL_PROFILE`，明确不替代 kernel root-cause 或 formal convergence。
 - [x] v0.88 将 RZ Esirkepov correction-on rho-side observable 扩展到 shape=1/2/3/4：四个 shape 的末态 species decomposition 均通过约 `1e-14` reader-side gate；明确不替代 `divE-rho`、current closure 或正式 convergence。
 - [x] v0.87 完成 v0.86 新增收敛执行页的 PDF 视觉抽查：发现并修复长分类标识和 raw path 截断；封面、第 5 章边界页和第 9 章缺口页重新纳入 spotcheck。

@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.89 合订 PDF 的页数以实际构建结果为准；本版补齐 RZ Esirkepov correction-on shape=1/2/3/4 的 rho-side species decomposition 观测 family，并新增 8 个 `256x512` sibling 的 axis-dominated reader-side residual profile；同时保留 `divE-rho` axis charge boundary、正式收敛预注册、第二组 family runner、页面布局修复、项目级当前成书缺口登记、沉积证据梯度、第 7 章 PML 证据梯度与 Esirkepov 2001 CPC bounded compare。
+当前 v0.90 合订 PDF 的页数以实际构建结果为准；本版补齐 RZ Esirkepov correction-on shape=1/2/3/4 的 rho-side species decomposition 观测 family，并将 8 个 `256x512` sibling 的 axis-dominated reader-side residual profile 扩展到 16 个 evolved-time frames；同时保留 `divE-rho` axis charge boundary、正式收敛预注册、第二组 family runner、页面布局修复、项目级当前成书缺口登记、沉积证据梯度、第 7 章 PML 证据梯度与 Esirkepov 2001 CPC bounded compare。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 

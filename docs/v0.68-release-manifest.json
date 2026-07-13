@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 762,
-  "total_bytes": 27937710,
+  "total_bytes": 27938912,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1532928,
-      "sha256": "f8def9831ca6771231f8dfeea2502e5dda6f2e1fc703ee194b4b420d7fffa626"
+      "bytes": 1533085,
+      "sha256": "7bd89cc45cc4359cc00517d6aeea85bada6052906ed48cb5ab65484443ecf5ac"
     },
     {
       "path": "TODO.md",
-      "bytes": 1380690,
-      "sha256": "b3945372d65a336dc033cca7dd7b6ba3beffdd8e05a5b42bd385cf70c5bdcbdb"
+      "bytes": 1380939,
+      "sha256": "6400dceba871d59e71f0a1e97b75ebdb57b3c94bc1a42fef79c3b22659da2761"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5779575,
-      "sha256": "9871f83588ff645c929176c5f4cf1042253ce8776636beeaf3a8e860df684dba"
+      "bytes": 5779758,
+      "sha256": "daf8cabcecab450ef5462fb67eb5f293882f96bcf113b0951e76b7c1c2bef68a"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1101834,
-      "sha256": "b66432b9c2a82e692c1941f4021d2bd5b86dfb37ba13d060a7fb3c70e05d7b87"
+      "bytes": 1102000,
+      "sha256": "64077ec270b4274f2d557e8c63143d4f8e59530b6886dd0fcaf67facd06115db"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3408122,
-      "sha256": "1601b3bea3dce1fca55e0e61afa5a2e746993b461f5949d25225cfd30c0192c8"
+      "bytes": 3408123,
+      "sha256": "852b4fc28ea7c555abfa26fea076643469f46df85011365b6b1d5cd220556c64"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4243,
-      "sha256": "93a83918566fb22598d26b085b50310867bcc1402ce8b6b5a02eecb074e670c4"
+      "sha256": "31e08087593cced7d4928f7cafb1edb0468ca27b182adf4cb89bfbbeac7ce4d5"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 75026,
-      "sha256": "d541b60ec1759714c67c43e20dc6ba0e45040a53f80454de0a8fd0908d0faec5"
+      "bytes": 75192,
+      "sha256": "8274fa7cd184ff68b090dd82b9812b6a436196c5377550a72c9abf2688f5461f"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -903,7 +903,7 @@
     {
       "path": "manuscript/chapters/06-field-solvers.md",
       "bytes": 186961,
-      "sha256": "87a2f7f4d540b27767a26080f264a12df832f5a2ae3d5a37914fb2fc5df40472"
+      "sha256": "ef09bad03665e1fc3d4da9e3b86ddeebc1ff7461c0c5b65e5aa65e70ef419797"
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
@@ -3832,8 +3832,8 @@
     },
     {
       "path": "scripts/verify_v68_build.py",
-      "bytes": 3093,
-      "sha256": "b265e8f56a6e0f8a28c30c41e157544172b8d8184abcc3a8a6754b8214729d51"
+      "bytes": 3373,
+      "sha256": "24519a0b5c7b77f1973c5b5315e21665c23ae24dee043d03e6ad65a638cedd28"
     },
     {
       "path": "scripts/verify_villasenor_formula_contract.py",

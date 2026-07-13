@@ -42,6 +42,9 @@ def main() -> None:
     chapter_5_numbers = chapter_subheading_numbers(
         ROOT / "manuscript" / "chapters" / "05-deposition-shapes.md", "5"
     )
+    chapter_6_numbers = chapter_subheading_numbers(
+        ROOT / "manuscript" / "chapters" / "06-field-solvers.md", "6"
+    )
 
     checks = {
         "pdf_pages": len(reader.pages) == EXPECTED_PDF_PAGES,
@@ -55,6 +58,8 @@ def main() -> None:
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
         "chapter_5_subheading_order": chapter_5_numbers == sorted(chapter_5_numbers)
         and len(chapter_5_numbers) == len(set(chapter_5_numbers)),
+        "chapter_6_subheading_order": chapter_6_numbers == sorted(chapter_6_numbers)
+        and len(chapter_6_numbers) == len(set(chapter_6_numbers)),
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],
         "public_path_hygiene_html": inspect(HTML)["passed"],
     }

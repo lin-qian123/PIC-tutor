@@ -12,6 +12,8 @@
 
 当前 v0.68 又修正第 5 章 `5.11.1/5.11.2/5.11.3` 小节错序，并将第 5 章小节单调性与重复编号纳入 `scripts/verify_v68_build.py`。
 
+当前 v0.68 又修正第 6 章 `6.11.3` 重复编号，顺移后续 regression 小节，并将第 6 章小节单调性与重复编号纳入同一验收。
+
 当前公开证据索引已更新为 177 条合同；README 中较早的历史日志保留当时的条数，不代表当前索引快照。
 
 当前 v0.68 又为第 5 章补入正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface。该合同用于防止源码演进造成正文漂移，不替代物理 runtime 或论文逐行证据。
@@ -46,7 +48,7 @@
 
 当前成书版本为 `v0.68`，对应 323 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、FieldSolver、boundary/AMR 与 diagnostics source crosswalk、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 173 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
+v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 177 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 

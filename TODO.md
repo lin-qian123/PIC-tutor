@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：修正第 6 章 `6.11.3` 重复编号，将 `K_4`/QPM、静电球、隐式 EM、Hybrid Ohm 和 regression 索引顺移为 `6.11.4`–`6.11.9`；并将第 6 章小节单调性与重复编号纳入 `scripts/verify_v68_build.py`。
+
 - [x] 2026-07-13：修正第 5 章 `5.11.1/5.11.2/5.11.3` 小节错序，并将小节单调性与重复编号纳入 `scripts/verify_v68_build.py` 的 v0.68 构建验收；历史 dist 快照不回写。
 
 - [x] 2026-07-13：新增第 9 章文献路线资产合同：12 组检查绑定 A/B/C/D 证据层、八条核心文献目录、`docs/literature-map.md`、生成式 inventory 和 `TajimaDawson1982`/`Esirkepov 2001`/`LeeCPC2015`/`Yee 1966`/`Hockney-Eastwood` 缺口边界；报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}`。公开证据索引随后更新为 177 条。

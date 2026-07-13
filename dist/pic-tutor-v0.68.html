@@ -591,17 +591,17 @@ FDTD：场能增长是否被 corrector 压住</a></li>
 Gauss law</a></li>
 <li><a href="#maxwell-hybrid-qed真空修正后的相速度偏移" id="toc-maxwell-hybrid-qed真空修正后的相速度偏移">6.11.3 Maxwell hybrid
 QED：真空修正后的相速度偏移</a></li>
-<li><a href="#k_4qpm-与-thermal-plasma-长期-figure-of-merit" id="toc-k_4qpm-与-thermal-plasma-长期-figure-of-merit">6.11.3
+<li><a href="#k_4qpm-与-thermal-plasma-长期-figure-of-merit" id="toc-k_4qpm-与-thermal-plasma-长期-figure-of-merit">6.11.4
 <code>K_4</code>、QPM 与 thermal-plasma 长期 figure of merit</a></li>
-<li><a href="#静电球解析场-l2-误差与能量守恒" id="toc-静电球解析场-l2-误差与能量守恒">6.11.4 静电球：解析场 L2
+<li><a href="#静电球解析场-l2-误差与能量守恒" id="toc-静电球解析场-l2-误差与能量守恒">6.11.5 静电球：解析场 L2
 误差与能量守恒</a></li>
-<li><a href="#隐式-em能量gauss-law-与求解器迭代数" id="toc-隐式-em能量gauss-law-与求解器迭代数">6.11.5 隐式 EM：能量、Gauss
+<li><a href="#隐式-em能量gauss-law-与求解器迭代数" id="toc-隐式-em能量gauss-law-与求解器迭代数">6.11.6 隐式 EM：能量、Gauss
 law 与求解器迭代数</a></li>
-<li><a href="#hybrid-ohm-solver哪些是强判据哪些只是输出回归" id="toc-hybrid-ohm-solver哪些是强判据哪些只是输出回归">6.11.6 Hybrid Ohm
+<li><a href="#hybrid-ohm-solver哪些是强判据哪些只是输出回归" id="toc-hybrid-ohm-solver哪些是强判据哪些只是输出回归">6.11.7 Hybrid Ohm
 solver：哪些是强判据，哪些只是输出回归</a></li>
-<li><a href="#具体-regression-入口索引" id="toc-具体-regression-入口索引">6.11.7 具体 regression
+<li><a href="#具体-regression-入口索引" id="toc-具体-regression-入口索引">6.11.8 具体 regression
 入口索引</a></li>
-<li><a href="#本章正文与源码同步合同" id="toc-本章正文与源码同步合同">6.11.8 本章正文与源码同步合同</a></li>
+<li><a href="#本章正文与源码同步合同" id="toc-本章正文与源码同步合同">6.11.9 本章正文与源码同步合同</a></li>
 </ul></li>
 <li><a href="#练习与运行验证" id="toc-练习与运行验证">6.12
 练习与运行验证</a>
@@ -841,6 +841,9 @@ runtime physics proof。报告见
 <code>runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}</code>。</p>
 <p>本版又修正第 5 章 <code>5.11.1/5.11.2/5.11.3</code>
 小节错序，并把小节单调性与重复编号纳入 v0.68 artifact verification。</p>
+<p>本版又修正第 6 章 <code>6.11.3</code> 重复编号，顺移后续 regression
+小节，并把第 6 章小节单调性与重复编号纳入 v0.68 artifact
+verification。</p>
 <p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
 组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
 kernel、Cartesian/RZ spectral 分派和 regression
@@ -18824,7 +18827,7 @@ particle-particle correction 如何服务于低噪声或 sub-mesh
 resolution，后者说明 charge-sharing hierarchy 与 potential-correction
 coefficients 如何影响 force-law isotropy。项目内双论文 contract 位于
 <code>runs/stage-c-validation/particle-mesh-1974-abstract/contract.{json,md}</code>，当前只能作为摘要级来源，不能替代原文推导和图表。</p>
-<h3 id="k_4qpm-与-thermal-plasma-长期-figure-of-merit">6.11.3
+<h3 id="k_4qpm-与-thermal-plasma-长期-figure-of-merit">6.11.4
 <code>K_4</code>、QPM 与 thermal-plasma 长期 figure of merit</h3>
 <p>Birdsall Chapter 13 对 Hockney 2d2v
 长时间实验的转述，还给出了一条比“提高 shape order
@@ -18873,7 +18876,7 @@ Debye-scale physics 的替代，以及 field-noise / collision / heating
 <code>K_4</code> 数值和 QPM 结构来自 Birdsall 对 Hockney
 结果的转述；Hockney-Eastwood
 原书/发表版全文仍未在本地取得，因此本节不宣称对原始图表逐页核对。</p>
-<h3 id="静电球解析场-l2-误差与能量守恒">6.11.4 静电球：解析场 L2
+<h3 id="静电球解析场-l2-误差与能量守恒">6.11.5 静电球：解析场 L2
 误差与能量守恒</h3>
 <p><code>../warpx/Examples/Tests/electrostatic_sphere/analysis_electrostatic_sphere.py</code>
 检查均匀带电电子球的库仑展开。球半径满足</p>
@@ -19092,7 +19095,7 @@ openPMD 中的
 <li>space-charge-limited diode steady profile</li>
 </ul>
 <p>这四层在同一个 1D 理论基准下被同时闭合。</p>
-<h3 id="隐式-em能量gauss-law-与求解器迭代数">6.11.5 隐式 EM：能量、Gauss
+<h3 id="隐式-em能量gauss-law-与求解器迭代数">6.11.6 隐式 EM：能量、Gauss
 law 与求解器迭代数</h3>
 <p>隐式 solver 的 regression 不是只看场图像，而是直接读 reduced
 diagnostics。<code>../warpx/Examples/Tests/implicit/analysis_1d.py</code>
@@ -19482,7 +19485,7 @@ analysis，应诚实记录为工作流/输出基线，而不是强稳定性断�
 <p>当 LU 作为精确求解器或预条件器时，每个时间步只需要 1 次 Newton 和 1
 次 GMRES；如果这个断言失败，问题更可能出在矩阵装配、DOF 映射、PETSc
 bridge 或预条件器，而不是 Maxwell 方程本身。</p>
-<h3 id="hybrid-ohm-solver哪些是强判据哪些只是输出回归">6.11.6 Hybrid Ohm
+<h3 id="hybrid-ohm-solver哪些是强判据哪些只是输出回归">6.11.7 Hybrid Ohm
 solver：哪些是强判据，哪些只是输出回归</h3>
 <p>Hybrid Ohm solver 的测试更接近物理
 benchmark。<code>ohm_solver_em_modes/analysis_rz.py</code> 先对 <span class="math inline">\(E_\theta(r,z,t)\)</span> 做径向 Hankel 投影、轴向
@@ -19544,7 +19547,7 @@ parallel/perpendicular EM modes 做二维 FFT 谱图。</li>
 instability 有脚本级硬断言；Landau damping、magnetic
 reconnection、Cartesian EM modes 和 cylinder compression
 主要提供物理图像与输出回归线索。</p>
-<h3 id="具体-regression-入口索引">6.11.7 具体 regression 入口索引</h3>
+<h3 id="具体-regression-入口索引">6.11.8 具体 regression 入口索引</h3>
 <p>上面的验证讨论按物理检查量组织。实际维护时，还需要知道哪些 regression
 入口正在覆盖这些检查。下表按当前 <code>../warpx/Examples/Tests</code> 的
 CMake 与 analysis
@@ -19673,7 +19676,7 @@ Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum
 restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML
 restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum
 说成完整物理验证。</p>
-<h3 id="本章正文与源码同步合同">6.11.8 本章正文与源码同步合同</h3>
+<h3 id="本章正文与源码同步合同">6.11.9 本章正文与源码同步合同</h3>
 <p>本章的正文-源码对应关系由
 <code>scripts/audit_field_solver_chapter_source_crosswalk.py</code>
 维护。它把外层 <code>WarpXEvolve.cpp</code> 推进入口、FDTD/PML

@@ -6,6 +6,8 @@
 
 本版又修正第 5 章 `5.11.1/5.11.2/5.11.3` 小节错序，并把小节单调性与重复编号纳入 v0.68 artifact verification。
 
+本版又修正第 6 章 `6.11.3` 重复编号，顺移后续 regression 小节，并把第 6 章小节单调性与重复编号纳入 v0.68 artifact verification。
+
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 
 本版又补入第 7 章边界/PML/AMR 正文-源码 crosswalk：13 组代表性锚点覆盖 field/particle 边界顺序、场边界分派、PML 生命周期、guard-cell/通信、AMR 重建、moving window 和 scraping consumer；transition-zone route ledger 仍保持 `RUNTIME_LEDGER_UNPROVEN`。该合同只防止正文漂移，不替代 runtime route-count proof。报告见 `runs/stage-c-validation/boundary-amr-chapter-source-crosswalk/contract.{json,md}`。
@@ -12558,7 +12560,7 @@ $$
 
 QPM/PPPM 与 force-shaping 两篇 1974 摘要还提供了 solver-side 的历史补充：前者说明 Gaussian cloud、potential shaping 和近邻 particle-particle correction 如何服务于低噪声或 sub-mesh resolution，后者说明 charge-sharing hierarchy 与 potential-correction coefficients 如何影响 force-law isotropy。项目内双论文 contract 位于 `runs/stage-c-validation/particle-mesh-1974-abstract/contract.{json,md}`，当前只能作为摘要级来源，不能替代原文推导和图表。
 
-### 6.11.3 `K_4`、QPM 与 thermal-plasma 长期 figure of merit
+### 6.11.4 `K_4`、QPM 与 thermal-plasma 长期 figure of merit
 
 Birdsall Chapter 13 对 Hockney 2d2v 长时间实验的转述，还给出了一条比“提高 shape order 会降低噪声”更可操作的设计语言。在 optimum path 上，heating time 与 slowing-down time 的比值可以写成
 
@@ -12584,7 +12586,7 @@ $$
 
 最后，Hockney 观察到 kinetic-energy 增量 `h(t)` 近似随时间线性增长。该形状应解释为 stochastic heating 的长期积累，而不是自动解释成某个离散 mode 的瞬时爆炸。对当前 `uniform_plasma`、`energy_conserving_thermal_plasma` 和稳定性案例，较稳妥的 reader-side 问题应当是：漂移是否近似线性、在多少个 `\tau_s` 内积累到可见，以及 `\tau_H/\tau_s` 是否足够大；不能只凭短时间总能量曲线就宣称热背景“长期稳定”。这些 `K_4` 数值和 QPM 结构来自 Birdsall 对 Hockney 结果的转述；Hockney-Eastwood 原书/发表版全文仍未在本地取得，因此本节不宣称对原始图表逐页核对。
 
-### 6.11.4 静电球：解析场 L2 误差与能量守恒
+### 6.11.5 静电球：解析场 L2 误差与能量守恒
 
 `../warpx/Examples/Tests/electrostatic_sphere/analysis_electrostatic_sphere.py` 检查均匀带电电子球的库仑展开。球半径满足
 
@@ -12691,7 +12693,7 @@ Chapter 13 则把这条统计图像压成了更直接的工程尺度。第一，
 
 这四层在同一个 1D 理论基准下被同时闭合。
 
-### 6.11.5 隐式 EM：能量、Gauss law 与求解器迭代数
+### 6.11.6 隐式 EM：能量、Gauss law 与求解器迭代数
 
 隐式 solver 的 regression 不是只看场图像，而是直接读 reduced diagnostics。`../warpx/Examples/Tests/implicit/analysis_1d.py` 对 1D Picard case 做总能量漂移检查：
 
@@ -12973,7 +12975,7 @@ assert total_newton_iters == num_steps
 
 当 LU 作为精确求解器或预条件器时，每个时间步只需要 1 次 Newton 和 1 次 GMRES；如果这个断言失败，问题更可能出在矩阵装配、DOF 映射、PETSc bridge 或预条件器，而不是 Maxwell 方程本身。
 
-### 6.11.6 Hybrid Ohm solver：哪些是强判据，哪些只是输出回归
+### 6.11.7 Hybrid Ohm solver：哪些是强判据，哪些只是输出回归
 
 Hybrid Ohm solver 的测试更接近物理 benchmark。`ohm_solver_em_modes/analysis_rz.py` 先对 $E_\theta(r,z,t)$ 做径向 Hankel 投影、轴向 Fourier transform 和时间 Fourier transform：
 
@@ -13034,7 +13036,7 @@ $$
 
 这给本章一个重要限制：Hybrid PIC 章节不能把所有 regression 都写成“物理判据已严格验证”。更准确的说法是：RZ normal modes 和 ion beam instability 有脚本级硬断言；Landau damping、magnetic reconnection、Cartesian EM modes 和 cylinder compression 主要提供物理图像与输出回归线索。
 
-### 6.11.7 具体 regression 入口索引
+### 6.11.8 具体 regression 入口索引
 
 上面的验证讨论按物理检查量组织。实际维护时，还需要知道哪些 regression 入口正在覆盖这些检查。下表按当前 `../warpx/Examples/Tests` 的 CMake 与 analysis 脚本整理，目的是让读者能从正文回到可运行测试，而不是只停留在抽象“有验证”的说法上。
 
@@ -13055,7 +13057,7 @@ $$
 
 这个索引表也暴露了一个写作边界：有些 regression 是物理强判据，例如 Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum 或 restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum 说成完整物理验证。
 
-### 6.11.8 本章正文与源码同步合同
+### 6.11.9 本章正文与源码同步合同
 
 本章的正文-源码对应关系由 `scripts/audit_field_solver_chapter_source_crosswalk.py` 维护。它把外层 `WarpXEvolve.cpp` 推进入口、FDTD/PML kernel、Cartesian spectral algorithm 分派、RZ spectral algorithm 分派，以及 regression consumer 的证据边界固定成 12 组可重复检查。该脚本检查的是代表性入口是否仍存在、章节是否仍明确写出对应路径；它不是 C++ 语义等价证明，也不替代实际运行和论文推导。
 

@@ -18,9 +18,11 @@
 
 当前 v0.68 又将第 8 章孤立的 `8.14.1` 源码同步合同提升为正式 `8.14` 小节，并修正验证矩阵中历史 `175` 条合同口径为当前 `177` 条。
 
-当前 v0.68 又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查绑定 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入与 analysis consumer；公开证据索引更新为 178 条。
+当前 v0.68 又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查绑定 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入与 analysis consumer；公开证据索引当前为 181 条。
 
-当前公开证据索引已更新为 178 条合同；README 中较早的历史日志保留当时的条数，不代表当前索引快照。
+当前 v0.68 又补入第 5 章 geometry/order coverage gap register：7 项已知缺口分别登记为 `BOUNDARY`、`UNPROVEN`、`PRE_PHYSICS_BOUNDARY` 或 `PARTIAL`，并绑定下一步证据入口；该 negative-space contract 不把未覆盖组合写成 PASS。报告见 `runs/stage-c-validation/deposition-geometry-order-gap-register/contract.{json,md}`。
+
+当前公开证据索引已更新为 181 条合同（`PASS 129 / FAIL 30 / UNKNOWN 22`）；README 中较早的历史日志保留当时的条数，不代表当前索引快照。
 
 当前 v0.68 又为第 5 章补入正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface。该合同用于防止源码演进造成正文漂移，不替代物理 runtime 或论文逐行证据。
 
@@ -52,9 +54,9 @@
 
 当前 v0.68 又新增 RZ secondary-emission resolution-aware public contract：默认 `64x64` 仍为 raw `FAIL`/`BOUNDARY`，`128x128` 与 `256x256` refined controls 通过官方 `2%` EB impact-point gate；三档误差 `3.6038%/0.9977%/0.6646%` 单调下降，支持分辨率敏感性诊断，但不把默认 upstream regression 改写成通过，也不宣称正式 convergence order。合同见 `runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}`。
 
-当前成书版本为 `v0.68`，对应 324 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、FieldSolver、boundary/AMR 与 diagnostics source crosswalk、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
+当前成书版本为 `v0.68`，对应 325 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、FieldSolver、boundary/AMR 与 diagnostics source crosswalk、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 178 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
+v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 181 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
@@ -84,7 +86,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 178 条 `contrac
 
 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将“线性稳定不等于非线性无扰动”、相空间 clump/density hole 诊断和相对漂移自由能边界写入中文讲解笔记，并最小回填第 8 章；该结论不升格为 NCI 或 WarpX runtime physics gate。
 
-2026-07-13：复核 `Birdsall 1985` `3A ES1` 的最小程序骨架与 WarpX `InitData()`/`Evolve()` 阶段边界，新增 11 组 source crosswalk 锚点并确认第 3A 正文回填已落地；当前 v0.68 为 324 页。
+2026-07-13：复核 `Birdsall 1985` `3A ES1` 的最小程序骨架与 WarpX `InitData()`/`Evolve()` 阶段边界，新增 11 组 source crosswalk 锚点并确认第 3A 正文回填已落地；当前 v0.68 为 325 页。
 
 2026-07-13：materialize `Peiravi and Birdsall (1978)` Berkeley technical report，完成 40 页 PDF、MinerU Markdown、52 张图、中文讲解和独立 asset contract；第 5/6/8 章仍只保留摘要/文献边界回链，不把技术报告升格为 publisher journal 证据。
 
@@ -116,7 +118,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 178 条 `contrac
 
 2026-07-13：新增 Esirkepov 2001 paper/source/runtime crosswalk：预印本 `Eq.(23)`/二阶 spline、WarpX current-deposition 源码表面、3D/RZ/径向/MR runtime contract 和 Langmuir wiring 均通过只读审计；结果保留各 family 的 `PASS/BOUNDARY`，不把 geometry/order 矩阵或预印本升格为 CPC 定稿全覆盖。
 
-2026-07-13：新增 `scripts/audit_leecpc2015_source_crosswalk.py`，将 LeeCPC2015 accepted manuscript 的 PSTD/staggered-grid/reflection 锚点、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 实现表面和官方 `pml` reflectivity regression wiring 收成三方可重复 contract；v0.68 已重建为 324 页。该 contract 不把 accepted manuscript 升格为 publisher PDF，也不把组合 reflectivity gate 写成 `C1-C25` 逐系数证明。
+2026-07-13：新增 `scripts/audit_leecpc2015_source_crosswalk.py`，将 LeeCPC2015 accepted manuscript 的 PSTD/staggered-grid/reflection 锚点、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 实现表面和官方 `pml` reflectivity regression wiring 收成三方可重复 contract；v0.68 已重建为 325 页。该 contract 不把 accepted manuscript 升格为 publisher PDF，也不把组合 reflectivity gate 写成 `C1-C25` 逐系数证明。
 
 2026-07-13：完成 RZ JRhom first-stage handoff 的目标 checkout 只读验收：目标 `/Volumes/PHILIPS/programs/PIC/warpx` 保持 `unstaged`，`audit/report/preview/stage --dry-run` 全部成功，计划写入面仅包含一个 analysis helper 和一处 CMake wiring；MPI=2 的 `finite + energy` contract 继续通过。正式 staging 仍需 WarpX 维护者明确允许，当前不声称 upstream 已接入。决策记录见 `notes/code-reading/fieldsolver/36-rz-jrhom-first-stage-decision.md`。
 

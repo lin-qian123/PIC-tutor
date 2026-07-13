@@ -1,14 +1,16 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.68 合订 PDF 为 324 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-9 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.68 合订 PDF 为 325 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-9 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
-2026-07-13：第 9 章新增文献路线资产合同，12 项检查绑定证据层、核心文献树、literature map、inventory 与 publisher/metadata 缺口；当前公开证据索引为 178 条，合同不替代论文逐式审校或 runtime physics proof。
+2026-07-13：第 5 章新增 geometry/order coverage gap register，统一登记 7 项已知缺口及其下一步证据入口；该 negative-space contract 不替代 runtime physics proof。
+
+2026-07-13：第 9 章新增文献路线资产合同，12 项检查绑定证据层、核心文献树、literature map、inventory 与 publisher/metadata 缺口；当前公开证据索引为 181 条，合同不替代论文逐式审校或 runtime physics proof。
 
 2026-07-13：第 4 章新增显式 leapfrog position source crosswalk，核对 momentum-then-position 顺序、时间中心速度公式、维度分支和 Higuera-Cary split-push 边界；直接 half-step attribute 与 Vay Appendix B 专门圆轨道仍保留为后续验证项。
 
 2026-07-13：第 4 章新增 Vay Appendix B 窄化 uniform-B runtime proxy contract；三种 pusher 各 81 帧，离散 phase、速度 proxy、gyroradius proxy 和动量范数 gate 通过，finalize tail 与 physics data contract 分开记录。
 
-v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 178 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
+v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 181 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
 
 2026-07-13：第 7 章新增 LeeCPC2015 paper/source/regression crosswalk：accepted manuscript 的 PSTD 与 reflection recurrence、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 的实现表面、以及官方 `<1e-6` reflectivity consumer 均由只读 contract 交叉验收；仍保留 publisher-formatted CPC PDF 和逐系数等价缺失边界。
 

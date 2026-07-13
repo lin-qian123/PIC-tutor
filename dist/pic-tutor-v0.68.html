@@ -500,6 +500,8 @@ mask、filter、SumBoundary</a></li>
 <ul>
 <li><a href="#正文主张与源码版本的同步合同" id="toc-正文主张与源码版本的同步合同">5.14.1
 正文主张与源码版本的同步合同</a></li>
+<li><a href="#geometryorder-coverage-gap-register" id="toc-geometryorder-coverage-gap-register">5.14.2 geometry/order
+coverage gap register</a></li>
 </ul></li>
 <li><a href="#本章结论-1" id="toc-本章结论-1">5.15 本章结论</a></li>
 <li><a href="#练习与源码定位-1" id="toc-练习与源码定位-1">5.16
@@ -846,6 +848,12 @@ acquisition 排序练习</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版又补入第 5 章 geometry/order coverage gap register：7
+项已知缺口被统一登记为
+<code>BOUNDARY</code>、<code>UNPROVEN</code>、<code>PRE_PHYSICS_BOUNDARY</code>
+或 <code>PARTIAL</code>，并分别绑定下一步证据入口。该 negative-space
+contract 只关闭缺口登记的文档歧义，不把未覆盖组合升级为 PASS。报告见
+<code>runs/stage-c-validation/deposition-geometry-order-gap-register/contract.{json,md}</code>。</p>
 <p>本版又补入第 9 章文献路线资产合同：12 组检查绑定 A/B/C/D
 证据层、八条核心文献目录、全局 literature map、生成式 inventory 以及
 <code>TajimaDawson1982</code>、<code>Esirkepov 2001</code>、<code>LeeCPC2015</code>、<code>Yee 1966</code>、<code>Hockney-Eastwood</code>
@@ -1100,7 +1108,7 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 发表元数据、Section 1–5、Eq.(23)、二阶 spline 线索与 publisher PDF
 缺失状态共 8 项检查全部通过。该 contract
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
-<p>当前合订 PDF 为 323 页；本 v0.68 版本在 v0.67
+<p>当前合订 PDF 为 324 页；本 v0.68 版本在 v0.67
 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同、LeeCPC2015
 publisher-abstract boundary、第 6 章 FieldSolver source crosswalk 和第 7
 章 boundary/AMR source crosswalk，并保留强守恒
@@ -15436,6 +15444,71 @@ helper、shape 和 geometry 分支</td>
 组通过。它的作用是维护“正文-源码”这条线，而不是把 source marker
 误写成物理验证；论文 publisher PDF 对照、完整 geometry/order runtime 和
 RZ implicit 运行边界仍按前文分类保留。</p>
+<h3 id="geometryorder-coverage-gap-register">5.14.2 geometry/order
+coverage gap register</h3>
+<p>上一张 coverage matrix
+解决了“已有证据分布在哪里”，但成书还需要明确记录“哪些组合仍然没有证据”。因此本节新增一份
+<strong>negative-space
+contract</strong>：它只登记已知缺口、当前分类和下一步证据入口，不把缺少
+runtime 结果的行写成 PASS。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>缺口</th>
+<th>当前分类</th>
+<th>下一步证据入口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RZ 默认 axis correction 下的 charge residual</td>
+<td><code>BOUNDARY</code></td>
+<td>分离 axis-volume 与诊断路径；在证据闭合前不修改默认值</td>
+</tr>
+<tr>
+<td>RCYLINDER/RSPHERE 的完整 charge/Gauss-law</td>
+<td><code>BOUNDARY</code></td>
+<td>建立 geometry-specific charge consumer，不能由径向 field PASS
+代替</td>
+</tr>
+<tr>
+<td>2D MR transition-zone route-count</td>
+<td><code>UNPROVEN</code></td>
+<td>接入真实 intermediate-field/route ledger；schema fixture 不等于
+runtime proof</td>
+</tr>
+<tr>
+<td>RZ implicit Villasenor</td>
+<td><code>PRE_PHYSICS_BOUNDARY</code></td>
+<td>取得兼容 PETSc/AMReX build 后重跑，不把 <code>SIGILL</code>
+写成算法失败</td>
+</tr>
+<tr>
+<td>Villasenor 非 XZ geometry/order family</td>
+<td><code>PARTIAL</code></td>
+<td>每次增加一个带独立 consumer 的 sibling</td>
+</tr>
+<tr>
+<td>Vay geometry/order family</td>
+<td><code>PARTIAL</code></td>
+<td>将支持路径与 RZ/1D source guard 分开逐项补证据</td>
+</tr>
+<tr>
+<td>跨 geometry/shape 的正式收敛阶</td>
+<td><code>UNPROVEN</code></td>
+<td>固定 observable、误差范数和 resolution family 后再做 study</td>
+</tr>
+</tbody>
+</table>
+<p>维护台账见
+<code>notes/code-reading/particles/72-deposition-geometry-order-gap-register.md</code>，由
+<code>scripts/audit_deposition_geometry_order_gap_register.py</code>
+验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。</p>
 <h2 id="本章结论-1">5.15 本章结论</h2>
 <p>沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：</p>
 <pre class="mermaid"><code>flowchart TD

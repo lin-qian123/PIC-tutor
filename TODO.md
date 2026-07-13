@@ -1,6 +1,8 @@
 # TODO
 
-- [x] 2026-07-13：新增第 8 章 reduced diagnostics 最小输入合同：12 项检查绑定官方 `FieldProbe` point/line/plane、`ParticleHistogram2D` `z`--`uz` openPMD mesh、`LoadBalanceCosts` efficiency analysis 与章节边界；公开证据索引更新为 178 条。报告见 `runs/stage-c-validation/diagnostics-minimal-inputs/contract.{json,md}`。
+- [x] 2026-07-13：新增第 8 章 reduced diagnostics 最小输入合同：12 项检查绑定官方 `FieldProbe` point/line/plane、`ParticleHistogram2D` `z`--`uz` openPMD mesh、`LoadBalanceCosts` efficiency analysis 与章节边界；公开证据索引当前为 181 条。报告见 `runs/stage-c-validation/diagnostics-minimal-inputs/contract.{json,md}`。
+
+- [x] 2026-07-13：新增第 5 章 geometry/order coverage gap register：将 RZ correction-on charge、RCYLINDER/RSPHERE Gauss-law、2D MR route-count、RZ implicit Villasenor、Villasenor/Vay partial family 和 formal convergence order 共 7 项缺口统一登记为负空间合同，绑定分类与下一步证据入口；该合同不把未覆盖组合写成 PASS。报告见 `runs/stage-c-validation/deposition-geometry-order-gap-register/contract.{json,md}`。
 
 - [x] 2026-07-13：修正第 8 章孤立的 `8.14.1` 标题层级为正式 `8.14` 小节，并将验证矩阵的历史 `175` 条公开合同口径更新为当前 `177` 条；同步纳入 `scripts/verify_v68_build.py`。
 
@@ -62,7 +64,7 @@
 - [x] 2026-07-13：建立 `Abe et al. (1975)` 摘要级论文专属目录、中文讲解、access audit、reading log 和 `scripts/audit_abe_1975_abstract_contract.py`；固定 `sigma(K_g)`、correlation time、finite-grid stochastic fluctuation 的窄证据范围，明确 publisher PDF/MinerU 缺失。
 - [x] 2026-07-13：重核查 `Hockney et al. (1974)` 与 `Eastwood and Hockney (1974)` acquisition：Elsevier API 仅返回 `openaccess=0` 元数据，ScienceDirect `/pdf` 仍返回 HTTP `403` HTML；full-text missing 边界保持不变。
 - [x] 2026-07-13：materialize `Peiravi and Birdsall (1978)` Berkeley technical report，完成 40 页 PDF、MinerU Markdown、52 张图、中文讲解、access audit、reading log 和 `scripts/audit_peiravi_birdsall_1978_asset_contract.py`；明确 institutional full-text 与 journal-version equivalence 的边界。
-- [x] 2026-07-13：整理并完成 `Birdsall 1985` `3A ES1` 的 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 与 WarpX `InitData()`/`Evolve()` 的近似对应、不可等同边界及 Langmuir/初始化验证入口；第 3A 章正文已在 `3A.13` 完成回填，当前 v0.68 为 324 页，source crosswalk 另行验收。
+- [x] 2026-07-13：整理并完成 `Birdsall 1985` `3A ES1` 的 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 与 WarpX `InitData()`/`Evolve()` 的近似对应、不可等同边界及 Langmuir/初始化验证入口；第 3A 章正文已在 `3A.13` 完成回填，当前 v0.68 为 325 页，source crosswalk 另行验收。
 - [x] 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将线性稳定与非线性湍流的边界、相空间 clump/density hole 诊断和相对漂移自由能写入中文讲解笔记，并最小回填第 8 章；明确不把书中转述升格为 NCI 或 WarpX runtime physics gate。
 - [x] 2026-07-12：对公开证据摘要执行 path hygiene，确认不含 `/Volumes/`、`/Users/`、`file://` 或绝对本地链接。
 - [x] 2026-07-12：完成 v0.68 成书构建、manifest 更新；GitHub push 在本轮提交后完成。

@@ -17,7 +17,7 @@ SOURCE_CHAPTERS = sorted((ROOT / "manuscript" / "chapters").glob("*.md"))
 MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.68.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.68.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.68.pdf"
-EXPECTED_PDF_PAGES = 324
+EXPECTED_PDF_PAGES = 325
 
 
 def image_links(text: str) -> list[str]:
@@ -72,6 +72,15 @@ def main() -> None:
         "chapter_8_source_contract_heading": "## 8.14 本章正文与源码同步合同" in source
         and "### 8.14.1 本章正文与源码同步合同" not in source,
         "chapter_8_minimal_diagnostics_section": "### 8.14.1 reduced diagnostics 最小输入合同" in source,
+        "chapter_5_geometry_order_gap_register": all(
+            marker in source
+            for marker in (
+                "### 5.14.2 geometry/order coverage gap register",
+                "negative-space contract",
+                "RZ 默认 axis correction 下的 charge residual",
+                "跨 geometry/shape 的正式收敛阶",
+            )
+        ),
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],
         "public_path_hygiene_html": inspect(HTML)["passed"],
     }

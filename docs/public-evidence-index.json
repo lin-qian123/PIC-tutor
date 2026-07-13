@@ -1,16 +1,16 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 178,
+  "record_count": 181,
   "status_counts": {
-    "PASS": 128,
+    "PASS": 129,
     "FAIL": 30,
-    "UNKNOWN": 20
+    "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 107,
+    "PASS": 108,
     "FAIL": 27,
-    "UNKNOWN": 11,
+    "UNKNOWN": 13,
     "BOUNDARY": 33
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
@@ -132,6 +132,17 @@
       }
     },
     {
+      "case": "deposition-geometry-order-gap-register",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Chapter 5 deposition geometry/order gap register",
+      "classification": "KNOWN_GAPS_EXPLICITLY_SCOPED_NO_PASS_INFERENCE",
+      "scope": "negative-space register; named gaps and next evidence actions only",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
       "case": "deposition-geometry-order-source",
       "status": "PASS",
       "evidence_kind": "PASS",
@@ -178,6 +189,18 @@
       "scope": null,
       "metrics": {
         "passed": 12
+      }
+    },
+    {
+      "case": "diagnostics-source-crosswalk",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "Chapter 8 diagnostics source crosswalk",
+      "classification": "CHAPTER_8_DIAGNOSTICS_SOURCE_ANCHORS_VERIFIED",
+      "scope": "Representative producer/consumer/source anchors; this is not a runtime physics proof or complete diagnostics inventory.",
+      "metrics": {
+        "check_count": 13,
+        "pass_count": 13
       }
     },
     {
@@ -1612,6 +1635,17 @@
       "scope": "paper anchors, WarpX implementation surfaces, and official regression wiring; no publisher-PDF or coefficient-equivalence claim",
       "metrics": {
         "passed": true
+      }
+    },
+    {
+      "case": "literature-roadmap",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "literature-roadmap",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": 12
       }
     },
     {

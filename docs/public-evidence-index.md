@@ -2,10 +2,10 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `178`
-- PASS: `128`
+- records: `181`
+- PASS: `129`
 - FAIL: `30`
-- UNKNOWN: `20`
+- UNKNOWN: `22`
 - boundary-classified: `33`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
@@ -21,10 +21,12 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `boundary-amr-chapter-source-crosswalk` | `UNKNOWN` | `BOUNDARY` | Chapter 7 boundary AMR source crosswalk | `CHAPTER_7_BOUNDARY_AMR_SOURCE_ANCHORS_VERIFIED` | Representative chapter/source anchors; transition-zone runtime route ledger remains explicitly unproven. | `check_count=13`, `pass_count=13` |
 | `charge-deposition-bridge-source` | `PASS` | `PASS` | ABLASTR charge-deposition bridge source contract | `` | source mapping only; not a numerical charge-deposition regression | `anchor_count=13`, `missing_count=0`, `passed=True` |
 | `deposition-chapter-source-crosswalk` | `PASS` | `PASS` | Chapter 5 deposition source crosswalk | `CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED` | Checks representative Chapter 5 claims against current WarpX source markers; not a semantic proof or runtime regression. | `passed=True` |
+| `deposition-geometry-order-gap-register` | `PASS` | `PASS` | Chapter 5 deposition geometry/order gap register | `KNOWN_GAPS_EXPLICITLY_SCOPED_NO_PASS_INFERENCE` | negative-space register; named gaps and next evidence actions only | `passed=True` |
 | `deposition-geometry-order-source` | `PASS` | `PASS` | deposition geometry/order source dispatch | `` | read-only source audit; does not claim runtime coverage for every geometry/order combination | `anchor_count=69`, `passed=True`, `passed_anchor_count=69` |
 | `deposition-geometry-order-source-contract` | `PASS` | `PASS` | deposition geometry/order source dispatch | `` | read-only source audit; does not claim runtime coverage for every geometry/order combination | `anchor_count=69`, `passed=True`, `passed_anchor_count=69` |
 | `diagnostics-chapter-source-crosswalk` | `UNKNOWN` | `UNKNOWN` | Chapter 8 diagnostics source crosswalk | `CHAPTER_8_DIAGNOSTICS_SOURCE_ANCHORS_VERIFIED` | Representative producer/consumer/source anchors; this is not a runtime physics proof or complete diagnostics inventory. | `check_count=13`, `pass_count=13` |
 | `diagnostics-minimal-inputs` | `UNKNOWN` | `UNKNOWN` | chapter-8-diagnostics-minimal-inputs | `` |  | `passed=12` |
+| `diagnostics-source-crosswalk` | `UNKNOWN` | `UNKNOWN` | Chapter 8 diagnostics source crosswalk | `CHAPTER_8_DIAGNOSTICS_SOURCE_ANCHORS_VERIFIED` | Representative producer/consumer/source anchors; this is not a runtime physics proof or complete diagnostics inventory. | `check_count=13`, `pass_count=13` |
 | `esirkepov-2001-paper-asset` | `PASS` | `BOUNDARY` | Esirkepov 1999/2001 Chapter 5 deposition paper asset contract | `PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING` | author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open | `passed=True` |
 | `esirkepov-bounded-compare` | `PASS` | `BOUNDARY` | Esirkepov 2001 bounded preprint/publication comparison | `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING` | bounded structural and abstract-level compare only; no publisher-PDF line-by-line claim | `passed=True` |
 | `esirkepov-density-decomposition` | `PASS` | `PASS` | Esirkepov second-order density decomposition identity | `` | paper formula / algebra layer; not a WarpX kernel or end-to-end regression | `max_residual=8.881784197001252e-16`, `passed=True`, `sample_count=10000` |
@@ -121,6 +123,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `ionization-dsmc-source-contract` | `PASS` | `PASS` | 3D DSMC electron/ion-impact source and regression wiring | `ION_IMPACT_CHECKSUM_ONLY_ELECTRON_IMPACT_ANALYSIS_ACTIVE` | CMake/input/analysis source wiring; no runtime physics claim | `anchor_count=10`, `passed=True`, `passed_anchor_count=10` |
 | `leecpc2015-accepted-manuscript-contract` | `PASS` | `BOUNDARY` | LeeCPC2015 accepted-manuscript source-grounded literature contract | `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING` | seven-page accepted/submitted manuscript plus indexed publisher abstract support first-round PML formula and source mapping; publisher-formatted CPC comparison remains open | `passed=True` |
 | `leecpc2015-source-crosswalk` | `PASS` | `BOUNDARY` | LeeCPC2015 paper/source/regression crosswalk | `ACCEPTED_MANUSCRIPT_SOURCE_CROSSWALK_PUBLISHER_PDF_STILL_MISSING` | paper anchors, WarpX implementation surfaces, and official regression wiring; no publisher-PDF or coefficient-equivalence claim | `passed=True` |
+| `literature-roadmap` | `UNKNOWN` | `UNKNOWN` | literature-roadmap | `` |  | `passed=12` |
 | `literature-roadmap-asset-contract` | `UNKNOWN` | `UNKNOWN` | literature-roadmap-asset-contract | `` |  | `passed=12` |
 | `parameter-map-parser-anchor-contract` | `PASS` | `PASS` | WarpX parameter-map parser-anchor review surface | `PARSER_LITERAL_ANCHOR_SURFACE_AND_STRUCTURED_NONLITERAL_REVIEW_VERIFIED_RUNTIME_VALUE_SEMANTICS_REMAINS` | cited-source text, exact parser-call/literal anchors and structured dynamic/owner review; not C++ AST or runtime value semantics | `contract_pass=True`, `dynamic_key_constructor_count=0`, `external_owner_count=0`, `manual_review_count=0`, `parser_anchor_count=435`, `parser_call_anchor_count=269`, `parser_literal_anchor_count=166`, `row_count=445`, `structured_review_verified_count=10`, `unclassified_count=0` |
 | `parameter-map-runtime-coverage` | `PASS` | `BOUNDARY` | structured parameter-map runtime coverage | `STRUCTURED_PARAMETER_MAP_RUNTIME_COVERAGE_ATTRIBUTE_PARTICLE_FIELD_VECTOR_RATIO_AND_ADIOS2_BP5_SMOKE_DSMC_DATA_BOUNDARY` | case-local runtime/input/source coverage inventory; not a full parameter semantic or physics regression | `input_only_case_count=1`, `passed=True`, `runtime_case_count=5`, `source_only_case_count=0` |

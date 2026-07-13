@@ -698,6 +698,24 @@ v0.25 继续尝试 Lee/Vay PML 论文的全文路径。CPC DOI、OSTI、eScholar
 
 同一份独立报告还读取官方 `inputs_test_rz_pml_psatd` 的 RZ 末态 plotfile。历史 1-rank 项目级结果为 `max|Er|=1.4793`、`max|Ez|=0.4841`；本轮进一步按官方 CMake 的 2-rank 注册复现，`analysis_pml_psatd_rz.py` 与独立 `scripts/analyze_rz_pml_psatd_contract.py` 均通过，得到 `max|Er|=1.0316`、`max|Ez|=0.5695`，合并残余场最大值 `1.0316 < 2`。这条证据测的是径向脉冲离域后的 `PML_RZ` 残余场衰减，不应与 Cartesian 反射率数值直接比较；2-rank 报告归档于 `runs/stage-c-validation/pml_rz_psatd_mpi2/contract.{json,md}`。
 
+### 7.5.10 v0.77 PML 证据梯度：低反射率、残余场、重启与粒子入 PML
+
+本版把已有 PML 运行结果按“producer 产生什么、consumer 读取什么、结论能走到哪一步”重新分层。这样做的目的不是增加一个更大的 PASS 数字，而是防止把不同物理对象的合同互相替代：反射率、残余场、重启重复性和粒子入 PML 各自回答不同问题。
+
+| 证据族 | producer / consumer | 可以支持的结论 | 不能支持的结论 |
+|---|---|---|---|
+| Cartesian FDTD Yee/CKC 反射 | `test_2d_pml_x_yee` / `analysis_pml_yee.py` | 代表性 FDTD 配置满足理论相对反射误差 `<5%` | 不能证明 PSATD 的 `C1-C25` 或所有 solver/入射角 |
+| Cartesian PSATD/Galilean 反射 | `pml_psatd_2d_mpi2` / `analyze_pml_psatd_contract.py` | 组合后的末态反射率 `9.4704e-7 < 1e-6` | 不能逐项证明 `C1-C25`，也不能由 `E/B` 能量推出 `F/G` 残差 |
+| RZ PSATD 残余场 | `pml_rz_psatd_mpi2` / `analyze_rz_pml_psatd_contract.py` | RZ 专用分支的 `max(|Er|,|Ez|)=1.0316<2` | 不能把 RZ 结果外推为 Cartesian PML 或统一反射率 |
+| 重启重复性 | `test_2d_pml_x_psatd_restart` / `analyze_pml_restart_contract.py` | checkpoint/restart 后场量和输出序列满足既定合同 | 不能把重复性写成新的吸收精度或更低反射率证明 |
+| 粒子入 PML：2D/3D 单层 | `particles_in_pml_*_single_layer` / `analyze_particles_in_pml_contract.py` | 代表性单层配置的边界残余量通过绝对值合同 | 不能证明粒子轨迹守恒、粒子不被吸收或完整 AMR 组合 |
+| 粒子入 PML：3D MR | `particles_in_pml_3d_mr_mpi2` / signed-absolute audit | 官方 signed gate `106.4354<110` 通过 | 更强 absolute gate 为 `110.3994>110`；不能隐藏负向 `Ex` 极值 |
+| 3D cleaning | `pml_psatd_3d_cleaning_contract_mpi2` / reader-side diagnostics | 可比较 `divE`/`divB` 的读侧控制结果 | 不能写成 solver-native `F/G` 物理证明；当前 `divE` 改善而 `divB` 变差 |
+
+因此，本节的公开分类为 `PML_EVIDENCE_GRADIENT_WITH_EXPLICIT_RUNTIME_BOUNDARIES`。反射率合同只约束组合响应，RZ residual 只约束 RZ 分支，restart 只约束可重复性，粒子入 PML 只约束指定字段/层级的残余量。`C23-C25`、cleaning `F/G`、Galilean `T2` 和 RZ PML 必须继续分别绑定到源码或专用 regression；在没有 publisher/full-text 的直接逐式证据时，不能把它们写成 LeeCPC2015 的原始公式。
+
+该分层由 `scripts/audit_pml_evidence_gradient_contract.py` 重复检查，报告位于 `runs/stage-c-validation/pml-evidence-gradient/contract.{json,md}`。合同通过表示正文、源码锚点和代表性 producer/consumer 文件彼此存在且负面边界已写出，不表示未覆盖的 solver、几何、AMR 或入射角组合已经完成。
+
 ## 7.6 Embedded boundary 先是几何初始化和辅助标记系统
 
 前面讨论的 PML、PEC、PMC、Silver-Mueller 都作用在计算域外边界上，而 embedded boundary 的第一步不是“给某个边界类型分派更新公式”，而是先把几何对象嵌入到 AMReX cut-cell 数据结构。

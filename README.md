@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.76`：完成 Esirkepov 2001 CPC indexed abstract 与 arXiv 预印本的 bounded compare，并延续第 5 章论文、WarpX 源码和 runtime contract 的分层边界。
+当前成书版本为 `v0.77`：新增第 7 章 PML 证据梯度矩阵，将低反射率、RZ 残余场、重启重复性、粒子入 PML 和 3D cleaning 结果按 producer/consumer 与负面边界分层；并延续第 5 章 Esirkepov 论文、WarpX 源码和 runtime contract 的证据边界。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

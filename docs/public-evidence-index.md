@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `194`
-- PASS: `142`
+- records: `195`
+- PASS: `143`
 - FAIL: `30`
 - UNKNOWN: `22`
 - boundary-classified: `37`
@@ -157,6 +157,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `pec_particle_3d_mpi2` | `PASS` | `PASS` | 3D PEC near-boundary field suppression relative to periodic control | `` | official PEC input plus local periodic-field control; 2-rank reader-side comparison; not direct particle-gather instrumentation | `Ey_max_abs_ratio=0.0022796202594083776`, `max_abs_E_ratio=0.0070491256177838395`, `passed=True`, `ratio_tolerance=0.01` |
 | `peiravi-birdsall-1978` | `PASS` | `PASS` | Peiravi and Birdsall 1978 local full-text technical-report asset contract | `INSTITUTIONAL_FULL_TEXT_MINERU_VERIFIED_JOURNAL_VERSION_NOT_ESTABLISHED` | technical-report full text and figures available; no publisher-journal equivalence claim | `passed=True` |
 | `pmc_field_3d_mpi2` | `PASS` | `PASS` | test_3d_pmc_field | `` |  | `contract_pass=True`, `max_relative_error=0.006153430381301878`, `min_relative_error=0.006901308573957358`, `reflection_gate=True` |
+| `pml-evidence-gradient` | `PASS` | `PASS` | chapter-7 PML evidence gradient | `PML_EVIDENCE_GRADIENT_WITH_EXPLICIT_RUNTIME_BOUNDARIES` | read-only chapter/source/runtime linkage; not complete PML solver, geometry, AMR, or angle coverage | `passed=True` |
 | `pml_psatd_2d_mpi2` | `PASS` | `PASS` | Cartesian PSATD-PML initial-energy and low-reflectivity contract | `` | 2-rank project-level independent reader-side summary; official analysis separately rerun | `expected_initial_energy=7.282940112203595e-08`, `final_energy=6.897268359469654e-14`, `initial_energy=7.282940112203606e-08`, `initial_reference_relative_error=1.453796362122656e-15`, `passed=True` |
 | `pml_rz_psatd_mpi2` | `PASS` | `PASS` | RZ PSATD radial-PML residual-field contract | `` | independent reader-side RZ residual-field check on the official 2-rank producer | `max_abs_field=1.0315718696300396`, `passed=True` |
 | `position-leapfrog-source-crosswalk` | `PASS` | `PASS` | WarpX explicit leapfrog position/source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_TIME_CENTERED_POSITION_DIRECT_HALF_STEP_ATTRIBUTE_NOT_EXPORTED` | read-only source mapping; adjacent Full plotfiles provide a velocity proxy but do not prove a direct half-step diagnostic attribute | `passed=True` |

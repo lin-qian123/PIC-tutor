@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 194,
+  "record_count": 195,
   "status_counts": {
-    "PASS": 142,
+    "PASS": 143,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 117,
+    "PASS": 118,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 37
@@ -2081,6 +2081,17 @@
         "max_relative_error": 0.006153430381301878,
         "min_relative_error": 0.006901308573957358,
         "reflection_gate": true
+      }
+    },
+    {
+      "case": "pml-evidence-gradient",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "chapter-7 PML evidence gradient",
+      "classification": "PML_EVIDENCE_GRADIENT_WITH_EXPLICIT_RUNTIME_BOUNDARIES",
+      "scope": "read-only chapter/source/runtime linkage; not complete PML solver, geometry, AMR, or angle coverage",
+      "metrics": {
+        "passed": true
       }
     },
     {

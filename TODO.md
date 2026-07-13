@@ -4875,3 +4875,8 @@
 - [x] 完成 Vay--Godfrey 2014 review 全文资产：9 页 PDF、MinerU Markdown、43 张图、中文精读、access audit、reading log 和 asset contract。
 - [x] 将该 review 接入第 4、6、9 章，并明确论文公式、WarpX 源码和 runtime contract 的证据边界。
 - [ ] 继续补齐第 5 章 Esirkepov/Villasenor 的发表版逐式核对，以及第 7 章 LeeCPC2015 的 publisher PDF。
+## 2026-07-13
+
+- [x] 新增第 7 章 v0.77 PML 证据梯度矩阵：区分 Cartesian FDTD/PSATD 反射率、RZ residual、restart、粒子入 PML 和 3D cleaning reader-side 证据，并显式记录 `C1-C25`、`F/G`、Galilean `T2`、RZ 与 AMR 的负面边界。
+- [x] 新增 `scripts/audit_pml_evidence_gradient_contract.py`，绑定第 7 章正文、WarpX 只读源码和代表性 PML runtime contracts；分类为 `PML_EVIDENCE_GRADIENT_WITH_EXPLICIT_RUNTIME_BOUNDARIES`。
+- [ ] 继续获取 LeeCPC2015 publisher-formatted PDF，并在全文可得后逐式核对 `C1-C25`、`F/G`、`T2` 与 RZ 分支；当前 accepted manuscript 和源码/runtime 证据已闭环，但 publisher PDF 仍是边界。

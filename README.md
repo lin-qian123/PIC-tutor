@@ -14,6 +14,8 @@
 
 当前 v0.68 又修正第 6 章 `6.11.3` 重复编号，顺移后续 regression 小节，并将第 6 章小节单调性与重复编号纳入同一验收。
 
+当前 v0.68 又为第 9 章补入证据分层、合同复核和 acquisition 排序三项读者练习；第 1-9 章均已有可执行的练习或复核入口。
+
 当前公开证据索引已更新为 177 条合同；README 中较早的历史日志保留当时的条数，不代表当前索引快照。
 
 当前 v0.68 又为第 5 章补入正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface。该合同用于防止源码演进造成正文漂移，不替代物理 runtime 或论文逐行证据。

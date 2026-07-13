@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.68 合订 PDF 为 323 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.68 合订 PDF 为 323 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-9 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
 2026-07-13：第 9 章新增文献路线资产合同，12 项检查绑定证据层、核心文献树、literature map、inventory 与 publisher/metadata 缺口；当前公开证据索引为 177 条，合同不替代论文逐式审校或 runtime physics proof。
 

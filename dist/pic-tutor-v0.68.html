@@ -818,6 +818,15 @@ boosted-frame / NCI</a></li>
 文献资产与路线图同步合同</a></li>
 </ul></li>
 <li><a href="#本章结论-2" id="toc-本章结论-2">9.8 本章结论</a></li>
+<li><a href="#练习与复核" id="toc-练习与复核">9.9 练习与复核</a>
+<ul>
+<li><a href="#证据层分类练习" id="toc-证据层分类练习">9.9.1
+证据层分类练习</a></li>
+<li><a href="#合同复核练习" id="toc-合同复核练习">9.9.2
+合同复核练习</a></li>
+<li><a href="#acquisition-排序练习" id="toc-acquisition-排序练习">9.9.3
+acquisition 排序练习</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#附录-a符号时间层与源码变量" id="toc-附录-a符号时间层与源码变量">附录 A：符号、时间层与源码变量</a>
 <ul>
@@ -844,6 +853,8 @@ runtime physics proof。报告见
 <p>本版又修正第 6 章 <code>6.11.3</code> 重复编号，顺移后续 regression
 小节，并把第 6 章小节单调性与重复编号纳入 v0.68 artifact
 verification。</p>
+<p>本版又为第 9 章补入证据层分类、合同复核和 acquisition
+排序三项读者练习，使第 1-9 章均具备可执行的练习或复核入口。</p>
 <p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
 组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
 kernel、Cartesian/RZ spectral 分派和 regression
@@ -26861,6 +26872,30 @@ acquisition、MinerU、中文精读和章节回填继续绑成同一条工作流
 </ol>
 <p>做到这三点，第 9
 章才不是一个附录式书单，而是真正控制全书证据质量的总调度章。</p>
+<h2 id="练习与复核">9.9 练习与复核</h2>
+<h3 id="证据层分类练习">9.9.1 证据层分类练习</h3>
+<p>从以下五项中各选一项，分别判断它属于 A、B、C 或 D
+层，并写出判断所依据的本地路径：<code>Birdsall 1985</code>、<code>Yee 1966</code>、<code>Esirkepov 2001</code>
+作者预印本、Tajima 1982 FNAL 相关会议稿、<code>LeeCPC2015</code>
+accepted
+manuscript。答案必须同时写出“可以支持的句子”和“不能支持的句子”。例如，不能因为某项有
+DOI 或摘要，就把它写成“已完成全文精读”。</p>
+<h3 id="合同复核练习">9.9.2 合同复核练习</h3>
+<p>在项目根目录运行：</p>
+<div class="sourceCode" id="cb440"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb440-1"><a href="#cb440-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/audit_literature_roadmap_asset_contract.py <span class="dt">\</span></span>
+<span id="cb440-2"><a href="#cb440-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--project-root</span> . <span class="dt">\</span></span>
+<span id="cb440-3"><a href="#cb440-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--output-json</span> runs/stage-c-validation/literature-roadmap-asset-contract/contract.json <span class="dt">\</span></span>
+<span id="cb440-4"><a href="#cb440-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--output-md</span> runs/stage-c-validation/literature-roadmap-asset-contract/contract.md</span></code></pre></div>
+<p>然后将合同中的 <code>12/12 PASS</code> 与
+<code>docs/public-evidence-index.md</code>
+中对应记录对照。解释为什么合同通过只能证明“路线图与本地资产一致”，不能证明论文出版社版本已取得，也不能证明
+WarpX runtime 已复现论文全部结论。</p>
+<h3 id="acquisition-排序练习">9.9.3 acquisition 排序练习</h3>
+<p>从
+<code>Hockney-Eastwood</code>、<code>Yee 1966</code>、<code>Esirkepov 2001</code>
+CPC 定稿、<code>LeeCPC2015</code> publisher PDF 和 Boris 1970 原始
+proceedings 中选出下一项 acquisition
+目标。用三列短表说明：它影响哪一章、当前已有哪一级证据、取得后会关闭哪一个具体边界。若目标仍受访问或许可限制，必须把“继续获取”和“先用现有证据回填正文”分成两个独立动作。</p>
 <!-- source: manuscript/appendices/A-symbols.md -->
 <h1 id="附录-a符号时间层与源码变量">附录 A：符号、时间层与源码变量</h1>
 <p>本附录服务于正文阅读和源码检索。公式中的符号采用连续模型或离散模型的常用记号；反引号中的名称则优先对应

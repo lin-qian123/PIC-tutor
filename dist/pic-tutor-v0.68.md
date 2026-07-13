@@ -8,6 +8,8 @@
 
 本版又修正第 6 章 `6.11.3` 重复编号，顺移后续 regression 小节，并把第 6 章小节单调性与重复编号纳入 v0.68 artifact verification。
 
+本版又为第 9 章补入证据层分类、合同复核和 acquisition 排序三项读者练习，使第 1-9 章均具备可执行的练习或复核入口。
+
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 
 本版又补入第 7 章边界/PML/AMR 正文-源码 crosswalk：13 组代表性锚点覆盖 field/particle 边界顺序、场边界分派、PML 生命周期、guard-cell/通信、AMR 重建、moving window 和 scraping consumer；transition-zone route ledger 仍保持 `RUNTIME_LEDGER_UNPROVEN`。该合同只防止正文漂移，不替代 runtime route-count proof。报告见 `runs/stage-c-validation/boundary-amr-chapter-source-crosswalk/contract.{json,md}`。
@@ -16797,6 +16799,29 @@ $$
 3. 把 acquisition、MinerU、中文精读和章节回填继续绑成同一条工作流。
 
 做到这三点，第 9 章才不是一个附录式书单，而是真正控制全书证据质量的总调度章。
+
+## 9.9 练习与复核
+
+### 9.9.1 证据层分类练习
+
+从以下五项中各选一项，分别判断它属于 A、B、C 或 D 层，并写出判断所依据的本地路径：`Birdsall 1985`、`Yee 1966`、`Esirkepov 2001` 作者预印本、Tajima 1982 FNAL 相关会议稿、`LeeCPC2015` accepted manuscript。答案必须同时写出“可以支持的句子”和“不能支持的句子”。例如，不能因为某项有 DOI 或摘要，就把它写成“已完成全文精读”。
+
+### 9.9.2 合同复核练习
+
+在项目根目录运行：
+
+```bash
+python scripts/audit_literature_roadmap_asset_contract.py \
+  --project-root . \
+  --output-json runs/stage-c-validation/literature-roadmap-asset-contract/contract.json \
+  --output-md runs/stage-c-validation/literature-roadmap-asset-contract/contract.md
+```
+
+然后将合同中的 `12/12 PASS` 与 `docs/public-evidence-index.md` 中对应记录对照。解释为什么合同通过只能证明“路线图与本地资产一致”，不能证明论文出版社版本已取得，也不能证明 WarpX runtime 已复现论文全部结论。
+
+### 9.9.3 acquisition 排序练习
+
+从 `Hockney-Eastwood`、`Yee 1966`、`Esirkepov 2001` CPC 定稿、`LeeCPC2015` publisher PDF 和 Boris 1970 原始 proceedings 中选出下一项 acquisition 目标。用三列短表说明：它影响哪一章、当前已有哪一级证据、取得后会关闭哪一个具体边界。若目标仍受访问或许可限制，必须把“继续获取”和“先用现有证据回填正文”分成两个独立动作。
 
 
 <!-- source: manuscript/appendices/A-symbols.md -->

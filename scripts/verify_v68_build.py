@@ -60,6 +60,15 @@ def main() -> None:
         and len(chapter_5_numbers) == len(set(chapter_5_numbers)),
         "chapter_6_subheading_order": chapter_6_numbers == sorted(chapter_6_numbers)
         and len(chapter_6_numbers) == len(set(chapter_6_numbers)),
+        "chapter_9_exercises": all(
+            marker in source
+            for marker in (
+                "## 9.9 练习与复核",
+                "### 9.9.1 证据层分类练习",
+                "### 9.9.2 合同复核练习",
+                "### 9.9.3 acquisition 排序练习",
+            )
+        ),
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],
         "public_path_hygiene_html": inspect(HTML)["passed"],
     }

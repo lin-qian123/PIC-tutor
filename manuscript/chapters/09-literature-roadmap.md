@@ -215,3 +215,26 @@
 3. 把 acquisition、MinerU、中文精读和章节回填继续绑成同一条工作流。
 
 做到这三点，第 9 章才不是一个附录式书单，而是真正控制全书证据质量的总调度章。
+
+## 9.9 练习与复核
+
+### 9.9.1 证据层分类练习
+
+从以下五项中各选一项，分别判断它属于 A、B、C 或 D 层，并写出判断所依据的本地路径：`Birdsall 1985`、`Yee 1966`、`Esirkepov 2001` 作者预印本、Tajima 1982 FNAL 相关会议稿、`LeeCPC2015` accepted manuscript。答案必须同时写出“可以支持的句子”和“不能支持的句子”。例如，不能因为某项有 DOI 或摘要，就把它写成“已完成全文精读”。
+
+### 9.9.2 合同复核练习
+
+在项目根目录运行：
+
+```bash
+python scripts/audit_literature_roadmap_asset_contract.py \
+  --project-root . \
+  --output-json runs/stage-c-validation/literature-roadmap-asset-contract/contract.json \
+  --output-md runs/stage-c-validation/literature-roadmap-asset-contract/contract.md
+```
+
+然后将合同中的 `12/12 PASS` 与 `docs/public-evidence-index.md` 中对应记录对照。解释为什么合同通过只能证明“路线图与本地资产一致”，不能证明论文出版社版本已取得，也不能证明 WarpX runtime 已复现论文全部结论。
+
+### 9.9.3 acquisition 排序练习
+
+从 `Hockney-Eastwood`、`Yee 1966`、`Esirkepov 2001` CPC 定稿、`LeeCPC2015` publisher PDF 和 Boris 1970 原始 proceedings 中选出下一项 acquisition 目标。用三列短表说明：它影响哪一章、当前已有哪一级证据、取得后会关闭哪一个具体边界。若目标仍受访问或许可限制，必须把“继续获取”和“先用现有证据回填正文”分成两个独立动作。

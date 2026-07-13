@@ -12,6 +12,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 152 条 `contrac
 
 2026-07-13：收口 Tajima-Dawson 1979 论文资产：补齐 README、access audit 和独立 contract，确认 4 页全文、11 张图和中文精读；该文作为 early LWFA scaling baseline 纳入公开证据索引，不写成现代 WarpX regression。
 
+2026-07-13：重新核查 Esirkepov 2001 CPC 发表版：ScienceDirect 摘要可作为有限 metadata/abstract evidence，直接 PDF 端点仍返回 403/HTML；第 5 章补入该摘要级边界，继续区分预印本与发表版。
+
 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将“线性稳定不等于非线性无扰动”、相空间 clump/density hole 诊断和相对漂移自由能边界写入中文讲解笔记，并最小回填第 8 章；该结论不升格为 NCI 或 WarpX runtime physics gate。
 
 2026-07-13：整理 `Birdsall 1985` `3A ES1` 的最小程序骨架与 WarpX `InitData()`/`Evolve()` 阶段边界，补充不可等同说明和 Langmuir/初始化验证入口，作为下一次第 3A 章正文回填依据；当前 v0.68 继续保持 316 页。

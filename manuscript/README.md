@@ -14,6 +14,8 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 152 条验
 
 2026-07-13：收口 Tajima-Dawson 1979 论文资产合同：4 页 PDF、MinerU、11 张图、中文精读和图 1/图 2 机制对应均已复核；该文作为 early LWFA scaling baseline 使用，不替代现代 WarpX runtime evidence。
 
+2026-07-13：第 5 章补入 Esirkepov 2001 CPC 索引摘要级证据：arbitrary form-factor、straight-line trajectory、no-Poisson-solve 和 2D/3D demonstration；发表版 PDF 仍无法取得，不升级为逐行核对。
+
 2026-07-13：完成 `LeeCPC2015` accepted/submitted manuscript contract：7 页全文、13 张抽取图片、MinerU 结构、公式锚点和中文讲解均通过；第 7 章可使用第一轮 paper-backed PML 解释，但不把该资产标记为 CPC publisher-formatted 定稿。
 
 2026-07-13：完成第 5 章 Villasenor/Esirkepov 本地论文资产合同：Villasenor 11 页/27 图、Esirkepov 13 页/39 图均通过结构、公式锚点和中文讲解检查；两条线仍保留各自的 publisher provenance / CPC 定稿差异边界。

@@ -32,7 +32,8 @@ Date: 2026-07-13
 | CiNii Research metadata re-check | Confirms CPC 135(2), 144-153, DOI `10.1016/S0010-4655(00)00228-9` and Elsevier rights metadata; no publisher full-text PDF is exposed on the record | web search on 2026-07-12 |
 | ResearchGate record re-check | Record exposes abstract and a `Request full-text` path, but not a downloadable full-text PDF | web search on 2026-07-12 |
 | ScienceDirect PDF endpoint re-check | Current local `curl -L -I` still returns HTTP 403; response advertises TDM policy but does not provide PDF bytes | local command on 2026-07-12 |
-| ScienceDirect PDF endpoint current re-check | Search-discovered publisher PDF URL was tested with `curl -I -L` on 2026-07-13; response is HTTP/2 403 with `content-type: text/html`, Cloudflare headers and no PDF bytes | local command on 2026-07-13 |
+| ScienceDirect PDF endpoint current re-check | Search-discovered publisher PDF URL was tested with `curl -L` on 2026-07-13; response is HTTP/2 403 with `content-type: text/html`, Cloudflare headers and no PDF bytes. The browser-facing page likewise shows “Preparing your download” and “A problem was encountered” rather than a PDF. | local `curl` plus ScienceDirect page check on 2026-07-13 |
+| ScienceDirect indexed abstract current re-check | Search result exposes the published abstract: arbitrary quasi-particle form-factor, straight-line trajectory assumption, no Poisson solve, and 2D/3D demonstration. This is abstract-level evidence only, not a publisher-PDF reading. | ScienceDirect indexed result on 2026-07-13 |
 | Local paper-asset contract | `scripts/audit_deposition_paper_asset_contract.py` checks the 13-page arXiv PDF, 39 images, MinerU structure, Chinese note and publisher-PDF boundary | contract run on 2026-07-13; all checks pass |
 
 ## Current decision
@@ -53,7 +54,7 @@ More concretely, the strongest currently verified transport-layer evidence is:
 
 So the present blocker is no longer "the paper is unknown" or "no legal full text exists", but specifically: **the publisher-formatted 2001 CPC PDF is not yet locally obtainable in this environment for line-by-line comparison**.
 
-The 2026-07-11/12 re-check therefore closes the publication-metadata and access-status part of the audit. It does not change the PDF status or upgrade the chapter to publisher-PDF line-by-line evidence. The official API's `openaccess=0` and the 406 PDF response make the remaining boundary explicit: the current environment can retrieve publisher metadata but not the licensed full text. The currently discoverable publisher PDF endpoint is:
+The 2026-07-11/12/13 re-check therefore closes the publication-metadata, abstract-discovery and access-status part of the audit. It does not change the PDF status or upgrade the chapter to publisher-PDF line-by-line evidence. The official API's `openaccess=0`, the 406 PDF response from the API route, and the 403/HTML response from the browser-facing route make the remaining boundary explicit: the current environment can retrieve publisher metadata and indexed abstract text but not the licensed full text. The currently discoverable publisher PDF endpoint is:
 
 `https://www.sciencedirect.com/science/article/pii/S0010465500002289/pdf?md5=526385691a2c427ee41e96a0bfbd1d3b&pid=1-s2.0-S0010465500002289-main.pdf`
 

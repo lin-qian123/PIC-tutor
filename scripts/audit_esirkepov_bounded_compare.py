@@ -42,6 +42,8 @@ def main() -> int:
         "publisher_pdf_missing": bool(
             re.search(r"publisher PDF status.*still missing", access_audit, re.IGNORECASE)
         ),
+        "publisher_endpoint_html_boundary_recorded": "content-type: text/html" in access_audit and "Preparing your download" in access_audit,
+        "abstract_boundary_recorded": "abstract-level evidence only" in access_audit,
     }
     result = {
         "contract": "Esirkepov 2001 bounded preprint/publication comparison",
@@ -54,7 +56,7 @@ def main() -> int:
             "doi": PUBLISHED_DOI,
             "journal": "Computer Physics Communications 135(2), 144-153 (2001)",
         },
-        "scope": "bounded structural compare only; no publisher-PDF line-by-line claim",
+        "scope": "bounded structural and abstract-level compare only; no publisher-PDF line-by-line claim",
     }
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "contract.json").write_text(

@@ -34,7 +34,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 316 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 317 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要和 Tajima-Dawson 1979 资产合同，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -47,6 +47,8 @@
 本版补充一份相关但不同的 Tajima 1982 FNAL 单作者会议稿：26 页 PDF、MinerU、67 张图和中文讲解已通过独立资产合同；它只用于 beat-wave 主题旁证，不能替代正式 Tajima-Dawson AIP 论文。
 
 本版又收口 Tajima-Dawson 1979 论文资产：4 页 PDF、MinerU、11 张图、中文精读和图 1/图 2 机制对应已通过独立合同；证据分类为 early LWFA scaling baseline，不替代现代 WarpX runtime regression。
+
+本版又补入 Esirkepov 2001 CPC 发表版的摘要级访问边界：ScienceDirect 可见摘要固定 arbitrary form-factor、straight-line trajectory、no-Poisson-solve 和 2D/3D demonstration；直接 PDF 下载仍为 403/HTML，仍不宣称 publisher-PDF line-by-line compare。
 
 本版补充 `LeeCPC2015` accepted/submitted manuscript 资产合同：7 页 PDF、MinerU 结构、13 张图片、公式锚点和中文讲解全部通过；CPC publisher-formatted PDF 的版本差异仍待核对。
 
@@ -8846,7 +8848,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 截至 2026-07-11，这条 compare 线又可以把“已核实”和“仍未核实”拆得更干净。arXiv 页面明确记录预印本于 1999-01-26 提交，题名为 `Exact charge conservation scheme for Particle-in-Cell simulations for a big class of form-factors`，并标注为 13 页、无图、10 条参考文献；公开书目信息则确认 CPC 发表版为 `Computer Physics Communications 135(2), 144-153 (2001)`，题名为 `Exact charge conservation scheme for Particle-in-Cell simulation with an arbitrary form-factor`，DOI 为 `10.1016/S0010-4655(00)00228-9`。这已经足以把“发表版身份”和“当前本地全文资产”分开记录，但仍不足以推出发表版正文的逐式编辑差异。
 
-本项目把这次 bounded compare 单独记在 `notes/code-reading/particles/44-esirkepov-cpc-bounded-comparison.md`。因此，本章当前可以更准确地写成：发表版书目信息已核实，预印本已完成 MinerU 和源码映射，`Eq.(23)` 到 `sdxi/sdyj/sdzk` 的主论证可以使用；但 abstract、section numbering、公式排版和 second-order spline 段落仍不能声称已经按 publisher PDF 逐页核过。
+本项目把这次 bounded compare 单独记在 `notes/code-reading/particles/44-esirkepov-cpc-bounded-comparison.md`。因此，本章当前可以更准确地写成：发表版书目信息已核实，ScienceDirect 索引摘要还可以支持“任意 form-factor、直线轨迹假设、无需 Poisson solve、2D/3D demonstration”这组摘要级事实，但本地下载得到的仍是 HTML 访问响应而不是 PDF；预印本已完成 MinerU 和源码映射，`Eq.(23)` 到 `sdxi/sdyj/sdzk` 的主论证可以使用；但 abstract 的正式排版、section numbering、公式排版和 second-order spline 段落仍不能声称已经按 publisher PDF 逐页核过。
 
 同样，当前预印本也已经足够把论文内部的 section 结构稳定绑定到第 5 章的主叙述，而不必等发表版 PDF 才能继续写。更准确地说：
 

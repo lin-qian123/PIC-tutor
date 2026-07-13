@@ -45,6 +45,7 @@
   - `references/04_particle_pushers_deposition_shapes/2017_HigueraPOP2017_Structure-preserving_second-order_integration_of_relativistic_charged_particle_trajectories_in_electromagnetic_fields/`
 - 两份目录现均具备 README、access audit 和可重复资产合同；Vay 2008 为 7 页/38 图，Higuera-Cary 2017 为 9 页/44 图。合同只确认 paper-backed explanation/source mapping，不把 Appendix B 圆轨道或 Poincare topology 误写成当前 WarpX runtime 已复现。
 - `Villasenor-Buneman 1992` 与 `Esirkepov 1999/2001` 的本地读取包现已分别通过 `scripts/audit_deposition_paper_asset_contract.py`：前者为 11 页本地全文/27 张图，后者为 13 页 arXiv 预印本/39 张图；两者均完成第一轮结构、公式锚点和中文讲解资产验收，但仍分别保留 publisher provenance 或 CPC 定稿逐行对照边界。
+- 2026-07-13 Esirkepov CPC recheck：ScienceDirect indexed abstract 进一步固定 arbitrary form-factor、straight-line trajectory、no-Poisson-solve 和 2D/3D demonstration 四项摘要级事实；直接 publisher PDF 仍为 403/HTML，未改变 `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING` 分类。
 - 其中 `Birdsall 1985` 因原书 `469` 页超过 MinerU `200` 页限制，当前保留：
   - 原 PDF
   - `split_parts/*.pdf`

@@ -46,6 +46,8 @@
 
 本版又收口 Tajima-Dawson 1979 论文资产：4 页 PDF、MinerU、11 张图、中文精读和图 1/图 2 机制对应已通过独立合同；证据分类为 early LWFA scaling baseline，不替代现代 WarpX runtime regression。
 
+本版又补入 Esirkepov 2001 CPC 发表版的摘要级访问边界：ScienceDirect 可见摘要固定 arbitrary form-factor、straight-line trajectory、no-Poisson-solve 和 2D/3D demonstration；直接 PDF 下载仍为 403/HTML，仍不宣称 publisher-PDF line-by-line compare。
+
 本版补充 `LeeCPC2015` accepted/submitted manuscript 资产合同：7 页 PDF、MinerU 结构、13 张图片、公式锚点和中文讲解全部通过；CPC publisher-formatted PDF 的版本差异仍待核对。
 
 本版补充第 5 章 Villasenor/Esirkepov 本地论文资产合同：分别确认 11 页/27 图与 13 页/39 图的读取包完整；这只关闭本地资产可复核性，不关闭 publisher provenance 或 CPC 定稿逐行对照。

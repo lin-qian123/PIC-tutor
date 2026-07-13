@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-13：重新核查 Esirkepov 2001 CPC 发表版：ScienceDirect 索引摘要可确认 arbitrary form-factor、straight-line trajectory、无需 Poisson solve 和 2D/3D demonstration；直接 PDF 下载仍返回 Cloudflare 403/HTML，因此 bounded compare 合同新增摘要级边界，但不升级为 publisher-PDF 逐行核对。
 - [x] 2026-07-13：重建 `docs/public-evidence-index.{json,md}`，从本地一级 case contract 汇总 151 条验证合同；新增 Tajima 1982 相关会议稿的完整资产合同，保留原始 PASS/FAIL/UNKNOWN，并显式标记 boundary/unproven/missing 证据。
 - [x] 2026-07-13：materialize T. Tajima 单作者 FNAL 1982 相关会议稿：26 页 PDF、MinerU Markdown、67 张图、中文讲解、access audit、reading log 和 `scripts/audit_tajima_1982_related_note_contract.py` 全部通过；分类为 `RELATED_SINGLE_AUTHOR_CONFERENCE_NOTE_FULL_TEXT_MINERU_VERIFIED_FORMAL_TAJIMA_DAWSON_ITEM_NOT_SUBSTITUTED`，正式 AIP 论文仍保留全文缺失边界。
 - [x] 2026-07-13：建立 `Abe et al. (1975)` 摘要级论文专属目录、中文讲解、access audit、reading log 和 `scripts/audit_abe_1975_abstract_contract.py`；固定 `sigma(K_g)`、correlation time、finite-grid stochastic fluctuation 的窄证据范围，明确 publisher PDF/MinerU 缺失。

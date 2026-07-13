@@ -1,0 +1,438 @@
+{
+  "contract": "formal convergence repeat-family runner preflight",
+  "passed": true,
+  "ready_to_execute": true,
+  "classification": "REPEAT_FAMILY_RUNNER_EXECUTION_PASS",
+  "scope": "twelve independent 2-rank producers: RZ/RSPHERE x 64/128/256 x correction on/off",
+  "expected_ranks": 2,
+  "mpi_launcher": "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+  "checks": {
+    "twelve_runs_declared": true,
+    "templates_present": true,
+    "binaries_present": true,
+    "inputs_present": true,
+    "referenced_input_files_present": true,
+    "diagnostics_configured": true,
+    "mpi_launcher_present": true,
+    "fixed_rank_count": true,
+    "single_rank_substitute_forbidden": true,
+    "all_producers_exit_zero": true,
+    "producer_log_present": true,
+    "used_inputs_present": true,
+    "diagnostics_present": true,
+    "diagnostic_dirs_present": true
+  },
+  "planned": [
+    {
+      "geometry": "RZ",
+      "resolution": "64",
+      "correction": "on",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rz_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rz-64-on",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rz_mpi2/inputs",
+        "runs/stage-c-validation/esirkepov_langmuir_rz_mpi2/inputs_base_rz"
+      ]
+    },
+    {
+      "geometry": "RZ",
+      "resolution": "64",
+      "correction": "off",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rz_no_verboncoeur_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rz-64-off",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rz_no_verboncoeur_mpi2/inputs",
+        "runs/stage-c-validation/esirkepov_langmuir_rz_no_verboncoeur_mpi2/inputs_base_rz"
+      ]
+    },
+    {
+      "geometry": "RZ",
+      "resolution": "128",
+      "correction": "on",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rz_resolution128_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rz-128-on",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rz_resolution128_mpi2/inputs",
+        "runs/stage-c-validation/esirkepov_langmuir_rz_resolution128_mpi2/inputs_base_rz"
+      ]
+    },
+    {
+      "geometry": "RZ",
+      "resolution": "128",
+      "correction": "off",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rz_resolution128_no_verboncoeur_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rz-128-off",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rz_resolution128_no_verboncoeur_mpi2/inputs",
+        "runs/stage-c-validation/esirkepov_langmuir_rz_resolution128_no_verboncoeur_mpi2/inputs_base_rz"
+      ]
+    },
+    {
+      "geometry": "RZ",
+      "resolution": "256",
+      "correction": "on",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rz_resolution256_on_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rz-256-on",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rz_resolution256_on_mpi2/inputs",
+        "runs/stage-c-validation/esirkepov_langmuir_rz_resolution256_on_mpi2/inputs_base_rz"
+      ]
+    },
+    {
+      "geometry": "RZ",
+      "resolution": "256",
+      "correction": "off",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rz_resolution256_off_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rz-256-off",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rz_resolution256_off_mpi2/inputs",
+        "runs/stage-c-validation/esirkepov_langmuir_rz_resolution256_off_mpi2/inputs_base_rz"
+      ]
+    },
+    {
+      "geometry": "RSPHERE",
+      "resolution": "64",
+      "correction": "on",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-64-on",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_mpi2/inputs"
+      ]
+    },
+    {
+      "geometry": "RSPHERE",
+      "resolution": "64",
+      "correction": "off",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_no_verboncoeur_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-64-off",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_no_verboncoeur_mpi2/inputs"
+      ]
+    },
+    {
+      "geometry": "RSPHERE",
+      "resolution": "128",
+      "correction": "on",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_n128_on_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-128-on",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_n128_on_mpi2/inputs"
+      ]
+    },
+    {
+      "geometry": "RSPHERE",
+      "resolution": "128",
+      "correction": "off",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_n128_off_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-128-off",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_n128_off_mpi2/inputs"
+      ]
+    },
+    {
+      "geometry": "RSPHERE",
+      "resolution": "256",
+      "correction": "on",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_n256_on_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-256-on",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_n256_on_mpi2/inputs"
+      ]
+    },
+    {
+      "geometry": "RSPHERE",
+      "resolution": "256",
+      "correction": "off",
+      "template": "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_n256_off_mpi2",
+      "binary": "../warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-256-off",
+      "binary_exists": true,
+      "template_exists": true,
+      "inputs_present": true,
+      "referenced_files_present": true,
+      "diagnostics_configured": true,
+      "input_files": [
+        "runs/stage-c-validation/esirkepov_langmuir_rsphere_charge_n256_off_mpi2/inputs"
+      ]
+    }
+  ],
+  "commands": [
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rz.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ],
+    [
+      "/Users/yuxiangzhang/anaconda3/envs/warpx-cpu-mpich-dev/bin/mpiexec",
+      "-n",
+      "2",
+      "/Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.rsphere.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES",
+      "inputs"
+    ]
+  ],
+  "executions": [
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rz-64-on",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rz-64-off",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rz-128-on",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rz-128-off",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rz-256-on",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rz-256-off",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-64-on",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-64-off",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-128-on",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-128-off",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-256-on",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    },
+    {
+      "run": "runs/stage-c-validation/formal-repeat-rsphere-256-off",
+      "returncode": 0,
+      "output_contract": {
+        "producer_log_present": true,
+        "used_inputs_present": true,
+        "diagnostics_present": true,
+        "diagnostic_dirs_present": true
+      }
+    }
+  ],
+  "runtime_environment": {
+    "FI_PROVIDER": "tcp"
+  },
+  "execution_requested": true,
+  "single_rank_substitute": "forbidden"
+}

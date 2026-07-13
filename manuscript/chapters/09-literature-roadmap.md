@@ -213,7 +213,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ## 9.8 当前成书缺口登记
 
-v0.91 延续第二组 formal convergence family 的 12 组固定 2-rank producer runner 输入引用、diagnostics 配置和执行后产物检查，并将 RZ correction-on/off shape=1/2/3/4 的 rho-side species decomposition 做成全时间 reader-side contract：排除初始化基线后，8 个既有 `256x512` sibling 的 16 个 evolved-time frames 全部通过 `1e-12` gate；与 v0.90 的 axis-dominated residual time profile 相结合，当前诊断边界进一步收窄。当前本机缺少 `mpiexec/mpirun`，仍保持 MPI launcher 缺失边界。该 rho/species contract 只验证总 rho 与 species rho 的分解一致性，不等于 `divE-rho` axis charge 闭合；v0.84 的 norm、observable、拟合区间、负对照和重复 family 预注册继续保留。正式收敛阶、人工全书通读、第三方材料许可和公开再分发仍需单独签收。
+v0.92 完成预注册 formal convergence family 的真实第二组执行：RZ/RSPHERE 各 `64/128/256`、`correction=on/off` 共 12 个 2-rank producer 在 `FI_PROVIDER=tcp` 下全部返回码为 0，并生成完整 diagnostics。随后以与第一 family 相同的 reader-side norm 对两组 family 的全部相邻 pair 做 slope 对照，RZ 与 RSPHERE 分开报告，不做 pooled fit。两组 slope 几乎重合，但原预注册未定义数值化的 repeat-slope comparison tolerance，且 correction-on axis charge 仍为 boundary；因此第二组 materialization 已完成，正式收敛阶仍保持开放。v0.91 的 rho/species decomposition 与 axis-dominated residual time profile 继续作为独立证据层，不等于 `divE-rho` axis charge 闭合。人工全书通读、第三方材料许可和公开再分发仍需单独签收。
 
 文献路线图需要和运行/编辑缺口分开管理，否则“论文缺全文”和“代码没有 route ledger”会在 TODO 中互相遮蔽。当前项目把缺口登记在 `docs/current-book-gap-register.md`，每一行绑定证据、分类、下一步动作和关闭条件。当前八项缺口分别覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条 release editorial gate。
 

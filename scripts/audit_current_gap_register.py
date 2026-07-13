@@ -47,21 +47,21 @@ def main() -> int:
         "editorial_audit_evidence": all(
             (root / path).is_file()
             for path in (
-                "docs/pdf-layout-audit-v0.85.md",
-                "runs/stage-c-validation/pdf-layout-v0.85/contract.json",
-                "docs/editorial-quality-audit-v0.85.md",
-                "runs/stage-c-validation/editorial-quality-v0.85/contract.json",
+                "docs/pdf-layout-audit-v0.92.md",
+                "runs/stage-c-validation/pdf-layout-v0.92/contract.json",
+                "docs/editorial-quality-audit-v0.92.md",
+                "runs/stage-c-validation/editorial-quality-v0.92/contract.json",
                 "runs/stage-c-validation/cross-geometry-convergence-trends/contract.json",
                 "docs/formal-convergence-preregistration.json",
                 "runs/stage-c-validation/formal-convergence-preregistration/contract.json",
             )
         ) and all(marker in register for marker in (
             "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
-            "FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT",
+            "FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN",
         )),
         "classification_boundaries": all(marker in register for marker in (
             "OPEN_EXTERNAL_ACCESS", "RUNTIME_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
-            "FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT", "RELEASE-EDITORIAL",
+            "FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN", "RELEASE-EDITORIAL",
         )),
         "closure_language": all(marker in register for marker in ("关闭条件", "真实 `current_buf/rho_buf`", "publisher PDF")),
         "exercise_renumbering": all(marker in chapter for marker in ("## 9.10 练习与复核", "### 9.10.1", "### 9.10.2", "### 9.10.3")),

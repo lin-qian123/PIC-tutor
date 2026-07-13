@@ -1,13 +1,14 @@
 {
   "contract": "PIC-tutor formal convergence study preregistration",
-  "version": "v0.84-pre",
-  "classification": "FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT",
+  "version": "v0.92-pre",
+  "classification": "FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN",
   "scope": "RZ and RSPHERE Esirkepov Langmuir resolution families; independent geometry fits only",
   "data_sources": {
     "rz": "runs/stage-c-validation/esirkepov_langmuir_rz_resolution-trend/contract.json",
     "rsphere": "runs/stage-c-validation/esirkepov_rsphere_charge_resolution-comparison/contract.json"
   },
-  "repeat_execution_preflight": "runs/stage-c-validation/formal-convergence-repeat-preflight/contract.json",
+  "repeat_execution_preflight": "runs/stage-c-validation/formal-convergence-repeat-family-v0.92-tcp/contract.json",
+  "repeat_slope_comparison": "runs/stage-c-validation/formal-convergence-second-family-v0.92/contract.json",
   "design": {
     "geometry_units": ["RZ", "RSPHERE"],
     "correction_controls": ["on", "off"],
@@ -15,7 +16,7 @@
     "required_refinement_ratio": 2,
     "fit_interval": "all adjacent pairs from the declared 64/128/256 levels; no post-hoc omission",
     "minimum_independent_families_per_geometry": 2,
-    "current_independent_families_per_geometry": 1,
+    "current_independent_families_per_geometry": 2,
     "pooled_geometry_fit": false,
     "repeat_requirement": "A second independently produced family with the same declared physics and observable contract is required before formal-order closure."
   },
@@ -58,10 +59,9 @@
     "preregistration_complete": true,
     "current_data_meets_formal_closure": false,
     "blocking_gates": [
-      "only one independent family is currently materialized per geometry",
-      "correction-on axis charge remains a boundary in the source contracts",
-      "field and charge slopes are descriptive and are not yet repeat-validated",
-      "the current machine has no mpiexec/mpirun launcher for the required 2-rank repeat"
+      "field and charge slopes are now repeat-materialized but no numerical repeat-slope comparison tolerance was declared",
+      "correction-on axis charge remains a boundary in both geometry families",
+      "the default MPICH provider selects utun6 and fails during finalize; current execution requires explicit FI_PROVIDER=tcp"
     ]
   }
 }

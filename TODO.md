@@ -2,15 +2,16 @@
 
 ## 2026-07-14
 
+- [x] v0.92 完成预注册 RZ/RSPHERE 第二组独立 2-rank refinement family：12/12 producer 在 `FI_PROVIDER=tcp` 下返回码为 0，`producer.log`、`warpx_used_inputs` 与 diagnostics 全部存在；新增同一 reader-side norm 的两组 slope 对照，分类为 `FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN`，明确 correction-on axis charge 与正式 order closure 仍未关闭。
 - [x] v0.91 对 8 个 RZ `256x512`、2-rank sibling 的 `rho`/species decomposition 做全时间 reader-side contract；排除初始化帧后，16 个 evolved frames 全部通过 `1e-12` gate，分类为 `EVOLVED_TIME_RHO_SPECIES_DECOMPOSITION_PASS_AXIS_CHARGE_SEPARATE`，明确不替代 `divE-rho`、current closure 或 formal convergence。
 - [x] v0.90 将 RZ axis residual profile 扩展到 8 个 `256x512`、2-rank sibling 的 24 个数值 plotfile；排除 `t=0` 初始化基线后，16 个 evolved frames 的最大值全部位于 `r=0`，分类为 `POST_INITIAL_AXIS_DOMINATED_READER_SIDE_RESIDUAL_TIME_PROFILE`，明确不替代 kernel root-cause 或 formal convergence。
 - [x] v0.89 对 RZ Esirkepov correction-on/off、shape=1/2/3/4 的 8 个 `256x512` 2-rank sibling 增加 reader-side 径向 residual profile；8/8 的最大值位于 `r=0`，分类为 `AXIS_DOMINATED_READER_SIDE_RESIDUAL_PROFILE`，明确不替代 kernel root-cause 或 formal convergence。
 - [x] v0.88 将 RZ Esirkepov correction-on rho-side observable 扩展到 shape=1/2/3/4：四个 shape 的末态 species decomposition 均通过约 `1e-14` reader-side gate；明确不替代 `divE-rho`、current closure 或正式 convergence。
 - [x] v0.87 完成 v0.86 新增收敛执行页的 PDF 视觉抽查：发现并修复长分类标识和 raw path 截断；封面、第 5 章边界页和第 9 章缺口页重新纳入 spotcheck。
-- [x] v0.86 补强第二组 family runner：执行前检查 `inputs`/`FILE` 引用和 `Full` diagnostics，执行后检查退出码、`warpx_used_inputs` 和 `diags/diag*` 产物；当前仍因缺少 `mpiexec/mpirun` 停在真实 2-rank 执行前。
+- [x] v0.86 补强第二组 family runner：执行前检查 `inputs`/`FILE` 引用和 `Full` diagnostics，执行后检查退出码、`warpx_used_inputs` 和 `diags/diag*` 产物；v0.92 已在显式 `FI_PROVIDER=tcp` 环境完成真实 2-rank 执行。
 - [x] v0.84 预注册正式收敛 study：固定 RZ/RSPHERE 独立 geometry、field/charge norm、primary/secondary observable、全部相邻拟合区间、correction-off negative control 和每种 geometry 至少两组独立 family 的关闭条件；当前数据明确仍不足以关闭 formal order。
-- [ ] 按预注册合同补齐每种 geometry 的第二组独立 refinement family，并重新执行重复 family slope 与 charge boundary gate。
-- [x] v0.85 固化第二组 family 的 12 组 2-rank producer runner 与 preflight；当前输入模板和二进制存在，但本机缺少 `mpiexec/mpirun`，单进程替代被明确禁止。
+- [x] 按预注册合同补齐每种 geometry 的第二组独立 refinement family，并重新执行重复 family slope 与 charge boundary gate；当前两组 slope 已并列归档，正式 closure 仍受 preregistered comparison tolerance 与 correction-on charge boundary 约束。
+- [x] v0.85 固化第二组 family 的 12 组 2-rank producer runner 与 preflight；v0.92 补充 `FI_PROVIDER=tcp` provider 记录和完整 execution contract，单进程替代仍明确禁止。
 
 ## 2026-07-14
 

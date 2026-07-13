@@ -141,6 +141,11 @@ def main() -> int:
     }
     commands = []
     executions = []
+    runtime_environment = {
+        name: os.environ.get(name)
+        for name in ("FI_PROVIDER", "FI_LOG_LEVEL", "MPICH_OFI_STARTUP_CONNECT")
+        if os.environ.get(name) is not None
+    }
     if args.execute:
         if not all(prerequisite_checks.values()):
             raise SystemExit("repeat-family preflight failed; use the report to resolve prerequisites")
@@ -156,7 +161,14 @@ def main() -> int:
             command = [launcher, "-n", str(EXPECTED_RANKS), str(binary), "inputs"]
             commands.append(command)
             with (run_dir / "producer.log").open("w", encoding="utf-8") as log:
-                completed = subprocess.run(command, cwd=run_dir, stdout=log, stderr=subprocess.STDOUT, check=False)
+                completed = subprocess.run(
+                    command,
+                    cwd=run_dir,
+                    env=os.environ.copy(),
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                    check=False,
+                )
             executions.append(
                 {
                     "run": item["run"],
@@ -192,6 +204,7 @@ def main() -> int:
         "planned": planned,
         "commands": commands,
         "executions": executions,
+        "runtime_environment": runtime_environment,
         "execution_requested": args.execute,
         "single_rank_substitute": "forbidden",
     }
@@ -205,6 +218,7 @@ def main() -> int:
         f"- ready to execute: `{result['ready_to_execute']}`",
         f"- expected MPI ranks: `{EXPECTED_RANKS}`",
         f"- MPI launcher: `{launcher or 'missing'}`",
+        f"- runtime environment: `{json.dumps(runtime_environment, ensure_ascii=False, sort_keys=True)}`",
         "",
         "| check | status |",
         "|---|:---:|",

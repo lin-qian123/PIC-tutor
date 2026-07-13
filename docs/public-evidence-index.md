@@ -2,9 +2,9 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `238`
-- PASS: `185`
-- FAIL: `31`
+- records: `245`
+- PASS: `190`
+- FAIL: `33`
 - UNKNOWN: `22`
 - boundary-classified: `40`
 
@@ -34,6 +34,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `current-book-gap-register-v0.89` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `current-book-gap-register-v0.90` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `current-book-gap-register-v0.91` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
+| `current-book-gap-register-v0.92` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `deposition-algorithm-selection` | `PASS` | `PASS` | chapter-5 deposition algorithm selection matrix | `SOURCE_AND_RUNTIME_SELECTION_MATRIX_WITH_EXPLICIT_BOUNDARIES` | read-only chapter/source/runtime linkage; not equal physics coverage across algorithms | `passed=True` |
 | `deposition-chapter-source-crosswalk` | `PASS` | `PASS` | Chapter 5 deposition source crosswalk | `CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED` | Checks representative Chapter 5 claims against current WarpX source markers; not a semantic proof or runtime regression. | `passed=True` |
 | `deposition-convergence-readiness` | `PASS` | `BOUNDARY` | deposition convergence readiness | `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` | existing RZ Esirkepov shape=1 three-resolution controls; descriptive pairwise order only | `passed=True` |
@@ -56,6 +57,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `editorial-quality-v0.89` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=324`, `html_heading_count=324`, `passed=True`, `pdf_pages=331` |
 | `editorial-quality-v0.90` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=324`, `html_heading_count=324`, `passed=True`, `pdf_pages=331` |
 | `editorial-quality-v0.91` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=324`, `html_heading_count=324`, `passed=True`, `pdf_pages=331` |
+| `editorial-quality-v0.92` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=325`, `html_heading_count=325`, `passed=True`, `pdf_pages=331` |
 | `esirkepov-2001-paper-asset` | `PASS` | `BOUNDARY` | Esirkepov 1999/2001 Chapter 5 deposition paper asset contract | `PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING` | author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open | `passed=True` |
 | `esirkepov-bounded-compare` | `PASS` | `BOUNDARY` | Esirkepov 2001 bounded preprint/publication comparison | `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING` | bounded structural and abstract-level compare only; no publisher-PDF line-by-line claim | `passed=True` |
 | `esirkepov-density-decomposition` | `PASS` | `PASS` | Esirkepov second-order density decomposition identity | `` | paper formula / algebra layer; not a WarpX kernel or end-to-end regression | `max_residual=8.881784197001252e-16`, `passed=True`, `sample_count=10000` |
@@ -144,7 +146,11 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `esirkepov_rsphere_charge_resolution-comparison` | `UNKNOWN` | `BOUNDARY` | RSPHERE charge resolution/axis-correction comparison | `RSPHERE_RESOLUTION_SENSITIVE_CHARGE_BOUNDARY` | paired 2-rank reader-side Er and charge comparison; not a convergence-order proof |  |
 | `fieldsolver-chapter-source-crosswalk` | `UNKNOWN` | `UNKNOWN` | Chapter 6 field solver source crosswalk | `CHAPTER_6_FIELDSOLVER_SOURCE_ANCHORS_VERIFIED` | Representative chapter/source anchors; this is not semantic equivalence or runtime physics proof. | `check_count=12`, `pass_count=12` |
 | `formal-convergence-preregistration` | `PASS` | `PASS` | formal convergence study preregistration | `FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT` | RZ and RSPHERE Esirkepov Langmuir resolution families; independent geometry fits only | `passed=True` |
+| `formal-convergence-repeat-family-v0.92` | `FAIL` | `FAIL` | formal convergence repeat-family runner preflight | `REPEAT_FAMILY_RUNNER_BLOCKED_INPUT_OR_OUTPUT_CONTRACT` | twelve independent 2-rank producers: RZ/RSPHERE x 64/128/256 x correction on/off | `passed=False` |
+| `formal-convergence-repeat-family-v0.92-tcp` | `PASS` | `PASS` | formal convergence repeat-family runner preflight | `REPEAT_FAMILY_RUNNER_EXECUTION_PASS` | twelve independent 2-rank producers: RZ/RSPHERE x 64/128/256 x correction on/off | `passed=True` |
 | `formal-convergence-repeat-preflight` | `FAIL` | `BOUNDARY` | formal convergence repeat-family runner preflight | `REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING` | twelve independent 2-rank producers: RZ/RSPHERE x 64/128/256 x correction on/off | `passed=False` |
+| `formal-convergence-repeat-preflight-current` | `PASS` | `PASS` | formal convergence repeat-family runner preflight | `REPEAT_FAMILY_RUNNER_READY` | twelve independent 2-rank producers: RZ/RSPHERE x 64/128/256 x correction on/off | `passed=True` |
+| `formal-convergence-second-family-v0.92` | `FAIL` | `FAIL` | formal convergence second-family slope comparison | `FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN` | two independent 2-rank RZ/RSPHERE families; all declared 64/128/256 adjacent pairs; no pooled geometry fit | `passed=False`, `second_family_correction_on_charge_boundary=True` |
 | `higuera-2017-paper-asset` | `PASS` | `BOUNDARY` | Higuera-Cary 2017 Chapter 4 pusher paper asset contract | `FULLTEXT_SOURCE_GROUNDED_VOLUME_DRIFT_JACOBIAN_BOUNDARY` | local full-text PDF and MinerU package support Higuera-Cary volume/drift/Jacobian explanations; dedicated phase-space-topology runtime reproduction remains open | `passed=True` |
 | `higuera-poincare-evidence-summary` | `PASS` | `PASS` | Higuera-Cary Poincare evidence boundary summary | `HIGUERA_POINCARE_INVARIANT_AND_RESONANCE_SCREEN_VERIFIED_TOPOLOGY_REMAINS_UNPROMOTED` | summary of existing case-local Poincare, invariant, dense-family and resolution contracts; no new runtime | `passed=True` |
 | `higuera_poincare_comparison` | `PASS` | `PASS` | Higuera-Cary Poincare section and invariant ledger | `` |  | `passed=True` |
@@ -192,6 +198,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `pdf-layout-v0.89` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=331` |
 | `pdf-layout-v0.90` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=331` |
 | `pdf-layout-v0.91` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=331` |
+| `pdf-layout-v0.92` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=331` |
 | `pec_field_3d_mpi2` | `PASS` | `PASS` | test_3d_pec_field | `` |  | `contract_pass=True`, `max_relative_error=0.005594417719379853`, `min_relative_error=0.006322001968861878`, `reflection_gate=True` |
 | `pec_field_mr_3d_mpi2` | `PASS` | `PASS` | test_3d_pec_field_mr | `` |  | `contract_pass=True`, `max_relative_error=0.041003798427618164`, `min_relative_error=0.03554155727132573`, `reflection_gate=True` |
 | `pec_insulator_explicit_2d_mpi2` | `PASS` | `PASS` | 2D explicit PECInsulator boundary-drive localization and By amplitude | `` | official WarpX explicit input; 2-rank reader-side contract; cell-centered By boundary sample; not the implicit Poynting-ledger contract | `active_boundary_by_relative_error=0.015368241679916036`, `active_z_cell_count=16`, `final_field_energy_proxy=112905613127832.42`, `final_max_abs_field=1669497.4348623438`, `initial_max_abs_field=0.0`, `passed=True`, `relative_tolerance=0.05` |

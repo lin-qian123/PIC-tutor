@@ -2675,15 +2675,23 @@ v0.84 将“下一步要做什么”进一步固定成预注册，而不是在�
 
 第二组 family 的执行流程已经固化为 `scripts/run_formal_convergence_repeat_family.py`。它声明 RZ/RSPHERE 两种 geometry 在 `64/128/256` 三档、`correction=on/off` 下共 12 个 2-rank producer，复用已经核对过的输入模板和 `build_full` binary，并在每个 run 目录单独保存 `producer.log`。脚本默认只做 preflight；真正执行必须发现 `mpiexec` 或 `mpirun`，并始终使用 `-n 2`。
 
-当前机器的二进制和 12 组输入模板均存在，但没有 `mpiexec`/`mpirun`，所以 preflight 保持为“MPI launcher 缺失”边界。单进程替代被脚本明确禁止；这是一条执行环境边界，不是第二 family 的结果，也不改变正式收敛阶仍未关闭的判断。报告见 [preflight summary](../../docs/formal-convergence-repeat-preflight.md) 和 [raw contract](../../runs/stage-c-validation/formal-convergence-repeat-preflight/contract.json)。
+当前机器的二进制和 12 组输入模板均存在；默认 shell `PATH` 没有暴露 MPI launcher，但显式使用 Conda 环境提供的 `mpiexec` 并设置 `FI_PROVIDER=tcp` 后，12/12 producer 均返回码为 0。未设置 provider 时，12 组会在 WarpX 已 finalized 后触发 `utun6` 上的 OFI finalize 错误，不能作为 execution pass；因此 provider 被记录为运行合同的一部分。报告见 [current execution contract](../../docs/formal-convergence-repeat-family-v0.92.md) 和 [raw contract](../../runs/stage-c-validation/formal-convergence-repeat-family-v0.92-tcp/contract.json)。
 <!-- REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING -->
 
-### 5.14.9 v0.91 第二组 family 的输入与产物合同
+### 5.14.9 v0.92 第二组 family 的输入与产物合同
 
 v0.86 将 runner 的“可启动”与“产物可用”分开检查。执行前，脚本逐个核对 12 个模板的 `inputs`、`FILE = ...` 引用文件、`diag_type = Full` 和 diagnostics `intervals`；因此目录存在不再等价于输入可运行。执行时仍固定使用 `mpiexec -n 2` 或等价的 `mpirun -n 2`，不允许降级为单进程。执行后，每个 producer 必须同时满足退出码为 0、生成 `producer.log`、生成 `warpx_used_inputs`，并在 `diags/` 下至少出现一个 `diag*` 目录。任何一项缺失都分类为“输入或产物合同不通过”，而不是把命令启动成功写成有效 runtime evidence。
 <!-- REPEAT_FAMILY_RUNNER_BLOCKED_INPUT_OR_OUTPUT_CONTRACT -->
 
-当前机器仍在执行前阶段被缺少 MPI launcher 阻断，因此本节只关闭复现链的输入/产物判据，不关闭第二组 family、正式收敛阶或 charge boundary。合同实现见 `scripts/run_formal_convergence_repeat_family.py`，原始 preflight 见 [raw preflight contract](../../runs/stage-c-validation/formal-convergence-repeat-preflight/contract.json)。
+v0.92 已将第二组 family 实际执行结果与第一组 materialized family 用同一 reader-side norm 重算：RZ 的 `Er/Ez/axis/off-axis`、RSPHERE 的 `Er/axis/off-axis` 均覆盖 `64->128` 和 `128->256` 两个相邻 pair，且不做跨 geometry pooled fit。报告见 [second-family slope comparison](../../runs/stage-c-validation/formal-convergence-second-family-v0.92/contract.{json,md})，说明见 `notes/code-reading/particles/74-formal-convergence-second-family.md`。两组 slope 数值几乎重合，但原预注册没有给出可执行的 repeat-slope 数值容差，且 correction-on axis charge 仍是 boundary，因此本节只关闭第二组 producer 与 slope materialization，不关闭正式 order 或 charge boundary。
+
+合同实现见 `scripts/run_formal_convergence_repeat_family.py` 与 `scripts/analyze_formal_convergence_repeat_family.py`；未设置 `FI_PROVIDER=tcp` 的默认 MPICH provider 会在 finalize 阶段触发 `utun6` OFI 错误，不被算作有效 execution pass。
+
+### 5.14.10 v0.92 第二组 family slope 对照
+
+第二组 family 的 12 个 2-rank producer 已经真实落盘并通过退出码、used-inputs 与 diagnostics 三层合同。RZ/RSPHERE 各自保留 `correction=on/off`，每种 geometry 的两个 family 都覆盖 `64/128/256`，因此“第二组尚未 materialize”这一前置缺口已经关闭。reader-side 分析没有把两种 geometry 合并：RZ 继续使用 `Er/Ez/axis/off-axis`，RSPHERE 使用 `Er/axis/off-axis`，全部相邻 pair 都保留。
+
+这一步仍不是正式收敛阶闭合。第一、第二 family 的 slope 对照已写入合同，但 `docs/formal-convergence-preregistration.json` 原始预注册没有定义一个数值化的 repeat-slope comparison tolerance；同时 correction-on axis charge 在两种 geometry 中仍保持独立 boundary。因而当前最准确的分类是 `FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN`：执行链与两组数据已完成，正式 order 解释和 charge correctness 仍开放。
 
 ## 5.15 本章结论
 

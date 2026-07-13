@@ -822,6 +822,11 @@ boosted-frame / NCI</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版新增 parameter-map parser-anchor review surface：445 条参数中 349
+条在引用源码中找到 parser-like literal anchor，96 条保留为
+dynamic/consumer 手工复核队列；该结果不替代 C++ AST、默认值/校验或
+runtime value semantics 审计。报告见
+<code>runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}</code>。</p>
 <p>本版又将 3D AMR <code>particles_in_pml</code> signed/absolute
 分解提升为公开 boundary contract：官方 signed gate 为
 <code>106.4354 &lt; 110</code>，严格 absolute gate 为
@@ -907,7 +912,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 161 条 <code>contract.json</code>，保留原始
+汇总本地 162 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
@@ -26021,7 +26026,7 @@ reconstruction <code>&lt; 3.1e-16</code></td>
 也不等价于确定性 <code>1e-9</code>
 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema
 contract、性能 gate 和采样统计边界。公开仓库中的
-<code>docs/public-evidence-index.{json,md}</code> 进一步提供 161
+<code>docs/public-evidence-index.{json,md}</code> 进一步提供 162
 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。</p>
 <p>当前证据等级应写成：Langmuir
 已有运行级解析频率、场误差和最终守恒证据；uniform plasma

@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 736,
-  "total_bytes": 27699737,
+  "entry_count": 737,
+  "total_bytes": 27708541,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1524238,
-      "sha256": "00192a4495d2d83c4990a6421c8e3839acc1aea1204362b28e7edbc765bd0998"
+      "bytes": 1524695,
+      "sha256": "b5d3b915dd9cba4e9796cdda92c630d1d7b968d04b6c21defdc2891320251de2"
     },
     {
       "path": "TODO.md",
-      "bytes": 1370081,
-      "sha256": "421b8b2d35409eb0891e735197b51cfab4275503c2581cf71c1a85ee39d47ce3"
+      "bytes": 1370553,
+      "sha256": "64ac5615c8c4e50c4953b88f61873d2e68a4dcea050b81d94d7e382441853d41"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5756413,
-      "sha256": "abd2e77525ad5615edc0a0e68ffca0419080ba9a9890df67a1382d1899032ae6"
+      "bytes": 5756798,
+      "sha256": "67ac6eef303d5b6d844f999e1cd3f1e2b73cb9e8988775ba1140d64fe3c46e18"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1082467,
-      "sha256": "8a1a7aa66f74d16c2fa2a551752b80788e6abbbf85ce6075756ad218f96a4e40"
+      "bytes": 1082835,
+      "sha256": "c2264217cf088916c26e1a4ab043ee05943721e7df44bc5f642a2455c2231d00"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3381842,
-      "sha256": "3c70f00b2bb9630e7724e5c3b14c97ccb081328afeb1a6e0ab3f47af174bfec1"
+      "bytes": 3382171,
+      "sha256": "b0365f482abf2d00bb10c626463d03f92317730c750a85045fd69597e0ac2573"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 87236,
-      "sha256": "39762c36a039bd7164378db26728de6a64f112f3a759930d01d24f5fbfe9a79c"
+      "bytes": 87737,
+      "sha256": "1a7ae881f2ec78c5df02066369e4c212583c84430455c8f9e0468228c4f8afb6"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 57393,
-      "sha256": "2163b14004c966767403296c2d0528316b52be75a5eeb7814c2635f5cb908623"
+      "bytes": 57731,
+      "sha256": "e64e674bd3e3d0373a81f2a910313dc070ad807c73d4d1dc4c5279d4193f0865"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "ec5d8393a87a68b24c7816bb1aba4446a3a3686605f0244528de751c5cc81806"
+      "sha256": "18c9bc564c6fae38ca35f3912fa7121661e846d667a3cdcd146c45ea086ad1f4"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44575,
-      "sha256": "a224ee230a121bc62de6e962da1bae83f70e1bc6a8b1b3fcf4377a1896616cde"
+      "sha256": "1e40904b5294db73ef612b0def4403107adcf168dea8701d8c8feb65d68c8dfa"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 66706,
-      "sha256": "a4a5068ae1e515d59cb7a2e4e441884d4e4528c47c7ac5d033c2eb0e51fef936"
+      "bytes": 67074,
+      "sha256": "9c6a5c7cc3b911242b6ef6942964cf4ad3619394d9825a8e4605d7ea352891ae"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -913,7 +913,7 @@
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
       "bytes": 111833,
-      "sha256": "bc82a81511d3853f8c42e16eabcb8ad7870582328ea016a9568c1439302c785f"
+      "sha256": "70ed887ca42b46a5e7d782fdb6d0ef7e8d9a63cba7bd1c6b345ee21723c36e7b"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -2664,6 +2664,11 @@
       "path": "scripts/audit_leecpc2015_source_crosswalk.py",
       "bytes": 5407,
       "sha256": "e8e0441ecd1d99f54e4a679a081a5da77e2eaccc91a1582c4415ce5e41d6c89b"
+    },
+    {
+      "path": "scripts/audit_parameter_map_parser_anchors.py",
+      "bytes": 5586,
+      "sha256": "62cae863b18f56ffce0b19efec89b3c76a02c026c2b073d3ae535f59bb77ee02"
     },
     {
       "path": "scripts/audit_parameter_map_surface.py",

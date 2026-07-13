@@ -1,5 +1,7 @@
 # PIC-tutor v0.68
 
+本版新增 parameter-map parser-anchor review surface：445 条参数中 349 条在引用源码中找到 parser-like literal anchor，96 条保留为 dynamic/consumer 手工复核队列；该结果不替代 C++ AST、默认值/校验或 runtime value semantics 审计。报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
+
 本版又将 3D AMR `particles_in_pml` signed/absolute 分解提升为公开 boundary contract：官方 signed gate 为 `106.4354 < 110`，严格 absolute gate 为 `110.3994 > 110`，唯一越界项是负向 `Ex`，coarse/fine 读取一致。该结果只关闭“判据差异未被结构化索引”的缺口，不关闭 AMR/PML 强残余场验证，也不修改上游阈值。
 
 本版将 RZ secondary-emission 三档 resolution trend 提升为公开 boundary contract：`64x64` 默认基线仍为 raw `FAIL`，`128x128/256x256` refined controls 通过官方 `2%` EB impact-point gate；该结果支持 resolution-sensitive geometry diagnosis，但不关闭默认 upstream regression，也不构成正式 convergence order。
@@ -30,7 +32,7 @@
 
 本版又补入 dense `p_y=0.2..2.8` family 和 64³ `p_y=1.6/1.8` resolution control：Vay 共振窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，但仍只标记为 resonance-sensitive invariant screen，不提升为 two-fold island topology reproduction。
 
-本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 161 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
+本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 162 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
 

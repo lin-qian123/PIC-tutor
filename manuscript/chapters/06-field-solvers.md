@@ -3212,6 +3212,12 @@ $$
 
 这个索引表也暴露了一个写作边界：有些 regression 是物理强判据，例如 Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum 或 restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum 说成完整物理验证。
 
+### 6.11.8 本章正文与源码同步合同
+
+本章的正文-源码对应关系由 `scripts/audit_field_solver_chapter_source_crosswalk.py` 维护。它把外层 `WarpXEvolve.cpp` 推进入口、FDTD/PML kernel、Cartesian spectral algorithm 分派、RZ spectral algorithm 分派，以及 regression consumer 的证据边界固定成 12 组可重复检查。该脚本检查的是代表性入口是否仍存在、章节是否仍明确写出对应路径；它不是 C++ 语义等价证明，也不替代实际运行和论文推导。
+
+因此，后续修改 FieldSolver 章节时应同时更新三处：正文的算法解释、`notes/code-reading/fieldsolver/43-fieldsolver-chapter-source-crosswalk.md` 的维护边界、以及脚本输出的 `contract.json`/`contract.md`。当某个入口迁移或重命名时，先确认新的 dispatch 和 consumer，再改正文；不要把 checksum-only 测试升级为物理强判据。
+
 ## 6.12 练习与运行验证
 
 1. **solver 分派题**：给定 `algo.maxwell_solver`、`psatd.JRhom`、`m_implicit_solver` 和 AMR subcycling 四个开关，使用第 2 章决策图判断它们分别会落到哪一个 `OneStep` 入口，并列出一个不允许的组合。

@@ -1,16 +1,16 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 173,
+  "record_count": 174,
   "status_counts": {
     "PASS": 128,
     "FAIL": 30,
-    "UNKNOWN": 15
+    "UNKNOWN": 16
   },
   "evidence_kind_counts": {
     "PASS": 107,
     "FAIL": 27,
-    "UNKNOWN": 7,
+    "UNKNOWN": 8,
     "BOUNDARY": 32
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
@@ -1393,6 +1393,18 @@
       "classification": "RSPHERE_RESOLUTION_SENSITIVE_CHARGE_BOUNDARY",
       "scope": "paired 2-rank reader-side Er and charge comparison; not a convergence-order proof",
       "metrics": {}
+    },
+    {
+      "case": "fieldsolver-chapter-source-crosswalk",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "Chapter 6 field solver source crosswalk",
+      "classification": "CHAPTER_6_FIELDSOLVER_SOURCE_ANCHORS_VERIFIED",
+      "scope": "Representative chapter/source anchors; this is not semantic equivalence or runtime physics proof.",
+      "metrics": {
+        "check_count": 12,
+        "pass_count": 12
+      }
     },
     {
       "case": "higuera-2017-paper-asset",

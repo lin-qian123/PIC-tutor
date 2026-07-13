@@ -601,6 +601,7 @@ law 与求解器迭代数</a></li>
 solver：哪些是强判据，哪些只是输出回归</a></li>
 <li><a href="#具体-regression-入口索引" id="toc-具体-regression-入口索引">6.11.7 具体 regression
 入口索引</a></li>
+<li><a href="#本章正文与源码同步合同" id="toc-本章正文与源码同步合同">6.11.8 本章正文与源码同步合同</a></li>
 </ul></li>
 <li><a href="#练习与运行验证" id="toc-练习与运行验证">6.12
 练习与运行验证</a>
@@ -828,6 +829,12 @@ boosted-frame / NCI</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
+组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
+kernel、Cartesian/RZ spectral 分派和 regression
+证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++
+语义等价证明、runtime physics proof 或论文逐式复现。报告见
+<code>runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}</code>。</p>
 <p>本版又完成 Birdsall <code>3A ES1</code> 章节回填的 source
 crosswalk：11 组代表性锚点核对历史阶段链、WarpX fresh/restart
 初始化、粒子生命周期、<code>Evolve()</code> 分派和
@@ -1003,7 +1010,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 169 条 <code>contract.json</code>，保留原始
+汇总本地 174 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
@@ -1042,10 +1049,11 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 发表元数据、Section 1–5、Eq.(23)、二阶 spline 线索与 publisher PDF
 缺失状态共 8 项检查全部通过。该 contract
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
-<p>当前合订 PDF 为 322 页；本 v0.68 版本在 v0.67
-基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015
-publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整
-Gauss-law 闭环。</p>
+<p>当前合订 PDF 为 323 页；本 v0.68 版本在 v0.67
+基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同、LeeCPC2015
+publisher-abstract boundary 和第 6 章 FieldSolver source
+crosswalk，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law
+闭环。</p>
 <p>本版另补入 RZ shape=1 的 <code>256x512</code> resolution
 control：correction-on axis charge residual 为
 <code>3.593e-3 -&gt; 1.520e-3 -&gt; 7.554e-4</code>，correction-off 为
@@ -19639,6 +19647,20 @@ Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum
 restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML
 restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum
 说成完整物理验证。</p>
+<h3 id="本章正文与源码同步合同">6.11.8 本章正文与源码同步合同</h3>
+<p>本章的正文-源码对应关系由
+<code>scripts/audit_field_solver_chapter_source_crosswalk.py</code>
+维护。它把外层 <code>WarpXEvolve.cpp</code> 推进入口、FDTD/PML
+kernel、Cartesian spectral algorithm 分派、RZ spectral algorithm
+分派，以及 regression consumer 的证据边界固定成 12
+组可重复检查。该脚本检查的是代表性入口是否仍存在、章节是否仍明确写出对应路径；它不是
+C++ 语义等价证明，也不替代实际运行和论文推导。</p>
+<p>因此，后续修改 FieldSolver
+章节时应同时更新三处：正文的算法解释、<code>notes/code-reading/fieldsolver/43-fieldsolver-chapter-source-crosswalk.md</code>
+的维护边界、以及脚本输出的
+<code>contract.json</code>/<code>contract.md</code>。当某个入口迁移或重命名时，先确认新的
+dispatch 和 consumer，再改正文；不要把 checksum-only
+测试升级为物理强判据。</p>
 <h2 id="练习与运行验证">6.12 练习与运行验证</h2>
 <ol type="1">
 <li><strong>solver 分派题</strong>：给定

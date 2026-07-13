@@ -2,10 +2,10 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `173`
+- records: `174`
 - PASS: `128`
 - FAIL: `30`
-- UNKNOWN: `15`
+- UNKNOWN: `16`
 - boundary-classified: `32`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
@@ -102,6 +102,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `esirkepov_radial_charge_shape-matrix` | `UNKNOWN` | `BOUNDARY` | RCYLINDER/RSPHERE Esirkepov radial charge shape matrix | `RADIAL_SHAPE_CHARGE_BOUNDARY` | 2-rank reader-side radial Er and same-surface divE-rho/epsilon0; shape=1/2/3/4; not a full Gauss-law proof | `all_charge_pass=False`, `all_field_pass=True` |
 | `esirkepov_radial_geometry_shape-matrix` | `PASS` | `PASS` | RCYLINDER/RSPHERE Esirkepov radial shape matrix | `RADIAL_GEOMETRY_SHAPE_1_TO_4_FIELD_PASS` | 2-rank reader-side radial Er contract; not a charge/Gauss-law or all-geometry proof | `passed=True` |
 | `esirkepov_rsphere_charge_resolution-comparison` | `UNKNOWN` | `BOUNDARY` | RSPHERE charge resolution/axis-correction comparison | `RSPHERE_RESOLUTION_SENSITIVE_CHARGE_BOUNDARY` | paired 2-rank reader-side Er and charge comparison; not a convergence-order proof |  |
+| `fieldsolver-chapter-source-crosswalk` | `UNKNOWN` | `UNKNOWN` | Chapter 6 field solver source crosswalk | `CHAPTER_6_FIELDSOLVER_SOURCE_ANCHORS_VERIFIED` | Representative chapter/source anchors; this is not semantic equivalence or runtime physics proof. | `check_count=12`, `pass_count=12` |
 | `higuera-2017-paper-asset` | `PASS` | `BOUNDARY` | Higuera-Cary 2017 Chapter 4 pusher paper asset contract | `FULLTEXT_SOURCE_GROUNDED_VOLUME_DRIFT_JACOBIAN_BOUNDARY` | local full-text PDF and MinerU package support Higuera-Cary volume/drift/Jacobian explanations; dedicated phase-space-topology runtime reproduction remains open | `passed=True` |
 | `higuera-poincare-evidence-summary` | `PASS` | `PASS` | Higuera-Cary Poincare evidence boundary summary | `HIGUERA_POINCARE_INVARIANT_AND_RESONANCE_SCREEN_VERIFIED_TOPOLOGY_REMAINS_UNPROMOTED` | summary of existing case-local Poincare, invariant, dense-family and resolution contracts; no new runtime | `passed=True` |
 | `higuera_poincare_comparison` | `PASS` | `PASS` | Higuera-Cary Poincare section and invariant ledger | `` |  | `passed=True` |

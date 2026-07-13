@@ -2,6 +2,8 @@
 
 # PIC-tutor v0.68
 
+本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
+
 本版又完成 Birdsall `3A ES1` 章节回填的 source crosswalk：11 组代表性锚点核对历史阶段链、WarpX fresh/restart 初始化、粒子生命周期、`Evolve()` 分派和 Langmuir/初始化验证层。该合同不宣称历史程序与现代 WarpX 逐函数等价。报告见 `runs/stage-c-validation/birdsall-3a-warpx-crosswalk/contract.{json,md}`。
 
 本版又为第 5 章新增 deposition 正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface；该 contract 只防止正文随源码漂移，不升级为 C++ 语义证明、完整 geometry/order runtime 覆盖或论文逐行复现。报告见 `runs/stage-c-validation/deposition-chapter-source-crosswalk/contract.{json,md}`。
@@ -58,7 +60,7 @@
 
 本版又补入 dense `p_y=0.2..2.8` family 和 64³ `p_y=1.6/1.8` resolution control：Vay 共振窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，但仍只标记为 resonance-sensitive invariant screen，不提升为 two-fold island topology reproduction。
 
-本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 169 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
+本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 174 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
 
@@ -74,7 +76,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 322 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 323 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同、LeeCPC2015 publisher-abstract boundary 和第 6 章 FieldSolver source crosswalk，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -13044,6 +13046,12 @@ $$
 | Langmuir RZ / RZ PSATD | `langmuir/inputs_test_rz_langmuir_multi*` | `langmuir/analysis_rz.py diags/diag1000080` | `Er/Ez` 与 RZ 解析 Langmuir 场误差 `< 0.12`，并检查 RZ 粒子过滤诊断 | RZ field solver、RZ PSATD/current correction/JRhom 和诊断过滤是否共同正确 |
 
 这个索引表也暴露了一个写作边界：有些 regression 是物理强判据，例如 Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum 或 restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum 说成完整物理验证。
+
+### 6.11.8 本章正文与源码同步合同
+
+本章的正文-源码对应关系由 `scripts/audit_field_solver_chapter_source_crosswalk.py` 维护。它把外层 `WarpXEvolve.cpp` 推进入口、FDTD/PML kernel、Cartesian spectral algorithm 分派、RZ spectral algorithm 分派，以及 regression consumer 的证据边界固定成 12 组可重复检查。该脚本检查的是代表性入口是否仍存在、章节是否仍明确写出对应路径；它不是 C++ 语义等价证明，也不替代实际运行和论文推导。
+
+因此，后续修改 FieldSolver 章节时应同时更新三处：正文的算法解释、`notes/code-reading/fieldsolver/43-fieldsolver-chapter-source-crosswalk.md` 的维护边界、以及脚本输出的 `contract.json`/`contract.md`。当某个入口迁移或重命名时，先确认新的 dispatch 和 consumer，再改正文；不要把 checksum-only 测试升级为物理强判据。
 
 ## 6.12 练习与运行验证
 

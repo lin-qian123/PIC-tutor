@@ -47,10 +47,12 @@ def main() -> int:
         "editorial_audit_evidence": all(
             (root / path).is_file()
             for path in (
-                "docs/editorial-quality-audit-v0.81.md",
-                "runs/stage-c-validation/editorial-quality-v0.81/contract.json",
+                "docs/pdf-layout-audit-v0.82.md",
+                "runs/stage-c-validation/pdf-layout-v0.82/contract.json",
+                "docs/editorial-quality-audit-v0.82.md",
+                "runs/stage-c-validation/editorial-quality-v0.82/contract.json",
             )
-        ) and "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN" in register,
+        ) and "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED" in register,
         "classification_boundaries": all(marker in register for marker in (
             "OPEN_EXTERNAL_ACCESS", "RUNTIME_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
             "CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN", "RELEASE-EDITORIAL",

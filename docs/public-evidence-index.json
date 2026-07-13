@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 201,
+  "record_count": 204,
   "status_counts": {
-    "PASS": 149,
+    "PASS": 152,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 123,
+    "PASS": 126,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 38
@@ -145,6 +145,18 @@
     },
     {
       "case": "current-book-gap-register-v0.81",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "current book gap register",
+      "classification": "CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA",
+      "scope": "project-level gap inventory; does not close any listed gap",
+      "metrics": {
+        "gap_count": 8,
+        "passed": true
+      }
+    },
+    {
+      "case": "current-book-gap-register-v0.82",
       "status": "PASS",
       "evidence_kind": "PASS",
       "contract": "current book gap register",
@@ -297,6 +309,20 @@
         "html_heading_count": 320,
         "passed": true,
         "pdf_pages": 332
+      }
+    },
+    {
+      "case": "editorial-quality-v0.82",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "editorial quality audit",
+      "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
+      "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
+      "metrics": {
+        "heading_count": 320,
+        "html_heading_count": 320,
+        "passed": true,
+        "pdf_pages": 329
       }
     },
     {
@@ -2039,6 +2065,18 @@
       "metrics": {
         "max_abs_Efield": 110.3993781372607,
         "passed": false
+      }
+    },
+    {
+      "case": "pdf-layout-v0.82",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "PDF layout risk audit",
+      "classification": "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
+      "scope": "page text coverage and known wide-table regression; not a substitute for full human reading",
+      "metrics": {
+        "passed": true,
+        "pdf_pages": 329
       }
     },
     {

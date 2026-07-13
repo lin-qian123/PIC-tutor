@@ -19,9 +19,9 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.81.pdf` | 3,465,234 bytes | 当前 332 页成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.81.html` | 5,832,613 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.81.md` | 1,144,415 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.82.pdf` | 3,455,668 bytes | 当前 329 页成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.82.html` | 5,831,538 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.82.md` | 1,147,187 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 
@@ -59,7 +59,7 @@ python scripts/audit_release_consistency.py
 git status --short
 ```
 
-当前 v0.81 构建验收结果：`pdf_pages=332`、源/合订图片链接均为 `16`、HTML 内嵌图片和图号范围检查全部通过；自动编辑质量审计的分类为 `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN`。
+当前 v0.82 构建验收结果以 `scripts/verify_v82_build.py`、`scripts/audit_editorial_quality.py` 和 `scripts/audit_pdf_layout.py` 为准；已知宽表列重叠已修复，代表页实际渲染通过，人工全书通读、许可和公开再分发仍保持开放。
 
 v0.78 发布 allowlist 另见 `docs/v0.78-release-manifest.{json,md}`；总字节数以 manifest 的 `total_bytes` 为准，`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
 

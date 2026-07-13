@@ -298,6 +298,19 @@ PML 的 regression 入口也不能继续混成单一 checksum 桶。当前最稳
 
 上面的讨论已经说明：同样叫“边界测试”，证据强度并不一样。`CMakeLists.txt` 只能说明一个输入卡被注册成 regression；真正能说明物理合同的是 `analysis*.py`。v0.9 先把第 7 章需要回填的入口收成下表，后续再逐条扩写成正文。
 
+为避免五列长表在 PDF 中发生挤压，本节正文只保留按证据线分组的窄索引；每条具体结论仍在后续小节中展开，并绑定对应的 analysis、源码风险和原始 contract。
+
+| 证据线 | 当前可支持的结论与代表性入口 |
+|---|---|
+| domain / particle boundary | `test_3d_particle_boundaries`、thermal boundary、absorbing boundary；覆盖镜像、周期回绕、删除和短时能量/尾部 gate。 |
+| PEC / PMC field reflection | 3D PEC、PMC 及 PEC+MR standing-wave amplitude；代表入口为 `pec/analysis_pec.py` 和独立 field contracts。 |
+| PECInsulator | 显式 boundary drive、implicit energy ledger 和 restart continuation 分开记录，不能混成一个合同。 |
+| PML | FDTD/CKC、PSATD/Galilean、RZ residual-field、restart 和 particles-in-PML 分层记录；cleaning smoke 保持 checksum-only 边界。 |
+| embedded-boundary particle | EB scrape、absorption、flux injection、PICMI reflection、secondary emission 和 spacecraft charging 均按 callback/reader-side consumer 分开记录。 |
+| Silver-Mueller | Cartesian 1D/2D、RZ 短时 residual-field contracts 已有覆盖，但不外推为长期吸收效率或角度扫描。 |
+| 证据边界 | `analysis` 支撑指定物理合同，restart 支撑恢复一致性，checksum-only 只支撑输出未漂移；均不替代 transition-zone route-count。 |
+<!--
+begin preserved wide regression index; excluded from rendered release because its five-column layout overflowed the PDF
 | family | 代表输入 / 测试名 | analysis 入口 | 主要判据 | 本章对应的源码风险 |
 |---|---|---|---|---|
 | 粒子 domain boundary | `boundaries/inputs_test_3d_particle_boundaries` | `boundaries/analysis.py diags/diag1000008`；独立 `scripts/analyze_particle_boundaries_contract.py` | 官方 analysis 与独立合同通过；reflecting position/velocity 误差 `0/0`，periodic position 绝对误差 `4.44e-16`、velocity 误差 `0`，absorbing 由 `3 -> 1` 保留保底粒子 | `parse_particle_boundaries()`、`ParticleBoundaries_K.H::apply_boundaries()`、domain boundary buffer 和粒子删除/重分布顺序 |
@@ -334,6 +347,8 @@ PML 的 regression 入口也不能继续混成单一 checksum 桶。当前最稳
 | Cartesian 2D Silver-Mueller z | `silver_mueller/inputs_test_2d_silver_mueller_z` | `silver_mueller/analysis.py diags/diag1000500`；独立 `scripts/analyze_silver_mueller_cartesian_contract.py` | 官方和独立通过；`max(|Ex|,|Ey|,|Ez|)=(3.912e-3,3.516e-3,9.149e-4) V/m < 0.01 V/m`，与 x 向结果分量置换对称 | `ApplySilverMuellerBoundary()`、z 向双侧开放边界、Gaussian laser 离域后的 Cartesian 残余场 |
 | Cartesian 1D Silver-Mueller | `silver_mueller/inputs_test_1d_silver_mueller` | `silver_mueller/analysis.py diags/diag1000500`；独立 `scripts/analyze_silver_mueller_cartesian_contract.py` | 官方和独立通过；`max(|Ex|,|Ey|,|Ez|)=(3.887e-8,3.887e-8,0) V/m < 0.01 V/m` | 1D 双侧 Silver-Mueller、Gaussian pulse 离域后的极低 Cartesian 残余场 |
 | Silver-Mueller open boundary | `silver_mueller/inputs_test_1d_silver_mueller`、`inputs_test_2d_silver_mueller_x/z`、`inputs_test_rz_silver_mueller_z` | `silver_mueller/analysis.py diags/diag1000500` | 脉冲离域后所有场分量都低于脚本阈值，检验反射场远小于入射场 | `ApplySilverMuellerBoundary()` 只在 level 0 `B` first half-push 生效的开放边界合同 |
+end preserved wide regression index
+-->
 
 这个表的用途不是替代正文推导，而是给后续写作设定证据等级。强 analysis 可以支撑“验证某个物理合同”；restart analysis 支撑“恢复后状态一致”；checksum-only 只能支撑“当前输出没有漂移”。第 7 章后续扩写时，必须在每条边界结论旁边标明它属于哪一类证据。
 

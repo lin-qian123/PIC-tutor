@@ -2,6 +2,9 @@
 
 ## 2026-07-14
 
+- [x] 新增 v0.82 页面布局风险审计：修复第 7 章边界 regression 五列表格的 PDF 列重叠，新增 `scripts/audit_pdf_layout.py`，并实际渲染复核第 1、101、250、251、329 页。
+- [ ] 继续完成全书人工通读、第三方材料许可确认和公开再分发签收。
+
 - [x] 新增 v0.81 自动编辑质量审计：校验合订 Markdown 标题/表格结构、HTML 标题一致性、PDF 关键章节、页数和构建警告；结果为 `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN`。
 - [ ] 继续完成当前候选版人工通读、HTML/PDF 版式复核、第三方材料许可确认和公开再分发签收。
 

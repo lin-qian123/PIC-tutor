@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `165`
-- PASS: `120`
+- records: `166`
+- PASS: `121`
 - FAIL: `30`
 - UNKNOWN: `15`
 - boundary-classified: `30`
@@ -100,6 +100,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `esirkepov_radial_geometry_shape-matrix` | `PASS` | `PASS` | RCYLINDER/RSPHERE Esirkepov radial shape matrix | `RADIAL_GEOMETRY_SHAPE_1_TO_4_FIELD_PASS` | 2-rank reader-side radial Er contract; not a charge/Gauss-law or all-geometry proof | `passed=True` |
 | `esirkepov_rsphere_charge_resolution-comparison` | `UNKNOWN` | `BOUNDARY` | RSPHERE charge resolution/axis-correction comparison | `RSPHERE_RESOLUTION_SENSITIVE_CHARGE_BOUNDARY` | paired 2-rank reader-side Er and charge comparison; not a convergence-order proof |  |
 | `higuera-2017-paper-asset` | `PASS` | `BOUNDARY` | Higuera-Cary 2017 Chapter 4 pusher paper asset contract | `FULLTEXT_SOURCE_GROUNDED_VOLUME_DRIFT_JACOBIAN_BOUNDARY` | local full-text PDF and MinerU package support Higuera-Cary volume/drift/Jacobian explanations; dedicated phase-space-topology runtime reproduction remains open | `passed=True` |
+| `higuera-poincare-evidence-summary` | `PASS` | `PASS` | Higuera-Cary Poincare evidence boundary summary | `HIGUERA_POINCARE_INVARIANT_AND_RESONANCE_SCREEN_VERIFIED_TOPOLOGY_REMAINS_UNPROMOTED` | summary of existing case-local Poincare, invariant, dense-family and resolution contracts; no new runtime | `passed=True` |
 | `higuera_poincare_comparison` | `PASS` | `PASS` | Higuera-Cary Poincare section and invariant ledger | `` |  | `passed=True` |
 | `higuera_poincare_dense_comparison` | `PASS` | `PASS` | Higuera-Cary Poincare section and invariant ledger | `` |  | `passed=True` |
 | `higuera_poincare_long_comparison` | `PASS` | `PASS` | Higuera-Cary Poincare section and invariant ledger | `` |  | `passed=True` |

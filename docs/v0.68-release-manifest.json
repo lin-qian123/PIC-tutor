@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 741,
-  "total_bytes": 27755188,
+  "entry_count": 743,
+  "total_bytes": 27767482,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1526504,
-      "sha256": "87a2071c43732287d2e77c293baf9e9b01cdb1f351ae19132e8c77f2fd6e5f9c"
+      "bytes": 1526994,
+      "sha256": "7a431b4b779ca697ddfd7bcb256abcb32e34169cc45e8f61f183fda15f4d6140"
     },
     {
       "path": "TODO.md",
-      "bytes": 1372394,
-      "sha256": "9f6cd375ae3c5f5298ddbdc056016d4a658ac832402417a2282c0fab90303102"
+      "bytes": 1372806,
+      "sha256": "2f0c3088ffb8d9028c71099173a9ed797afec7c499380069b23d869b58fde597"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5760353,
-      "sha256": "5383188b1ea303b79bd156f305cc502a07b444be7a9f42f813f6792ea2bcbe0a"
+      "bytes": 5761653,
+      "sha256": "a0198c2e24c6f9265e43a0682dd107a2ff9ebdba66c8aba12b929e8c9160a8e3"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1086030,
-      "sha256": "cd1d2edaa5786e7eeab7834fa27a679b0fe4262c57b3178daa4e61d8d543e156"
+      "bytes": 1087219,
+      "sha256": "6bbbe380cecbac49364480064b486fcf946ced40b51ab22ce993137ac2de5947"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3389296,
-      "sha256": "c7f687a3ccea3ce7a3d6a2e007f59f3305f89fcf1d0a9b4879d32dfc4dd9dec9"
+      "bytes": 3390937,
+      "sha256": "e967856ea116fbc1e7a8df1dc0c0d6f504706de7fb4ceee851c14c417c9a1946"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 90089,
-      "sha256": "dccd4c6119b6500e6077ccd7d1554108075f8effd210475b66874398128c9520"
+      "bytes": 90563,
+      "sha256": "b52c0da50438f9ec9080f33b8e08aea89647a45da96f00c70f9762d08292ac2f"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 59470,
-      "sha256": "d01b2186e9f7414058e08d835911820c98c5ff7dc6b6c768bafb0e34ede6ffce"
+      "bytes": 59791,
+      "sha256": "db91cf6f20fc923e24fbce7e31a179291ae4612d7519fe169b007a62ad0bdb80"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "ef969ffe370e40973d807f4616dcc79509c96b8638c9d41d3ea9931ce8641e9e"
+      "sha256": "3a1ade38b29b45f171319feac2701487f7375e4d5ae629f4b875666077e0130e"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44575,
-      "sha256": "1585b8e5e8a3abfba1259da12ae106dbbe40fce4872428f0c16397275373170b"
+      "sha256": "417070e8bf9256eb2592038ec13d24c2157b7f48b9c3f266a126481bccf3d8d8"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 68648,
-      "sha256": "58753fdd28968c609d933d5d733b835cb79687e847c1906c000337bc2891ade1"
+      "bytes": 69065,
+      "sha256": "f99900db8f2b7fb796be9d712d3930f7946d0fb80c7df8381ea048d4a41516e0"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 148299,
-      "sha256": "41618e2bb2ead9d464788e02e277a4575377724b9836ff4029c8b1f7d5a07c2c"
+      "bytes": 149071,
+      "sha256": "9182d6fec17cf40947edfe851c1ea447851302daa24e86faa6a1a89b0bb63d6e"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -913,7 +913,7 @@
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
       "bytes": 111833,
-      "sha256": "e7034b0dd78f18dec2f710e039f9ada5becf71d844f3c29863b5e0c8d2dd0959"
+      "sha256": "33570bad5d4e92d31c19ff94664121332d9c9f7e75f36d9fe8561317074d1794"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -2114,6 +2114,11 @@
       "path": "notes/code-reading/particles/68-position-update-output-staggering-contract.md",
       "bytes": 1551,
       "sha256": "96b1be978ebca703cf68e4f49e261cbd86bd8ed1babd5abdcfd6d225be7cbd27"
+    },
+    {
+      "path": "notes/code-reading/particles/69-higuera-poincare-evidence-boundary.md",
+      "bytes": 1153,
+      "sha256": "9cd45965e48964392a136b5059209fa7298d8fb995f82aea97afee291ebc7e75"
     },
     {
       "path": "notes/code-reading/particles/README.md",
@@ -3509,6 +3514,11 @@
       "path": "scripts/summarize_esirkepov_3d_shape_contract.py",
       "bytes": 6707,
       "sha256": "fd901df54395f8073d2f00c876c534ecb8c9f66094173bbb85a29795235abb91"
+    },
+    {
+      "path": "scripts/summarize_higuera_poincare_evidence.py",
+      "bytes": 4125,
+      "sha256": "9353f045de9c4ec4fa90a923473c3927dc345808c3f1b170f7ae112bc31abd4a"
     },
     {
       "path": "scripts/summarize_radial_charge_shape_contract.py",

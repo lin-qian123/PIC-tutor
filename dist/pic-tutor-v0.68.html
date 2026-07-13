@@ -836,6 +836,13 @@ dispatch；三组 uniform-<code>B</code> Full plotfile 的单帧动量配对误�
 <code>1.609e-3</code>。该证据确认输出时间层边界，不把机械动量字段升级为直接
 half-step velocity attribute。报告见
 <code>runs/stage-c-validation/position-update-runtime-contract/contract.{json,md}</code>。</p>
+<p>本版统一 Higuera-Cary Poincare evidence boundary：短轨道为
+<code>INSUFFICIENT_SAMPLING</code>，长轨道 invariant/reference 与
+angular-order candidate 通过但 topology 保持
+<code>REVIEW_REQUIRED</code>，密集族 resonance screen 通过而解析
+reference/candidate signature 保留边界；不宣称论文等价 topology
+gate。报告见
+<code>runs/stage-c-validation/higuera-poincare-evidence-summary/contract.{json,md}</code>。</p>
 <p>本版新增 parameter-map structured review contract：parser-anchor
 之外的 10 条参数已逐项核对，8 条 dynamic-key constructor 和 2 条 AMReX
 owner 全部通过源码锚点检查；该结果不替代完整 C++ AST、默认值/校验或
@@ -933,7 +940,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 165 条 <code>contract.json</code>，保留原始
+汇总本地 166 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
@@ -7953,6 +7960,19 @@ resonance-island 证据。14-species dense family 与 64³
 <code>6.5e-2</code>，控制组约 <code>1e-3</code>，但该
 resonance-sensitive screen 仍不是 two-fold island 或 trajectory-crossing
 topology proof。</p>
+<p>本版新增
+<code>scripts/summarize_higuera_poincare_evidence.py</code>，把短轨道、长轨道、密集
+<code>p_y</code> family、resonance screen 和 resolution screen
+的证据等级统一成一份边界合同：短轨道是
+<code>INSUFFICIENT_SAMPLING</code>；长轨道的 invariant/reference 与
+angular-order candidate 通过但 topology 仍为
+<code>REVIEW_REQUIRED</code>；密集族的 resonance screen 通过而解析
+reference curve 和 cross-pusher candidate signature
+保留边界。因此当前最强可写结论是“invariant 与局部 resonance-sensitive
+screen 已建立，论文等价 topology gate 尚未启用”，完整说明见
+<code>notes/code-reading/particles/69-higuera-poincare-evidence-boundary.md</code>
+和
+<code>runs/stage-c-validation/higuera-poincare-evidence-summary/contract.{json,md}</code>。</p>
 <h2 id="从-multiparticlecontainer-到-physicalparticlecontainer">4.6 从
 <code>MultiParticleContainer</code> 到
 <code>PhysicalParticleContainer</code></h2>
@@ -26069,7 +26089,7 @@ reconstruction <code>&lt; 3.1e-16</code></td>
 也不等价于确定性 <code>1e-9</code>
 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema
 contract、性能 gate 和采样统计边界。公开仓库中的
-<code>docs/public-evidence-index.{json,md}</code> 进一步提供 165
+<code>docs/public-evidence-index.{json,md}</code> 进一步提供 166
 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。</p>
 <p>当前证据等级应写成：Langmuir
 已有运行级解析频率、场误差和最终守恒证据；uniform plasma

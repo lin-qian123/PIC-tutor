@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 165,
+  "record_count": 166,
   "status_counts": {
-    "PASS": 120,
+    "PASS": 121,
     "FAIL": 30,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 101,
+    "PASS": 102,
     "FAIL": 27,
     "UNKNOWN": 7,
     "BOUNDARY": 30
@@ -1366,6 +1366,17 @@
       "contract": "Higuera-Cary 2017 Chapter 4 pusher paper asset contract",
       "classification": "FULLTEXT_SOURCE_GROUNDED_VOLUME_DRIFT_JACOBIAN_BOUNDARY",
       "scope": "local full-text PDF and MinerU package support Higuera-Cary volume/drift/Jacobian explanations; dedicated phase-space-topology runtime reproduction remains open",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "higuera-poincare-evidence-summary",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Higuera-Cary Poincare evidence boundary summary",
+      "classification": "HIGUERA_POINCARE_INVARIANT_AND_RESONANCE_SCREEN_VERIFIED_TOPOLOGY_REMAINS_UNPROMOTED",
+      "scope": "summary of existing case-local Poincare, invariant, dense-family and resolution contracts; no new runtime",
       "metrics": {
         "passed": true
       }

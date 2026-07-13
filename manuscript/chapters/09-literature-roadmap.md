@@ -213,7 +213,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ## 9.8 当前成书缺口登记
 
-v0.93 在 v0.92 的第二组 materialization 与 slope 对照之上，又把 correction-on axis charge 的 repeat stability 单独登记：RZ/RSPHERE 六个 correction-on level 的两组 axis residual 全部通过 `1e-10` 相对重复容差，并且 axis 仍高于 off-axis。该结果把 axis charge 从“单次观测”推进为“跨 family 稳定的 reader-side boundary”，但不把它解释成 kernel root-cause，也不关闭正式收敛阶。v0.91 的 rho/species decomposition 与 axis-dominated residual time profile继续作为独立证据层，不等于 `divE-rho` axis charge 闭合。人工全书通读、第三方材料许可和公开再分发仍需单独签收。
+v0.94 在 v0.93 的 repeat stability 之上补入源码-诊断交叉审计：13/13 个 WarpX 源码锚点确认 rho 的外层 inverse-volume scaling、divE 的 solver 计算、Rho/DivE functor 的独立输出和 FullDiagnostics 的分离注册。该结果把问题固定为 `SOURCE_DIAGNOSTIC_DISCRETIZATION_BOUNDARY`，强化“稳定但未归因”的表述，不把 axis residual 升格成 deposition kernel root-cause。v0.91 的 rho/species decomposition 与 axis-dominated residual time profile继续作为独立证据层，不等于 `divE-rho` axis charge 闭合。人工全书通读、第三方材料许可和公开再分发仍需单独签收。
 
 文献路线图需要和运行/编辑缺口分开管理，否则“论文缺全文”和“代码没有 route ledger”会在 TODO 中互相遮蔽。当前项目把缺口登记在 `docs/current-book-gap-register.md`，每一行绑定证据、分类、下一步动作和关闭条件。当前八项缺口分别覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条 release editorial gate。
 

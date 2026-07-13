@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.93`：在 v0.92 两组独立 2-rank family 基础上，新增 correction-on axis charge 的跨 family reader-side repeat stability contract；RZ/RSPHERE 六个 correction-on level 全部在 `1e-10` 相对重复容差内稳定，且 axis residual 始终高于 off-axis；同时保留 kernel root-cause、正式 order closure、论文定稿获取和人工编辑缺口。
+当前成书版本为 `v0.94`：在 v0.93 的跨 family repeat stability 基础上，新增 RZ axis charge 的源码-诊断交叉审计；13/13 个源码锚点通过，明确 rho 的 inverse-volume scaling、divE 的 solver/diagnostic 路径和两者的独立 functor 边界。该证据强化了稳定的 reader-side boundary，但仍不把 residual 归因到 deposition kernel；正式 order closure、论文定稿获取和人工编辑缺口继续保留。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

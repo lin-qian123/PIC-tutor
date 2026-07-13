@@ -2680,7 +2680,7 @@ v0.84 将“下一步要做什么”进一步固定成预注册，而不是在�
 当前机器的二进制和 12 组输入模板均存在；默认 shell `PATH` 没有暴露 MPI launcher，但显式使用 Conda 环境提供的 `mpiexec` 并设置 `FI_PROVIDER=tcp` 后，12/12 producer 均返回码为 0。未设置 provider 时，12 组会在 WarpX 已 finalized 后触发 `utun6` 上的 OFI finalize 错误，不能作为 execution pass；因此 provider 被记录为运行合同的一部分。报告见 [current execution contract](../../docs/formal-convergence-repeat-family-v0.92.md) 和 [raw contract](../../runs/stage-c-validation/formal-convergence-repeat-family-v0.92-tcp/contract.json)。
 <!-- REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING -->
 
-### 5.14.9 v0.93 第二组 family 的输入与产物合同
+### 5.14.9 v0.94 第二组 family 的输入与产物合同
 
 v0.86 将 runner 的“可启动”与“产物可用”分开检查。执行前，脚本逐个核对 12 个模板的 `inputs`、`FILE = ...` 引用文件、`diag_type = Full` 和 diagnostics `intervals`；因此目录存在不再等价于输入可运行。执行时仍固定使用 `mpiexec -n 2` 或等价的 `mpirun -n 2`，不允许降级为单进程。执行后，每个 producer 必须同时满足退出码为 0、生成 `producer.log`、生成 `warpx_used_inputs`，并在 `diags/` 下至少出现一个 `diag*` 目录。任何一项缺失都分类为“输入或产物合同不通过”，而不是把命令启动成功写成有效 runtime evidence。
 <!-- REPEAT_FAMILY_RUNNER_BLOCKED_INPUT_OR_OUTPUT_CONTRACT -->
@@ -2695,11 +2695,19 @@ v0.92 已将第二组 family 实际执行结果与第一组 materialized family 
 
 这一步仍不是正式收敛阶闭合。第一、第二 family 的 slope 对照已写入合同，但 `docs/formal-convergence-preregistration.json` 原始预注册没有定义一个数值化的 repeat-slope comparison tolerance；同时 correction-on axis charge 在两种 geometry 中仍保持独立 boundary。因而当前最准确的分类是 `FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN`：执行链与两组数据已完成，正式 order 解释和 charge correctness 仍开放。
 
-### 5.14.11 v0.93 axis charge repeat stability
+### 5.14.11 v0.94 axis charge repeat stability
 
-在两组 family 都 materialize 后，不能只看它们的 slope 是否相近，还要确认 correction-on 的 axis residual 是否在独立 producer 间稳定。v0.93 对 RZ/RSPHERE 的 `64/128/256` 六个 correction-on level 计算两组 axis residual 的相对差，固定 `1e-10` reader-side repeat gate，并同时要求两组的 axis residual 都高于 off-axis residual；六个 level 全部通过。该结果分类为 `REPEAT_STABLE_AXIS_CHARGE_BOUNDARY_NOT_KERNEL_ROOT_CAUSE`，报告见 `runs/stage-c-validation/rz-axis-charge-repeat-stability-v0.93/contract.{json,md}`，说明见 `notes/code-reading/particles/75-rz-axis-charge-repeat-stability.md`。
+在两组 family 都 materialize 后，不能只看它们的 slope 是否相近，还要确认 correction-on 的 axis residual 是否在独立 producer 间稳定。v0.93 对 RZ/RSPHERE 的 `64/128/256` 六个 correction-on level 计算两组 axis residual 的相对差，固定 `1e-10` reader-side repeat gate，并同时要求两组的 axis residual 都高于 off-axis residual；六个 level 全部通过。该结果分类为 `REPEAT_STABLE_AXIS_CHARGE_BOUNDARY_NOT_KERNEL_ROOT_CAUSE`，报告见 `runs/stage-c-validation/rz-axis-charge-repeat-stability-v0.94/contract.{json,md}`，说明见 `notes/code-reading/particles/75-rz-axis-charge-repeat-stability.md`。
 
 correction-off 的 RZ residual 已接近数值地板，因此该负对照只报告绝对值与放大的相对差，不把它混入 correction-on stability gate。这个合同只证明 correction-on axis boundary 在两组 family 中可重复、且仍高于 off-axis；它不识别 kernel root cause，不关闭 current closure，也不把稳定 boundary 改写成正式收敛阶。
+
+### 5.14.12 v0.94 axis charge 源码-诊断交叉审计
+
+v0.93 的 repeat stability 只能说明 axis observable 在独立 producer 间稳定；v0.94 继续沿源码路径拆分它的消费者边界。`PhysicalParticleContainer` 将粒子写入 `rho_fp`，transition-zone 粒子直接写入 coarse-geometry 的 `rho_buf`；完成 deposition 后，`WarpXEvolve.cpp` 才调用 `ApplyInverseVolumeScalingToChargeDensity(...)`，而 `WarpXPushFieldsEM.cpp` 根据 `verboncoeur_axis_correction` 选择 RZ axis volume factor。该步骤属于沉积后的外层几何归一化，不是 `ChargeDeposition.H` 内部的局部 shape 写入。
+
+`divE` 走另一条路径：`WarpX::ComputeDivE()` 由 FDTD 或 PSATD solver 从 `Efield_aux` 计算临时场，`DivEFunctor` 再按 RZ 的 node/cell location 和 diagnostic coarsen 规则输出；`RhoFunctor` 则重新取 charge density，执行 boundary/filter 与 `InterpolateMFForDiag(...)`。`FullDiagnostics.cpp` 将两者注册为独立 functor，因此最终比较的 `divE-rho/epsilon_0` 同时包含 solver divergence stencil、RZ location/mode 处理、rho-side volume scaling 与 diagnostic resampling。
+
+当前 13/13 个源码锚点通过，分类为 `SOURCE_DIAGNOSTIC_DISCRETIZATION_BOUNDARY`。这条证据支持“稳定的 axis/diagnostic boundary”，但不支持 `KERNEL_ROOT_CAUSE`；在没有 raw rho、volume-scaled rho、solver-native divE 和 converted divE 四类中间量前，本章不把 residual 归因到 deposition kernel。合同见 `runs/stage-c-validation/rz-axis-charge-source-diagnostic-crosswalk-v0.94/contract.{json,md}`，源码说明见 `notes/code-reading/particles/76-rz-axis-charge-source-diagnostic-crosswalk.md`。
 
 ## 5.15 本章结论
 

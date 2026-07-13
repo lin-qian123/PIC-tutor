@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.93 合订 PDF 的页数以实际构建结果为准；本版在两组独立 2-rank family 基础上新增 correction-on axis charge 的跨 family repeat stability contract，确认 axis residual 的重复稳定性与 axis/off-axis 分离；同时保留 kernel root-cause boundary、正式收敛预注册、页面布局修复、项目级当前成书缺口登记、沉积证据梯度、第 7 章 PML 证据梯度与 Esirkepov 2001 CPC bounded compare。
+当前 v0.94 合订 PDF 的页数以实际构建结果为准；本版在 v0.93 的 repeat stability 基础上新增 RZ axis charge 源码-诊断交叉审计，确认 rho inverse-volume scaling、divE solver path 和独立 diagnostic functor 边界；同时保留 kernel root-cause boundary、正式收敛预注册、页面布局修复、项目级当前成书缺口登记、沉积证据梯度、第 7 章 PML 证据梯度与 Esirkepov 2001 CPC bounded compare。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 

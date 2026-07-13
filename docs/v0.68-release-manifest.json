@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 745,
-  "total_bytes": 27788486,
+  "entry_count": 746,
+  "total_bytes": 27791675,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1528064,
-      "sha256": "0cda536592c1d3d45f335a0dcc696cb6f897a86e9675a55f27b0e8bd9da7e785"
+      "bytes": 1528138,
+      "sha256": "8a41ff1b1fd0b86ca6bf5a7905b69fb50074979687098a7c9a3d6a5e30024099"
     },
     {
       "path": "TODO.md",
-      "bytes": 1373978,
-      "sha256": "22cff719ca4573e8757b5b4cdf17e95913b1ecd96b3c5dbefd43f793ce9bdac9"
+      "bytes": 1374499,
+      "sha256": "4b18fecb7d4277d4d2d316a28bdc545f66a90b378052de042a2bd8f2043c8c56"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3391874,
-      "sha256": "2cccbc1628a95f980d692d2ae750bcc37c66522e1a839d8c72ab846269b8d9a9"
+      "bytes": 3392282,
+      "sha256": "351eb86658b713bbb13efd6eb69b5fd2da5a476db75331568f31c67459b84201"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "17548f4620f06396ef86cca1c8a00eaf022f7ac8f67625313980ceafac532172"
+      "sha256": "0fd83ed10179e77010c0addbb4f66fa4d7816c9b33884092428af9f04db4c29a"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -2196,6 +2196,11 @@
       "sha256": "7da028d7228f912546e90618458b1d6041d17049401dcb0990b1a8138506db5d"
     },
     {
+      "path": "notes/code-reading/utils/03-parameter-runtime-coverage-followup.md",
+      "bytes": 1615,
+      "sha256": "5a95f131d128463d6f27d684bb9aea4c74e61e55255303aa0b79d159528f3f39"
+    },
+    {
       "path": "notes/code-reading/utils/05-deep-solver-object-parameter-families.md",
       "bytes": 15563,
       "sha256": "a0d838272fcca840483e78d0e112ea12e25c67ff1e962af72978a425de9f4882"
@@ -2682,8 +2687,8 @@
     },
     {
       "path": "scripts/audit_parameter_map_runtime_coverage.py",
-      "bytes": 6612,
-      "sha256": "4b8d456ecfb6608c62d4b69660b21e6d6766489f0b60acfb0b7327b186401b03"
+      "bytes": 7183,
+      "sha256": "12a1cbf22a262b412c6dc6c437ed4b6d6d761775da36e2058bf67eaff0797ac6"
     },
     {
       "path": "scripts/audit_parameter_map_semantic_anchors.py",

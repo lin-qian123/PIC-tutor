@@ -17,7 +17,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 168 条 `contrac
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.68.pdf` | 3,392,282 bytes | 当前 321 页成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.68.pdf` | 3,392,292 bytes | 当前 321 页成书候选，可单独审计后发布 |
 | `dist/pic-tutor-v0.68.html` | 5,762,644 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
 | `dist/pic-tutor-v0.68.md` | 1,088,154 bytes | 当前合订源，可作为文本 release 候选 |
 
@@ -59,6 +59,6 @@ git status --short
 
 当前 v0.68 构建验收结果：`pdf_pages=321`、源/合订图片链接均为 `16`、HTML 内嵌图片和图号范围检查全部通过。
 
-v0.68 发布 allowlist 另见 `docs/v0.68-release-manifest.{json,md}`：当前包含 745 个项目文件、总计 `27,788,894` bytes；`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
+v0.68 发布 allowlist 另见 `docs/v0.68-release-manifest.{json,md}`：当前包含 745 个项目文件、总计 `27,788,486` bytes；`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
 
 验收脚本证明的是成书构建和资源合同，不替代第三方材料的版权审计，也不替代 GitHub 仓库最终 staged 文件清单审阅。

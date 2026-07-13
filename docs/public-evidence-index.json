@@ -1554,13 +1554,13 @@
       "status": "PASS",
       "evidence_kind": "BOUNDARY",
       "contract": "structured parameter-map runtime coverage",
-      "classification": "STRUCTURED_PARAMETER_MAP_RUNTIME_COVERAGE_BOUNDARY_ATTRIBUTE_AND_PARTICLE_FIELD_SMOKE_ADIOS2_VECTOR_RATIO_GAPS",
+      "classification": "STRUCTURED_PARAMETER_MAP_RUNTIME_COVERAGE_BOUNDARY_ATTRIBUTE_PARTICLE_FIELD_AND_VECTOR_RATIO_SMOKE_ADIOS2_SUFFIX_GAP_DSMC_DATA_BOUNDARY",
       "scope": "case-local runtime/input/source coverage inventory; not a full parameter semantic or physics regression",
       "metrics": {
         "input_only_case_count": 1,
         "passed": true,
-        "runtime_case_count": 3,
-        "source_only_case_count": 2
+        "runtime_case_count": 4,
+        "source_only_case_count": 1
       }
     },
     {

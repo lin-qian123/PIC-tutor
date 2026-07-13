@@ -21,8 +21,11 @@ def text(path: Path) -> str:
 def main() -> int:
     attrs = RUNS / "attributes"
     fields = RUNS / "particle-fields"
+    dsmc = RUNS / "dsmc"
+    ref_ratio_vect = RUNS / "ref-ratio-vect"
     attr_plotfile = attrs / "diags/diag1000001"
     field_plotfile = fields / "diags/diag1000000"
+    ref_ratio_input = text(ref_ratio_vect / "warpx_used_inputs")
 
     attr_input = text(attrs / "warpx_used_inputs")
     field_input = text(fields / "warpx_used_inputs")
@@ -59,8 +62,8 @@ def main() -> int:
             "parameter_group": "<collision_name>.<scattering_process>_{cross_section,energy}",
             "coverage": "input_only",
             "passed": source_collision.is_file() and all(token in text(source_collision) for token in ("scattering_processes", "charge_exchange_cross_section")),
-            "evidence": "WarpX Examples/Tests/collision/inputs_test_2d_charge_exchange_dsmc",
-            "boundary": "no matching case-local producer was found in this coverage pass",
+            "evidence": "WarpX Examples/Tests/collision/inputs_test_2d_charge_exchange_dsmc + dsmc/run.log",
+            "boundary": "short runtime was attempted but stopped before initialization because the local checkout has no warpx-data/MCC_cross_sections/He/charge_exchange.dat; the dynamic key is not promoted to runtime PASS",
         },
         {
             "parameter_group": "<diag_name>.adios2_{operator,engine}.parameters.*",
@@ -79,17 +82,18 @@ def main() -> int:
         },
         {
             "parameter_group": "amr.ref_ratio_vect",
-            "coverage": "source_only",
-            "passed": False,
-            "evidence": "AMReX/AmrCore owner plus WarpX directional consumers",
-            "boundary": "no explicit vector-ratio runtime case is currently archived",
+            "coverage": "runtime",
+            "passed": all(token in ref_ratio_input for token in ("amr.ref_ratio_vect = 2 1", "amr.max_level = 1"))
+            and (ref_ratio_vect / "diags/diag1000000/Level_1/Cell_H").is_file(),
+            "evidence": "ref-ratio-vect/warpx_used_inputs + ref-ratio-vect/diags/diag1000000 Level_0/Level_1",
+            "boundary": "2D max_step=0 initialization smoke; it proves vector parsing and two-level materialization, not anisotropic refinement accuracy",
         },
     ]
     checks = {record["parameter_group"]: record["passed"] for record in records}
     result = {
         "contract": "structured parameter-map runtime coverage",
         "passed": all(record["passed"] or record["coverage"] == "source_only" for record in records),
-        "classification": "STRUCTURED_PARAMETER_MAP_RUNTIME_COVERAGE_BOUNDARY_ATTRIBUTE_AND_PARTICLE_FIELD_SMOKE_ADIOS2_VECTOR_RATIO_GAPS",
+        "classification": "STRUCTURED_PARAMETER_MAP_RUNTIME_COVERAGE_BOUNDARY_ATTRIBUTE_PARTICLE_FIELD_AND_VECTOR_RATIO_SMOKE_ADIOS2_SUFFIX_GAP_DSMC_DATA_BOUNDARY",
         "records": records,
         "checks": checks,
         "runtime_case_count": sum(record["coverage"] == "runtime" for record in records),

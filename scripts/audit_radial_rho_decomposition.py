@@ -12,7 +12,7 @@ import yt
 
 
 CASES = (
-    ("RCYLINDER", 1, "esirkepov_langmuir_rcylinder_charge_mpi2", False),
+    ("RCYLINDER", 1, "esirkepov_langmuir_rcylinder_shape1_species_rho", True),
     ("RCYLINDER", 2, "esirkepov_langmuir_rcylinder_shape2_mpi2", True),
     ("RCYLINDER", 3, "esirkepov_langmuir_rcylinder_shape3_mpi2", True),
     ("RCYLINDER", 4, "esirkepov_langmuir_rcylinder_shape4_mpi2", True),
@@ -65,16 +65,15 @@ def main() -> None:
             row["passed"] = row["finite"] and row["max_relative_residual"] < args.tolerance
         rows.append(row)
 
-    missing_exports = [row for row in rows if not row["has_species_fields"]]
     runtime_rows = [row for row in rows if row["has_species_fields"]]
     result = {
         "contract": "RCYLINDER/RSPHERE rho species decomposition observable",
-        "passed": all(row["passed"] for row in runtime_rows) and len(missing_exports) == 1,
-        "classification": "RADIAL_RHO_DECOMPOSITION_OBSERVABLE_VERIFIED_SHAPE1_EXPORT_BOUNDARY",
+        "passed": all(row["passed"] for row in runtime_rows) and len(runtime_rows) == len(rows),
+        "classification": "RADIAL_RHO_DECOMPOSITION_OBSERVABLE_VERIFIED_SHAPE1_EXPORT_COMPLETED",
         "tolerance": args.tolerance,
         "rows": rows,
         "runtime_row_count": len(runtime_rows),
-        "missing_species_export_count": len(missing_exports),
+        "missing_species_export_count": len(rows) - len(runtime_rows),
         "scope": "rho equals rho_electrons plus rho_ions on archived radial plotfiles; not a full Gauss-law or current-closure proof",
     }
     args.output_json.parent.mkdir(parents=True, exist_ok=True)

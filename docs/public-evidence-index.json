@@ -8,10 +8,10 @@
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 103,
+    "PASS": 104,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 32
+    "BOUNDARY": 31
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -1996,14 +1996,14 @@
     {
       "case": "radial-rho-decomposition-observable",
       "status": "PASS",
-      "evidence_kind": "BOUNDARY",
+      "evidence_kind": "PASS",
       "contract": "RCYLINDER/RSPHERE rho species decomposition observable",
-      "classification": "RADIAL_RHO_DECOMPOSITION_OBSERVABLE_VERIFIED_SHAPE1_EXPORT_BOUNDARY",
+      "classification": "RADIAL_RHO_DECOMPOSITION_OBSERVABLE_VERIFIED_SHAPE1_EXPORT_COMPLETED",
       "scope": "rho equals rho_electrons plus rho_ions on archived radial plotfiles; not a full Gauss-law or current-closure proof",
       "metrics": {
-        "missing_species_export_count": 1,
+        "missing_species_export_count": 0,
         "passed": true,
-        "runtime_row_count": 7
+        "runtime_row_count": 8
       }
     },
     {

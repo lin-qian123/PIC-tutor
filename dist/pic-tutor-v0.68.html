@@ -829,11 +829,11 @@ boosted-frame / NCI</a></li>
 charge；该结果不修改 WarpX 默认参数，也不宣称正式收敛阶。报告见
 <code>runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}</code>。</p>
 <p>本版新增 RCYLINDER/RSPHERE species-rho decomposition
-observable：既有径向 Esirkepov plotfile 中 7 个可读 runtime rows 的
+observable：通过为 RCYLINDER shape=1 增加物种 rho 诊断字段，径向
+Esirkepov shape=1/2/3/4 共 8 个 runtime rows 的
 <code>rho-(rho_electrons+rho_ions)</code> 最大相对差均低于
-<code>9.1e-15</code>，RCYLINDER shape=1 因旧输出未包含物种 rho 字段保留
-export boundary；该 observable 不替代 radial <code>divE-rho</code> 或
-current-closure proof。报告见
+<code>9.1e-14</code>；该 observable 不替代 radial <code>divE-rho</code>
+或 current-closure proof。报告见
 <code>runs/stage-c-validation/radial-rho-decomposition-observable/contract.{json,md}</code>。</p>
 <p>本版新增 position-update output-staggering contract：源码确认
 <code>UpdatePosition.H</code> 的 <code>u*inv_gamma*dt</code> 公式和
@@ -962,7 +962,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 168 条 <code>contract.json</code>，保留原始
+汇总本地 169 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始

@@ -84,6 +84,8 @@ def main() -> int:
                 "publisher-formatted CPC PDF",
             )
         ),
+        "publisher_abstract_boundary_recorded": "ScienceDirect indexed" in audit and "abstract-level" in audit,
+        "publisher_pdf_still_missing_recorded": "publisher-formatted CPC PDF is still missing" in audit,
         "publisher_boundary_not_overclaimed_in_note": all(
             term in note_text for term in ("不能直接等同于 WarpX", "仍需", "不能")
         ),
@@ -93,7 +95,7 @@ def main() -> int:
         "checks": checks,
         "passed": all(checks.values()),
         "classification": "ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING",
-        "scope": "seven-page accepted/submitted manuscript supports first-round PML formula and source mapping; publisher-formatted CPC comparison remains open",
+        "scope": "seven-page accepted/submitted manuscript plus indexed publisher abstract support first-round PML formula and source mapping; publisher-formatted CPC comparison remains open",
         "source": ESCHOLARSHIP_URL,
         "published": {"title": TITLE, "doi": DOI, "journal": "Computer Physics Communications 194, 1-9 (2015)"},
         "asset": {

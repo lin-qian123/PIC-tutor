@@ -12,11 +12,13 @@
 
 This is the primary reference cited by WarpX as `LeeCPC2015` in `../warpx/Docs/source/refs.bib` and `bibliography/warpx-refs.bib`.
 
-## Access status on 2026-07-11
+## Access status on 2026-07-13
 
 OpenAlex reports the CPC article as green OA and points to the OSTI record `1246488`. Crossref also records an accepted-manuscript license after 2016-05-21. However, the current OSTI record and API responses expose bibliographic metadata and citation links, not a direct PDF/full-text file. ScienceDirect PDF access returns HTTP 403 from the local command line, and the Elsevier API returns minimized metadata without authorization.
 
 The public eScholarship record now exposes a valid 7-page PDF endpoint. The PDF has been downloaded to this directory, converted with the project stdlib MinerU workflow, and materialized with 13 extracted images plus a Chinese walkthrough. This is an accepted/submitted manuscript and should not be silently labeled as the publisher-formatted CPC version.
+
+The indexed ScienceDirect record also exposes the publisher abstract: it reports that the analyzed PML efficiency is preserved for arbitrary solver order, including the infinite-order pseudo-spectral limit. This remains abstract-level publication evidence; the publisher-formatted PDF is still unavailable for line-by-line comparison.
 
 Primary asset source: <https://escholarship.org/uc/item/49m2k3vj>. The local package is now covered by `scripts/audit_leecpc2015_manuscript_contract.py`; its classification is accepted-manuscript-backed, publisher-formatted CPC PDF still missing.
 

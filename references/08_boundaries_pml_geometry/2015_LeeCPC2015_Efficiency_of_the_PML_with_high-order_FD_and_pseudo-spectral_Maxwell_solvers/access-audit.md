@@ -30,12 +30,14 @@ Date: 2026-07-13
 | Elsevier content API PDF endpoint | Returned HTTP 406/minimized metadata without authorization | local curl check on 2026-06-29 |
 | AIP Scitation DOI PDF endpoint | `https://aip.scitation.org/doi/pdf/10.1063/1.4965625` returns a short HTML page, not a PDF; the AIP article PDF endpoint returns Cloudflare HTTP 403 | local curl checks on 2026-06-29 |
 | AIP `pubs.aip.org` direct PDF endpoint | `https://pubs.aip.org/aip/acp/article-pdf/doi/10.1063/1.4965625/13262029/050002_1_online.pdf` still returns Cloudflare HTTP 403 with browser-like user agent | local curl check on 2026-06-29 |
+| ScienceDirect indexed abstract re-check | The publisher record exposes the abstract claim that PML efficiency is preserved for arbitrary solver order, including the infinite-order pseudo-spectral limit; this is abstract-level evidence, not a publisher-PDF line-by-line reading | ScienceDirect indexed record checked on 2026-07-13 |
+| ScienceDirect publisher PDF current re-check | The publisher PDF route remains access-controlled in the current environment; no local publisher-formatted PDF was materialized | current publisher route and accepted-manuscript boundary on 2026-07-13 |
 
 ## Current decision
 
 The article is now ingested from the public eScholarship accepted/submitted manuscript. The book may use the local PDF, MinerU Markdown, images, and Chinese walkthrough for a first paper-backed explanation. This does not upgrade the asset to the publisher-formatted CPC version; version-specific wording, pagination, and final equation typography still require a separate comparison.
 
-The publisher-formatted CPC PDF is still missing.
+The publisher-formatted CPC PDF is still missing. The indexed publisher abstract can be cited for the narrow claim that the reported PML efficiency is preserved at high order and in the pseudo-spectral limit, but it cannot settle final pagination, equation typography or version-specific formula differences.
 
 The local package is classified as `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING`. The contract closes asset integrity and first-round source mapping, not the publisher-version comparison.
 

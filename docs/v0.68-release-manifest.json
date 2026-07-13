@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 726,
-  "total_bytes": 27587000,
+  "total_bytes": 27594839,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1520555,
-      "sha256": "64e727a5e56f8ec1a0d347c213515b1aae57112a4a0962d82dac80abbe98ec55"
+      "bytes": 1520794,
+      "sha256": "1e42cf16416727f5d8b10ee977c829fb1f66e94becaccc914b10514268318637"
     },
     {
       "path": "TODO.md",
-      "bytes": 1364462,
-      "sha256": "085d323acc392743859372bbd7da656a9dd2d992208c2a6304f5a3e48d0545f1"
+      "bytes": 1364780,
+      "sha256": "7279d3e652efca34a4329fa1591a9c3766aeb2e369de69278edcf8eb834f0f81"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5742018,
-      "sha256": "afe51824e566725bb35e2c5f10714cdcd2303e9a71833174ea584c8e3e853a07"
+      "bytes": 5743177,
+      "sha256": "570f23de690a11cd3de01c7194a7f552cf8e92b5dba0c86074fd375140e67d92"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1070300,
-      "sha256": "d9e8f50f18fb447f4baaeb679641b7415ef463d05a50778ea1b7ca2f9fd7ffa5"
+      "bytes": 1071425,
+      "sha256": "ea771fa4d7a77e141c2ac46f41a579c30d0525d399908ced8b23749e261d4c67"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3369161,
-      "sha256": "76a0a24aece232ac962d8071cb56d15c8b186954c1181a2187951591f6c48a5d"
+      "bytes": 3372560,
+      "sha256": "43afb1a9fff27111f9bb74762042dbb18817c34fbf3fb444e4ec98516137e056"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "a2ea19fa55c6b0373bb78987fc3894ae1da49a5d469eb2a3b26924479c8ed9df"
+      "sha256": "ad0dd3fa1209e68e85d83cf6e1e7c03ac8f300abc8b462c064550bfc4c2b9135"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -427,8 +427,8 @@
     },
     {
       "path": "manuscript/README.md",
-      "bytes": 42764,
-      "sha256": "275f9d68e2053fee6df551ccefece6817319b10f5fd57f7c941c24011fff920e"
+      "bytes": 42990,
+      "sha256": "548f4cf998ed0b6f4ac49bb9c7391839d8701c4c4e3f6a77db3bcb28dc855958"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 63200,
-      "sha256": "546645cb93c4b53b9859efc01f8cf4b33926a67a27c7d34b4610e5955227f155"
+      "bytes": 63568,
+      "sha256": "7d666682f09ea15a778b16f53f8abd2884d4b5d8ba1d6256f9290d7881957410"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -907,8 +907,8 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 165734,
-      "sha256": "341f616586a942ded88867fec01ea29f94f3928730edff34758e2bdcbaedbd40"
+      "bytes": 166378,
+      "sha256": "29699541f637bf5ba10370ab7e65ce170b66b9c25185d1c5ff893b087da56cc9"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
@@ -917,8 +917,8 @@
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
-      "bytes": 13828,
-      "sha256": "7972f9ff7a585bf0d0b69f28298dda0ee2e1e687b01bcc69432574c48c120198"
+      "bytes": 13941,
+      "sha256": "bd7675234e02de6b82ad67fb20735854aaa404b38b349485bc78899b5be26e4d"
     },
     {
       "path": "notes/code-reading/README.md",
@@ -2632,8 +2632,8 @@
     },
     {
       "path": "scripts/audit_leecpc2015_manuscript_contract.py",
-      "bytes": 5628,
-      "sha256": "afced8b143605b2b36105e0b49e40fc9e4e4951fb354ef67b43acfed0e680362"
+      "bytes": 5876,
+      "sha256": "03b175bd23e4ddd07202889dae0311cd09a2794c0163750cb834acd47ff99c36"
     },
     {
       "path": "scripts/audit_leecpc2015_source_crosswalk.py",
@@ -3653,7 +3653,7 @@
     {
       "path": "scripts/verify_v68_build.py",
       "bytes": 2518,
-      "sha256": "6f5565a88ee747f25e635bd530995db116992cf300eda17b7905c921e5ad6715"
+      "sha256": "d030474ec9b34a465f54c159549476c444fba27515b22a4eed1afd4df95958d3"
     },
     {
       "path": "scripts/verify_villasenor_formula_contract.py",

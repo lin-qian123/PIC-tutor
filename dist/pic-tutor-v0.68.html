@@ -902,9 +902,10 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 发表元数据、Section 1–5、Eq.(23)、二阶 spline 线索与 publisher PDF
 缺失状态共 8 项检查全部通过。该 contract
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
-<p>当前合订 PDF 为 317 页；本 v0.68 版本在 v0.67
-基础上补入公开验证证据摘要和 Tajima-Dawson 1979 资产合同，并保留强守恒
-BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。</p>
+<p>当前合订 PDF 为 318 页；本 v0.68 版本在 v0.67
+基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015
+publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整
+Gauss-law 闭环。</p>
 <p>本版另补入 RZ shape=1 的 <code>256x512</code> resolution
 control：correction-on axis charge residual 为
 <code>3.593e-3 -&gt; 1.520e-3 -&gt; 7.554e-4</code>，correction-off 为
@@ -937,6 +938,10 @@ scaling baseline，不替代现代 WarpX runtime regression。</p>
 可见摘要固定 arbitrary form-factor、straight-line
 trajectory、no-Poisson-solve 和 2D/3D demonstration；直接 PDF 下载仍为
 403/HTML，仍不宣称 publisher-PDF line-by-line compare。</p>
+<p>本版又补强 LeeCPC2015 的 PML 证据边界：ScienceDirect indexed abstract
+支持高阶 solver 至无限阶 pseudo-spectral limit 的摘要级主张，7 页
+accepted manuscript 支持第一轮公式，WarpX source/runtime contract
+支持当前实现路径；publisher-formatted CPC PDF 和逐版本差异仍未完成。</p>
 <p>本版补充 <code>LeeCPC2015</code> accepted/submitted manuscript
 资产合同：7 页 PDF、MinerU 结构、13
 张图片、公式锚点和中文讲解全部通过；CPC publisher-formatted PDF
@@ -21429,6 +21434,15 @@ source crosswalk 见
 <code>notes/code-reading/fieldsolver/37-leecpc2015-source-crosswalk.md</code>。合同通过的含义是“本地
 accepted manuscript 包完整且可用于第一轮讲解”，不是“CPC publisher
 版本已取得”或“论文逐式证明了当前 WarpX 的 <code>C1-C25</code>”。</p>
+<p>发表版索引摘要还支持一个更窄的结论：作者把 PML
+反射效率的分析扩展到任意阶 solver，并把 pseudo-spectral formulation
+作为无限阶极限；这可以作为论文的摘要级性能主张，但不能替代 accepted
+manuscript 中的公式阅读，更不能把当前 WarpX 的
+<code>C1-C25</code>、Galilean <code>T2</code>、cleaning <code>F/G</code>
+或 RZ 分支直接归因给论文。当前最准确的证据链是：publisher abstract
+支持主题和高阶极限的摘要事实，accepted manuscript 支持第一轮公式，WarpX
+source crosswalk 支持当前实现，runtime contracts 支持特定组合的反射率或
+residual gate。</p>
 <h3 id="v0.40-psatd-pml-的-cartesianrz-并列复现">7.5.9 v0.40 PSATD-PML
 的 Cartesian/RZ 并列复现</h3>
 <p>为了把上面的源码和 regression
@@ -26056,11 +26070,11 @@ PDF + MinerU + 中文讲解</td>
 </tr>
 <tr>
 <td><code>LeeCPC2015</code></td>
-<td>已有 access audit、公式映射准备和核对清单；仍无授权 PDF/MinerU
-正文</td>
+<td>已有 7 页 eScholarship accepted/submitted manuscript、MinerU、13
+张图、中文讲解和 source crosswalk；仍缺 publisher-formatted CPC PDF</td>
 <td>第 7 章</td>
-<td>源码侧 <code>C1-C25</code> 和 regression
-可继续推进，但论文闭环仍缺主文</td>
+<td>accepted-manuscript-backed + source-grounded
+已成立，但发表版差异和逐系数等价仍未完成</td>
 </tr>
 </tbody>
 </table>
@@ -26071,8 +26085,8 @@ PDF + MinerU + 中文讲解</td>
 <li><code>公式映射准备.md</code></li>
 <li><code>公式核对清单.md</code></li>
 </ul>
-<p>也就是说，当前不是“不知道该怎么读”，而是“知道该对什么，但还拿不到可合法精读的正文
-PDF”。</p>
+<p>也就是说，当前不是“不知道该怎么读”，而是“accepted manuscript
+已可精读，仍缺 publisher-formatted CPC PDF 的版本差异核对”。</p>
 <h2 id="各章当前的文献成熟度">9.4 各章当前的文献成熟度</h2>
 <p>把全书按章节看，当前文献成熟度并不均匀。</p>
 <table>

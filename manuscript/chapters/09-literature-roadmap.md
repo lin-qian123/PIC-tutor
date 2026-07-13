@@ -95,7 +95,7 @@
 | `Yee 1966` | metadata/DOI 已清楚；无本地 PDF/MinerU | 第 2、6 章 | 可暂由源码与后继 FDTD 文献支撑，但缺原始历史入口 |
 | `Esirkepov 2001` | 已建立 paper-specific 目录、access audit，并已 materialize 作者 arXiv 预印本 + MinerU + 中文讲解；仍缺出版商 CPC PDF 对照 | 第 5 章 | 已从纯源码缺口推进到 preprint-backed，但还未完成 CPC 定稿核对 |
 | `Villasenor-Buneman 1992` | 已建立 paper-specific 目录、access audit，并已 materialize 本机现成 PDF + MinerU + 中文讲解 | 第 5 章 | 已从纯源码缺口推进到 paper-backed，但中文讲解仍是第一轮结构精读 |
-| `LeeCPC2015` | 已有 access audit、公式映射准备和核对清单；仍无授权 PDF/MinerU 正文 | 第 7 章 | 源码侧 `C1-C25` 和 regression 可继续推进，但论文闭环仍缺主文 |
+| `LeeCPC2015` | 已有 7 页 eScholarship accepted/submitted manuscript、MinerU、13 张图、中文讲解和 source crosswalk；仍缺 publisher-formatted CPC PDF | 第 7 章 | accepted-manuscript-backed + source-grounded 已成立，但发表版差异和逐系数等价仍未完成 |
 
 这五条缺口里，`LeeCPC2015` 最特殊。它不是完全没工作，而是已经推进到：
 
@@ -103,7 +103,7 @@
 - `公式映射准备.md`
 - `公式核对清单.md`
 
-也就是说，当前不是“不知道该怎么读”，而是“知道该对什么，但还拿不到可合法精读的正文 PDF”。
+也就是说，当前不是“不知道该怎么读”，而是“accepted manuscript 已可精读，仍缺 publisher-formatted CPC PDF 的版本差异核对”。
 
 ## 9.4 各章当前的文献成熟度
 

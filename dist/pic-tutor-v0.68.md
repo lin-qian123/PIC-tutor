@@ -34,7 +34,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 317 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要和 Tajima-Dawson 1979 资产合同，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 318 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -49,6 +49,8 @@
 本版又收口 Tajima-Dawson 1979 论文资产：4 页 PDF、MinerU、11 张图、中文精读和图 1/图 2 机制对应已通过独立合同；证据分类为 early LWFA scaling baseline，不替代现代 WarpX runtime regression。
 
 本版又补入 Esirkepov 2001 CPC 发表版的摘要级访问边界：ScienceDirect 可见摘要固定 arbitrary form-factor、straight-line trajectory、no-Poisson-solve 和 2D/3D demonstration；直接 PDF 下载仍为 403/HTML，仍不宣称 publisher-PDF line-by-line compare。
+
+本版又补强 LeeCPC2015 的 PML 证据边界：ScienceDirect indexed abstract 支持高阶 solver 至无限阶 pseudo-spectral limit 的摘要级主张，7 页 accepted manuscript 支持第一轮公式，WarpX source/runtime contract 支持当前实现路径；publisher-formatted CPC PDF 和逐版本差异仍未完成。
 
 本版补充 `LeeCPC2015` accepted/submitted manuscript 资产合同：7 页 PDF、MinerU 结构、13 张图片、公式锚点和中文讲解全部通过；CPC publisher-formatted PDF 的版本差异仍待核对。
 
@@ -13651,6 +13653,8 @@ v0.25 继续尝试 Lee/Vay PML 论文的全文路径。CPC DOI、OSTI、eScholar
 
 该资产的可重复验收报告位于 `runs/stage-c-validation/leecpc2015-accepted-manuscript-contract/contract.{json,md}`，由 `scripts/audit_leecpc2015_manuscript_contract.py` 生成；三方 source crosswalk 见 `runs/stage-c-validation/leecpc2015-source-crosswalk/contract.{json,md}` 与 `notes/code-reading/fieldsolver/37-leecpc2015-source-crosswalk.md`。合同通过的含义是“本地 accepted manuscript 包完整且可用于第一轮讲解”，不是“CPC publisher 版本已取得”或“论文逐式证明了当前 WarpX 的 `C1-C25`”。
 
+发表版索引摘要还支持一个更窄的结论：作者把 PML 反射效率的分析扩展到任意阶 solver，并把 pseudo-spectral formulation 作为无限阶极限；这可以作为论文的摘要级性能主张，但不能替代 accepted manuscript 中的公式阅读，更不能把当前 WarpX 的 `C1-C25`、Galilean `T2`、cleaning `F/G` 或 RZ 分支直接归因给论文。当前最准确的证据链是：publisher abstract 支持主题和高阶极限的摘要事实，accepted manuscript 支持第一轮公式，WarpX source crosswalk 支持当前实现，runtime contracts 支持特定组合的反射率或 residual gate。
+
 ### 7.5.9 v0.40 PSATD-PML 的 Cartesian/RZ 并列复现
 
 为了把上面的源码和 regression 地图推进到可复查的运行证据，项目又对官方 `pml` 输入做了单进程复现。Cartesian `inputs_test_2d_pml_x_psatd` 使用 `warpx.2d` 运行，官方 `analysis_pml_psatd.py` 与独立脚本 `scripts/analyze_pml_psatd_contract.py` 都通过：`diag1000050` 初始场能量相对参考值误差为 `1.45e-15`，末态总场能量与初始能量之比，即反射率，为 `9.4704e-7 < 1e-6`。这条结果支持“主域 PSATD 与普通 Cartesian PML 组合满足低反射率合同”，但不证明 `C1-C25` 每个系数逐项正确。
@@ -16536,7 +16540,7 @@ $$
 | `Yee 1966` | metadata/DOI 已清楚；无本地 PDF/MinerU | 第 2、6 章 | 可暂由源码与后继 FDTD 文献支撑，但缺原始历史入口 |
 | `Esirkepov 2001` | 已建立 paper-specific 目录、access audit，并已 materialize 作者 arXiv 预印本 + MinerU + 中文讲解；仍缺出版商 CPC PDF 对照 | 第 5 章 | 已从纯源码缺口推进到 preprint-backed，但还未完成 CPC 定稿核对 |
 | `Villasenor-Buneman 1992` | 已建立 paper-specific 目录、access audit，并已 materialize 本机现成 PDF + MinerU + 中文讲解 | 第 5 章 | 已从纯源码缺口推进到 paper-backed，但中文讲解仍是第一轮结构精读 |
-| `LeeCPC2015` | 已有 access audit、公式映射准备和核对清单；仍无授权 PDF/MinerU 正文 | 第 7 章 | 源码侧 `C1-C25` 和 regression 可继续推进，但论文闭环仍缺主文 |
+| `LeeCPC2015` | 已有 7 页 eScholarship accepted/submitted manuscript、MinerU、13 张图、中文讲解和 source crosswalk；仍缺 publisher-formatted CPC PDF | 第 7 章 | accepted-manuscript-backed + source-grounded 已成立，但发表版差异和逐系数等价仍未完成 |
 
 这五条缺口里，`LeeCPC2015` 最特殊。它不是完全没工作，而是已经推进到：
 
@@ -16544,7 +16548,7 @@ $$
 - `公式映射准备.md`
 - `公式核对清单.md`
 
-也就是说，当前不是“不知道该怎么读”，而是“知道该对什么，但还拿不到可合法精读的正文 PDF”。
+也就是说，当前不是“不知道该怎么读”，而是“accepted manuscript 已可精读，仍缺 publisher-formatted CPC PDF 的版本差异核对”。
 
 ## 9.4 各章当前的文献成熟度
 

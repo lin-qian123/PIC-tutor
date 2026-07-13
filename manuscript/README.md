@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.68 合订 PDF 为 317 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.68 合订 PDF 为 318 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
 v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 152 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
 
@@ -15,6 +15,8 @@ v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 152 条验
 2026-07-13：收口 Tajima-Dawson 1979 论文资产合同：4 页 PDF、MinerU、11 张图、中文精读和图 1/图 2 机制对应均已复核；该文作为 early LWFA scaling baseline 使用，不替代现代 WarpX runtime evidence。
 
 2026-07-13：第 5 章补入 Esirkepov 2001 CPC 索引摘要级证据：arbitrary form-factor、straight-line trajectory、no-Poisson-solve 和 2D/3D demonstration；发表版 PDF 仍无法取得，不升级为逐行核对。
+
+2026-07-13：第 7 章补入 LeeCPC2015 的 publisher abstract boundary：高阶 solver 到无限阶 pseudo-spectral limit 的摘要事实可引用，但 accepted manuscript 与 publisher-formatted CPC PDF 仍严格分层。
 
 2026-07-13：完成 `LeeCPC2015` accepted/submitted manuscript contract：7 页全文、13 张抽取图片、MinerU 结构、公式锚点和中文讲解均通过；第 7 章可使用第一轮 paper-backed PML 解释，但不把该资产标记为 CPC publisher-formatted 定稿。
 

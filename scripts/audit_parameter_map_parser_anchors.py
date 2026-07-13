@@ -39,7 +39,9 @@ def candidate_keys(parameter: str) -> list[str]:
 
 def parser_literals(text: str) -> set[str]:
     found: set[str] = set()
-    for match in re.finditer(r'"([^"\\]*(?:\\.[^"\\]*)*)"', text):
+    # Keep the heuristic local to ordinary one-line C++ string literals. This
+    # avoids treating a malformed/escaped diagnostic string as a giant key.
+    for match in re.finditer(r'"([^"\n]{1,120})"', text):
         start = max(0, match.start() - 180)
         end = min(len(text), match.end() + 80)
         if PARSER_WORDS.search(text[start:end]):

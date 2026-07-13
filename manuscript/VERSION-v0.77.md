@@ -1,6 +1,4 @@
-# PIC-tutor v0.78
-
-本版新增第 5 章沉积证据梯度：将 Direct、Esirkepov、Villasenor-Buneman 和 Vay 的论文/公式层、WarpX 源码层、runtime consumer 和不能外推的范围并列收口。新增 `scripts/audit_deposition_evidence_gradient_contract.py`，分类为 `DEPOSITION_PAPER_SOURCE_RUNTIME_GRADIENT_WITH_EXPLICIT_GAPS`；该矩阵推进了论文-源码-测试三线闭环，但不把局部 runtime family 写成完整 geometry/order/AMR 覆盖。
+# PIC-tutor v0.77
 
 本版新增第 7 章 PML 证据梯度矩阵：将 Cartesian FDTD/PSATD 低反射率、RZ 残余场、重启重复性、粒子入 PML 和 3D cleaning reader-side 结果分开列出，逐项写明 producer、consumer、可支持结论和负面边界。新增 `scripts/audit_pml_evidence_gradient_contract.py`，将正文、WarpX 只读源码锚点和代表性 runtime contract 固化为 `PML_EVIDENCE_GRADIENT_WITH_EXPLICIT_RUNTIME_BOUNDARIES`；该矩阵不把未覆盖的 solver、几何、AMR 或入射角组合升级为完成。
 
@@ -12,7 +10,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v78_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v77_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

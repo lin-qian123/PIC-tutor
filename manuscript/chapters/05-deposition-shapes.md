@@ -2609,6 +2609,21 @@ AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在�
 
 本节由 `scripts/audit_deposition_algorithm_selection_contract.py` 对当前 WarpX 分派源码、geometry/AMR guard、章节矩阵和代表性 runtime contract 做只读验收。它的分类是 `SOURCE_AND_RUNTIME_SELECTION_MATRIX_WITH_EXPLICIT_BOUNDARIES`：证明读者侧选择矩阵与当前 checkout 及已有证据目录一致，不宣称四种算法拥有同等的 physics coverage。
 
+### 5.14.4 v0.78 沉积证据梯度：论文公式、源码入口与 runtime consumer
+
+选择矩阵回答“应该选哪条算法”；本节进一步回答“当前证据究竟证明到了哪一层”。对沉积算法，论文公式、源码 loop 和运行级 consumer 不是同一个证据对象，必须分别列出。尤其是公式恒等式通过，不等于当前 kernel 的所有 geometry/order 分支都通过；单个 Langmuir case 通过，也不等于论文公式已经逐式映射到每个入口。
+
+| 算法/证据族 | 论文或公式层 | WarpX 源码层 | runtime consumer | 当前可支持结论 | 明确不能外推 |
+|---|---|---|---|---|---|
+| Direct | 作为非守恒对照，只有通用 shape/current 公式 | `doDepositionShapeNKernel`，由 `DepositCurrent()` 分派 | Direct/Langmuir 对照输入 | 可以说明普通 current kernel 的输入输出路径 | 不能把 `psatd.current_correction` 写成 Direct 已具备 Esirkepov/Villasenor 的守恒算法 |
+| Esirkepov | 预印本 `W^1/W^2/W^3`、`Eq.(23)`、`1/3,1/6` density decomposition；发表版摘要级主张已核实 | `doEsirkepovDepositionShapeN`、`sdxi/sdyj/sdzk`、`one_third/one_sixth` | density-decomposition algebra、source crosswalk、Langmuir/shape/geometry family | 预印本公式与当前 kernel skeleton 有可审计对应，代表性 Cartesian/RZ/径向 contracts 可分层引用 | 不能写成 CPC 定稿逐式已核对，也不能把代表性 family 外推为完整 geometry/order/AMR product |
+| Villasenor-Buneman | full-text 的 four-boundary、crossing segmentation、3D mixed term | `VillasenorDepositionShapeNKernel`、`cell_crossings_*`、`num_segments`、`earliest-crossing` | formula contract、source contract、2D implicit JFNK/cropping/filter/PICMI | 论文局部几何闭合、源码 segment skeleton 和代表性 2D implicit consumer 三层均有独立证据 | 不能把 RZ pre-physics boundary 或 2D PASS 外推成 3D/RZ/全部 shape/order 的 runtime 等价 |
+| Vay | 论文算法背景与当前实现的选择边界 | `doVayDepositionShapeN`，PSATD-only/AMR/RZ/1D guards | 2D/3D shape family 单进程与 2-rank official-scale contracts | 当前 checkout 的 Cartesian shape family 有 runtime consumer，且 guard 已明确 | 不能把 case-local sibling 写成上游注册项，也不能宣称 Vay + AMR 或正式收敛阶已完成 |
+
+因此本节的分类为 `DEPOSITION_PAPER_SOURCE_RUNTIME_GRADIENT_WITH_EXPLICIT_GAPS`。它把每一行的 producer 和 consumer 绑定到不同证据层：`verify_esirkepov_density_decomposition.py` / `villasenor_formula_contract.py` 是公式层，`audit_*_source_contract.py` 是源码层，Langmuir、implicit JFNK 和 Vay shape-family contracts 是运行层。三层同时出现时，结论仍只覆盖表中写明的 scope；缺少某一层时，正文必须降级为 `PREPRINT_SOURCE_GROUNDED`、`FORMULA_ONLY`、`SOURCE_ONLY` 或 `RUNTIME_FAMILY_ONLY`。
+
+本节由 `scripts/audit_deposition_evidence_gradient_contract.py` 验收。该合同只检查章节矩阵、当前 WarpX 只读源码锚点和代表性报告是否一致，不把证据目录数量当作物理覆盖率，也不改变上游 WarpX 仓库。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

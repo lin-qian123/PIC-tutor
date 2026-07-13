@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 
-CURRENT_VERSION = "v0.77"
+CURRENT_VERSION = "v0.78"
 
 
 def check(root: Path, relative: str, expected: str) -> dict[str, object]:
@@ -21,19 +21,24 @@ def check(root: Path, relative: str, expected: str) -> dict[str, object]:
 def build_report(root: Path) -> dict[str, object]:
     checks = [
         check(root, "README.md", f"当前成书版本为 `{CURRENT_VERSION}`"),
+        check(root, "README.md", "拒绝 README 中已知的旧当前版本口径"),
         check(root, "manuscript/README.md", f"当前 {CURRENT_VERSION} 合订 PDF"),
         check(root, "manuscript/VERSION.md", f"# PIC-tutor {CURRENT_VERSION}"),
-        check(root, "manuscript/VERSION.md", "scripts/verify_v77_build.py"),
+        check(root, "manuscript/VERSION.md", "scripts/verify_v78_build.py"),
         check(root, "docs/public-repo-release-audit.md", f"dist/pic-tutor-{CURRENT_VERSION}.pdf"),
-        check(root, "docs/v0.77-release-manifest.json", f'"release": "PIC-tutor {CURRENT_VERSION}"'),
-        check(root, "scripts/build_v77.py", f"pic-tutor-{CURRENT_VERSION}"),
-        check(root, "scripts/verify_v77_build.py", f"v0.77 artifact verification"),
+        check(root, "docs/v0.78-release-manifest.json", f'"release": "PIC-tutor {CURRENT_VERSION}"'),
+        check(root, "scripts/build_v78.py", f"pic-tutor-{CURRENT_VERSION}"),
+        check(root, "scripts/verify_v78_build.py", f"v0.78 artifact verification"),
     ]
     forbidden_current_refs = []
     for relative in ("README.md", "manuscript/README.md", "manuscript/VERSION.md"):
         text = (root / relative).read_text(encoding="utf-8")
         if "当前收束版本是 `v0.67`" in text or "scripts/verify_v67_build.py` 覆盖" in text:
             forbidden_current_refs.append(relative)
+    readme = (root / "README.md").read_text(encoding="utf-8")
+    for marker in ("当前成书版本为 `v0.76`", "指向同一 v0.76", "当前成书版本为 `v0.77`"):
+        if marker in readme:
+            forbidden_current_refs.append(f"README.md:{marker}")
     return {
         "contract": "current release metadata consistency",
         "current_version": CURRENT_VERSION,

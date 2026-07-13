@@ -1,5 +1,11 @@
 # TODO
 
+## 2026-07-14
+
+- [x] 新增第 5 章 v0.78 沉积证据梯度：并列 Direct、Esirkepov、Villasenor-Buneman、Vay 的论文/公式层、WarpX 源码层、runtime consumer 和负面边界；不把局部 family 证据外推为完整 geometry/order/AMR 覆盖。
+- [x] 新增 `scripts/audit_deposition_evidence_gradient_contract.py`，绑定第 5 章矩阵、当前 WarpX 只读源码和代表性公式/source/runtime contracts；分类为 `DEPOSITION_PAPER_SOURCE_RUNTIME_GRADIENT_WITH_EXPLICIT_GAPS`。
+- [x] 修正 README 中 v0.76/v0.77 当前版本漂移，并将旧版本口径加入 `audit_release_consistency.py` 的拒绝检查。
+
 - [x] 2026-07-13：完成 Esirkepov 2001 CPC indexed abstract 与 arXiv 预印本的 bounded compare；发表版 metadata/abstract 已核实，publisher PDF 仍因访问限制未取得。报告见 `runs/stage-c-validation/esirkepov-publisher-abstract-compare/contract.{json,md}`。
 
 - [x] 2026-07-13：完成第 5 章沉积算法选择矩阵的 v0.75 成书接入，并把 Direct/Esirkepov/Villasenor/Vay 的几何、时间层和证据边界纳入构建验收；报告见 `runs/stage-c-validation/deposition-algorithm-selection/contract.{json,md}`。

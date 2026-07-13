@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `164`
-- PASS: `119`
+- records: `165`
+- PASS: `120`
 - FAIL: `30`
 - UNKNOWN: `15`
-- boundary-classified: `29`
+- boundary-classified: `30`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -141,6 +141,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `pml_psatd_2d_mpi2` | `PASS` | `PASS` | Cartesian PSATD-PML initial-energy and low-reflectivity contract | `` | 2-rank project-level independent reader-side summary; official analysis separately rerun | `expected_initial_energy=7.282940112203595e-08`, `final_energy=6.897268359469654e-14`, `initial_energy=7.282940112203606e-08`, `initial_reference_relative_error=1.453796362122656e-15`, `passed=True` |
 | `pml_rz_psatd_mpi2` | `PASS` | `PASS` | RZ PSATD radial-PML residual-field contract | `` | independent reader-side RZ residual-field check on the official 2-rank producer | `max_abs_field=1.0315718696300396`, `passed=True` |
 | `position-leapfrog-source-crosswalk` | `PASS` | `PASS` | WarpX explicit leapfrog position/source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_TIME_CENTERED_POSITION_DIRECT_HALF_STEP_ATTRIBUTE_NOT_EXPORTED` | read-only source mapping; adjacent Full plotfiles provide a velocity proxy but do not prove a direct half-step diagnostic attribute | `passed=True` |
+| `position-update-runtime-contract` | `PASS` | `BOUNDARY` | explicit position update source/runtime formula contract | `POSITION_UPDATE_SOURCE_CONFIRMED_OUTPUT_STAGGERING_BOUNDARY_DIRECT_HALF_STEP_ATTRIBUTE_REMAINS` | three existing case-local uniform-B Full-plotfile series; previous, next and midpoint mechanical-momentum alignments are compared against UpdatePosition displacement | `max_midpoint_proxy_relative_vector_error=0.00160921344021234`, `max_single_frame_pairing_relative_vector_error=0.06242129358104317`, `passed=True` |
 | `psatd-literature-strategy` | `PASS` | `PASS` | PSATD/NCI literature-to-source strategy matrix | `FULL_TEXT_SOURCE_GROUNDED_RUNTIME_STRATEGY_MATRIX` | indexing contract across Godfrey fixed-grid PSATD, Lehe Galilean PSATD, and Kirchen boosted-frame application; not a new physics regression | `passed=True` |
 | `pusher_uniform_b_comparison` | `PASS` | `PASS` | dedicated uniform-B Boris/Vay/Higuera-Cary orbit comparison | `` |  | `passed=True` |
 | `python-mr-observability` | `UNKNOWN` | `BOUNDARY` | Python MR intermediate-field observability audit | `INTERFACE_PRESENT_RUNTIME_LEDGER_UNPROVEN` | source/API observability boundary; not a runtime current_buf/rho_buf proof | `missing_count=0` |

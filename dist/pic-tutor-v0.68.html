@@ -828,6 +828,14 @@ boosted-frame / NCI</a></li>
 <code>BOUNDARY</code>，correction-off 只在局部 sibling 上恢复
 charge；该结果不修改 WarpX 默认参数，也不宣称正式收敛阶。报告见
 <code>runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}</code>。</p>
+<p>本版新增 position-update output-staggering contract：源码确认
+<code>UpdatePosition.H</code> 的 <code>u*inv_gamma*dt</code> 公式和
+<code>PhysicalParticleContainer.cpp</code> 的 <code>Full</code>
+dispatch；三组 uniform-<code>B</code> Full plotfile 的单帧动量配对误差约
+<code>6.242e-2</code>，相邻帧中点 proxy 最大误差约
+<code>1.609e-3</code>。该证据确认输出时间层边界，不把机械动量字段升级为直接
+half-step velocity attribute。报告见
+<code>runs/stage-c-validation/position-update-runtime-contract/contract.{json,md}</code>。</p>
 <p>本版新增 parameter-map structured review contract：parser-anchor
 之外的 10 条参数已逐项核对，8 条 dynamic-key constructor 和 2 条 AMReX
 owner 全部通过源码锚点检查；该结果不替代完整 C++ AST、默认值/校验或
@@ -925,7 +933,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 164 条 <code>contract.json</code>，保留原始
+汇总本地 165 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
@@ -964,7 +972,7 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 发表元数据、Section 1–5、Eq.(23)、二阶 spline 线索与 publisher PDF
 缺失状态共 8 项检查全部通过。该 contract
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
-<p>当前合订 PDF 为 320 页；本 v0.68 版本在 v0.67
+<p>当前合订 PDF 为 321 页；本 v0.68 版本在 v0.67
 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015
 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整
 Gauss-law 闭环。</p>
@@ -7256,9 +7264,9 @@ gather guard cells，粒子位置和动量必须处在正确 leapfrog
 时间层，外场、电离电荷态、辐射反作用和 QED 选项也必须在进入 pusher
 前准备好。</p>
 <p>本章对应源码笔记见
-<code>notes/code-reading/particles/00-particle-evolve-callchain.md</code>、<code>notes/code-reading/particles/01-pusher-and-deposition-evidence.md</code>、<code>notes/code-reading/particles/02-gather-shape-deposition-kernels.md</code>、<code>notes/code-reading/particles/03-vay-higuera-cary-pushers.md</code>、<code>notes/code-reading/particles/24-thermalizer-validation-and-checksum-boundaries.md</code>、<code>notes/code-reading/particles/25-gather-variants-and-external-particle-fields.md</code>、<code>notes/code-reading/particles/26-pusher-single-particle-and-photon-validation-map.md</code>、<code>notes/code-reading/particles/27-particle-fields-plasma-lens-and-mpi-validation-map.md</code>、<code>notes/code-reading/particles/28-particle-diagnostics-python-interface-validation-map.md</code>、<code>notes/code-reading/particles/29-boundary-and-python-front-end-validation-map.md</code>、<code>notes/code-reading/particles/30-pml-eb-contact-and-mr-validation-map.md</code>
+<code>notes/code-reading/particles/00-particle-evolve-callchain.md</code>、<code>notes/code-reading/particles/01-pusher-and-deposition-evidence.md</code>、<code>notes/code-reading/particles/02-gather-shape-deposition-kernels.md</code>、<code>notes/code-reading/particles/03-vay-higuera-cary-pushers.md</code>、<code>notes/code-reading/particles/24-thermalizer-validation-and-checksum-boundaries.md</code>、<code>notes/code-reading/particles/25-gather-variants-and-external-particle-fields.md</code>、<code>notes/code-reading/particles/26-pusher-single-particle-and-photon-validation-map.md</code>、<code>notes/code-reading/particles/27-particle-fields-plasma-lens-and-mpi-validation-map.md</code>、<code>notes/code-reading/particles/28-particle-diagnostics-python-interface-validation-map.md</code>、<code>notes/code-reading/particles/29-boundary-and-python-front-end-validation-map.md</code>、<code>notes/code-reading/particles/30-pml-eb-contact-and-mr-validation-map.md</code>、<code>notes/code-reading/particles/66-explicit-leapfrog-position-source-crosswalk.md</code>
 和
-<code>notes/code-reading/particles/66-explicit-leapfrog-position-source-crosswalk.md</code>。</p>
+<code>notes/code-reading/particles/68-position-update-output-staggering-contract.md</code>。</p>
 <p>本章当前依据的 WarpX 源码版本是：</p>
 <ul>
 <li><code>../warpx</code></li>
@@ -8698,6 +8706,18 @@ attribute。另一个容易忽略的分叉是 <code>PushSelector.H</code>：Bori
 <code>scripts/analyze_vay_appendix_b_runtime_contract.py</code>
 固化；当前结论是“时间中心位置更新和 proxy-level Appendix-B evidence
 已建立，直接半步速度属性和论文图形逐点复现仍未完成”。</p>
+<p>新增的 <code>scripts/audit_position_update_runtime_contract.py</code>
+又把这条边界推进到运行输出层：它对三组 81 帧 uniform-<code>B</code> Full
+plotfile 逐步比较 <code>UpdatePosition.H</code>
+公式与实际位移。源码公式和 <code>Full</code> dispatch
+均通过，但上一帧/下一帧机械动量的直接配对误差约为
+<code>6.242e-2</code>；相邻帧中点 proxy 的最大误差约为
+<code>1.609e-3</code>。因此当前更准确的结论是“源码公式已确认、输出时间层存在可测
+stagger、独立 half-step attribute 仍未提供”，而不是把单帧 plotfile
+动量升级为 half-step 证据。完整报告见
+<code>notes/code-reading/particles/68-position-update-output-staggering-contract.md</code>
+和
+<code>runs/stage-c-validation/position-update-runtime-contract/contract.{json,md}</code>。</p>
 <h2 id="rrimplicit-与-photon-path">4.11 RR、implicit 与 photon path</h2>
 <p>前面 4.1 到 4.10 主要还是显式带电粒子的主线，但 WarpX
 的粒子推进并不只有这一条路径。至少还有三条不能忽略的分支：</p>
@@ -26049,7 +26069,7 @@ reconstruction <code>&lt; 3.1e-16</code></td>
 也不等价于确定性 <code>1e-9</code>
 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema
 contract、性能 gate 和采样统计边界。公开仓库中的
-<code>docs/public-evidence-index.{json,md}</code> 进一步提供 164
+<code>docs/public-evidence-index.{json,md}</code> 进一步提供 165
 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。</p>
 <p>当前证据等级应写成：Langmuir
 已有运行级解析频率、场误差和最终守恒证据；uniform plasma

@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 164,
+  "record_count": 165,
   "status_counts": {
-    "PASS": 119,
+    "PASS": 120,
     "FAIL": 30,
     "UNKNOWN": 15
   },
@@ -11,7 +11,7 @@
     "PASS": 101,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 29
+    "BOUNDARY": 30
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -1894,6 +1894,19 @@
       "classification": "CURRENT_WARPX_SOURCE_GROUNDED_TIME_CENTERED_POSITION_DIRECT_HALF_STEP_ATTRIBUTE_NOT_EXPORTED",
       "scope": "read-only source mapping; adjacent Full plotfiles provide a velocity proxy but do not prove a direct half-step diagnostic attribute",
       "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "position-update-runtime-contract",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "explicit position update source/runtime formula contract",
+      "classification": "POSITION_UPDATE_SOURCE_CONFIRMED_OUTPUT_STAGGERING_BOUNDARY_DIRECT_HALF_STEP_ATTRIBUTE_REMAINS",
+      "scope": "three existing case-local uniform-B Full-plotfile series; previous, next and midpoint mechanical-momentum alignments are compared against UpdatePosition displacement",
+      "metrics": {
+        "max_midpoint_proxy_relative_vector_error": 0.00160921344021234,
+        "max_single_frame_pairing_relative_vector_error": 0.06242129358104317,
         "passed": true
       }
     },

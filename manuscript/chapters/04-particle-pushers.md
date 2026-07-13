@@ -2,7 +2,7 @@
 
 粒子推进器负责把单个宏粒子从一个时间层推进到下一个时间层。它表面上是局部单粒子算法，实际上依赖上一章建立的主循环条件：场必须已经填好 gather guard cells，粒子位置和动量必须处在正确 leapfrog 时间层，外场、电离电荷态、辐射反作用和 QED 选项也必须在进入 pusher 前准备好。
 
-本章对应源码笔记见 `notes/code-reading/particles/00-particle-evolve-callchain.md`、`notes/code-reading/particles/01-pusher-and-deposition-evidence.md`、`notes/code-reading/particles/02-gather-shape-deposition-kernels.md`、`notes/code-reading/particles/03-vay-higuera-cary-pushers.md`、`notes/code-reading/particles/24-thermalizer-validation-and-checksum-boundaries.md`、`notes/code-reading/particles/25-gather-variants-and-external-particle-fields.md`、`notes/code-reading/particles/26-pusher-single-particle-and-photon-validation-map.md`、`notes/code-reading/particles/27-particle-fields-plasma-lens-and-mpi-validation-map.md`、`notes/code-reading/particles/28-particle-diagnostics-python-interface-validation-map.md`、`notes/code-reading/particles/29-boundary-and-python-front-end-validation-map.md`、`notes/code-reading/particles/30-pml-eb-contact-and-mr-validation-map.md` 和 `notes/code-reading/particles/66-explicit-leapfrog-position-source-crosswalk.md`。
+本章对应源码笔记见 `notes/code-reading/particles/00-particle-evolve-callchain.md`、`notes/code-reading/particles/01-pusher-and-deposition-evidence.md`、`notes/code-reading/particles/02-gather-shape-deposition-kernels.md`、`notes/code-reading/particles/03-vay-higuera-cary-pushers.md`、`notes/code-reading/particles/24-thermalizer-validation-and-checksum-boundaries.md`、`notes/code-reading/particles/25-gather-variants-and-external-particle-fields.md`、`notes/code-reading/particles/26-pusher-single-particle-and-photon-validation-map.md`、`notes/code-reading/particles/27-particle-fields-plasma-lens-and-mpi-validation-map.md`、`notes/code-reading/particles/28-particle-diagnostics-python-interface-validation-map.md`、`notes/code-reading/particles/29-boundary-and-python-front-end-validation-map.md`、`notes/code-reading/particles/30-pml-eb-contact-and-mr-validation-map.md`、`notes/code-reading/particles/66-explicit-leapfrog-position-source-crosswalk.md` 和 `notes/code-reading/particles/68-position-update-output-staggering-contract.md`。
 
 本章当前依据的 WarpX 源码版本是：
 
@@ -1042,6 +1042,8 @@ $$
 更新位置，见 `UpdatePosition.H:52-69`。因此 photon container 可以复用位置推进形式，但动量和沉积行为不同；光子容器的专门逻辑后续多物理章节再展开。
 
 这个调用顺序也限定了“半步速度”的证据边界：`UpdatePosition.H` 的注释明确把显式位置更新写成 `x(t+dt)=x(t)+v(t+dt/2)dt`，而公共 Full plotfile 只稳定提供位置和机械动量。相邻 plotfile 的位置差可以构造 position-update velocity proxy，但不能冒充直接读取的 half-step attribute。另一个容易忽略的分叉是 `PushSelector.H`：Boris 接受 `FirstHalf/SecondHalf/Full` 的 `momentum_push_type`，当前 Higuera-Cary 接口没有这一参数，因此不能把两者写成完全相同的 split-half 输出合同。该源码 crosswalk 由 `scripts/audit_position_leapfrog_source_crosswalk.py` 固化，Appendix-B 的 bounded runtime contract 由 `scripts/analyze_vay_appendix_b_runtime_contract.py` 固化；当前结论是“时间中心位置更新和 proxy-level Appendix-B evidence 已建立，直接半步速度属性和论文图形逐点复现仍未完成”。
+
+新增的 `scripts/audit_position_update_runtime_contract.py` 又把这条边界推进到运行输出层：它对三组 81 帧 uniform-`B` Full plotfile 逐步比较 `UpdatePosition.H` 公式与实际位移。源码公式和 `Full` dispatch 均通过，但上一帧/下一帧机械动量的直接配对误差约为 `6.242e-2`；相邻帧中点 proxy 的最大误差约为 `1.609e-3`。因此当前更准确的结论是“源码公式已确认、输出时间层存在可测 stagger、独立 half-step attribute 仍未提供”，而不是把单帧 plotfile 动量升级为 half-step 证据。完整报告见 `notes/code-reading/particles/68-position-update-output-staggering-contract.md` 和 `runs/stage-c-validation/position-update-runtime-contract/contract.{json,md}`。
 
 ## 4.11 RR、implicit 与 photon path
 

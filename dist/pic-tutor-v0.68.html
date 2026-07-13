@@ -669,6 +669,7 @@ transition-zone regression patch 计划</a></li>
 练习与源码定位</a></li>
 <li><a href="#v0.68-transition-zone-当前证据状态" id="toc-v0.68-transition-zone-当前证据状态">7.7.7 v0.68 transition-zone
 当前证据状态</a></li>
+<li><a href="#本章正文与源码同步合同-1" id="toc-本章正文与源码同步合同-1">7.7.8 本章正文与源码同步合同</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#诊断验证与案例" id="toc-诊断验证与案例">8.
@@ -835,6 +836,13 @@ kernel、Cartesian/RZ spectral 分派和 regression
 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++
 语义等价证明、runtime physics proof 或论文逐式复现。报告见
 <code>runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}</code>。</p>
+<p>本版又补入第 7 章边界/PML/AMR 正文-源码 crosswalk：13
+组代表性锚点覆盖 field/particle 边界顺序、场边界分派、PML
+生命周期、guard-cell/通信、AMR 重建、moving window 和 scraping
+consumer；transition-zone route ledger 仍保持
+<code>RUNTIME_LEDGER_UNPROVEN</code>。该合同只防止正文漂移，不替代
+runtime route-count proof。报告见
+<code>runs/stage-c-validation/boundary-amr-chapter-source-crosswalk/contract.{json,md}</code>。</p>
 <p>本版又完成 Birdsall <code>3A ES1</code> 章节回填的 source
 crosswalk：11 组代表性锚点核对历史阶段链、WarpX fresh/restart
 初始化、粒子生命周期、<code>Evolve()</code> 分派和
@@ -1010,7 +1018,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 174 条 <code>contract.json</code>，保留原始
+汇总本地 175 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
@@ -1051,9 +1059,9 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
 <p>当前合订 PDF 为 323 页；本 v0.68 版本在 v0.67
 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同、LeeCPC2015
-publisher-abstract boundary 和第 6 章 FieldSolver source
-crosswalk，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law
-闭环。</p>
+publisher-abstract boundary、第 6 章 FieldSolver source crosswalk 和第 7
+章 boundary/AMR source crosswalk，并保留强守恒
+BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。</p>
 <p>本版另补入 RZ shape=1 的 <code>256x512</code> resolution
 control：correction-on axis charge residual 为
 <code>3.593e-3 -&gt; 1.520e-3 -&gt; 7.554e-4</code>，correction-off 为
@@ -19846,7 +19854,10 @@ window、subcycling、safe mode 和 implicit 分支共同决定；不是 AMR
 <td>load balance 后会重分布 particle boundary
 buffer；<code>RemakeLevel()</code> 按原 <code>nGrowVect()</code> 重建
 field MultiFab，并在 EB 路径使用
-<code>guard_cells.ng_FieldSolver.max()</code>。</td>
+<code>guard_cells.ng_FieldSolver.max()</code>。moving window
+的运行时入口另在
+<code>../warpx/Source/Utils/WarpXMovingWindow.cpp:357</code> 的
+<code>MoveWindow()</code>。</td>
 </tr>
 <tr>
 <td>boundary scraping 诊断</td>
@@ -23704,9 +23715,24 @@ BOUNDARY 仍需要在 WarpX 的 <code>PartitionParticlesInBuffers()</code>
 weights，再分别记录 <code>rho_fp/current_fp</code> 与
 <code>rho_buf/current_buf</code>，最后经过 coarsened-fine、owner-mask 和
 <code>SyncRho/SyncCurrent</code> 形成 post-sync
-closure。图中流程是设计层接口，不表示当前 checkout 已有 runtime 输出。
-官方 <code>test_2d_subcycling_mr</code> 也已完成当前 checkout 的
-2-rank、250 步运行。独立脚本
+closure。图中流程是设计层接口，不表示当前 checkout 已有 runtime
+输出。</p>
+<h3 id="本章正文与源码同步合同-1">7.7.8 本章正文与源码同步合同</h3>
+<p>本章的正文-源码对应关系由
+<code>scripts/audit_boundary_amr_chapter_source_crosswalk.py</code>
+维护。它把 field/particle 参数顺序、PEC/PMC/Silver-Mueller/PECInsulator
+分派、PML 生命周期、通信与 guard-cell 预算、AMR 重建、moving
+window、粒子 scraping 以及 transition-zone 未完成边界固定成 13
+组可重复检查。该脚本检查的是代表性入口和证据边界是否仍与正文一致，不是
+C++ 语义等价证明，也不是 runtime route-count proof。</p>
+<p>后续修改本章时，应同时更新正文、<code>notes/code-reading/boundary/05-boundary-amr-chapter-source-crosswalk.md</code>
+和脚本输出的
+<code>contract.json</code>/<code>contract.md</code>。特别要保留两条区分：PML
+exchange/guard-cell 入口不等于 transition-zone route ledger；AMR/MR
+的整体末态 regression 也不等于
+<code>fine_gather/coarse_gather/fine_deposit/coarse_deposit</code>
+分支已被专门逐项命中。 官方 <code>test_2d_subcycling_mr</code>
+也已完成当前 checkout 的 2-rank、250 步运行。独立脚本
 <code>scripts/analyze_subcycling_mr_contract.py</code> 读取初末
 <code>diag1000000/diag1000250</code>：末态为两层
 AMR、<code>64x256x1</code>，E/B/J 在 finest covering grid 上全部

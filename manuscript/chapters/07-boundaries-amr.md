@@ -41,7 +41,7 @@ WarpX 官方理论文档把 PML、PEC、PMC、Silver-Mueller、周期边界和�
 | PML 数据与推进 | `../warpx/Source/BoundaryConditions/PML.H`、`PML.cpp`、`WarpXEvolvePML.cpp`、`PML_current.H` | PML 不是一个单独边界开关，而是一组 split fields、sigma/kappa 系数、current damping 和推进分支。第 6 章已经覆盖场求解器侧入口，本章继续补边界侧语义。 |
 | FillBoundary、PML exchange 与 guard cell 检查 | `../warpx/Source/Parallelization/WarpXComm.cpp:703-916` | E/B 顶层 `FillBoundary*()` 会进入 PML exchange/fill 和普通 `MultiFab::FillBoundary`，并在 guard 数不足时直接断言。 |
 | guard-cell 数量预算 | `../warpx/Source/Parallelization/GuardCellManager.cpp:35-140`、`:300-390` | guard cell 由粒子 shape、field stencil、NCI、moving window、subcycling、safe mode 和 implicit 分支共同决定；不是 AMR 后临时补的常数。 |
-| AMR/load-balance 后边界 buffer 与场数组重建 | `../warpx/Source/Parallelization/WarpXRegrid.cpp:140-230` | load balance 后会重分布 particle boundary buffer；`RemakeLevel()` 按原 `nGrowVect()` 重建 field MultiFab，并在 EB 路径使用 `guard_cells.ng_FieldSolver.max()`。 |
+| AMR/load-balance 后边界 buffer 与场数组重建 | `../warpx/Source/Parallelization/WarpXRegrid.cpp:140-230` | load balance 后会重分布 particle boundary buffer；`RemakeLevel()` 按原 `nGrowVect()` 重建 field MultiFab，并在 EB 路径使用 `guard_cells.ng_FieldSolver.max()`。moving window 的运行时入口另在 `../warpx/Source/Utils/WarpXMovingWindow.cpp:357` 的 `MoveWindow()`。 |
 | boundary scraping 诊断 | `../warpx/Source/Diagnostics/BoundaryScrapingDiagnostics.cpp:27-126`、`../warpx/Source/Particles/ParticleBoundaries_K.H` | 粒子离开域或撞到 EB 后不只是删除，也可能进入 boundary buffer，再由 scraping diagnostics 输出。 |
 
 把这些入口串起来，边界章节的主线应当是：
@@ -1726,4 +1726,10 @@ p_gather_main: fine_gather = 0, coarse_gather = np
 ![](../assets/figures/transition-zone-route-contract.png)
 
 图 7-1：transition-zone reduced route-count 合同的计划数据流。粒子分区先产生 fine/buffer route counts 和 weights，再分别记录 `rho_fp/current_fp` 与 `rho_buf/current_buf`，最后经过 coarsened-fine、owner-mask 和 `SyncRho/SyncCurrent` 形成 post-sync closure。图中流程是设计层接口，不表示当前 checkout 已有 runtime 输出。
+
+### 7.7.8 本章正文与源码同步合同
+
+本章的正文-源码对应关系由 `scripts/audit_boundary_amr_chapter_source_crosswalk.py` 维护。它把 field/particle 参数顺序、PEC/PMC/Silver-Mueller/PECInsulator 分派、PML 生命周期、通信与 guard-cell 预算、AMR 重建、moving window、粒子 scraping 以及 transition-zone 未完成边界固定成 13 组可重复检查。该脚本检查的是代表性入口和证据边界是否仍与正文一致，不是 C++ 语义等价证明，也不是 runtime route-count proof。
+
+后续修改本章时，应同时更新正文、`notes/code-reading/boundary/05-boundary-amr-chapter-source-crosswalk.md` 和脚本输出的 `contract.json`/`contract.md`。特别要保留两条区分：PML exchange/guard-cell 入口不等于 transition-zone route ledger；AMR/MR 的整体末态 regression 也不等于 `fine_gather/coarse_gather/fine_deposit/coarse_deposit` 分支已被专门逐项命中。
 官方 `test_2d_subcycling_mr` 也已完成当前 checkout 的 2-rank、250 步运行。独立脚本 `scripts/analyze_subcycling_mr_contract.py` 读取初末 `diag1000000/diag1000250`：末态为两层 AMR、`64x256x1`，E/B/J 在 finest covering grid 上全部 finite；moving window 的实际 z 位移为 `1.9453125e-5 m`，而 `c*t=1.9529297e-5 m`，误差 `7.6171875e-8 m`，不超过 coarse `dz=7.8125e-8 m`；最终 `driver/beam/plasma_e/plasma_p` 粒子数分别为 `10000/10000/30218/31872`。初始诊断帧尚未包含连续注入的两个 plasma species，脚本将其记录为初始化时序而非失败。该 contract 只支撑 subcycling+MR+moving-window 的运行完整性和几何时间一致性，不支撑 transition-zone route-count、fine/coarse 电荷守恒或粒子 gather/deposition 分区证明。报告归档于 `runs/stage-c-validation/subcycling_2d_mr_mpi2/contract.{json,md}`。

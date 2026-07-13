@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `174`
+- records: `175`
 - PASS: `128`
 - FAIL: `30`
-- UNKNOWN: `16`
-- boundary-classified: `32`
+- UNKNOWN: `17`
+- boundary-classified: `33`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -18,6 +18,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `birdsall-3a-warpx-crosswalk` | `PASS` | `PASS` | Chapter 3A Birdsall ES1 to WarpX source crosswalk | `CHAPTER_3A_HISTORICAL_MODERN_MAPPING_SOURCE_ANCHORS_VERIFIED` | Verifies representative historical-stage, modern lifecycle, and validation-layer anchors; not a function-by-function equivalence proof or a new runtime physics regression. | `passed=True` |
 | `boris-1970-metadata` | `PASS` | `BOUNDARY` | Boris 1970 metadata and access-boundary contract | `METADATA_BACKED_HISTORICAL_SOURCE_FULL_TEXT_MISSING_SECONDARY_DERIVATION_AVAILABLE` | bibliographic identity and access boundary only; no original proceedings PDF or line-by-line claim | `passed=True` |
 | `boris-source-crosswalk` | `PASS` | `BOUNDARY` | WarpX Boris kernel/source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING` | read-only current WarpX source mapping; not a line-by-line reconstruction of the 1970 proceedings paper | `passed=True` |
+| `boundary-amr-chapter-source-crosswalk` | `UNKNOWN` | `BOUNDARY` | Chapter 7 boundary AMR source crosswalk | `CHAPTER_7_BOUNDARY_AMR_SOURCE_ANCHORS_VERIFIED` | Representative chapter/source anchors; transition-zone runtime route ledger remains explicitly unproven. | `check_count=13`, `pass_count=13` |
 | `charge-deposition-bridge-source` | `PASS` | `PASS` | ABLASTR charge-deposition bridge source contract | `` | source mapping only; not a numerical charge-deposition regression | `anchor_count=13`, `missing_count=0`, `passed=True` |
 | `deposition-chapter-source-crosswalk` | `PASS` | `PASS` | Chapter 5 deposition source crosswalk | `CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED` | Checks representative Chapter 5 claims against current WarpX source markers; not a semantic proof or runtime regression. | `passed=True` |
 | `deposition-geometry-order-source` | `PASS` | `PASS` | deposition geometry/order source dispatch | `` | read-only source audit; does not claim runtime coverage for every geometry/order combination | `anchor_count=69`, `passed=True`, `passed_anchor_count=69` |

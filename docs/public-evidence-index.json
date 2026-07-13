@@ -1,17 +1,17 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 174,
+  "record_count": 175,
   "status_counts": {
     "PASS": 128,
     "FAIL": 30,
-    "UNKNOWN": 16
+    "UNKNOWN": 17
   },
   "evidence_kind_counts": {
     "PASS": 107,
     "FAIL": 27,
     "UNKNOWN": 8,
-    "BOUNDARY": 32
+    "BOUNDARY": 33
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -93,6 +93,18 @@
       "scope": "read-only current WarpX source mapping; not a line-by-line reconstruction of the 1970 proceedings paper",
       "metrics": {
         "passed": true
+      }
+    },
+    {
+      "case": "boundary-amr-chapter-source-crosswalk",
+      "status": "UNKNOWN",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Chapter 7 boundary AMR source crosswalk",
+      "classification": "CHAPTER_7_BOUNDARY_AMR_SOURCE_ANCHORS_VERIFIED",
+      "scope": "Representative chapter/source anchors; transition-zone runtime route ledger remains explicitly unproven.",
+      "metrics": {
+        "check_count": 13,
+        "pass_count": 13
       }
     },
     {

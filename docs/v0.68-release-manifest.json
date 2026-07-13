@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 756,
-  "total_bytes": 27888792,
+  "entry_count": 758,
+  "total_bytes": 27904086,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1531567,
-      "sha256": "2f53a8f2bd0083947619642e7411673a3a87ebb43021cbe5138c0a4844ccb124"
+      "bytes": 1531964,
+      "sha256": "79fc1cd09b439c072d46a390a7595444afcc6e0688bb4f9bafa14bb38cbf6a66"
     },
     {
       "path": "TODO.md",
-      "bytes": 1379165,
-      "sha256": "40a63d30fc9a8acb297bbe70450fbfeee1a9c0552926de40b1491791b5aef0a1"
+      "bytes": 1379670,
+      "sha256": "172325ff868eb098d96b8eaf46bb33444b2bb4c709bda24abf5e10be6d889251"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5774144,
-      "sha256": "dfdbf5f40efdee31dd0c1d25eb37b33c8e76bf6d0fec35f5158743819d6b6468"
+      "bytes": 5776028,
+      "sha256": "a5fc2383458597b4d7b19b531f29bb84a5bdc44a31adda67807c1c8ee45e9719"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1097414,
-      "sha256": "e8dde8b9aa14490fb83a2ffca0f760ceeb90237bc48fa2f25379aa84320b9165"
+      "bytes": 1098991,
+      "sha256": "b490d280dcc3ced0213f76f5341d2de23e06a296d3ed8b363fefe81e402316ac"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3402686,
-      "sha256": "fc6df76699a78bacccbf7e289d60f1ef0b3c231565e7f3798f27ac23448eade1"
+      "bytes": 3403158,
+      "sha256": "513760a43eb3675ae4db9f42826d1d75099d41e44f83bf19bfb5a9c5a59b4caf"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 94914,
-      "sha256": "d7f2d032dfa057da27db9761fc7ee3329852cc3ee4980bcac1baad51fd1e3aac"
+      "bytes": 95381,
+      "sha256": "85fbe8365ad6f4de240564f54dbb61c5b2688bd06576a03cdc299e62a93f2dcf"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 62790,
-      "sha256": "f053c9571478e21d36a8cfdba976a5f0b41f1ba2fca8cccbe2d4f15907d6ee9a"
+      "bytes": 63095,
+      "sha256": "d50566cca23c3ddd4d6689468470a1cd5b3443084b344c1d534f5624892725ad"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4243,
-      "sha256": "722d618ade1d926ab674ff13543c2a73c25c93a2bb32f191bd8ad18d917a0841"
+      "sha256": "be87f0be1cae5367999e501c2421c9d189ea70eb1497634668fdb89409e4cc41"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44575,
-      "sha256": "30565258035ca066433e14293fd5e3367bb44f0793b3af94436039809f60bb2e"
+      "sha256": "61b309a5d5070d6be0420406a10965ffe0680af5ccdfdb80760ad2a34e678b8d"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 73460,
-      "sha256": "3ce44e99466523645c40b9d234f2aa4371c6e7d028a92184a84e09cb7dfbf2f5"
+      "bytes": 73968,
+      "sha256": "f9296ef4ae8500ca91b3af4db02a6630bff31292d121f5dd1e19801fe525ffda"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -907,8 +907,8 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 167095,
-      "sha256": "d0562c744785d8896dfa247cf083ec160f57f7510e1483d8e30c167881e166ce"
+      "bytes": 168164,
+      "sha256": "81ea87204f0aba0078b3a08600b0ff83af8eefb19530d2e13a9f23be38e9d1a0"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
@@ -1019,6 +1019,11 @@
       "path": "notes/code-reading/boundary/04-silver-mueller-internal-stencil.md",
       "bytes": 9388,
       "sha256": "483a42ad3ba9762aaa76b18eaaeb079e50ae8f571d3d7111c22a1df3d874eeda"
+    },
+    {
+      "path": "notes/code-reading/boundary/05-boundary-amr-chapter-source-crosswalk.md",
+      "bytes": 2063,
+      "sha256": "bcb5d19a0771fd793eb5dadd7d193d04df3de700a5dd66ec2fcbca8f5755a1aa"
     },
     {
       "path": "notes/code-reading/boundary/README.md",
@@ -2644,6 +2649,11 @@
       "path": "scripts/audit_boris_source_crosswalk.py",
       "bytes": 3727,
       "sha256": "8540c81e9166a3930f2131d0ab056a156d3dcbc607852d90e45c93e6dce98b8d"
+    },
+    {
+      "path": "scripts/audit_boundary_amr_chapter_source_crosswalk.py",
+      "bytes": 6047,
+      "sha256": "923c4f1f0a368362edab355dfca4c2326969bd7c74ca36e1671c1720722a124a"
     },
     {
       "path": "scripts/audit_charge_deposition_bridge_contract.py",

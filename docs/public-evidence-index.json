@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 158,
+  "record_count": 159,
   "status_counts": {
-    "PASS": 115,
+    "PASS": 116,
     "FAIL": 28,
     "UNKNOWN": 15
   },
@@ -11,7 +11,7 @@
     "PASS": 99,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 25
+    "BOUNDARY": 26
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -1515,6 +1515,17 @@
         "data_row_count": 445,
         "declared_data_row_count": 445,
         "header_count_matches": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "particle-histogram2d-count-trend",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "ParticleHistogram2D particle-count trend with expected low-count negative control",
+      "classification": "PARTICLE_HISTOGRAM2D_COUNT_TREND_PASS_EXPECTED_LOW_COUNT_NEGATIVE_CONTROL_FORMAL_CONVERGENCE_BOUNDARY",
+      "scope": "four matched-time single-process PPC runs; local weighted-moment stability only, not a formal convergence-order proof or upstream regression",
+      "metrics": {
         "passed": true
       }
     },

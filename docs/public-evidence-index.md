@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `158`
-- PASS: `115`
+- records: `159`
+- PASS: `116`
 - FAIL: `28`
 - UNKNOWN: `15`
-- boundary-classified: `25`
+- boundary-classified: `26`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -113,6 +113,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `leecpc2015-accepted-manuscript-contract` | `PASS` | `BOUNDARY` | LeeCPC2015 accepted-manuscript source-grounded literature contract | `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING` | seven-page accepted/submitted manuscript plus indexed publisher abstract support first-round PML formula and source mapping; publisher-formatted CPC comparison remains open | `passed=True` |
 | `leecpc2015-source-crosswalk` | `PASS` | `BOUNDARY` | LeeCPC2015 paper/source/regression crosswalk | `ACCEPTED_MANUSCRIPT_SOURCE_CROSSWALK_PUBLISHER_PDF_STILL_MISSING` | paper anchors, WarpX implementation surfaces, and official regression wiring; no publisher-PDF or coefficient-equivalence claim | `passed=True` |
 | `parameter-map-surface-contract` | `PASS` | `PASS` | WarpX parameter-map structural surface | `STRUCTURAL_SOURCE_TOKEN_SURFACE_PASS_MANUAL_PARSER_REVIEW_REMAINS` | row shape, current chapter labels, source-path existence and parameter-token coverage; not semantic parser-function verification | `data_row_count=445`, `declared_data_row_count=445`, `header_count_matches=True`, `passed=True` |
+| `particle-histogram2d-count-trend` | `PASS` | `BOUNDARY` | ParticleHistogram2D particle-count trend with expected low-count negative control | `PARTICLE_HISTOGRAM2D_COUNT_TREND_PASS_EXPECTED_LOW_COUNT_NEGATIVE_CONTROL_FORMAL_CONVERGENCE_BOUNDARY` | four matched-time single-process PPC runs; local weighted-moment stability only, not a formal convergence-order proof or upstream regression | `passed=True` |
 | `particle-mesh-1974-abstract` | `PASS` | `BOUNDARY` | 1974 particle-mesh bounded abstract-level literature contracts | `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING` | abstract-level evidence only; no publisher-PDF or line-by-line claim | `passed=True` |
 | `particle_absorbing_boundary_1d` | `PASS` | `PASS` | test_1d_particle_absorbing_boundary | `` |  | `iteration=8000`, `passed=True`, `region_weight=2.150955858923628e+20`, `region_weight_limit=3.2e+20`, `total_histogram_weight=8.253966129697429e+23` |
 | `particle_boundaries_mpi2` | `PASS` | `PASS` | test_3d_particle_boundaries | `` |  | `passed=True` |

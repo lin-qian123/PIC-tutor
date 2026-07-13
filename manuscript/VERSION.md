@@ -1,6 +1,6 @@
 # PIC-tutor v0.68
 
-本版新增显式 leapfrog position source crosswalk：只读核对 `PhysicalParticleContainer::Evolve()` 的 momentum-then-position 顺序、`UpdatePosition.H` 的时间中心速度公式、维度条件，以及 `PushSelector.H` / Higuera-Cary 接口的 split-push 边界。正文明确相邻 Full plotfile 位置差只能构造 velocity proxy，不能冒充直接 half-step attribute；Vay Appendix B 专门圆轨道输出仍未接入。
+本版新增显式 leapfrog position source crosswalk：只读核对 `PhysicalParticleContainer::Evolve()` 的 momentum-then-position 顺序、`UpdatePosition.H` 的时间中心速度公式、维度条件，以及 `PushSelector.H` / Higuera-Cary 接口的 split-push 边界。正文明确相邻 Full plotfile 位置差只能构造 velocity proxy，不能冒充直接 half-step attribute；Vay Appendix B 已建立 proxy-level bounded runtime contract，但直接 half-step attribute 和论文图形逐点复现仍未接入。
 
 本版又补入 Vay Appendix B 窄化 uniform-B runtime proxy：三种 pusher 各生成 81 个 Full plotfile，离散 phase、position-update velocity proxy、gyroradius proxy 和动量范数均通过窄 gate；报告分开记录最终 plotfile 写出后的 `ComputeDivE` finalize tail，不把它误读成 pusher 物理失败。该结果仍是 proxy-level bounded reproduction，不是直接 half-step attribute 或论文图形逐点复现。
 
@@ -26,7 +26,7 @@
 
 本版又补入 dense `p_y=0.2..2.8` family 和 64³ `p_y=1.6/1.8` resolution control：Vay 共振窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，但仍只标记为 resonance-sensitive invariant screen，不提升为 two-fold island topology reproduction。
 
-本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 158 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
+本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 159 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
 
@@ -192,7 +192,7 @@
 
 2026-07-12 又补入 `ParticleHistogram2D` BP5 weighted-moment sanity：记录 ions/electrons 在 iteration 0/100 的总权重、`z/uz` 均值和标准差，并明确该 reader-side 统计不等于更高分辨率/粒子数 convergence proof。
 
-2026-07-12 又补入 `ParticleHistogram2D` 匹配物理时间的网格敏感性 contract：`384x512` baseline 与 `768x1024` refined producer 的总权重、`std(z)`、`std(uz)` 局部稳定性 gate 通过；`1x1` particles-per-cell 负对照因电子总权重差 `1.9471e-3 > 1e-3` 被拒绝，粒子数收敛仍未完成。
+2026-07-12 又补入 `ParticleHistogram2D` 匹配物理时间的网格敏感性 contract：`384x512` baseline 与 `768x1024` refined producer 的总权重、`std(z)`、`std(uz)` 局部稳定性 gate 通过；随后以 `1x1/2x2/4x4/8x8` 趋势 contract 将 `1x1 -> 2x2` 作为预期低采样负对照、将 `2x2 -> 4x4` 与 `4x4 -> 8x8` 作为高粒子数局部通过。该结果仍不是正式 convergence order 或 upstream regression gate。
 
 2026-07-12 又将 `ParticleHistogram2D` 粒子数敏感性扩展为 `1x1/2x2/4x4` pairwise contract：`1x1 -> 2x2` 电子总权重差 `1.9471e-3` 未通过，`2x2 -> 4x4` 降至 `4.2685e-4` 并通过总权重/`std(z)`/`std(uz)` 局部 gate；本版仍不声称正式 convergence order。
 2026-07-12 又补做 `8x8` particles-per-cell sibling：`4x4 -> 8x8` 电子总权重差进一步降至 `3.6534e-4`，四档相邻比较的总权重、`std(z)`、`std(uz)` 局部 gate 均通过；8x8 producer 的 BP5 输出完整，MPI finalize 尾噪声仅限本机 OFI 收尾环境；本版仍不声称正式 convergence order 或 upstream regression gate。

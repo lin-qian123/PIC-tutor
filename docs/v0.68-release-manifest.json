@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 733,
-  "total_bytes": 27675082,
+  "entry_count": 734,
+  "total_bytes": 27681476,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1523164,
-      "sha256": "544cab0d40d4caf017282336d69f3551d55aeab20380d808bb71439e5e7884de"
+      "bytes": 1523312,
+      "sha256": "f0f23bb5acab7f1809ab8238b1c6dba9e429f41dea8f6b4f9b9b89a3e38654a6"
     },
     {
       "path": "TODO.md",
-      "bytes": 1368681,
-      "sha256": "e042523a30dcd2892d05ef34544628d839911f7a4643c67cf191e8f8c591415b"
+      "bytes": 1369110,
+      "sha256": "20bd0953fb5c61c0c8b7d626e4413bd263850776b5223b6f50c54619c82e031f"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5754570,
-      "sha256": "c5ae42d37b2c167b631bcbeff64852ddaeee1dc6b108da791021f2b8e6b4c0be"
+      "bytes": 5754980,
+      "sha256": "bdc7b532d11b53e12ce85f0a66a0693d34190ecc80b26971e514a3f9ebe3efde"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1080835,
-      "sha256": "bac004043aac980d81d510db877671bed4d23bd23fe0a2c1f296fee8f85eac0c"
+      "bytes": 1081206,
+      "sha256": "57143a1731d89a908bbb8d4d15dc1309f19584c2c88da7c0d48cef413daeaa10"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3380469,
-      "sha256": "125fde24af82afe9024728eab27ebe757938974864d4231ce92df2fbf8b2d749"
+      "bytes": 3380678,
+      "sha256": "1c6b3fb576e6689f66e938ed13bc68e8b5daeb0f448ce5eac615b5f34cd443b1"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 85212,
-      "sha256": "6e4b9ad1af2558a7a0069d2f7a7734d3316c8478f6bfa8a6f0d5b0d9b466185e"
+      "bytes": 85775,
+      "sha256": "4e4839505cc8fa2bb6f5165e79eedc72aeefe8c234a495f51244c93185355d47"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 55935,
-      "sha256": "1d10b4abb4df68fd94fb0ac3c7aafcbdc32b50e70618d7a818d86c4618579ed2"
+      "bytes": 56345,
+      "sha256": "ff3cf96d6e940f4332e0f196c1cdb7d8461791707f156a8e28d7675b64654af4"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "0b040167131c84c7322920114a87e8c5ecca7cdb83398524c956193955fcf4bc"
+      "sha256": "d1d21525bef209810378d158ef0f248b9123eef5962581afb8e6914dac7bedfd"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44575,
-      "sha256": "66a7283f9f73fa00e413c4a910fef470ab932301af3605b48618e233b50b253f"
+      "sha256": "f076be2240c97dc32ae919a44ab5dcc9af03bec9ba4fba05a9a385e702ef81fb"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 65776,
-      "sha256": "9e59c70369e00b6d37048e335a31e9c96ed3f8ab0994f418c4fc433ae695e665"
+      "bytes": 65979,
+      "sha256": "0735daa9ee9c50930be945e80a01ddb747df5437f4e20987e240bd9c78f1dba0"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -912,8 +912,8 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 111665,
-      "sha256": "b2dd1a7871c2bc35778844ba43d3622b7a7f814f60163d440ee952dabd5966d3"
+      "bytes": 111833,
+      "sha256": "aa0d68a65af21732d10cc681d1d8c76b58b80bce8c826266ffe917b9b26bd4e7"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -2669,6 +2669,11 @@
       "path": "scripts/audit_parameter_map_surface.py",
       "bytes": 7489,
       "sha256": "94c709582eb8f2ab387304b20ac1636ffe296a4cf00a6aed0c12a2c32a76125f"
+    },
+    {
+      "path": "scripts/audit_particle_histogram2d_count_trend_contract.py",
+      "bytes": 3483,
+      "sha256": "e0b050ff6172b119f1099d4097aef553c7a8a41e064b0a7d3a910d291dc46cc3"
     },
     {
       "path": "scripts/audit_particle_mesh_1974_abstract_contract.py",

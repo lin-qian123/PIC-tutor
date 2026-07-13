@@ -2,7 +2,7 @@
 
 当前成书版本为 `v0.68`，对应 319 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 158 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
+v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 159 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
@@ -10,7 +10,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 158 条 `contrac
 
 2026-07-13：新增 Boris 当前 WarpX source crosswalk contract，逐项锁定 `UpdateMomentumBoris.H` 的 half-push、磁旋转、半角重标定与 `PushSelector.H` 分派边界；该 contract 是当前源码证据，不升级为 Boris 1970 原文证据。
 
-2026-07-13：新增显式 leapfrog position source crosswalk，固定 `PhysicalParticleContainer::Evolve()` 的 momentum-then-position 顺序、`UpdatePosition.H` 的时间中心速度公式、维度条件和 Higuera-Cary 不支持 split momentum push 的接口边界；相邻 Full plotfile 速度明确降级为 proxy，直接 half-step attribute 与 Vay Appendix B 专门圆轨道仍未完成。
+2026-07-13：新增显式 leapfrog position source crosswalk，固定 `PhysicalParticleContainer::Evolve()` 的 momentum-then-position 顺序、`UpdatePosition.H` 的时间中心速度公式、维度条件和 Higuera-Cary 不支持 split momentum push 的接口边界；相邻 Full plotfile 速度明确降级为 proxy，Vay Appendix B 已有 proxy-level bounded contract，但直接 half-step attribute 与论文图形逐点复现仍未完成。
 
 2026-07-13：完成 Vay Appendix B 窄化 uniform-B runtime proxy contract：Boris/Vay/Higuera-Cary 各生成 81 个 Full plotfile，离散 phase、position-update velocity proxy、gyroradius proxy 和动量范数 gate 全部通过；三条 binary 在最终 plotfile 写出后统一进入已知 `ComputeDivE` finalize tail，直接 half-step attribute 和论文图形逐点复现仍保留边界。
 
@@ -211,7 +211,7 @@ AMR transition-zone 的下一阶段接口已落成可执行设计合同：`pytho
 - 2026-07-12：完成 transition-zone live source audit：当前 WarpX checkout 的五组 buffer/mask/partition/route/sync 源码锚点全部找到，且确认 dedicated `TransitionZoneRoutes` 仍未接入；报告标明这是 source audit，不是 runtime regression。
 - 2026-07-12：将 comoving 第一阶段 `finite + spike` 方案做成独立正/负 contract：stable baseline 通过、no-comoving reference 被同一 spike ceiling 拒绝；energy gate 继续保持关闭并保留 local-calibration 边界。
 - 2026-07-12：将 RZ JRhom LL2 first-stage helper 做成真实 2-rank repeated/MPI 正/负 contract：baseline 通过 energy ceiling，no-time-averaging reference 被拒绝；仍保留 project-level、未接入 upstream CMake 的边界。
-- 2026-07-12：为 ParticleHistogram2D 增加 BP5 `z/uz` weighted-moment sanity，补充总权重、空间/动量宽度和 iteration 变化统计；明确尚未完成真正的分辨率/粒子数 convergence study。
+- 2026-07-12：为 ParticleHistogram2D 增加 BP5 `z/uz` weighted-moment sanity，补充总权重、空间/动量宽度和 iteration 变化统计；随后补成 `1x1/2x2/4x4/8x8` 粒子数趋势 contract，低采样负对照与高粒子数局部稳定性已分开验收，但仍未宣称正式 convergence order。
 - 2026-07-12：完成 ParticleHistogram2D 匹配物理时间的 `384x512 -> 768x1024` 网格敏感性对照，`std(z)`/`std(uz)` 局部稳定性 gate 通过；另以 `1x1` particles-per-cell 做负对照，电子总权重差 `1.9471e-3` 被 `1e-3` gate 拒绝，粒子数收敛仍明确保留为未完成项。
 - 2026-07-12：将 ParticleHistogram2D 粒子数敏感性扩展为 `1x1/2x2/4x4` 序列：`1x1 -> 2x2` 的电子总权重 gate 失败，`2x2 -> 4x4` 降至 `4.2685e-4` 并通过局部稳定性 gate；新增 pairwise 趋势报告，但不宣称正式收敛阶。
 - 2026-07-12：为第 5 章新增 `scripts/verify_villasenor_formula_contract.py`，用 10000 组确定性样本验证四边界 flux、任意 crossing 分段位移以及 Eq.(36) 三维交叉项/体积闭合；二维最大残差 `4.4409e-16`、三维最大残差 `1.7764e-15`，不替代 WarpX kernel regression。

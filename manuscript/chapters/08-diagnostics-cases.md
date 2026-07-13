@@ -1658,21 +1658,21 @@ $$
 
 本地运行归档于 `runs/stage-c-validation/laser_ion_histogram2d_mpi2/`。两个 series 都写出 `0` 和 `100` 两个 BP5 iteration，数据形状均为 `1000 x 1000`，axis labels 为 `uz/z`，所有数据有限且存在非零 bin；官方 time-average analysis 通过。`PhaseSpaceIons.txt` 与 `PhaseSpaceElectrons.txt` 的大小均为 `0`，这是预期结果：`ParticleHistogram2D::WriteToFile()` 绕过基类逐行文本 writer，直接创建 `reducedfiles/<name>/openpmd_%T.<backend>` series，因此空 `.txt` companion 不能被误判成 histogram 丢失。
 
-这条证据的边界也需要保留：它证明二维 histogram 的配置、openPMD layout、轴元数据和 writer 输出链成立，不等于已经用独立解析分布证明 laser-ion phase-space 的物理收敛性；后者仍需要更高分辨率/粒子数以及针对相空间分布的物理参考结果。
+这条证据的边界也需要保留：它证明二维 histogram 的配置、openPMD layout、轴元数据和 writer 输出链成立，不等于已经用独立解析分布证明 laser-ion phase-space 的物理收敛性；后者需要更高分辨率/粒子数以及针对相空间分布的物理参考结果。
 
 在不改变这条边界的前提下，项目又用 `scripts/analyze_particle_histogram2d_moments.py` 对 BP5 数组做了 reader-side 加权统计。`PhaseSpaceIons` 的总权重从 iteration 0 的 `3.9975794429219594e18` 到 iteration 100 的 `3.997579442921919e18`，相对变化约 `1.0e-14`；`std(z)` 保持在 `1.47204e-6 m`，而 `std(uz)` 从数值零增长到 `4.78558e-4`。受径向 filter 影响的 `PhaseSpaceElectrons` 总权重从 `5.30929e17` 变为 `5.32861e17`，`std(uz)` 从 `0.196998` 变为 `0.199300`。这些统计量把“相空间图发生了什么变化”从视觉判断推进成了可复现的 weighted-moment 摘要，但仍不能替代更高分辨率/粒子数的 convergence study。报告位于 `runs/stage-c-validation/laser_ion_histogram2d_mpi2/particle-histogram2d-moments.{json,md}`。
 
 随后又做了一个匹配物理时间的 producer 对照：baseline 使用 `384x512` 网格、`dt=1.083064693e-16 s`、100 步，refined 使用 `768x1024` 网格、`dt=5.415323467e-17 s`、200 步；两者最终时间差只有 `3.31e-29 s`。`scripts/analyze_particle_histogram2d_resolution.py` 对两个 BP5 series 的总权重、`std(z)` 和 `std(uz)` 设置了 `1e-3/1e-2/5e-2` 的局部稳定性阈值，ions/electrons 均通过：`std(z)` 相对差为 `5.51e-4/2.02e-4`，`std(uz)` 相对差为 `2.04e-3/4.47e-2`。这是“网格加密后 reader-side 加权宽度仍稳定”的项目级证据，不是严格的物理收敛阶证明；两套 producer 都是单进程，运行结束时的 OFI `MPI_Finalize` 环境尾噪声不影响已写出的 BP5 数据读取。
 
-同一脚本还记录了 `1x1` particles-per-cell 的负对照。它的 ions 宽度仍接近 baseline，但 electrons 总权重相对差为 `1.9471e-3`，超过 `1e-3` 阈值，因此 `weighted_width_stability` 被拒绝。这个负结果保留了当前最重要的边界：网格分辨率敏感性已经有局部通过项，粒子数统计收敛仍未完成。完整 JSON/Markdown 产物位于 `runs/stage-c-validation/laser_ion_histogram2d_resolution/`。
+同一脚本还记录了 `1x1` particles-per-cell 的负对照。它的 ions 宽度仍接近 baseline，但 electrons 总权重相对差为 `1.9471e-3`，超过 `1e-3` 阈值，因此 `weighted_width_stability` 被拒绝。这个负结果被保留为低采样负对照，而不是被静默删除；随后四档粒子数趋势 contract 将它与高粒子数局部稳定性分开处理。完整 JSON/Markdown 产物位于 `runs/stage-c-validation/laser_ion_histogram2d_resolution/`。
 
-为判断该负结果是否只是单个低采样点，又补做了 `1x1/2x2/4x4/8x8` 四档 particles-per-cell 序列，并用 `scripts/analyze_particle_histogram2d_particle_count.py` 做相邻档位比较。`1x1 -> 2x2` 时 electrons 总权重差为 `1.9471e-3`，稳定性 gate 失败；`2x2 -> 4x4` 时降至 `4.2685e-4`，`4x4 -> 8x8` 时进一步降至 `3.6534e-4`，ions/electrons 的总权重、`std(z)`、`std(uz)` 均通过局部阈值。这支持“增加粒子数后该 reader-side 统计总体更稳定”的方向性判断，但它仍是单进程、单一激光离子 case 的局部矩合同，不足以给出正式收敛阶或上游 regression gate。8x8 producer 的 MPI 收尾仍出现本机 OFI `MPI_Finalize` 尾噪声，但 BP5 输出和独立读取均完整；趋势报告位于 `runs/stage-c-validation/laser_ion_histogram2d_resolution/particle-count-trend-8x8.{json,md}`。
+为判断该负结果是否只是单个低采样点，又补做了 `1x1/2x2/4x4/8x8` 四档 particles-per-cell 序列，并用 `scripts/analyze_particle_histogram2d_particle_count.py` 做相邻档位比较。新增 `scripts/audit_particle_histogram2d_count_trend_contract.py` 将 `1x1 -> 2x2` 明确固定为预期负对照，将 `2x2 -> 4x4` 与 `4x4 -> 8x8` 固定为高粒子数局部稳定性 gate：electrons 总权重差依次为 `1.9471e-3`、`4.2685e-4`、`3.6534e-4`，ions/electrons 的总权重、`std(z)`、`std(uz)` 高粒子数 pair 均通过。这支持“增加粒子数后该 reader-side 统计总体更稳定”的方向性判断，但仍是单进程、单一激光离子 case 的局部矩合同，不足以给出正式收敛阶或上游 regression gate。8x8 producer 的 MPI 收尾仍出现本机 OFI `MPI_Finalize` 尾噪声，但 BP5 输出和独立读取均完整；趋势 contract 位于 `runs/stage-c-validation/particle-histogram2d-count-trend/contract.{json,md}`。
 
 图 8-8 直接从 BP5 series 读取 `PhaseSpaceIons` 与 `PhaseSpaceElectrons` 的 iteration 0/100 数据，并按每个面板的非零 bin 裁剪显示范围。它展示的是 writer 实际落盘的 `uz-z` 相空间结构和随 iteration 的变化；由于每个面板使用独立对数颜色归一化，颜色不能用于跨 species 或跨 iteration 的绝对产额比较。完整数组仍为 `1000 x 1000`，空 `.txt` sidecar 也仍是预期的 writer 路径边界。
 
 ![](../assets/figures/particle-histogram2d-phase-space.png)
 
-图 8-12 用同一份四档 pairwise contract 把粒子数敏感性归一化到各自局部 gate：虚线是 gate 边界，纵轴小于 1 表示通过。`1x1 -> 2x2` 的电子总权重仍越过边界，`2x2 -> 4x4` 和 `4x4 -> 8x8` 则落在边界以内；因此图支持“采样增加后局部统计趋稳”，但不把单一 case 的 reader-side 矩合同写成正式收敛阶。
+图 8-12 用同一份四档 pairwise contract 把粒子数敏感性归一化到各自局部 gate：虚线是 gate 边界，纵轴小于 1 表示通过。`1x1 -> 2x2` 的电子总权重仍越过边界，`2x2 -> 4x4` 和 `4x4 -> 8x8` 则落在边界以内；新增 trend contract 将这种“预期负对照 + 高粒子数局部通过”固定为可复查状态，但不把单一 case 的 reader-side 矩合同写成正式收敛阶。
 
 ![](../assets/figures/particle-histogram2d-particle-count.png)
 
@@ -1726,7 +1726,7 @@ $$
 | RZ electrostatic sphere | 官方 RZ，1 rank | `python scripts/analyze_rz_charge_volume_contract.py ...` | 官方轴向场 L2 gate；全域 rho-volume/particle-charge mismatch `< 1%` | `runs/stage-c-validation/rz_electrostatic_sphere/` |
 | RZ Langmuir multimode | case-local RZ sibling，1 rank，3 modes | `python scripts/analyze_rz_langmuir_multimode_contract.py ...` | `m=1/2` 实虚分量非零；theta=0 native-field/writeback reconstruction `< 3.1e-16` | `runs/stage-c-validation/rz_langmuir_multimode/` |
 
-这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供 155 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
+这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供 159 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
 
 当前证据等级应写成：Langmuir 已有运行级解析频率、场误差和最终守恒证据；uniform plasma 已有粒子数、能量统计和 checkpoint/restart 逐字段证据，但短时运行的总能量变化不能直接升级成热平衡守恒通过；FieldProbe 已确认 1/2-rank 输出一致，并通过 `lambda/32` 的 matched-time 解析 gate，但官方 `lambda/16` coarse case 仍失败；`reduced_diags` 已有 60 项 compact observable 与 full-state reference 的 2-rank 逐项通过证据，并有 Heuristic/Timers 两条 `LoadBalanceCosts` efficiency improvement 证据；`ColliderRelevant` 已有 2-rank 的 chi/角度/ParticleExtrema/dL/dt 聚合合同证据；`DifferentialLuminosity` 已有 leptons、AMR 和 photons 三组 1D/2D 解析谱通过证据；laser-ion 已有 `ParticleHistogram2D` 的 2-rank openPMD writer 合同证据；`BeamRelevant` 已有最小 3D 的 schema/截断高斯束统计合同证据；完整 initial-distribution family 已有当前 checkout 的官方分布 analysis 通过证据，并在显式 `5e-3` sampling tolerance 下通过 checksum，但不宣称 `1e-9` 确定性相等；native Gaussian external-file 变体已有 1-rank 项目级束斑物理合同，但官方 CMake analysis 缺失仍保留为 upstream registration 缺口；RZ electrostatic sphere 又补充了官方场/能量 gate 与独立 rho-volume charge closure；RZ 三模 Langmuir sibling 又补充了 `m>0` diagnostics writeback 和 theta=0 重建合同，但它是 project-level case-local evidence，不能替代官方单模 CMake analysis。JSON/Markdown 报告和脚本都保存在项目内，运行产物仍按 case-local 目录归档。
 

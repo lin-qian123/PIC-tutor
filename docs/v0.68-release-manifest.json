@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 729,
-  "total_bytes": 27644227,
+  "total_bytes": 27645595,
   "entries": [
     {
       "path": ".gitignore",
@@ -47,8 +47,8 @@
     },
     {
       "path": "TODO.md",
-      "bytes": 1367121,
-      "sha256": "e8043b040b29f9c4be5d828134a61c31a518b06429fd491251c4326ab8c1cca2"
+      "bytes": 1367586,
+      "sha256": "e005179cc630a71d33235adbf1b5991cf3e5bc11288aacc423bd6cf6fab9efcb"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -72,8 +72,8 @@
     },
     {
       "path": "docs/example-regression-map.md",
-      "bytes": 1844962,
-      "sha256": "b619d68badb261413c127bcd5f0dd9d5b200e7b23d4fa3c7ee0c663557b92f74"
+      "bytes": 1845865,
+      "sha256": "327fe78f750c8cadb996fd7db636a2759492188d27b048469ff410cb06bdadc5"
     },
     {
       "path": "docs/foundations-literature-list.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "9a8d56bd1a2bd90792188aadaabc4163ad4a5f4652e34500c22e9bfe9ccfafb0"
+      "sha256": "1cac4a226b6e09c23a49e5ae569ea19f98904c8cd1ff3496f2efc8914ddceb64"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",

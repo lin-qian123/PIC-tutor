@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.90`：补齐 RZ Esirkepov correction-on shape=1/2/3/4 的 rho-side species decomposition 观测 family，并确认 8 个 `256x512` sibling 的 16 个 evolved-time reader-side residual maximum 均位于 `r=0`；同时保留 `divE-rho` axis charge boundary、正式收敛和 MPI launcher 缺口。
+当前成书版本为 `v0.91`：补齐 RZ Esirkepov correction-on shape=1/2/3/4 的 rho-side species decomposition 观测 family，并确认 8 个 `256x512` sibling 的 16 个 evolved-time residual maximum 均位于 `r=0`、rho/species decomposition 均通过 `1e-12` gate；同时保留 `divE-rho` axis charge boundary、正式收敛和 MPI launcher 缺口。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

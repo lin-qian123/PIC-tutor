@@ -1,0 +1,23 @@
+{
+  "contract": "PDF layout risk audit",
+  "version": "v0.91",
+  "checks": {
+    "files_present": true,
+    "all_pages_have_extractable_text": true,
+    "chapter_7_5_1_has_no_overwide_rendered_table": true,
+    "chapter_7_5_1_preserved_source_comment_balanced": true,
+    "pdf_has_expected_boundary_sections": true
+  },
+  "passed": true,
+  "classification": "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
+  "pdf_pages": 331,
+  "min_page_chars": 659,
+  "min_page_number": 319,
+  "chapter_7_5_1_tables": [
+    [
+      8,
+      2
+    ]
+  ],
+  "scope": "page text coverage and known wide-table regression; not a substitute for full human reading"
+}

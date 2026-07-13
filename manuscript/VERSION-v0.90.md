@@ -1,10 +1,8 @@
-# PIC-tutor v0.91
+# PIC-tutor v0.90
 
 本版补齐 RZ Esirkepov correction-on shape=1/2/3/4 的 rho-side species decomposition 观测 family：四个 shape 的末态 `rho-(rho_electrons+rho_ions)` 均达到约 `1e-14` reader-side 一致性，integrated-rho 漂移也被逐 shape 记录；该 family 不关闭同面 `divE-rho` axis charge boundary、正式收敛阶或 current-conservation contract。v0.87 的第二组 formal convergence runner、输入/产物合同和 PDF 长 token 修复继续保留；当前机器仍缺少 `mpiexec/mpirun`。
 
 本版将 RZ axis residual profile 从单一末帧扩展到 8 个 `256x512`、2-rank sibling 的全部 24 个数值 plotfile。排除 `diag1000000` 初始化基线后，16 个 evolved frames 的 profile maximum 全部位于 `r=0`，分类为 `POST_INITIAL_AXIS_DOMINATED_READER_SIDE_RESIDUAL_TIME_PROFILE`；该结果仍是 reader-side 诊断，不关闭 `divE-rho`、current closure 或 formal convergence。
-
-本版新增 rho/species decomposition 时间合同：对同一 8 个 case 的 `rho`、`rho_electrons` 和 `rho_ions` 读取 24 帧，排除初始化基线后 16 个 evolved frames 全部通过 `1e-12` gate，分类为 `EVOLVED_TIME_RHO_SPECIES_DECOMPOSITION_PASS_AXIS_CHARGE_SEPARATE`；该结果强化 rho-side assembly 与独立 axis charge boundary 的分层，不关闭 current closure 或 formal convergence。
 
 本版新增正式收敛 study 预注册合同：固定 RZ/RSPHERE 独立 geometry、field/charge norm、primary/secondary observable、全部相邻拟合区间、correction-off negative control 和每种 geometry 至少两组独立 family 的关闭条件。当前 materialized 数据仍只有每种 geometry 一组 family，且 correction-on axis charge 仍是 boundary，因此分类为 `FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT`，不把 descriptive slope 写成正式收敛阶。
 
@@ -30,7 +28,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v91_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v90_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

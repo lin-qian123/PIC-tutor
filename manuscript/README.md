@@ -2,13 +2,15 @@
 
 当前 v0.68 合订 PDF 为 316 页；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v68_build.py` 验收。第 1-8 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
-v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 150 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
+v0.68 新增 `../docs/public-evidence-index.{json,md}`，汇总本地 151 条验证合同的原始状态和边界分类。该摘要去除了本机路径；`runs/` 原始产物仍保持排除，摘要不替代逐项 JSON/Markdown 报告。
 
 2026-07-13：第 7 章新增 LeeCPC2015 paper/source/regression crosswalk：accepted manuscript 的 PSTD 与 reflection recurrence、WarpX `PML.cpp`/`PsatdAlgorithmPml.cpp` 的实现表面、以及官方 `<1e-6` reflectivity consumer 均由只读 contract 交叉验收；仍保留 publisher-formatted CPC PDF 和逐系数等价缺失边界。
 
 2026-07-13：RZ JRhom first-stage handoff 已完成目标 WarpX checkout 的只读 audit/report/preview/stage dry-run 验收；目标仍为 `unstaged`，正式 staging 需维护者明确允许。`finite + energy` 的 MPI=2 contract 通过，决策记录见 `notes/code-reading/fieldsolver/36-rz-jrhom-first-stage-decision.md`。
 
 2026-07-13：完成 `TajimaDawson1982` 正式来源访问审计。DOI 与 AIP canonical resource 已确认，但本机访问返回 Cloudflare HTTP `403`，因此第 9 章继续明确 publisher PDF/MinerU 仍未取得，相关 FNAL 单作者 note 不能替代原文。
+
+2026-07-13：新增 Tajima 1982 FNAL 相关会议稿的全文资产合同和中文讲解；第 9 章将其作为 beat-wave / plasma-wave accelerator 的主题旁证，正式 Tajima-Dawson AIP 论文仍单独列为缺失全文。
 
 2026-07-13：完成 `LeeCPC2015` accepted/submitted manuscript contract：7 页全文、13 张抽取图片、MinerU 结构、公式锚点和中文讲解均通过；第 7 章可使用第一轮 paper-backed PML 解释，但不把该资产标记为 CPC publisher-formatted 定稿。
 

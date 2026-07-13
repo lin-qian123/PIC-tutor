@@ -1,6 +1,7 @@
 # TODO
 
-- [x] 2026-07-13：重建 `docs/public-evidence-index.{json,md}`，从本地一级 case contract 汇总 150 条验证合同；修正递归扫描大体积 plotfile 树导致的重建风险，保留原始 PASS/FAIL/UNKNOWN，并显式标记 boundary/unproven/missing 证据。
+- [x] 2026-07-13：重建 `docs/public-evidence-index.{json,md}`，从本地一级 case contract 汇总 151 条验证合同；新增 Tajima 1982 相关会议稿的完整资产合同，保留原始 PASS/FAIL/UNKNOWN，并显式标记 boundary/unproven/missing 证据。
+- [x] 2026-07-13：materialize T. Tajima 单作者 FNAL 1982 相关会议稿：26 页 PDF、MinerU Markdown、67 张图、中文讲解、access audit、reading log 和 `scripts/audit_tajima_1982_related_note_contract.py` 全部通过；分类为 `RELATED_SINGLE_AUTHOR_CONFERENCE_NOTE_FULL_TEXT_MINERU_VERIFIED_FORMAL_TAJIMA_DAWSON_ITEM_NOT_SUBSTITUTED`，正式 AIP 论文仍保留全文缺失边界。
 - [x] 2026-07-13：建立 `Abe et al. (1975)` 摘要级论文专属目录、中文讲解、access audit、reading log 和 `scripts/audit_abe_1975_abstract_contract.py`；固定 `sigma(K_g)`、correlation time、finite-grid stochastic fluctuation 的窄证据范围，明确 publisher PDF/MinerU 缺失。
 - [x] 2026-07-13：重核查 `Hockney et al. (1974)` 与 `Eastwood and Hockney (1974)` acquisition：Elsevier API 仅返回 `openaccess=0` 元数据，ScienceDirect `/pdf` 仍返回 HTTP `403` HTML；full-text missing 边界保持不变。
 - [x] 2026-07-13：materialize `Peiravi and Birdsall (1978)` Berkeley technical report，完成 40 页 PDF、MinerU Markdown、52 张图、中文讲解、access audit、reading log 和 `scripts/audit_peiravi_birdsall_1978_asset_contract.py`；明确 institutional full-text 与 journal-version equivalence 的边界。

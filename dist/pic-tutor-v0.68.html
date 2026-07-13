@@ -863,7 +863,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 150 条 <code>contract.json</code>，保留原始
+汇总本地 151 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
@@ -927,6 +927,9 @@ correction/shape 之间存在 tradeoff，不能把 correction-off
 canonical resource 已确认，但本机请求返回 Cloudflare HTTP
 <code>403</code>，因此仍不宣称 publisher PDF、MinerU
 或逐式核对完成。</p>
+<p>本版补充一份相关但不同的 Tajima 1982 FNAL 单作者会议稿：26 页
+PDF、MinerU、67 张图和中文讲解已通过独立资产合同；它只用于 beat-wave
+主题旁证，不能替代正式 Tajima-Dawson AIP 论文。</p>
 <p>本版补充 <code>LeeCPC2015</code> accepted/submitted manuscript
 资产合同：7 页 PDF、MinerU 结构、13
 张图片、公式锚点和中文讲解全部通过；CPC publisher-formatted PDF
@@ -25788,7 +25791,7 @@ reconstruction <code>&lt; 3.1e-16</code></td>
 也不等价于确定性 <code>1e-9</code>
 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema
 contract、性能 gate 和采样统计边界。公开仓库中的
-<code>docs/public-evidence-index.{json,md}</code> 进一步提供 150
+<code>docs/public-evidence-index.{json,md}</code> 进一步提供 151
 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。</p>
 <p>当前证据等级应写成：Langmuir
 已有运行级解析频率、场误差和最终守恒证据；uniform plasma
@@ -25981,6 +25984,15 @@ publisher PDF、MinerU Markdown 或逐式核对标记为已完成。FNAL 的
 <code>p169.pdf</code> 是 Tajima
 单作者的相关会议稿，只能作为主题旁证，不能替代 Tajima–Dawson
 正式条目。</p>
+<p>本轮已将这份相关会议稿的实际全文资产 materialize 到
+<code>references/03_pic_foundations/1982_Tajima_related_FNAL_conference_note_Laser_accelerator_by_plasma_waves/</code>：本地
+PDF 为 26 页，附 MinerU Markdown、67 张抽取图、论文顺序中文讲解、access
+audit、reading log 和
+<code>runs/stage-c-validation/tajima-1982-related-note/contract.{json,md}</code>。这使本书可以在有限边界内直接讲解
+beat-wave 共振、前向 Raman
+散射、电子俘获、退相位、自聚焦、丝化和相对论前向 Brillouin
+散射；但该资产明确是 related single-author conference note，正式
+Tajima–Dawson AIP item 仍是独立的全文缺失缺口。</p>
 <p>如果按“哪一章会因为缺它而不够出版级”排序，当前最重要的缺口不是更多新论文，而是以下几条老而关键的
 primary sources。</p>
 <table>

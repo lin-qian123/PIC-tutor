@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 150,
+  "record_count": 151,
   "status_counts": {
-    "PASS": 107,
+    "PASS": 108,
     "FAIL": 28,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 95,
+    "PASS": 96,
     "FAIL": 27,
     "UNKNOWN": 7,
     "BOUNDARY": 21
@@ -2115,6 +2115,17 @@
         "moving_window_gate": true,
         "moving_window_shift_error": 7.617187499991694e-08,
         "particle_presence_gate": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "tajima-1982-related-note",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Tajima 1982 related FNAL conference note full-text asset contract",
+      "classification": "RELATED_SINGLE_AUTHOR_CONFERENCE_NOTE_FULL_TEXT_MINERU_VERIFIED_FORMAL_TAJIMA_DAWSON_ITEM_NOT_SUBSTITUTED",
+      "scope": null,
+      "metrics": {
         "passed": true
       }
     },

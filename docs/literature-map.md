@@ -58,6 +58,7 @@
       - *Laser accelerator by plasma waves for ultra-high energies*
       - `T. Tajima` 单作者
     - 这能为主题理解提供旁证，但不能替代 `TajimaDawson1982` 本文的 materialization
+    - 相关会议稿现已完成本地全文资产化：26 页 PDF、MinerU Markdown、67 张图、中文讲解和独立 contract 均可复核；该条目仍只作为旁证，不能关闭正式 AIP 论文缺口
 - 对 `Hockney-Eastwood` 这条缺口，当前已进一步明确出一组 article-level fallback targets：
   - `Hockney (1971)`：2d2v thermal-plasma long runs，`tau_s / tau_H / N_C / optimum path`
     - confirmed title: *Measurements of collision and heating times in a two-dimensional thermal computer plasma*

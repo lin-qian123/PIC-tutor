@@ -2,6 +2,7 @@
 
 ## 2026-07-14
 
+- [x] v0.87 完成 v0.86 新增收敛执行页的 PDF 视觉抽查：发现并修复长分类标识和 raw path 截断；封面、第 5 章边界页和第 9 章缺口页重新纳入 spotcheck。
 - [x] v0.86 补强第二组 family runner：执行前检查 `inputs`/`FILE` 引用和 `Full` diagnostics，执行后检查退出码、`warpx_used_inputs` 和 `diags/diag*` 产物；当前仍因缺少 `mpiexec/mpirun` 停在真实 2-rank 执行前。
 - [x] v0.84 预注册正式收敛 study：固定 RZ/RSPHERE 独立 geometry、field/charge norm、primary/secondary observable、全部相邻拟合区间、correction-off negative control 和每种 geometry 至少两组独立 family 的关闭条件；当前数据明确仍不足以关闭 formal order。
 - [ ] 按预注册合同补齐每种 geometry 的第二组独立 refinement family，并重新执行重复 family slope 与 charge boundary gate。

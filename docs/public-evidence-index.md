@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `219`
-- PASS: `166`
+- records: `222`
+- PASS: `169`
 - FAIL: `31`
 - UNKNOWN: `22`
 - boundary-classified: `40`
@@ -29,6 +29,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `current-book-gap-register-v0.84` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `current-book-gap-register-v0.85` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `current-book-gap-register-v0.86` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
+| `current-book-gap-register-v0.87` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `deposition-algorithm-selection` | `PASS` | `PASS` | chapter-5 deposition algorithm selection matrix | `SOURCE_AND_RUNTIME_SELECTION_MATRIX_WITH_EXPLICIT_BOUNDARIES` | read-only chapter/source/runtime linkage; not equal physics coverage across algorithms | `passed=True` |
 | `deposition-chapter-source-crosswalk` | `PASS` | `PASS` | Chapter 5 deposition source crosswalk | `CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED` | Checks representative Chapter 5 claims against current WarpX source markers; not a semantic proof or runtime regression. | `passed=True` |
 | `deposition-convergence-readiness` | `PASS` | `BOUNDARY` | deposition convergence readiness | `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` | existing RZ Esirkepov shape=1 three-resolution controls; descriptive pairwise order only | `passed=True` |
@@ -46,6 +47,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `editorial-quality-v0.84` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=322`, `html_heading_count=322`, `passed=True`, `pdf_pages=330` |
 | `editorial-quality-v0.85` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=323`, `html_heading_count=323`, `passed=True`, `pdf_pages=330` |
 | `editorial-quality-v0.86` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=324`, `html_heading_count=324`, `passed=True`, `pdf_pages=330` |
+| `editorial-quality-v0.87` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=324`, `html_heading_count=324`, `passed=True`, `pdf_pages=330` |
 | `esirkepov-2001-paper-asset` | `PASS` | `BOUNDARY` | Esirkepov 1999/2001 Chapter 5 deposition paper asset contract | `PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING` | author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open | `passed=True` |
 | `esirkepov-bounded-compare` | `PASS` | `BOUNDARY` | Esirkepov 2001 bounded preprint/publication comparison | `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING` | bounded structural and abstract-level compare only; no publisher-PDF line-by-line claim | `passed=True` |
 | `esirkepov-density-decomposition` | `PASS` | `PASS` | Esirkepov second-order density decomposition identity | `` | paper formula / algebra layer; not a WarpX kernel or end-to-end regression | `max_residual=8.881784197001252e-16`, `passed=True`, `sample_count=10000` |
@@ -173,6 +175,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `pdf-layout-v0.84` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=330` |
 | `pdf-layout-v0.85` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=330` |
 | `pdf-layout-v0.86` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=330` |
+| `pdf-layout-v0.87` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=330` |
 | `pec_field_3d_mpi2` | `PASS` | `PASS` | test_3d_pec_field | `` |  | `contract_pass=True`, `max_relative_error=0.005594417719379853`, `min_relative_error=0.006322001968861878`, `reflection_gate=True` |
 | `pec_field_mr_3d_mpi2` | `PASS` | `PASS` | test_3d_pec_field_mr | `` |  | `contract_pass=True`, `max_relative_error=0.041003798427618164`, `min_relative_error=0.03554155727132573`, `reflection_gate=True` |
 | `pec_insulator_explicit_2d_mpi2` | `PASS` | `PASS` | 2D explicit PECInsulator boundary-drive localization and By amplitude | `` | official WarpX explicit input; 2-rank reader-side contract; cell-centered By boundary sample; not the implicit Poynting-ledger contract | `active_boundary_by_relative_error=0.015368241679916036`, `active_z_cell_count=16`, `final_field_energy_proxy=112905613127832.42`, `final_max_abs_field=1669497.4348623438`, `initial_max_abs_field=0.0`, `passed=True`, `relative_tolerance=0.05` |

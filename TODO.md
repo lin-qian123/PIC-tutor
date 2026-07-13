@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-13：将 `Birdsall 1985` `3A ES1` 的 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 正式回填第 3A 章，新增与 `WarpX::InitData()`/`Evolve()` 的阶段映射表、不可等同边界和 Langmuir/初始化 regression 分层说明。
 - [x] 2026-07-13：补强 `LeeCPC2015` 资产合同和第 7/9 章边界：accepted manuscript 仍为 7 页全文资产，新增 ScienceDirect indexed abstract 的高阶/PSTD 极限摘要证据与 publisher PDF 缺失检查；合同全部通过，不把摘要或 accepted manuscript 升格为 CPC 定稿逐式核对。
 - [x] 2026-07-13：重新核查 Esirkepov 2001 CPC 发表版：ScienceDirect 索引摘要可确认 arbitrary form-factor、straight-line trajectory、无需 Poisson solve 和 2D/3D demonstration；直接 PDF 下载仍返回 Cloudflare 403/HTML，因此 bounded compare 合同新增摘要级边界，但不升级为 publisher-PDF 逐行核对。
 - [x] 2026-07-13：重建 `docs/public-evidence-index.{json,md}`，从本地一级 case contract 汇总 151 条验证合同；新增 Tajima 1982 相关会议稿的完整资产合同，保留原始 PASS/FAIL/UNKNOWN，并显式标记 boundary/unproven/missing 证据。

@@ -32,7 +32,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 318 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 319 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -49,6 +49,8 @@
 本版又补入 Esirkepov 2001 CPC 发表版的摘要级访问边界：ScienceDirect 可见摘要固定 arbitrary form-factor、straight-line trajectory、no-Poisson-solve 和 2D/3D demonstration；直接 PDF 下载仍为 403/HTML，仍不宣称 publisher-PDF line-by-line compare。
 
 本版又补强 LeeCPC2015 的 PML 证据边界：ScienceDirect indexed abstract 支持高阶 solver 至无限阶 pseudo-spectral limit 的摘要级主张，7 页 accepted manuscript 支持第一轮公式，WarpX source/runtime contract 支持当前实现路径；publisher-formatted CPC PDF 和逐版本差异仍未完成。
+
+本版又将 Birdsall `3A ES1` 的历史阶段链回填第 3A 章：`INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 现在与 WarpX `InitData()`、粒子初始化、初始场构造、`Evolve()` 和 diagnostics 有明确的近似映射，但不宣称旧程序与现代 WarpX 逐函数等价。
 
 本版补充 `LeeCPC2015` accepted/submitted manuscript 资产合同：7 页 PDF、MinerU 结构、13 张图片、公式锚点和中文讲解全部通过；CPC publisher-formatted PDF 的版本差异仍待核对。
 

@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.68`，对应 318 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract contract、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
+当前成书版本为 `v0.68`，对应 319 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract contract、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
 v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 152 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
@@ -15,6 +15,8 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 152 条 `contrac
 2026-07-13：重新核查 Esirkepov 2001 CPC 发表版：ScienceDirect 摘要可作为有限 metadata/abstract evidence，直接 PDF 端点仍返回 403/HTML；第 5 章补入该摘要级边界，继续区分预印本与发表版。
 
 2026-07-13：补强 LeeCPC2015 资产合同和第 7 章 PML 证据链：accepted manuscript、ScienceDirect indexed abstract、WarpX source crosswalk 与 runtime gate 的层级已分开记录；publisher-formatted CPC PDF 仍保留缺失边界。
+
+2026-07-13：将 Birdsall `3A ES1` 的历史最小程序骨架正式回填第 3A 章，新增 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 到 WarpX 初始化/演化阶段的映射表，并明确这不是逐函数等价证明。
 
 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将“线性稳定不等于非线性无扰动”、相空间 clump/density hole 诊断和相对漂移自由能边界写入中文讲解笔记，并最小回填第 8 章；该结论不升格为 NCI 或 WarpX runtime physics gate。
 

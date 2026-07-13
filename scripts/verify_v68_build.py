@@ -17,7 +17,7 @@ SOURCE_CHAPTERS = sorted((ROOT / "manuscript" / "chapters").glob("*.md"))
 MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.68.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.68.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.68.pdf"
-EXPECTED_PDF_PAGES = 318
+EXPECTED_PDF_PAGES = 319
 
 
 def image_links(text: str) -> list[str]:

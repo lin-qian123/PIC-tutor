@@ -1741,7 +1741,31 @@ analysis 则从 `sim_parameters.dpkl` 读回参数，构造 Connor et al. 风格
 
 16. effective-potential electrostatic：`effective_potential_electrostatic`
 
-## 3A.13 本章小结：初始化状态怎样进入第一步推进
+## 3A.13 从 Birdsall `3A ES1` 到 WarpX：历史最小程序骨架的现代映射
+
+Birdsall and Langdon 的 `3A ES1` 是一份很好的历史参照，因为它把一维静电 PIC 的最小程序压缩成一条容易检查的阶段链：
+
+```text
+INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY
+```
+
+这条链可以帮助读者理解“初始化结束后第一步推进究竟从哪里开始”，但不能把旧程序的子程序名直接当成 WarpX 的函数名。书中对应的本地精读资产是 `references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/`；现代实现的主源码入口是 `../warpx/Source/Initialization/WarpXInitData.cpp`、`../warpx/Source/Particles/` 和 `../warpx/Source/FieldSolver/`。
+
+| `3A ES1` 阶段 | 历史程序的物理职责 | WarpX 中最接近的阶段 | 不能直接等同的部分 |
+|---|---|---|---|
+| `INIT` | 建立网格、粒子、权重、边界和初始参数 | `ReadParameters()`、`WarpX::InitData()`、`InitFromScratch()`、`AllocLevelData()` 与 `mypc->AllocData()` | WarpX 还要处理 AMR、多几何、solver 分支、PML、外部场、restart 和并行布局 |
+| `SETRHO` | 用初始粒子位置完成第一次 charge deposition | `PlasmaInjector`/`AddParticles` 之后的初始 `rho` 构造及相关 field-register 路径 | 现代 WarpX 的 `rho` 是否直接写入、重新沉积或由 solver 分支消费，取决于 geometry、solver 和初始化选项 |
+| `FIELDS` | 从 `rho` 求解静电势和电场，并形成可供粒子使用的场 | electrostatic solver 的 `InitData()`、`ComputeSpaceChargeField()`、初始场填充与 projection cleaning | WarpX 不只有一条 FFT Poisson 路径；EM、PSATD、RZ、EB 和 external-field 分支会改变字段对象与约束 |
+| `SETV` | 设置初始速度、热分布和漂移 | `SpeciesUtils`、`InjectorMomentum`、temperature/velocity functor 与粒子属性创建 | WarpX 还可能创建 relativistic、spin、implicit 或 pusher-specific attributes；并非一次简单数组赋值 |
+| `ACCEL` | 用当前电场/磁场更新粒子速度 | `Evolve()` 内的 particle push 与 gather | 历史 ES1 的静电推进不能覆盖现代 EM、Boris/Vay/Higuera-Cary、implicit 和 subcycling 路径 |
+| `MOVE` | 用更新后的速度推进粒子位置 | `PushParticlesAndDeposit()` 中的 position update、边界处理和 current deposition | WarpX 还要处理 AMR tile、moving window、particle boundary、suborbit/crossing 和 MPI 交换 |
+| `HISTRY` | 记录历史量、能量或分布函数 | full/reduced diagnostics、openPMD/plotfile writer 与 reader-side analysis | 现代 diagnostics 是独立 writer/schema 合同，不等于旧程序中的一个历史数组 |
+
+最容易误读的是 `SETRHO -> FIELDS -> SETV` 的顺序。对历史 ES1 来说，它表达的是“先由初始位置形成源，再求场，再给粒子速度”；对 WarpX fresh run，实际初始化链还要先完成 AMReX level 和 field data 分配，并根据 solver、外场和 `initialize_self_fields` 等条件决定哪些源/场对象被创建。因而更可靠的读法是：Birdsall 骨架提供物理阶段的语义，WarpX 源码决定这些语义在现代对象图和分支条件中的落点。
+
+这条映射也解释了为什么 `Langmuir` regression 可以同时作为初始化和演化入口：它检查的不是某个名为 `SETRHO` 的函数，而是初始粒子/密度、初始场、后续推进和最终解析频率之间的组合合同。相反，`initial_distribution`、`space_charge_initialization`、`load_external_field` 与 `projection_div_cleaner` 分别覆盖粒子分布、初始 self-field、外部场装填和初始散度修正的更窄路径。它们共同支撑的是现代 WarpX 初始化链的分层验证，而不是对 `3A ES1` 原程序做逐行复现。
+
+## 3A.14 本章小结：初始化状态怎样进入第一步推进
 
 到 `InitData()` 结束时，WarpX 已经完成：
 
@@ -1768,7 +1792,7 @@ inputs
 - 把 openPMD 文件格式与 WarpX 单位约定加入诊断/I/O 章节；
 - 判断 initialization 验证层是否已经阶段性收口，并切回下一未完成模块。
 
-## 3A.14 练习与最小复现
+## 3A.15 练习与最小复现
 
 1. **fresh/restart 定位题**：沿 `WarpXInitData.cpp` 追踪 `InitData()`，说明 `ComputeDt()` 为什么只出现在 fresh-run 分支，以及 restart 为什么必须进入 `PostRestart()`。
 2. **初始化顺序题**：解释 `AmrCore::InitFromScratch()`、`AllocLevelData()`、`mypc->AllocData()`、`mypc->InitData()` 和 `InitPML()` 的先后关系；指出把粒子初始化提前到 AMR level 创建之前会破坏哪类对象合同。

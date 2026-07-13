@@ -1246,11 +1246,12 @@ gates；该设计尚未写入 <code>../warpx</code>。</p>
 <p>2026-07-12 增补 charge deposition bridge source contract，以 13
 个源码锚点验收时间层偏移、ABLASTR 暂存、形状函数分派、RZ
 分支和原子写回。</p>
-<p>2026-07-12 增补 deposition geometry/order source contract，以 53
+<p>2026-07-13 强化 deposition geometry/order source contract，以 69
 个源码锚点验收 charge
 ordinary/shared、Direct、Esirkepov、Villasenor、Vay、implicit 的
-shape=1/2/3/4 分派和六类几何分支；该证据不替代全组合 runtime
-regression。</p>
+shape=1/2/3/4 分派、六类几何分支、Vay 的 RZ/1D 不支持
+guard、Vay-implicit guard 和径向 shared-memory 限制；该证据不替代全组合
+runtime regression。</p>
 <p>2026-07-12 补入 RCYLINDER/RSPHERE Esirkepov Langmuir 2-rank runtime
 evidence；独立径向 <code>Er</code> contract 的相对误差为
 <code>2.174e-2/5.405e-3 &lt; 0.12</code>，范围限定为两条径向场合同。</p>
@@ -13629,6 +13630,16 @@ regression。三方汇总见
 与
 <code>notes/code-reading/particles/62-esirkepov-paper-source-runtime-crosswalk.md</code>；其
 <code>PASS/BOUNDARY</code> scope 和 publisher-PDF 缺失边界保持不变。</p>
+<p>在这个 Esirkepov skeleton 之上，本版又把 geometry/order
+的源码审计从“函数名出现”推进到分支约束层。<code>scripts/audit_deposition_geometry_order_contract.py</code>
+现在对 <code>CurrentDeposition.H</code> 的
+<code>1D_Z/XZ/RZ/RCYLINDER/RSPHERE/3D</code> 宏、Vay 在 RZ/1D 的显式
+abort、Vay 与 implicit 的互斥 guard，以及径向 geometry 不进入
+shared-memory current kernel 的条件逐项检查；连同 charge
+ordinary/shared、算法分派和 shape=1/2/3/4 入口共 <code>69/69</code>
+锚点通过。它证明的是当前 checkout 的编译分支和入口合同，不是所有
+geometry × order 组合已经运行通过；对应报告为
+<code>runs/stage-c-validation/deposition-geometry-order-source/contract.{json,md}</code>。</p>
 <p>Villasenor
 的组织方式则完全不同。<code>VillasenorDepositionShapeNKernel(...)</code>
 在完成轨迹恢复和 boundary crop 之后，第一件事不是构造 shape

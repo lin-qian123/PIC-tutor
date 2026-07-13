@@ -1736,6 +1736,8 @@ $$
 
 公式层之外，又对当前同级 `../warpx` checkout 做了只读 source audit。`scripts/audit_esirkepov_source_contract.py` 检查 `CurrentDeposition.H` 中的 14 个锚点全部存在：包括 `doEsirkepovDepositionShapeN`、`Compute_shifted_shape_factor`、`invdtd`、`one_third/one_sixth`、`sdxi/sdyj/sdzk`、三方向 old/new shape difference 和 `Jx/Jy/Jz` writeback。报告位于 `runs/stage-c-validation/esirkepov-source-contract/contract.{json,md}`；这证明当前源码仍 materialize 了正文所描述的 skeleton，但仍不是数值 kernel regression。三方汇总见 `runs/stage-c-validation/esirkepov-paper-source-runtime-crosswalk/contract.{json,md}` 与 `notes/code-reading/particles/62-esirkepov-paper-source-runtime-crosswalk.md`；其 `PASS/BOUNDARY` scope 和 publisher-PDF 缺失边界保持不变。
 
+在这个 Esirkepov skeleton 之上，本版又把 geometry/order 的源码审计从“函数名出现”推进到分支约束层。`scripts/audit_deposition_geometry_order_contract.py` 现在对 `CurrentDeposition.H` 的 `1D_Z/XZ/RZ/RCYLINDER/RSPHERE/3D` 宏、Vay 在 RZ/1D 的显式 abort、Vay 与 implicit 的互斥 guard，以及径向 geometry 不进入 shared-memory current kernel 的条件逐项检查；连同 charge ordinary/shared、算法分派和 shape=1/2/3/4 入口共 `69/69` 锚点通过。它证明的是当前 checkout 的编译分支和入口合同，不是所有 geometry × order 组合已经运行通过；对应报告为 `runs/stage-c-validation/deposition-geometry-order-source/contract.{json,md}`。
+
 Villasenor 的组织方式则完全不同。`VillasenorDepositionShapeNKernel(...)` 在完成轨迹恢复和 boundary crop 之后，第一件事不是构造 shape difference，而是先统计整条轨迹的 `cell_crossings_x/y/z`，得到 `num_segments`，再按 crossing 逐段推进。3D 情况下，它甚至不会平均切段，而是每一轮都比较哪个方向先撞到下一条 crossing，并用最早发生的那个 crossing 定义当前段终点。也就是说，Villasenor 的第一性对象不是“一对 old/new shape 数组”，而是一条被真实 cell crossing 切开的粒子轨迹。
 
 这条结构和 `Villasenor-Buneman 1992` 的 paper-level 写法也是一致的。原论文先从最简单的 four-boundary case 出发，把一整步运动写成

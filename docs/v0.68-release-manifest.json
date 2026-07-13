@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 749,
-  "total_bytes": 27827255,
+  "total_bytes": 27833338,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1529933,
-      "sha256": "56901ad7c0efcacd3c6e672f15fb70b24d370ae799429f379548418d0bf28968"
+      "bytes": 1529897,
+      "sha256": "af53a000ebaf20e93be07af0a57ed7b7232d87cd21aae9c2e19eb536f6c1faf7"
     },
     {
       "path": "TODO.md",
-      "bytes": 1377621,
-      "sha256": "18b141cf3dd90a609afc59a9f54a9306f95ec5039a1d8f5ea8bffa7aa3d5649f"
+      "bytes": 1377610,
+      "sha256": "ecb7eb2b78b8a155e016da3fa41981202e6dffb0969b5d72a0884b8906756c14"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5766932,
-      "sha256": "1db3badf462f65247e783d512212b8233c0081f40e7a8bb212d79a831415e30a"
+      "bytes": 5767806,
+      "sha256": "f48b09b765cc4caa7022c94f2a46ac209f07f008b3276e95a2eab8a4266c5b17"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1091548,
-      "sha256": "75a8178adcdbc2b0289252d2b1f052a4ff099d75fd31b9dbcb599931183db794"
+      "bytes": 1092361,
+      "sha256": "41c7ab8efcb43f4666b06698f21422e29b93bd3a8f9a33f28c59abdc54664bda"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3392533,
-      "sha256": "038a73050bf73a3b5273b6756e17cc9a8edda5e820ab46c18d6d20bbcef4a001"
+      "bytes": 3393472,
+      "sha256": "b0c50cdde9c31fb2f5d88add7dd7040ab5ba8e9904d7dc8046452ea9ae34e8bb"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 92566,
-      "sha256": "b18afd81ecba66d1c2344b3da2511bdcd0cfe7b988c01db8cf9308bbbbc028e0"
+      "bytes": 93010,
+      "sha256": "bd49784c360b712efd7c7666d61bb52bf83acff0238e118d6c810525aefbd169"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 61236,
-      "sha256": "d43239410609aa119c93b7b6bf077c19323a06f5947a76ef693b67cca0ed492e"
+      "bytes": 61507,
+      "sha256": "1a0165a5ca863ca41d37caa57a4595960590be56db2fa28aa668c6cc3094c243"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "377a3736785ebf6fadaa2f01778cfb1a14c8260b389659b52a4651d50e31f44d"
+      "sha256": "a0f9f6364bf900b3039f361f1ec0e75b58c666f475c384df5e7ac3da01dc7b81"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 71539,
-      "sha256": "fda11c448993d9fd2c6f7ea85b8a116df71f128c4d6854c756a6dad79c877dfb"
+      "bytes": 71623,
+      "sha256": "730fee8e27a4ec20a82df47f81e8f28f4d02bb9ed94c228613d2d91a80fd3da5"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -897,8 +897,8 @@
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
-      "bytes": 182507,
-      "sha256": "5e5e0bdcfe1b36b528e808a2f524cbb23dc15ba48e35738f7f14adf69bddb785"
+      "bytes": 183236,
+      "sha256": "838236214be8720982a347bba11840d9a3e02924cb7a2ab66a4d87e2dc60de3d"
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
@@ -2062,8 +2062,8 @@
     },
     {
       "path": "notes/code-reading/particles/59-deposition-geometry-order-coverage-matrix.md",
-      "bytes": 2540,
-      "sha256": "ad648454824be4543e9cc41ef7a3ab858d499bde6e95e7ca4b304a8212eb9e94"
+      "bytes": 3076,
+      "sha256": "56f884fd2cf8e389b768fa7fc04e1fd0e594d0f295ec186916e6d595caee6159"
     },
     {
       "path": "notes/code-reading/particles/60-esirkepov-3d-shape-runtime-contract.md",
@@ -2637,8 +2637,8 @@
     },
     {
       "path": "scripts/audit_deposition_geometry_order_contract.py",
-      "bytes": 4055,
-      "sha256": "5d882997f454a2d86c151e2ecba6dfa078382be09b38e785646a3745bf7ca36c"
+      "bytes": 5495,
+      "sha256": "3505ebff7000500287b05c06556fcc4f55123d982a28c76bd4fcff052905e559"
     },
     {
       "path": "scripts/audit_deposition_paper_asset_contract.py",

@@ -23,6 +23,7 @@ def main() -> None:
     files = {
         "charge_kernel": args.warpx_root / "Source/Particles/Deposition/ChargeDeposition.H",
         "charge_bridge": args.warpx_root / "Source/ablastr/particles/DepositCharge.H",
+        "current_kernel": args.warpx_root / "Source/Particles/Deposition/CurrentDeposition.H",
         "particle_container": args.warpx_root / "Source/Particles/WarpXParticleContainer.cpp",
         "startup": args.warpx_root / "Source/WarpX.cpp",
     }
@@ -54,6 +55,34 @@ def main() -> None:
     ):
         for order in range(1, 5):
             checks[f"current_{family}_{order}"] = check(sources["particle_container"], f"{family}<{order}>")
+
+    for macro in ("WARPX_DIM_1D_Z", "WARPX_DIM_XZ", "WARPX_DIM_RZ", "WARPX_DIM_RCYLINDER", "WARPX_DIM_RSPHERE", "WARPX_DIM_3D"):
+        checks[f"current_kernel_geometry_{macro}"] = check(sources["current_kernel"], macro)
+
+    for algo in ("Direct", "Esirkepov", "Villasenor", "Vay"):
+        checks[f"dispatch_algorithm_{algo}"] = check(
+            sources["startup"] if algo == "Direct" else sources["particle_container"],
+            f"CurrentDepositionAlgo::{algo}"
+        )
+
+    checks["dispatch_implicit_esirkepov"] = check(
+        sources["particle_container"], "doChargeConservingDepositionShapeNImplicit<1>"
+    )
+    checks["dispatch_implicit_villasenor"] = check(
+        sources["particle_container"], "doVillasenorDepositionShapeNImplicit<1>"
+    )
+    checks["dispatch_vay_implicit_guard"] = check(
+        sources["particle_container"], "The Vay algorithm cannot be used with implicit algorithm."
+    )
+    checks["kernel_vay_rz_guard"] = check(
+        sources["current_kernel"], "Vay deposition not implemented in RZ geometry"
+    )
+    checks["kernel_vay_1d_guard"] = check(
+        sources["current_kernel"], "Vay deposition not implemented in 1D geometry"
+    )
+    checks["kernel_shared_mem_radial_guard"] = check(
+        sources["current_kernel"], "!(defined(WARPX_DIM_RCYLINDER) || defined(WARPX_DIM_RSPHERE))"
+    )
 
     checks["startup_shape_range"] = check(
         sources["startup"],

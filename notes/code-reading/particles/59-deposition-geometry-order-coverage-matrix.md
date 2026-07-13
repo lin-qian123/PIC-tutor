@@ -2,6 +2,8 @@
 
 第 5 章已经积累了多条 deposition runtime 和 source contract，但它们分散在不同报告中。本 note 将当前最强证据按 family、geometry、shape/order 和证据范围并排整理，避免把局部 PASS 外推成全组合覆盖。可执行生成器为 `scripts/summarize_deposition_geometry_order_coverage.py`，报告归档于 `runs/stage-c-validation/deposition-geometry-order-coverage-matrix/coverage-matrix.{json,md}`。
 
+源码层合同现由 `scripts/audit_deposition_geometry_order_contract.py` 复核 69 个锚点：除 charge ordinary/shared、startup shape range 和各算法 shape=1/2/3/4 dispatch 外，还直接检查 `CurrentDeposition.H` 的六类 geometry macro、Vay 的 RZ/1D abort、Vay-implicit guard，以及 RCYLINDER/RSPHERE shared-memory 限制。报告为 `runs/stage-c-validation/deposition-geometry-order-source/contract.{json,md}`。这仍然是 source dispatch contract，不是每个 geometry/order 组合的 runtime regression。
+
 ## 当前矩阵
 
 | family | geometry | shape/order | 当前证据 | 证据范围 |

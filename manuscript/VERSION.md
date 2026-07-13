@@ -152,7 +152,7 @@
 
 2026-07-12 增补 charge deposition bridge source contract，以 13 个源码锚点验收时间层偏移、ABLASTR 暂存、形状函数分派、RZ 分支和原子写回。
 
-2026-07-12 增补 deposition geometry/order source contract，以 53 个源码锚点验收 charge ordinary/shared、Direct、Esirkepov、Villasenor、Vay、implicit 的 shape=1/2/3/4 分派和六类几何分支；该证据不替代全组合 runtime regression。
+2026-07-13 强化 deposition geometry/order source contract，以 69 个源码锚点验收 charge ordinary/shared、Direct、Esirkepov、Villasenor、Vay、implicit 的 shape=1/2/3/4 分派、六类几何分支、Vay 的 RZ/1D 不支持 guard、Vay-implicit guard 和径向 shared-memory 限制；该证据不替代全组合 runtime regression。
 
 2026-07-12 补入 RCYLINDER/RSPHERE Esirkepov Langmuir 2-rank runtime evidence；独立径向 `Er` contract 的相对误差为 `2.174e-2/5.405e-3 < 0.12`，范围限定为两条径向场合同。
 

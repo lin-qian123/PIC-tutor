@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `169`
-- PASS: `124`
+- records: `170`
+- PASS: `125`
 - FAIL: `30`
 - UNKNOWN: `15`
 - boundary-classified: `31`
@@ -18,7 +18,8 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `boris-1970-metadata` | `PASS` | `BOUNDARY` | Boris 1970 metadata and access-boundary contract | `METADATA_BACKED_HISTORICAL_SOURCE_FULL_TEXT_MISSING_SECONDARY_DERIVATION_AVAILABLE` | bibliographic identity and access boundary only; no original proceedings PDF or line-by-line claim | `passed=True` |
 | `boris-source-crosswalk` | `PASS` | `BOUNDARY` | WarpX Boris kernel/source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING` | read-only current WarpX source mapping; not a line-by-line reconstruction of the 1970 proceedings paper | `passed=True` |
 | `charge-deposition-bridge-source` | `PASS` | `PASS` | ABLASTR charge-deposition bridge source contract | `` | source mapping only; not a numerical charge-deposition regression | `anchor_count=13`, `missing_count=0`, `passed=True` |
-| `deposition-geometry-order-source` | `PASS` | `PASS` | deposition geometry/order source dispatch | `` | read-only source audit; does not claim runtime coverage for every geometry/order combination | `anchor_count=53`, `passed=True`, `passed_anchor_count=53` |
+| `deposition-geometry-order-source` | `PASS` | `PASS` | deposition geometry/order source dispatch | `` | read-only source audit; does not claim runtime coverage for every geometry/order combination | `anchor_count=69`, `passed=True`, `passed_anchor_count=69` |
+| `deposition-geometry-order-source-contract` | `PASS` | `PASS` | deposition geometry/order source dispatch | `` | read-only source audit; does not claim runtime coverage for every geometry/order combination | `anchor_count=69`, `passed=True`, `passed_anchor_count=69` |
 | `esirkepov-2001-paper-asset` | `PASS` | `BOUNDARY` | Esirkepov 1999/2001 Chapter 5 deposition paper asset contract | `PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING` | author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open | `passed=True` |
 | `esirkepov-bounded-compare` | `PASS` | `BOUNDARY` | Esirkepov 2001 bounded preprint/publication comparison | `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING` | bounded structural and abstract-level compare only; no publisher-PDF line-by-line claim | `passed=True` |
 | `esirkepov-density-decomposition` | `PASS` | `PASS` | Esirkepov second-order density decomposition identity | `` | paper formula / algebra layer; not a WarpX kernel or end-to-end regression | `max_residual=8.881784197001252e-16`, `passed=True`, `sample_count=10000` |

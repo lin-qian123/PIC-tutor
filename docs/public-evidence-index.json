@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 169,
+  "record_count": 170,
   "status_counts": {
-    "PASS": 124,
+    "PASS": 125,
     "FAIL": 30,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 104,
+    "PASS": 105,
     "FAIL": 27,
     "UNKNOWN": 7,
     "BOUNDARY": 31
@@ -105,9 +105,22 @@
       "classification": null,
       "scope": "read-only source audit; does not claim runtime coverage for every geometry/order combination",
       "metrics": {
-        "anchor_count": 53,
+        "anchor_count": 69,
         "passed": true,
-        "passed_anchor_count": 53
+        "passed_anchor_count": 69
+      }
+    },
+    {
+      "case": "deposition-geometry-order-source-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "deposition geometry/order source dispatch",
+      "classification": null,
+      "scope": "read-only source audit; does not claim runtime coverage for every geometry/order combination",
+      "metrics": {
+        "anchor_count": 69,
+        "passed": true,
+        "passed_anchor_count": 69
       }
     },
     {

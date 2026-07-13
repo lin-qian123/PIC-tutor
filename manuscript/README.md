@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.96 合订 PDF 的页数以实际构建结果为准；本版在 v0.95 的 repeat-slope comparison gate 基础上补入 Esirkepov 2001 与 LeeCPC2015 的 DOI/PII、publisher record 和 PDF 路由访问边界复核。正文继续保留 accepted manuscript/预印本与 publisher-formatted PDF 的证据分层，并不把访问边界升级为定稿逐页对照完成。
+当前 v0.97 合订 PDF 的页数以实际构建结果为准；本版在 v0.96 论文访问边界审计基础上补入真实 2-rank 两层 AMR subcycling 运行中的 transition-zone 分区/同步路径激活证据。正文继续区分“路径已调用”与“route-count ledger 已闭合”，不把 profiling marker 升级为逐粒子路由证明。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 

@@ -32,6 +32,7 @@ def main() -> int:
     evidence_paths = (
         "runs/stage-c-validation/esirkepov-publication-boundary/contract.json",
         "runs/stage-c-validation/leecpc2015-accepted-manuscript-contract/contract.json",
+        "runs/stage-c-validation/transition-zone-runtime-activation-v0.97/contract.json",
         "runs/stage-c-validation/transition-zone-source-contract.json",
         "runs/stage-c-validation/rz-implicit-villasenor-build-boundary/contract.json",
         "runs/stage-c-validation/vay-amr-guard/contract.json",
@@ -63,7 +64,7 @@ def main() -> int:
             "SOURCE_DIAGNOSTIC_DISCRETIZATION_BOUNDARY",
         )),
         "classification_boundaries": all(marker in register for marker in (
-            "OPEN_EXTERNAL_ACCESS", "RUNTIME_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
+            "OPEN_EXTERNAL_ACCESS", "RUNTIME_TRANSITION_ZONE_BRANCH_ACTIVATION_OBSERVED_ROUTE_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
             "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN", "RELEASE-EDITORIAL",
         )),
         "closure_language": all(marker in register for marker in ("关闭条件", "真实 `current_buf/rho_buf`", "publisher PDF")),

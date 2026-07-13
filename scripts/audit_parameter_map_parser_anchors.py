@@ -16,7 +16,7 @@ from audit_parameter_map_surface import MAP, parameter_tokens, source_paths
 
 PARSER_WORDS = re.compile(
     r"\b(?:query|queryAdd|queryarr|queryArrWithParser|query_enum_sloppy|queryWithParser|queryWithParserWithDefault|"
-    r"queryWithParserAndValidate|contains|add|get|getarr|getArrWithParser|getWithParser|Store_parserString)\b"
+    r"queryWithParserAndValidate|contains|add|get|getarr|getArrWithParser|getWithParser|Store_parserString|getEntries)\b"
 )
 GENERIC_KEYS = {
     "abs", "amr", "boundary", "field", "hi", "lo", "name", "ord", "psatd",
@@ -26,12 +26,25 @@ GENERIC_KEYS = {
 
 def candidate_keys(parameter: str) -> list[str]:
     value = parameter.strip().strip("`")
-    keys = [value]
+    normalized = re.sub(r"<[^>]+>\.", "", value)
+    keys = [value, normalized]
     if "." in value:
         keys.append(value.rsplit(".", 1)[1])
     keys.extend(parameter_tokens(value))
+    # Expand compact parameter-map notation such as `potential_lo/hi_x/y/z`
+    # into the concrete keys used by the parser.
+    compact = value.rsplit(".", 1)[-1]
+    if compact in {"type", "theta"}:
+        keys.append(compact)
+    match = re.fullmatch(r"(.+)_lo/hi_([xyz])/([xyz])/([xyz])", compact)
+    if match:
+        prefix, *axes = match.groups()
+        keys.extend(f"{prefix}_{bound}_{axis}" for bound in ("lo", "hi") for axis in axes)
+    if "J[x/y/z]_external_grid_function" in value:
+        keys.extend(f"J{axis}_external_grid_function" for axis in ("x", "y", "z"))
+    contextual = {compact} if compact in {"type", "theta"} else set()
     return sorted(
-        {key for key in keys if key and key not in {"*", "..."} and key not in GENERIC_KEYS},
+        {key for key in keys if key and key not in {"*", "..."} and (key not in GENERIC_KEYS or key in contextual)},
         key=len,
         reverse=True,
     )
@@ -45,7 +58,11 @@ def parser_literals(text: str) -> set[str]:
         start = max(0, match.start() - 180)
         end = min(len(text), match.end() + 80)
         if PARSER_WORDS.search(text[start:end]):
-            found.add(match.group(1))
+            literal = match.group(1)
+            found.add(literal)
+            # Parameter-map rows often name the function key without its
+            # argument signature, while WarpX stores the signature literally.
+            found.add(literal.split("(", 1)[0])
     return found
 
 
@@ -66,20 +83,34 @@ def main() -> None:
         literals: set[str] = set()
         source_token_seen = set()
         source_file_count = 0
+        source_fragments = []
         for reference in references:
             for path in source_paths(reference):
                 source_file_count += 1
                 source_text = path.read_text(encoding="utf-8", errors="ignore")
+                source_fragments.append(source_text)
                 source_token_seen.update(key for key in candidate_keys(parameter) if key in source_text)
                 literals.update(parser_literals(source_text))
         keys = candidate_keys(parameter)
         matched_literals = sorted(key for key in keys if key in literals)
+        source_blob = "\n".join(source_fragments)
+        reference_blob = " ".join(references)
+        owner_review = "owned" in reference_blob.lower() and "amrex" in reference_blob.lower()
+        dynamic_key_review = any(
+            marker in parameter
+            for marker in (
+                ".attribute.", "_cross_section", "_energy", "J[x/y/z]_external_grid_function",
+                ".particle_fields.", "adios2_operator.parameters", "adios2_engine.parameters",
+            )
+        )
         if matched_literals:
             category = "parser_literal_anchor"
+        elif owner_review:
+            category = "external_owner_review"
+        elif dynamic_key_review and ("getEntries" in source_blob or " + " in source_blob or "append(var)" in source_blob or "scattering_process" in source_blob):
+            category = "dynamic_key_constructor_review"
         elif source_token_seen:
             category = "consumer_or_dynamic_review"
-        elif "AMReX-owned" in columns[6] or "AMReX-owned" in columns[7]:
-            category = "external_owner_review"
         else:
             category = "no_source_token_review"
         records.append(
@@ -94,7 +125,8 @@ def main() -> None:
         )
 
     counts = {category: sum(item["category"] == category for item in records) for category in (
-        "parser_literal_anchor", "consumer_or_dynamic_review", "external_owner_review", "no_source_token_review"
+        "parser_literal_anchor", "dynamic_key_constructor_review", "consumer_or_dynamic_review",
+        "external_owner_review", "no_source_token_review"
     )}
     result = {
         "contract": "WarpX parameter-map parser-anchor review surface",
@@ -105,6 +137,9 @@ def main() -> None:
         "manual_review_rows": len(records) - counts["parser_literal_anchor"],
         "parser_anchor_count": counts["parser_literal_anchor"],
         "manual_review_count": len(records) - counts["parser_literal_anchor"],
+        "dynamic_key_constructor_count": counts["dynamic_key_constructor_review"],
+        "external_owner_count": counts["external_owner_review"],
+        "unclassified_count": counts["no_source_token_review"] + counts["consumer_or_dynamic_review"],
         "contract_pass": True,
         "classification": "PARSER_LITERAL_ANCHOR_SURFACE_AUDITED_MANUAL_VALUE_SEMANTICS_REMAINS",
         "scope": "cited-source text, parser-like API adjacency and explicit review queue; not C++ AST or runtime value semantics",

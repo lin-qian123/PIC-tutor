@@ -81,6 +81,8 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 - `references/06_stability_filtering_nci/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas/`
 - `references/06_stability_filtering_nci/2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates/`
 
+本版又 materialize `references/01_reviews_surveys/2014_VayFRACAD2014_Modeling_of_relativistic_plasmas_with_the_Particle-In-Cell_method/`：9 页 PDF、MinerU Markdown、43 张图片、论文顺序中文精读、access audit、reading log 和 asset contract。它为第 4 章的 Boris/Vay pusher 谱系、第 6 章的 PSATD/NCI 机制提供统一 review 入口；它不替代当前 WarpX 的源码 crosswalk、runtime contract 或论文图形逐点复现。
+
 这三条线已经构成第 6 章目前最完整的一组 paper-backed 主干：
 
 - Godfrey 2014：fixed-grid PSATD 的 NCI 策略分类；
@@ -127,7 +129,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 | 第 3/3A 章 主循环与初始化 | 中低 | 以源码为主 | 需要把基础文献和工程论文绑定得更明确 |
 | 第 4 章 粒子推进器 | 中高 | `Boris 1970` metadata contract、`Birdsall 1985`、`Vay 2008`、`Higuera-Cary 2017` | 原始 Boris 1970 会议论文 PDF 仍缺 |
 | 第 5 章 沉积与形函数 | 中等 | Esirkepov 与 Villasenor 两条 charge-conserving 主线都已有第一轮 paper-backed 资产 | 仍需把两篇论文系统回写正文；Esirkepov 还缺 CPC 定稿对照 |
-| 第 6 章 场求解器 | 高 | `Godfrey 2014`、`Lehe 2016`、`Kirchen 2016` | 更多 validation/engineering 线，而不是 paper 主干 |
+| 第 6 章 场求解器 | 高 | `Vay--Godfrey 2014`、`Godfrey 2014`、`Lehe 2016`、`Kirchen 2016` | 更多 validation/engineering 线，而不是 paper 主干 |
 | 第 7 章 边界、PML 与 AMR | 中等偏低 | `Berenger 1994/1996` 有 bibliographic anchor，源码和 regression 很强 | `LeeCPC2015` 正文仍缺 |
 | 第 8 章 诊断、验证与案例 | 中等 | `Dawson 1983` diagnostics 思路已可直接服务正文 | 还缺更多 case-specific benchmark papers |
 | 第 9 章 文献路线 | 本章即路线图 | 当前 `references/` 树和 `docs/literature-map.md` | 需要持续同步，而不是一次性写完 |

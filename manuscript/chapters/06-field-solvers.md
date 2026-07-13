@@ -928,6 +928,21 @@ finite-order PSATD 是另一条独立轴线。`Source/WarpX.cpp:1557-1590` 读�
 4. finite-order PSATD 由 `psatd.nox/noy/noz` 和 `periodic_single_box_fft` 共同限定，NCI tests 中常见的是有限阶分支；
 5. Galilean PSATD 是表示层面的移动坐标策略，JRhom 是源项时间积分策略，二者和 filter/current correction 可以组合出不同 regression 入口，但不能合并成同一个物理机制。
 
+### 6.6.7 v0.74 文献闭环：Vay--Godfrey 2014 review
+
+Vay--Godfrey 2014 review 为本节的 PSATD 讨论补上统一的文献主干。论文式（15--28）从 Fourier 空间的 Maxwell 方程出发，把场分解为纵向与横向分量，并用
+
+$$
+C=\cos(c|\mathbf{k}|\Delta t),\qquad
+S=\frac{\sin(c|\mathbf{k}|\Delta t)}{c|\mathbf{k}|}
+$$
+
+写出解析时间推进；当时间步足够小时，PSTD 可以看作该解析推进的极限或近似。这个推导解释了为什么 `PsatdAlgorithm` 同时需要波数、`C/S` 系数、源项时间依赖和 current correction，而不是只做一次 FFT 后的代数更新。
+
+同一 review 的数值稳定性部分还给出 NCI 色散关系（式 39）的结构：漂移速度、网格 alias、场 gather 插值和电流沉积共同进入增长率；纵向 alias 可写为 `$k'_z = k_z + m_z 2\pi/\Delta z$`。因此 filter、插值阶数、current scaling、时间步和 Galilean/boosted-frame 表示属于不同的抑制轴线，不能用“PSATD 已稳定”一句话替代机制分析。
+
+本书已将全文资产、43 张图和中文精读固定在上述 review 的专属目录，并通过 asset contract。映射到当前 WarpX 时继续保持三条边界：`psatd.current_correction` 是离散连续性/Gauss-law projection，不等于论文中为降低 NCI 增长率设计的 `$\zeta(k)$` current scaling；`warpx.use_filter`、RZ spectral filter 和 `NCIGodfreyFilter` 分别属于不同的 filter/gather 实现；论文中的历史 Warp/其他 PIC 结果也不自动成为当前 WarpX runtime 结果。第 6 章因此获得的是公式和机制层闭环，不是函数级等价或完整 NCI benchmark 证明。
+
 ## 6.7 PSATD-JRhom：多次源项沉积与一阶/二阶谱更新
 
 `notes/code-reading/fieldsolver/07-psatd-jrhom.md` 把 PSATD-JRhom 从主循环到谱算法做了第一轮完整精读。物理上，JRhom 处理的是一个 PIC 时间步内 `J` 和 `rho` 不一定满足“电流常量、电荷线性”的假设。WarpX 使用 `psatd.JRhom` 字符串指定时间依赖：
@@ -1900,7 +1915,7 @@ $$
 
 本轮又把这条 helper 收成独立的正/负 contract：`scripts/analyze_rz_jrhom_first_stage_contract.py` 直接读取真实 2-rank repeated/MPI 末态 plotfile，要求 baseline 被 energy ceiling 接受、`ll2-no-timeavg-cleaning` reference 被同一 ceiling 拒绝。实际 baseline energy ratio 为 `0.9770894022295227`，reference ratio 为 `1.0`，由 `1.001` safety factor 导出的阈值为 `0.9780664916317521`；六个字段 `Er/Ez/Bt/jr/jz/rho` 在两组 plotfile 中均 finite。报告位于 `runs/fieldsolver-validation/rz-reference-ledgers/rz-jrhom-first-stage-contract.{json,md}`。这仍是 project-level repeated/MPI validation，不等于 WarpX upstream CMake 已经接入 analysis；spike 只记录、不作为第一阶段主 gate。
 
-### 6.8.6 v0.73 文献闭环：Andriyash 2016 Fourier-Bessel PSATD
+### 6.8.6 v0.74 文献闭环：Andriyash 2016 Fourier-Bessel PSATD
 
 本版新增 `references/03_pic_foundations/2016_AndriyashPoP2016_Laser-plasma_interactions_with_a_Fourier-Bessel_particle-in-cell_method/`：本地 9 页 PDF 已经完成 MinerU、26 张图片提取、按论文顺序中文精读和 `scripts/audit_andriyash_2016_asset_contract.py` 资产合同。它补的是 RZ/准柱坐标谱求解器的 primary-source 背景，而不是再增加一条泛泛的 PSATD 书目。
 

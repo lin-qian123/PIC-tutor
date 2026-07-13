@@ -4866,3 +4866,8 @@
 - [x] 2026-05-31：继续清理 `docs/example-regression-map.md` 的 `test_rz_electrostatic_sphere_eb_mr.json`：已把这条 residual weak baseline 从旧式 `checksum 基线` 口径补成 source-grounded 强描述，明确写清它当前不是 checksum-only，而是 `electrostatic_sphere_eb` family 里 RZ+MR `patchwise phi/Er` 主链，再叠加同目录 `diag1/` additive checksum；producer 侧固定 materialize multi-level `Er/phi/eb_covered` surface，而主 consumer 则对每个 level 的真实 MR patch 上解析 `phi/Er` 逐层施加 `4e-3` 最大相对误差 gate。
 - [x] 2026-05-31：继续清理 `docs/example-regression-map.md` 的 `test_rz_electrostatic_sphere.json`：已把这条 residual weak baseline 从旧式 `checksum 基线` 口径补成 source-grounded 强描述，明确写清它当前不是 checksum-only，而是 `electrostatic_sphere` family 里 RZ self-field-expansion 主链，再叠加同一张 `diag1000030` 末态面的 additive checksum；producer 侧固定 materialize 末态 `Er/Et/Ez/rho` 和带 `phi` 的 openPMD 粒子面，而主 consumer 则对末态 `Er/Ez` 轴向解析场 `L2` 与条件触发的粒子能量账本同时施加 gate。
 - [x] 2026-05-31：继续清理 `docs/example-regression-map.md` 的 `test_rz_electrostatic_sphere_uniform_weighting.json`：已把这条 residual weak baseline 从旧式 `checksum 基线` 口径补成 source-grounded 强描述，明确写清它当前不是 checksum-only，而是 `electrostatic_sphere` family 里 RZ self-field-expansion 主链上的 `uniform_weighting` sibling；producer 侧把径向装填切到 `6 2 2 + radial_numpercell_power = 1.`，而主 consumer 则继续做末态 `Er/Ez` 轴向解析场 `L2`，并把 phi-gated 能量账本容差放宽到 `1.2%`。
+## 2026-07-13
+
+- [x] 完成 Vay--Godfrey 2014 review 全文资产：9 页 PDF、MinerU Markdown、43 张图、中文精读、access audit、reading log 和 asset contract。
+- [x] 将该 review 接入第 4、6、9 章，并明确论文公式、WarpX 源码和 runtime contract 的证据边界。
+- [ ] 继续补齐第 5 章 Esirkepov/Villasenor 的发表版逐式核对，以及第 7 章 LeeCPC2015 的 publisher PDF。

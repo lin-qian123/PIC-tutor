@@ -366,7 +366,7 @@
 
 | PDF | 初步主题 | 计划章节 | MinerU 状态 |
 |---|---|---|---|
-| `references/01_reviews_surveys/2014_VayFRACAD2014_Modeling_of_relativistic_plasmas_with_the_Particle-In-Cell_method.pdf` | Vay pusher / boosted frame / AMR / PSATD | 24, 42, 55, 72 | 待 MinerU |
+| `references/01_reviews_surveys/2014_VayFRACAD2014_Modeling_of_relativistic_plasmas_with_the_Particle-In-Cell_method/` | Vay/Boris pusher、PSATD、current deposition、NCI review | 第 4、6、9 章 | 已 materialize：9 页 PDF、MinerU、43 图、中文精读、asset contract |
 | `references/01_reviews_surveys/2016_Habib2016_ASCRHEP_Exascale_Requirements_Review_Report.pdf` | HPC / AMReX / performance | 71-79, 121-123 | 待 MinerU |
 | `references/01_reviews_surveys/no-year_FullyKineticPICFusionReview2024_Recent_development_of_fully_kinetic_particle-in-cell_method_and_its_application_to_fusion_plasma_instability_study.pdf` | 待分类 | 待定 | 待 MinerU |
 | `references/01_reviews_surveys/no-year_PICMethodsAstrophysics2021_PIC_methods_in_astrophysics_simulations_of_relativistic_jets_and_kinetic_physics_in_astrophysical_systems.pdf` | 待分类 | 待定 | 待 MinerU |

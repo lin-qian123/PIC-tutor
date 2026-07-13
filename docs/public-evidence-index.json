@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 191,
+  "record_count": 192,
   "status_counts": {
-    "PASS": 139,
+    "PASS": 140,
     "FAIL": 30,
     "UNKNOWN": 22
   },
@@ -11,7 +11,7 @@
     "PASS": 116,
     "FAIL": 27,
     "UNKNOWN": 13,
-    "BOUNDARY": 35
+    "BOUNDARY": 36
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -2530,6 +2530,17 @@
       "contract": "Vay 2008 Chapter 4 pusher paper asset contract",
       "classification": "FULLTEXT_SOURCE_GROUNDED_FRAME_CONSISTENCY_APPENDIX_BOUNDARY",
       "scope": "local full-text PDF and MinerU package support Vay frame-consistency, explicit-gamma and gyroradius explanations; dedicated Appendix-B runtime reproduction remains open",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "vay-2014-review-asset",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "Vay-Godfrey 2014 relativistic PIC review asset",
+      "classification": "FULL_TEXT_MINERU_CHINESE_NOTE_VERIFIED_WARP_ERA_REVIEW_WARPX_RUNTIME_BOUNDARY",
+      "scope": "review-level equations, algorithm taxonomy and NCI source; not a current WarpX function-level or runtime equivalence proof",
       "metrics": {
         "passed": true
       }

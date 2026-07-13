@@ -43,12 +43,12 @@
     {
       "path": "README.md",
       "bytes": 1522239,
-      "sha256": "a00011ea191fed2801d12a8027877a756cf94d8355d30150bf6cad17c7bf90d1"
+      "sha256": "f165591d3150c7995d4eef302af2ef3f6b9cda137fd90fc3e70612c6a4625bff"
     },
     {
       "path": "TODO.md",
       "bytes": 1367139,
-      "sha256": "bd1ff812e0370de8dafa971867f976752617af7e107aa5d22b776b50dff0a118"
+      "sha256": "89ef3c74fbd89f96712a6e466fbd34fbed5948fe759244edbf63a9107eb490d9"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "e4379bf4d4d0e9557b83bce4cada0b49780bfc08f933adf63df29696d980e495"
+      "sha256": "a2ab2f24da1030fd9b702425fbb2dc7422c9b35c6dbeeb6fe08d6051425571d0"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",

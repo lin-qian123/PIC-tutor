@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.74`：新增 Vay--Godfrey 2014 relativistic PIC review 全文资产，并补入第 4 章 pusher 谱系、第 6 章 PSATD/NCI 机制和第 9 章文献路线；当前正文仍区分论文证据与 WarpX runtime/源码等价边界。
+当前成书版本为 `v0.75`：补入第 5 章 Direct/Esirkepov/Villasenor/Vay 沉积算法选择矩阵，并延续论文证据、WarpX 源码和 runtime contract 的分层边界。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 
@@ -74,11 +74,11 @@
 
 当前 v0.68 又新增 RZ secondary-emission resolution-aware public contract：默认 `64x64` 仍为 raw `FAIL`/`BOUNDARY`，`128x128` 与 `256x256` refined controls 通过官方 `2%` EB impact-point gate；三档误差 `3.6038%/0.9977%/0.6646%` 单调下降，支持分辨率敏感性诊断，但不把默认 upstream regression 改写成通过，也不宣称正式 convergence order。合同见 `runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}`。
 
-当前成书版本为 `v0.74`，页数以本轮构建验收为准；本版新增 Vay--Godfrey 2014 review 全文资产，历史 `v0.73` 由 `manuscript/VERSION-v0.73.md` 保留。
+当前成书版本为 `v0.75`，页数以本轮构建验收为准；本版新增第 5 章沉积选择矩阵，历史 `v0.74` 由 `manuscript/VERSION-v0.74.md` 保留。
 
-v0.74 延续 `docs/public-evidence-index.{json,md}`：从本地 contract 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据；同时公开 `docs/literature-pending-triage.md` 的 acquisition/read queue。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
+v0.75 延续 `docs/public-evidence-index.{json,md}`：从本地 contract 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据；同时公开 `docs/literature-pending-triage.md` 的 acquisition/read queue。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
-当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.74。
+当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.75。
 
 2026-07-13：新增 Boris 1970 论文专属 metadata/access contract，记录 DTIC `ADA023511` 的书目身份和 PDF 限流边界；第 4 章采用 Birdsall 1985 二手推导与 WarpX `UpdateMomentumBoris.H` 源码解释，未把原始 proceedings 全文缺口隐藏为已完成精读。
 

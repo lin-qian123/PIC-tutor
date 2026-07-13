@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `192`
-- PASS: `140`
+- records: `193`
+- PASS: `141`
 - FAIL: `30`
 - UNKNOWN: `22`
 - boundary-classified: `36`
@@ -21,6 +21,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `boris-source-crosswalk` | `PASS` | `BOUNDARY` | WarpX Boris kernel/source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING` | read-only current WarpX source mapping; not a line-by-line reconstruction of the 1970 proceedings paper | `passed=True` |
 | `boundary-amr-chapter-source-crosswalk` | `UNKNOWN` | `BOUNDARY` | Chapter 7 boundary AMR source crosswalk | `CHAPTER_7_BOUNDARY_AMR_SOURCE_ANCHORS_VERIFIED` | Representative chapter/source anchors; transition-zone runtime route ledger remains explicitly unproven. | `check_count=13`, `pass_count=13` |
 | `charge-deposition-bridge-source` | `PASS` | `PASS` | ABLASTR charge-deposition bridge source contract | `` | source mapping only; not a numerical charge-deposition regression | `anchor_count=13`, `missing_count=0`, `passed=True` |
+| `deposition-algorithm-selection` | `PASS` | `PASS` | chapter-5 deposition algorithm selection matrix | `SOURCE_AND_RUNTIME_SELECTION_MATRIX_WITH_EXPLICIT_BOUNDARIES` | read-only chapter/source/runtime linkage; not equal physics coverage across algorithms | `passed=True` |
 | `deposition-chapter-source-crosswalk` | `PASS` | `PASS` | Chapter 5 deposition source crosswalk | `CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED` | Checks representative Chapter 5 claims against current WarpX source markers; not a semantic proof or runtime regression. | `passed=True` |
 | `deposition-geometry-order-gap-register` | `PASS` | `PASS` | Chapter 5 deposition geometry/order gap register | `KNOWN_GAPS_EXPLICITLY_SCOPED_NO_PASS_INFERENCE` | negative-space register; named gaps and next evidence actions only | `passed=True` |
 | `deposition-geometry-order-source` | `PASS` | `PASS` | deposition geometry/order source dispatch | `` | read-only source audit; does not claim runtime coverage for every geometry/order combination | `anchor_count=69`, `passed=True`, `passed_anchor_count=69` |

@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.74 合订 PDF 的页数以实际构建结果为准；本版新增 Vay--Godfrey 2014 review 全文资产，补入第 4 章 relativistic pusher 谱系、第 6 章 PSATD/NCI 机制和第 9 章文献路线。
+当前 v0.75 合订 PDF 的页数以实际构建结果为准；本版补入第 5 章 Direct/Esirkepov/Villasenor/Vay 沉积算法选择矩阵和显式证据边界。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 
@@ -10,7 +10,7 @@
 
 2026-07-13：第 5 章新增 Vay Cartesian shape-family runtime contract：2D/3D 的 shape=1/2/3/4 共 8 个单进程 producer 均通过官方 `divE-rho/epsilon_0` analysis；该结果不替代 2-rank 官方回归或正式收敛阶证明。
 
-当前 v0.74 合订 PDF 页数以实际构建结果为准；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v74_build.py` 验收。第 1-9 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
+当前 v0.75 合订 PDF 页数以实际构建结果为准；页数、图表资源、关键标记、public path hygiene 和构建警告均由 `scripts/verify_v75_build.py` 验收。第 1-9 章均已补入至少一个可执行的练习、源码定位题或复现实验任务。
 
 2026-07-13：第 4 章新增 Muraviev 2021 重采样论文资产和 paper-to-WarpX 有界映射；50 页 PDF、38 个图像资源及 `10/10` asset contract 通过，论文 PICADOR/hi-chi QED cascade 案例不当作 WarpX runtime 结果。
 

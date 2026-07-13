@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 192,
+  "record_count": 193,
   "status_counts": {
-    "PASS": 140,
+    "PASS": 141,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 116,
+    "PASS": 117,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 36
@@ -128,6 +128,17 @@
       "metrics": {
         "anchor_count": 13,
         "missing_count": 0,
+        "passed": true
+      }
+    },
+    {
+      "case": "deposition-algorithm-selection",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "chapter-5 deposition algorithm selection matrix",
+      "classification": "SOURCE_AND_RUNTIME_SELECTION_MATRIX_WITH_EXPLICIT_BOUNDARIES",
+      "scope": "read-only chapter/source/runtime linkage; not equal physics coverage across algorithms",
+      "metrics": {
         "passed": true
       }
     },

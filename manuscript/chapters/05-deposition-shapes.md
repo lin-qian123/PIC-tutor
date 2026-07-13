@@ -2584,6 +2584,29 @@ AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在�
 
 维护台账见 `notes/code-reading/particles/72-deposition-geometry-order-gap-register.md`，由 `scripts/audit_deposition_geometry_order_gap_register.py` 验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。
 
+### 5.14.3 v0.75 沉积算法选择矩阵：先看几何和时间层，再看守恒证据
+
+前面各节已经分别解释了四个 current-deposition 家族，但读者在实际输入卡里首先面对的通常不是公式，而是“当前 case 应该选哪条路径”。下面的矩阵把选择顺序固定为：**geometry/grid 约束 -> explicit/implicit 时间层 -> source-side 守恒机制 -> 当前可引用证据**。
+
+| 选择面 | Direct | Esirkepov | Villasenor | Vay |
+|---|---|---|---|---|
+| 离散目标 | 速度加权源项；不自动闭合离散连续性 | old/new shape difference + prefix decomposition | crossing-defined segment-local flux | 专用两阶段 `D`-field 组织 |
+| 轨迹输入 | 当前时间层速度 | old/new endpoint 与 shifted shape | endpoint reconstruction、cell crossing、segment fraction | explicit push 与专用 `D` 字段 |
+| explicit/implicit | 两者均有，但守恒属性不同 | explicit/implicit 两条前端；论文主干对应 explicit | explicit/implicit 共享 segment backend，端点恢复不同 | 当前 checkout 为 explicit-only |
+| 典型源码入口 | `doDepositionShapeNKernel` | `doEsirkepovDepositionShapeN` / `doChargeConservingDepositionShapeNImplicit` | `doVillasenorDepositionShapeNExplicit` / `Implicit` | `doVayDepositionShapeN` |
+| 主要限制 | near-boundary 与 charge-conservation 不能由 direct 推出 | collocated/shared-memory/部分几何分支有 guard；publisher PDF 仍缺 | crossing 与 geometry/order 组合需逐项验证 | 当前 `Vay + AMR` 在初始化阶段显式拒绝 |
+| 当前证据 | 适合作为非守恒对照 | preprint + source + Langmuir/geometry contracts | full-text + formula audit + source contract | source/runtime family contracts |
+
+因此输入卡的排查顺序不应是“看到 `Villasenor` 就认为一定更精确”，而应是：
+
+1. 先确认 geometry、grid staggering、AMR 和 shared-memory 路径是否允许该算法；
+2. 再确认 explicit/implicit 前端提供的轨迹端点和时间层是否满足 kernel 合同；
+3. 最后才用 `divE-rho/epsilon_0`、charge observable 或专门 energy gate 判断当前 case 的结果。
+
+这一矩阵还给出三条负面结论。第一，`psatd.current_correction` 可以修正源项的离散连续性/Gauss-law 关系，但不把 Direct 自动变成 Esirkepov 或 Villasenor。第二，Esirkepov 与 Villasenor 都可能出现 `one_third/one_sixth` 或 old/new 平均，但前者是 whole-orbit density decomposition，后者是 segment-local transverse flux；相同系数不代表相同算法。第三，任何单一 Langmuir PASS 都不能外推到 RZ axis、AMR、boundary crop、shared-memory 或全部 shape/order family。
+
+本节由 `scripts/audit_deposition_algorithm_selection_contract.py` 对当前 WarpX 分派源码、geometry/AMR guard、章节矩阵和代表性 runtime contract 做只读验收。它的分类是 `SOURCE_AND_RUNTIME_SELECTION_MATRIX_WITH_EXPLICIT_BOUNDARIES`：证明读者侧选择矩阵与当前 checkout 及已有证据目录一致，不宣称四种算法拥有同等的 physics coverage。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

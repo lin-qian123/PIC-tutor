@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 162,
+  "record_count": 163,
   "status_counts": {
-    "PASS": 117,
+    "PASS": 118,
     "FAIL": 30,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 100,
+    "PASS": 101,
     "FAIL": 27,
     "UNKNOWN": 7,
     "BOUNDARY": 28
@@ -1519,6 +1519,20 @@
         "parser_anchor_count": 435,
         "row_count": 445,
         "unclassified_count": 0
+      }
+    },
+    {
+      "case": "parameter-map-structured-review-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "parameter-map structured dynamic/owner review",
+      "classification": "STRUCTURED_PARAMETER_MAP_DYNAMIC_AND_EXTERNAL_OWNER_SURFACE_VERIFIED_RUNTIME_SEMANTICS_REMAINS",
+      "scope": "10 non-literal parameter rows; source construction/owner anchors only, not full C++ AST or runtime value semantics",
+      "metrics": {
+        "case_count": 10,
+        "contract_pass": true,
+        "dynamic_key_constructor_count": 8,
+        "external_owner_count": 2
       }
     },
     {

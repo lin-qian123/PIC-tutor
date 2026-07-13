@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `162`
-- PASS: `117`
+- records: `163`
+- PASS: `118`
 - FAIL: `30`
 - UNKNOWN: `15`
 - boundary-classified: `28`
@@ -113,6 +113,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `leecpc2015-accepted-manuscript-contract` | `PASS` | `BOUNDARY` | LeeCPC2015 accepted-manuscript source-grounded literature contract | `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING` | seven-page accepted/submitted manuscript plus indexed publisher abstract support first-round PML formula and source mapping; publisher-formatted CPC comparison remains open | `passed=True` |
 | `leecpc2015-source-crosswalk` | `PASS` | `BOUNDARY` | LeeCPC2015 paper/source/regression crosswalk | `ACCEPTED_MANUSCRIPT_SOURCE_CROSSWALK_PUBLISHER_PDF_STILL_MISSING` | paper anchors, WarpX implementation surfaces, and official regression wiring; no publisher-PDF or coefficient-equivalence claim | `passed=True` |
 | `parameter-map-parser-anchor-contract` | `PASS` | `PASS` | WarpX parameter-map parser-anchor review surface | `PARSER_LITERAL_ANCHOR_SURFACE_AUDITED_MANUAL_VALUE_SEMANTICS_REMAINS` | cited-source text, parser-like API adjacency and explicit review queue; not C++ AST or runtime value semantics | `contract_pass=True`, `dynamic_key_constructor_count=8`, `external_owner_count=2`, `manual_review_count=10`, `parser_anchor_count=435`, `row_count=445`, `unclassified_count=0` |
+| `parameter-map-structured-review-contract` | `PASS` | `PASS` | parameter-map structured dynamic/owner review | `STRUCTURED_PARAMETER_MAP_DYNAMIC_AND_EXTERNAL_OWNER_SURFACE_VERIFIED_RUNTIME_SEMANTICS_REMAINS` | 10 non-literal parameter rows; source construction/owner anchors only, not full C++ AST or runtime value semantics | `case_count=10`, `contract_pass=True`, `dynamic_key_constructor_count=8`, `external_owner_count=2` |
 | `parameter-map-surface-contract` | `PASS` | `PASS` | WarpX parameter-map structural surface | `STRUCTURAL_SOURCE_TOKEN_SURFACE_PASS_MANUAL_PARSER_REVIEW_REMAINS` | row shape, current chapter labels, source-path existence and parameter-token coverage; not semantic parser-function verification | `data_row_count=445`, `declared_data_row_count=445`, `header_count_matches=True`, `passed=True` |
 | `particle-histogram2d-count-trend` | `PASS` | `BOUNDARY` | ParticleHistogram2D particle-count trend with expected low-count negative control | `PARTICLE_HISTOGRAM2D_COUNT_TREND_PASS_EXPECTED_LOW_COUNT_NEGATIVE_CONTROL_FORMAL_CONVERGENCE_BOUNDARY` | four matched-time single-process PPC runs; local weighted-moment stability only, not a formal convergence-order proof or upstream regression | `passed=True` |
 | `particle-mesh-1974-abstract` | `PASS` | `BOUNDARY` | 1974 particle-mesh bounded abstract-level literature contracts | `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING` | abstract-level evidence only; no publisher-PDF or line-by-line claim | `passed=True` |

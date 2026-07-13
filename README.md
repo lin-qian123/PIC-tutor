@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.108`：在 v0.107 跨分辨率复核基础上，新增 `128x256`、`ions.density=0.25*n0/0.5*n0` 的 shape family。species rho 比值对密度稳定，但 total-rho 在 `0.5*n0` 的 shape=2/3/4 会抵消，在 `0.25*n0` 恢复单调；因此将边界收窄为 density-sensitive species cancellation，不宣称 root cause、charge closure 或正式收敛阶已完成。
+当前成书版本为 `v0.109`：在 v0.108 两密度复核基础上，新增 `128x256`、`ions.density=0.25*n0/0.5*n0/0.75*n0` 的三密度 shape family。species rho 比值对三种密度稳定，`0.25*n0` 与 `0.75*n0` 的 total-rho 序列一致，而 `0.5*n0` 的 shape=2/3/4 出现 sampled-axis cancellation；分类收窄为特定物种配比边界，不宣称 root cause、charge closure 或正式收敛阶已完成。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

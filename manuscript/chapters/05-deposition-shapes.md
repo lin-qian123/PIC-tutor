@@ -2836,6 +2836,14 @@ v0.107 的 `128x256`、`ions.density = 0.5*n0` family 显示 shape=2/3/4 的 tot
 
 结果把边界进一步收窄：species rho 的 axis 比值在两种离子密度上完全一致，均为 `0.850000000/0.843478261/0.836500221/0.831672744`；`0.25*n0` 时 total-rho 也恢复同一严格单调关系，而 `0.5*n0` 时 shape=2/3/4 仍为 `1/1/1`。两组的 particle state、off-axis rho、初始 `Er/Ez/divE` 和 `delta(rho)` species decomposition 均通过合同。因此，v0.107 的现象应表述为 **total-rho 合成 observable 对 species cancellation 与离子密度敏感**，而不是简单的跨分辨率失效。当前分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_TOTAL_RHO_CANCELLATION_DENSITY_SENSITIVE_BOUNDARY_OPEN`；该结果仍不识别 kernel root cause、不关闭 charge closure 或正式收敛阶。报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-density-family-v0.108/contract.{json,md}`，说明见 `notes/code-reading/particles/89-rz-axis-correction-nonneutral-density-family.md`。
 
+### 5.14.25 v0.109 non-neutral shape behavior across three density ratios
+
+为区分“密度敏感”与“特定物种配比下的 sampled-axis 抵消”，本轮在同一 `128x256`、2-rank、shape=1/2/3/4、correction-on/off sibling family 中加入 `ions.density = 0.75*n0`。因此当前对照包含 `0.25*n0`、`0.5*n0` 和 `0.75*n0` 三个密度，而电子分布、网格、粒子 shape 和 axis toggle 的成对关系保持不变。
+
+三种密度的 species `rho_ions` axis on/off 比值完全一致，并随 shape 严格下降：`0.850000000/0.843478261/0.836500221/0.831672744`。total-rho 的结果则分成两类：`0.25*n0` 与 `0.75*n0` 都复现同一单调序列；`0.5*n0` 的 shape=1 仍为 `0.850000000`，但 shape=2/3/4 为 `1/1/1`。这说明抵消不是任意 density change 都会触发的普遍失效，而是 sampled axis cells 上特定 species ratio 与 shape 组合造成的合成 observable cancellation。
+
+三密度的 correction-on/off sibling 均通过粒子 ID 状态、off-axis rho、初始 `Er/Ez/divE`、MPI decomposition 和 `delta(rho)` species-sum 检查；源码仍显示 charge kernel 不读取 axis toggle，axis correction 位于后续 axis wrap/scaling consumer。当前分类收窄为 `RZ_NONNEUTRAL_AXIS_CORRECTION_TOTAL_RHO_SAMPLED_AXIS_CANCELLATION_SPECIAL_RATIO_BOUNDARY_OPEN`。该结果不识别 kernel root cause、不关闭 charge closure 或正式收敛阶。报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-density-triple-v0.109/contract.{json,md}`，说明见 `notes/code-reading/particles/90-rz-axis-correction-nonneutral-density-triple.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

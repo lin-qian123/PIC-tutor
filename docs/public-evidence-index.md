@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `172`
-- PASS: `127`
+- records: `173`
+- PASS: `128`
 - FAIL: `30`
 - UNKNOWN: `15`
 - boundary-classified: `32`
@@ -15,6 +15,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `2d_flux_injection_from_eb_mpi2` | `PASS` | `PASS` | test_2d_flux_injection_from_eb | `` |  | `contract_pass=True`, `eb_outside_pass=True`, `expected_weight=6.283185307179586e-08`, `min_radius_ratio=0.9986533355394428`, `particle_count=50235`, `total_weight=6.279375000000002e-08`, `total_weight_pass=True`, `total_weight_relative_error=0.0006064292223293722` |
 | `3d_flux_injection_from_eb_mpi2` | `PASS` | `PASS` | test_3d_flux_injection_from_eb | `` |  | `contract_pass=True`, `eb_outside_pass=True`, `expected_weight=2.5132741228718345e-07`, `min_radius_ratio=0.9963803673196601`, `particle_count=801308`, `total_weight=2.504087500000001e-07`, `total_weight_pass=True`, `total_weight_relative_error=0.003655241100933395` |
 | `abe-1975-abstract` | `PASS` | `BOUNDARY` | Abe et al. 1975 bounded abstract-level literature contract | `ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING` | abstract-level evidence only; no publisher-PDF or line-by-line claim | `passed=True` |
+| `birdsall-3a-warpx-crosswalk` | `PASS` | `PASS` | Chapter 3A Birdsall ES1 to WarpX source crosswalk | `CHAPTER_3A_HISTORICAL_MODERN_MAPPING_SOURCE_ANCHORS_VERIFIED` | Verifies representative historical-stage, modern lifecycle, and validation-layer anchors; not a function-by-function equivalence proof or a new runtime physics regression. | `passed=True` |
 | `boris-1970-metadata` | `PASS` | `BOUNDARY` | Boris 1970 metadata and access-boundary contract | `METADATA_BACKED_HISTORICAL_SOURCE_FULL_TEXT_MISSING_SECONDARY_DERIVATION_AVAILABLE` | bibliographic identity and access boundary only; no original proceedings PDF or line-by-line claim | `passed=True` |
 | `boris-source-crosswalk` | `PASS` | `BOUNDARY` | WarpX Boris kernel/source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING` | read-only current WarpX source mapping; not a line-by-line reconstruction of the 1970 proceedings paper | `passed=True` |
 | `charge-deposition-bridge-source` | `PASS` | `PASS` | ABLASTR charge-deposition bridge source contract | `` | source mapping only; not a numerical charge-deposition regression | `anchor_count=13`, `missing_count=0`, `passed=True` |

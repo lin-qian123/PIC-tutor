@@ -1785,6 +1785,8 @@ inputs
 
 这个状态才是 PIC 时间推进的初始条件。后续 `Evolve()`、`OneStep()`、`PushParticlesandDeposit()`、field solver 和 diagnostics 都在这个已经离散化、分布式、带权重和边界条件的状态上工作。
 
+这条初始化到推进的交界在当前 checkout 中由 `../warpx/Source/Evolve/WarpXEvolve.cpp` 承接：`Evolve()` 负责外层时间步，`OneStep()` 负责 solver/AMR 分派，`PushParticlesandDeposit()` 才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史 `3A ES1` 子程序的同名替代物。
+
 后续扩写方向：
 
 - 把 `InitLevelData()` 中每一类 field allocation 展开到 root/fieldsolver 章节；

@@ -828,6 +828,12 @@ boosted-frame / NCI</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版又完成 Birdsall <code>3A ES1</code> 章节回填的 source
+crosswalk：11 组代表性锚点核对历史阶段链、WarpX fresh/restart
+初始化、粒子生命周期、<code>Evolve()</code> 分派和
+Langmuir/初始化验证层。该合同不宣称历史程序与现代 WarpX
+逐函数等价。报告见
+<code>runs/stage-c-validation/birdsall-3a-warpx-crosswalk/contract.{json,md}</code>。</p>
 <p>本版又为第 5 章新增 deposition 正文-源码 crosswalk：13
 组代表性锚点同步 charge bridge、旧/新时间层、implicit
 Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向
@@ -1036,7 +1042,7 @@ fixed-grid、Galilean 和 boosted-frame 三条机制合并。</p>
 发表元数据、Section 1–5、Eq.(23)、二阶 spline 线索与 publisher PDF
 缺失状态共 8 项检查全部通过。该 contract
 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。</p>
-<p>当前合订 PDF 为 321 页；本 v0.68 版本在 v0.67
+<p>当前合订 PDF 为 322 页；本 v0.68 版本在 v0.67
 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015
 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整
 Gauss-law 闭环。</p>
@@ -7295,6 +7301,12 @@ WarpX 初始化链的分层验证，而不是对 <code>3A ES1</code>
 <code>Evolve()</code>、<code>OneStep()</code>、<code>PushParticlesandDeposit()</code>、field
 solver 和 diagnostics
 都在这个已经离散化、分布式、带权重和边界条件的状态上工作。</p>
+<p>这条初始化到推进的交界在当前 checkout 中由
+<code>../warpx/Source/Evolve/WarpXEvolve.cpp</code>
+承接：<code>Evolve()</code> 负责外层时间步，<code>OneStep()</code> 负责
+solver/AMR 分派，<code>PushParticlesandDeposit()</code>
+才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史
+<code>3A ES1</code> 子程序的同名替代物。</p>
 <p>后续扩写方向：</p>
 <ul>
 <li>把 <code>InitLevelData()</code> 中每一类 field allocation 展开到

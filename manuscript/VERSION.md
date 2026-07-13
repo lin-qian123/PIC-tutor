@@ -1,5 +1,7 @@
 # PIC-tutor v0.68
 
+本版又完成 Birdsall `3A ES1` 章节回填的 source crosswalk：11 组代表性锚点核对历史阶段链、WarpX fresh/restart 初始化、粒子生命周期、`Evolve()` 分派和 Langmuir/初始化验证层。该合同不宣称历史程序与现代 WarpX 逐函数等价。报告见 `runs/stage-c-validation/birdsall-3a-warpx-crosswalk/contract.{json,md}`。
+
 本版又为第 5 章新增 deposition 正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface；该 contract 只防止正文随源码漂移，不升级为 C++ 语义证明、完整 geometry/order runtime 覆盖或论文逐行复现。报告见 `runs/stage-c-validation/deposition-chapter-source-crosswalk/contract.{json,md}`。
 
 本版又复核 RZ theta-implicit Villasenor 的构建/运行边界：官方 `petsc_ksp` 输入仍受当前 binary 缺少 `AMREX_USE_PETSC` 阻断；同一 binary 的 MPI=2 `amrex_gmres` control 能完成 DOF 定义后，在 RZ curl-curl boundary-mask 初始化阶段触发 `SIGILL`，尚未进入粒子推进或 current deposition。新增 `scripts/audit_rz_implicit_villasenor_build_boundary.py` 及对应 command-output/contract；该结果保持为 pre-physics boundary，不升级为 Villasenor physics pass/fail。

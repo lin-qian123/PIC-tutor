@@ -1,5 +1,9 @@
 # PIC-tutor
 
+当前 v0.68 又补入 Birdsall `3A ES1` 到 WarpX 的 source crosswalk：11 组锚点同步历史阶段链、fresh/restart 初始化、粒子生命周期、`Evolve()` 分派和 Langmuir/初始化验证层；该合同不宣称历史程序与现代 WarpX 逐函数等价。报告见 `runs/stage-c-validation/birdsall-3a-warpx-crosswalk/contract.{json,md}`。
+
+当前公开证据索引已更新为 173 条合同；README 中较早的历史日志保留当时的条数，不代表当前索引快照。
+
 当前 v0.68 又为第 5 章补入正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface。该合同用于防止源码演进造成正文漂移，不替代物理 runtime 或论文逐行证据。
 
 当前 v0.68 又复核 RZ theta-implicit Villasenor 的可执行边界：官方 `petsc_ksp` 输入仍因当前 binary 缺少 `AMREX_USE_PETSC` 无法启动；MPI=2 的 `amrex_gmres` control 可到达 DOF 定义，但在 RZ curl-curl boundary-mask 初始化阶段触发 `SIGILL`，尚未进入粒子推进或 current deposition。该结果已固化为 `RZ_IMPLICIT_VILLASENOR_PREPHYSICS_SIGILL_BOUNDARY` contract，不作为 Villasenor physics pass/fail。
@@ -32,7 +36,7 @@
 
 当前成书版本为 `v0.68`，对应 322 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 169 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
+v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 173 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
@@ -62,7 +66,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 169 条 `contrac
 
 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将“线性稳定不等于非线性无扰动”、相空间 clump/density hole 诊断和相对漂移自由能边界写入中文讲解笔记，并最小回填第 8 章；该结论不升格为 NCI 或 WarpX runtime physics gate。
 
-2026-07-13：整理 `Birdsall 1985` `3A ES1` 的最小程序骨架与 WarpX `InitData()`/`Evolve()` 阶段边界，补充不可等同说明和 Langmuir/初始化验证入口，作为下一次第 3A 章正文回填依据；当前 v0.68 为 322 页。
+2026-07-13：复核 `Birdsall 1985` `3A ES1` 的最小程序骨架与 WarpX `InitData()`/`Evolve()` 阶段边界，新增 11 组 source crosswalk 锚点并确认第 3A 正文回填已落地；当前 v0.68 为 322 页。
 
 2026-07-13：materialize `Peiravi and Birdsall (1978)` Berkeley technical report，完成 40 页 PDF、MinerU Markdown、52 张图、中文讲解和独立 asset contract；第 5/6/8 章仍只保留摘要/文献边界回链，不把技术报告升格为 publisher journal 证据。
 

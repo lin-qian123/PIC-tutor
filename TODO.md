@@ -44,7 +44,7 @@
 - [x] 2026-07-13：建立 `Abe et al. (1975)` 摘要级论文专属目录、中文讲解、access audit、reading log 和 `scripts/audit_abe_1975_abstract_contract.py`；固定 `sigma(K_g)`、correlation time、finite-grid stochastic fluctuation 的窄证据范围，明确 publisher PDF/MinerU 缺失。
 - [x] 2026-07-13：重核查 `Hockney et al. (1974)` 与 `Eastwood and Hockney (1974)` acquisition：Elsevier API 仅返回 `openaccess=0` 元数据，ScienceDirect `/pdf` 仍返回 HTTP `403` HTML；full-text missing 边界保持不变。
 - [x] 2026-07-13：materialize `Peiravi and Birdsall (1978)` Berkeley technical report，完成 40 页 PDF、MinerU Markdown、52 张图、中文讲解、access audit、reading log 和 `scripts/audit_peiravi_birdsall_1978_asset_contract.py`；明确 institutional full-text 与 journal-version equivalence 的边界。
-- [x] 2026-07-13：整理并完成 `Birdsall 1985` `3A ES1` 的 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 与 WarpX `InitData()`/`Evolve()` 的近似对应、不可等同边界及 Langmuir/初始化验证入口；第 3A 章正文已在 `3A.13` 完成回填，当前 v0.68 版面保持 320 页。
+- [x] 2026-07-13：整理并完成 `Birdsall 1985` `3A ES1` 的 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 与 WarpX `InitData()`/`Evolve()` 的近似对应、不可等同边界及 Langmuir/初始化验证入口；第 3A 章正文已在 `3A.13` 完成回填，当前 v0.68 为 322 页，source crosswalk 另行验收。
 - [x] 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将线性稳定与非线性湍流的边界、相空间 clump/density hole 诊断和相对漂移自由能写入中文讲解笔记，并最小回填第 8 章；明确不把书中转述升格为 NCI 或 WarpX runtime physics gate。
 - [x] 2026-07-12：对公开证据摘要执行 path hygiene，确认不含 `/Volumes/`、`/Users/`、`file://` 或绝对本地链接。
 - [x] 2026-07-12：完成 v0.68 成书构建、manifest 更新；GitHub push 在本轮提交后完成。
@@ -4515,7 +4515,7 @@
   - energy-conserving 路线把 `W_E=(V_c/2)\sum \rho_j\phi_j` 和 `-\partial W_E/\partial x_i` 当成第一性对象
   - reciprocity / Green's reciprocation theorem 是 exact energy conservation 的真正条件
   - 第 5 / 6 章已做最小文献回填
-- [ ] 继续把 `Birdsall 1985` 这几轮读书结论更系统回填到第 3A / 4 / 5 / 6 章。当前已新增：
+- [x] 2026-07-13：完成 `Birdsall 1985` 这几轮读书结论到第 3A / 4 / 5 / 6 章的阶段性系统回填；第 3A 已固定 `3A ES1` 阶段映射、现代初始化/演化边界和分层 validation。新增 `scripts/audit_3a_birdsall_warpx_crosswalk.py` 与 `notes/code-reading/initialization/20-birdsall-3a-warpx-source-crosswalk.md`，11 组代表性锚点通过；该合同不宣称历史程序与现代 WarpX 逐函数等价。
   - 第 4 章已补入 `energy-conserving` / `momentum-conserving` 不是单纯 gather wrapper 差异，而是两套离散守恒合同的理论边界
   - 第 5 / 6 章已补入 sampled density aliasing、`\sum \rho_j\phi_j` 场能量账本、time alias 与 reciprocity 的最小文献回填
 - [x] 评估并精读 `12-3` 到 `12-7` 的 fluctuation / collision / numerical heating kinetic 解释。当前已明确写清：

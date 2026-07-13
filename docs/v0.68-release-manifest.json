@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 752,
-  "total_bytes": 27863249,
+  "entry_count": 754,
+  "total_bytes": 27873731,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1530681,
-      "sha256": "2147397f0739357aec45666fb0c97dee8414a17e8d0e02c7ac41f17e63a3f977"
+      "bytes": 1531150,
+      "sha256": "dee4524045e33fa9797088aa8f849d96b33dfca7e148056c3b2b422814e2fc1a"
     },
     {
       "path": "TODO.md",
-      "bytes": 1378371,
-      "sha256": "fbe4da658cbeff013e3a65f6fc983d05446136950fa5de8da26832859366b7e0"
+      "bytes": 1378718,
+      "sha256": "11ab6f66c62a8faa34756f464856eab8a7349fda6fd83f26e97fefc4ca256e09"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5771572,
-      "sha256": "4ef8bca364ab7e9e53732737caa4931e128154a8883fa73d3f3cc8eb6b8cf12f"
+      "bytes": 5772459,
+      "sha256": "295822590c2ae01f203dd5e6e1b0262f3b79d62fd99dd63ea5d8d3446a9e5016"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1095222,
-      "sha256": "8efb90b3ff87be155d0bff56c44f1347d86c3f20a6451748098669c1885af934"
+      "bytes": 1096009,
+      "sha256": "af97cc05738cbf7ec141d179b712d5055200362ab826ae495ae8b22df3559920"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3400140,
-      "sha256": "dc73e167b9be5c323bd4aa78ccd712be64618cfe6e635c9e17f6f5344f9f8be1"
+      "bytes": 3401025,
+      "sha256": "605d3c1f80d03cd6078466fb24c350d807c7d775516d580b4a0797cc045eea6e"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 93945,
-      "sha256": "cd7e7c03b3bf60495e70801aa5a75acfad99a48a9d6f7b551f180718bfa66a36"
+      "bytes": 94457,
+      "sha256": "4390388ff62012d6db233028e0259b70b181d99bc148ab0f1c5624a991acb95c"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 62136,
-      "sha256": "499eb9ea40cdf336cf3f9da2147603815ef5221a92a4553e9af20ac4ce78310b"
+      "bytes": 62495,
+      "sha256": "1bdd4379c2947fc13a53e3456f4ad6824a5756c330351ddc5b43c6eaf817f094"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "5ea737b96b0c3f60a0725fdd20badf772f9820f1985fb15741424d8f8907a6ba"
+      "sha256": "fa69a1d99d1f9e1e0bcb009e3d4dc67f463fb61ae863b5c1d0b3198b4558e715"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 72612,
-      "sha256": "d093db967e2e9314fdde775b813bf6f7f39ab7aad6eba17de0f48f382de12af6"
+      "bytes": 72981,
+      "sha256": "ccfd29dbc828472ee59516374ad023dd993d984263211befa0fcce5ac6489af3"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -887,8 +887,8 @@
     },
     {
       "path": "manuscript/chapters/03a-warpx-initialization.md",
-      "bytes": 98937,
-      "sha256": "89369d918fbf4d938978bc10ecfa6df9671f104842fc26dd7ba36f596b3281bd"
+      "bytes": 99355,
+      "sha256": "03a009dc455effbc15487d86702225fc602ba0a0c6b0d3d55c0463de0d491f7e"
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
@@ -1619,6 +1619,11 @@
       "path": "notes/code-reading/initialization/19-initialization-validation-map-openbc-relativistic-nodal.md",
       "bytes": 4673,
       "sha256": "faf8071851df1f1bc0457e61e38ed0564e4e7b3ff1df7b70ed1382a43e02c84e"
+    },
+    {
+      "path": "notes/code-reading/initialization/20-birdsall-3a-warpx-source-crosswalk.md",
+      "bytes": 1008,
+      "sha256": "663b2d3a71bf6a815ee0fd1a53861e1f5ef31b3b8dd28ae725f2f2e179d9bd42"
     },
     {
       "path": "notes/code-reading/initialization/README.md",
@@ -2614,6 +2619,11 @@
       "path": "scripts/analyze_vay_appendix_b_runtime_contract.py",
       "bytes": 5250,
       "sha256": "2329caa2ef3839663bc180005c6bee527110dfae75135cd7515bf2ce0b142ee5"
+    },
+    {
+      "path": "scripts/audit_3a_birdsall_warpx_crosswalk.py",
+      "bytes": 4441,
+      "sha256": "5cea0ac28d30378828fdf766f2c817199bec6488aee0e0beb3b3d2edf733210b"
     },
     {
       "path": "scripts/audit_abe_1975_abstract_contract.py",

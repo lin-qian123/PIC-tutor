@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 172,
+  "record_count": 173,
   "status_counts": {
-    "PASS": 127,
+    "PASS": 128,
     "FAIL": 30,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 106,
+    "PASS": 107,
     "FAIL": 27,
     "UNKNOWN": 7,
     "BOUNDARY": 32
@@ -58,6 +58,17 @@
       "contract": "Abe et al. 1975 bounded abstract-level literature contract",
       "classification": "ABSTRACT_BACKED_METADATA_VERIFIED_FULL_TEXT_MISSING",
       "scope": "abstract-level evidence only; no publisher-PDF or line-by-line claim",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "birdsall-3a-warpx-crosswalk",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Chapter 3A Birdsall ES1 to WarpX source crosswalk",
+      "classification": "CHAPTER_3A_HISTORICAL_MODERN_MAPPING_SOURCE_ANCHORS_VERIFIED",
+      "scope": "Verifies representative historical-stage, modern lifecycle, and validation-layer anchors; not a function-by-function equivalence proof or a new runtime physics regression.",
       "metrics": {
         "passed": true
       }

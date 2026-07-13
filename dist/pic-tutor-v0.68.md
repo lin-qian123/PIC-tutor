@@ -2,6 +2,8 @@
 
 # PIC-tutor v0.68
 
+本版又完成 Birdsall `3A ES1` 章节回填的 source crosswalk：11 组代表性锚点核对历史阶段链、WarpX fresh/restart 初始化、粒子生命周期、`Evolve()` 分派和 Langmuir/初始化验证层。该合同不宣称历史程序与现代 WarpX 逐函数等价。报告见 `runs/stage-c-validation/birdsall-3a-warpx-crosswalk/contract.{json,md}`。
+
 本版又为第 5 章新增 deposition 正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface；该 contract 只防止正文随源码漂移，不升级为 C++ 语义证明、完整 geometry/order runtime 覆盖或论文逐行复现。报告见 `runs/stage-c-validation/deposition-chapter-source-crosswalk/contract.{json,md}`。
 
 本版又复核 RZ theta-implicit Villasenor 的构建/运行边界：官方 `petsc_ksp` 输入仍受当前 binary 缺少 `AMREX_USE_PETSC` 阻断；同一 binary 的 MPI=2 `amrex_gmres` control 能完成 DOF 定义后，在 RZ curl-curl boundary-mask 初始化阶段触发 `SIGILL`，尚未进入粒子推进或 current deposition。新增 `scripts/audit_rz_implicit_villasenor_build_boundary.py` 及对应 command-output/contract；该结果保持为 pre-physics boundary，不升级为 Villasenor physics pass/fail。
@@ -72,7 +74,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 321 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 322 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 
@@ -4324,6 +4326,8 @@ inputs
 ```
 
 这个状态才是 PIC 时间推进的初始条件。后续 `Evolve()`、`OneStep()`、`PushParticlesandDeposit()`、field solver 和 diagnostics 都在这个已经离散化、分布式、带权重和边界条件的状态上工作。
+
+这条初始化到推进的交界在当前 checkout 中由 `../warpx/Source/Evolve/WarpXEvolve.cpp` 承接：`Evolve()` 负责外层时间步，`OneStep()` 负责 solver/AMR 分派，`PushParticlesandDeposit()` 才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史 `3A ES1` 子程序的同名替代物。
 
 后续扩写方向：
 

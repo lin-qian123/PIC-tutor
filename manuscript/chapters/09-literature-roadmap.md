@@ -211,7 +211,15 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 这个合同只说明“路线图与项目内资产状态一致”，不证明中文讲解已经逐式审校，不证明预印本与出版社排版版逐页等价，也不把 WarpX runtime 结果升级为论文全部物理结论的验证。后续新增或替换 primary source 时，应先更新合同，再同步本章与 `references/00_index`。
 
-## 9.8 本章结论
+## 9.8 当前成书缺口登记
+
+文献路线图需要和运行/编辑缺口分开管理，否则“论文缺全文”和“代码没有 route ledger”会在 TODO 中互相遮蔽。当前项目把缺口登记在 `docs/current-book-gap-register.md`，每一行绑定证据、分类、下一步动作和关闭条件。当前八项缺口分别覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条 release editorial gate。
+
+本登记表的分类纪律是：`OPEN_EXTERNAL_ACCESS` 不是下载失败的同义词，而是当前没有合法可读取的目标全文；`PRE_PHYSICS_BOUNDARY` 表示尚未进入物理推进，不能写成 physics PASS/FAIL；`RUNTIME_LEDGER_UNPROVEN` 表示源码与 schema 已有，但真实 producer 尚未输出账本；`CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` 表示可以计算描述性 order，但不能宣称正式阶数。
+
+该表由 `scripts/audit_current_gap_register.py` 检查。合同通过仅表示当前正文和证据目录对同一组缺口使用一致口径，不表示本书已经达到终稿。
+
+## 9.9 本章结论
 
 当前项目的文献工作已经跨过了“只有书目，没有正文资产”的阶段，但还远未到“全书 primary sources fully closed”的阶段。可以更准确地概括成：
 
@@ -229,13 +237,13 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 做到这三点，第 9 章才不是一个附录式书单，而是真正控制全书证据质量的总调度章。
 
-## 9.9 练习与复核
+## 9.10 练习与复核
 
-### 9.9.1 证据层分类练习
+### 9.10.1 证据层分类练习
 
 从以下五项中各选一项，分别判断它属于 A、B、C 或 D 层，并写出判断所依据的本地路径：`Birdsall 1985`、`Yee 1966`、`Esirkepov 2001` 作者预印本、Tajima 1982 FNAL 相关会议稿、`LeeCPC2015` accepted manuscript。答案必须同时写出“可以支持的句子”和“不能支持的句子”。例如，不能因为某项有 DOI 或摘要，就把它写成“已完成全文精读”。
 
-### 9.9.2 合同复核练习
+### 9.10.2 合同复核练习
 
 在项目根目录运行：
 
@@ -248,6 +256,6 @@ python scripts/audit_literature_roadmap_asset_contract.py \
 
 然后将合同中的 `12/12 PASS` 与 `docs/public-evidence-index.md` 中对应记录对照。解释为什么合同通过只能证明“路线图与本地资产一致”，不能证明论文出版社版本已取得，也不能证明 WarpX runtime 已复现论文全部结论。
 
-### 9.9.3 acquisition 排序练习
+### 9.10.3 acquisition 排序练习
 
 从 `Hockney-Eastwood`、`Yee 1966`、`Esirkepov 2001` CPC 定稿、`LeeCPC2015` publisher PDF 和 Boris 1970 原始 proceedings 中选出下一项 acquisition 目标。用三列短表说明：它影响哪一章、当前已有哪一级证据、取得后会关闭哪一个具体边界。若目标仍受访问或许可限制，必须把“继续获取”和“先用现有证据回填正文”分成两个独立动作。

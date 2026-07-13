@@ -2,6 +2,9 @@
 
 ## 2026-07-14
 
+- [x] 新增 v0.80 `docs/current-book-gap-register.md`：将 publisher access、transition-zone ledger、RZ implicit Villasenor、Vay+AMR、RZ axis charge、formal convergence 和 release editorial gate 八项开放问题绑定到证据、分类、动作和关闭条件。
+- [x] 新增 `scripts/audit_current_gap_register.py` 与第 9 章 `9.8` 登记表合同；分类为 `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA`，只确认状态口径一致，不关闭任何开放项。
+
 - [x] 新增第 5 章 v0.79 收敛研究就绪合同：读取既有 RZ Esirkepov shape=1 三档分辨率，计算 field/charge/axis/off-axis observable 的描述性 pairwise order；保留 axis charge、非单调误差和正式收敛阶未证明边界。
 - [x] 新增 `scripts/audit_deposition_convergence_readiness_contract.py`，分类为 `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN`；该合同把后续正式 study 所需的 refinement ratio、observable、控制变量和拟合边界固定下来。
 

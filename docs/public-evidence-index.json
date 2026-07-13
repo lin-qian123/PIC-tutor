@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 197,
+  "record_count": 198,
   "status_counts": {
-    "PASS": 145,
+    "PASS": 146,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 119,
+    "PASS": 120,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 38
@@ -128,6 +128,18 @@
       "metrics": {
         "anchor_count": 13,
         "missing_count": 0,
+        "passed": true
+      }
+    },
+    {
+      "case": "current-book-gap-register",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "current book gap register",
+      "classification": "CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA",
+      "scope": "project-level gap inventory; does not close any listed gap",
+      "metrics": {
+        "gap_count": 8,
         "passed": true
       }
     },

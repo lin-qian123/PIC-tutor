@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `197`
-- PASS: `145`
+- records: `198`
+- PASS: `146`
 - FAIL: `30`
 - UNKNOWN: `22`
 - boundary-classified: `38`
@@ -21,6 +21,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `boris-source-crosswalk` | `PASS` | `BOUNDARY` | WarpX Boris kernel/source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING` | read-only current WarpX source mapping; not a line-by-line reconstruction of the 1970 proceedings paper | `passed=True` |
 | `boundary-amr-chapter-source-crosswalk` | `UNKNOWN` | `BOUNDARY` | Chapter 7 boundary AMR source crosswalk | `CHAPTER_7_BOUNDARY_AMR_SOURCE_ANCHORS_VERIFIED` | Representative chapter/source anchors; transition-zone runtime route ledger remains explicitly unproven. | `check_count=13`, `pass_count=13` |
 | `charge-deposition-bridge-source` | `PASS` | `PASS` | ABLASTR charge-deposition bridge source contract | `` | source mapping only; not a numerical charge-deposition regression | `anchor_count=13`, `missing_count=0`, `passed=True` |
+| `current-book-gap-register` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `deposition-algorithm-selection` | `PASS` | `PASS` | chapter-5 deposition algorithm selection matrix | `SOURCE_AND_RUNTIME_SELECTION_MATRIX_WITH_EXPLICIT_BOUNDARIES` | read-only chapter/source/runtime linkage; not equal physics coverage across algorithms | `passed=True` |
 | `deposition-chapter-source-crosswalk` | `PASS` | `PASS` | Chapter 5 deposition source crosswalk | `CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED` | Checks representative Chapter 5 claims against current WarpX source markers; not a semantic proof or runtime regression. | `passed=True` |
 | `deposition-convergence-readiness` | `PASS` | `BOUNDARY` | deposition convergence readiness | `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` | existing RZ Esirkepov shape=1 three-resolution controls; descriptive pairwise order only | `passed=True` |

@@ -4,6 +4,8 @@
 
 本版又补入第 9 章文献路线资产合同：12 组检查绑定 A/B/C/D 证据层、八条核心文献目录、全局 literature map、生成式 inventory 以及 `TajimaDawson1982`、`Esirkepov 2001`、`LeeCPC2015`、`Yee 1966`、`Hockney-Eastwood` 的缺口声明。该合同只确认路线图与仓库资产一致，不替代论文逐式审校或 runtime physics proof。报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}`。
 
+本版又修正第 5 章 `5.11.1/5.11.2/5.11.3` 小节错序，并把小节单调性与重复编号纳入 v0.68 artifact verification。
+
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 
 本版又补入第 7 章边界/PML/AMR 正文-源码 crosswalk：13 组代表性锚点覆盖 field/particle 边界顺序、场边界分派、PML 生命周期、guard-cell/通信、AMR 重建、moving window 和 scraping consumer；transition-zone route ledger 仍保持 `RUNTIME_LEDGER_UNPROVEN`。该合同只防止正文漂移，不替代 runtime route-count proof。报告见 `runs/stage-c-validation/boundary-amr-chapter-source-crosswalk/contract.{json,md}`。
@@ -8934,7 +8936,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 截至 2026-07-11，这条 compare 线又可以把“已核实”和“仍未核实”拆得更干净。arXiv 页面明确记录预印本于 1999-01-26 提交，题名为 `Exact charge conservation scheme for Particle-in-Cell simulations for a big class of form-factors`，并标注为 13 页、无图、10 条参考文献；公开书目信息则确认 CPC 发表版为 `Computer Physics Communications 135(2), 144-153 (2001)`，题名为 `Exact charge conservation scheme for Particle-in-Cell simulation with an arbitrary form-factor`，DOI 为 `10.1016/S0010-4655(00)00228-9`。这已经足以把“发表版身份”和“当前本地全文资产”分开记录，但仍不足以推出发表版正文的逐式编辑差异。
 
-### 5.11.3 论文、源码、代数合同与 runtime 证据的分层
+### 5.11.1 论文、源码、代数合同与 runtime 证据的分层
 
 为了避免把不同强度的证据压成一句“Esirkepov 已验证”，本章把当前可复核材料分成四层：
 
@@ -9209,7 +9211,7 @@ new*new * one_third
 
 这条线当前已经完成四边界、重复分段和三维交叉项的第一轮公式级审计；仍未完成的是论文图示逐图回填、记号统一，以及所有现代 geometry/order 分支的逐项等价性审查。因此本章现在对 Villasenor 最稳妥的证据等级是 **paper-backed + source-grounded + formula-audited**，而不是把尚未完成的出版级图示精修误写成公式缺口。
 
-### 5.11.1 Villasenor-Buneman 公式级审计：四边界、重复分段与三维交叉项
+### 5.11.2 Villasenor-Buneman 公式级审计：四边界、重复分段与三维交叉项
 
 项目内的 Villasenor-Buneman 1992 full-text PDF 与 MinerU Markdown 现在已经完成第一轮公式级核对。论文以局部原点为最近的 cell-boundary 交点，对单位方形粒子的四边界运动写出：
 
@@ -9331,7 +9333,7 @@ $$
 | `test_rz_theta_implicit_dynamic_pinch` | RZ、shape=2、axis/insulator | PETSc 官方路径在 `NewtonSolver::Define()` 拒绝；`amrex_gmres` control 在 `InitializeCurlCurlBCMasks()` `SIGILL` | 未进入物理计算 |
 | `test_1d_theta_implicit_planar_pinch` | 1D、shape=2、planar pinch | Newton 后 `SIGILL`，仅初始帧 | 不作为通过证据 |
 
-### 5.11.2 Esirkepov 运行级维度证据：1D、2D 与 3D Langmuir
+### 5.11.3 Esirkepov 运行级维度证据：1D、2D 与 3D Langmuir
 
 前面的公式恒等式和源码合同只能证明局部结构；为了避免把它们误写成端到端证据，本轮又直接运行了 WarpX 官方 Langmuir 输入。官方 1D 和 3D 输入本身显式设置 `algo.current_deposition = esirkepov`；官方 2D 测试卡默认是 `direct`，本项目在 case-local 副本中只将这一项覆盖为 `esirkepov`，并补上官方 analysis 所需的 `rho/divE` 输出字段，因此它是可复查的验证 sibling，而不是 WarpX 上游已注册的 2D Esirkepov regression。
 

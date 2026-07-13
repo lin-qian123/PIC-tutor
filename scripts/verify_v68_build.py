@@ -24,6 +24,11 @@ def image_links(text: str) -> list[str]:
     return re.findall(r"!\[\]\(([^)]+figures/[^)]+)\)", text)
 
 
+def chapter_subheading_numbers(path: Path, chapter: str) -> list[tuple[int, ...]]:
+    pattern = re.compile(rf"^### ({re.escape(chapter)}\.\d+\.\d+)\b", re.MULTILINE)
+    return [tuple(int(part) for part in match.split(".")) for match in pattern.findall(path.read_text(encoding="utf-8"))]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--build-log", type=Path)
@@ -34,6 +39,9 @@ def main() -> None:
     html = HTML.read_text(encoding="utf-8", errors="ignore")
     reader = PdfReader(str(PDF))
     pdf_text = "\n".join(page.extract_text() or "" for page in reader.pages)
+    chapter_5_numbers = chapter_subheading_numbers(
+        ROOT / "manuscript" / "chapters" / "05-deposition-shapes.md", "5"
+    )
 
     checks = {
         "pdf_pages": len(reader.pages) == EXPECTED_PDF_PAGES,
@@ -45,6 +53,8 @@ def main() -> None:
         "html_embedded_images": html.count("data:image/png;base64,") >= 16,
         "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
+        "chapter_5_subheading_order": chapter_5_numbers == sorted(chapter_5_numbers)
+        and len(chapter_5_numbers) == len(set(chapter_5_numbers)),
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],
         "public_path_hygiene_html": inspect(HTML)["passed"],
     }

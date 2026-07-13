@@ -458,11 +458,11 @@ current deposition：非守恒但直观的速度加权沉积</a></li>
 <li><a href="#esirkepov-current-deposition用新旧形函数差构造连续性方程" id="toc-esirkepov-current-deposition用新旧形函数差构造连续性方程">5.11
 Esirkepov current deposition：用新旧形函数差构造连续性方程</a>
 <ul>
-<li><a href="#论文源码代数合同与-runtime-证据的分层" id="toc-论文源码代数合同与-runtime-证据的分层">5.11.3
+<li><a href="#论文源码代数合同与-runtime-证据的分层" id="toc-论文源码代数合同与-runtime-证据的分层">5.11.1
 论文、源码、代数合同与 runtime 证据的分层</a></li>
-<li><a href="#villasenor-buneman-公式级审计四边界重复分段与三维交叉项" id="toc-villasenor-buneman-公式级审计四边界重复分段与三维交叉项">5.11.1
+<li><a href="#villasenor-buneman-公式级审计四边界重复分段与三维交叉项" id="toc-villasenor-buneman-公式级审计四边界重复分段与三维交叉项">5.11.2
 Villasenor-Buneman 公式级审计：四边界、重复分段与三维交叉项</a></li>
-<li><a href="#esirkepov-运行级维度证据1d2d-与-3d-langmuir" id="toc-esirkepov-运行级维度证据1d2d-与-3d-langmuir">5.11.2 Esirkepov
+<li><a href="#esirkepov-运行级维度证据1d2d-与-3d-langmuir" id="toc-esirkepov-运行级维度证据1d2d-与-3d-langmuir">5.11.3 Esirkepov
 运行级维度证据：1D、2D 与 3D Langmuir</a></li>
 </ul></li>
 <li><a href="#沉积不只回-rhojwarpx-还把线性响应矩阵和统计矩交回网格" id="toc-沉积不只回-rhojwarpx-还把线性响应矩阵和统计矩交回网格">5.12
@@ -839,6 +839,8 @@ boosted-frame / NCI</a></li>
 的缺口声明。该合同只确认路线图与仓库资产一致，不替代论文逐式审校或
 runtime physics proof。报告见
 <code>runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}</code>。</p>
+<p>本版又修正第 5 章 <code>5.11.1/5.11.2/5.11.3</code>
+小节错序，并把小节单调性与重复编号纳入 v0.68 artifact verification。</p>
 <p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
 组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
 kernel、Cartesian/RZ spectral 分派和 regression
@@ -13497,7 +13499,7 @@ bounded compare
 <code>Exact charge conservation scheme for Particle-in-Cell simulation with an arbitrary form-factor</code>，DOI
 为
 <code>10.1016/S0010-4655(00)00228-9</code>。这已经足以把“发表版身份”和“当前本地全文资产”分开记录，但仍不足以推出发表版正文的逐式编辑差异。</p>
-<h3 id="论文源码代数合同与-runtime-证据的分层">5.11.3
+<h3 id="论文源码代数合同与-runtime-证据的分层">5.11.1
 论文、源码、代数合同与 runtime 证据的分层</h3>
 <p>为了避免把不同强度的证据压成一句“Esirkepov
 已验证”，本章把当前可复核材料分成四层：</p>
@@ -14053,7 +14055,7 @@ four-boundary 到 segment kernel 的直接映射；</li>
 geometry/order 分支的逐项等价性审查。因此本章现在对 Villasenor
 最稳妥的证据等级是 <strong>paper-backed + source-grounded +
 formula-audited</strong>，而不是把尚未完成的出版级图示精修误写成公式缺口。</p>
-<h3 id="villasenor-buneman-公式级审计四边界重复分段与三维交叉项">5.11.1
+<h3 id="villasenor-buneman-公式级审计四边界重复分段与三维交叉项">5.11.2
 Villasenor-Buneman 公式级审计：四边界、重复分段与三维交叉项</h3>
 <p>项目内的 Villasenor-Buneman 1992 full-text PDF 与 MinerU Markdown
 现在已经完成第一轮公式级核对。论文以局部原点为最近的 cell-boundary
@@ -14381,7 +14383,7 @@ RMS，PASS</td>
 </tr>
 </tbody>
 </table>
-<h3 id="esirkepov-运行级维度证据1d2d-与-3d-langmuir">5.11.2 Esirkepov
+<h3 id="esirkepov-运行级维度证据1d2d-与-3d-langmuir">5.11.3 Esirkepov
 运行级维度证据：1D、2D 与 3D Langmuir</h3>
 <p>前面的公式恒等式和源码合同只能证明局部结构；为了避免把它们误写成端到端证据，本轮又直接运行了
 WarpX 官方 Langmuir 输入。官方 1D 和 3D 输入本身显式设置

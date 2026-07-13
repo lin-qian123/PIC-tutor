@@ -17,9 +17,9 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 177 条 `contrac
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.68.pdf` | 3,407,734 bytes | 当前 323 页成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.68.html` | 5,779,420 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.68.md` | 1,101,696 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.68.pdf` | 3,408,122 bytes | 当前 323 页成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.68.html` | 5,779,575 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.68.md` | 1,101,834 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 

@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：修正第 5 章 `5.11.1/5.11.2/5.11.3` 小节错序，并将小节单调性与重复编号纳入 `scripts/verify_v68_build.py` 的 v0.68 构建验收；历史 dist 快照不回写。
+
 - [x] 2026-07-13：新增第 9 章文献路线资产合同：12 组检查绑定 A/B/C/D 证据层、八条核心文献目录、`docs/literature-map.md`、生成式 inventory 和 `TajimaDawson1982`/`Esirkepov 2001`/`LeeCPC2015`/`Yee 1966`/`Hockney-Eastwood` 缺口边界；报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}`。公开证据索引随后更新为 177 条。
 
 - [x] 2026-07-13：新增第 8 章诊断/验证正文-源码 crosswalk：13 组检查覆盖主循环调度、Full/BTD/BoundaryScraping、`ComputeDiagFunctors`/flush、OpenPMD 生命周期、reduced diagnostics 注册/写盘和官方 analysis consumer；同步修正章节内过期的 168 条公开合同口径。报告见 `runs/stage-c-validation/diagnostics-chapter-source-crosswalk/contract.{json,md}`。

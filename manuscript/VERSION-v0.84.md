@@ -1,6 +1,4 @@
-# PIC-tutor v0.85
-
-本版新增第二组 formal convergence family 的执行 runner 与 preflight：声明 RZ/RSPHERE 两种 geometry 在 `64/128/256` 三档、`correction=on/off` 下共 12 个固定 2-rank producer，复用已核对的输入模板和 `build_full` binary。当前机器缺少 `mpiexec/mpirun`，preflight 分类为 `REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING`；单进程替代被明确禁止，因此正式收敛阶仍未关闭。
+# PIC-tutor v0.84
 
 本版新增正式收敛 study 预注册合同：固定 RZ/RSPHERE 独立 geometry、field/charge norm、primary/secondary observable、全部相邻拟合区间、correction-off negative control 和每种 geometry 至少两组独立 family 的关闭条件。当前 materialized 数据仍只有每种 geometry 一组 family，且 correction-on axis charge 仍是 boundary，因此分类为 `FORMAL_CONVERGENCE_PREREGISTERED_CURRENT_DATA_INSUFFICIENT`，不把 descriptive slope 写成正式收敛阶。
 
@@ -26,7 +24,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v85_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v84_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

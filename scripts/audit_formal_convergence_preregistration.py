@@ -33,6 +33,8 @@ def main() -> int:
     spec = load(spec_path)
     sources = {name: root / path for name, path in spec["data_sources"].items()}
     data = {name: load(path) for name, path in sources.items()}
+    repeat_preflight_path = root / spec["repeat_execution_preflight"]
+    repeat_preflight = load(repeat_preflight_path) if repeat_preflight_path.is_file() else {}
     grouped = {}
     for geometry, contract in data.items():
         grouped[geometry] = {
@@ -77,6 +79,8 @@ def main() -> int:
         "primary_observables_separate": spec["observables"]["primary"] == ["axis_residual", "off_axis_residual"],
         "no_geometry_pooling": spec["design"]["pooled_geometry_fit"] is False,
         "repeat_requirement_declared": spec["design"]["minimum_independent_families_per_geometry"] >= 2,
+        "repeat_runner_contract_present": repeat_preflight_path.is_file(),
+        "repeat_runner_keeps_two_rank_requirement": repeat_preflight.get("expected_ranks") == 2 and repeat_preflight.get("single_rank_substitute") == "forbidden",
         "closure_stays_open": spec["current_status"]["current_data_meets_formal_closure"] is False,
     }
     result = {
@@ -92,6 +96,10 @@ def main() -> int:
         "finite_checks": finite_checks,
         "pairwise_slope_report": slope_report,
         "blocking_gates": spec["current_status"]["blocking_gates"],
+        "repeat_preflight": {
+            "classification": repeat_preflight.get("classification"),
+            "ready_to_execute": repeat_preflight.get("ready_to_execute"),
+        },
     }
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "contract.json").write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

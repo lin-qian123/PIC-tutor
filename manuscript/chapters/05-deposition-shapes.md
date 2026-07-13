@@ -2663,6 +2663,12 @@ v0.84 将“下一步要做什么”进一步固定成预注册，而不是在�
 
 合同脚本：`scripts/audit_formal_convergence_preregistration.py`。该合同推进实验设计的可重复性，不把现有 descriptive slope 升格为正式收敛阶，也不改变任何 WarpX 源码或默认参数。
 
+### 5.14.8 v0.85 第二组 family 的执行前提
+
+第二组 family 的执行流程已经固化为 `scripts/run_formal_convergence_repeat_family.py`。它声明 RZ/RSPHERE 两种 geometry 在 `64/128/256` 三档、`correction=on/off` 下共 12 个 2-rank producer，复用已经核对过的输入模板和 `build_full` binary，并在每个 run 目录单独保存 `producer.log`。脚本默认只做 preflight；真正执行必须发现 `mpiexec` 或 `mpirun`，并始终使用 `-n 2`。
+
+当前机器的二进制和 12 组输入模板均存在，但没有 `mpiexec`/`mpirun`，所以 preflight 分类为 `REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING`。单进程替代被脚本明确禁止；这是一条执行环境边界，不是第二 family 的结果，也不改变正式收敛阶仍未关闭的判断。报告见 `docs/formal-convergence-repeat-preflight.md` 和 `runs/stage-c-validation/formal-convergence-repeat-preflight/contract.json`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

@@ -1,0 +1,10 @@
+# Formal convergence repeat-family preflight
+
+- classification: `REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING`
+- planned family: `RZ/RSPHERE x 64/128/256 x correction on/off`
+- required launch: `mpiexec -n 2`
+- current environment: no `mpiexec` or `mpirun` executable was found
+
+The repeat runner is implemented in `scripts/run_formal_convergence_repeat_family.py`. It copies only the existing case input templates, runs the fixed 2-rank binaries, and records producer return codes. It refuses to substitute a single-rank run. Raw preflight evidence is written to `runs/stage-c-validation/formal-convergence-repeat-preflight/contract.{json,md}`.
+
+This is an execution boundary, not a convergence result. The existing one-family RZ/RSPHERE evidence remains the only materialized family until a compatible MPI launcher is available.

@@ -7,6 +7,7 @@
     "rz": "runs/stage-c-validation/esirkepov_langmuir_rz_resolution-trend/contract.json",
     "rsphere": "runs/stage-c-validation/esirkepov_rsphere_charge_resolution-comparison/contract.json"
   },
+  "repeat_execution_preflight": "runs/stage-c-validation/formal-convergence-repeat-preflight/contract.json",
   "design": {
     "geometry_units": ["RZ", "RSPHERE"],
     "correction_controls": ["on", "off"],
@@ -59,7 +60,8 @@
     "blocking_gates": [
       "only one independent family is currently materialized per geometry",
       "correction-on axis charge remains a boundary in the source contracts",
-      "field and charge slopes are descriptive and are not yet repeat-validated"
+      "field and charge slopes are descriptive and are not yet repeat-validated",
+      "the current machine has no mpiexec/mpirun launcher for the required 2-rank repeat"
     ]
   }
 }

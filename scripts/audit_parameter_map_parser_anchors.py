@@ -18,6 +18,12 @@ PARSER_WORDS = re.compile(
     r"\b(?:query|queryAdd|queryarr|queryArrWithParser|query_enum_sloppy|queryWithParser|queryWithParserWithDefault|"
     r"queryWithParserAndValidate|contains|add|get|getarr|getArrWithParser|getWithParser|Store_parserString|getEntries)\b"
 )
+PARSER_CALL_NAMES = {
+    "query", "queryAdd", "queryarr", "queryArrWithParser", "query_enum_sloppy",
+    "queryWithParser", "queryWithParserWithDefault", "queryWithParserAndValidate",
+    "contains", "add", "get", "getarr", "getArrWithParser", "getWithParser",
+    "Store_parserString", "getEntries",
+}
 GENERIC_KEYS = {
     "abs", "amr", "boundary", "field", "hi", "lo", "name", "ord", "psatd",
     "r", "t", "theta", "type", "ux", "uy", "uz", "value", "warpx", "w", "x", "y", "z",
@@ -66,6 +72,18 @@ def parser_literals(text: str) -> set[str]:
     return found
 
 
+def parser_calls(text: str) -> dict[str, set[str]]:
+    """Return parser method names for ordinary literal-first calls."""
+    calls: dict[str, set[str]] = {}
+    for match in re.finditer(r"\b([A-Za-z_]\w*)\s*\(\s*\"([^\"\n]{1,120})\"", text):
+        method, literal = match.groups()
+        if method not in PARSER_CALL_NAMES:
+            continue
+        calls.setdefault(literal, set()).add(method)
+        calls.setdefault(literal.split("(", 1)[0], set()).add(method)
+    return calls
+
+
 def main() -> None:
     text = MAP.read_text(encoding="utf-8")
     rows = []
@@ -81,6 +99,7 @@ def main() -> None:
         parameter = columns[0]
         references = [item.strip().strip("`") for item in columns[6].split(",")]
         literals: set[str] = set()
+        call_names: dict[str, set[str]] = {}
         source_token_seen = set()
         source_file_count = 0
         source_fragments = []
@@ -91,8 +110,13 @@ def main() -> None:
                 source_fragments.append(source_text)
                 source_token_seen.update(key for key in candidate_keys(parameter) if key in source_text)
                 literals.update(parser_literals(source_text))
+                for literal, methods in parser_calls(source_text).items():
+                    call_names.setdefault(literal, set()).update(methods)
         keys = candidate_keys(parameter)
         matched_literals = sorted(key for key in keys if key in literals)
+        matched_parser_calls = {
+            key: sorted(call_names[key]) for key in keys if key in call_names
+        }
         source_blob = "\n".join(source_fragments)
         reference_blob = " ".join(references)
         owner_review = "owned" in reference_blob.lower() and "amrex" in reference_blob.lower()
@@ -103,7 +127,9 @@ def main() -> None:
                 ".particle_fields.", "adios2_operator.parameters", "adios2_engine.parameters",
             )
         )
-        if matched_literals:
+        if matched_parser_calls:
+            category = "parser_call_anchor"
+        elif matched_literals:
             category = "parser_literal_anchor"
         elif owner_review:
             category = "external_owner_review"
@@ -119,13 +145,14 @@ def main() -> None:
                 "parameter": parameter,
                 "category": category,
                 "parser_literal_keys": matched_literals,
+                "parser_call_anchors": matched_parser_calls,
                 "source_token_keys": sorted(source_token_seen),
                 "source_file_count": source_file_count,
             }
         )
 
     counts = {category: sum(item["category"] == category for item in records) for category in (
-        "parser_literal_anchor", "dynamic_key_constructor_review", "consumer_or_dynamic_review",
+        "parser_call_anchor", "parser_literal_anchor", "dynamic_key_constructor_review", "consumer_or_dynamic_review",
         "external_owner_review", "no_source_token_review"
     )}
     result = {
@@ -133,16 +160,20 @@ def main() -> None:
         "parameter_map": str(MAP),
         "row_count": len(records),
         "category_counts": counts,
-        "parser_anchor_rows": counts["parser_literal_anchor"],
-        "manual_review_rows": len(records) - counts["parser_literal_anchor"],
-        "parser_anchor_count": counts["parser_literal_anchor"],
-        "manual_review_count": len(records) - counts["parser_literal_anchor"],
+        "parser_call_anchor_rows": counts["parser_call_anchor"],
+        "parser_literal_anchor_rows": counts["parser_literal_anchor"],
+        "parser_call_anchor_count": counts["parser_call_anchor"],
+        "parser_literal_anchor_count": counts["parser_literal_anchor"],
+        "parser_anchor_rows": counts["parser_call_anchor"] + counts["parser_literal_anchor"],
+        "manual_review_rows": len(records) - counts["parser_call_anchor"] - counts["parser_literal_anchor"],
+        "parser_anchor_count": counts["parser_call_anchor"] + counts["parser_literal_anchor"],
+        "manual_review_count": len(records) - counts["parser_call_anchor"] - counts["parser_literal_anchor"],
         "dynamic_key_constructor_count": counts["dynamic_key_constructor_review"],
         "external_owner_count": counts["external_owner_review"],
         "unclassified_count": counts["no_source_token_review"] + counts["consumer_or_dynamic_review"],
         "contract_pass": True,
         "classification": "PARSER_LITERAL_ANCHOR_SURFACE_AUDITED_MANUAL_VALUE_SEMANTICS_REMAINS",
-        "scope": "cited-source text, parser-like API adjacency and explicit review queue; not C++ AST or runtime value semantics",
+        "scope": "cited-source text, exact parser-call/literal anchors and explicit review queue; not C++ AST or runtime value semantics",
         "records": records,
     }
     output_dir = MAP.parent.parent / "runs/stage-c-validation/parameter-map-parser-anchor-contract"
@@ -152,11 +183,12 @@ def main() -> None:
         "# Parameter-map parser-anchor review surface",
         "",
         f"- rows: `{len(records)}`",
-        f"- parser-literal anchor rows: `{counts['parser_literal_anchor']}`",
+        f"- exact parser-call anchor rows: `{counts['parser_call_anchor']}`",
+        f"- parser-literal-only anchor rows: `{counts['parser_literal_anchor']}`",
         f"- manual review rows: `{result['manual_review_rows']}`",
         f"- classification: `{result['classification']}`",
         "",
-        "This contract records where cited source files contain a parser-like API adjacent to a parameter literal. `consumer_or_dynamic_review` and `external_owner_review` remain explicit manual queues; this report does not claim that a literal anchor proves defaults, validation, aliases, or runtime value semantics.",
+        "This contract records where cited source files contain an exact parser call whose first argument is a parameter literal, or only a parser-like literal adjacency. `consumer_or_dynamic_review` and `external_owner_review` remain explicit manual queues; this report does not claim that a parser call proves defaults, validation, aliases, or runtime value semantics.",
         "",
         "| category | rows |",
         "|---|---:|",

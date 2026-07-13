@@ -881,8 +881,9 @@ runtime value semantics 审计。报告见
 <p>本版新增 parameter-map parser-anchor review surface：排除通用
 <code>type/field/x/y/z</code> token，限制为普通单行 C++ literal，并覆盖
 <code>query_enum_sloppy</code>、<code>queryArrWithParser</code>、<code>getWithParser</code>、<code>getArrWithParser</code>、<code>Store_parserString</code>、<code>getEntries</code>
-后，445 条参数中 435 条找到固定 parser anchor，8 条确认是 dynamic-key
-constructor，2 条确认是 AMReX owner 参数，没有未分类项；该结果不替代 C++
+后，445 条参数中 269 条找到精确 parser-call anchor，另有 166 条找到
+parser-literal-only anchor，8 条确认是 dynamic-key constructor，2
+条确认是 AMReX owner 参数，没有未分类项；该结果不替代 C++
 AST、默认值/校验或 runtime value semantics 审计。报告见
 <code>runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}</code>。</p>
 <p>本版又将 3D AMR <code>particles_in_pml</code> signed/absolute

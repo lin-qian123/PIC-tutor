@@ -16,7 +16,7 @@
 
 当前 v0.68 又完成 parameter-map structured review contract：parser-anchor 之外的 10 条参数已逐项核对，8 条 dynamic-key constructor 和 2 条 AMReX owner 全部通过；这关闭了“非固定键仅按类别记录、没有逐项源码锚点”的缺口，但不替代完整 C++ AST、默认值/校验或 runtime value semantics 审计。脚本为 `scripts/audit_parameter_map_structured_review.py`，报告见 `runs/stage-c-validation/parameter-map-structured-review-contract/contract.{json,md}`。
 
-当前 v0.68 又补入 parameter-map parser-anchor review surface：排除通用 `type/field/x/y/z` token，限制为普通单行 C++ literal，并覆盖 `query_enum_sloppy`、`queryArrWithParser`、`getWithParser`、`getArrWithParser`、`Store_parserString`、`getEntries` 后，445 条参数中 435 条找到固定 parser anchor，8 条确认是 dynamic-key constructor，2 条确认是 AMReX owner 参数，没有未分类项；该审计仍不冒充 C++ AST 或完整 ParmParse 语义证明。脚本为 `scripts/audit_parameter_map_parser_anchors.py`，报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
+当前 v0.68 又补入 parameter-map parser-anchor review surface：排除通用 `type/field/x/y/z` token，限制为普通单行 C++ literal，并覆盖 `query_enum_sloppy`、`queryArrWithParser`、`getWithParser`、`getArrWithParser`、`Store_parserString`、`getEntries` 后，445 条参数中 269 条找到精确 parser-call anchor，另有 166 条找到 parser-literal-only anchor；8 条确认是 dynamic-key constructor，2 条确认是 AMReX owner 参数，没有未分类项。该审计仍不冒充 C++ AST 或完整 ParmParse 语义证明。脚本为 `scripts/audit_parameter_map_parser_anchors.py`，报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
 
 当前 v0.68 又补入 3D AMR `particles_in_pml` signed/absolute boundary contract：官方 signed consumer 为 `106.4354 < 110`，严格 absolute reader 为 `110.3994 > 110`，唯一越界项是负向 `Ex`，且 coarse/fine 读取一致。该证据明确保留“官方判据通过、强化判据失败”的边界，不修改 WarpX 上游或阈值。合同见 `runs/stage-c-validation/particles-in-pml-3d-mr-boundary/contract.{json,md}`。
 

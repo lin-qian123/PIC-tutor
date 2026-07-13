@@ -2786,6 +2786,21 @@ v0.102 继续展开 `0.85`/`0.75` 差异，而不是把它直接归因于体积�
 
 因此新增 `RZ_RHO_AXIS_PRESCALE_INPUT_BOUNDARY_OPEN`：三档 resolution 的最终 axis ratio 和 scaling 前反推 ratio 均稳定，且 on/off 输入除显式 correction toggle 外一致。该合同把剩余边界进一步收窄到 scaling 前 axis deposition、负半径 wrap 或其输入状态，但仍不是 kernel root-cause 证明、charge closure 或正式收敛阶。合同由 `scripts/audit_rz_rho_axis_prescale_boundary.py` 生成，报告见 `runs/stage-c-validation/rz-rho-axis-prescale-boundary-v0.102/contract.{json,md}`，说明见 `notes/code-reading/particles/83-rz-rho-axis-prescale-boundary.md`。
 
+### 5.14.19 v0.103 rho axis particle-state invariant
+
+v0.103 再向上游核对 on/off 初始诊断帧的粒子状态。对 `electrons` 和 `ions`，按 `particle_id` 对齐后逐项比较位置、角度、权重和动量；三档 `64/128/256` resolution 的粒子数 on/off 完全一致，所有比较字段最大绝对差均为 `0`。在这一粒子状态不变量下，species `rho` 的 axis on/off 比值仍为 `0.85`，off-axis 比值仍为 `1`。
+
+| grid | species | particles on/off | particle state | rho field | axis ratio | off-axis max deviation |
+|---:|---|---:|:---:|---|---:|---:|
+| `64x128` | `electrons` | `58880/58880` | `PASS` | `rho_electrons` | `0.850000` | `0` |
+| `64x128` | `ions` | `58880/58880` | `PASS` | `rho_ions` | `0.850000` | `0` |
+| `128x256` | `electrons` | `235520/235520` | `PASS` | `rho_electrons` | `0.850000` | `0` |
+| `128x256` | `ions` | `235520/235520` | `PASS` | `rho_ions` | `0.850000` | `0` |
+| `256x512` | `electrons` | `944128/944128` | `PASS` | `rho_electrons` | `0.850000` | `0` |
+| `256x512` | `ions` | `944128/944128` | `PASS` | `rho_ions` | `0.850000` | `0` |
+
+因此新增 `RZ_RHO_AXIS_DIAGNOSTIC_CONSUMER_BOUNDARY_OPEN`：粒子初始化和粒子状态差异已被排除，剩余边界集中在 species-rho diagnostic consumer、charge deposition 或负半径 axis wrap/scaling 路径。该合同仍不是具体 kernel root-cause 证明、charge closure 或正式收敛阶。合同由 `scripts/audit_rz_rho_particle_state_invariant.py` 生成，报告见 `runs/stage-c-validation/rz-rho-particle-state-invariant-v0.103/contract.{json,md}`，说明见 `notes/code-reading/particles/84-rz-rho-particle-state-invariant.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

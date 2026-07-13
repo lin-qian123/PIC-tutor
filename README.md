@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.102`：在 v0.101 rho-side 比例合同基础上，进一步按 WarpX `GetChargeDensity -> DepositCharge -> ApplyInverseVolumeScalingToChargeDensity` 调用链反推 scaling 前 axis 输入。三档 resolution、两种 species 的最终 axis 比值为 `0.85`，按源码 `1/3` 与 `1/4` 因子还原后的 scaling 前比值为 `1.133333`，off-axis 比值仍为 `1`。该结果把剩余问题收窄到 scaling 前 axis deposition、负半径 wrap 或其输入状态，但不宣称 root cause、charge closure 或正式收敛阶已完成。
+当前成书版本为 `v0.103`：在 v0.102 scaling 前 axis 输入合同基础上，进一步证明 on/off 三档初始帧的电子/离子 particle ID、位置、角度、权重和动量逐项完全一致，但 species-rho axis 比值仍为 `0.85`、off-axis 比值仍为 `1`。该结果排除了粒子初始化状态差异，把剩余问题收窄到 diagnostic consumer、charge deposition 或 axis wrap/scaling 路径，但不宣称 root cause、charge closure 或正式收敛阶已完成。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

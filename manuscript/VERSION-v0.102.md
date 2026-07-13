@@ -1,6 +1,4 @@
-# PIC-tutor v0.103
-
-本版新增 rho axis particle-state invariant 合同：对既有 `64/128/256` correction-on/off 初始诊断帧，电子/离子 particle ID、位置、角度、权重和动量逐项一致；三档 particle count 分别为 `58880/235520/944128`，on/off 完全相同。但 species-rho axis 比值仍为 `0.85`，off-axis 比值仍为 `1`。分类为 `RZ_RHO_AXIS_DIAGNOSTIC_CONSUMER_BOUNDARY_OPEN`。该结果排除粒子初始化和粒子状态差异，把剩余问题收窄到 species-rho diagnostic consumer、charge deposition 或负半径 axis wrap/scaling 路径，但不宣称 root cause、charge closure 或正式收敛阶已关闭。报告见 `runs/stage-c-validation/rz-rho-particle-state-invariant-v0.103/contract.{json,md}`，说明见 `notes/code-reading/particles/84-rz-rho-particle-state-invariant.md`。
+# PIC-tutor v0.102
 
 本版新增 rho-side scaling 前 axis 输入边界合同：WarpX 当前源码显示 species `rho` 诊断经 `RhoFunctor` 请求 `WarpXParticleContainer::GetChargeDensity`，该路径以 `apply_boundary_and_scale_volume=true` 调用 `DepositCharge`，并在 `ApplyInverseVolumeScalingToChargeDensity` 中先做负半径 guard-cell wrap、再按轴向体积因子归一化。对既有 `64/128/256` correction-on/off 初始帧，6/6 个 field-case 的最终 axis 比值为 `0.85`；按源码 `((1/3)/(1/4))` 还原后，scaling 前 axis 输入比值为 `1.133333`，off-axis 比值为 `1`。分类为 `RZ_RHO_AXIS_PRESCALE_INPUT_BOUNDARY_OPEN`。该结果把剩余问题收窄到 scaling 前 axis deposition、负半径 wrap 或其输入状态，但不宣称 root cause、charge closure 或正式收敛阶已关闭。报告见 `runs/stage-c-validation/rz-rho-axis-prescale-boundary-v0.102/contract.{json,md}`，说明见 `notes/code-reading/particles/83-rz-rho-axis-prescale-boundary.md`。
 
@@ -71,7 +69,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v103_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v102_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

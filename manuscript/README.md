@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.102 合订 PDF 的页数以实际构建结果为准；本版在 v0.101 rho-side ratio boundary 基础上，按 WarpX 的 species charge-density call chain 反推 scaling 前 axis 输入：最终 axis 比值为 `0.85`，还原后为 `1.133333`，off-axis 比值为 `1`。正文继续区分“定位到 scaling 前 axis 输入边界”与“root cause/charge closure 已完成”，不把 reader 对照升级为完整物理通过。
+当前 v0.103 合订 PDF 的页数以实际构建结果为准；本版在 v0.102 scaling 前 axis 输入边界基础上，新增粒子状态不变量合同：on/off 的 particle ID、位置、角度、权重和动量逐项一致，而 species-rho axis 比值仍为 `0.85`、off-axis 比值为 `1`。正文继续区分“排除粒子状态差异”与“root cause/charge closure 已完成”，不把 reader 对照升级为完整物理通过。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 

@@ -1,5 +1,7 @@
 # PIC-tutor v0.68
 
+本版又为第 5 章新增 deposition 正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface；该 contract 只防止正文随源码漂移，不升级为 C++ 语义证明、完整 geometry/order runtime 覆盖或论文逐行复现。报告见 `runs/stage-c-validation/deposition-chapter-source-crosswalk/contract.{json,md}`。
+
 本版又复核 RZ theta-implicit Villasenor 的构建/运行边界：官方 `petsc_ksp` 输入仍受当前 binary 缺少 `AMREX_USE_PETSC` 阻断；同一 binary 的 MPI=2 `amrex_gmres` control 能完成 DOF 定义后，在 RZ curl-curl boundary-mask 初始化阶段触发 `SIGILL`，尚未进入粒子推进或 current deposition。新增 `scripts/audit_rz_implicit_villasenor_build_boundary.py` 及对应 command-output/contract；该结果保持为 pre-physics boundary，不升级为 Villasenor physics pass/fail。
 
 本版又补入第 5 章 deposition 证据层导航表：将 Esirkepov 的论文/索引摘要、当前源码、代数/源码合同和 runtime consumer 分开列出，明确每层能支持与不能支持的结论；`scripts/audit_esirkepov_paper_source_runtime_crosswalk.py` 当前 15 项检查全部通过，但仍保留 publisher-PDF 逐行对照、完整 geometry/order product 和 AMR 强 runtime 闭环边界。
@@ -68,7 +70,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 321 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 322 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 

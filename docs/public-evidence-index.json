@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 171,
+  "record_count": 172,
   "status_counts": {
-    "PASS": 126,
+    "PASS": 127,
     "FAIL": 30,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 105,
+    "PASS": 106,
     "FAIL": 27,
     "UNKNOWN": 7,
     "BOUNDARY": 32
@@ -94,6 +94,17 @@
       "metrics": {
         "anchor_count": 13,
         "missing_count": 0,
+        "passed": true
+      }
+    },
+    {
+      "case": "deposition-chapter-source-crosswalk",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Chapter 5 deposition source crosswalk",
+      "classification": "CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED",
+      "scope": "Checks representative Chapter 5 claims against current WarpX source markers; not a semantic proof or runtime regression.",
+      "metrics": {
         "passed": true
       }
     },

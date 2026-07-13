@@ -2,6 +2,8 @@
 
 # PIC-tutor v0.68
 
+本版又为第 5 章新增 deposition 正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface；该 contract 只防止正文随源码漂移，不升级为 C++ 语义证明、完整 geometry/order runtime 覆盖或论文逐行复现。报告见 `runs/stage-c-validation/deposition-chapter-source-crosswalk/contract.{json,md}`。
+
 本版又复核 RZ theta-implicit Villasenor 的构建/运行边界：官方 `petsc_ksp` 输入仍受当前 binary 缺少 `AMREX_USE_PETSC` 阻断；同一 binary 的 MPI=2 `amrex_gmres` control 能完成 DOF 定义后，在 RZ curl-curl boundary-mask 初始化阶段触发 `SIGILL`，尚未进入粒子推进或 current deposition。新增 `scripts/audit_rz_implicit_villasenor_build_boundary.py` 及对应 command-output/contract；该结果保持为 pre-physics boundary，不升级为 Villasenor physics pass/fail。
 
 本版又补入第 5 章 deposition 证据层导航表：将 Esirkepov 的论文/索引摘要、当前源码、代数/源码合同和 runtime consumer 分开列出，明确每层能支持与不能支持的结论；`scripts/audit_esirkepov_paper_source_runtime_crosswalk.py` 当前 15 项检查全部通过，但仍保留 publisher-PDF 逐行对照、完整 geometry/order product 和 AMR 强 runtime 闭环边界。
@@ -9775,6 +9777,20 @@ RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on
 ![](manuscript/assets/figures/deposition-geometry-order-coverage.png)
 
 图 5-2：当前 deposition geometry/order 证据矩阵的可视化。`PASS` 表示该行最强可用证据通过，`MIX` 表示同一行同时包含通过项和边界项，`EDGE` 表示构建或运行边界，`LIMIT` 表示只覆盖径向场而非完整 charge/Gauss-law。它展示的是九条证据行，不是完整 geometry × shape/order 的笛卡尔积。
+
+### 5.14.1 正文主张与源码版本的同步合同
+
+本章的源码路径和行号不是静态的“参考链接”，而是必须随当前 WarpX checkout 重新核对的证据边界。为避免正文在源码演进后继续保留看似合理、实际已经漂移的描述，本项目新增 `scripts/audit_deposition_chapter_source_crosswalk.py`，对本节前面反复使用的代表性主张做分组检查：
+
+| 正文层 | 当前源码锚点 | 这项检查能证明什么 | 不能证明什么 |
+|---|---|---|---|
+| charge bridge | `WarpXParticleContainer.cpp` 的 `icomp/time_shift_delta/LowerCorner` 与 `deposit_charge` | 旧/新 `rho` 时间层和普通/shared 路径仍有对应入口 | 不证明所有运行时 component 值都正确 |
+| ABLASTR bridge | `DepositCharge.H` 的 `depos_lev`、`rel_ref_ratio`、GPU alias、CPU `lockAdd` | 本文对 level 与 CPU/GPU 暂存的说明仍有源码表面 | 不证明 CPU/GPU 数值结果等价 |
+| implicit current | `CurrentDeposition.H` 的两条 implicit 入口和 `xp_np1` 重建 | 本文区分“端点恢复”和“共享守恒 kernel”的层次没有漂移 | 不证明 RZ implicit runtime 已通过 |
+| Villasenor kernel | `VillasenorDepositionShapeNKernel`、`crop_at_boundary`、`cell_crossings`、`num_segments` | 本文关于 crossing-driven segment loop 的入口仍存在 | 不证明每种 geometry/order 都已运行 |
+| shape/geometry | `ShapeFactors.H` 与 `ChargeDeposition.H` 的 helper、shape 和 geometry 分支 | 本文的 shape helper 与 RZ/径向分支指向当前源码 | 不替代 C++ 语义审计或完整笛卡尔积回归 |
+
+该合同当前为 `13/13` 组通过。它的作用是维护“正文-源码”这条线，而不是把 source marker 误写成物理验证；论文 publisher PDF 对照、完整 geometry/order runtime 和 RZ implicit 运行边界仍按前文分类保留。
 
 ## 5.15 本章结论
 

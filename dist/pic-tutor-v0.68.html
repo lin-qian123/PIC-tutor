@@ -496,7 +496,11 @@ mask、filter、SumBoundary</a></li>
 合同</a></li>
 </ul></li>
 <li><a href="#形函数guard-cells-与稳定性" id="toc-形函数guard-cells-与稳定性">5.14 形函数、guard cells
-与稳定性</a></li>
+与稳定性</a>
+<ul>
+<li><a href="#正文主张与源码版本的同步合同" id="toc-正文主张与源码版本的同步合同">5.14.1
+正文主张与源码版本的同步合同</a></li>
+</ul></li>
 <li><a href="#本章结论-1" id="toc-本章结论-1">5.15 本章结论</a></li>
 <li><a href="#练习与源码定位-1" id="toc-练习与源码定位-1">5.16
 练习与源码定位</a></li>
@@ -824,6 +828,12 @@ boosted-frame / NCI</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版又为第 5 章新增 deposition 正文-源码 crosswalk：13
+组代表性锚点同步 charge bridge、旧/新时间层、implicit
+Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向
+geometry surface；该 contract 只防止正文随源码漂移，不升级为 C++
+语义证明、完整 geometry/order runtime 覆盖或论文逐行复现。报告见
+<code>runs/stage-c-validation/deposition-chapter-source-crosswalk/contract.{json,md}</code>。</p>
 <p>本版又复核 RZ theta-implicit Villasenor 的构建/运行边界：官方
 <code>petsc_ksp</code> 输入仍受当前 binary 缺少
 <code>AMREX_USE_PETSC</code> 阻断；同一 binary 的 MPI=2
@@ -15291,6 +15301,70 @@ route-count/intermediate-field 证明、RZ implicit Villasenor
 表示构建或运行边界，<code>LIMIT</code> 表示只覆盖径向场而非完整
 charge/Gauss-law。它展示的是九条证据行，不是完整 geometry × shape/order
 的笛卡尔积。</p>
+<h3 id="正文主张与源码版本的同步合同">5.14.1
+正文主张与源码版本的同步合同</h3>
+<p>本章的源码路径和行号不是静态的“参考链接”，而是必须随当前 WarpX
+checkout
+重新核对的证据边界。为避免正文在源码演进后继续保留看似合理、实际已经漂移的描述，本项目新增
+<code>scripts/audit_deposition_chapter_source_crosswalk.py</code>，对本节前面反复使用的代表性主张做分组检查：</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>正文层</th>
+<th>当前源码锚点</th>
+<th>这项检查能证明什么</th>
+<th>不能证明什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>charge bridge</td>
+<td><code>WarpXParticleContainer.cpp</code> 的
+<code>icomp/time_shift_delta/LowerCorner</code> 与
+<code>deposit_charge</code></td>
+<td>旧/新 <code>rho</code> 时间层和普通/shared 路径仍有对应入口</td>
+<td>不证明所有运行时 component 值都正确</td>
+</tr>
+<tr>
+<td>ABLASTR bridge</td>
+<td><code>DepositCharge.H</code> 的
+<code>depos_lev</code>、<code>rel_ref_ratio</code>、GPU alias、CPU
+<code>lockAdd</code></td>
+<td>本文对 level 与 CPU/GPU 暂存的说明仍有源码表面</td>
+<td>不证明 CPU/GPU 数值结果等价</td>
+</tr>
+<tr>
+<td>implicit current</td>
+<td><code>CurrentDeposition.H</code> 的两条 implicit 入口和
+<code>xp_np1</code> 重建</td>
+<td>本文区分“端点恢复”和“共享守恒 kernel”的层次没有漂移</td>
+<td>不证明 RZ implicit runtime 已通过</td>
+</tr>
+<tr>
+<td>Villasenor kernel</td>
+<td><code>VillasenorDepositionShapeNKernel</code>、<code>crop_at_boundary</code>、<code>cell_crossings</code>、<code>num_segments</code></td>
+<td>本文关于 crossing-driven segment loop 的入口仍存在</td>
+<td>不证明每种 geometry/order 都已运行</td>
+</tr>
+<tr>
+<td>shape/geometry</td>
+<td><code>ShapeFactors.H</code> 与 <code>ChargeDeposition.H</code> 的
+helper、shape 和 geometry 分支</td>
+<td>本文的 shape helper 与 RZ/径向分支指向当前源码</td>
+<td>不替代 C++ 语义审计或完整笛卡尔积回归</td>
+</tr>
+</tbody>
+</table>
+<p>该合同当前为 <code>13/13</code>
+组通过。它的作用是维护“正文-源码”这条线，而不是把 source marker
+误写成物理验证；论文 publisher PDF 对照、完整 geometry/order runtime 和
+RZ implicit 运行边界仍按前文分类保留。</p>
 <h2 id="本章结论-1">5.15 本章结论</h2>
 <p>沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：</p>
 <pre class="mermaid"><code>flowchart TD

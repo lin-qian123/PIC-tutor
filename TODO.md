@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：新增第 5 章 deposition 正文-源码 crosswalk：用 13 组代表性锚点同步 `ChargeDeposition.H`、ABLASTR bridge、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helpers 和 geometry surface；该合同防止正文漂移，但不替代 C++ 语义证明或完整 runtime 矩阵。报告见 `runs/stage-c-validation/deposition-chapter-source-crosswalk/contract.{json,md}`。
+
 - [x] 2026-07-13：复核 RZ implicit Villasenor control：MPI=2 再次到达 DOF 定义后触发 `SIGILL`，新增可重复的 pre-physics boundary contract 和 project-local command output；仍等待兼容 PETSc/AMReX 的 RZ binary 或上游 arm64 `InitializeCurlCurlBCMasks()` 修复，未将该项升级为 runtime physics 结论。
 
 - [x] 2026-07-13：新增 `scripts/summarize_rz_esirkepov_charge_field_tradeoff.py`，对 7 组既有 RZ Esirkepov evidence family 做 12 项统一交叉检查；确认默认 axis correction 下 field PASS/charge BOUNDARY、correction-off 仅为局部 sibling、cleaning 与 axis cell 主导关系仍需保留。该 contract 不修改 WarpX 默认参数，不宣称正式收敛阶。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}`。

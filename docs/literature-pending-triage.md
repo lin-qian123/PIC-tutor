@@ -3,7 +3,7 @@
 This is an acquisition and reading queue for entries still marked `待分类` in `docs/literature-map.md`.
 Keyword-derived topics and chapter suggestions are planning metadata only; they do not prove that a paper was read, downloaded, converted by MinerU, or suitable as primary evidence.
 
-- pending entries: **83**
+- pending entries: **82**
 - classification: conservative title/key triage
 - P1: likely useful for the current book's core algorithm or application routes
 - P2: useful for a later chapter or a narrower source comparison
@@ -31,7 +31,6 @@ Keyword-derived topics and chapter suggestions are planning metadata only; they 
 | `QiangPhysRevSTAB2006` | accelerator / beam dynamics | 3A, 7-9 | P1 | metadata first; MinerU if a lawful PDF is acquired | Three-dimensional quasistatic model for high brightness beam dynamics simulation, author = Qiang, Ji and Lidia, Steve and Ryne, Robert D. and Limborg-Deprey, Cecile, journal = Phys | 10.1103/PhysRevSTAB.9.044204 |
 | `QiangPhysRevSTAB2006err` | accelerator / beam dynamics | 3A, 7-9 | P1 | metadata first; MinerU if a lawful PDF is acquired | Erratum: Three-dimensional quasistatic model for high brightness beam dynamics simulation [Phys. Rev. ST Accel. Beams 9, 044204 (2006)], author = Qiang, Ji and Lidia, Steve and Ryn | 10.1103/PhysRevSTAB.10.129901 |
 | `Wiedemann2015` | accelerator / beam dynamics | 3A, 7-9 | P1 | metadata first; MinerU if a lawful PDF is acquired | Particle Accelerator Physics, doi = 10.1007/978-3-319-18317-6, year = 2015 | 10.1007/978-3-319-18317-6, year = 2015 |
-| `Vranic2015` | general acquisition / manual review | 1-9 | P3 | keep metadata only until a chapter need is identified | Particle merging algorithm for PIC codes, author = M. Vranic and T. Grismayer and J.L. Martins and R.A. Fonseca and L.O. Silva, journal = Computer Physics Communications, volume = | 10.1016/j.cpc.2015.01.020 |
 | `Barnes2021` | general acquisition / manual review | 1-9 | P3 | keep metadata only until a chapter need is identified | Improved C1 shape functions for simplex meshes, author = D.C. Barnes, journal = Journal of Computational Physics, volume = 424, pages = 109852, year = 2021, issn = 0021-9991, doi = | 10.1016/j.jcp.2020.109852, url = https://www.sciencedirect.com/science/article/pii/S0021999120306264 |
 | `Rhee1987` | general acquisition / manual review | 1-9 | P3 | keep metadata only until a chapter need is identified | Simple time‐resolving Thomson spectrometer", journal = Review of Scientific Instruments, volume = 58, number = 2, pages = 240-244, year = 1987, month = 02, issn = 0034-6748, doi = | 10.1063/1.1139314, eprint = https://pubs.aip.org/aip/rsi/article-pdf/58/2/240/19154912/240\_1\_online.pdf |
 | `Lundprstab2009` | general acquisition / manual review | 1-9 | P3 | keep metadata only until a chapter need is identified | Generation Of Initial Kinetic Distributions For Simulation Of Long-Pulse Charged Particle Beams With High Space-Charge Intensity | 10.1103/Physrevstab.12.114801 |

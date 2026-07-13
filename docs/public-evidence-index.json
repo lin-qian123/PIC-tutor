@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 187,
+  "record_count": 188,
   "status_counts": {
-    "PASS": 135,
+    "PASS": 136,
     "FAIL": 30,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 114,
+    "PASS": 115,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 33
@@ -2629,6 +2629,17 @@
         "max_flux_sum_residual": 4.440892098500626e-16,
         "max_four_boundary_residual": 4.440892098500626e-16,
         "max_segment_sum_residual": 4.440892098500626e-16,
+        "passed": true
+      }
+    },
+    {
+      "case": "vranic-2015-paper-asset",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "Vranic 2015 particle-merging paper asset contract",
+      "classification": "FULLTEXT_PAPER_BACKED_PARTICLE_MERGING_WARPX_MAPPING_RUNTIME_SEPARATE",
+      "scope": "local PDF/MinerU/Chinese note and Chapter 4 mapping; no claim of WarpX paper-case reproduction",
+      "metrics": {
         "passed": true
       }
     },

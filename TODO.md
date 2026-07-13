@@ -1,6 +1,8 @@
 # TODO
 
-- [x] 2026-07-13：为 `docs/literature-map.md` 中仍待分类的 83 条 BibTeX 条目生成保守 triage：逐条给出候选主题、章节入口、P1/P2/P3 优先级和 MinerU/metadata 后续动作；报告见 `docs/literature-pending-triage.md`，不把标题关键词升级为论文正文证据。
+- [x] 2026-07-13：materialize Vranic 2015 粒子合并论文：24 页 PDF、MinerU Markdown、32 张图、中文精读、README/access audit/reading log 和 `scripts/audit_vranic_2015_asset_contract.py` 均已完成；第 4 章已接入“两粒子局部守恒 merge”与 WarpX `VelocityCoincidenceThinning` 的有界映射，论文案例不升级为 WarpX runtime PASS。报告见 `runs/stage-c-validation/vranic-2015-paper-asset/contract.{json,md}`。
+
+- [x] 2026-07-13：为 `docs/literature-map.md` 中仍待分类的 82 条 BibTeX 条目生成保守 triage：逐条给出候选主题、章节入口、P1/P2/P3 优先级和 MinerU/metadata 后续动作；报告见 `docs/literature-pending-triage.md`，不把标题关键词升级为论文正文证据。
 
 - [x] 2026-07-13：将 Vay + AMR 边界固化为独立 source contract：当前 `WarpX.cpp` 对 `Vay && maxLevel() > 0` 在初始化阶段直接拒绝，并保留 PSATD-only、RZ/1D guards；该结果分类为 `SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED`，不写成 AMR physics PASS/FAIL。报告见 `runs/stage-c-validation/vay-amr-guard/contract.{json,md}`。
 
@@ -4120,7 +4122,7 @@
 - [x] 回到 `docs/parameter-map.md` 做尾项清理，先补一批高置信空源码命中：species 初始化/space-charge/field-ionization/resampling、virtual photons、collision product species、`external_vector_potential.<field_name>.*`、以及 diagnostics / BTD 主参数。
 - [x] 新增 `notes/code-reading/utils/08-low-frequency-parameter-families-and-pass-throughs.md`，把 `parameter-map` 最后一批低频空项压成正式源码结论，区分 grouped alias、AMReX-owned pass-through 输入、外场聚合开关、PSATD/centering grouped key、macroscopic/hybrid parser 参数和 Schwinger 区域边界框，并把整张表的空“初步源码命中”列清到 0。
 - [x] 人工复核 `docs/example-regression-map.md` 中 `general / to classify` 条目；当前这类顶层粗分类已清到 0，并开始转入成批清理仍写成“checksum 基线；需反查对应 inputs 和分析脚本”的家族条目。
-- [x] 2026-07-13：完成 `docs/literature-map.md` 中 83 条 `待分类` 条目的保守 acquisition triage，标出候选主题、章节入口、优先级和需要 MinerU/metadata 的动作；正式分类仍需逐篇阅读，详见 `docs/literature-pending-triage.md`。
+- [x] 2026-07-13：完成 `docs/literature-map.md` 中 82 条 `待分类` 条目的保守 acquisition triage，标出候选主题、章节入口、优先级和需要 MinerU/metadata 的动作；正式分类仍需逐篇阅读，详见 `docs/literature-pending-triage.md`。
 
 ### 阶段 0：全源码精读框架落地
 

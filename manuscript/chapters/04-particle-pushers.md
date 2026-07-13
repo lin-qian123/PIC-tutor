@@ -1795,6 +1795,28 @@ mypc->SortParticlesByBin(
 - thermalizer：调局部高动量粒子的热化行为
 - sorting：调后续 deposition/gather 的访存局部性
 
+### 4.13.7 Vranic 2015：两粒子 merge 的论文-源码边界
+
+Vranic 等人的论文把粒子合并明确放在六维 phase space 中：先用空间 merge cell 和动量 cell 找到相近 cluster，再把一个 cluster 压成两个新宏粒子。单个新粒子一般不能同时满足总权重、总动量、总能量和质量壳关系；两粒子构造则可以令
+
+$$
+w_t=w_a+w_b,\qquad
+\boldsymbol{p}_t=w_a\boldsymbol{p}_a+w_b\boldsymbol{p}_b,\qquad
+\epsilon_t=w_a\epsilon_a+w_b\epsilon_b.
+$$
+
+在等权、等能量的简化下，两个新动量关于总动量方向对称，论文用
+
+$$
+\cos\theta=\frac{p_t}{w_t p_a}
+$$
+
+确定夹角，并用动量 cell 对角线选择平面，避免在原来没有展宽的方向凭空制造分布。论文还强调位置不能机械地都放在 cluster 质心，而应从原粒子位置中抽取，以避免 merge cell 中心出现人为密度尖峰。完整的按段落中文讲解和图 1--8 见 `references/03_pic_foundations/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes-中文讲解.md`。
+
+这与当前 WarpX 的 `VelocityCoincidenceThinning` 存在清晰的结构映射：源码同样在 cell 内按速度空间分 bin，把 cluster 压成两个粒子，并累计权重、加权动量和动能；`resampling_algorithm_target_weight` 还因“两粒子输出”而在内部乘 2。论文的 Poisson merging-rate 公式、QED cascade speed-up 和分布复现结果则属于论文自己的 OSIRIS/QED 案例，不能转写成 WarpX 已完成的 runtime physics proof。
+
+当前 WarpX `resampling` regression 仍主要提供粒子数、权重或 checksum 层证据，缺少与论文 two-stream、magnetic-shower、QED-cascade 案例一一对应的 dedicated consumer。因此本节的准确分类是 `FULLTEXT_PAPER_BACKED_PARTICLE_MERGING_WARPX_MAPPING_RUNTIME_SEPARATE`：论文资产已经闭合，论文到 WarpX 的语义映射已建立，但 runtime 等价和 speed-up 仍保持边界。合同见 `runs/stage-c-validation/vranic-2015-paper-asset/contract.{json,md}`。
+
 ### 4.13.8 `particle_pusher`、`single_particle`、`larmor`、`photon_pusher` 的真实验证边界
 
 `Particles` 目录里还有一组很容易被简单统称为“单粒子 test”的 regression：

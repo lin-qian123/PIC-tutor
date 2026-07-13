@@ -2,8 +2,8 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `187`
-- PASS: `135`
+- records: `188`
+- PASS: `136`
 - FAIL: `30`
 - UNKNOWN: `22`
 - boundary-classified: `33`
@@ -197,5 +197,6 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `villasenor-1992-paper-asset` | `PASS` | `PASS` | Villasenor-Buneman 1992 Chapter 5 deposition paper asset contract | `LOCAL_FULLTEXT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_PROVENANCE_PENDING` | local full-text PDF and MinerU package support a first-round formula/source walkthrough; publisher provenance and final-formula transcription remain open | `passed=True` |
 | `villasenor-source-contract` | `PASS` | `PASS` | Villasenor crossing-driven segment source skeleton | `` | read-only source audit; not a runtime or kernel numerical regression | `anchor_count=16`, `passed=True`, `passed_anchor_count=16` |
 | `villasenor_formula_contract` | `PASS` | `PASS` | 2D four-boundary and 3D cross-term flux/volume identities plus arbitrary crossing-split displacement closure | `` | paper formula and geometric segmentation identities; not a WarpX kernel equivalence or end-to-end regression | `max_3d_face_sum_residual=1.7763568394002505e-15`, `max_3d_volume_closure_residual=1.7763568394002505e-15`, `max_crossing_count=6`, `max_flux_sum_residual=4.440892098500626e-16`, `max_four_boundary_residual=4.440892098500626e-16`, `max_segment_sum_residual=4.440892098500626e-16`, `passed=True` |
+| `vranic-2015-paper-asset` | `PASS` | `PASS` | Vranic 2015 particle-merging paper asset contract | `FULLTEXT_PAPER_BACKED_PARTICLE_MERGING_WARPX_MAPPING_RUNTIME_SEPARATE` | local PDF/MinerU/Chinese note and Chapter 4 mapping; no claim of WarpX paper-case reproduction | `passed=True` |
 | `yee-1966-indexed-abstract` | `PASS` | `BOUNDARY` | Yee 1966 bounded indexed-abstract literature contract | `INDEXED_ABSTRACT_BACKED_METADATA_VERIFIED_IEEE_FULL_TEXT_MISSING` | indexed abstract-level evidence only; no IEEE publisher-PDF or line-by-line claim | `passed=True` |
 | `yee-source-crosswalk` | `PASS` | `BOUNDARY` | WarpX Yee/FDTD source crosswalk | `CURRENT_WARPX_SOURCE_GROUNDED_YEE_CROSSWALK_INDEXED_ABSTRACT_HISTORICAL_FULL_TEXT_MISSING` | read-only current FDTD source mapping; not a line-by-line reconstruction of the 1966 IEEE paper | `passed=True` |

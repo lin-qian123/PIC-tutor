@@ -40,15 +40,18 @@
 - `references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/`
 - `references/03_pic_foundations/1979_TajimaDawson_Laser_Electron_Accelerator/`
 - `references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/`
+- `references/03_pic_foundations/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes/`
 
 其中 `TajimaDawson1979` 现已通过独立的 `runs/stage-c-validation/tajima-dawson-1979-asset/contract.{json,md}` 收口为 paper-backed full-text asset：4 页 PDF、MinerU Markdown、11 张图和中文精读均已存在。它支撑的是最早期 `driver -> wake -> trapping -> acceleration` 与 LWFA scaling；合同同时保留“不替代现代 WarpX regression”的边界。
 
-这三条线已经足以支撑：
+这些基础资产已经足以支撑：
 
 - 第 1 章的 superparticle、weighted particles、finite-size particles、quiet start、噪声与 heating 讨论；
 - 第 2 章的最小 PIC loop、electrostatic / EM / Darwin 模型边界；
 - 第 8 章中 diagnostics、spectrum、correlation time、weak instability dynamic range 的讨论；
 - LWFA 最早 scaling baseline 的历史入口。
+
+Vranic 2015 进一步补上了粒子 merge/resampling 这条应用线：论文专属目录、24 页 PDF、MinerU Markdown、32 张图、中文讲解和独立 asset contract 均已存在。它支撑第 4 章对“两粒子局部守恒 merge”的 paper-backed 解释，但不替代 WarpX `VelocityCoincidenceThinning` 的逐行等价或 dedicated runtime consumer。
 
 其中 `Birdsall 1985` 因原书过长，当前项目采用分卷 PDF + 分卷 MinerU 的方式处理；这意味着它已经是 A 层资产，但仍不是“整本都已完全精读”。
 

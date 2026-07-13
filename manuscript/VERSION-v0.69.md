@@ -1,10 +1,8 @@
-# PIC-tutor v0.70
+# PIC-tutor v0.69
 
-本版新增 Vranic 2015 粒子合并论文资产：24 页 PDF、MinerU Markdown、32 张图、中文精读和 `11/11` asset contract 已通过；第 4 章将论文的两粒子局部守恒 merge 与 WarpX `VelocityCoincidenceThinning` 做有界映射，但不把论文案例升级为 WarpX runtime PASS。
+本版为第 9 章补入 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 83 条 BibTeX 条目生成保守的候选主题、章节入口、P1/P2/P3 优先级和获取动作。该 triage 只服务于 acquisition/read queue，不把标题关键词、metadata 或建议章节升级为全文阅读或正文证据。
 
-本版延续第 9 章的 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 82 条 BibTeX 条目保留保守的候选主题、章节入口、P1/P2/P3 优先级和获取动作。该 triage 只服务于 acquisition/read queue，不把标题关键词、metadata 或建议章节升级为全文阅读或正文证据。
-
-本版由 `scripts/verify_v70_build.py` 验收，当前合订 PDF 为 326 页。
+本版由 `scripts/verify_v69_build.py` 验收，当前合订 PDF 为 326 页。
 
 本版又固化 Vay + AMR 的 source guard：当前 `WarpX.cpp` 在 `Vay && maxLevel() > 0` 时于初始化阶段拒绝运行，分类为 `SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED`；不把该支持边界写成 AMR physics PASS/FAIL。
 
@@ -30,7 +28,7 @@
 
 本版又修正第 8 章 `8.14.1` 孤立标题层级为正式 `8.14` 小节，并将正文验证矩阵的合同数口径更新为当前 `177` 条。
 
-本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `188` 条。
+本版又补入第 8 章 reduced diagnostics 最小输入合同：12 项检查覆盖 `FieldProbe`、`ParticleHistogram2D`、`LoadBalanceCosts` 的官方输入和 analysis consumer；公开证据索引当前为 `187` 条。
 
 本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12 组代表性锚点覆盖 `WarpXEvolve.cpp` 外层推进、FDTD/PML kernel、Cartesian/RZ spectral 分派和 regression 证据边界。该合同只用于防止正文随当前 WarpX 源码漂移，不替代 C++ 语义等价证明、runtime physics proof 或论文逐式复现。报告见 `runs/stage-c-validation/fieldsolver-chapter-source-crosswalk/contract.{json,md}`。
 

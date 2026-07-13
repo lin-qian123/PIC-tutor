@@ -2,11 +2,11 @@
 
 审计日期：2026-07-13
 
-当前 release 为 v0.103；本版在 v0.102 scaling 前 axis 输入边界基础上，进一步证明 on/off 三档初始帧的电子/离子 particle ID、位置、角度、权重和动量逐项完全一致，但 species-rho axis 比值仍为 `0.85`、off-axis 比值仍为 `1`。该结果排除粒子初始化状态差异，把剩余问题收窄到 diagnostic consumer、charge deposition 或 axis wrap/scaling 路径；route-count ledger、axis charge correctness、正式 order closure、RZ implicit runtime、人工全书通读、许可和公开再分发仍保持开放。
+当前 release 为 v0.104；本版在 v0.103 particle-state invariant 基础上，进一步证明 64x128 RZ 的 default-true 与 explicit-true runtime 完全等价：`rho_electrons/rho_ions/rho/Er/Ez/divE` 及电子/离子粒子状态逐项一致；explicit false 只在 species axis rho 上产生差异。分类为 `RZ_AXIS_CORRECTION_DEFAULT_EXPLICIT_TRUE_EQUIVALENT_FALSE_BOUNDARY_OPEN`，不把该结果写成 root cause、charge closure 或正式 order closure。route-count ledger、axis charge correctness、RZ implicit runtime、人工全书通读、许可和公开再分发仍保持开放。
 
 v0.78 完成 Esirkepov 2001 CPC indexed abstract 与 arXiv 预印本的 bounded compare；该 contract 只确认发表版 metadata/abstract 级算法主张已归类，不把 publisher-PDF 缺口写成已关闭。
 
-当前 `dist/pic-tutor-v0.103.pdf` 页数以本轮构建验收为准；v0.75 及此前的构建记录均属于历史构建快照。
+当前 `dist/pic-tutor-v0.104.pdf` 页数以本轮构建验收为准；v0.75 及此前的构建记录均属于历史构建快照。
 
 v0.66 审计发现合订 Markdown/HTML 含本机绝对路径和不可随公共仓库迁移的绝对链接；v0.67 已在 release 构建层修复，v0.75 延续该检查，并将验证合同摘要、文献 triage、沉积算法选择矩阵和 paper asset contract 纳入公共 allowlist；论文 `references/` 原始资产仍按逐篇许可边界排除。
 
@@ -21,19 +21,19 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.103.pdf` | 3,500,518 bytes / 336 页 | 当前成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.103.html` | 5,883,486 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.103.md` | 1,183,654 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.104.pdf` | 3,503,426 bytes / 337 页 | 当前成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.104.html` | 5,886,949 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.104.md` | 1,186,090 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 
 - `runs/` 已加入忽略规则；本轮又忽略了根目录运行残留 `Backtrace.*` 和 `bmmntr.txt`。
 - 当前书稿图表位于 `manuscript/assets/figures/`，源章节使用相对路径；`scripts/build_v96.py` 会在合订阶段解析资源。
-- `dist/` 当前仍保留历史版本产物，发布时应明确选择 `v0.103`，不要按目录整体上传。
+- `dist/` 当前仍保留历史版本产物，发布时应明确选择 `v0.104`，不要按目录整体上传。
 - `references/` 中的论文 PDF、MinerU 图片和讲解笔记应按论文逐项确认公开许可；本审计不把“本机可读”当作“可公开分发”。
 - `README.md`、`TODO.md`、`manuscript/VERSION.md` 和本文件应在 push 前再次同步当前 release 选择。
 
-## v0.103 建议发布清单
+## v0.104 建议发布清单
 
 建议纳入公共仓库的项目内资产：
 
@@ -43,7 +43,7 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 - `docs/` 中的项目说明、验证矩阵和本发布审计；
 - `docs/public-evidence-index.{json,md}`；
 - `docs/transition-zone-route-contract.{json,md}` 与 `scripts/validate_transition_zone_route_contract.py`；
-- `dist/pic-tutor-v0.103.md`、`dist/pic-tutor-v0.103.html`、`dist/pic-tutor-v0.103.pdf`，前提是维护者确认生成物的发布策略。
+- `dist/pic-tutor-v0.104.md`、`dist/pic-tutor-v0.104.html`、`dist/pic-tutor-v0.104.pdf`，前提是维护者确认生成物的发布策略。
 
 明确排除：
 
@@ -61,8 +61,8 @@ python scripts/audit_release_consistency.py
 git status --short
 ```
 
-当前 v0.103 构建验收结果以 `scripts/verify_v103_build.py`、`scripts/audit_editorial_quality.py`、`scripts/audit_pdf_layout.py`、`scripts/audit_formal_convergence_preregistration.py`、`scripts/audit_formal_convergence_repeat_slope_gate.py`、`scripts/run_formal_convergence_repeat_family.py`、`scripts/analyze_formal_convergence_repeat_family.py`、`scripts/analyze_rz_axis_charge_repeat_stability.py`、`scripts/analyze_rz_axis_divergence_stencil_contract.py`、`scripts/analyze_rz_axis_divergence_resolution_contract.py`、`scripts/analyze_rz_axis_divergence_fit_contract.py` 和 `scripts/audit_transition_zone_runtime_activation.py` 为准；route-count ledger、axis charge correctness、正式收敛阶、人工全书通读、许可和公开再分发仍保持开放。
+当前 v0.104 构建验收结果以 `scripts/verify_v104_build.py`、`scripts/audit_editorial_quality.py`、`scripts/audit_pdf_layout.py`、`scripts/audit_formal_convergence_preregistration.py`、`scripts/audit_formal_convergence_repeat_slope_gate.py`、`scripts/run_formal_convergence_repeat_family.py`、`scripts/analyze_formal_convergence_repeat_family.py`、`scripts/analyze_rz_axis_charge_repeat_stability.py`、`scripts/analyze_rz_axis_divergence_stencil_contract.py`、`scripts/analyze_rz_axis_divergence_resolution_contract.py`、`scripts/analyze_rz_axis_divergence_fit_contract.py` 和 `scripts/audit_transition_zone_runtime_activation.py` 为准；route-count ledger、axis charge correctness、正式收敛阶、人工全书通读、许可和公开再分发仍保持开放。
 
-v0.103 发布 allowlist 另见 `docs/v0.103-release-manifest.{json,md}`；总字节数以 manifest 的 `total_bytes` 为准，`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
+v0.104 发布 allowlist 另见 `docs/v0.104-release-manifest.{json,md}`；总字节数以 manifest 的 `total_bytes` 为准，`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
 
 验收脚本证明的是成书构建和资源合同，不替代第三方材料的版权审计，也不替代 GitHub 仓库最终 staged 文件清单审阅。

@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.103`：在 v0.102 scaling 前 axis 输入合同基础上，进一步证明 on/off 三档初始帧的电子/离子 particle ID、位置、角度、权重和动量逐项完全一致，但 species-rho axis 比值仍为 `0.85`、off-axis 比值仍为 `1`。该结果排除了粒子初始化状态差异，把剩余问题收窄到 diagnostic consumer、charge deposition 或 axis wrap/scaling 路径，但不宣称 root cause、charge closure 或正式收敛阶已完成。
+当前成书版本为 `v0.104`：在 v0.103 粒子状态不变量基础上，新增真实 2-rank default-true 与 explicit-true sibling 对照。两者的 species rho、总 rho、场变量和粒子状态逐项完全一致；explicit false 只在 species axis rho 上产生差异。该结果排除了参数默认值/解析路径，把剩余问题收窄到 axis correction 参与的 diagnostic/deposition/wrap/scaling consumer，但不宣称 root cause、charge closure 或正式收敛阶已完成。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

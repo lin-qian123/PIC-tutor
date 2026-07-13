@@ -2801,6 +2801,17 @@ v0.103 再向上游核对 on/off 初始诊断帧的粒子状态。对 `electrons
 
 因此新增 `RZ_RHO_AXIS_DIAGNOSTIC_CONSUMER_BOUNDARY_OPEN`：粒子初始化和粒子状态差异已被排除，剩余边界集中在 species-rho diagnostic consumer、charge deposition 或负半径 axis wrap/scaling 路径。该合同仍不是具体 kernel root-cause 证明、charge closure 或正式收敛阶。合同由 `scripts/audit_rz_rho_particle_state_invariant.py` 生成，报告见 `runs/stage-c-validation/rz-rho-particle-state-invariant-v0.103/contract.{json,md}`，说明见 `notes/code-reading/particles/84-rz-rho-particle-state-invariant.md`。
 
+### 5.14.20 v0.104 default versus explicit true axis correction
+
+v0.104 对参数解析做真实 runtime 对照：64x128 RZ 的 default-true on case 省略 `boundary.verboncoeur_axis_correction`，另一个 sibling 显式设置 `true`，并与显式 `false` case 比较。default-true 与 explicit-true 的 `rho_electrons`、`rho_ions`、`rho`、`Er`、`Ez`、`divE` 数组最大绝对差均为 `0`；两种 species 的 particle ID、位置、角度、权重和动量也逐项一致。显式 false 只在 species axis rho 上产生差异，总 `rho` 与场变量保持一致。
+
+| comparison | species rho fields | total rho / fields | particle state |
+|---|:---:|:---:|:---:|
+| default true vs explicit true | exact equal | exact equal | exact equal |
+| default true vs explicit false | axis differs; max `60081.62377500016` | exact equal in selected fields | exact equal in saved state |
+
+因此新增 `RZ_AXIS_CORRECTION_DEFAULT_EXPLICIT_TRUE_EQUIVALENT_FALSE_BOUNDARY_OPEN`：默认值解析和显式 true 分支已被排除，剩余问题集中在 axis correction 参与的 species-rho diagnostic/deposition/wrap/scaling consumer。该合同仍不是具体 kernel root-cause 证明、charge closure 或正式收敛阶。合同由 `scripts/audit_rz_axis_correction_default_explicit_true.py` 生成，报告见 `runs/stage-c-validation/rz-axis-correction-default-explicit-true-v0.104/contract.{json,md}`，说明见 `notes/code-reading/particles/85-rz-axis-correction-default-explicit-true.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

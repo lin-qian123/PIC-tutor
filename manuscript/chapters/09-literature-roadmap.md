@@ -192,6 +192,12 @@
 - 方案 A 不强依赖外部授权状态；
 - 方案 B 仍可能被 PDF 获取问题卡住。
 
+### 9.7.1 文献资产与路线图同步合同
+
+本章的路线图现在由 `scripts/audit_literature_roadmap_asset_contract.py` 做仓库内一致性检查。当前合同共 12 项，覆盖 A/B/C/D 证据层定义、八条核心文献目录、`docs/literature-map.md` 与生成式 inventory 的锚点，以及 `TajimaDawson1982`、`Esirkepov 2001`、`LeeCPC2015`、`Yee 1966`、`Hockney-Eastwood` 的缺口声明。报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}`。
+
+这个合同只说明“路线图与项目内资产状态一致”，不证明中文讲解已经逐式审校，不证明预印本与出版社排版版逐页等价，也不把 WarpX runtime 结果升级为论文全部物理结论的验证。后续新增或替换 primary source 时，应先更新合同，再同步本章与 `references/00_index`。
+
 ## 9.8 本章结论
 
 当前项目的文献工作已经跨过了“只有书目，没有正文资产”的阶段，但还远未到“全书 primary sources fully closed”的阶段。可以更准确地概括成：

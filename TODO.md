@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：新增第 9 章文献路线资产合同：12 组检查绑定 A/B/C/D 证据层、八条核心文献目录、`docs/literature-map.md`、生成式 inventory 和 `TajimaDawson1982`/`Esirkepov 2001`/`LeeCPC2015`/`Yee 1966`/`Hockney-Eastwood` 缺口边界；报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}`。公开证据索引随后更新为 177 条。
+
 - [x] 2026-07-13：新增第 8 章诊断/验证正文-源码 crosswalk：13 组检查覆盖主循环调度、Full/BTD/BoundaryScraping、`ComputeDiagFunctors`/flush、OpenPMD 生命周期、reduced diagnostics 注册/写盘和官方 analysis consumer；同步修正章节内过期的 168 条公开合同口径。报告见 `runs/stage-c-validation/diagnostics-chapter-source-crosswalk/contract.{json,md}`。
 
 - [x] 2026-07-13：新增第 7 章边界/PML/AMR 正文-源码 crosswalk：13 组检查覆盖 field/particle 边界顺序、PEC/PMC/Silver-Mueller、PML 生命周期、guard-cell/通信、AMR 重建、moving window、scraping consumer 和 transition-zone 未完成边界；新增 `scripts/audit_boundary_amr_chapter_source_crosswalk.py` 与对应维护笔记。该合同不替代 runtime route-count proof。报告见 `runs/stage-c-validation/boundary-amr-chapter-source-crosswalk/contract.{json,md}`。

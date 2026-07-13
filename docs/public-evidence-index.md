@@ -2,10 +2,10 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `176`
+- records: `177`
 - PASS: `128`
 - FAIL: `30`
-- UNKNOWN: `18`
+- UNKNOWN: `19`
 - boundary-classified: `33`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
@@ -120,6 +120,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `ionization-dsmc-source-contract` | `PASS` | `PASS` | 3D DSMC electron/ion-impact source and regression wiring | `ION_IMPACT_CHECKSUM_ONLY_ELECTRON_IMPACT_ANALYSIS_ACTIVE` | CMake/input/analysis source wiring; no runtime physics claim | `anchor_count=10`, `passed=True`, `passed_anchor_count=10` |
 | `leecpc2015-accepted-manuscript-contract` | `PASS` | `BOUNDARY` | LeeCPC2015 accepted-manuscript source-grounded literature contract | `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING` | seven-page accepted/submitted manuscript plus indexed publisher abstract support first-round PML formula and source mapping; publisher-formatted CPC comparison remains open | `passed=True` |
 | `leecpc2015-source-crosswalk` | `PASS` | `BOUNDARY` | LeeCPC2015 paper/source/regression crosswalk | `ACCEPTED_MANUSCRIPT_SOURCE_CROSSWALK_PUBLISHER_PDF_STILL_MISSING` | paper anchors, WarpX implementation surfaces, and official regression wiring; no publisher-PDF or coefficient-equivalence claim | `passed=True` |
+| `literature-roadmap-asset-contract` | `UNKNOWN` | `UNKNOWN` | literature-roadmap-asset-contract | `` |  | `passed=12` |
 | `parameter-map-parser-anchor-contract` | `PASS` | `PASS` | WarpX parameter-map parser-anchor review surface | `PARSER_LITERAL_ANCHOR_SURFACE_AND_STRUCTURED_NONLITERAL_REVIEW_VERIFIED_RUNTIME_VALUE_SEMANTICS_REMAINS` | cited-source text, exact parser-call/literal anchors and structured dynamic/owner review; not C++ AST or runtime value semantics | `contract_pass=True`, `dynamic_key_constructor_count=0`, `external_owner_count=0`, `manual_review_count=0`, `parser_anchor_count=435`, `parser_call_anchor_count=269`, `parser_literal_anchor_count=166`, `row_count=445`, `structured_review_verified_count=10`, `unclassified_count=0` |
 | `parameter-map-runtime-coverage` | `PASS` | `BOUNDARY` | structured parameter-map runtime coverage | `STRUCTURED_PARAMETER_MAP_RUNTIME_COVERAGE_ATTRIBUTE_PARTICLE_FIELD_VECTOR_RATIO_AND_ADIOS2_BP5_SMOKE_DSMC_DATA_BOUNDARY` | case-local runtime/input/source coverage inventory; not a full parameter semantic or physics regression | `input_only_case_count=1`, `passed=True`, `runtime_case_count=5`, `source_only_case_count=0` |
 | `parameter-map-semantic-anchor-contract` | `PASS` | `PASS` | parameter-map semantic consumer/default/validation anchors | `STRUCTURED_PARAMETER_MAP_SEMANTIC_ANCHORS_VERIFIED_RUNTIME_VALUE_EXECUTION_REMAINS` | 10 structured parameter rows; source-level semantic anchors, not C++ AST, runtime value execution, or all defaults | `case_count=10`, `passed=True` |

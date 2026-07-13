@@ -8,7 +8,9 @@
 
 当前 v0.68 又补入第 8 章诊断/验证正文-源码 crosswalk：13 组检查覆盖主循环调度、Full/BTD/BoundaryScraping、ComputeDiagFunctors/FlushFormats、OpenPMD 生命周期、reduced diagnostics 注册/写盘和官方 analysis consumer；该合同不替代 case-local physics gate。报告见 `runs/stage-c-validation/diagnostics-chapter-source-crosswalk/contract.{json,md}`。
 
-当前公开证据索引已更新为 176 条合同；README 中较早的历史日志保留当时的条数，不代表当前索引快照。
+当前 v0.68 又补入第 9 章文献路线资产合同：12 组检查绑定 A/B/C/D 证据层、八条核心文献目录、全局 literature map、生成式 inventory 和明确的 publisher/metadata 缺口；该合同不把 metadata、相关会议稿或 accepted manuscript 升格为目标论文正文。报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}`。
+
+当前公开证据索引已更新为 177 条合同；README 中较早的历史日志保留当时的条数，不代表当前索引快照。
 
 当前 v0.68 又为第 5 章补入正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface。该合同用于防止源码演进造成正文漂移，不替代物理 runtime 或论文逐行证据。
 

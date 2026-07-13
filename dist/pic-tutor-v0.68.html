@@ -814,6 +814,8 @@ boosted-frame / NCI</a></li>
 <li><a href="#方案-a第-5-章沉积文献闭环" id="toc-方案-a第-5-章沉积文献闭环">方案 A：第 5 章沉积文献闭环</a></li>
 <li><a href="#方案-b第-7-章-pml-论文闭环" id="toc-方案-b第-7-章-pml-论文闭环">方案 B：第 7 章 PML
 论文闭环</a></li>
+<li><a href="#文献资产与路线图同步合同" id="toc-文献资产与路线图同步合同">9.7.1
+文献资产与路线图同步合同</a></li>
 </ul></li>
 <li><a href="#本章结论-2" id="toc-本章结论-2">9.8 本章结论</a></li>
 </ul></li>
@@ -831,6 +833,12 @@ boosted-frame / NCI</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版又补入第 9 章文献路线资产合同：12 组检查绑定 A/B/C/D
+证据层、八条核心文献目录、全局 literature map、生成式 inventory 以及
+<code>TajimaDawson1982</code>、<code>Esirkepov 2001</code>、<code>LeeCPC2015</code>、<code>Yee 1966</code>、<code>Hockney-Eastwood</code>
+的缺口声明。该合同只确认路线图与仓库资产一致，不替代论文逐式审校或
+runtime physics proof。报告见
+<code>runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}</code>。</p>
 <p>本版又补入第 6 章 FieldSolver 正文-源码 crosswalk：12
 组代表性锚点覆盖 <code>WarpXEvolve.cpp</code> 外层推进、FDTD/PML
 kernel、Cartesian/RZ spectral 分派和 regression
@@ -26808,6 +26816,19 @@ paper-backed 章节。</li>
 <li>方案 A 不强依赖外部授权状态；</li>
 <li>方案 B 仍可能被 PDF 获取问题卡住。</li>
 </ul>
+<h3 id="文献资产与路线图同步合同">9.7.1 文献资产与路线图同步合同</h3>
+<p>本章的路线图现在由
+<code>scripts/audit_literature_roadmap_asset_contract.py</code>
+做仓库内一致性检查。当前合同共 12 项，覆盖 A/B/C/D
+证据层定义、八条核心文献目录、<code>docs/literature-map.md</code>
+与生成式 inventory 的锚点，以及
+<code>TajimaDawson1982</code>、<code>Esirkepov 2001</code>、<code>LeeCPC2015</code>、<code>Yee 1966</code>、<code>Hockney-Eastwood</code>
+的缺口声明。报告见
+<code>runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}</code>。</p>
+<p>这个合同只说明“路线图与项目内资产状态一致”，不证明中文讲解已经逐式审校，不证明预印本与出版社排版版逐页等价，也不把
+WarpX runtime 结果升级为论文全部物理结论的验证。后续新增或替换 primary
+source 时，应先更新合同，再同步本章与
+<code>references/00_index</code>。</p>
 <h2 id="本章结论-2">9.8 本章结论</h2>
 <p>当前项目的文献工作已经跨过了“只有书目，没有正文资产”的阶段，但还远未到“全书
 primary sources fully closed”的阶段。可以更准确地概括成：</p>

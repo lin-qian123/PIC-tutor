@@ -1,16 +1,16 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 176,
+  "record_count": 177,
   "status_counts": {
     "PASS": 128,
     "FAIL": 30,
-    "UNKNOWN": 18
+    "UNKNOWN": 19
   },
   "evidence_kind_counts": {
     "PASS": 107,
     "FAIL": 27,
-    "UNKNOWN": 9,
+    "UNKNOWN": 10,
     "BOUNDARY": 33
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
@@ -1601,6 +1601,17 @@
       "scope": "paper anchors, WarpX implementation surfaces, and official regression wiring; no publisher-PDF or coefficient-equivalence claim",
       "metrics": {
         "passed": true
+      }
+    },
+    {
+      "case": "literature-roadmap-asset-contract",
+      "status": "UNKNOWN",
+      "evidence_kind": "UNKNOWN",
+      "contract": "literature-roadmap-asset-contract",
+      "classification": null,
+      "scope": null,
+      "metrics": {
+        "passed": 12
       }
     },
     {

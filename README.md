@@ -16,6 +16,8 @@
 
 当前 v0.68 又为第 9 章补入证据分层、合同复核和 acquisition 排序三项读者练习；第 1-9 章均已有可执行的练习或复核入口。
 
+当前 v0.68 又将第 8 章孤立的 `8.14.1` 源码同步合同提升为正式 `8.14` 小节，并修正验证矩阵中历史 `175` 条合同口径为当前 `177` 条。
+
 当前公开证据索引已更新为 177 条合同；README 中较早的历史日志保留当时的条数，不代表当前索引快照。
 
 当前 v0.68 又为第 5 章补入正文-源码 crosswalk：13 组代表性锚点同步 charge bridge、旧/新时间层、implicit Esirkepov/Villasenor、Villasenor segment kernel、shape helper 和 RZ/径向 geometry surface。该合同用于防止源码演进造成正文漂移，不替代物理 runtime 或论文逐行证据。

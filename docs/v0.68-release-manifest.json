@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 762,
-  "total_bytes": 27948631,
+  "total_bytes": 27949637,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1533247,
-      "sha256": "9fdfc8df4de38fc14cf9d154593ae6d44b2098ef89708cdfa9f6286b58617954"
+      "bytes": 1533420,
+      "sha256": "bc5a9c4d2f084d93075bc41f11f54ad574d73ff6c5507a1d8010aaa9891e02d6"
     },
     {
       "path": "TODO.md",
-      "bytes": 1381154,
-      "sha256": "84f9fcf730247b17534b0c269da9834eab9dd9c380d2d2a852e8c196f72e48e7"
+      "bytes": 1381375,
+      "sha256": "0a950a38154ed8c18d03b62fd371d23a3fade12f2f278bb53bd67f6091618279"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5782738,
-      "sha256": "665ca957d198142ea513c1093cdb810ab2c6f7d1590b66761755bb6ed203df97"
+      "bytes": 5782923,
+      "sha256": "c04f7a3b447f73d9453819cb2ee664ab77614f2cc77d56f808269e6d6966856e"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1103714,
-      "sha256": "e794f093403e07e3a7c57bf5eed0e7b7ef545564e32abb78fa10394c85220bd5"
+      "bytes": 1103861,
+      "sha256": "45bd0aaa6451c4a9579c4c45b4be1e1c5efd1c823f9c787bc7476c785fda2de3"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3410744,
-      "sha256": "4a4a1daf276e507596652410055a63a809fc2b025b4d3dae354d71d1afb28b04"
+      "bytes": 3410704,
+      "sha256": "70d531ad5ea494d1c6cb95046708864e4f3b1b11350d47007629bab8f3064cb4"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4243,
-      "sha256": "9688dcab2d64577234070edcfd3deeb5e99d87140953d3cc85f64294fc9ab758"
+      "sha256": "5759939d35ffc59ed684ac607c0ba518eb13cda1c72de54c221d8762ad65b6a4"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 75353,
-      "sha256": "b4ee47f7d8d00287ebed93afae5b4fc8c8a8f7ec8f8b1c4d85b2c8c36e15911f"
+      "bytes": 75503,
+      "sha256": "f285f54e9a1c826f480907e6f21c51e4dbf45605b1f09c320d1d4b6cb260a813"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -912,8 +912,8 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 112760,
-      "sha256": "cf8f2475ed867a23b0ec7fb745b9c3c2e9f86e77430a18e9f54dfbf627280932"
+      "bytes": 112757,
+      "sha256": "0048b85786282ab105f7b6151fd56ac1385766aa461c61d27a0013a77bb308a2"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -3832,8 +3832,8 @@
     },
     {
       "path": "scripts/verify_v68_build.py",
-      "bytes": 3686,
-      "sha256": "a7992b9ab545285365d755d79ea83997a825ac3ba853a6270fedcfe36382d891"
+      "bytes": 3859,
+      "sha256": "109df34114d1b330dbdfe43ed064500b94a0e9c64221ac05a9cbe3c68eaa2a99"
     },
     {
       "path": "scripts/verify_villasenor_formula_contract.py",

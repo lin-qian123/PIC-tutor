@@ -69,6 +69,8 @@ def main() -> None:
                 "### 9.9.3 acquisition 排序练习",
             )
         ),
+        "chapter_8_source_contract_heading": "## 8.14 本章正文与源码同步合同" in source
+        and "### 8.14.1 本章正文与源码同步合同" not in source,
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],
         "public_path_hygiene_html": inspect(HTML)["passed"],
     }

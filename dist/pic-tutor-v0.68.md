@@ -14746,7 +14746,7 @@ p_gather_main: fine_gather = 0, coarse_gather = np
 2. **PML 证据题**：对照 `pml/analysis_pml_yee.py`、`analysis_pml_psatd.py` 和 RZ analysis，区分反射率强判据、末态 residual 判据和 checksum-only 证据。
 3. **AMR route 题**：阅读 `BuildBufferMasks()` 与 `PartitionParticlesInBuffers()`，画出一个粒子分别进入 fine gather、coarse gather、fine deposit 和 coarse deposit 的条件；说明为什么当前没有 dedicated route-count regression 时不能声称每条 route 已被单独验证。
 
-### 7.7.7 v0.40 transition-zone 当前证据状态
+### 7.7.7 v0.68 transition-zone 当前证据状态
 
 为了避免把设计草案写成已完成 regression，本章把当前状态收束成四层：
 
@@ -14759,7 +14759,7 @@ p_gather_main: fine_gather = 0, coarse_gather = np
 
 本轮又对相邻 WarpX checkout 做了只读的 live source contract audit。新增 `scripts/audit_transition_zone_source_contract.py`，在 commit `8c488b1a9` 上逐项找到 `WarpX.H` 的 buffer-width 控制、`WarpX.cpp` 的 `BuildBufferMasks()`/`BuildBufferMasksInBox()`、`Partition.cpp` 的 `stablePartition`、`PhysicalParticleContainer.cpp` 的 `nfine_deposit/nfine_gather` 与 `Efield_cax/current_buf/rho_buf` 路由，以及 `WarpXComm.cpp` 的 `SyncCurrent/SyncRho` 回灌锚点；五组源码检查全部通过。同时，脚本确认当前 `Source/` 与 `Examples/Tests/` 中仍没有 `TransitionZoneRoutes` 或 `amr_transition_zone`。报告位于 `runs/stage-c-validation/transition-zone-source-contract.{json,md}`。这一步把“源码已核”变成了可重复的 checkout-level audit，但仍明确不是运行级 route-count regression。
 
-因此，v0.40 的第 7 章对 transition zone 应采用“源码已核、间接验证已核、专门 route proof 待实现”的证据等级。下一步真正进入 WarpX 时，应先实现 reduced diagnostic skeleton 和 `PartitionParticlesInBuffers()` 后的轻量 hook，再接入五类最小输入；在此之前，本书不会把现有 MR checksum 或 residual-field analysis 改写成 branch-level validation。
+因此，v0.68 的第 7 章对 transition zone 应采用“源码已核、间接验证已核、专门 route proof 待实现”的证据等级。下一步真正进入 WarpX 时，应先实现 reduced diagnostic skeleton 和 `PartitionParticlesInBuffers()` 后的轻量 hook，再接入五类最小输入；在此之前，本书不会把现有 MR checksum 或 residual-field analysis 改写成 branch-level validation。
 
 本轮又把这条“下一步”压成可 review 的 implementation packet：`notes/code-reading/particles/50-transition-zone-route-count-implementation-packet.md` 固定了 `PhysicalParticleContainer::Evolve()`、`SyncCurrent/SyncRho` 的插入点，以及 `nfine/nbuffer`、weight、`rho/J`、coarsened-fine、owner-mask 和 post-sync 的最小 reduced schema。该 packet 仍未写入当前 `../warpx`，因此它是接续开发入口，不是已启用的 CI regression。
 

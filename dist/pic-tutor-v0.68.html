@@ -662,7 +662,7 @@ transition-zone 测试草案</a></li>
 transition-zone regression patch 计划</a></li>
 <li><a href="#练习与源码定位-2" id="toc-练习与源码定位-2">7.7.6
 练习与源码定位</a></li>
-<li><a href="#v0.40-transition-zone-当前证据状态" id="toc-v0.40-transition-zone-当前证据状态">7.7.7 v0.40 transition-zone
+<li><a href="#v0.68-transition-zone-当前证据状态" id="toc-v0.68-transition-zone-当前证据状态">7.7.7 v0.68 transition-zone
 当前证据状态</a></li>
 </ul></li>
 </ul></li>
@@ -23462,7 +23462,7 @@ gather、coarse gather、fine deposit 和 coarse deposit
 的条件；说明为什么当前没有 dedicated route-count regression
 时不能声称每条 route 已被单独验证。</li>
 </ol>
-<h3 id="v0.40-transition-zone-当前证据状态">7.7.7 v0.40 transition-zone
+<h3 id="v0.68-transition-zone-当前证据状态">7.7.7 v0.68 transition-zone
 当前证据状态</h3>
 <p>为了避免把设计草案写成已完成
 regression，本章把当前状态收束成四层：</p>
@@ -23532,7 +23532,7 @@ audit。新增
 <code>amr_transition_zone</code>。报告位于
 <code>runs/stage-c-validation/transition-zone-source-contract.{json,md}</code>。这一步把“源码已核”变成了可重复的
 checkout-level audit，但仍明确不是运行级 route-count regression。</p>
-<p>因此，v0.40 的第 7 章对 transition zone
+<p>因此，v0.68 的第 7 章对 transition zone
 应采用“源码已核、间接验证已核、专门 route proof
 待实现”的证据等级。下一步真正进入 WarpX 时，应先实现 reduced diagnostic
 skeleton 和 <code>PartitionParticlesInBuffers()</code> 后的轻量

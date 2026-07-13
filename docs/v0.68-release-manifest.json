@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 748,
-  "total_bytes": 27818700,
+  "total_bytes": 27819204,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1529151,
-      "sha256": "0f7686519ed279908eee649a16c8cdb3a38ac10b78b91226f5230f43836a2fd7"
+      "bytes": 1529405,
+      "sha256": "f5e4900339ba40468c9e65dda32b9b712a53056c4a171fbab5ac7ecb473c2527"
     },
     {
       "path": "TODO.md",
-      "bytes": 1376759,
-      "sha256": "9ecfe0d74774709dd93d45dee0e7d4e3b651cf16c023dcd43218d3dcebf8037a"
+      "bytes": 1377000,
+      "sha256": "9ce3dd764e116a6b3472fdd51e490adf074e75441e0ecc6f6b7e580fa7cd5786"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
       "bytes": 5766439,
-      "sha256": "d3557ba6d4001d8defc46b6902a7de6e751bb3182813cf72e1f1b67fa8a32abc"
+      "sha256": "4ec9393a431f4dbb25897fbae109b326d34d675707f9c439af8c1e07d9845ef3"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
       "bytes": 1091094,
-      "sha256": "d87a47757d5557493723d717ff48981941b71920d22316ca241175113e1a0dcb"
+      "sha256": "ee6200b74e76338dcf047ac96723a6fb6d47f1cd93010657a5144f9ab7193708"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3392111,
-      "sha256": "20e5d780f6a0911a3f544af0dcb3de609276075cbbd20016d92525b414d9087b"
+      "bytes": 3392120,
+      "sha256": "4708604d9b76370c7040560a4c530bc332809f73833ab7009982574a5c05f326"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "80770b4a07ab9149f01ac15fd5828240192b61ccfcd54190086e36ce569de591"
+      "sha256": "51336bb4341d27b9f2fc9d8b3001928db699cbee5ce17cca07b3b207730acca0"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -908,7 +908,7 @@
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
       "bytes": 167095,
-      "sha256": "6b9c819b27cc56a65538c53bb6bc540c72ba4a44110f6b9b734ba3671d1cd0b2"
+      "sha256": "d0562c744785d8896dfa247cf083ec160f57f7510e1483d8e30c167881e166ce"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",

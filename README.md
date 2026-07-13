@@ -4,6 +4,8 @@
 
 当前 v0.68 又补入第 5 章 deposition 证据层导航表：将 Esirkepov 的论文/索引摘要、WarpX 当前源码、代数/源码合同和 runtime consumer 分层，明确 publisher-PDF 逐行对照、完整 geometry/order product 与 AMR 强 runtime 闭环仍未完成。crosswalk 脚本为 `scripts/audit_esirkepov_paper_source_runtime_crosswalk.py`，当前 15 项检查全部通过。
 
+当前 v0.68 又清理第 7 章 transition-zone 状态口径：将过期的 `v0.40` 小节标题和结论更新为当前 v0.68，同时保留 `TransitionZoneRoutes`/`amr_transition_zone` 尚未接入、真实 route-count ledger 仍未完成的边界。
+
 当前 v0.68 又补入 position-update output-staggering contract：`UpdatePosition.H` 与 `PhysicalParticleContainer.cpp` 的源码锚点通过，Boris/Vay/Higuera-Cary 三组各 81 帧 Full plotfile 的单帧动量配对误差约为 `6.242e-2`，相邻帧中点 proxy 最大误差约为 `1.609e-3`；该结果确认输出时间层边界，不把 plotfile 机械动量冒充直接 half-step attribute。脚本为 `scripts/audit_position_update_runtime_contract.py`，报告见 `runs/stage-c-validation/position-update-runtime-contract/contract.{json,md}`。
 
 当前 v0.68 又统一 Higuera-Cary Poincare evidence boundary：短轨道采样不足，长轨道 invariant/reference 和 angular-order candidate 通过但 topology 未升级，密集族 resonance screen 通过而解析 reference/candidate signature 保留边界；不宣称论文等价 two-fold island 或 trajectory-crossing proof。脚本为 `scripts/summarize_higuera_poincare_evidence.py`，报告见 `runs/stage-c-validation/higuera-poincare-evidence-summary/contract.{json,md}`。

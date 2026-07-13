@@ -14,6 +14,9 @@ from pathlib import Path
 from audit_parameter_map_surface import MAP, parameter_tokens, source_paths
 
 
+STRUCTURED_REVIEW = MAP.parent.parent / "runs/stage-c-validation/parameter-map-structured-review-contract/contract.json"
+
+
 PARSER_WORDS = re.compile(
     r"\b(?:query|queryAdd|queryarr|queryArrWithParser|query_enum_sloppy|queryWithParser|queryWithParserWithDefault|"
     r"queryWithParserAndValidate|contains|add|get|getarr|getArrWithParser|getWithParser|Store_parserString|getEntries)\b"
@@ -85,6 +88,12 @@ def parser_calls(text: str) -> dict[str, set[str]]:
 
 
 def main() -> None:
+    reviewed_parameters = set()
+    if STRUCTURED_REVIEW.is_file():
+        review = json.loads(STRUCTURED_REVIEW.read_text(encoding="utf-8"))
+        reviewed_parameters = {
+            item["parameter"] for item in review.get("checks", []) if item.get("passed")
+        }
     text = MAP.read_text(encoding="utf-8")
     rows = []
     for line_number, line in enumerate(text.splitlines()[10:], 11):
@@ -139,6 +148,11 @@ def main() -> None:
             category = "consumer_or_dynamic_review"
         else:
             category = "no_source_token_review"
+        if category in {
+            "dynamic_key_constructor_review", "external_owner_review",
+            "consumer_or_dynamic_review", "no_source_token_review",
+        } and parameter.strip("`") in reviewed_parameters:
+            category = "structured_review_verified"
         records.append(
             {
                 "line": line_number,
@@ -152,8 +166,8 @@ def main() -> None:
         )
 
     counts = {category: sum(item["category"] == category for item in records) for category in (
-        "parser_call_anchor", "parser_literal_anchor", "dynamic_key_constructor_review", "consumer_or_dynamic_review",
-        "external_owner_review", "no_source_token_review"
+        "parser_call_anchor", "parser_literal_anchor", "structured_review_verified", "dynamic_key_constructor_review",
+        "consumer_or_dynamic_review", "external_owner_review", "no_source_token_review"
     )}
     result = {
         "contract": "WarpX parameter-map parser-anchor review surface",
@@ -165,15 +179,16 @@ def main() -> None:
         "parser_call_anchor_count": counts["parser_call_anchor"],
         "parser_literal_anchor_count": counts["parser_literal_anchor"],
         "parser_anchor_rows": counts["parser_call_anchor"] + counts["parser_literal_anchor"],
-        "manual_review_rows": len(records) - counts["parser_call_anchor"] - counts["parser_literal_anchor"],
+        "manual_review_rows": len(records) - counts["parser_call_anchor"] - counts["parser_literal_anchor"] - counts["structured_review_verified"],
         "parser_anchor_count": counts["parser_call_anchor"] + counts["parser_literal_anchor"],
-        "manual_review_count": len(records) - counts["parser_call_anchor"] - counts["parser_literal_anchor"],
+        "manual_review_count": len(records) - counts["parser_call_anchor"] - counts["parser_literal_anchor"] - counts["structured_review_verified"],
         "dynamic_key_constructor_count": counts["dynamic_key_constructor_review"],
         "external_owner_count": counts["external_owner_review"],
         "unclassified_count": counts["no_source_token_review"] + counts["consumer_or_dynamic_review"],
+        "structured_review_verified_count": counts["structured_review_verified"],
         "contract_pass": True,
-        "classification": "PARSER_LITERAL_ANCHOR_SURFACE_AUDITED_MANUAL_VALUE_SEMANTICS_REMAINS",
-        "scope": "cited-source text, exact parser-call/literal anchors and explicit review queue; not C++ AST or runtime value semantics",
+        "classification": "PARSER_LITERAL_ANCHOR_SURFACE_AND_STRUCTURED_NONLITERAL_REVIEW_VERIFIED_RUNTIME_VALUE_SEMANTICS_REMAINS",
+        "scope": "cited-source text, exact parser-call/literal anchors and structured dynamic/owner review; not C++ AST or runtime value semantics",
         "records": records,
     }
     output_dir = MAP.parent.parent / "runs/stage-c-validation/parameter-map-parser-anchor-contract"
@@ -188,7 +203,7 @@ def main() -> None:
         f"- manual review rows: `{result['manual_review_rows']}`",
         f"- classification: `{result['classification']}`",
         "",
-        "This contract records where cited source files contain an exact parser call whose first argument is a parameter literal, or only a parser-like literal adjacency. `consumer_or_dynamic_review` and `external_owner_review` remain explicit manual queues; this report does not claim that a parser call proves defaults, validation, aliases, or runtime value semantics.",
+        "This contract records where cited source files contain an exact parser call whose first argument is a parameter literal, or only a parser-like literal adjacency. Non-literal rows are promoted only after the separate structured dynamic/owner contract passes; this report does not claim that a parser call proves defaults, validation, aliases, or runtime value semantics.",
         "",
         "| category | rows |",
         "|---|---:|",
@@ -196,7 +211,7 @@ def main() -> None:
     lines.extend(f"| `{category}` | `{count}` |" for category, count in counts.items())
     lines.extend(["", "## Manual review queue", "", "| line | parameter | category | source-token keys |", "|---:|---|---|---|"])
     for item in records:
-        if item["category"] != "parser_literal_anchor":
+        if item["category"] not in {"parser_call_anchor", "parser_literal_anchor"}:
             lines.append(f"| `{item['line']}` | `{item['parameter']}` | `{item['category']}` | `{', '.join(item['source_token_keys'])}` |")
     (output_dir / "contract.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps({"row_count": len(records), "category_counts": counts, "manual_review_rows": result["manual_review_rows"]}, ensure_ascii=False))

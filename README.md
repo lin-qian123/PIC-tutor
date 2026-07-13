@@ -20,6 +20,8 @@
 
 当前 v0.68 又补入 parameter-map parser-anchor review surface：排除通用 `type/field/x/y/z` token，限制为普通单行 C++ literal，并覆盖 `query_enum_sloppy`、`queryArrWithParser`、`getWithParser`、`getArrWithParser`、`Store_parserString`、`getEntries` 后，445 条参数中 269 条找到精确 parser-call anchor，另有 166 条找到 parser-literal-only anchor；8 条确认是 dynamic-key constructor，2 条确认是 AMReX owner 参数，没有未分类项。该审计仍不冒充 C++ AST 或完整 ParmParse 语义证明。脚本为 `scripts/audit_parameter_map_parser_anchors.py`，报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
 
+本轮又把上述 10 条非固定键审计升级为精确源码合同：`AMReX_AmrMesh.cpp` 的 `ref_ratio/ref_ratio_vect` `queryarr`、互斥检查和逐 level/方向 materialize，以及 8 条动态键的构造、前缀枚举或 consumer 锚点均逐项通过；parser-anchor 报告现将它们记为 `structured_review_verified`，剩余人工队列为 0，但仍不宣称完整 C++ AST、默认值矩阵或 runtime value semantics。逐条说明见 `notes/code-reading/parameters/00-parameter-map-nonliteral-review.md`。
+
 当前 v0.68 又补入 3D AMR `particles_in_pml` signed/absolute boundary contract：官方 signed consumer 为 `106.4354 < 110`，严格 absolute reader 为 `110.3994 > 110`，唯一越界项是负向 `Ex`，且 coarse/fine 读取一致。该证据明确保留“官方判据通过、强化判据失败”的边界，不修改 WarpX 上游或阈值。合同见 `runs/stage-c-validation/particles-in-pml-3d-mr-boundary/contract.{json,md}`。
 
 当前 v0.68 又新增 RZ secondary-emission resolution-aware public contract：默认 `64x64` 仍为 raw `FAIL`/`BOUNDARY`，`128x128` 与 `256x256` refined controls 通过官方 `2%` EB impact-point gate；三档误差 `3.6038%/0.9977%/0.6646%` 单调下降，支持分辨率敏感性诊断，但不把默认 upstream regression 改写成通过，也不宣称正式 convergence order。合同见 `runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}`。

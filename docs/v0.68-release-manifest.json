@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 748,
-  "total_bytes": 27819204,
+  "entry_count": 749,
+  "total_bytes": 27827255,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1529405,
-      "sha256": "f5e4900339ba40468c9e65dda32b9b712a53056c4a171fbab5ac7ecb473c2527"
+      "bytes": 1529933,
+      "sha256": "56901ad7c0efcacd3c6e672f15fb70b24d370ae799429f379548418d0bf28968"
     },
     {
       "path": "TODO.md",
-      "bytes": 1377000,
-      "sha256": "9ce3dd764e116a6b3472fdd51e490adf074e75441e0ecc6f6b7e580fa7cd5786"
+      "bytes": 1377621,
+      "sha256": "18b141cf3dd90a609afc59a9f54a9306f95ec5039a1d8f5ea8bffa7aa3d5649f"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5766439,
-      "sha256": "4ec9393a431f4dbb25897fbae109b326d34d675707f9c439af8c1e07d9845ef3"
+      "bytes": 5766932,
+      "sha256": "1db3badf462f65247e783d512212b8233c0081f40e7a8bb212d79a831415e30a"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1091094,
-      "sha256": "ee6200b74e76338dcf047ac96723a6fb6d47f1cd93010657a5144f9ab7193708"
+      "bytes": 1091548,
+      "sha256": "75a8178adcdbc2b0289252d2b1f052a4ff099d75fd31b9dbcb599931183db794"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3392120,
-      "sha256": "4708604d9b76370c7040560a4c530bc332809f73833ab7009982574a5c05f326"
+      "bytes": 3392533,
+      "sha256": "038a73050bf73a3b5273b6756e17cc9a8edda5e820ab46c18d6d20bbcef4a001"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 92427,
-      "sha256": "0950d2f1ccb96e57274f494f4b2d99fe2369f2edddfda7194ea143d0062f32c2"
+      "bytes": 92566,
+      "sha256": "b18afd81ecba66d1c2344b3da2511bdcd0cfe7b988c01db8cf9308bbbbc028e0"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 61106,
-      "sha256": "148a2bd764ef43032e5b2fb447a6b5ef1b03fa0a660df4b5fc0f0fa22c02cd29"
+      "bytes": 61236,
+      "sha256": "d43239410609aa119c93b7b6bf077c19323a06f5947a76ef693b67cca0ed492e"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "51336bb4341d27b9f2fc9d8b3001928db699cbee5ce17cca07b3b207730acca0"
+      "sha256": "377a3736785ebf6fadaa2f01778cfb1a14c8260b389659b52a4651d50e31f44d"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 71085,
-      "sha256": "f0af54d8c8606fb13d45f0287bb8a2bf83faa4e1be0f8aa9d5137342ed384dea"
+      "bytes": 71539,
+      "sha256": "fda11c448993d9fd2c6f7ea85b8a116df71f128c4d6854c756a6dad79c877dfb"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -1751,6 +1751,11 @@
       "sha256": "a6227c2f80dc7e419f858041109e5ad564965c586c87b00c08e3373735a7ff64"
     },
     {
+      "path": "notes/code-reading/parameters/00-parameter-map-nonliteral-review.md",
+      "bytes": 2351,
+      "sha256": "6cad594639d62ad156b2382d49639ca3c11aca0dcaabbadcef807d6483b8559b"
+    },
+    {
       "path": "notes/code-reading/particles/00-particle-evolve-callchain.md",
       "bytes": 4838,
       "sha256": "512afcd7170e12244f385809b8db2b0b6e4b0f31455aa78092807efa30b34059"
@@ -2687,8 +2692,8 @@
     },
     {
       "path": "scripts/audit_parameter_map_parser_anchors.py",
-      "bytes": 10047,
-      "sha256": "8ea2aded7da0fba8184410cf13bcf038a38c0994d6d9b2218f0de500a51fad07"
+      "bytes": 10990,
+      "sha256": "54fc9381e0cee67676c5b6a0b1ac1108d374b7108500feb44ef9e1485dcd33e4"
     },
     {
       "path": "scripts/audit_parameter_map_runtime_coverage.py",
@@ -2702,13 +2707,13 @@
     },
     {
       "path": "scripts/audit_parameter_map_structured_review.py",
-      "bytes": 5807,
-      "sha256": "7bfca06b2eddfd6554627442d5852873ff7059918cd4a2ccbce9e970ca6a8a2a"
+      "bytes": 7265,
+      "sha256": "e455451eda7b8e79b4236f47057ada0e1a318471f16918080df5407550d1beff"
     },
     {
       "path": "scripts/audit_parameter_map_surface.py",
-      "bytes": 7489,
-      "sha256": "94c709582eb8f2ab387304b20ac1636ffe296a4cf00a6aed0c12a2c32a76125f"
+      "bytes": 7556,
+      "sha256": "0dfe6c846be5c9b3ef0612584d519819b33759b62853386ea331147a1ad8628d"
     },
     {
       "path": "scripts/audit_particle_histogram2d_count_trend_contract.py",

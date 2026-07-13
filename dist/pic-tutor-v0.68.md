@@ -20,6 +20,8 @@
 
 本版新增 parameter-map parser-anchor review surface：排除通用 `type/field/x/y/z` token，限制为普通单行 C++ literal，并覆盖 `query_enum_sloppy`、`queryArrWithParser`、`getWithParser`、`getArrWithParser`、`Store_parserString`、`getEntries` 后，445 条参数中 269 条找到精确 parser-call anchor，另有 166 条找到 parser-literal-only anchor，8 条确认是 dynamic-key constructor，2 条确认是 AMReX owner 参数，没有未分类项；该结果不替代 C++ AST、默认值/校验或 runtime value semantics 审计。报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
 
+本版进一步完成这 10 条非固定键的精确源码复核：AMReX `AMReX_AmrMesh.cpp` 的 `ref_ratio/ref_ratio_vect` 输入、互斥和 materialize 分支，以及 8 条 dynamic-key constructor/consumer 均通过多 marker contract。parser-anchor 报告将它们标记为 `structured_review_verified`，剩余人工 review queue 为 0；这只关闭源码结构层缺口，不关闭完整 C++ AST、默认值矩阵或 runtime value semantics。
+
 本版又将 3D AMR `particles_in_pml` signed/absolute 分解提升为公开 boundary contract：官方 signed gate 为 `106.4354 < 110`，严格 absolute gate 为 `110.3994 > 110`，唯一越界项是负向 `Ex`，coarse/fine 读取一致。该结果只关闭“判据差异未被结构化索引”的缺口，不关闭 AMR/PML 强残余场验证，也不修改上游阈值。
 
 本版将 RZ secondary-emission 三档 resolution trend 提升为公开 boundary contract：`64x64` 默认基线仍为 raw `FAIL`，`128x128/256x256` refined controls 通过官方 `2%` EB impact-point gate；该结果支持 resolution-sensitive geometry diagnosis，但不关闭默认 upstream regression，也不构成正式 convergence order。

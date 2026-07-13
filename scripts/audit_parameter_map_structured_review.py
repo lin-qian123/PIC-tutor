@@ -10,50 +10,83 @@ from audit_parameter_map_surface import MAP, source_paths
 
 
 ROOT = MAP.parent.parent
+AMREX = ROOT.parent / "amrex"
 
 
 CASES = {
     "amr.ref_ratio": {
         "kind": "external_owner",
         "required_map_text": "AMReX/AmrCore-owned input",
-        "required_source_text": "ref_ratio",
+        "source_files": [AMREX / "Src/AmrCore/AMReX_AmrMesh.cpp"],
+        "required_source_text": [
+            'pp.queryarr("ref_ratio",ratios)',
+            "Only input *either* ref_ratio or ref_ratio_vect",
+        ],
     },
     "amr.ref_ratio_vect": {
         "kind": "external_owner",
         "required_map_text": "AMReX/AmrCore-owned input",
-        "required_source_text": "ref_ratios",
+        "source_files": [AMREX / "Src/AmrCore/AMReX_AmrMesh.cpp"],
+        "required_source_text": [
+            'pp.queryarr("ref_ratio_vect",ratios_vect,0,nratios_vect)',
+            "ref_ratio[i][n] = ratios_vect[k]",
+        ],
     },
     "<species_name>.attribute.<name>(x,y,z,ux,uy,uz,t)": {
         "kind": "dynamic_key_constructor",
-        "required_source_text": '"attribute."+m_user_int_attribs',
+        "required_source_text": [
+            '"attribute."+m_user_int_attribs',
+            '"attribute."+m_user_real_attribs',
+        ],
     },
     "<collision_name>.<scattering_process>_cross_section": {
         "kind": "dynamic_key_constructor",
-        "required_source_text": 'scattering_process + "_cross_section"',
+        "required_source_text": [
+            'scattering_process + "_cross_section"',
+            'pp_collision_name.query(kw_cross_section',
+        ],
     },
     "<collision_name>.<scattering_process>_energy": {
         "kind": "dynamic_key_constructor",
-        "required_source_text": 'scattering_process + "_energy"',
+        "required_source_text": [
+            'scattering_process + "_energy"',
+            'getWithParser(\n                pp_collision_name, kw_energy.c_str()',
+        ],
     },
     "<diag_name>.adios2_operator.parameters.*": {
         "kind": "dynamic_key_constructor",
-        "required_source_text": "ParmParse::getEntries(prefix)",
+        "required_source_text": [
+            "auto entr = amrex::ParmParse::getEntries(prefix)",
+            "k.erase(0, prefix_len)",
+        ],
     },
     "<diag_name>.adios2_engine.parameters.*": {
         "kind": "dynamic_key_constructor",
-        "required_source_text": "ParmParse::getEntries(engine_prefix)",
+        "required_source_text": [
+            "auto eng_entr = amrex::ParmParse::getEntries(engine_prefix)",
+            "k.erase(0, prefixlen)",
+        ],
     },
     "<diag_name>.particle_fields.<field_name>.do_average": {
         "kind": "dynamic_key_constructor",
-        "required_source_text": 'var + ".do_average"',
+        "required_source_text": [
+            'var + ".do_average"',
+            "m_pfield_do_average.push_back(do_average)",
+        ],
     },
     "<diag_name>.particle_fields.<field_name>(x,y,z,ux,uy,uz)": {
         "kind": "dynamic_key_constructor",
-        "required_source_text": "m_diag_name + \".particle_fields\"",
+        "required_source_text": [
+            'm_diag_name + ".particle_fields"',
+            'Store_parserString(\n            pp_diag_pfield, (var + "(x,y,z,ux,uy,uz)")',
+        ],
     },
     "<diag_name>.particle_fields.<field_name>.filter(x,y,z,ux,uy,uz)": {
         "kind": "dynamic_key_constructor",
-        "required_source_text": "filter_parser_str",
+        "required_source_text": [
+            'var + ".filter(x,y,z,ux,uy,uz)"',
+            "m_pfield_filter_strings.push_back(filter_parser_str)",
+        ],
     },
 }
 
@@ -79,14 +112,20 @@ def main() -> None:
         map_ok = columns is not None
         map_text = " ".join(columns or [])
         references = [item.strip().strip("`") for item in (columns[6].split(",") if columns else [])]
-        source_text = "\n".join(
+        source_fragments = [
+            path.read_text(encoding="utf-8", errors="ignore")
+            for path in expected.get("source_files", [])
+        ]
+        source_fragments.extend(
             path.read_text(encoding="utf-8", errors="ignore")
             for reference in references
             for path in source_paths(reference)
         )
+        source_text = "\n".join(source_fragments)
         required_map_ok = expected.get("required_map_text", "") in map_text
-        required_source = expected["required_source_text"]
-        source_ok = required_source in source_text
+        required_sources = expected["required_source_text"]
+        source_checks = [marker in source_text for marker in required_sources]
+        source_ok = all(source_checks)
         passed = map_ok and required_map_ok and source_ok
         checks.append({"parameter": parameter, "kind": expected["kind"], "passed": passed})
         records.append(
@@ -95,8 +134,9 @@ def main() -> None:
                 "kind": expected["kind"],
                 "map_row_present": map_ok,
                 "required_map_text_present": required_map_ok,
-                "required_source_text": required_source,
+                "required_source_text": required_sources,
                 "required_source_text_present": source_ok,
+                "source_marker_checks": source_checks,
                 "source_file_count": len(source_text.splitlines()) if source_text else 0,
             }
         )

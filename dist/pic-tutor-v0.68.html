@@ -886,6 +886,13 @@ parser-literal-only anchor，8 条确认是 dynamic-key constructor，2
 条确认是 AMReX owner 参数，没有未分类项；该结果不替代 C++
 AST、默认值/校验或 runtime value semantics 审计。报告见
 <code>runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}</code>。</p>
+<p>本版进一步完成这 10 条非固定键的精确源码复核：AMReX
+<code>AMReX_AmrMesh.cpp</code> 的 <code>ref_ratio/ref_ratio_vect</code>
+输入、互斥和 materialize 分支，以及 8 条 dynamic-key
+constructor/consumer 均通过多 marker contract。parser-anchor
+报告将它们标记为 <code>structured_review_verified</code>，剩余人工
+review queue 为 0；这只关闭源码结构层缺口，不关闭完整 C++
+AST、默认值矩阵或 runtime value semantics。</p>
 <p>本版又将 3D AMR <code>particles_in_pml</code> signed/absolute
 分解提升为公开 boundary contract：官方 signed gate 为
 <code>106.4354 &lt; 110</code>，严格 absolute gate 为

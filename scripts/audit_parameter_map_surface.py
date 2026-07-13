@@ -137,8 +137,8 @@ def main() -> None:
         "source_token_unresolved": token_unresolved,
         "header_count_matches": declared_data_row_count == len(rows),
         "passed": not placeholder_cells and not missing_references and declared_data_row_count == len(rows),
-        "classification": "STRUCTURAL_SOURCE_TOKEN_SURFACE_PASS_MANUAL_PARSER_REVIEW_REMAINS",
-        "scope": "row shape, current chapter labels, source-path existence and parameter-token coverage; not semantic parser-function verification",
+        "classification": "STRUCTURAL_SOURCE_TOKEN_SURFACE_PASS_MANUAL_PARSER_REVIEW_SEPARATELY_VERIFIED",
+        "scope": "row shape, current chapter labels, source-path existence and parameter-token coverage; parser semantics are verified by separate anchor/structured-review contracts",
     }
     output_dir = ROOT / "runs/stage-c-validation/parameter-map-surface-contract"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -155,7 +155,7 @@ def main() -> None:
         f"- source-token hit rows: `{len(token_hit_rows)}`",
         f"- source-token unresolved rows: `{len(token_unresolved)}`",
         f"- missing source references: `{len(missing_references)}`",
-        "- scope: structural audit, row-count consistency and source-token coverage; token hits do not replace manual ParmParse parser review",
+        "- scope: structural audit, row-count consistency and source-token coverage; parser semantics are verified by separate anchor/structured-review contracts",
         "",
     ]
     lines.append("")

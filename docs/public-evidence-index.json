@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 170,
+  "record_count": 171,
   "status_counts": {
-    "PASS": 125,
+    "PASS": 126,
     "FAIL": 30,
     "UNKNOWN": 15
   },
@@ -11,7 +11,7 @@
     "PASS": 105,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 31
+    "BOUNDARY": 32
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -2035,6 +2035,17 @@
         "anchor_count": 11,
         "passed": true,
         "passed_anchor_count": 11
+      }
+    },
+    {
+      "case": "rz-implicit-villasenor-build-boundary",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "RZ implicit Villasenor pre-physics build boundary",
+      "classification": "RZ_IMPLICIT_VILLASENOR_PREPHYSICS_SIGILL_BOUNDARY",
+      "scope": "The runtime control reaches solver DOF setup but fails before particle push/current deposition; this is not a Villasenor physics pass/fail.",
+      "metrics": {
+        "passed": true
       }
     },
     {

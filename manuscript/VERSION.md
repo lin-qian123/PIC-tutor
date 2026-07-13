@@ -1,5 +1,7 @@
 # PIC-tutor v0.68
 
+本版又复核 RZ theta-implicit Villasenor 的构建/运行边界：官方 `petsc_ksp` 输入仍受当前 binary 缺少 `AMREX_USE_PETSC` 阻断；同一 binary 的 MPI=2 `amrex_gmres` control 能完成 DOF 定义后，在 RZ curl-curl boundary-mask 初始化阶段触发 `SIGILL`，尚未进入粒子推进或 current deposition。新增 `scripts/audit_rz_implicit_villasenor_build_boundary.py` 及对应 command-output/contract；该结果保持为 pre-physics boundary，不升级为 Villasenor physics pass/fail。
+
 本版又补入第 5 章 deposition 证据层导航表：将 Esirkepov 的论文/索引摘要、当前源码、代数/源码合同和 runtime consumer 分开列出，明确每层能支持与不能支持的结论；`scripts/audit_esirkepov_paper_source_runtime_crosswalk.py` 当前 15 项检查全部通过，但仍保留 publisher-PDF 逐行对照、完整 geometry/order product 和 AMR 强 runtime 闭环边界。
 
 本版新增 RZ Esirkepov charge/field tradeoff summary contract：对 7 组既有 RZ evidence family 做 12 项统一交叉检查，确认默认 axis correction 下 field gate 通过而 axis charge 仍为 `BOUNDARY`，correction-off 只在局部 sibling 上恢复 charge；该结果不修改 WarpX 默认参数，也不宣称正式收敛阶。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}`。

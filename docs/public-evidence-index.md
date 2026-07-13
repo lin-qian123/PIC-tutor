@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `170`
-- PASS: `125`
+- records: `171`
+- PASS: `126`
 - FAIL: `30`
 - UNKNOWN: `15`
-- boundary-classified: `31`
+- boundary-classified: `32`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -152,6 +152,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `radial-axis-volume-source` | `PASS` | `PASS` | radial geometry axis-volume correction source contract | `` | read-only source audit; not a numerical regression or default-change recommendation | `anchor_count=10`, `passed=True`, `passed_anchor_count=10` |
 | `radial-rho-decomposition-observable` | `PASS` | `PASS` | RCYLINDER/RSPHERE rho species decomposition observable | `RADIAL_RHO_DECOMPOSITION_TIME_SERIES_VERIFIED_SHAPE1_EXPORT_COMPLETED` | rho equals rho_electrons plus rho_ions on every current numbered radial plotfile frame; not a full Gauss-law or current-closure proof | `missing_species_export_count=0`, `passed=True`, `passed_frame_count=648`, `runtime_row_count=8`, `total_frame_count=648` |
 | `rz-esirkepov-charge-diagnostic-source` | `PASS` | `PASS` | RZ Esirkepov charge diagnostic boundary source contract | `` | read-only source audit; explains diagnostic evidence boundary and is not a physics regression | `anchor_count=11`, `passed=True`, `passed_anchor_count=11` |
+| `rz-implicit-villasenor-build-boundary` | `PASS` | `BOUNDARY` | RZ implicit Villasenor pre-physics build boundary | `RZ_IMPLICIT_VILLASENOR_PREPHYSICS_SIGILL_BOUNDARY` | The runtime control reaches solver DOF setup but fails before particle push/current deposition; this is not a Villasenor physics pass/fail. | `passed=True` |
 | `rz_flux_injection_from_eb_mpi2` | `PASS` | `PASS` | test_rz_flux_injection_from_eb | `` |  | `contract_pass=True`, `eb_outside_pass=True`, `expected_weight=2.5132741228718345e-07`, `min_radius_ratio=0.9978960981558814`, `particle_count=75347`, `total_weight=2.5078544411855113e-07`, `total_weight_pass=True`, `total_weight_relative_error=0.002156422825907381` |
 | `rz_galilean_current_correction_pair` | `UNKNOWN` | `BOUNDARY` | rz_galilean_current_correction_pair | `{'current-correction': 'CHARGE_BOUNDARY', 'current-correction-psb': 'PASS'}` | project-level RZ Galilean runtime contract; official upstream analysis was also executed |  |
 | `rz_langmuir_multi_psatd_current_correction_mpi1` | `PASS` | `PASS` | RZ PSATD current-correction Langmuir reader-side contract | `` | independent RZ analytic Er/Ez and same-surface divE-rho/epsilon0 check | `axis_charge_relative_residual=5.4780903032369686e-14`, `charge_passed=True`, `charge_relative_residual=5.4780903032369686e-14`, `charge_tolerance=1e-09`, `field_passed=True`, `field_tolerance=0.12`, `off_axis_charge_relative_residual=2.7327096578213714e-14`, `passed=True`, `relative_er_error=0.10542231708921167`, `relative_ez_error=0.019312914807486016` |

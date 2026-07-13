@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：复核 RZ implicit Villasenor control：MPI=2 再次到达 DOF 定义后触发 `SIGILL`，新增可重复的 pre-physics boundary contract 和 project-local command output；仍等待兼容 PETSc/AMReX 的 RZ binary 或上游 arm64 `InitializeCurlCurlBCMasks()` 修复，未将该项升级为 runtime physics 结论。
+
 - [x] 2026-07-13：新增 `scripts/summarize_rz_esirkepov_charge_field_tradeoff.py`，对 7 组既有 RZ Esirkepov evidence family 做 12 项统一交叉检查；确认默认 axis correction 下 field PASS/charge BOUNDARY、correction-off 仅为局部 sibling、cleaning 与 axis cell 主导关系仍需保留。该 contract 不修改 WarpX 默认参数，不宣称正式收敛阶。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}`。
 
 - [x] 2026-07-13：新增 `scripts/audit_position_update_runtime_contract.py` 与 `notes/code-reading/particles/68-position-update-output-staggering-contract.md`：确认 `UpdatePosition.H` 的显式公式、`Full` dispatch 和三组 81 帧 uniform-`B` runtime；上一帧/下一帧机械动量直接配对误差约 `6.242e-2`，中点 proxy 最大误差约 `1.609e-3`，因此固化为 output-staggering boundary，仍不宣称独立 half-step velocity attribute 已提供。

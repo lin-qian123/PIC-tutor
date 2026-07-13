@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 749,
-  "total_bytes": 27833338,
+  "entry_count": 750,
+  "total_bytes": 27842186,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1529897,
-      "sha256": "af53a000ebaf20e93be07af0a57ed7b7232d87cd21aae9c2e19eb536f6c1faf7"
+      "bytes": 1530354,
+      "sha256": "f0b34fdcc408702eec41548937ea3200ffca0fd2b2c13f84fdcbe4d9687d938d"
     },
     {
       "path": "TODO.md",
-      "bytes": 1377610,
-      "sha256": "ecb7eb2b78b8a155e016da3fa41981202e6dffb0969b5d72a0884b8906756c14"
+      "bytes": 1377949,
+      "sha256": "f3e5c72c718dfeee3352bde1d6c44fac152f62f01e88695457369c8e2e34ef47"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5767806,
-      "sha256": "f48b09b765cc4caa7022c94f2a46ac209f07f008b3276e95a2eab8a4266c5b17"
+      "bytes": 5768389,
+      "sha256": "83c97b31cffdd61ded6c24e013788bd0812b63896224a7b8a9bdc1504466a16d"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1092361,
-      "sha256": "41c7ab8efcb43f4666b06698f21422e29b93bd3a8f9a33f28c59abdc54664bda"
+      "bytes": 1092883,
+      "sha256": "117593198539168bbd77e1e0a36dbe7c35f70008ce4d3a82686b6cf7d958d096"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3393472,
-      "sha256": "b0c50cdde9c31fb2f5d88add7dd7040ab5ba8e9904d7dc8046452ea9ae34e8bb"
+      "bytes": 3394273,
+      "sha256": "1e87316d88fd6be7b19943b83abb04336deb8de21084574a0f39c089ece0ac68"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 93010,
-      "sha256": "bd49784c360b712efd7c7666d61bb52bf83acff0238e118d6c810525aefbd169"
+      "bytes": 93493,
+      "sha256": "77e11d7938adcae1ec86c118850505d8034aed0b5f2ea12c9b692b232c5f5d82"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 61507,
-      "sha256": "1a0165a5ca863ca41d37caa57a4595960590be56db2fa28aa668c6cc3094c243"
+      "bytes": 61837,
+      "sha256": "cd91cb134ed6d2556f28ee8e68092059e26ca631fc5cef722986f5c24810534b"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "a0f9f6364bf900b3039f361f1ec0e75b58c666f475c384df5e7ac3da01dc7b81"
+      "sha256": "641cbc4beeef17a8c551da917ec68f8d5e5b4473f6ded0193317f7d3b56ed393"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 71623,
-      "sha256": "730fee8e27a4ec20a82df47f81e8f28f4d02bb9ed94c228613d2d91a80fd3da5"
+      "bytes": 72145,
+      "sha256": "3c57ef9c46ed9798bcb185bc5eecfbd0dbae28635a21c8bdefdbc7a6571b74d2"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -2002,8 +2002,8 @@
     },
     {
       "path": "notes/code-reading/particles/47-rz-implicit-villasenor-build-boundary.md",
-      "bytes": 1706,
-      "sha256": "2fd21c6af11f1d8aee50fb30f9ffe87cfd1090757bd9748a76b0ac0b29e55440"
+      "bytes": 2592,
+      "sha256": "8c9e0701dcebb59e68ab295aca150dbccdd2285d7c13f43d48915f6f64c2fa3f"
     },
     {
       "path": "notes/code-reading/particles/48-esirkepov-langmuir-runtime-contract.md",
@@ -2789,6 +2789,11 @@
       "path": "scripts/audit_rz_charge_diagnostic_contract.py",
       "bytes": 3629,
       "sha256": "93ef41778cc11fedf11e35109d482189e7ef056389f50b77638941215f10396a"
+    },
+    {
+      "path": "scripts/audit_rz_implicit_villasenor_build_boundary.py",
+      "bytes": 3925,
+      "sha256": "cdf3f4dc282ca0cec181d34b976416cfa1edce792e4b26ff1ba1c663efb3060b"
     },
     {
       "path": "scripts/audit_rz_jrhom_first_stage_patch.py",

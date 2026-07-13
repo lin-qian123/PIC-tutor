@@ -824,6 +824,15 @@ boosted-frame / NCI</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版又复核 RZ theta-implicit Villasenor 的构建/运行边界：官方
+<code>petsc_ksp</code> 输入仍受当前 binary 缺少
+<code>AMREX_USE_PETSC</code> 阻断；同一 binary 的 MPI=2
+<code>amrex_gmres</code> control 能完成 DOF 定义后，在 RZ curl-curl
+boundary-mask 初始化阶段触发 <code>SIGILL</code>，尚未进入粒子推进或
+current deposition。新增
+<code>scripts/audit_rz_implicit_villasenor_build_boundary.py</code>
+及对应 command-output/contract；该结果保持为 pre-physics
+boundary，不升级为 Villasenor physics pass/fail。</p>
 <p>本版又补入第 5 章 deposition 证据层导航表：将 Esirkepov
 的论文/索引摘要、当前源码、代数/源码合同和 runtime consumer
 分开列出，明确每层能支持与不能支持的结论；<code>scripts/audit_esirkepov_paper_source_runtime_crosswalk.py</code>

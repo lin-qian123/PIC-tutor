@@ -37,3 +37,9 @@ WarpX::InitData()
 2. 非 PETSc `amrex_gmres` control 也在 RZ theta-implicit boundary-mask 初始化阶段失败。
 
 这不是 Villasenor current kernel 的 physics pass 或 physics fail，因为粒子推进和 current deposition 尚未开始。当前 2D implicit Villasenor contracts 仍有效，但不能外推到 RZ theta-implicit；要关闭该缺口，需要具备兼容 PETSc/AMReX 构建的 RZ binary，或先定位当前 arm64 `InitializeCurlCurlBCMasks()` 的 `SIGILL`。
+
+## 2026-07-13 复核
+
+再次用同一 `build_full` binary、同一官方输入、`FI_PROVIDER=tcp`、`OMP_NUM_THREADS=1` 和 MPI=2 执行 `newton.linear_solver=amrex_gmres` control。结果稳定出现 `Defined DOF object for linear solves (total DOFs = 5392)`，随后在初始化阶段出现 `SIGILL` 和 `MPI_Abort`；project-local 原始摘要保存在 `runs/stage-c-validation/rz-implicit-villasenor-build-boundary/command-output.txt`。
+
+源码顺序也固定了边界：`ThetaImplicitEM::Define()` 先定义 nonlinear solver，再仅在 `pc_petsc` 下调用 `InitializeCurlCurlBCMasks()`；官方输入的 `petsc_ksp` 仍依赖 `AMREX_USE_PETSC`。因此本次结果只能分类为 `RZ_IMPLICIT_VILLASENOR_PREPHYSICS_SIGILL_BOUNDARY`，不能称为 Villasenor current kernel 的 physics pass/fail。可重复合同为 `scripts/audit_rz_implicit_villasenor_build_boundary.py`。

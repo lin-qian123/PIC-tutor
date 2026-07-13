@@ -24,7 +24,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 155 条 `contrac
 
 2026-07-13：补强 LeeCPC2015 资产合同和第 7 章 PML 证据链：accepted manuscript、ScienceDirect indexed abstract、WarpX source crosswalk 与 runtime gate 的层级已分开记录；publisher-formatted CPC PDF 仍保留缺失边界。
 
-2026-07-13：将 Birdsall `3A ES1` 的历史最小程序骨架正式回填第 3A 章，新增 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 到 WarpX 初始化/演化阶段的映射表，并明确这不是逐函数等价证明。
+2026-07-13：将 Birdsall `3A ES1` 的历史最小程序骨架正式回填第 3A 章，新增 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 到 WarpX 初始化/演化阶段的映射表，并明确这不是逐函数等价证明；此前“下一次正文回填”的接续描述已同步为已完成状态。
 
 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将“线性稳定不等于非线性无扰动”、相空间 clump/density hole 诊断和相对漂移自由能边界写入中文讲解笔记，并最小回填第 8 章；该结论不升格为 NCI 或 WarpX runtime physics gate。
 

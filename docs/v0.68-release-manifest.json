@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 735,
-  "total_bytes": 27690750,
+  "entry_count": 736,
+  "total_bytes": 27699737,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1523795,
-      "sha256": "c55f7d6118e1cb5e86204129ad4fe5750d261da16d3ebbc7a37743364e9c897f"
+      "bytes": 1524238,
+      "sha256": "00192a4495d2d83c4990a6421c8e3839acc1aea1204362b28e7edbc765bd0998"
     },
     {
       "path": "TODO.md",
-      "bytes": 1369596,
-      "sha256": "e81a472f33c6b40150ba6267626c20bb36fdcc5c6d1fd84a7edd3a89df4145f3"
+      "bytes": 1370081,
+      "sha256": "421b8b2d35409eb0891e735197b51cfab4275503c2581cf71c1a85ee39d47ce3"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5755656,
-      "sha256": "182e65be0a475774311bd6567ea349ac2795c25963f9bc2e81dc4f9fa5d47a64"
+      "bytes": 5756413,
+      "sha256": "abd2e77525ad5615edc0a0e68ffca0419080ba9a9890df67a1382d1899032ae6"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1081799,
-      "sha256": "518163b1de394897013bffc61920a0d1b5de941c570f8f667b40d8e8f4bd47aa"
+      "bytes": 1082467,
+      "sha256": "8a1a7aa66f74d16c2fa2a551752b80788e6abbbf85ce6075756ad218f96a4e40"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3381345,
-      "sha256": "3d41c4b29395632142fb02f868defe57668ed11218e7d876b3402a2f2527ed94"
+      "bytes": 3381842,
+      "sha256": "3c70f00b2bb9630e7724e5c3b14c97ccb081328afeb1a6e0ab3f47af174bfec1"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 86593,
-      "sha256": "9f94596f8b629a82e756ea7101a45b2e8b013449bfba3953e3b6e46c4af0a66d"
+      "bytes": 87236,
+      "sha256": "39762c36a039bd7164378db26728de6a64f112f3a759930d01d24f5fbfe9a79c"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 56943,
-      "sha256": "838e755033de8a462f48860d954d4b555aa369e50133c9770c250770101ebca4"
+      "bytes": 57393,
+      "sha256": "2163b14004c966767403296c2d0528316b52be75a5eeb7814c2635f5cb908623"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "05accf8b364397bf67a942c683a6ae9d9a0e19ee042b73962b1593998c080d1c"
+      "sha256": "ec5d8393a87a68b24c7816bb1aba4446a3a3686605f0244528de751c5cc81806"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44575,
-      "sha256": "4f4fe63b8c8dc74ff8bf2dd0555652217d025ec946e5f24ede19082117530db3"
+      "sha256": "a224ee230a121bc62de6e962da1bae83f70e1bc6a8b1b3fcf4377a1896616cde"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 66327,
-      "sha256": "4d3f08d85905aafa599f7bf6cb4a38f96d8f2874fcd17bde0a2ef0e1af593f15"
+      "bytes": 66706,
+      "sha256": "a4a5068ae1e515d59cb7a2e4e441884d4e4528c47c7ac5d033c2eb0e51fef936"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -907,13 +907,13 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 166806,
-      "sha256": "3f55c13893c8298d91fc8012fe55e5e647b4764be66d43347d1aa1d43d0d1e1c"
+      "bytes": 167095,
+      "sha256": "6b9c819b27cc56a65538c53bb6bc540c72ba4a44110f6b9b734ba3671d1cd0b2"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
       "bytes": 111833,
-      "sha256": "6c4c205e1d8056035b547c4fb1eb41d0af5d3aae34e329188f79367c88c03622"
+      "sha256": "bc82a81511d3853f8c42e16eabcb8ad7870582328ea016a9568c1439302c785f"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -2684,6 +2684,11 @@
       "path": "scripts/audit_particles_in_pml_analysis_contract.py",
       "bytes": 3335,
       "sha256": "6d99129bd3e62bc71b40a7b697d0627c0eb5b48a93acc3beed4e8ee0a280bd43"
+    },
+    {
+      "path": "scripts/audit_particles_in_pml_signed_absolute_boundary.py",
+      "bytes": 4376,
+      "sha256": "b14909ae07809fe4aa47e2023055e888e45f201a9d027879412764f5dadaff96"
     },
     {
       "path": "scripts/audit_peiravi_birdsall_1978_asset_contract.py",

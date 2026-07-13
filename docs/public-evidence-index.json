@@ -1,17 +1,17 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 160,
+  "record_count": 161,
   "status_counts": {
     "PASS": 116,
-    "FAIL": 29,
+    "FAIL": 30,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
     "PASS": 99,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 27
+    "BOUNDARY": 28
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -1618,6 +1618,21 @@
         "particle_energy_relative_drift": 0.017030369011965033,
         "particle_energy_samples": 201,
         "passed": true
+      }
+    },
+    {
+      "case": "particles-in-pml-3d-mr-boundary",
+      "status": "FAIL",
+      "evidence_kind": "BOUNDARY",
+      "contract": "3D AMR particles-in-PML signed-vs-absolute boundary",
+      "classification": "PARTICLES_IN_PML_3D_MR_BOUNDARY_SIGNED_PASS_ABSOLUTE_NEGATIVE_EX_FAIL",
+      "scope": "2-rank official producer; final finest covering grid; signed upstream consumer versus strict per-component absolute reader",
+      "metrics": {
+        "absolute_max": 110.3993781372607,
+        "contract_pass": false,
+        "frame_count": 2,
+        "official_signed_status": "PASS",
+        "strict_absolute_status": "FAIL"
       }
     },
     {

@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-13：将 3D AMR `particles_in_pml` 的 signed/absolute 分解提升为独立公开 boundary contract：新增 `scripts/audit_particles_in_pml_signed_absolute_boundary.py` 与 `runs/stage-c-validation/particles-in-pml-3d-mr-boundary/contract.{json,md}`；验证官方 signed `106.4354 < 110`、严格 absolute `110.3994 > 110`、唯一越界项为负向 `Ex`，并确认 coarse/fine absolute 极值一致。该 contract 不修改 `../warpx`、上游 analysis 或阈值。
 - [x] 2026-07-13：将 RZ secondary-emission `64/128/256` resolution trend 提升为独立公开 contract：新增 `scripts/audit_rz_secondary_emission_resolution_contract.py` 与 `runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}`；明确默认 `64x64` 为 raw `FAIL`/`BOUNDARY`，`128x128` 与 `256x256` refined controls 通过官方 `2%` gate，且三档误差单调下降。该 contract 不关闭默认回归，也不宣称正式 convergence order。
 
 - [x] 2026-07-13：修正 `docs/parameter-map.md` 的计数漂移：当前实际数据行是 445 条而非旧 header 的 352 条；`scripts/audit_parameter_map_surface.py` 新增 header-count contract，`parameter-chapter-index.md` 同步区分数据行数量与官方参数源条目数量，逐条 `ParmParse` 语义复核仍保持未完成边界。

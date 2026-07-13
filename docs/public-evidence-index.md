@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `160`
+- records: `161`
 - PASS: `116`
-- FAIL: `29`
+- FAIL: `30`
 - UNKNOWN: `15`
-- boundary-classified: `27`
+- boundary-classified: `28`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -121,6 +121,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `particle_boundary_scrape_mpi2` | `PASS` | `PASS` | test_3d_particle_scrape | `` |  | `passed=True`, `weight_relative_difference_20_to_40=0.0` |
 | `particle_reflection_picmi_2d` | `PASS` | `PASS` | test_2d_particle_reflection_picmi | `` |  | `passed=True` |
 | `particle_thermal_boundary_mpi2` | `PASS` | `PASS` | test_2d_particle_thermal_boundary | `` |  | `field_energy_final=9.84501686803055e-06`, `field_energy_final_over_step_10=9.090697870768006`, `field_energy_reference_step_10=1.08297701760479e-06`, `field_energy_samples=201`, `particle_energy_final=0.0141029132380973`, `particle_energy_initial=0.013866757245212`, `particle_energy_relative_drift=0.017030369011965033`, `particle_energy_samples=201`, `passed=True` |
+| `particles-in-pml-3d-mr-boundary` | `FAIL` | `BOUNDARY` | 3D AMR particles-in-PML signed-vs-absolute boundary | `PARTICLES_IN_PML_3D_MR_BOUNDARY_SIGNED_PASS_ABSOLUTE_NEGATIVE_EX_FAIL` | 2-rank official producer; final finest covering grid; signed upstream consumer versus strict per-component absolute reader | `absolute_max=110.3993781372607`, `contract_pass=False`, `frame_count=2`, `official_signed_status=PASS`, `strict_absolute_status=FAIL` |
 | `particles-in-pml-analysis-source-contract` | `PASS` | `PASS` | particles-in-pml-analysis-source-contract | `` |  | `independent_uses_absolute_component_max=True`, `passed=True` |
 | `particles_in_pml_2d_mpi2` | `PASS` | `PASS` | 2D particles-in-PML residual electric-field absorption | `` | official WarpX 2D input; 2-rank run; independent yt reader; not the upstream checksum benchmark | `max_abs_Efield=0.00025542538436684726`, `passed=True` |
 | `particles_in_pml_2d_mr_mpi2` | `PASS` | `PASS` | particles-in-PML residual electric-field absorption | `` | official WarpX input; 2-rank run; independent yt reader; not the upstream checksum benchmark | `max_abs_Efield=0.0003661057413095795`, `passed=True` |

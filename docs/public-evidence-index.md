@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `159`
+- records: `160`
 - PASS: `116`
-- FAIL: `28`
+- FAIL: `29`
 - UNKNOWN: `15`
-- boundary-classified: `26`
+- boundary-classified: `27`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -152,6 +152,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `rz_scraping_mpi2` | `PASS` | `PASS` | test_rz_scraping | `` |  | `final_particle_count=512`, `final_weight=4.841626861764053e+18`, `initial_particle_count=6656`, `initial_weight=5.546299286199021e+19`, `passed=True`, `scraped_particle_count=6144`, `scraped_weight=5.062136600022616e+19`, `weight_relative_error=0.0` |
 | `rz_silver_mueller_z_mpi2` | `PASS` | `PASS` | test_rz_silver_mueller_z | `` |  | `contract_pass=True` |
 | `secondary-emission-eb-source-contract` | `PASS` | `PASS` | RZ secondary-emission EB callback/source wiring audit | `` |  | `anchor_count=10`, `passed=True`, `passed_anchor_count=10` |
+| `secondary-emission-resolution-trend` | `FAIL` | `BOUNDARY` | RZ secondary-emission resolution-aware geometry boundary | `RZ_SECONDARY_EMISSION_BOUNDARY_BASELINE_FAIL_REFINED_CONTROLS_PASS` | 64x64 baseline plus 128x128/256x256 refined controls; official 2% EB impact-point gate | `baseline_max_relative_distance=0.03603811888684052`, `baseline_status=FAIL`, `contract_pass=False`, `max_error_reduction_64_to_128=3.6121251395470173`, `refined_128_max_relative_distance=0.009976985152668304`, `refined_256_max_relative_distance=0.006646152621586896`, `refined_status=PASS`, `resolution_count=3` |
 | `secondary_ion_emission_rz` | `FAIL` | `FAIL` | test_rz_secondary_ion_emission_picmi | `` |  | `contract_pass=False`, `count_pass=True`, `electron_count=2`, `expected_electron_count=2`, `geometry_pass=False`, `iteration=3` |
 | `secondary_ion_emission_rz_resolution128` | `PASS` | `PASS` | test_rz_secondary_ion_emission_picmi | `` |  | `contract_pass=True`, `count_pass=True`, `electron_count=2`, `expected_electron_count=2`, `geometry_pass=True`, `iteration=3` |
 | `secondary_ion_emission_rz_resolution256` | `PASS` | `PASS` | test_rz_secondary_ion_emission_picmi | `` |  | `contract_pass=True`, `count_pass=True`, `electron_count=2`, `expected_electron_count=2`, `geometry_pass=True`, `iteration=3` |

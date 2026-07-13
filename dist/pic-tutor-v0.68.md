@@ -2,6 +2,8 @@
 
 # PIC-tutor v0.68
 
+本版将 RZ secondary-emission 三档 resolution trend 提升为公开 boundary contract：`64x64` 默认基线仍为 raw `FAIL`，`128x128/256x256` refined controls 通过官方 `2%` EB impact-point gate；该结果支持 resolution-sensitive geometry diagnosis，但不关闭默认 upstream regression，也不构成正式 convergence order。
+
 本版新增显式 leapfrog position source crosswalk：只读核对 `PhysicalParticleContainer::Evolve()` 的 momentum-then-position 顺序、`UpdatePosition.H` 的时间中心速度公式、维度条件，以及 `PushSelector.H` / Higuera-Cary 接口的 split-push 边界。正文明确相邻 Full plotfile 位置差只能构造 velocity proxy，不能冒充直接 half-step attribute；Vay Appendix B 已建立 proxy-level bounded runtime contract，但直接 half-step attribute 和论文图形逐点复现仍未接入。
 
 本版又补入 Vay Appendix B 窄化 uniform-B runtime proxy：三种 pusher 各生成 81 个 Full plotfile，离散 phase、position-update velocity proxy、gyroradius proxy 和动量范数均通过窄 gate；报告分开记录最终 plotfile 写出后的 `ComputeDivE` finalize tail，不把它误读成 pusher 物理失败。该结果仍是 proxy-level bounded reproduction，不是直接 half-step attribute 或论文图形逐点复现。
@@ -28,7 +30,7 @@
 
 本版又补入 dense `p_y=0.2..2.8` family 和 64³ `p_y=1.6/1.8` resolution control：Vay 共振窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，但仍只标记为 resonance-sensitive invariant screen，不提升为 two-fold island topology reproduction。
 
-本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 159 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
+本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 160 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
 
@@ -13376,7 +13378,7 @@ PMC sibling 也已完成 2-rank 复现。官方 `analysis_pec.py` 与独立 `scr
 
 为区分实现错误与网格分辨率效应，又在不修改上游输入的前提下把同一 RZ PICMI case 的 `nr/nz` 从 `64/64` 提高到 `128/128`。官方 analysis 与独立 contract 均通过：两个电子的最大回溯相对误差降为 `0.9977% < 2%`，相对 64×64 基线的最大误差下降约 `3.61` 倍。该对照支持“当前失败主要受 EB 交点离散分辨率控制”的诊断，但不能把 64×64 baseline 改写成通过，也不能替代对默认测试分辨率和上游容差的正式决策。对照报告归档于 `runs/stage-c-validation/secondary_ion_emission_rz_resolution/resolution-comparison.{json,md}`。
 
-再增加 `256x256` 后，最大回溯相对误差为 `0.6646%`，官方和独立 gate 继续通过；三档结果为 `64x64: 3.6038%`、`128x128: 0.9977%`、`256x256: 0.6646%`。相邻分辨率的经验误差阶约为 `1.85` 和 `0.59`，这里只作为描述性趋势，不能包装成正式 convergence order：样本只有三档，且粒子事件、callback 和分析容差均未改变。趋势报告归档于 `runs/stage-c-validation/secondary_ion_emission_rz_resolution/resolution-trend.{json,md}`。
+再增加 `256x256` 后，最大回溯相对误差为 `0.6646%`，官方和独立 gate 继续通过；三档结果为 `64x64: 3.6038%`、`128x128: 0.9977%`、`256x256: 0.6646%`。相邻分辨率的经验误差阶约为 `1.85` 和 `0.59`，这里只作为描述性趋势，不能包装成正式 convergence order：样本只有三档，且粒子事件、callback 和分析容差均未改变。新增的公开 contract 将默认基线保留为 raw `FAIL`/`BOUNDARY`，并将 refined controls 的通过状态与“趋势支持诊断”分开记录，见 `runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}`；趋势报告仍归档于 `runs/stage-c-validation/secondary_ion_emission_rz_resolution/resolution-trend.{json,md}`。
 
 thermal boundary 也已完成官方 2-rank、2000 步复现。官方 `analysis.py` 和独立 reduced-ledger 脚本均通过：`EF/EN` 各有 `201` 个样本，按上游语义以第 10 步场能作为参考，末态场能比值为 `9.0906979`、末态场能 `9.8450169e-6 < 5e-5`，粒子能从 `0.0138667572` 变为 `0.0141029132`，相对漂移 `1.7030369% < 2%`。这支持“当前短时 thermal boundary workflow 的能量注入处于官方 gate 内”，不支持“系统已达到热平衡”或“长期统计收敛”。报告归档于 `runs/stage-c-validation/particle_thermal_boundary_mpi2/contract.{json,md}`。
 
@@ -16462,7 +16464,7 @@ $$
 | RZ electrostatic sphere | 官方 RZ，1 rank | `python scripts/analyze_rz_charge_volume_contract.py ...` | 官方轴向场 L2 gate；全域 rho-volume/particle-charge mismatch `< 1%` | `runs/stage-c-validation/rz_electrostatic_sphere/` |
 | RZ Langmuir multimode | case-local RZ sibling，1 rank，3 modes | `python scripts/analyze_rz_langmuir_multimode_contract.py ...` | `m=1/2` 实虚分量非零；theta=0 native-field/writeback reconstruction `< 3.1e-16` | `runs/stage-c-validation/rz_langmuir_multimode/` |
 
-这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供 159 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
+这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供 160 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
 
 当前证据等级应写成：Langmuir 已有运行级解析频率、场误差和最终守恒证据；uniform plasma 已有粒子数、能量统计和 checkpoint/restart 逐字段证据，但短时运行的总能量变化不能直接升级成热平衡守恒通过；FieldProbe 已确认 1/2-rank 输出一致，并通过 `lambda/32` 的 matched-time 解析 gate，但官方 `lambda/16` coarse case 仍失败；`reduced_diags` 已有 60 项 compact observable 与 full-state reference 的 2-rank 逐项通过证据，并有 Heuristic/Timers 两条 `LoadBalanceCosts` efficiency improvement 证据；`ColliderRelevant` 已有 2-rank 的 chi/角度/ParticleExtrema/dL/dt 聚合合同证据；`DifferentialLuminosity` 已有 leptons、AMR 和 photons 三组 1D/2D 解析谱通过证据；laser-ion 已有 `ParticleHistogram2D` 的 2-rank openPMD writer 合同证据；`BeamRelevant` 已有最小 3D 的 schema/截断高斯束统计合同证据；完整 initial-distribution family 已有当前 checkout 的官方分布 analysis 通过证据，并在显式 `5e-3` sampling tolerance 下通过 checksum，但不宣称 `1e-9` 确定性相等；native Gaussian external-file 变体已有 1-rank 项目级束斑物理合同，但官方 CMake analysis 缺失仍保留为 upstream registration 缺口；RZ electrostatic sphere 又补充了官方场/能量 gate 与独立 rho-volume charge closure；RZ 三模 Langmuir sibling 又补充了 `m>0` diagnostics writeback 和 theta=0 重建合同，但它是 project-level case-local evidence，不能替代官方单模 CMake analysis。JSON/Markdown 报告和脚本都保存在项目内，运行产物仍按 case-local 目录归档。
 

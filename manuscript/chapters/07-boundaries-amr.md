@@ -373,7 +373,7 @@ PMC sibling 也已完成 2-rank 复现。官方 `analysis_pec.py` 与独立 `scr
 
 为区分实现错误与网格分辨率效应，又在不修改上游输入的前提下把同一 RZ PICMI case 的 `nr/nz` 从 `64/64` 提高到 `128/128`。官方 analysis 与独立 contract 均通过：两个电子的最大回溯相对误差降为 `0.9977% < 2%`，相对 64×64 基线的最大误差下降约 `3.61` 倍。该对照支持“当前失败主要受 EB 交点离散分辨率控制”的诊断，但不能把 64×64 baseline 改写成通过，也不能替代对默认测试分辨率和上游容差的正式决策。对照报告归档于 `runs/stage-c-validation/secondary_ion_emission_rz_resolution/resolution-comparison.{json,md}`。
 
-再增加 `256x256` 后，最大回溯相对误差为 `0.6646%`，官方和独立 gate 继续通过；三档结果为 `64x64: 3.6038%`、`128x128: 0.9977%`、`256x256: 0.6646%`。相邻分辨率的经验误差阶约为 `1.85` 和 `0.59`，这里只作为描述性趋势，不能包装成正式 convergence order：样本只有三档，且粒子事件、callback 和分析容差均未改变。趋势报告归档于 `runs/stage-c-validation/secondary_ion_emission_rz_resolution/resolution-trend.{json,md}`。
+再增加 `256x256` 后，最大回溯相对误差为 `0.6646%`，官方和独立 gate 继续通过；三档结果为 `64x64: 3.6038%`、`128x128: 0.9977%`、`256x256: 0.6646%`。相邻分辨率的经验误差阶约为 `1.85` 和 `0.59`，这里只作为描述性趋势，不能包装成正式 convergence order：样本只有三档，且粒子事件、callback 和分析容差均未改变。新增的公开 contract 将默认基线保留为 raw `FAIL`/`BOUNDARY`，并将 refined controls 的通过状态与“趋势支持诊断”分开记录，见 `runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}`；趋势报告仍归档于 `runs/stage-c-validation/secondary_ion_emission_rz_resolution/resolution-trend.{json,md}`。
 
 thermal boundary 也已完成官方 2-rank、2000 步复现。官方 `analysis.py` 和独立 reduced-ledger 脚本均通过：`EF/EN` 各有 `201` 个样本，按上游语义以第 10 步场能作为参考，末态场能比值为 `9.0906979`、末态场能 `9.8450169e-6 < 5e-5`，粒子能从 `0.0138667572` 变为 `0.0141029132`，相对漂移 `1.7030369% < 2%`。这支持“当前短时 thermal boundary workflow 的能量注入处于官方 gate 内”，不支持“系统已达到热平衡”或“长期统计收敛”。报告归档于 `runs/stage-c-validation/particle_thermal_boundary_mpi2/contract.{json,md}`。
 

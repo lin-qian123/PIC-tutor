@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 734,
-  "total_bytes": 27681476,
+  "entry_count": 735,
+  "total_bytes": 27690750,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1523312,
-      "sha256": "f0f23bb5acab7f1809ab8238b1c6dba9e429f41dea8f6b4f9b9b89a3e38654a6"
+      "bytes": 1523795,
+      "sha256": "c55f7d6118e1cb5e86204129ad4fe5750d261da16d3ebbc7a37743364e9c897f"
     },
     {
       "path": "TODO.md",
-      "bytes": 1369110,
-      "sha256": "20bd0953fb5c61c0c8b7d626e4413bd263850776b5223b6f50c54619c82e031f"
+      "bytes": 1369596,
+      "sha256": "e81a472f33c6b40150ba6267626c20bb36fdcc5c6d1fd84a7edd3a89df4145f3"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5754980,
-      "sha256": "bdc7b532d11b53e12ce85f0a66a0693d34190ecc80b26971e514a3f9ebe3efde"
+      "bytes": 5755656,
+      "sha256": "182e65be0a475774311bd6567ea349ac2795c25963f9bc2e81dc4f9fa5d47a64"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1081206,
-      "sha256": "57143a1731d89a908bbb8d4d15dc1309f19584c2c88da7c0d48cef413daeaa10"
+      "bytes": 1081799,
+      "sha256": "518163b1de394897013bffc61920a0d1b5de941c570f8f667b40d8e8f4bd47aa"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3380678,
-      "sha256": "1c6b3fb576e6689f66e938ed13bc68e8b5daeb0f448ce5eac615b5f34cd443b1"
+      "bytes": 3381345,
+      "sha256": "3d41c4b29395632142fb02f868defe57668ed11218e7d876b3402a2f2527ed94"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 85775,
-      "sha256": "4e4839505cc8fa2bb6f5165e79eedc72aeefe8c234a495f51244c93185355d47"
+      "bytes": 86593,
+      "sha256": "9f94596f8b629a82e756ea7101a45b2e8b013449bfba3953e3b6e46c4af0a66d"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 56345,
-      "sha256": "ff3cf96d6e940f4332e0f196c1cdb7d8461791707f156a8e28d7675b64654af4"
+      "bytes": 56943,
+      "sha256": "838e755033de8a462f48860d954d4b555aa369e50133c9770c250770101ebca4"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "d1d21525bef209810378d158ef0f248b9123eef5962581afb8e6914dac7bedfd"
+      "sha256": "05accf8b364397bf67a942c683a6ae9d9a0e19ee042b73962b1593998c080d1c"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44575,
-      "sha256": "f076be2240c97dc32ae919a44ab5dcc9af03bec9ba4fba05a9a385e702ef81fb"
+      "sha256": "4f4fe63b8c8dc74ff8bf2dd0555652217d025ec946e5f24ede19082117530db3"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 65979,
-      "sha256": "0735daa9ee9c50930be945e80a01ddb747df5437f4e20987e240bd9c78f1dba0"
+      "bytes": 66327,
+      "sha256": "4d3f08d85905aafa599f7bf6cb4a38f96d8f2874fcd17bde0a2ef0e1af593f15"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -907,13 +907,13 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 166561,
-      "sha256": "2d584341cb83deee79abd91599825e79b7743dc66d85867c69587471704ebab6"
+      "bytes": 166806,
+      "sha256": "3f55c13893c8298d91fc8012fe55e5e647b4764be66d43347d1aa1d43d0d1e1c"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
       "bytes": 111833,
-      "sha256": "aa0d68a65af21732d10cc681d1d8c76b58b80bce8c826266ffe917b9b26bd4e7"
+      "sha256": "6c4c205e1d8056035b547c4fb1eb41d0af5d3aae34e329188f79367c88c03622"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -2734,6 +2734,11 @@
       "path": "scripts/audit_rz_jrhom_first_stage_patch.py",
       "bytes": 5136,
       "sha256": "06d00f2d09c3b26a2d793b844139e471b0b464439e982a8bac72840d01784a5a"
+    },
+    {
+      "path": "scripts/audit_rz_secondary_emission_resolution_contract.py",
+      "bytes": 4360,
+      "sha256": "215b7464d63b274de5674647b4d102bfe0fab21ce14cba0179c434f6f6949738"
     },
     {
       "path": "scripts/audit_secondary_emission_eb_source_contract.py",

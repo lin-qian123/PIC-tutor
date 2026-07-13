@@ -1,17 +1,17 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 159,
+  "record_count": 160,
   "status_counts": {
     "PASS": 116,
-    "FAIL": 28,
+    "FAIL": 29,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
     "PASS": 99,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 26
+    "BOUNDARY": 27
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -2045,6 +2045,24 @@
         "anchor_count": 10,
         "passed": true,
         "passed_anchor_count": 10
+      }
+    },
+    {
+      "case": "secondary-emission-resolution-trend",
+      "status": "FAIL",
+      "evidence_kind": "BOUNDARY",
+      "contract": "RZ secondary-emission resolution-aware geometry boundary",
+      "classification": "RZ_SECONDARY_EMISSION_BOUNDARY_BASELINE_FAIL_REFINED_CONTROLS_PASS",
+      "scope": "64x64 baseline plus 128x128/256x256 refined controls; official 2% EB impact-point gate",
+      "metrics": {
+        "baseline_max_relative_distance": 0.03603811888684052,
+        "baseline_status": "FAIL",
+        "contract_pass": false,
+        "max_error_reduction_64_to_128": 3.6121251395470173,
+        "refined_128_max_relative_distance": 0.009976985152668304,
+        "refined_256_max_relative_distance": 0.006646152621586896,
+        "refined_status": "PASS",
+        "resolution_count": 3
       }
     },
     {

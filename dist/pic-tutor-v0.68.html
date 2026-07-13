@@ -822,6 +822,12 @@ boosted-frame / NCI</a></li>
 </nav>
 <!-- source: manuscript/VERSION.md -->
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
+<p>本版将 RZ secondary-emission 三档 resolution trend 提升为公开
+boundary contract：<code>64x64</code> 默认基线仍为 raw
+<code>FAIL</code>，<code>128x128/256x256</code> refined controls
+通过官方 <code>2%</code> EB impact-point gate；该结果支持
+resolution-sensitive geometry diagnosis，但不关闭默认 upstream
+regression，也不构成正式 convergence order。</p>
 <p>本版新增显式 leapfrog position source crosswalk：只读核对
 <code>PhysicalParticleContainer::Evolve()</code> 的
 momentum-then-position 顺序、<code>UpdatePosition.H</code>
@@ -894,7 +900,7 @@ gate：<code>p_y^2 + (b y^2/2)^2 = I_y</code> 的全部长轨道相对残差低�
 <code>1e-3</code>，但仍只标记为 resonance-sensitive invariant
 screen，不提升为 two-fold island topology reproduction。</p>
 <p>本版新增公开验证证据摘要：<code>docs/public-evidence-index.{json,md}</code>
-汇总本地 159 条 <code>contract.json</code>，保留原始
+汇总本地 160 条 <code>contract.json</code>，保留原始
 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing
 的记录标为
 <code>evidence_kind=BOUNDARY</code>。摘要不含本机绝对路径；原始
@@ -20414,8 +20420,11 @@ PICMI case 的 <code>nr/nz</code> 从 <code>64/64</code> 提高到
 <code>64x64: 3.6038%</code>、<code>128x128: 0.9977%</code>、<code>256x256: 0.6646%</code>。相邻分辨率的经验误差阶约为
 <code>1.85</code> 和
 <code>0.59</code>，这里只作为描述性趋势，不能包装成正式 convergence
-order：样本只有三档，且粒子事件、callback
-和分析容差均未改变。趋势报告归档于
+order：样本只有三档，且粒子事件、callback 和分析容差均未改变。新增的公开
+contract 将默认基线保留为 raw
+<code>FAIL</code>/<code>BOUNDARY</code>，并将 refined controls
+的通过状态与“趋势支持诊断”分开记录，见
+<code>runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}</code>；趋势报告仍归档于
 <code>runs/stage-c-validation/secondary_ion_emission_rz_resolution/resolution-trend.{json,md}</code>。</p>
 <p>thermal boundary 也已完成官方 2-rank、2000 步复现。官方
 <code>analysis.py</code> 和独立 reduced-ledger
@@ -26001,7 +26010,7 @@ reconstruction <code>&lt; 3.1e-16</code></td>
 也不等价于确定性 <code>1e-9</code>
 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema
 contract、性能 gate 和采样统计边界。公开仓库中的
-<code>docs/public-evidence-index.{json,md}</code> 进一步提供 159
+<code>docs/public-evidence-index.{json,md}</code> 进一步提供 160
 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。</p>
 <p>当前证据等级应写成：Langmuir
 已有运行级解析频率、场误差和最终守恒证据；uniform plasma

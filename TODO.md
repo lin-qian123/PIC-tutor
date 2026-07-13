@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：将 RZ secondary-emission `64/128/256` resolution trend 提升为独立公开 contract：新增 `scripts/audit_rz_secondary_emission_resolution_contract.py` 与 `runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}`；明确默认 `64x64` 为 raw `FAIL`/`BOUNDARY`，`128x128` 与 `256x256` refined controls 通过官方 `2%` gate，且三档误差单调下降。该 contract 不关闭默认回归，也不宣称正式 convergence order。
+
 - [x] 2026-07-13：修正 `docs/parameter-map.md` 的计数漂移：当前实际数据行是 445 条而非旧 header 的 352 条；`scripts/audit_parameter_map_surface.py` 新增 header-count contract，`parameter-chapter-index.md` 同步区分数据行数量与官方参数源条目数量，逐条 `ParmParse` 语义复核仍保持未完成边界。
 - [x] 2026-07-13：继续增强参数映射审计：`audit_parameter_map_surface.py` 现在支持 WarpX/AMReX 外部源码路径、模板函数名归一化和动态 key alias；当前 445/445 行完成 parameter-token coverage，但 token 命中仍不冒充 `ParmParse` parser/consumer 语义证明。
 - [x] 2026-07-13：新增 `scripts/audit_position_leapfrog_source_crosswalk.py` 与 `notes/code-reading/particles/66-explicit-leapfrog-position-source-crosswalk.md`：只读核对 `PhysicalParticleContainer::Evolve()` 的 momentum-then-position 顺序、`UpdatePosition.H` 的时间中心速度公式、维度条件和 Higuera-Cary 不支持 split momentum push 的接口边界；明确相邻 Full plotfile 速度只是 proxy，Vay Appendix B 已有 proxy-level bounded contract，直接 half-step attribute 与论文图形逐点复现仍未完成。

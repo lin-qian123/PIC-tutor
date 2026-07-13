@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `163`
-- PASS: `118`
+- records: `164`
+- PASS: `119`
 - FAIL: `30`
 - UNKNOWN: `15`
-- boundary-classified: `28`
+- boundary-classified: `29`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -55,6 +55,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `esirkepov_langmuir_rsphere_shape2_mpi2` | `PASS` | `PASS` | Esirkepov radial Langmuir reader-side runtime contract | `` | independent radial Er/theory check; not a full charge-conservation or all-combination regression | `passed=True`, `relative_er_error=0.010070073404105487` |
 | `esirkepov_langmuir_rsphere_shape3_mpi2` | `PASS` | `PASS` | Esirkepov radial Langmuir reader-side runtime contract | `` | independent radial Er/theory check; not a full charge-conservation or all-combination regression | `passed=True`, `relative_er_error=0.015108651884574139` |
 | `esirkepov_langmuir_rsphere_shape4_mpi2` | `PASS` | `PASS` | Esirkepov radial Langmuir reader-side runtime contract | `` | independent radial Er/theory check; not a full charge-conservation or all-combination regression | `passed=True`, `relative_er_error=0.02195398944651997` |
+| `esirkepov_langmuir_rz-charge-field-tradeoff-summary` | `PASS` | `BOUNDARY` | RZ Esirkepov charge/field tradeoff summary | `RZ_ESIRKEPOV_CHARGE_FIELD_TRADEOFF_SUMMARY_BOUNDARY_DEFAULT_AXIS_CHARGE_UNRESOLVED` | existing 2-rank RZ Langmuir baseline, cleaning, axis-correction, shape and resolution contracts; summary only, not a new runtime | `axis_correction_off_status=LOCAL_PASS_NOT_GLOBAL_DEFAULT_RECOMMENDATION`, `check_count=12`, `contract_pass=True`, `correction_on_charge_status=BOUNDARY`, `default_charge_status=BOUNDARY`, `default_field_status=PASS`, `refined_higher_shape_status=PASS_FOR_CORRECTION_OFF_FIELD_AND_CHARGE` |
 | `esirkepov_langmuir_rz_axis-correction-comparison` | `UNKNOWN` | `UNKNOWN` | RZ Esirkepov Verboncoeur axis correction comparison | `AXIS_CORRECTION_OFF_RESTORES_CHARGE_GATE` | paired reader-side comparison; does not justify changing the global default | `charge_gate=True` |
 | `esirkepov_langmuir_rz_axis-correction-family` | `PASS` | `PASS` | RZ Esirkepov axis-correction shape family | `` |  | `passed=True`, `refined_field_all_pass=True`, `refined_off_all_pass=True`, `refined_on_all_charge_boundary=True` |
 | `esirkepov_langmuir_rz_axis-resolution-comparison` | `PASS` | `PASS` | RZ Esirkepov axis-correction resolution comparison | `` |  | `correction_on_axis_residual_reduction=2.3643711907660565`, `passed=True`, `refined_off_all_gates_pass=True` |

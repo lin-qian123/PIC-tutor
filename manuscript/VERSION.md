@@ -1,5 +1,7 @@
 # PIC-tutor v0.68
 
+本版新增 RZ Esirkepov charge/field tradeoff summary contract：对 7 组既有 RZ evidence family 做 12 项统一交叉检查，确认默认 axis correction 下 field gate 通过而 axis charge 仍为 `BOUNDARY`，correction-off 只在局部 sibling 上恢复 charge；该结果不修改 WarpX 默认参数，也不宣称正式收敛阶。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}`。
+
 本版新增 parameter-map structured review contract：parser-anchor 之外的 10 条参数已逐项核对，8 条 dynamic-key constructor 和 2 条 AMReX owner 全部通过源码锚点检查；该结果不替代完整 C++ AST、默认值/校验或 runtime value semantics 审计。报告见 `runs/stage-c-validation/parameter-map-structured-review-contract/contract.{json,md}`。
 
 本版新增 parameter-map parser-anchor review surface：排除通用 `type/field/x/y/z` token，限制为普通单行 C++ literal，并覆盖 `query_enum_sloppy`、`queryArrWithParser`、`getWithParser`、`getArrWithParser`、`Store_parserString`、`getEntries` 后，445 条参数中 435 条找到固定 parser anchor，8 条确认是 dynamic-key constructor，2 条确认是 AMReX owner 参数，没有未分类项；该结果不替代 C++ AST、默认值/校验或 runtime value semantics 审计。报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
@@ -34,7 +36,7 @@
 
 本版又补入 dense `p_y=0.2..2.8` family 和 64³ `p_y=1.6/1.8` resolution control：Vay 共振窗口 `I_y` 漂移约 `6.5e-2`，Boris/Higuera-Cary 约 `1e-3`，但仍只标记为 resonance-sensitive invariant screen，不提升为 two-fold island topology reproduction。
 
-本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 163 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
+本版新增公开验证证据摘要：`docs/public-evidence-index.{json,md}` 汇总本地 164 条 `contract.json`，保留原始 PASS/FAIL/UNKNOWN，并将明确分类为 boundary、unproven 或 missing 的记录标为 `evidence_kind=BOUNDARY`。摘要不含本机绝对路径；原始 `runs/` 仍不进入公共 release，也不把摘要当作原始运行证据的替代品。
 
 本版又把 AMR transition-zone route-count packet 落成 `scripts/validate_transition_zone_route_contract.py` 和 `docs/transition-zone-route-contract-example.json`：正例 `DESIGN_SCHEMA_VALIDATED`，故意破坏 route count 的负例被拒绝。该 contract 只验证未来 runtime analysis 的 schema 与 arithmetic gate；当前 WarpX 尚未输出真实 route ledger，不能升级为 AMR physics PASS。
 
@@ -50,7 +52,7 @@
 
 本版新增 Esirkepov 2001 bounded compare contract：本地预印本、CPC 发表元数据、Section 1--5、Eq.(23)、二阶 spline 线索与 publisher PDF 缺失状态共 8 项检查全部通过。该 contract 只固化当前证据边界，不替代尚未取得的 CPC 定稿逐行对照。
 
-当前合订 PDF 为 320 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
+当前合订 PDF 为 321 页；本 v0.68 版本在 v0.67 基础上补入公开验证证据摘要、Tajima-Dawson 1979 资产合同和 LeeCPC2015 publisher-abstract boundary，并保留强守恒 BOUNDARY，不把局部观测写成完整 Gauss-law 闭环。
 
 本版另补入 RZ shape=1 的 `256x512` resolution control：correction-on axis charge residual 为 `3.593e-3 -> 1.520e-3 -> 7.554e-4`，correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`。官方 field analysis 在三档均通过；结果支持 correction-on 的分辨率敏感性，但 correction-off 在最高分辨率越过强 gate，因此不修改默认轴修正，也不宣称正式收敛阶。
 

@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 163,
+  "record_count": 164,
   "status_counts": {
-    "PASS": 118,
+    "PASS": 119,
     "FAIL": 30,
     "UNKNOWN": 15
   },
@@ -11,7 +11,7 @@
     "PASS": 101,
     "FAIL": 27,
     "UNKNOWN": 7,
-    "BOUNDARY": 28
+    "BOUNDARY": 29
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -630,6 +630,23 @@
       "metrics": {
         "passed": true,
         "relative_er_error": 0.02195398944651997
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz-charge-field-tradeoff-summary",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "RZ Esirkepov charge/field tradeoff summary",
+      "classification": "RZ_ESIRKEPOV_CHARGE_FIELD_TRADEOFF_SUMMARY_BOUNDARY_DEFAULT_AXIS_CHARGE_UNRESOLVED",
+      "scope": "existing 2-rank RZ Langmuir baseline, cleaning, axis-correction, shape and resolution contracts; summary only, not a new runtime",
+      "metrics": {
+        "axis_correction_off_status": "LOCAL_PASS_NOT_GLOBAL_DEFAULT_RECOMMENDATION",
+        "check_count": 12,
+        "contract_pass": true,
+        "correction_on_charge_status": "BOUNDARY",
+        "default_charge_status": "BOUNDARY",
+        "default_field_status": "PASS",
+        "refined_higher_shape_status": "PASS_FOR_CORRECTION_OFF_FIELD_AND_CHARGE"
       }
     },
     {

@@ -1,5 +1,7 @@
 # PIC-tutor
 
+当前 v0.68 又补入 RZ Esirkepov charge/field tradeoff summary contract：对 7 组既有 RZ evidence family 做 12 项统一交叉检查，确认默认 axis correction 下 field gate 通过而 axis charge 仍为 `BOUNDARY`，correction-off 仅在局部 sibling 上恢复 charge；该结果不修改 WarpX 默认参数，也不宣称正式收敛阶。脚本为 `scripts/summarize_rz_esirkepov_charge_field_tradeoff.py`，报告见 `runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}`。
+
 当前 v0.68 又完成 parameter-map structured review contract：parser-anchor 之外的 10 条参数已逐项核对，8 条 dynamic-key constructor 和 2 条 AMReX owner 全部通过；这关闭了“非固定键仅按类别记录、没有逐项源码锚点”的缺口，但不替代完整 C++ AST、默认值/校验或 runtime value semantics 审计。脚本为 `scripts/audit_parameter_map_structured_review.py`，报告见 `runs/stage-c-validation/parameter-map-structured-review-contract/contract.{json,md}`。
 
 当前 v0.68 又补入 parameter-map parser-anchor review surface：排除通用 `type/field/x/y/z` token，限制为普通单行 C++ literal，并覆盖 `query_enum_sloppy`、`queryArrWithParser`、`getWithParser`、`getArrWithParser`、`Store_parserString`、`getEntries` 后，445 条参数中 435 条找到固定 parser anchor，8 条确认是 dynamic-key constructor，2 条确认是 AMReX owner 参数，没有未分类项；该审计仍不冒充 C++ AST 或完整 ParmParse 语义证明。脚本为 `scripts/audit_parameter_map_parser_anchors.py`，报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
@@ -8,9 +10,9 @@
 
 当前 v0.68 又新增 RZ secondary-emission resolution-aware public contract：默认 `64x64` 仍为 raw `FAIL`/`BOUNDARY`，`128x128` 与 `256x256` refined controls 通过官方 `2%` EB impact-point gate；三档误差 `3.6038%/0.9977%/0.6646%` 单调下降，支持分辨率敏感性诊断，但不把默认 upstream regression 改写成通过，也不宣称正式 convergence order。合同见 `runs/stage-c-validation/secondary-emission-resolution-trend/contract.{json,md}`。
 
-当前成书版本为 `v0.68`，对应 320 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
+当前成书版本为 `v0.68`，对应 321 页 3D Esirkepov refined matrix、RZ correction tradeoff audit、Esirkepov 2001 bounded compare、Hockney 1971/1974 particle-mesh contracts、Yee 1966 indexed-abstract/source crosswalk、Boris 1970 metadata/access/source crosswalk、PSATD/NCI strategy matrix、public path hygiene 和公开验证证据摘要版；历史 `v0.67` 由 `manuscript/VERSION-v0.67.md` 保留。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 163 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
+v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 164 条 `contract.json` 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
 当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.68。
 
@@ -40,7 +42,7 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`：从本地 163 条 `contrac
 
 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将“线性稳定不等于非线性无扰动”、相空间 clump/density hole 诊断和相对漂移自由能边界写入中文讲解笔记，并最小回填第 8 章；该结论不升格为 NCI 或 WarpX runtime physics gate。
 
-2026-07-13：整理 `Birdsall 1985` `3A ES1` 的最小程序骨架与 WarpX `InitData()`/`Evolve()` 阶段边界，补充不可等同说明和 Langmuir/初始化验证入口，作为下一次第 3A 章正文回填依据；当前 v0.68 为 320 页。
+2026-07-13：整理 `Birdsall 1985` `3A ES1` 的最小程序骨架与 WarpX `InitData()`/`Evolve()` 阶段边界，补充不可等同说明和 Langmuir/初始化验证入口，作为下一次第 3A 章正文回填依据；当前 v0.68 为 321 页。
 
 2026-07-13：materialize `Peiravi and Birdsall (1978)` Berkeley technical report，完成 40 页 PDF、MinerU Markdown、52 张图、中文讲解和独立 asset contract；第 5/6/8 章仍只保留摘要/文献边界回链，不把技术报告升格为 publisher journal 证据。
 

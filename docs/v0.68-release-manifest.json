@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 738,
-  "total_bytes": 27724294,
+  "entry_count": 739,
+  "total_bytes": 27739041,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1525409,
-      "sha256": "52ca6a0af12fa78b0735ba641acf4c386d912e214e8fb07c2a54c760ff71ddfa"
+      "bytes": 1525944,
+      "sha256": "1be023f8555eb0a866781bca5bd1ffc96a6f8cd321918c367540cceeb3d9ef8a"
     },
     {
       "path": "TODO.md",
-      "bytes": 1371422,
-      "sha256": "19add095892ad633fc52e261db5a1d003c2bb180eeba0abf26a31b03a3c77ebf"
+      "bytes": 1371916,
+      "sha256": "c782313518cc4f3740f0315e2c6c157026724d7f3186e6625490c7d1820ea511"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5757506,
-      "sha256": "52b228817116123851c2b200bac0bfa98af3885c93fc7c9f7771f84209655b3a"
+      "bytes": 5758794,
+      "sha256": "63a5cad51377c3846b48f289e6099c531a7ed4211b529b1d164911fd94f630fe"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1083449,
-      "sha256": "4a5eb0888d9d02a5b0736abd95f8ba322c714a9b5e45c04758f8551b0a287223"
+      "bytes": 1084670,
+      "sha256": "4125a8a56fdca7d3a2816b031503278c616b03c980c7b48ed8919d0eaf98e5d3"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3384591,
-      "sha256": "cd4ba12201477aa3eecf96317c828113cf9d4a1fe8c45c442875d814ab786383"
+      "bytes": 3387956,
+      "sha256": "0de50667f776f28200ae1b39a9bd67d3da7bfad602a9e1e96335623c26863eaf"
     },
     {
       "path": "docs/chapter-template.md",
@@ -112,18 +112,18 @@
     },
     {
       "path": "docs/public-evidence-index.json",
-      "bytes": 88530,
-      "sha256": "3b64660dff8e000abb451530da94017906215a0c51d225b168cd2de507918c8c"
+      "bytes": 89381,
+      "sha256": "fe9485cea75e1132a4007ce3674952b84a33af23356341bc54fdb7b8ce8ee05d"
     },
     {
       "path": "docs/public-evidence-index.md",
-      "bytes": 58299,
-      "sha256": "cdc2e8d3ef874ed768a47fe9c4ca7221b79fbfb1e1138e90ed8fd307168116a9"
+      "bytes": 58933,
+      "sha256": "bd9e2a04edcee04b4e4a48a220a36552ebe76ab289654b46e6c6514c1e7d6696"
     },
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "c7504c38c3f7a97b4e321fa464bfa66b628a339e02ebb4ab2e1827673a084613"
+      "sha256": "17a7ff6842569ccb95a979e42c2496bf98dffb98416cffd9d4203391979fb87f"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -428,7 +428,7 @@
     {
       "path": "manuscript/README.md",
       "bytes": 44575,
-      "sha256": "4cf807658591031a676de64de7c87486deab871cc6c81474136a17f2b7a13506"
+      "sha256": "36fad1a972a518dea6762555a9142911b6fa8ab5f6fe585e9deee3bb455da6d4"
     },
     {
       "path": "manuscript/VERSION-v0.1.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 67688,
-      "sha256": "74a50c2a5501cdc68bd8d212b0d06d8d3c53b9347bcac698cd94b8e2b0b72a03"
+      "bytes": 68143,
+      "sha256": "14ecd5da14f21f4261870d9c05280ed8fa2d498961ed7abe19d5128fe4c5ec5b"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -897,8 +897,8 @@
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
-      "bytes": 179886,
-      "sha256": "5f42003a9d41296c4f3ca8b96bc48679db1faa0d1d97b0997ff6777136236052"
+      "bytes": 180652,
+      "sha256": "58d6fa5b7ae5231c3e8d0d594ef615cde9b9b3f4c75ed6c29d6b1e7d2d2b1a1e"
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
@@ -913,7 +913,7 @@
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
       "bytes": 111833,
-      "sha256": "f1a30d71d2e5b421d3a277665cb86012f84f38e075607a65a9ef403bd6b00487"
+      "sha256": "555a7949b5005a5951048a3160296d75483911377a7ca1c236ecd187c1763c50"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -3519,6 +3519,11 @@
       "path": "scripts/summarize_rz_esirkepov_axis_resolution_contract.py",
       "bytes": 4776,
       "sha256": "c1f4e6eab4056146e23bde983f893d7a09ca37036a76a4c1cc32e4da4f22aac3"
+    },
+    {
+      "path": "scripts/summarize_rz_esirkepov_charge_field_tradeoff.py",
+      "bytes": 5138,
+      "sha256": "1b9d4a1a5afcb9006c96c3d46806f402425133c87a73c86b396d4c4f083f970f"
     },
     {
       "path": "scripts/summarize_rz_esirkepov_highres_correction_family.py",

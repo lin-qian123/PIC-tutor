@@ -1,5 +1,7 @@
 # TODO
 
+- [x] 2026-07-13：新增 `scripts/summarize_rz_esirkepov_charge_field_tradeoff.py`，对 7 组既有 RZ Esirkepov evidence family 做 12 项统一交叉检查；确认默认 axis correction 下 field PASS/charge BOUNDARY、correction-off 仅为局部 sibling、cleaning 与 axis cell 主导关系仍需保留。该 contract 不修改 WarpX 默认参数，不宣称正式收敛阶。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.{json,md}`。
+
 - [x] 2026-07-13：新增 `scripts/audit_parameter_map_structured_review.py`，对 parser-anchor 之外的 10 条参数逐项复核：8 条 dynamic-key constructor（species attribute、collision process keys、ADIOS2 entries、particle fields）和 2 条 AMReX/AmrCore owner（`ref_ratio`/`ref_ratio_vect`）全部通过源码锚点检查；该 contract 仍不宣称完整 C++ AST、默认值/校验或 runtime value semantics。报告见 `runs/stage-c-validation/parameter-map-structured-review-contract/contract.{json,md}`。
 - [x] 2026-07-13：新增并收紧 `scripts/audit_parameter_map_parser_anchors.py`：对 `docs/parameter-map.md` 的 445 条参数逐条对照引用源码中的 parser-like literal 邻接，排除通用 `type/field/x/y/z` token，将字符串解析限制为普通单行 C++ literal，覆盖 `query_enum_sloppy`、`queryArrWithParser`、`getWithParser`、`getArrWithParser`、`Store_parserString`、`getEntries` API，并展开 compact boundary keys；最终 435 条找到固定 parser anchor，8 条确认是 dynamic-key constructor，2 条确认是 AMReX owner 参数，未留下未分类项。contract 仍不把这些字符串/构造器邻接升级成 C++ AST、默认值/校验或 runtime value semantics 证明。报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
 - [x] 2026-07-13：将 3D AMR `particles_in_pml` 的 signed/absolute 分解提升为独立公开 boundary contract：新增 `scripts/audit_particles_in_pml_signed_absolute_boundary.py` 与 `runs/stage-c-validation/particles-in-pml-3d-mr-boundary/contract.{json,md}`；验证官方 signed `106.4354 < 110`、严格 absolute `110.3994 > 110`、唯一越界项为负向 `Ex`，并确认 coarse/fine absolute 极值一致。该 contract 不修改 `../warpx`、上游 analysis 或阈值。
@@ -23,7 +25,7 @@
 - [x] 2026-07-13：建立 `Abe et al. (1975)` 摘要级论文专属目录、中文讲解、access audit、reading log 和 `scripts/audit_abe_1975_abstract_contract.py`；固定 `sigma(K_g)`、correlation time、finite-grid stochastic fluctuation 的窄证据范围，明确 publisher PDF/MinerU 缺失。
 - [x] 2026-07-13：重核查 `Hockney et al. (1974)` 与 `Eastwood and Hockney (1974)` acquisition：Elsevier API 仅返回 `openaccess=0` 元数据，ScienceDirect `/pdf` 仍返回 HTTP `403` HTML；full-text missing 边界保持不变。
 - [x] 2026-07-13：materialize `Peiravi and Birdsall (1978)` Berkeley technical report，完成 40 页 PDF、MinerU Markdown、52 张图、中文讲解、access audit、reading log 和 `scripts/audit_peiravi_birdsall_1978_asset_contract.py`；明确 institutional full-text 与 journal-version equivalence 的边界。
-- [x] 2026-07-13：整理并完成 `Birdsall 1985` `3A ES1` 的 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 与 WarpX `InitData()`/`Evolve()` 的近似对应、不可等同边界及 Langmuir/初始化验证入口；第 3A 章正文已在 `3A.13` 完成回填，当前 v0.68 版面保持 319 页。
+- [x] 2026-07-13：整理并完成 `Birdsall 1985` `3A ES1` 的 `INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY` 与 WarpX `InitData()`/`Evolve()` 的近似对应、不可等同边界及 Langmuir/初始化验证入口；第 3A 章正文已在 `3A.13` 完成回填，当前 v0.68 版面保持 320 页。
 - [x] 2026-07-13：继续精读 `Birdsall 1985` Chapter 13-6，将线性稳定与非线性湍流的边界、相空间 clump/density hole 诊断和相对漂移自由能写入中文讲解笔记，并最小回填第 8 章；明确不把书中转述升格为 NCI 或 WarpX runtime physics gate。
 - [x] 2026-07-12：对公开证据摘要执行 path hygiene，确认不含 `/Volumes/`、`/Users/`、`file://` 或绝对本地链接。
 - [x] 2026-07-12：完成 v0.68 成书构建、manifest 更新；GitHub push 在本轮提交后完成。

@@ -2,11 +2,11 @@
 
 审计日期：2026-07-13
 
-当前 `dist/pic-tutor-v0.68.pdf` 为 320 页，内含 16 张书稿验证图；v0.67 及此前的构建记录均属于历史构建快照。
+当前 `dist/pic-tutor-v0.68.pdf` 为 321 页，内含 16 张书稿验证图；v0.67 及此前的构建记录均属于历史构建快照。
 
 v0.66 审计发现合订 Markdown/HTML 含本机绝对路径和不可随公共仓库迁移的绝对链接；v0.67 已在 release 构建层修复，v0.68 延续该检查，并将验证合同摘要纳入公共 allowlist。
 
-v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 163 条 `contract.json` 生成去路径摘要。摘要保留原始合同状态，并将 boundary、unproven、missing 分类单独标记；原始 `runs/` 仍排除，因此该摘要是公共证据目录，不是运行产物替代品。
+v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 164 条 `contract.json` 生成去路径摘要。摘要保留原始合同状态，并将 boundary、unproven、missing 分类单独标记；原始 `runs/` 仍排除，因此该摘要是公共证据目录，不是运行产物替代品。
 
 本文件只记录发布边界和体积证据，不自动删除或移动工作区文件。真正 push 前仍需由维护者确认论文 PDF、图片和其他第三方材料的授权状态。
 
@@ -17,9 +17,9 @@ v0.68 新增 `docs/public-evidence-index.{json,md}`，从本地 163 条 `contrac
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.68.pdf` | 3,384,591 bytes | 当前 320 页成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.68.html` | 5,757,506 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.68.md` | 1,083,449 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.68.pdf` | 3,387,956 bytes | 当前 321 页成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.68.html` | 5,758,794 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.68.md` | 1,084,670 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 
@@ -57,8 +57,8 @@ python scripts/audit_release_consistency.py
 git status --short
 ```
 
-当前 v0.68 构建验收结果：`pdf_pages=320`、源/合订图片链接均为 `16`、HTML 内嵌图片和图号范围检查全部通过。
+当前 v0.68 构建验收结果：`pdf_pages=321`、源/合订图片链接均为 `16`、HTML 内嵌图片和图号范围检查全部通过。
 
-v0.68 发布 allowlist 另见 `docs/v0.68-release-manifest.{json,md}`：当前包含 738 个项目文件、总计 `27,724,294` bytes；`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
+v0.68 发布 allowlist 另见 `docs/v0.68-release-manifest.{json,md}`：当前包含 739 个项目文件、总计 `27,739,041` bytes；`runs/`、`references/`、历史 `dist/` 和调试残留均被排除。该 manifest 是审计输入，不自动执行 Git staging、commit 或 push。
 
 验收脚本证明的是成书构建和资源合同，不替代第三方材料的版权审计，也不替代 GitHub 仓库最终 staged 文件清单审阅。

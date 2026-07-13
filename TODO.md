@@ -2,6 +2,9 @@
 
 ## 2026-07-14
 
+- [x] 新增第 5 章 v0.79 收敛研究就绪合同：读取既有 RZ Esirkepov shape=1 三档分辨率，计算 field/charge/axis/off-axis observable 的描述性 pairwise order；保留 axis charge、非单调误差和正式收敛阶未证明边界。
+- [x] 新增 `scripts/audit_deposition_convergence_readiness_contract.py`，分类为 `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN`；该合同把后续正式 study 所需的 refinement ratio、observable、控制变量和拟合边界固定下来。
+
 - [x] 新增第 5 章 v0.78 沉积证据梯度：并列 Direct、Esirkepov、Villasenor-Buneman、Vay 的论文/公式层、WarpX 源码层、runtime consumer 和负面边界；不把局部 family 证据外推为完整 geometry/order/AMR 覆盖。
 - [x] 新增 `scripts/audit_deposition_evidence_gradient_contract.py`，绑定第 5 章矩阵、当前 WarpX 只读源码和代表性公式/source/runtime contracts；分类为 `DEPOSITION_PAPER_SOURCE_RUNTIME_GRADIENT_WITH_EXPLICIT_GAPS`。
 - [x] 修正 README 中 v0.76/v0.77 当前版本漂移，并将旧版本口径加入 `audit_release_consistency.py` 的拒绝检查。

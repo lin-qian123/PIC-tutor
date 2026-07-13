@@ -2624,6 +2624,19 @@ AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在�
 
 本节由 `scripts/audit_deposition_evidence_gradient_contract.py` 验收。该合同只检查章节矩阵、当前 WarpX 只读源码锚点和代表性报告是否一致，不把证据目录数量当作物理覆盖率，也不改变上游 WarpX 仓库。
 
+### 5.14.5 v0.79 收敛研究就绪合同：先固定 observable，再谈阶数
+
+当前 RZ Esirkepov shape=1 已有 `64x128`、`128x256`、`256x512` 三档 2-rank case-local 控制。它们足以计算描述性的 pairwise order，但还不足以把结果写成正式收敛阶：`correction-on` 的轴向 charge residual 从 `3.593e-3` 降到 `7.554e-4`，而 `correction-off` 的 charge residual 在第三档反而超过 `1e-11` gate；`Er/Ez` 误差的 pairwise order 也不是稳定常数。
+
+| 研究层 | 当前数据 | 可写结论 | 仍缺什么 |
+|---|---|---|---|
+| resolution family | RZ、shape=1、2-rank、三档各向同比例细化 | 几何与 resolution family 已固定，可以开始收敛研究 | 独立控制 particle count、时间步、边界和 axis treatment，确认误差源没有随网格一起改变 |
+| field observable | `Er/Ez` relative error | 可报告每一对 refinement 的描述性 order | 需要稳定的 exact/reference 解、统一 norm 和至少更长的 refinement family，不能只凭单调下降 |
+| charge observable | all-cell、axis、off-axis residual | 能识别 axis correction 与 off-axis 行为的分离 | correction-on 的 axis residual 仍远高于 `1e-11`，charge 不能被 field PASS 代替 |
+| formal-order claim | 当前未成立 | 合同把“可计算”与“可宣称”分开 | 需要预注册 observable、误差范数、控制变量、拟合区间和重复/独立 family |
+
+因此本节分类为 `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN`。`scripts/audit_deposition_convergence_readiness_contract.py` 从既有三档合同计算 pairwise order，并检查 refinement ratio、observable 分层、axis-charge 边界和正文负面声明。输出是研究入口，不是新的 physics PASS；尤其不能把 `correction-on` field trend 写成默认 axis charge 已修复，也不能把经验 order 当作论文或 WarpX 的正式收敛阶。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

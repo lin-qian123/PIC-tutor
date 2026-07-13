@@ -1,9 +1,9 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 196,
+  "record_count": 197,
   "status_counts": {
-    "PASS": 144,
+    "PASS": 145,
     "FAIL": 30,
     "UNKNOWN": 22
   },
@@ -11,7 +11,7 @@
     "PASS": 119,
     "FAIL": 27,
     "UNKNOWN": 13,
-    "BOUNDARY": 37
+    "BOUNDARY": 38
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -149,6 +149,17 @@
       "contract": "Chapter 5 deposition source crosswalk",
       "classification": "CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED",
       "scope": "Checks representative Chapter 5 claims against current WarpX source markers; not a semantic proof or runtime regression.",
+      "metrics": {
+        "passed": true
+      }
+    },
+    {
+      "case": "deposition-convergence-readiness",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "deposition convergence readiness",
+      "classification": "CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN",
+      "scope": "existing RZ Esirkepov shape=1 three-resolution controls; descriptive pairwise order only",
       "metrics": {
         "passed": true
       }

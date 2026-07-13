@@ -213,7 +213,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ## 9.8 当前成书缺口登记
 
-v0.92 完成预注册 formal convergence family 的真实第二组执行：RZ/RSPHERE 各 `64/128/256`、`correction=on/off` 共 12 个 2-rank producer 在 `FI_PROVIDER=tcp` 下全部返回码为 0，并生成完整 diagnostics。随后以与第一 family 相同的 reader-side norm 对两组 family 的全部相邻 pair 做 slope 对照，RZ 与 RSPHERE 分开报告，不做 pooled fit。两组 slope 几乎重合，但原预注册未定义数值化的 repeat-slope comparison tolerance，且 correction-on axis charge 仍为 boundary；因此第二组 materialization 已完成，正式收敛阶仍保持开放。v0.91 的 rho/species decomposition 与 axis-dominated residual time profile 继续作为独立证据层，不等于 `divE-rho` axis charge 闭合。人工全书通读、第三方材料许可和公开再分发仍需单独签收。
+v0.93 在 v0.92 的第二组 materialization 与 slope 对照之上，又把 correction-on axis charge 的 repeat stability 单独登记：RZ/RSPHERE 六个 correction-on level 的两组 axis residual 全部通过 `1e-10` 相对重复容差，并且 axis 仍高于 off-axis。该结果把 axis charge 从“单次观测”推进为“跨 family 稳定的 reader-side boundary”，但不把它解释成 kernel root-cause，也不关闭正式收敛阶。v0.91 的 rho/species decomposition 与 axis-dominated residual time profile继续作为独立证据层，不等于 `divE-rho` axis charge 闭合。人工全书通读、第三方材料许可和公开再分发仍需单独签收。
 
 文献路线图需要和运行/编辑缺口分开管理，否则“论文缺全文”和“代码没有 route ledger”会在 TODO 中互相遮蔽。当前项目把缺口登记在 `docs/current-book-gap-register.md`，每一行绑定证据、分类、下一步动作和关闭条件。当前八项缺口分别覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条 release editorial gate。
 

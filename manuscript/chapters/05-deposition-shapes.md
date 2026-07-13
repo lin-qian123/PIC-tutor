@@ -2522,6 +2522,8 @@ v0.90 将该 profile 扩展到相同 8 个 case 的全部数值 plotfile：`diag
 
 v0.91 对同一 8 个 case 的 `rho`、`rho_electrons` 和 `rho_ions` 做了全时间 species decomposition：初始化 `diag1000000` 的相对差约为 `1.37e-2/1.93e-2/1.96e-2/2.28e-2`，但排除该 pre-evolution baseline 后，16 个 evolved frames 的最大相对差分别为 correction-on `1.854e-14/1.636e-14/1.591e-14/1.435e-14`、correction-off `1.599e-14/1.389e-14/1.341e-14/1.347e-14`，全部通过 `1e-12` gate。该合同分类为 `EVOLVED_TIME_RHO_SPECIES_DECOMPOSITION_PASS_AXIS_CHARGE_SEPARATE`，说明 `rho` 组装在 evolved-time reader-side 已与物种和保持机器精度一致；报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_rho-species-time-profile/contract.{json,md}`，说明见 `notes/code-reading/particles/73-rz-esirkepov-rho-species-time-profile.md`。这仍不关闭独立的 `divE-rho` axis residual、current closure、轴体积耦合或正式收敛。
 
+v0.93 对 v0.92 的两组 RZ/RSPHERE family 做 correction-on axis charge repeat stability：6 个 correction-on level 的 axis residual 在两组 family 之间全部通过 `1e-10` 相对重复容差，且每个 level 的 axis residual 都高于对应 off-axis residual。correction-off 的 RZ 低残差已接近 reader/numerical floor，因此只报告绝对值与相对差，不把放大的相对末位差作为失败。该合同分类为 `REPEAT_STABLE_AXIS_CHARGE_BOUNDARY_NOT_KERNEL_ROOT_CAUSE`，报告见 `runs/stage-c-validation/rz-axis-charge-repeat-stability-v0.93/contract.{json,md}`，说明见 `notes/code-reading/particles/75-rz-axis-charge-repeat-stability.md`。这强化的是稳定的 reader-side boundary，不关闭 deposition kernel root cause、current closure 或正式 order。
+
 同一诊断也已扩展到 RCYLINDER/RSPHERE shape=1：默认 correction 下 charge residual 为 `4.711e-3/4.166e-2`，关闭后为 `3.505e-12/2.420e-11`。这表明 RCYLINDER 的 axis correction off 可以恢复当前强 gate，而 RSPHERE 虽明显改善仍略超 `1e-11`；两者均不支持直接修改全局默认值，完整对照见 `runs/stage-c-validation/esirkepov_radial_charge_axis-comparison/contract.{json,md}`。
 
 RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on 的 residual 为 `4.166e-2/1.390e-2/4.142e-3`，correction off 为 `2.420e-11/9.843e-11/7.461e-11`；六个 field gate 都通过，但六个 charge gate 都未闭合。因此这条证据只能说明 axis/resolution 组合敏感，不能替代正式收敛研究或作为全局默认参数修改依据。该组 `256` case 必须使用专用 `warpx.rsphere` executable；若误用 `warpx.3d`，会在 boundary-array parser 阶段失败，不能作为物理结论。
@@ -2678,7 +2680,7 @@ v0.84 将“下一步要做什么”进一步固定成预注册，而不是在�
 当前机器的二进制和 12 组输入模板均存在；默认 shell `PATH` 没有暴露 MPI launcher，但显式使用 Conda 环境提供的 `mpiexec` 并设置 `FI_PROVIDER=tcp` 后，12/12 producer 均返回码为 0。未设置 provider 时，12 组会在 WarpX 已 finalized 后触发 `utun6` 上的 OFI finalize 错误，不能作为 execution pass；因此 provider 被记录为运行合同的一部分。报告见 [current execution contract](../../docs/formal-convergence-repeat-family-v0.92.md) 和 [raw contract](../../runs/stage-c-validation/formal-convergence-repeat-family-v0.92-tcp/contract.json)。
 <!-- REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING -->
 
-### 5.14.9 v0.92 第二组 family 的输入与产物合同
+### 5.14.9 v0.93 第二组 family 的输入与产物合同
 
 v0.86 将 runner 的“可启动”与“产物可用”分开检查。执行前，脚本逐个核对 12 个模板的 `inputs`、`FILE = ...` 引用文件、`diag_type = Full` 和 diagnostics `intervals`；因此目录存在不再等价于输入可运行。执行时仍固定使用 `mpiexec -n 2` 或等价的 `mpirun -n 2`，不允许降级为单进程。执行后，每个 producer 必须同时满足退出码为 0、生成 `producer.log`、生成 `warpx_used_inputs`，并在 `diags/` 下至少出现一个 `diag*` 目录。任何一项缺失都分类为“输入或产物合同不通过”，而不是把命令启动成功写成有效 runtime evidence。
 <!-- REPEAT_FAMILY_RUNNER_BLOCKED_INPUT_OR_OUTPUT_CONTRACT -->
@@ -2692,6 +2694,12 @@ v0.92 已将第二组 family 实际执行结果与第一组 materialized family 
 第二组 family 的 12 个 2-rank producer 已经真实落盘并通过退出码、used-inputs 与 diagnostics 三层合同。RZ/RSPHERE 各自保留 `correction=on/off`，每种 geometry 的两个 family 都覆盖 `64/128/256`，因此“第二组尚未 materialize”这一前置缺口已经关闭。reader-side 分析没有把两种 geometry 合并：RZ 继续使用 `Er/Ez/axis/off-axis`，RSPHERE 使用 `Er/axis/off-axis`，全部相邻 pair 都保留。
 
 这一步仍不是正式收敛阶闭合。第一、第二 family 的 slope 对照已写入合同，但 `docs/formal-convergence-preregistration.json` 原始预注册没有定义一个数值化的 repeat-slope comparison tolerance；同时 correction-on axis charge 在两种 geometry 中仍保持独立 boundary。因而当前最准确的分类是 `FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN`：执行链与两组数据已完成，正式 order 解释和 charge correctness 仍开放。
+
+### 5.14.11 v0.93 axis charge repeat stability
+
+在两组 family 都 materialize 后，不能只看它们的 slope 是否相近，还要确认 correction-on 的 axis residual 是否在独立 producer 间稳定。v0.93 对 RZ/RSPHERE 的 `64/128/256` 六个 correction-on level 计算两组 axis residual 的相对差，固定 `1e-10` reader-side repeat gate，并同时要求两组的 axis residual 都高于 off-axis residual；六个 level 全部通过。该结果分类为 `REPEAT_STABLE_AXIS_CHARGE_BOUNDARY_NOT_KERNEL_ROOT_CAUSE`，报告见 `runs/stage-c-validation/rz-axis-charge-repeat-stability-v0.93/contract.{json,md}`，说明见 `notes/code-reading/particles/75-rz-axis-charge-repeat-stability.md`。
+
+correction-off 的 RZ residual 已接近数值地板，因此该负对照只报告绝对值与放大的相对差，不把它混入 correction-on stability gate。这个合同只证明 correction-on axis boundary 在两组 family 中可重复、且仍高于 off-axis；它不识别 kernel root cause，不关闭 current closure，也不把稳定 boundary 改写成正式收敛阶。
 
 ## 5.15 本章结论
 

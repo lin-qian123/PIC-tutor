@@ -1,6 +1,6 @@
 {
   "contract": "PIC-tutor formal convergence study preregistration",
-  "version": "v0.92-pre",
+  "version": "v0.93-pre",
   "classification": "FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN",
   "scope": "RZ and RSPHERE Esirkepov Langmuir resolution families; independent geometry fits only",
   "data_sources": {
@@ -9,6 +9,7 @@
   },
   "repeat_execution_preflight": "runs/stage-c-validation/formal-convergence-repeat-family-v0.92-tcp/contract.json",
   "repeat_slope_comparison": "runs/stage-c-validation/formal-convergence-second-family-v0.92/contract.json",
+  "axis_charge_repeat_stability": "runs/stage-c-validation/rz-axis-charge-repeat-stability-v0.93/contract.json",
   "design": {
     "geometry_units": ["RZ", "RSPHERE"],
     "correction_controls": ["on", "off"],

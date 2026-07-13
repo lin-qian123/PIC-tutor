@@ -2,11 +2,11 @@
 
 This is a path-redacted summary of local validation contracts. Raw `runs/` outputs are intentionally excluded from the public release.
 
-- records: `245`
-- PASS: `190`
+- records: `249`
+- PASS: `194`
 - FAIL: `33`
 - UNKNOWN: `22`
-- boundary-classified: `40`
+- boundary-classified: `41`
 
 `status` preserves the raw contract boolean. `evidence_kind=BOUNDARY` marks records whose classification says the result is a boundary, unproven, or missing-evidence condition; it is not equivalent to a regression.
 
@@ -35,6 +35,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `current-book-gap-register-v0.90` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `current-book-gap-register-v0.91` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `current-book-gap-register-v0.92` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
+| `current-book-gap-register-v0.93` | `PASS` | `PASS` | current book gap register | `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA` | project-level gap inventory; does not close any listed gap | `gap_count=8`, `passed=True` |
 | `deposition-algorithm-selection` | `PASS` | `PASS` | chapter-5 deposition algorithm selection matrix | `SOURCE_AND_RUNTIME_SELECTION_MATRIX_WITH_EXPLICIT_BOUNDARIES` | read-only chapter/source/runtime linkage; not equal physics coverage across algorithms | `passed=True` |
 | `deposition-chapter-source-crosswalk` | `PASS` | `PASS` | Chapter 5 deposition source crosswalk | `CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED` | Checks representative Chapter 5 claims against current WarpX source markers; not a semantic proof or runtime regression. | `passed=True` |
 | `deposition-convergence-readiness` | `PASS` | `BOUNDARY` | deposition convergence readiness | `CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` | existing RZ Esirkepov shape=1 three-resolution controls; descriptive pairwise order only | `passed=True` |
@@ -58,6 +59,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `editorial-quality-v0.90` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=324`, `html_heading_count=324`, `passed=True`, `pdf_pages=331` |
 | `editorial-quality-v0.91` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=324`, `html_heading_count=324`, `passed=True`, `pdf_pages=331` |
 | `editorial-quality-v0.92` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=325`, `html_heading_count=325`, `passed=True`, `pdf_pages=331` |
+| `editorial-quality-v0.93` | `PASS` | `PASS` | editorial quality audit | `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN` | automated structure and artifact consistency; not a substitute for human reading or redistribution approval | `heading_count=326`, `html_heading_count=326`, `passed=True`, `pdf_pages=331` |
 | `esirkepov-2001-paper-asset` | `PASS` | `BOUNDARY` | Esirkepov 1999/2001 Chapter 5 deposition paper asset contract | `PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING` | author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open | `passed=True` |
 | `esirkepov-bounded-compare` | `PASS` | `BOUNDARY` | Esirkepov 2001 bounded preprint/publication comparison | `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING` | bounded structural and abstract-level compare only; no publisher-PDF line-by-line claim | `passed=True` |
 | `esirkepov-density-decomposition` | `PASS` | `PASS` | Esirkepov second-order density decomposition identity | `` | paper formula / algebra layer; not a WarpX kernel or end-to-end regression | `max_residual=8.881784197001252e-16`, `passed=True`, `sample_count=10000` |
@@ -199,6 +201,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `pdf-layout-v0.90` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=331` |
 | `pdf-layout-v0.91` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=331` |
 | `pdf-layout-v0.92` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=331` |
+| `pdf-layout-v0.93` | `PASS` | `PASS` | PDF layout risk audit | `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED` | page text coverage and known wide-table regression; not a substitute for full human reading | `passed=True`, `pdf_pages=331` |
 | `pec_field_3d_mpi2` | `PASS` | `PASS` | test_3d_pec_field | `` |  | `contract_pass=True`, `max_relative_error=0.005594417719379853`, `min_relative_error=0.006322001968861878`, `reflection_gate=True` |
 | `pec_field_mr_3d_mpi2` | `PASS` | `PASS` | test_3d_pec_field_mr | `` |  | `contract_pass=True`, `max_relative_error=0.041003798427618164`, `min_relative_error=0.03554155727132573`, `reflection_gate=True` |
 | `pec_insulator_explicit_2d_mpi2` | `PASS` | `PASS` | 2D explicit PECInsulator boundary-drive localization and By amplitude | `` | official WarpX explicit input; 2-rank reader-side contract; cell-centered By boundary sample; not the implicit Poynting-ledger contract | `active_boundary_by_relative_error=0.015368241679916036`, `active_z_cell_count=16`, `final_field_energy_proxy=112905613127832.42`, `final_max_abs_field=1669497.4348623438`, `initial_max_abs_field=0.0`, `passed=True`, `relative_tolerance=0.05` |
@@ -217,6 +220,7 @@ This is a path-redacted summary of local validation contracts. Raw `runs/` outpu
 | `python-mr-observability` | `UNKNOWN` | `BOUNDARY` | Python MR intermediate-field observability audit | `INTERFACE_PRESENT_RUNTIME_LEDGER_UNPROVEN` | source/API observability boundary; not a runtime current_buf/rho_buf proof | `missing_count=0` |
 | `radial-axis-volume-source` | `PASS` | `PASS` | radial geometry axis-volume correction source contract | `` | read-only source audit; not a numerical regression or default-change recommendation | `anchor_count=10`, `passed=True`, `passed_anchor_count=10` |
 | `radial-rho-decomposition-observable` | `PASS` | `PASS` | RCYLINDER/RSPHERE rho species decomposition observable | `RADIAL_RHO_DECOMPOSITION_TIME_SERIES_VERIFIED_SHAPE1_EXPORT_COMPLETED` | rho equals rho_electrons plus rho_ions on every current numbered radial plotfile frame; not a full Gauss-law or current-closure proof | `missing_species_export_count=0`, `passed=True`, `passed_frame_count=648`, `runtime_row_count=8`, `total_frame_count=648` |
+| `rz-axis-charge-repeat-stability-v0.93` | `PASS` | `BOUNDARY` | reader-side axis-charge repeat stability | `REPEAT_STABLE_AXIS_CHARGE_BOUNDARY_NOT_KERNEL_ROOT_CAUSE` | two deterministic 2-rank RZ/RSPHERE families; axis/off-axis divE-rho reader-side residual only | `passed=True` |
 | `rz-esirkepov-charge-diagnostic-source` | `PASS` | `PASS` | RZ Esirkepov charge diagnostic boundary source contract | `` | read-only source audit; explains diagnostic evidence boundary and is not a physics regression | `anchor_count=11`, `passed=True`, `passed_anchor_count=11` |
 | `rz-implicit-villasenor-build-boundary` | `PASS` | `BOUNDARY` | RZ implicit Villasenor pre-physics build boundary | `RZ_IMPLICIT_VILLASENOR_PREPHYSICS_SIGILL_BOUNDARY` | The runtime control reaches solver DOF setup but fails before particle push/current deposition; this is not a Villasenor physics pass/fail. | `passed=True` |
 | `rz_flux_injection_from_eb_mpi2` | `PASS` | `PASS` | test_rz_flux_injection_from_eb | `` |  | `contract_pass=True`, `eb_outside_pass=True`, `expected_weight=2.5132741228718345e-07`, `min_radius_ratio=0.9978960981558814`, `particle_count=75347`, `total_weight=2.5078544411855113e-07`, `total_weight_pass=True`, `total_weight_relative_error=0.002156422825907381` |

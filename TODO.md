@@ -2,6 +2,7 @@
 
 ## 2026-07-14
 
+- [x] v0.93 对 v0.92 两组 RZ/RSPHERE family 做 correction-on axis charge repeat stability contract：6 个 correction-on level 全部通过 `1e-10` 相对重复容差，且 axis residual 在两组 family 中均高于 off-axis；correction-off 只作近数值地板的负对照，不把其相对差放大误判为不稳定。分类为 `REPEAT_STABLE_AXIS_CHARGE_BOUNDARY_NOT_KERNEL_ROOT_CAUSE`。
 - [x] v0.92 完成预注册 RZ/RSPHERE 第二组独立 2-rank refinement family：12/12 producer 在 `FI_PROVIDER=tcp` 下返回码为 0，`producer.log`、`warpx_used_inputs` 与 diagnostics 全部存在；新增同一 reader-side norm 的两组 slope 对照，分类为 `FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN`，明确 correction-on axis charge 与正式 order closure 仍未关闭。
 - [x] v0.91 对 8 个 RZ `256x512`、2-rank sibling 的 `rho`/species decomposition 做全时间 reader-side contract；排除初始化帧后，16 个 evolved frames 全部通过 `1e-12` gate，分类为 `EVOLVED_TIME_RHO_SPECIES_DECOMPOSITION_PASS_AXIS_CHARGE_SEPARATE`，明确不替代 `divE-rho`、current closure 或 formal convergence。
 - [x] v0.90 将 RZ axis residual profile 扩展到 8 个 `256x512`、2-rank sibling 的 24 个数值 plotfile；排除 `t=0` 初始化基线后，16 个 evolved frames 的最大值全部位于 `r=0`，分类为 `POST_INITIAL_AXIS_DOMINATED_READER_SIDE_RESIDUAL_TIME_PROFILE`，明确不替代 kernel root-cause 或 formal convergence。

@@ -1,8 +1,4 @@
-# PIC-tutor v0.93
-
-本版新增 correction-on axis charge 的跨 family reader-side repeat stability contract：以 v0.92 已 materialize 的第一、第二组 RZ/RSPHERE family 为输入，6 个 correction-on level 的 axis residual 全部在 `1e-10` 相对重复容差内稳定，且两组 family 的 axis residual 均高于 off-axis。correction-off 仍只作为负对照，靠近数值地板的相对差不进入同一 gate。合同见 `runs/stage-c-validation/rz-axis-charge-repeat-stability-v0.93/contract.{json,md}`，说明见 `notes/code-reading/particles/75-rz-axis-charge-repeat-stability.md`。
-
-该合同的分类为 `REPEAT_STABLE_AXIS_CHARGE_BOUNDARY_NOT_KERNEL_ROOT_CAUSE`：它把 correction-on axis residual 从“单次 reader-side 现象”推进为“跨 family 稳定的 reader-side boundary”，但不识别 deposition kernel root cause，不证明 current closure，也不关闭正式 order。
+# PIC-tutor v0.92
 
 本版完成预注册的第二组独立 refinement family：RZ/RSPHERE 各包含 `64/128/256`、`correction=on/off` 六组 producer，共 12 个 2-rank producer；在 Conda 环境提供的 `mpiexec` 与 `FI_PROVIDER=tcp` 下全部返回码为 0，且每组均生成 `producer.log`、`warpx_used_inputs` 和 diagnostics。合同见 `runs/stage-c-validation/formal-convergence-repeat-family-v0.92-tcp/contract.{json,md}`。
 
@@ -38,7 +34,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v93_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v92_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

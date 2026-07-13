@@ -1,17 +1,17 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 245,
+  "record_count": 249,
   "status_counts": {
-    "PASS": 190,
+    "PASS": 194,
     "FAIL": 33,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 163,
+    "PASS": 166,
     "FAIL": 29,
     "UNKNOWN": 13,
-    "BOUNDARY": 40
+    "BOUNDARY": 41
   },
   "status_semantics": "status is the raw contract boolean; evidence_kind marks classified boundary, unproven, or missing evidence explicitly",
   "records": [
@@ -288,6 +288,18 @@
     },
     {
       "case": "current-book-gap-register-v0.92",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "current book gap register",
+      "classification": "CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA",
+      "scope": "project-level gap inventory; does not close any listed gap",
+      "metrics": {
+        "gap_count": 8,
+        "passed": true
+      }
+    },
+    {
+      "case": "current-book-gap-register-v0.93",
       "status": "PASS",
       "evidence_kind": "PASS",
       "contract": "current book gap register",
@@ -592,6 +604,20 @@
       "metrics": {
         "heading_count": 325,
         "html_heading_count": 325,
+        "passed": true,
+        "pdf_pages": 331
+      }
+    },
+    {
+      "case": "editorial-quality-v0.93",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "editorial quality audit",
+      "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
+      "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
+      "metrics": {
+        "heading_count": 326,
+        "html_heading_count": 326,
         "passed": true,
         "pdf_pages": 331
       }
@@ -2590,6 +2616,18 @@
       }
     },
     {
+      "case": "pdf-layout-v0.93",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "PDF layout risk audit",
+      "classification": "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
+      "scope": "page text coverage and known wide-table regression; not a substitute for full human reading",
+      "metrics": {
+        "passed": true,
+        "pdf_pages": 331
+      }
+    },
+    {
       "case": "pec_field_3d_mpi2",
       "status": "PASS",
       "evidence_kind": "PASS",
@@ -2826,6 +2864,17 @@
         "passed_frame_count": 648,
         "runtime_row_count": 8,
         "total_frame_count": 648
+      }
+    },
+    {
+      "case": "rz-axis-charge-repeat-stability-v0.93",
+      "status": "PASS",
+      "evidence_kind": "BOUNDARY",
+      "contract": "reader-side axis-charge repeat stability",
+      "classification": "REPEAT_STABLE_AXIS_CHARGE_BOUNDARY_NOT_KERNEL_ROOT_CAUSE",
+      "scope": "two deterministic 2-rank RZ/RSPHERE families; axis/off-axis divE-rho reader-side residual only",
+      "metrics": {
+        "passed": true
       }
     },
     {

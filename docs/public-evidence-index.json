@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 166,
+  "record_count": 167,
   "status_counts": {
-    "PASS": 121,
+    "PASS": 122,
     "FAIL": 30,
     "UNKNOWN": 15
   },
   "evidence_kind_counts": {
-    "PASS": 102,
+    "PASS": 103,
     "FAIL": 27,
     "UNKNOWN": 7,
     "BOUNDARY": 30
@@ -1547,6 +1547,18 @@
         "parser_anchor_count": 435,
         "row_count": 445,
         "unclassified_count": 0
+      }
+    },
+    {
+      "case": "parameter-map-semantic-anchor-contract",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "parameter-map semantic consumer/default/validation anchors",
+      "classification": "STRUCTURED_PARAMETER_MAP_SEMANTIC_ANCHORS_VERIFIED_RUNTIME_VALUE_EXECUTION_REMAINS",
+      "scope": "10 structured parameter rows; source-level semantic anchors, not C++ AST, runtime value execution, or all defaults",
+      "metrics": {
+        "case_count": 10,
+        "passed": true
       }
     },
     {

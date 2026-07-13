@@ -1,0 +1,25 @@
+{
+  "contract": "public release path hygiene",
+  "reports": [
+    {
+      "path": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/dist/pic-tutor-v0.108.md",
+      "forbidden_path_counts": {},
+      "absolute_local_link_count": 0,
+      "passed": true
+    },
+    {
+      "path": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/dist/pic-tutor-v0.108.html",
+      "forbidden_path_counts": {},
+      "absolute_local_link_count": 0,
+      "passed": true
+    },
+    {
+      "path": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/dist/pic-tutor-v0.108.pdf",
+      "forbidden_path_counts": {},
+      "absolute_local_link_count": 0,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "scope": "release Markdown/HTML only; source manuscript paths remain local-source concerns"
+}

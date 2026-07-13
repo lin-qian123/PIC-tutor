@@ -2830,6 +2830,12 @@ v0.105 继续用真实 2-rank RZ sibling 检查中性背景是否掩盖了 axis 
 
 但不能把这组稳定性升级为 total-rho 结论。`64x128` 的 total-rho 保持上述单调比值，而 `128x256` 的 shape=2/3/4 在 sampled axis cells 发生电子/离子贡献近乎抵消，total-rho 比值变为 `1/1/1`；最大跨分辨率差为 `0.168327256`。这说明 total-rho 的可见性不仅取决于 axis scaling，还取决于 species cancellation 与网格/shape 组合。当前分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_SHAPE_DEPENDENT_CROSS_RESOLUTION_BOUNDARY_OPEN`：species-level 现象已获得跨分辨率复现，total-rho 仍是开放边界，且不关闭 charge closure、正式收敛阶或具体 kernel root cause。报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-shape-resolution-family-v0.107/contract.{json,md}`，说明见 `notes/code-reading/particles/88-rz-axis-correction-nonneutral-shape-resolution-family.md`。
 
+### 5.14.24 v0.108 non-neutral shape behavior across ion density
+
+v0.107 的 `128x256`、`ions.density = 0.5*n0` family 显示 shape=2/3/4 的 total-rho axis 比值因 species cancellation 变为 `1/1/1`。为判断这是否是分辨率造成的普遍失效，本轮保持网格、shape、粒子状态和 correction on/off sibling 不变，只将离子密度改为 `0.25*n0`，并完成另一组真实 2-rank 初始化帧对照。
+
+结果把边界进一步收窄：species rho 的 axis 比值在两种离子密度上完全一致，均为 `0.850000000/0.843478261/0.836500221/0.831672744`；`0.25*n0` 时 total-rho 也恢复同一严格单调关系，而 `0.5*n0` 时 shape=2/3/4 仍为 `1/1/1`。两组的 particle state、off-axis rho、初始 `Er/Ez/divE` 和 `delta(rho)` species decomposition 均通过合同。因此，v0.107 的现象应表述为 **total-rho 合成 observable 对 species cancellation 与离子密度敏感**，而不是简单的跨分辨率失效。当前分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_TOTAL_RHO_CANCELLATION_DENSITY_SENSITIVE_BOUNDARY_OPEN`；该结果仍不识别 kernel root cause、不关闭 charge closure 或正式收敛阶。报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-density-family-v0.108/contract.{json,md}`，说明见 `notes/code-reading/particles/89-rz-axis-correction-nonneutral-density-family.md`。
+
 ## 5.15 本章结论
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：

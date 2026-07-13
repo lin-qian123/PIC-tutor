@@ -2,6 +2,7 @@
 
 ## 2026-07-13
 
+- [x] v0.108 在 `128x256` 真实 2-rank RZ family 中加入 `ions.density=0.25*n0` 对照：species axis 比值对 `0.25/0.5*n0` 完全一致且随 shape 单调下降；total-rho 在 `0.25*n0` 恢复单调、在 `0.5*n0` 的 shape=2/3/4 因 species cancellation 为 `1/1/1`。分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_TOTAL_RHO_CANCELLATION_DENSITY_SENSITIVE_BOUNDARY_OPEN`，仍不宣称 kernel root cause 或 charge closure。
 - [x] v0.107 将非中性 RZ shape family 扩展到 `128x256` 真实 2-rank sibling：species axis 比值在 `64x128`/`128x256` 完全一致并随 shape 单调下降，但高分辨率 total-rho 的 shape=2/3/4 因 species cancellation 变为 `1/1/1`，最大跨分辨率差 `0.168327256`；分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_SHAPE_DEPENDENT_CROSS_RESOLUTION_BOUNDARY_OPEN`，保持 total-rho、charge closure 和 kernel root cause 开放。
 - [x] v0.96 完成论文正式来源访问边界复核：Esirkepov 2001 与 LeeCPC2015 的 DOI/PII、publisher record、PDF 路由和当前可获得版本已登记；accepted manuscript/预印本、出版社元数据/索引摘要与 publisher-formatted PDF 继续分层，不把访问限制写成论文缺失或定稿对照已完成。同步修正当前缺口登记、release audit、manifest 和 v0.96 构建验收链。
 - [x] 补入 transition-zone runtime activation contract：对既有 2-rank、两层 AMR subcycling 运行核对 `PartitionParticlesInBuffers` 与 `OwnerMask()` profiling marker、buffer 输入、source contract 和 workflow contract，分类为 `RUNTIME_TRANSITION_ZONE_BRANCH_ACTIVATION_OBSERVED_ROUTE_LEDGER_UNPROVEN`；确认分区/同步路径被调用过，但不伪造 route-count ledger。

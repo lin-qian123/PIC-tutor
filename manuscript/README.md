@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.107 合订 PDF 的页数以实际构建结果为准；本版将非中性 RZ shape family 复核扩展到 `64x128` 与 `128x256`，证明 species axis 比值跨分辨率稳定，但 total-rho 受 species cancellation 影响而保持开放。正文继续区分“跨分辨率 species 证据”与“root cause/charge closure 已完成”，不把 reader 对照升级为完整物理通过。
+当前 v0.108 合订 PDF 的页数以实际构建结果为准；本版新增两种离子密度的 `128x256` 非中性 RZ shape family，证明 species axis 比值对密度稳定，但 total-rho 的可见性受 species cancellation 影响。正文继续区分“species 证据”与“root cause/charge closure 已完成”，不把 reader 对照升级为完整物理通过。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 

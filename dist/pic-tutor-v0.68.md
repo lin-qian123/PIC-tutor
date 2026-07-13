@@ -292,7 +292,7 @@
 
 v0.40 只修改 `PIC-tutor` 书稿项目，不修改 `../warpx` 原仓库。本版继续以 v0.39 已核定的第 5 章 paper-backed 资产为基础，推进 `manuscript/chapters/05-deposition-shapes.md`、`README.md`、`TODO.md`、`manuscript/README.md` 与版本说明的统一收口，并重建当前合订稿。后续若 WarpX 更新，必须重新校准源码行号、沉积入口和 regression 锚点后再发布新版。
 
-## v0.40 章节范围
+## 历史 v0.40 章节范围（保留）
 
 | 章节 | 文件 | v0.40 状态 | 下一步缺口 |
 |---|---|---|---|
@@ -12997,7 +12997,7 @@ $$
 
 # 7. 边界条件、PML 与 AMR
 
-> v0.8 源码基线：本章这一轮按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重新校准入口。本版先完成边界、PML、guard-cell 与 AMR 的源码入口地图；PML 公式细化、AMR regrid 后场数组重建和 regression 判据仍留到下一版继续闭合。
+> v0.68 源码基线：本章按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重新校准入口。当前已具备边界、PML、guard-cell 与 AMR 的源码入口地图，LeeCPC2015 accepted manuscript、WarpX source crosswalk 和多条 Cartesian/RZ PML runtime evidence 也已接入；仍未关闭的是 publisher-formatted CPC PDF、`C1-C25`/Galilean `T2`/cleaning `F/G` 的逐项历史归因，以及真实 transition-zone route-count regression。
 
 边界条件在 PIC 中同时作用于场和粒子。场边界控制 Maxwell 方程如何在计算域边缘闭合；粒子边界控制宏粒子离开、反射、吸收、周期穿越或被记录的方式。二者不能混为一谈。
 
@@ -13024,11 +13024,11 @@ WarpX 官方理论文档把 PML、PEC、PMC、Silver-Mueller、周期边界和�
 
 这两篇笔记分别覆盖“参数如何进入 WarpX”和“PML 如何变成真实 split fields / sigma arrays”。对于边界模块，这个切分比直接按文件顺序扫描更有效，因为边界问题天然跨参数解析、主循环分派、场数组镜像和粒子沉积四层。
 
-## 7.0 v0.8 源码入口地图
+## 7.0 v0.68 源码入口地图
 
-本章后续不能只按“边界条件”这个名词归类，因为 WarpX 中的边界语义会穿过参数解析、场数组 guard cell、PML split field、粒子删除/反射/记录、诊断和 AMR 重建。v0.8 先把读代码的入口固定如下：
+本章后续不能只按“边界条件”这个名词归类，因为 WarpX 中的边界语义会穿过参数解析、场数组 guard cell、PML split field、粒子删除/反射/记录、诊断和 AMR 重建。本节把当前 v0.68 的读代码入口固定如下：
 
-| 问题 | 当前入口 | v0.8 读法 |
+| 问题 | 当前入口 | v0.68 读法 |
 |---|---|---|
 | field 与 particle 边界解析顺序 | `../warpx/Source/WarpX.cpp:274-296` | `MakeWarpX()` 先读 field boundary，再由 field periodic 掩码约束 particle boundary，最后才构造 `WarpX` 单例。 |
 | field boundary 参数与 periodic 一致性 | `../warpx/Source/BoundaryConditions/FieldBoundaries.cpp:22-80` | `boundary.field_lo/field_hi` 默认进入 `FieldBoundaryType::Default`，周期方向必须 lo/hi 成对闭合。 |

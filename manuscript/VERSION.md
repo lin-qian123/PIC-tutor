@@ -290,7 +290,7 @@
 
 v0.40 只修改 `PIC-tutor` 书稿项目，不修改 `../warpx` 原仓库。本版继续以 v0.39 已核定的第 5 章 paper-backed 资产为基础，推进 `manuscript/chapters/05-deposition-shapes.md`、`README.md`、`TODO.md`、`manuscript/README.md` 与版本说明的统一收口，并重建当前合订稿。后续若 WarpX 更新，必须重新校准源码行号、沉积入口和 regression 锚点后再发布新版。
 
-## v0.40 章节范围
+## 历史 v0.40 章节范围（保留）
 
 | 章节 | 文件 | v0.40 状态 | 下一步缺口 |
 |---|---|---|---|

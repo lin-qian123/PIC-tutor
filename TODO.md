@@ -1,5 +1,6 @@
 # TODO
 
+- [x] 2026-07-13：修正第 7 章开头遗留的 v0.8 当前状态口径，统一为 v0.68；正文明确 LeeCPC2015 accepted-manuscript/source-crosswalk/PML runtime evidence 已存在，同时保留 publisher-formatted CPC PDF、逐项历史归因和真实 transition-zone route-count regression 的未完成边界。
 - [x] 2026-07-13：新增 `scripts/audit_yee_source_crosswalk.py`，只读核对当前 WarpX `CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp`、`EvolveE.cpp` 的 Yee 选择、CFL/stencil、交错差分和章节映射；保留 IEEE 原文 PDF/MinerU 缺失边界，不把现代源码 crosswalk 写成 1966 论文逐式证明。
 - [x] 2026-07-13：新增 `scripts/audit_boris_source_crosswalk.py`，只读核对当前 WarpX `UpdateMomentumBoris.H` 与 `PushSelector.H` 的 half-push、相对论 gamma、磁旋转、半角重标定、Boris/辐射反作用分派；报告为 `CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING`，不替代 Boris 1970 原始 proceedings 全文。
 - [x] 2026-07-13：建立 Boris 1970 原始文献的 metadata/access contract，固定 DTIC `ADA023511`、书目范围和限流响应；第 4 章已接入三层证据边界，原始 proceedings PDF/MinerU/逐页核对仍保留为后续 acquisition。

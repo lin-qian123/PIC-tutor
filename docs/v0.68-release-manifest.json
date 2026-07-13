@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 729,
-  "total_bytes": 27638043,
+  "total_bytes": 27639472,
   "entries": [
     {
       "path": ".gitignore",
@@ -47,23 +47,23 @@
     },
     {
       "path": "TODO.md",
-      "bytes": 1366036,
-      "sha256": "df87be7d732ea3fff189eb563d00a9a70bda084d2042cd2f5a78aeac1d97b934"
+      "bytes": 1366356,
+      "sha256": "665ffce2fa01208bd24bb8828a5d08ce39359ed82aff4e693e983d6d9e6f64b9"
     },
     {
       "path": "dist/pic-tutor-v0.68.html",
-      "bytes": 5751588,
-      "sha256": "499c49a8ae83a53a5e323b587c55dde5370f310601952f474cb159d5be3569e2"
+      "bytes": 5751885,
+      "sha256": "48949f4aa760d54603d8d1a042cde2d05c188bd5ddedc8ca3cfbf2a0a002f95a"
     },
     {
       "path": "dist/pic-tutor-v0.68.md",
-      "bytes": 1078153,
-      "sha256": "5a8198e80b1e339c8241c819d1b1347ecde90328dc72e79912af86f56557100c"
+      "bytes": 1078355,
+      "sha256": "5381e29df9a531bec78d01b3b5dd2b3136967cf43d4c3d237e28b12ecf03b3b1"
     },
     {
       "path": "dist/pic-tutor-v0.68.pdf",
-      "bytes": 3377297,
-      "sha256": "3712f83ce19e0218a3a4e9f4b0b2752b3dfd079f274ca9a537c84474244f2d83"
+      "bytes": 3377705,
+      "sha256": "6fd51388585453c9ae0ede77d1d66e89d17856f01cdd854dbaa0b277ce14b5b9"
     },
     {
       "path": "docs/chapter-template.md",
@@ -123,7 +123,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 4219,
-      "sha256": "f462f94e1b7aec315c24ea8c5a69bf623b04cc86e63cfff1bc02f62776306b0b"
+      "sha256": "89d9c82d0daef4f2719f83e567c6b7ba13c8c11c5a0d92046a26499acd6d2187"
     },
     {
       "path": "docs/sample-chapter-audit-2026-05-18.md",
@@ -767,8 +767,8 @@
     },
     {
       "path": "manuscript/VERSION.md",
-      "bytes": 64751,
-      "sha256": "344a18be60efb6a65e3d8c2a4328b191d99e6dcf085551df34de999d9babfe74"
+      "bytes": 64770,
+      "sha256": "102ca6e071a20b447a1bdcc8ecb98d27be40155fa6a4488f5225d7d11fe05631"
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
@@ -907,8 +907,8 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 166378,
-      "sha256": "29699541f637bf5ba10370ab7e65ce170b66b9c25185d1c5ff893b087da56cc9"
+      "bytes": 166561,
+      "sha256": "2d584341cb83deee79abd91599825e79b7743dc66d85867c69587471704ebab6"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",

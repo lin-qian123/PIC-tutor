@@ -16,7 +16,7 @@ from audit_parameter_map_surface import MAP, parameter_tokens, source_paths
 
 PARSER_WORDS = re.compile(
     r"\b(?:query|queryAdd|queryarr|queryArrWithParser|query_enum_sloppy|queryWithParser|queryWithParserWithDefault|"
-    r"queryWithParserAndValidate|contains|add|get|getarr)\b"
+    r"queryWithParserAndValidate|contains|add|get|getarr|getArrWithParser|getWithParser|Store_parserString)\b"
 )
 GENERIC_KEYS = {
     "abs", "amr", "boundary", "field", "hi", "lo", "name", "ord", "psatd",

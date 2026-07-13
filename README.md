@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前 v0.68 又补入 parameter-map parser-anchor review surface：排除通用 `type/field/x/y/z` token，限制为普通单行 C++ literal，并覆盖 `query_enum_sloppy` / `queryArrWithParser` 后，445 条参数中 389 条在引用源码中找到 parser-like literal anchor，56 条明确进入 dynamic/consumer 手工复核队列；该审计只建立可复现 review surface，不冒充 C++ AST 或完整 ParmParse 语义证明。脚本为 `scripts/audit_parameter_map_parser_anchors.py`，报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
+当前 v0.68 又补入 parameter-map parser-anchor review surface：排除通用 `type/field/x/y/z` token，限制为普通单行 C++ literal，并覆盖 `query_enum_sloppy`、`queryArrWithParser`、`getWithParser`、`getArrWithParser`、`Store_parserString` 后，445 条参数中 420 条在引用源码中找到 parser-like literal anchor，25 条明确进入 dynamic/consumer 手工复核队列；该审计只建立可复现 review surface，不冒充 C++ AST 或完整 ParmParse 语义证明。脚本为 `scripts/audit_parameter_map_parser_anchors.py`，报告见 `runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}`。
 
 当前 v0.68 又补入 3D AMR `particles_in_pml` signed/absolute boundary contract：官方 signed consumer 为 `106.4354 < 110`，严格 absolute reader 为 `110.3994 > 110`，唯一越界项是负向 `Ex`，且 coarse/fine 读取一致。该证据明确保留“官方判据通过、强化判据失败”的边界，不修改 WarpX 上游或阈值。合同见 `runs/stage-c-validation/particles-in-pml-3d-mr-boundary/contract.{json,md}`。
 

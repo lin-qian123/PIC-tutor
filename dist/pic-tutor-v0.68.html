@@ -824,10 +824,10 @@ boosted-frame / NCI</a></li>
 <h1 id="pic-tutor-v0.68">PIC-tutor v0.68</h1>
 <p>本版新增 parameter-map parser-anchor review surface：排除通用
 <code>type/field/x/y/z</code> token，限制为普通单行 C++ literal，并覆盖
-<code>query_enum_sloppy</code> / <code>queryArrWithParser</code> 后，445
-条参数中 389 条在引用源码中找到 parser-like literal anchor，56 条保留为
-dynamic/consumer 手工复核队列；该结果不替代 C++ AST、默认值/校验或
-runtime value semantics 审计。报告见
+<code>query_enum_sloppy</code>、<code>queryArrWithParser</code>、<code>getWithParser</code>、<code>getArrWithParser</code>、<code>Store_parserString</code>
+后，445 条参数中 420 条在引用源码中找到 parser-like literal anchor，25
+条保留为 dynamic/consumer 手工复核队列；该结果不替代 C++
+AST、默认值/校验或 runtime value semantics 审计。报告见
 <code>runs/stage-c-validation/parameter-map-parser-anchor-contract/contract.{json,md}</code>。</p>
 <p>本版又将 3D AMR <code>particles_in_pml</code> signed/absolute
 分解提升为公开 boundary contract：官方 signed gate 为

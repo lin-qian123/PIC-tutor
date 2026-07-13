@@ -1513,8 +1513,8 @@
       "scope": "cited-source text, parser-like API adjacency and explicit review queue; not C++ AST or runtime value semantics",
       "metrics": {
         "contract_pass": true,
-        "manual_review_count": 56,
-        "parser_anchor_count": 389,
+        "manual_review_count": 25,
+        "parser_anchor_count": 420,
         "row_count": 445
       }
     },

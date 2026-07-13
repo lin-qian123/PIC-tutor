@@ -1,5 +1,10 @@
 # TODO
 
+## 2026-07-13
+
+- [x] v0.96 完成论文正式来源访问边界复核：Esirkepov 2001 与 LeeCPC2015 的 DOI/PII、publisher record、PDF 路由和当前可获得版本已登记；accepted manuscript/预印本、出版社元数据/索引摘要与 publisher-formatted PDF 继续分层，不把访问限制写成论文缺失或定稿对照已完成。同步修正当前缺口登记、release audit、manifest 和 v0.96 构建验收链。
+- [ ] 在取得合法 publisher PDF 后，完成 Esirkepov 2001 与 LeeCPC2015 的逐页/逐项定稿差异合同；在此之前保持 `OPEN_EXTERNAL_ACCESS`。
+
 ## 2026-07-14
 
 - [x] v0.95 将正式收敛预注册中的 repeat-slope comparison 变成可执行 gate：RZ/RSPHERE、correction-on、全部 field/axis/off-axis observable 与两个相邻区间共 14 项比较，最大绝对 slope 差 `2.587e-11 < 1e-8`；correction-off 因接近 numerical/reader floor 保留为 descriptive negative control，最大差 `1.996e-3` 不进入 gate。分类为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`，报告见 `runs/stage-c-validation/formal-convergence-repeat-slope-gate-v0.95/contract.{json,md}`。

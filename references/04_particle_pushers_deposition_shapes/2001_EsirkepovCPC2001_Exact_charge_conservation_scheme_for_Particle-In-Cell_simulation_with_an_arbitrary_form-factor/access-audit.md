@@ -2,6 +2,13 @@
 
 Date: 2026-07-13
 
+Current publisher identifiers rechecked for the v0.96 release audit:
+
+- DOI landing page: `https://doi.org/10.1016/S0010-4655(00)00228-9`
+- Elsevier PII: `S0010465500002289`
+- Publisher record: `https://www.sciencedirect.com/science/article/pii/S0010465500002289`
+- Publisher PDF route tested: `https://www.sciencedirect.com/science/article/pii/S0010465500002289/pdf`
+
 ## Target
 
 - Key: `Esirkepovcpc01`

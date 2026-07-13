@@ -1,6 +1,4 @@
-# PIC-tutor v0.96
-
-本版补入论文正式来源访问边界复核：Esirkepov 2001 与 LeeCPC2015 的 DOI/PII、publisher record 和 PDF 路由已再次登记；当前环境仍只能取得合法预印本或 accepted manuscript、出版社元数据与索引摘要，不能取得 publisher-formatted PDF。因此本版把“可引用的 paper-backed 内容”和“尚未完成的逐页定稿对照”明确分开，不把访问边界写成论文缺失或已关闭。
+# PIC-tutor v0.95
 
 本版新增正式收敛 study 的 repeat-slope comparison gate：预注册 `1e-8` absolute slope-delta tolerance，仅对 correction-on 的 RZ/RSPHERE、全部声明 field/axis/off-axis observable 与两个相邻 refinement interval 执行。14 项比较全部通过，最大绝对 slope 差为 `2.587e-11`；correction-off 因接近 numerical/reader floor 保留为 descriptive negative control，最大差 `1.996e-3` 不进入 gate。
 
@@ -57,7 +55,7 @@
 
 本版新增 Andriyash 2016 Fourier-Bessel PIC 论文资产：9 页 PDF、MinerU Markdown、26 张图、按论文顺序中文精读、access audit、reading log 和 `scripts/audit_andriyash_2016_asset_contract.py` 全部通过；第 6 章补入 quasi-cylindrical Fourier-Bessel PSATD 的 primary-source 闭环，第 9 章同步路线图。该论文介绍 PLARES-PIC，不把其 benchmark 写成 WarpX runtime 或函数级等价证明。
 
-本版由 `scripts/verify_v96_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
+本版由 `scripts/verify_v95_build.py` 验收，当前合订 PDF 页数以实际构建结果为准。
 
 本版新增 Esirkepov 2001 发表版缺口审计契约：将 13 页作者预印本、39 张 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 发表元数据和 publisher-PDF 缺失边界固化为 11 项可重复检查；第 5 章明确保持“预印本公式 + 当前 WarpX 源码 + runtime consumer”三层交叉复核，不把 CPC 定稿写成已完成逐式核对。报告见 `runs/stage-c-validation/esirkepov-publication-boundary/contract.{json,md}`。
 

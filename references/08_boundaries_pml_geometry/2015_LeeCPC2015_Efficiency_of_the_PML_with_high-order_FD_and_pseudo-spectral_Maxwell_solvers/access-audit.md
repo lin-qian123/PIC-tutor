@@ -2,6 +2,13 @@
 
 Date: 2026-07-13
 
+Current publisher identifiers rechecked for the v0.96 release audit:
+
+- DOI landing page: `https://doi.org/10.1016/j.cpc.2015.04.004`
+- Elsevier PII: `S0010465515001356`
+- Publisher record: `https://www.sciencedirect.com/science/article/pii/S0010465515001356`
+- Publisher PDF route tested: `https://www.sciencedirect.com/science/article/pii/S0010465515001356/pdfft`
+
 ## Target
 
 - Key: `LeeCPC2015`

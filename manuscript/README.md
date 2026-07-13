@@ -1,6 +1,6 @@
 # PIC 程序详解：从物理模型到 WarpX 源码
 
-当前 v0.95 合订 PDF 的页数以实际构建结果为准；本版在 v0.94 的 RZ axis charge 源码-诊断交叉审计基础上新增 correction-on repeat-slope comparison gate，14 项比较全部在 `1e-8` 容差内通过；同时保留 axis charge correctness、formal numerical order、页面布局修复、项目级当前成书缺口登记、沉积证据梯度、第 7 章 PML 证据梯度与 Esirkepov 2001 CPC bounded compare。
+当前 v0.96 合订 PDF 的页数以实际构建结果为准；本版在 v0.95 的 repeat-slope comparison gate 基础上补入 Esirkepov 2001 与 LeeCPC2015 的 DOI/PII、publisher record 和 PDF 路由访问边界复核。正文继续保留 accepted manuscript/预印本与 publisher-formatted PDF 的证据分层，并不把访问边界升级为定稿逐页对照完成。
 
 2026-07-13：第 5 章新增 Vay + AMR source guard contract，明确当前 checkout 在 `maxLevel() > 0` 时于初始化阶段拒绝 Vay；AMR 不被误写成 physics PASS/FAIL。
 

@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.95`：在 v0.94 的 RZ axis source-diagnostic crosswalk 基础上，新增正式收敛 study 的 repeat-slope comparison gate；RZ/RSPHERE 的 14 个 correction-on slope comparisons 全部在 `1e-8` 绝对 slope-delta 容差内通过，correction-off 继续作为 numerical-floor negative control。该 gate 只证明 family repeat consistency，不关闭 formal numerical order、axis charge correctness、论文定稿获取和人工编辑缺口。
+当前成书版本为 `v0.96`：在 v0.95 的 repeat-slope gate 基础上，补入 Esirkepov 2001 与 LeeCPC2015 的 DOI/PII、publisher record 和 PDF 路由访问边界复核。当前仍明确区分合法预印本/accepted manuscript、出版社元数据与 publisher-formatted PDF；该增量不宣称论文定稿逐页对照已完成，也不关闭 formal numerical order、axis charge correctness、transition-zone ledger、RZ implicit runtime 和人工编辑缺口。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

@@ -49,10 +49,10 @@ def main() -> int:
         "editorial_audit_evidence": all(
             (root / path).is_file()
             for path in (
-                "docs/pdf-layout-audit-v0.95.md",
-                "runs/stage-c-validation/pdf-layout-v0.95/contract.json",
-                "docs/editorial-quality-audit-v0.95.md",
-                "runs/stage-c-validation/editorial-quality-v0.95/contract.json",
+                "docs/pdf-layout-audit-v0.96.md",
+                "runs/stage-c-validation/pdf-layout-v0.96/contract.json",
+                "docs/editorial-quality-audit-v0.96.md",
+                "runs/stage-c-validation/editorial-quality-v0.96/contract.json",
                 "runs/stage-c-validation/cross-geometry-convergence-trends/contract.json",
                 "docs/formal-convergence-preregistration.json",
                 "runs/stage-c-validation/formal-convergence-preregistration/contract.json",

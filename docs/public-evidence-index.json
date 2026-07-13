@@ -1,14 +1,14 @@
 {
   "index": "PIC-tutor public validation evidence digest",
   "source_scope": "local stage-c-validation contract.json files; raw runs and references remain excluded from public release",
-  "record_count": 222,
+  "record_count": 226,
   "status_counts": {
-    "PASS": 169,
+    "PASS": 173,
     "FAIL": 31,
     "UNKNOWN": 22
   },
   "evidence_kind_counts": {
-    "PASS": 142,
+    "PASS": 146,
     "FAIL": 27,
     "UNKNOWN": 13,
     "BOUNDARY": 40
@@ -239,6 +239,18 @@
       }
     },
     {
+      "case": "current-book-gap-register-v0.88",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "current book gap register",
+      "classification": "CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA",
+      "scope": "project-level gap inventory; does not close any listed gap",
+      "metrics": {
+        "gap_count": 8,
+        "passed": true
+      }
+    },
+    {
       "case": "deposition-algorithm-selection",
       "status": "PASS",
       "evidence_kind": "PASS",
@@ -454,6 +466,20 @@
     },
     {
       "case": "editorial-quality-v0.87",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "editorial quality audit",
+      "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
+      "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
+      "metrics": {
+        "heading_count": 324,
+        "html_heading_count": 324,
+        "passed": true,
+        "pdf_pages": 330
+      }
+    },
+    {
+      "case": "editorial-quality-v0.88",
       "status": "PASS",
       "evidence_kind": "PASS",
       "contract": "editorial quality audit",
@@ -1270,6 +1296,18 @@
       "contract": "RZ Esirkepov direct rho/species observable",
       "classification": null,
       "scope": null,
+      "metrics": {
+        "all_final_species_difference_pass": true,
+        "passed": true
+      }
+    },
+    {
+      "case": "esirkepov_langmuir_rz_rho-observable-family",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "RZ Esirkepov direct rho/species observable",
+      "classification": null,
+      "scope": "correction-on, RZ, single-level, direct rho/species observable for particle_shape=1,2,3,4",
       "metrics": {
         "all_final_species_difference_pass": true,
         "passed": true
@@ -2292,6 +2330,18 @@
     },
     {
       "case": "pdf-layout-v0.87",
+      "status": "PASS",
+      "evidence_kind": "PASS",
+      "contract": "PDF layout risk audit",
+      "classification": "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
+      "scope": "page text coverage and known wide-table regression; not a substitute for full human reading",
+      "metrics": {
+        "passed": true,
+        "pdf_pages": 330
+      }
+    },
+    {
+      "case": "pdf-layout-v0.88",
       "status": "PASS",
       "evidence_kind": "PASS",
       "contract": "PDF layout risk audit",

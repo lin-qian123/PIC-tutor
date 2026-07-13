@@ -2514,6 +2514,8 @@ RZ + Esirkepov 还需要单独保留一个诊断边界：当前 2-rank case 的 
 
 为了避免把不同诊断量混成一个结论，v0.47 又对上述 shape=2/3/4 correction-on refined sibling 直接读取 `rho`、`rho_electrons` 和 `rho_ions`。末态 `rho-(rho_electrons+rho_ions)` 的相对差分别为 `1.303e-14/1.228e-14/1.343e-14`，说明 species decomposition 在 rho-side 已达到机器精度；三个 case 的 integrated-rho 时间序列漂移分别为 `2.371e-6/2.729e-6/3.354e-6`，只作为可复核观测记录。这个结果不能替代 `divE-rho`、current closure 或完整 Gauss-law contract：同一批 case 的 axis `divE-rho` residual 仍为 `2.177e-3/2.353e-3/2.552e-3`。脚本为 `scripts/analyze_rz_esirkepov_rho_observable.py`，报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_rho-observable/contract.{json,md}`。
 
+v0.88 将同一 reader-side observable 扩展到 shape=1/2/3/4 的统一 family：四个 shape 的末态 `rho-(rho_electrons+rho_ions)` 相对差为 `9.124e-15/1.303e-14/1.228e-14/1.343e-14`，integrated-rho 漂移相对 `abs(rho)` scale 为 `6.495e-6/2.371e-6/2.729e-6/3.354e-6`。这补齐的是 rho-side species decomposition 的 shape coverage，不是 `divE-rho` 守恒闭合；同面 axis residual 仍保持 `BOUNDARY`。统一报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_rho-observable-family/contract.{json,md}`，说明见 `notes/code-reading/particles/70-rz-esirkepov-rho-observable-family.md`。
+
 同一诊断也已扩展到 RCYLINDER/RSPHERE shape=1：默认 correction 下 charge residual 为 `4.711e-3/4.166e-2`，关闭后为 `3.505e-12/2.420e-11`。这表明 RCYLINDER 的 axis correction off 可以恢复当前强 gate，而 RSPHERE 虽明显改善仍略超 `1e-11`；两者均不支持直接修改全局默认值，完整对照见 `runs/stage-c-validation/esirkepov_radial_charge_axis-comparison/contract.{json,md}`。
 
 RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on 的 residual 为 `4.166e-2/1.390e-2/4.142e-3`，correction off 为 `2.420e-11/9.843e-11/7.461e-11`；六个 field gate 都通过，但六个 charge gate 都未闭合。因此这条证据只能说明 axis/resolution 组合敏感，不能替代正式收敛研究或作为全局默认参数修改依据。该组 `256` case 必须使用专用 `warpx.rsphere` executable；若误用 `warpx.3d`，会在 boundary-array parser 阶段失败，不能作为物理结论。
@@ -2670,7 +2672,7 @@ v0.84 将“下一步要做什么”进一步固定成预注册，而不是在�
 当前机器的二进制和 12 组输入模板均存在，但没有 `mpiexec`/`mpirun`，所以 preflight 保持为“MPI launcher 缺失”边界。单进程替代被脚本明确禁止；这是一条执行环境边界，不是第二 family 的结果，也不改变正式收敛阶仍未关闭的判断。报告见 [preflight summary](../../docs/formal-convergence-repeat-preflight.md) 和 [raw contract](../../runs/stage-c-validation/formal-convergence-repeat-preflight/contract.json)。
 <!-- REPEAT_FAMILY_RUNNER_BLOCKED_MPI_LAUNCHER_MISSING -->
 
-### 5.14.9 v0.87 第二组 family 的输入与产物合同
+### 5.14.9 v0.88 第二组 family 的输入与产物合同
 
 v0.86 将 runner 的“可启动”与“产物可用”分开检查。执行前，脚本逐个核对 12 个模板的 `inputs`、`FILE = ...` 引用文件、`diag_type = Full` 和 diagnostics `intervals`；因此目录存在不再等价于输入可运行。执行时仍固定使用 `mpiexec -n 2` 或等价的 `mpirun -n 2`，不允许降级为单进程。执行后，每个 producer 必须同时满足退出码为 0、生成 `producer.log`、生成 `warpx_used_inputs`，并在 `diags/` 下至少出现一个 `diag*` 目录。任何一项缺失都分类为“输入或产物合同不通过”，而不是把命令启动成功写成有效 runtime evidence。
 <!-- REPEAT_FAMILY_RUNNER_BLOCKED_INPUT_OR_OUTPUT_CONTRACT -->

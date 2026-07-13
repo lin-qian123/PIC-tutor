@@ -75,9 +75,15 @@ def main() -> int:
             }
         )
     cases.sort(key=lambda case: case["particle_shape"])
+    particle_shapes = [case["particle_shape"] for case in cases]
     result = {
         "contract": "RZ Esirkepov direct rho/species observable",
         "cases": cases,
+        "particle_shapes": particle_shapes,
+        "scope": (
+            "correction-on, RZ, single-level, direct rho/species observable for "
+            f"particle_shape={','.join(str(shape) for shape in particle_shapes)}"
+        ),
         "all_final_species_difference_pass": all(
             case["final_species_difference_pass"] for case in cases
         ),
@@ -112,7 +118,7 @@ def main() -> int:
         "",
         f"- final species-decomposition gate: `{'PASS' if result['all_final_species_difference_pass'] else 'BOUNDARY'}`.",
         f"- interpretation: {result['interpretation']}",
-        "- scope: correction-on, RZ, single-level, shape=2/3/4 refined siblings; rho-side only.",
+        f"- scope: `{result['scope']}`; rho-side only.",
     ]
     (args.output_dir / "contract.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2, ensure_ascii=False))

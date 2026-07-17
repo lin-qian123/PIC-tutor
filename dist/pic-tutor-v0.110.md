@@ -6223,9 +6223,9 @@ assert max_Efield < tolerance_abs
 
 这套区分也解释了为什么一个通过的测试集合仍可能留下开放边界：它们的输入可以相似，但被比较的对象、容差和可外推的范围并不相同。
 
-### 4.13.13 余下 `embedded_boundary`、`electrostatic_sphere_eb` 与辅助绘图脚本的真实边界
+### 4.13.13 Embedded boundary：从几何、吸收和解析场选择验证量
 
-还有一组条目此前虽然已经进入 `example-regression-map.md`，但标签仍然过粗：
+要验证 embedded boundary，先要确定你想验证的是几何表示、场的边界条件、粒子吸收，还是 Python 对几何数组的访问。下列例子涉及这些不同问题：
 
 - `particle_absorbing_boundary/plot_2d.py`
 - `particle_absorbing_boundary/plot_phase.py`
@@ -6237,20 +6237,16 @@ assert max_Efield < tolerance_abs
 - `electrostatic_sphere_eb`
 - `scraping`
 
-先说最简单的：`plot_2d.py` 和 `plot_phase.py` 都不是 regression analysis。
+先分清工具和断言：`plot_2d.py` 与 `plot_phase.py` 都不是 regression analysis。
 
 它们只是：
 
 - 画 2D full diagnostics 的 `Ez` slice
 - 画 `PhaseSpaceElectrons` reduced diagnostic 的相图
 
-因此更准确的角色只是：
+它们只是 visualization helper，不是物理断言脚本；图像适合帮助读者定位异常，却不能代替定量误差或守恒检查。
 
-- visualization helper
-
-而不是物理断言脚本。
-
-真正带强 analysis 的 EB 条目可以再分四类。
+#### PEC cavity：用解析本征模检验几何与场边界
 
 第一类是 cavity 模态解析对照：
 
@@ -6263,12 +6259,9 @@ assert max_Efield < tolerance_abs
 - `rotated_cube`：旋转后的 cavity，analysis 里要先把坐标和场分量反旋回解析坐标系
 - `cube_macroscopic`：同一模态，但频率按介质 `epsilon_r` 修正
 
-所以这两组不该再笼统记成 `boundary condition`，而应理解成：
+这两组例子回答的是“给定的 EB 几何和 PEC 场边界能否维持指定本征模”。旋转例还把坐标和场分量转回解析坐标系，因而同时约束几何方向和矢量分量的处理；它们不直接验证带电粒子撞击或任意复杂几何。
 
-- `embedded boundary / PEC cavity eigenmode`
-- `embedded boundary / rotated PEC cavity eigenmode`
-
-第二类是几何散射与几何访问：
+#### 衍射与 Python API：一个测物理图样，一个测几何数组
 
 - `embedded_boundary_diffraction`
 - `embedded_boundary_python_api`
@@ -6277,27 +6270,21 @@ assert max_Efield < tolerance_abs
 $$
 \theta \sim 1.22 \lambda / d
 $$
-预测比较，因此它测的是：
-
-- `embedded boundary / diffraction / Airy first minimum`
+预测比较。因此它测的是 EB 产生的衍射图样是否在 Airy 第一极小值上与解析预测相符，而不是对每个网格单元的几何误差证明。
 
 `embedded_boundary_python_api` 更特殊。CMake 里虽然 `analysis = OFF`，但 PICMI 输入脚本本身在运行时就会读取：
 
 - `edge_lengths`
 - `face_areas`
 
-并在三个中间切片上重建 cavity 的 perimeter 和 area，再和解析几何值比较。所以它并不是单纯 checksum，而是：
+并在三个中间切片上重建 cavity 的 perimeter 和 area，再和解析几何值比较。它虽没有独立 `analysis.py`，却不是单纯 checksum：输入本身验证了 PICMI wrapper 返回的 edge-length 与 face-area 几何量。这个检查不自动覆盖任意 EB 形状、所有 AMR level 或后续场演化。
 
-- `embedded boundary / PICMI wrapper / edge_lengths-face_areas`
-
-第三类是 EB 吸收与 scraping 合同：
+#### 吸收与 scraping：分别观察伪电荷和粒子记账
 
 - `embedded_boundary_em_particle_absorption`
 - `scraping`
 
-`embedded_boundary_em_particle_absorption/analysis.py` 做的不是看粒子是否消失，而是把 `divE` 做时间平均，去掉沿 EB 传播的真实波动分量后，检查是否还残留静态伪电荷。因此它真正验证的是：
-
-- `embedded boundary / EM particle absorption / no spurious charge build-up`
+`embedded_boundary_em_particle_absorption/analysis.py` 做的不是看粒子是否消失，而是把 `divE` 做时间平均，去掉沿 EB 传播的真实波动分量后，检查是否还残留静态伪电荷。因此它检验的是 EM 粒子吸收不会在该测试条件下积累非物理电荷，而不是一般的 `divE-rho` 全时空闭合证明。
 
 而 `scraping/analysis_rz.py` 与 `analysis_rz_filter.py` 测的是另一条 writer 合同：
 
@@ -6306,12 +6293,11 @@ $$
 - scraped buffer 中的 `id` 是否和初始全集闭合
 - 打开 `plot_filter_function` 后，是否真的只记录 `z > 0` 半域的 scraped particles
 
-因此 `scraping` 更准确的分类是：
+因此 `scraping` 关注的是 BoundaryScraping 的粒子记账和 `plot_filter_function` 的选择语义。它应与前一例的场量检查分开阅读：前者能发现 particle identity 或输出选择错误，后者能发现吸收后的静态场污染。
 
-- `embedded boundary / BoundaryScraping / particle accounting`
-- `embedded boundary / BoundaryScraping / plot_filter_function`
+#### 静电球：用解析势与电荷把三维、RZ 和 AMR 分层比较
 
-最后一类是 `electrostatic_sphere_eb`。这组其实至少分成三层：
+`electrostatic_sphere_eb` 至少分成三层：
 
 1. 3D `analysis.py`
    - reduced diagnostic `eb_charge.txt`
@@ -6328,17 +6314,9 @@ $$
 3. RZ `analysis_rz_mr.py`
    - 把同一 `\phi/Er` 对照扩展到每个 refinement level
 
-只有 `inputs_test_3d_electrostatic_sphere_eb_mixed_bc` 目前没有独立 analysis，它更准确的角色只是：
+只有 `inputs_test_3d_electrostatic_sphere_eb_mixed_bc` 没有独立 analysis，因此它只提供 mixed-BC 配置的 checksum 基线。其余例子分别把导体总电荷、覆盖区域、RZ 解析势/径向场和各 refinement level 的误差作为观察量；不能把通过的 checksum 当作解析 `phi/Er` 比较，也不能把一个对称球的结果外推为任意电极几何。
 
-- `embedded boundary / electrostatic sphere / mixed-BC checksum baseline`
-
-因此这组条目现在至少可以从三种过粗标签里退出：
-
-- `boundary condition`
-- `electrostatic / Poisson`
-- `general / to classify`
-
-改写成更贴近真实断言对象的 EB、writer、wrapper 和解析场解分类。
+综上，embedded-boundary 验证至少应同时问四个问题：几何是否表示正确，场是否满足已知解析解，吸收是否留下数值电荷，Python 或 writer 是否导出了预期的几何/粒子数据。不同问题需要不同的输出量，任何一个单独通过都不等于整个 EB 物理闭合。
 
 ## 4.14 QED：不是一个统一开关，而是三条不同的 product-species 事件链
 

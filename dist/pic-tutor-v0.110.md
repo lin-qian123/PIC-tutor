@@ -8522,31 +8522,13 @@ $$
 
 可以把这层 paper-to-code 关系压缩成下面的流程。论文用 four-/seven-/ten-boundary 给若干典型几何子移动命名；WarpX 则先统计 crossing 数，再在同一个循环中重复执行“选最早 crossing、截断 segment、局部写回”的过程。因此图中的 `four-boundary` 不是某个固定的 WarpX 枚举值，`seven/ten-boundary` 也不是源码中的两个分支名，而是 repeated segmentation 可能产生的论文级几何结果。
 
-```mermaid
-flowchart TB
-    accTitle: Villasenor Segment Deposition
-    accDescr: The diagram maps the paper's boundary-crossing picture to WarpX's repeated earliest-crossing segment loop and local current writeback.
+这条分段循环可按以下步骤阅读：
 
-    orbit_start([One-step particle orbit]) --> count_crossings[Count cell crossings]
-    count_crossings --> set_segments[Set num_segments]
-    set_segments --> segment_check{More than one segment?}
-    segment_check -->|No| build_weights[Build cell/node weights]
-    segment_check -->|Yes| choose_crossing{Choose earliest crossing}
-    choose_crossing --> truncate_segment[Truncate current segment]
-    truncate_segment --> build_weights
-    build_weights --> write_local_flux[Write local this_J components]
-    write_local_flux --> remaining_segments{Segments remain?}
-    remaining_segments -->|Yes| choose_crossing
-    remaining_segments -->|No| sum_flux([Sum segment-local fluxes])
-
-    classDef process fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a5f
-    classDef decision fill:#fef9c3,stroke:#ca8a04,stroke-width:2px,color:#713f12
-    classDef terminal fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
-
-    class count_crossings,set_segments,build_weights,truncate_segment,write_local_flux process
-    class segment_check,choose_crossing,remaining_segments decision
-    class orbit_start,sum_flux terminal
-```
+1. 对一个时间步的粒子轨迹统计各方向的 cell crossing，并确定 `num_segments`。
+2. 若仍有未处理的 crossing，比较候选 crossing，选择最早发生的一个。
+3. 用该 crossing 截断当前 segment，并为这个局部段构造 cell/node 权重。
+4. 将该段的 `this_J*` 局部通量写回；若还有剩余轨迹，则以新的局部原点重复第 2 步。
+5. 所有 segment 完成后，局部通量之和就是整条轨迹的沉积结果。
 
 | 论文级几何名称 | 它表达的内容 | WarpX 中的运行时表示 |
 |---|---|---|
@@ -8745,17 +8727,7 @@ $$
 
 下面的示意图把这层对应关系压成读者侧流程。它不是 Villasenor-Buneman 论文原图，也不表示源码里存在 `seven_boundary` 或 `ten_boundary` 两个分支；它只把论文的结果分类和 WarpX 当前循环骨架放在同一张图中：
 
-```mermaid
-flowchart LR
-    A["论文：four-boundary move"] --> B["第一次 complementary-mesh crossing"]
-    B --> C["写回 segment-local this_J*"]
-    C --> D{"轨迹是否还有剩余位移？"}
-    D -->|"是"| E["更新局部原点与 residual displacement"]
-    E --> B
-    D -->|"否"| F["论文分类：完成 four-boundary move"]
-    E -. "两段结果" .-> G["seven-boundary case"]
-    E -. "三段结果" .-> H["ten-boundary case"]
-```
+对应关系可直接读成：论文的 four-boundary move 对应一个 segment-local `this_J*` 写回；第一次 complementary-mesh crossing 后若还有残余位移，WarpX 更新局部原点并重复同一段式写回。两段的几何结果可被论文称为 seven-boundary case，三段可称为 ten-boundary case；这些名称是结果分类，不是源码中的固定分支。
 
 读图时应把实线理解成现代实现的执行顺序，把虚线理解成论文中的结果分类。也就是说，seven-/ten-boundary 不是额外的物理守恒律，而是同一局部四边界构造在一条轨迹上重复执行后出现的几何计数；这也是为什么源码只需要一个可重复的 crossing loop，就能覆盖论文中多个 case。
 
@@ -9416,21 +9388,12 @@ RZ Esirkepov 是本章最容易被误读的例子。默认 axis correction 下�
 
 沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：
 
-```mermaid
-flowchart TD
-    A["PhysicalParticleContainer::Evolve"] --> B["rho component 0 before push"]
-    A --> C["PushPX"]
-    C --> D["x and u advanced"]
-    D --> E["DepositCurrent relative_time=-0.5 dt"]
-    D --> F["rho component 1 after push"]
-    E --> G["WarpXParticleContainer::DepositCurrent"]
-    F --> H["WarpXParticleContainer::DepositCharge"]
-    G --> I["Esirkepov / Villasenor / Vay / Direct"]
-    H --> J["charge deposition shape kernels"]
-    I --> K["SyncCurrentAndRho"]
-    J --> K
-    K --> L["field solver"]
-```
+这条链按时间层可写成：
+
+1. `PhysicalParticleContainer::Evolve()` 先写入 `rho` component 0，再调用 `PushPX()` 推进位置与动量。
+2. 推进后的轨迹进入 `DepositCurrent(relative_time=-0.5 dt)`，由 `WarpXParticleContainer::DepositCurrent()` 选择 Esirkepov、Villasenor、Vay 或 Direct 路径。
+3. 同一推进后状态写入 `rho` component 1，并由 `WarpXParticleContainer::DepositCharge()` 调用 charge shape kernel。
+4. `SyncCurrentAndRho()` 合并两类源项的 guard、粗细层和边界信息，最后才由 field solver 消费。
 
 对读者而言，这张责任矩阵明确了 current kernel、charge kernel 和同步层的职责边界；`DepositCharge()` / ABLASTR / `ChargeDeposition.H` 的主要职责也已由此定位。仍需加强的是出版级证据与表达，而不是继续扩大局部 kernel 的职责：
 

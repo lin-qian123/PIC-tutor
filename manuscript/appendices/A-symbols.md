@@ -2,6 +2,8 @@
 
 本附录服务于正文阅读和源码检索。公式中的符号采用连续模型或离散模型的常用记号；反引号中的名称则优先对应 WarpX 源码、输入文件或 diagnostics 输出中的实际字段。除特别说明外，SI 制单位适用，粒子权重 `w_p` 表示一个宏粒子代表的真实粒子数。
 
+使用本附录时，先区分三件事：数学符号描述的物理量、WarpX 内部数组实际保存的量、输入文件或 diagnostics 对同一名称采用的单位。它们常常有关联，但不必完全相同；尤其是 `ux, uy, uz` 不能只按变量名猜测单位。
+
 ## A.1 连续模型符号
 
 | 符号 | 含义 | 常见单位或类型 |
@@ -11,7 +13,9 @@
 | $$q_s,m_s$$ | species 电荷和静质量 | C、kg |
 | $$\mathbf{x}=(x,y,z)$$ | 物理空间位置 | m |
 | $$\mathbf{p}$$ | 物理动量 | kg m s$$^{-1}$$ |
-| $$\mathbf{u}=\gamma\mathbf{v}$$ | 归一化动量；WarpX 粒子分量通常写作 `ux, uy, uz` | m s$$^{-1}$$ |
+| $$\boldsymbol{\beta}=\mathbf{v}/c$$ | 无量纲速度 | 无量纲 |
+| $$\mathbf{u}=\mathbf{p}/m=\gamma\mathbf{v}$$ | proper velocity；WarpX 粒子容器内部的 `ux, uy, uz` 以此量保存 | m s$$^{-1}$$ |
+| $$\mathbf{p}/(mc)=\mathbf{u}/c=\gamma\boldsymbol{\beta}$$ | 无量纲归一化动量；多数 species 输入的 `u` 参数采用这一约定 | 无量纲 |
 | $$\mathbf{v}$$ | 粒子速度 | m s$$^{-1}$$ |
 | $$\gamma$$ | Lorentz 因子，$$\gamma=(1-v^2/c^2)^{-1/2}$$ | 无量纲 |
 | $$c$$ | 真空光速 | m s$$^{-1}$$ |
@@ -20,6 +24,29 @@
 | $$\epsilon_0,\mu_0$$ | 真空介电常数和磁导率 | SI 常数 |
 | $$w_p$$ | 宏粒子权重，代表的真实粒子数 | 无量纲或按模型定义 |
 | $$S$$ | 粒子到网格的空间形函数 | 按离散归一化定义 |
+
+### `ux, uy, uz` 的两层约定
+
+对有质量粒子，三种写法的关系是
+
+$$
+\mathbf{p}=m\mathbf{u},\qquad
+\mathbf{u}=\gamma\mathbf{v},\qquad
+\frac{\mathbf{u}}{c}=\frac{\mathbf{p}}{mc}=\gamma\boldsymbol{\beta},
+$$
+
+并且
+
+$$
+\gamma=\sqrt{1+\left|\frac{\mathbf{u}}{c}\right|^2}.
+$$
+
+这解释了两个表面矛盾、实际一致的源码约定。
+
+1. `Source/Particles/WarpXParticleContainer.H` 将粒子容器中的 `ux, uy, uz` 说明为 proper velocity，即 `gamma*v`，内部量纲为 m/s。
+2. `Docs/source/usage/parameters.rst` 将 `single_particle_u`、`multiple_particles_u*` 和常见 species momentum distribution 的输入定义为 `gamma*beta`，即无量纲的 `gamma*v/c`。初始化时会乘以 `c`，再写入内部粒子数组；`PlasmaInjector.cpp` 中的 `multiple_particles_ux` 转换正是这一边界的例子。
+
+因此，阅读输入文件时把 `uz = 10` 理解为 $$\gamma\beta_z=10$$；阅读粒子容器或以 SI 单位计算能量的 kernel 时，把内部 `uz` 理解为 $$\gamma v_z=10c$$。诊断 parser、openPMD 记录和不同输出格式还可能按其文档以 $$\gamma v/c$$ 暴露动量分量；遇到 `ux` 时，先确认它来自输入、容器还是输出 metadata，再进行单位换算。
 
 ## A.2 网格、时间层与离散量
 
@@ -31,12 +58,15 @@
 | $$\Delta x,\Delta y,\Delta z$$ | 各方向网格间距 | `amr.n_cell`、几何 `cell_size` |
 | $$i,j,k$$ | 网格单元或节点索引 | AMReX `IntVect` 分量 |
 | $$\ell$$ | AMR level 索引，$$\ell=0$$ 为最粗层 | `lev`、`level` |
-| $$r$$ | MPI rank 或 rank 索引 | `ParallelDescriptor::MyProc()` 等 |
+| $$r$$ | RZ/cylindrical 几何中的径向坐标 | m |
+| `rank` 或 $$r_\mathrm{MPI}$$ | MPI rank 或 rank 索引；不用裸 $$r$$ 与径向坐标混写 | `ParallelDescriptor::MyProc()` 等 |
 | $$V_i$$ | 网格单元体积 | Cartesian 中常为 $$\Delta x\Delta y\Delta z$$ |
 | $$\rho_i^n$$ | 单元/节点 $$i$$ 在时间层 $$n$$ 的电荷密度 | `rho`、`rho_fp`、`rho_buf` |
 | $$\mathbf{J}_i^{n+1/2}$$ | 时间层 $$n+1/2$$ 的电流密度 | `current_fp`、`current_buf` |
 | $$\nabla_h\cdot\mathbf{J}$$ | 离散散度 | 由 staggering 和差分 stencil 决定 |
 | $$S_i(\mathbf{x}_p)$$ | 粒子位置对网格量 $$i$$ 的形函数值 | `ShapeFactors` 中的 shape 权重 |
+
+在 AMR 语境中，`_fp` 与 `_cp` 通常分别标记 fine patch 和 coarse patch，`_aux` 则标记供粒子 gather 使用的辅助场。它们不是同一物理场的任意别名：粗细网格覆盖、guard cell 和同步阶段决定某个数组何时有效。第 3、5 和 7 章中的 `current_fp/current_buf`、`rho_fp/rho_buf` 与 `Efield_aux/Bfield_aux` 都应按这个生命周期来读。
 
 ## A.3 沉积、推进与场求解记号
 
@@ -50,6 +80,9 @@
 | `current_fp` | fine-patch current buffer | 主要对应 fine patch 粒子沉积 |
 | `current_buf` | coarse-buffer current buffer | 后续还要经过同步/整理 |
 | `rho_fp` / `rho_buf` | fine-patch / coarse-buffer charge buffer | 是 source route 的观测面，不等于最终 plotfile 字段 |
+| `Efield_fp` / `Bfield_fp` | fine-patch 电场/磁场 | 不能直接假定就是粒子 gather 的数组 |
+| `Efield_cp` / `Bfield_cp` | coarse-patch 电场/磁场 | 在 mesh refinement 近边界的 gather/sync 语义要结合 level 与 patch type 判断 |
+| `Efield_aux` / `Bfield_aux` | 供粒子 gather 的辅助场 | 由 `UpdateAuxilaryData` 等路径从 patch 场构造；只定义 E/B，不把它误认为 current 或 charge 容器 |
 | `Direct` | 直接速度加权电流沉积 | 简单但不自动满足离散连续性方程 |
 | `Esirkepov` | 基于轨迹与形函数差分的 charge-conserving current deposition | 重点看 density decomposition 和 prefix accumulation |
 | `Villasenor` | 基于 cell crossing segment 的 charge-conserving current deposition | 重点看 crossing、segment 和局部 face flux |
@@ -93,7 +126,8 @@
 
 ## A.6 使用规则
 
-1. 看到 `rho`、`current_fp` 或 `current_buf` 时，先判断它属于 local kernel、level buffer、同步后场，还是最终 diagnostics 输出；同名物理量可能处于不同生命周期阶段。
-2. 看到上标 $$n$$、$$n+1/2$$ 或 `relative_time` 时，先确认粒子位置、场、current 和 charge 是否处在同一个时间层；不能只根据变量名推断守恒性。
-3. 看到 `analysis.py`、`analysis_default_regression.py` 或 checksum 时，先区分 physics、writer 和 checksum 三类 gate；本书第 8 章明确保留这三种证据等级的边界。
-4. 看到 `lev`、`fine`、`coarse` 或 `buf` 时，先回到 AMR route 和同步顺序，再解释某个字段的数值意义。
+1. 看到 `ux, uy, uz` 时，先确认它来自输入、内部粒子容器还是 diagnostics；分别按 $\gamma\beta$、$\gamma\mathbf{v}$ 或该输出的 metadata 解释，不能把数值直接混用。
+2. 看到 `rho`、`current_fp` 或 `current_buf` 时，先判断它属于 local kernel、level buffer、同步后场，还是最终 diagnostics 输出；同名物理量可能处于不同生命周期阶段。
+3. 看到上标 $n$、$n+1/2$ 或 `relative_time` 时，先确认粒子位置、场、current 和 charge 是否处在同一个时间层；不能只根据变量名推断守恒性。
+4. 看到 `analysis.py`、`analysis_default_regression.py` 或 checksum 时，先区分 physics、writer 和 checksum 三类 gate；本书第 8 章明确保留这三种证据等级的边界。
+5. 看到 `lev`、`fine`、`coarse`、`aux` 或 `buf` 时，先回到 AMR route、gather/deposit 位置和同步顺序，再解释某个字段的数值意义。

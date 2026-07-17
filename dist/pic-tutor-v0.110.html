@@ -822,7 +822,10 @@ A：第 5 章沉积文献</a></li>
 <li><a href="#附录-a符号时间层与源码变量" id="toc-附录-a符号时间层与源码变量">附录 A：符号、时间层与源码变量</a>
 <ul>
 <li><a href="#a.1-连续模型符号" id="toc-a.1-连续模型符号">A.1
-连续模型符号</a></li>
+连续模型符号</a>
+<ul>
+<li><a href="#ux-uy-uz-的两层约定" id="toc-ux-uy-uz-的两层约定"><code>ux, uy, uz</code> 的两层约定</a></li>
+</ul></li>
 <li><a href="#a.2-网格时间层与离散量" id="toc-a.2-网格时间层与离散量">A.2 网格、时间层与离散量</a></li>
 <li><a href="#a.3-沉积推进与场求解记号" id="toc-a.3-沉积推进与场求解记号">A.3 沉积、推进与场求解记号</a></li>
 <li><a href="#a.4-诊断文件与验证术语" id="toc-a.4-诊断文件与验证术语">A.4 诊断、文件与验证术语</a></li>
@@ -21237,6 +21240,10 @@ proceedings 中选出下一项 acquisition
 WarpX 源码、输入文件或 diagnostics 输出中的实际字段。除特别说明外，SI
 制单位适用，粒子权重 <code>w_p</code>
 表示一个宏粒子代表的真实粒子数。</p>
+<p>使用本附录时，先区分三件事：数学符号描述的物理量、WarpX
+内部数组实际保存的量、输入文件或 diagnostics
+对同一名称采用的单位。它们常常有关联，但不必完全相同；尤其是
+<code>ux, uy, uz</code> 不能只按变量名猜测单位。</p>
 <h2 id="a.1-连续模型符号">A.1 连续模型符号</h2>
 <table>
 <colgroup>
@@ -21279,9 +21286,21 @@ WarpX 源码、输入文件或 diagnostics 输出中的实际字段。除特别�
 <td>kg m s<span class="math display">\[^{-1}\]</span></td>
 </tr>
 <tr>
-<td><span class="math display">\[\mathbf{u}=\gamma\mathbf{v}\]</span></td>
-<td>归一化动量；WarpX 粒子分量通常写作 <code>ux, uy, uz</code></td>
+<td><span class="math display">\[\boldsymbol{\beta}=\mathbf{v}/c\]</span></td>
+<td>无量纲速度</td>
+<td>无量纲</td>
+</tr>
+<tr>
+<td><span class="math display">\[\mathbf{u}=\mathbf{p}/m=\gamma\mathbf{v}\]</span></td>
+<td>proper velocity；WarpX 粒子容器内部的 <code>ux, uy, uz</code>
+以此量保存</td>
 <td>m s<span class="math display">\[^{-1}\]</span></td>
+</tr>
+<tr>
+<td><span class="math display">\[\mathbf{p}/(mc)=\mathbf{u}/c=\gamma\boldsymbol{\beta}\]</span></td>
+<td>无量纲归一化动量；多数 species 输入的 <code>u</code>
+参数采用这一约定</td>
+<td>无量纲</td>
 </tr>
 <tr>
 <td><span class="math display">\[\mathbf{v}\]</span></td>
@@ -21325,6 +21344,35 @@ WarpX 源码、输入文件或 diagnostics 输出中的实际字段。除特别�
 </tr>
 </tbody>
 </table>
+<h3 id="ux-uy-uz-的两层约定"><code>ux, uy, uz</code> 的两层约定</h3>
+<p>对有质量粒子，三种写法的关系是</p>
+<p><span class="math display">\[
+\mathbf{p}=m\mathbf{u},\qquad
+\mathbf{u}=\gamma\mathbf{v},\qquad
+\frac{\mathbf{u}}{c}=\frac{\mathbf{p}}{mc}=\gamma\boldsymbol{\beta},
+\]</span></p>
+<p>并且</p>
+<p><span class="math display">\[
+\gamma=\sqrt{1+\left|\frac{\mathbf{u}}{c}\right|^2}.
+\]</span></p>
+<p>这解释了两个表面矛盾、实际一致的源码约定。</p>
+<ol type="1">
+<li><code>Source/Particles/WarpXParticleContainer.H</code>
+将粒子容器中的 <code>ux, uy, uz</code> 说明为 proper velocity，即
+<code>gamma*v</code>，内部量纲为 m/s。</li>
+<li><code>Docs/source/usage/parameters.rst</code> 将
+<code>single_particle_u</code>、<code>multiple_particles_u*</code>
+和常见 species momentum distribution 的输入定义为
+<code>gamma*beta</code>，即无量纲的
+<code>gamma*v/c</code>。初始化时会乘以
+<code>c</code>，再写入内部粒子数组；<code>PlasmaInjector.cpp</code> 中的
+<code>multiple_particles_ux</code> 转换正是这一边界的例子。</li>
+</ol>
+<p>因此，阅读输入文件时把 <code>uz = 10</code> 理解为 <span class="math display">\[\gamma\beta_z=10\]</span>；阅读粒子容器或以 SI
+单位计算能量的 kernel 时，把内部 <code>uz</code> 理解为 <span class="math display">\[\gamma v_z=10c\]</span>。诊断 parser、openPMD
+记录和不同输出格式还可能按其文档以 <span class="math display">\[\gamma
+v/c\]</span> 暴露动量分量；遇到 <code>ux</code>
+时，先确认它来自输入、容器还是输出 metadata，再进行单位换算。</p>
 <h2 id="a.2-网格时间层与离散量">A.2 网格、时间层与离散量</h2>
 <table>
 <colgroup>
@@ -21374,7 +21422,12 @@ z\]</span></td>
 </tr>
 <tr>
 <td><span class="math display">\[r\]</span></td>
-<td>MPI rank 或 rank 索引</td>
+<td>RZ/cylindrical 几何中的径向坐标</td>
+<td>m</td>
+</tr>
+<tr>
+<td><code>rank</code> 或 <span class="math display">\[r_\mathrm{MPI}\]</span></td>
+<td>MPI rank 或 rank 索引；不用裸 <span class="math display">\[r\]</span> 与径向坐标混写</td>
 <td><code>ParallelDescriptor::MyProc()</code> 等</td>
 </tr>
 <tr>
@@ -21406,6 +21459,12 @@ z\]</span></td>
 </tr>
 </tbody>
 </table>
+<p>在 AMR 语境中，<code>_fp</code> 与 <code>_cp</code> 通常分别标记 fine
+patch 和 coarse patch，<code>_aux</code> 则标记供粒子 gather
+使用的辅助场。它们不是同一物理场的任意别名：粗细网格覆盖、guard cell
+和同步阶段决定某个数组何时有效。第 3、5 和 7 章中的
+<code>current_fp/current_buf</code>、<code>rho_fp/rho_buf</code> 与
+<code>Efield_aux/Bfield_aux</code> 都应按这个生命周期来读。</p>
 <h2 id="a.3-沉积推进与场求解记号">A.3 沉积、推进与场求解记号</h2>
 <table>
 <colgroup>
@@ -21461,6 +21520,23 @@ kernel</td>
 <td><code>rho_fp</code> / <code>rho_buf</code></td>
 <td>fine-patch / coarse-buffer charge buffer</td>
 <td>是 source route 的观测面，不等于最终 plotfile 字段</td>
+</tr>
+<tr>
+<td><code>Efield_fp</code> / <code>Bfield_fp</code></td>
+<td>fine-patch 电场/磁场</td>
+<td>不能直接假定就是粒子 gather 的数组</td>
+</tr>
+<tr>
+<td><code>Efield_cp</code> / <code>Bfield_cp</code></td>
+<td>coarse-patch 电场/磁场</td>
+<td>在 mesh refinement 近边界的 gather/sync 语义要结合 level 与 patch
+type 判断</td>
+</tr>
+<tr>
+<td><code>Efield_aux</code> / <code>Bfield_aux</code></td>
+<td>供粒子 gather 的辅助场</td>
+<td>由 <code>UpdateAuxilaryData</code> 等路径从 patch 场构造；只定义
+E/B，不把它误认为 current 或 charge 容器</td>
 </tr>
 <tr>
 <td><code>Direct</code></td>
@@ -21638,20 +21714,24 @@ deposition</td>
 </table>
 <h2 id="a.6-使用规则">A.6 使用规则</h2>
 <ol type="1">
+<li>看到 <code>ux, uy, uz</code> 时，先确认它来自输入、内部粒子容器还是
+diagnostics；分别按 <span class="math inline">\(\gamma\beta\)</span>、<span class="math inline">\(\gamma\mathbf{v}\)</span> 或该输出的 metadata
+解释，不能把数值直接混用。</li>
 <li>看到 <code>rho</code>、<code>current_fp</code> 或
 <code>current_buf</code> 时，先判断它属于 local kernel、level
 buffer、同步后场，还是最终 diagnostics
 输出；同名物理量可能处于不同生命周期阶段。</li>
-<li>看到上标 <span class="math display">\[n\]</span>、<span class="math display">\[n+1/2\]</span> 或 <code>relative_time</code>
+<li>看到上标 <span class="math inline">\(n\)</span>、<span class="math inline">\(n+1/2\)</span> 或 <code>relative_time</code>
 时，先确认粒子位置、场、current 和 charge
 是否处在同一个时间层；不能只根据变量名推断守恒性。</li>
 <li>看到
 <code>analysis.py</code>、<code>analysis_default_regression.py</code> 或
 checksum 时，先区分 physics、writer 和 checksum 三类 gate；本书第 8
 章明确保留这三种证据等级的边界。</li>
-<li>看到 <code>lev</code>、<code>fine</code>、<code>coarse</code> 或
-<code>buf</code> 时，先回到 AMR route
-和同步顺序，再解释某个字段的数值意义。</li>
+<li>看到
+<code>lev</code>、<code>fine</code>、<code>coarse</code>、<code>aux</code>
+或 <code>buf</code> 时，先回到 AMR route、gather/deposit
+位置和同步顺序，再解释某个字段的数值意义。</li>
 </ol>
 </body>
 </html>

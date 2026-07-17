@@ -6754,31 +6754,21 @@ optional GenerateVirtualPhotons()
 
 ## 4.15 本章结论
 
-粒子推进器不等于孤立的 Boris 公式。WarpX 的实际路径是：
+粒子推进器不等于孤立的 Boris 公式。一次 WarpX 粒子 tile 路线按以下顺序展开：
 
-```mermaid
-flowchart TD
-    A["WarpX::PushParticlesandDeposit"] --> B["MultiParticleContainer::Evolve"]
-    B --> C["for each species"]
-    C --> D["PhysicalParticleContainer::Evolve"]
-    D --> E["tile loop"]
-    E --> F["rho component 0 before push"]
-    E --> G["PushPX"]
-    G --> H["doGatherShapeN"]
-    G --> I["doParticleMomentumPush"]
-    I --> J["Boris / Vay / Higuera-Cary / RR"]
-    G --> K["UpdatePosition"]
-    E --> L["current deposition"]
-    E --> M["rho component 1 after push"]
-```
+1. `PushParticlesandDeposit()` 调用 `MultiParticleContainer::Evolve()`，逐物种调度粒子推进与源项沉积。
+2. `PhysicalParticleContainer::Evolve()` 在局部 tile 上安排推前电荷、push、current 与推后电荷。
+3. `rho` component 0 记录旧时间层电荷，随后 `PushPX()` 进入粒子 kernel。
+4. `doGatherShapeN()` 从网格取得粒子场，`doParticleMomentumPush()` 选择 Boris、Vay、Higuera-Cary 或 RR 的动量更新。
+5. `UpdatePosition()` 用半步速度更新位置；current deposition 与 `rho` component 1 构造下一步场推进所需的电荷和电流。
 
 后续继续深入时，应分别追踪三个子问题：`doGatherShapeN()` 的形函数插值、`doParticleMomentumPush()` 的具体 pusher 公式、`DepositCurrent/DepositCharge()` 的守恒沉积算法。
 
 ## 4.16 练习与复现实验
 
-1. **pusher 对照题**：用 `scripts/compare_particle_pusher_siblings.py` 读取 Boris/Vay/Higuera-Cary sibling 报告，解释为什么 Boris 的大位移结果不能被简单归结为“代码运行失败”，而应联系 force-free relativistic pusher contract 判断。
+1. **pusher 对照题**：比较 Boris、Vay 与 Higuera-Cary 的同类案例结果，解释为什么 Boris 的大位移不能简单归结为“代码运行失败”，而应联系 force-free relativistic pusher 的适用条件判断。
 2. **源码定位题**：从 `PhysicalParticleContainer::Evolve()` 定位 `doGatherShapeN()`、momentum push、`UpdatePosition` 和 current/charge deposition，画出一次粒子 tile loop 的四个时间层节点。
-3. **最小复现实验**：运行官方 `particle_pusher` 或 `photon_pusher` analysis，并同时记录官方 analysis 与项目独立合同脚本的输出；说明 charged pusher 的位置误差和 massless photon 的位置/动量误差为何不能共用同一容差。
+3. **最小复现实验**：运行官方 `particle_pusher` 或 `photon_pusher` analysis，并分别记录位置、动量和是否发生电流沉积的观测量；说明带电 pusher 的位置误差和无质量 photon 的位置/动量误差为何不能共用同一容差。
 
 
 <!-- source: manuscript/chapters/05-deposition-shapes.md -->

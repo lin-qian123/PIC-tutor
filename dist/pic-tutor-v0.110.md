@@ -5861,11 +5861,10 @@ $$
 
 这整条 relativistic Higuera-Cary push 主链做强断言。
 
-本项目在当前 checkout 上又完成了一次真实单进程复现。运行产物位于：
+归档的单进程复现位于 `runs/stage-c-validation/particle_pusher_higuera/`：
 
-- `PIC-tutor/runs/stage-c-validation/particle_pusher_higuera`
 - 末态 plotfile：`diags/diag1010000`
-- 项目分析脚本：`scripts/analyze_particle_pusher_contract.py`
+- 分析脚本：`scripts/analyze_particle_pusher_contract.py`
 - 合同报告：`particle-pusher-contract.json`、`particle-pusher-contract.md`
 
 实际末态为 `current_time = 100.00000000001425`，单个 positron 的
@@ -5874,9 +5873,9 @@ $$
 \max |x| = 1.1430664323700516\times 10^{-4}
 $$
 
-小于官方 `1e-3` 容差，且官方 `analysis.py` 与项目脚本都通过。这个证据可以把“当前 binary 确实走 Higuera-Cary force-free 主链”从静态输入/源码判断推进到运行级验证，但它仍然只覆盖单进程、单粒子、恒定外场和 `x approximately 0` 这一条合同，不等价于对 Boris/Vay/Higuera-Cary 三者的完整轨道 benchmark。
+小于官方 `1e-3` 容差，且官方 `analysis.py` 与分析脚本都通过。这个证据将“Higuera-Cary force-free 主链确实被执行”从静态输入/源码判断推进到运行级验证，但它仍然只覆盖单进程、单粒子、恒定外场和 `x approximately 0` 这一条合同，不等价于对 Boris/Vay/Higuera-Cary 三者的完整轨道 benchmark。
 
-在同一官方输入上只替换 `algo.particle_pusher` 后，本项目还做了一个 local sibling 对照：
+在同一官方输入上只替换 `algo.particle_pusher` 后，case-local sibling 给出如下对照：
 
 | pusher | 末态 $\max|x|$ | `1e-3` gate | 解释 |
 | --- | ---: | ---: | --- |
@@ -5884,7 +5883,7 @@ $$
 | Vay | `1.0795497978e-4` | PASS | 保留较好的 relativistic frame/cancellation 行为 |
 | Higuera-Cary | `1.1430664324e-4` | PASS | 在该合同下与 Vay 同量级 |
 
-完整 sibling JSON/Markdown 对照报告位于 `PIC-tutor/runs/stage-c-validation/particle_pusher_siblings/`，由 `scripts/compare_particle_pusher_siblings.py` 重建。必须保留其证据等级：三组使用的是官方输入加 pusher-only override 的项目级对照，不是 `CMakeLists.txt` 注册的三条独立官方 regression；它支持的是 force-free cancellation 的差异提示，不替代 boosted-frame、Poincare section 或长期能量/相空间 benchmark。
+完整 sibling JSON/Markdown 对照报告位于 `runs/stage-c-validation/particle_pusher_siblings/`，由 `scripts/compare_particle_pusher_siblings.py` 重建。必须保留其证据等级：三组使用的是官方输入加 pusher-only override 的 case-local 对照，不是 `CMakeLists.txt` 注册的三条独立官方 regression；它支持的是 force-free cancellation 的差异提示，不替代 boosted-frame、Poincare section 或长期能量/相空间 benchmark。
 
 `single_particle` 则必须拆成两类。
 
@@ -5910,11 +5909,10 @@ analysis 先在 Python 里手动做 half-backward、5 步 leapfrog、再加 half
 
 也就是说，它验证的不是 Boris 物理轨道误差，而是“输出给 diagnostics 的速度是否和位置处在同一时间层”。
 
-本项目对这条路径也完成了真实单进程复现。运行产物位于：
+这条路径的单进程复现位于 `runs/stage-c-validation/single_particle_synchronize_velocity/`：
 
-- `PIC-tutor/runs/stage-c-validation/single_particle_synchronize_velocity`
 - 末态 plotfile：`diags/diag1000005`
-- 项目分析脚本：`scripts/analyze_single_particle_synchronization.py`
+- 分析脚本：`scripts/analyze_single_particle_synchronization.py`
 - 合同报告：`single-particle-sync-contract.json`、`single-particle-sync-contract.md`
 
 第 5 个诊断步的理论/模拟结果为：
@@ -5943,11 +5941,10 @@ $$
 - `UpdatePosition(...)` 里的 massless branch
 - photon 不做 charge/current deposition 的合同
 
-本项目已完成该官方 regression 的单进程复现。运行产物位于：
+该官方 regression 的单进程复现位于 `runs/stage-c-validation/photon_pusher/`：
 
-- `PIC-tutor/runs/stage-c-validation/photon_pusher`
 - 末态 plotfile：`diags/diag1000050`
-- 项目分析脚本：`scripts/analyze_photon_pusher_contract.py`
+- 分析脚本：`scripts/analyze_photon_pusher_contract.py`
 - 合同报告：`photon-pusher-contract.json`、`photon-pusher-contract.md`
 
 16 个 photon species 的末态最大相对误差为：
@@ -5971,7 +5968,7 @@ $$
 - 这是一个 charged-particle gyro-motion 与 external-particle-field、MR、PML、div-cleaning 组合稳定性的应用级 checksum 基线
 - 不是已经有独立解析半径/回旋频率对照的强单粒子 analysis
 
-本项目也运行了该 case 的单进程版本，并新增 `scripts/analyze_larmor_continuum_audit.py` 做 uniform-(B_y) 连续轨道审计。末态位于 `PIC-tutor/runs/stage-c-validation/larmor_single_process/diags/diag1000010`，修正 2D XZ 面内动量读取为 `particle_momentum_x/z` 后，电子/正电子的轨迹相对位移误差均为 `1.28285096e-2`，动量相对误差均为 `9.69641193e-2`。这不是一个失败的官方 regression：checksum 仍是当前官方合同；它说明在 MR/PML/div-cleaning 组合下，直接把连续 uniform-(B) 解析轨道当成严格 gate 并不成立。因此本章继续把 larmor 标为 checksum-only，并把该审计报告定位为“为什么暂不升级强物理 gate”的证据。
+单进程 Larmor 运行由 `scripts/analyze_larmor_continuum_audit.py` 做 uniform-(B_y) 连续轨道审计，末态位于 `runs/stage-c-validation/larmor_single_process/diags/diag1000010`。按 2D XZ 面内的 `particle_momentum_x/z` 读取后，电子/正电子的轨迹相对位移误差均为 `1.28285096e-2`，动量相对误差均为 `9.69641193e-2`。这不是一个失败的官方 regression：checksum 仍是官方合同；它说明在 MR/PML/div-cleaning 组合下，直接把连续 uniform-(B) 解析轨道当成严格 gate 并不成立。因此本章继续把 larmor 标为 checksum-only，并把该审计报告定位为“为什么暂不升级强物理 gate”的证据。
 
 这组 regression 目前能明确支持的结论是：
 
@@ -12859,24 +12856,12 @@ Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族�
 
 压在了同一个最小问题上。
 
-到 2026-05-18 为止，这条主线已经不只停在源码和 analysis 脚本层，也有了第一条本地运行记录。当前在
-
-- `PIC-tutor/runs/stage-c-validation/langmuir_1d`
-
-用
-
-```bash
-env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
-  $WARPX_ROOT/build_full/bin/warpx.1d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES \
-  $WARPX_ROOT/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi
-```
-
-完成了真实运行，并生成 `diags/diag1000080`。虽然官方 `analysis_1d.py` 因本机缺 `matplotlib/yt` 没有原样跑通，但它的核心断言已经按同一公式手工复现：
+归档的 1D 运行产物表明，这条主线不只停在源码和 analysis 脚本层；它产生 `diags/diag1000080`，并可用同一组解析式复核核心断言：
 
 - 解析场相对误差 `error_rel = 1.70e-3 < 5e-2`
 - `divE-rho/\epsilon_0` 相对误差 `8.35e-12 < 1e-11`
 
-因此 `Langmuir wave` 是运行级强基准，而不只是“源码上看起来应该能验证”的基准。
+因此 `Langmuir wave` 是运行级强基准，而不只是“源码上看起来应该能验证”的基准。读者可从 `Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 出发，用本机的 WarpX binary 和 `analysis_1d.py` 重建同一条验证链；后文的频率拟合报告补充了逐快照证据。
 
 ## Uniform plasma
 
@@ -12904,7 +12889,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 3. checkpoint/restart
    - 给 `analysis_default_restart.py` 提供一条极干净的 field-level reproducibility 基准。
 
-如果把 `TODO` 里的“噪声、能量、性能和诊断”拆开，当前工作树里的证据来源其实是分层的：
+若把“噪声、能量、性能和诊断”拆开，证据来源其实是分层的：
 
 - 噪声、性能背景、writer/checkpoint：
   - 主要来自 `Examples/Physics_applications/uniform_plasma/`
@@ -12923,25 +12908,13 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 -> 与能量守恒、PSATD 稳定性测试树的边界
 ```
 
-压成了项目里第二条最适合成文的应用主线。
+压成了本书第二条适合系统学习的应用主线。
 
-到 2026-05-18 为止，这条主线也已有一条最小本地运行记录。当前在
-
-- `PIC-tutor/runs/stage-c-validation/uniform_plasma_2d`
-
-用
-
-```bash
-env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
-  $WARPX_ROOT/build_full/bin/warpx.2d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES \
-  $WARPX_ROOT/Examples/Physics_applications/uniform_plasma/inputs_test_2d_uniform_plasma
-```
-
-完成了真实运行，并生成 `diags/diag1000010`。但这里必须保持验证分级：
+归档的 2D 运行从 `Examples/Physics_applications/uniform_plasma/inputs_test_2d_uniform_plasma` 生成 `diags/diag1000010`。它说明最小 workflow 可以落盘，但这里必须保持验证分级：
 
 - 主程序运行成功，只能证明 workflow、writer、最小噪声背景和输出路径正常；
 - 官方 regression 本来就只有 `analysis_default_regression.py --path diags/diag1000010` 这一层 checksum；
-- 这轮历史运行记录没有复跑 checksum 脚本；当前环境已有 `yt`，但仍缺 `openpmd_viewer`，所以 openPMD 分支仍未在本地验证。
+- 这条 2D 运行记录不包含独立的 openPMD 读取验证；需要该格式时，应按后文的 openPMD reader 案例另行执行 consumer。
 
 因此 `uniform_plasma` 的证据等级应表述为：
 
@@ -14259,15 +14232,15 @@ def check_values(benchmark, data, comp, rtol, atol):
 
 而不是过粗的 `Python API / callbacks`。它验证的是 `pywarpx` 经由 `MultiFabRegister` 暴露出来的非 owning `MultiFab` 视图，在 valid domain、ghost cell、PML 和 cleaning 字段这几层上都没有被包装错。
 
-## 本地运行注意
+## MPI transport 环境注意
 
-本机过去运行短 WarpX 案例时，MPI/OFI 路径可能受网络接口影响；小规模复现实验可优先设置：
+某些 MPI/OFI 组合会受网络接口选择影响；在这类环境中，小规模复现实验可设置：
 
 ```bash
 FI_PROVIDER=tcp
 ```
 
-这不是物理参数，只是本机 MPI transport 的稳定性处理。正式实验记录必须把环境变量、binary 路径、输入文件、输出目录和分析脚本写入对应章节。
+这不是物理参数，而是 MPI transport 的环境兼容设置。复现实验应记录环境变量、binary 版本、输入文件、输出目录和分析脚本；不要把它误当成会改变 PIC 物理模型的输入参数。
 
 ## Langmuir 与均匀等离子体的运行证据
 

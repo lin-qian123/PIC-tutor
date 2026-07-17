@@ -1872,11 +1872,10 @@ $$
 
 这整条 relativistic Higuera-Cary push 主链做强断言。
 
-本项目在当前 checkout 上又完成了一次真实单进程复现。运行产物位于：
+归档的单进程复现位于 `runs/stage-c-validation/particle_pusher_higuera/`：
 
-- `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/particle_pusher_higuera`
 - 末态 plotfile：`diags/diag1010000`
-- 项目分析脚本：`scripts/analyze_particle_pusher_contract.py`
+- 分析脚本：`scripts/analyze_particle_pusher_contract.py`
 - 合同报告：`particle-pusher-contract.json`、`particle-pusher-contract.md`
 
 实际末态为 `current_time = 100.00000000001425`，单个 positron 的
@@ -1885,9 +1884,9 @@ $$
 \max |x| = 1.1430664323700516\times 10^{-4}
 $$
 
-小于官方 `1e-3` 容差，且官方 `analysis.py` 与项目脚本都通过。这个证据可以把“当前 binary 确实走 Higuera-Cary force-free 主链”从静态输入/源码判断推进到运行级验证，但它仍然只覆盖单进程、单粒子、恒定外场和 `x approximately 0` 这一条合同，不等价于对 Boris/Vay/Higuera-Cary 三者的完整轨道 benchmark。
+小于官方 `1e-3` 容差，且官方 `analysis.py` 与分析脚本都通过。这个证据将“Higuera-Cary force-free 主链确实被执行”从静态输入/源码判断推进到运行级验证，但它仍然只覆盖单进程、单粒子、恒定外场和 `x approximately 0` 这一条合同，不等价于对 Boris/Vay/Higuera-Cary 三者的完整轨道 benchmark。
 
-在同一官方输入上只替换 `algo.particle_pusher` 后，本项目还做了一个 local sibling 对照：
+在同一官方输入上只替换 `algo.particle_pusher` 后，case-local sibling 给出如下对照：
 
 | pusher | 末态 $\max|x|$ | `1e-3` gate | 解释 |
 | --- | ---: | ---: | --- |
@@ -1895,7 +1894,7 @@ $$
 | Vay | `1.0795497978e-4` | PASS | 保留较好的 relativistic frame/cancellation 行为 |
 | Higuera-Cary | `1.1430664324e-4` | PASS | 在该合同下与 Vay 同量级 |
 
-完整 sibling JSON/Markdown 对照报告位于 `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/particle_pusher_siblings/`，由 `scripts/compare_particle_pusher_siblings.py` 重建。必须保留其证据等级：三组使用的是官方输入加 pusher-only override 的项目级对照，不是 `CMakeLists.txt` 注册的三条独立官方 regression；它支持的是 force-free cancellation 的差异提示，不替代 boosted-frame、Poincare section 或长期能量/相空间 benchmark。
+完整 sibling JSON/Markdown 对照报告位于 `runs/stage-c-validation/particle_pusher_siblings/`，由 `scripts/compare_particle_pusher_siblings.py` 重建。必须保留其证据等级：三组使用的是官方输入加 pusher-only override 的 case-local 对照，不是 `CMakeLists.txt` 注册的三条独立官方 regression；它支持的是 force-free cancellation 的差异提示，不替代 boosted-frame、Poincare section 或长期能量/相空间 benchmark。
 
 `single_particle` 则必须拆成两类。
 
@@ -1921,11 +1920,10 @@ analysis 先在 Python 里手动做 half-backward、5 步 leapfrog、再加 half
 
 也就是说，它验证的不是 Boris 物理轨道误差，而是“输出给 diagnostics 的速度是否和位置处在同一时间层”。
 
-本项目对这条路径也完成了真实单进程复现。运行产物位于：
+这条路径的单进程复现位于 `runs/stage-c-validation/single_particle_synchronize_velocity/`：
 
-- `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/single_particle_synchronize_velocity`
 - 末态 plotfile：`diags/diag1000005`
-- 项目分析脚本：`scripts/analyze_single_particle_synchronization.py`
+- 分析脚本：`scripts/analyze_single_particle_synchronization.py`
 - 合同报告：`single-particle-sync-contract.json`、`single-particle-sync-contract.md`
 
 第 5 个诊断步的理论/模拟结果为：
@@ -1954,11 +1952,10 @@ $$
 - `UpdatePosition(...)` 里的 massless branch
 - photon 不做 charge/current deposition 的合同
 
-本项目已完成该官方 regression 的单进程复现。运行产物位于：
+该官方 regression 的单进程复现位于 `runs/stage-c-validation/photon_pusher/`：
 
-- `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/photon_pusher`
 - 末态 plotfile：`diags/diag1000050`
-- 项目分析脚本：`scripts/analyze_photon_pusher_contract.py`
+- 分析脚本：`scripts/analyze_photon_pusher_contract.py`
 - 合同报告：`photon-pusher-contract.json`、`photon-pusher-contract.md`
 
 16 个 photon species 的末态最大相对误差为：
@@ -1982,7 +1979,7 @@ $$
 - 这是一个 charged-particle gyro-motion 与 external-particle-field、MR、PML、div-cleaning 组合稳定性的应用级 checksum 基线
 - 不是已经有独立解析半径/回旋频率对照的强单粒子 analysis
 
-本项目也运行了该 case 的单进程版本，并新增 `scripts/analyze_larmor_continuum_audit.py` 做 uniform-(B_y) 连续轨道审计。末态位于 `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/larmor_single_process/diags/diag1000010`，修正 2D XZ 面内动量读取为 `particle_momentum_x/z` 后，电子/正电子的轨迹相对位移误差均为 `1.28285096e-2`，动量相对误差均为 `9.69641193e-2`。这不是一个失败的官方 regression：checksum 仍是当前官方合同；它说明在 MR/PML/div-cleaning 组合下，直接把连续 uniform-(B) 解析轨道当成严格 gate 并不成立。因此本章继续把 larmor 标为 checksum-only，并把该审计报告定位为“为什么暂不升级强物理 gate”的证据。
+单进程 Larmor 运行由 `scripts/analyze_larmor_continuum_audit.py` 做 uniform-(B_y) 连续轨道审计，末态位于 `runs/stage-c-validation/larmor_single_process/diags/diag1000010`。按 2D XZ 面内的 `particle_momentum_x/z` 读取后，电子/正电子的轨迹相对位移误差均为 `1.28285096e-2`，动量相对误差均为 `9.69641193e-2`。这不是一个失败的官方 regression：checksum 仍是官方合同；它说明在 MR/PML/div-cleaning 组合下，直接把连续 uniform-(B) 解析轨道当成严格 gate 并不成立。因此本章继续把 larmor 标为 checksum-only，并把该审计报告定位为“为什么暂不升级强物理 gate”的证据。
 
 这组 regression 目前能明确支持的结论是：
 

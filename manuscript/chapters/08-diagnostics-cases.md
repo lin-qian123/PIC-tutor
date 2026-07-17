@@ -134,24 +134,12 @@ Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族�
 
 压在了同一个最小问题上。
 
-到 2026-05-18 为止，这条主线已经不只停在源码和 analysis 脚本层，也有了第一条本地运行记录。当前在
-
-- `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/langmuir_1d`
-
-用
-
-```bash
-env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
-  /Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.1d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES \
-  /Volumes/PHILIPS/programs/PIC/warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi
-```
-
-完成了真实运行，并生成 `diags/diag1000080`。虽然官方 `analysis_1d.py` 因本机缺 `matplotlib/yt` 没有原样跑通，但它的核心断言已经按同一公式手工复现：
+归档的 1D 运行产物表明，这条主线不只停在源码和 analysis 脚本层；它产生 `diags/diag1000080`，并可用同一组解析式复核核心断言：
 
 - 解析场相对误差 `error_rel = 1.70e-3 < 5e-2`
 - `divE-rho/\epsilon_0` 相对误差 `8.35e-12 < 1e-11`
 
-因此 `Langmuir wave` 是运行级强基准，而不只是“源码上看起来应该能验证”的基准。
+因此 `Langmuir wave` 是运行级强基准，而不只是“源码上看起来应该能验证”的基准。读者可从 `Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 出发，用本机的 WarpX binary 和 `analysis_1d.py` 重建同一条验证链；后文的频率拟合报告补充了逐快照证据。
 
 ## Uniform plasma
 
@@ -179,7 +167,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 3. checkpoint/restart
    - 给 `analysis_default_restart.py` 提供一条极干净的 field-level reproducibility 基准。
 
-如果把 `TODO` 里的“噪声、能量、性能和诊断”拆开，当前工作树里的证据来源其实是分层的：
+若把“噪声、能量、性能和诊断”拆开，证据来源其实是分层的：
 
 - 噪声、性能背景、writer/checkpoint：
   - 主要来自 `Examples/Physics_applications/uniform_plasma/`
@@ -198,25 +186,13 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 -> 与能量守恒、PSATD 稳定性测试树的边界
 ```
 
-压成了项目里第二条最适合成文的应用主线。
+压成了本书第二条适合系统学习的应用主线。
 
-到 2026-05-18 为止，这条主线也已有一条最小本地运行记录。当前在
-
-- `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/uniform_plasma_2d`
-
-用
-
-```bash
-env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
-  /Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.2d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES \
-  /Volumes/PHILIPS/programs/PIC/warpx/Examples/Physics_applications/uniform_plasma/inputs_test_2d_uniform_plasma
-```
-
-完成了真实运行，并生成 `diags/diag1000010`。但这里必须保持验证分级：
+归档的 2D 运行从 `Examples/Physics_applications/uniform_plasma/inputs_test_2d_uniform_plasma` 生成 `diags/diag1000010`。它说明最小 workflow 可以落盘，但这里必须保持验证分级：
 
 - 主程序运行成功，只能证明 workflow、writer、最小噪声背景和输出路径正常；
 - 官方 regression 本来就只有 `analysis_default_regression.py --path diags/diag1000010` 这一层 checksum；
-- 这轮历史运行记录没有复跑 checksum 脚本；当前环境已有 `yt`，但仍缺 `openpmd_viewer`，所以 openPMD 分支仍未在本地验证。
+- 这条 2D 运行记录不包含独立的 openPMD 读取验证；需要该格式时，应按后文的 openPMD reader 案例另行执行 consumer。
 
 因此 `uniform_plasma` 的证据等级应表述为：
 
@@ -1534,15 +1510,15 @@ def check_values(benchmark, data, comp, rtol, atol):
 
 而不是过粗的 `Python API / callbacks`。它验证的是 `pywarpx` 经由 `MultiFabRegister` 暴露出来的非 owning `MultiFab` 视图，在 valid domain、ghost cell、PML 和 cleaning 字段这几层上都没有被包装错。
 
-## 本地运行注意
+## MPI transport 环境注意
 
-本机过去运行短 WarpX 案例时，MPI/OFI 路径可能受网络接口影响；小规模复现实验可优先设置：
+某些 MPI/OFI 组合会受网络接口选择影响；在这类环境中，小规模复现实验可设置：
 
 ```bash
 FI_PROVIDER=tcp
 ```
 
-这不是物理参数，只是本机 MPI transport 的稳定性处理。正式实验记录必须把环境变量、binary 路径、输入文件、输出目录和分析脚本写入对应章节。
+这不是物理参数，而是 MPI transport 的环境兼容设置。复现实验应记录环境变量、binary 版本、输入文件、输出目录和分析脚本；不要把它误当成会改变 PIC 物理模型的输入参数。
 
 ## Langmuir 与均匀等离子体的运行证据
 

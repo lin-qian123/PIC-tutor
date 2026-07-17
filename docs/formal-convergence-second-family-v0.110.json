@@ -1,0 +1,393 @@
+{
+  "contract": "formal convergence second-family slope comparison",
+  "passed": false,
+  "checks": {
+    "two_independent_families_present": true,
+    "all_declared_levels_present": true,
+    "all_observables_finite": true,
+    "second_family_execution_pass": true,
+    "all_pairwise_slopes_computed": true,
+    "separate_geometry_reporting": true,
+    "formal_order_closure": false
+  },
+  "classification": "FORMAL_CONVERGENCE_SECOND_FAMILY_MATERIALIZED_ORDER_COMPARISON_OPEN",
+  "scope": "two independent 2-rank RZ/RSPHERE families; all declared 64/128/256 adjacent pairs; no pooled geometry fit",
+  "runner_contract": "runs/stage-c-validation/formal-convergence-repeat-v0.110/contract.json",
+  "runtime_environment": {
+    "FI_PROVIDER": "tcp"
+  },
+  "rows": [
+    {
+      "geometry": "RZ",
+      "correction": "off",
+      "family": "first",
+      "resolution": 64,
+      "er_error": 0.04279608308788969,
+      "ez_error": 0.009479615923683264,
+      "axis_residual": 5.512607403282768e-12,
+      "off_axis_residual": 1.7202442240408307e-12
+    },
+    {
+      "geometry": "RZ",
+      "correction": "off",
+      "family": "first",
+      "resolution": 128,
+      "er_error": 0.028089026960080407,
+      "ez_error": 0.03661603258231089,
+      "axis_residual": 9.353410309699217e-12,
+      "off_axis_residual": 3.664230915902013e-12
+    },
+    {
+      "geometry": "RZ",
+      "correction": "off",
+      "family": "first",
+      "resolution": 256,
+      "er_error": 0.012273448668731042,
+      "ez_error": 0.01501338144035843,
+      "axis_residual": 1.6391145153439027e-11,
+      "off_axis_residual": 8.458667599131464e-12
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "family": "first",
+      "resolution": 64,
+      "er_error": 0.010748924155027022,
+      "ez_error": 0.008240222669445638,
+      "axis_residual": 0.0035929741112595034,
+      "off_axis_residual": 0.0004292743653990161
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "family": "first",
+      "resolution": 128,
+      "er_error": 0.027970292400520305,
+      "ez_error": 0.03048696870168914,
+      "axis_residual": 0.001519631995725417,
+      "off_axis_residual": 0.0004691937939105463
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "family": "first",
+      "resolution": 256,
+      "er_error": 0.01235893745573737,
+      "ez_error": 0.01296416058309603,
+      "axis_residual": 0.000755370723357024,
+      "off_axis_residual": 0.0001720180817775647
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "family": "first",
+      "resolution": 64,
+      "relative_er_error": 0.005404660483220067,
+      "axis_residual": 0.04165922070361282,
+      "off_axis_residual": 0.002531402965202412
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "off",
+      "family": "first",
+      "resolution": 64,
+      "relative_er_error": 0.013800881908083002,
+      "axis_residual": 2.419909594988411e-11,
+      "off_axis_residual": 1.4140114197969747e-11
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "family": "first",
+      "resolution": 128,
+      "relative_er_error": 0.033890908922367444,
+      "axis_residual": 0.013904292839509402,
+      "off_axis_residual": 0.0009503782437110924
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "off",
+      "family": "first",
+      "resolution": 128,
+      "relative_er_error": 0.010409992800954126,
+      "axis_residual": 9.842865536436999e-11,
+      "off_axis_residual": 3.881674351648735e-11
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "family": "first",
+      "resolution": 256,
+      "relative_er_error": 0.009422405793057892,
+      "axis_residual": 0.004142252590710729,
+      "off_axis_residual": 0.0002770351164748635
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "off",
+      "family": "first",
+      "resolution": 256,
+      "relative_er_error": 0.011174858445806908,
+      "axis_residual": 7.460937649321889e-11,
+      "off_axis_residual": 1.712408872012303e-11
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "family": "second",
+      "resolution": 64,
+      "er_error": 0.010748924155027206,
+      "ez_error": 0.008240222669445943,
+      "axis_residual": 0.003592974111261883,
+      "off_axis_residual": 0.00042927436539584373
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "family": "second",
+      "resolution": 128,
+      "er_error": 0.027970292400520343,
+      "ez_error": 0.030486968701690088,
+      "axis_residual": 0.001519631995725417,
+      "off_axis_residual": 0.0004691937939045583
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "family": "second",
+      "resolution": 256,
+      "er_error": 0.01235893745573737,
+      "ez_error": 0.01296416058309603,
+      "axis_residual": 0.000755370723357024,
+      "off_axis_residual": 0.00017201808177777018
+    },
+    {
+      "geometry": "RZ",
+      "correction": "off",
+      "family": "second",
+      "resolution": 64,
+      "er_error": 0.042796083087889285,
+      "ez_error": 0.009479615923683264,
+      "axis_residual": 5.514431232729234e-12,
+      "off_axis_residual": 1.7202442240408307e-12
+    },
+    {
+      "geometry": "RZ",
+      "correction": "off",
+      "family": "second",
+      "resolution": 128,
+      "er_error": 0.028089026960080407,
+      "ez_error": 0.03661603258230956,
+      "axis_residual": 9.35756097559936e-12,
+      "off_axis_residual": 3.664230915902013e-12
+    },
+    {
+      "geometry": "RZ",
+      "correction": "off",
+      "family": "second",
+      "resolution": 256,
+      "er_error": 0.012273448668731042,
+      "ez_error": 0.015013381440357852,
+      "axis_residual": 1.6378702505504292e-11,
+      "off_axis_residual": 8.458667599131464e-12
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "family": "second",
+      "resolution": 64,
+      "relative_er_error": 0.005404660483220067,
+      "axis_residual": 0.04165922070361282,
+      "off_axis_residual": 0.002531402965202412
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "family": "second",
+      "resolution": 128,
+      "relative_er_error": 0.033890908922367444,
+      "axis_residual": 0.013904292839509402,
+      "off_axis_residual": 0.0009503782437110924
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "family": "second",
+      "resolution": 256,
+      "relative_er_error": 0.009422405793057892,
+      "axis_residual": 0.004142252590710729,
+      "off_axis_residual": 0.0002770351164748635
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "off",
+      "family": "second",
+      "resolution": 64,
+      "relative_er_error": 0.013800881908083002,
+      "axis_residual": 2.419909594988411e-11,
+      "off_axis_residual": 1.4140114197969747e-11
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "off",
+      "family": "second",
+      "resolution": 128,
+      "relative_er_error": 0.010409992800954126,
+      "axis_residual": 9.842865536436999e-11,
+      "off_axis_residual": 3.881674351648735e-11
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "off",
+      "family": "second",
+      "resolution": 256,
+      "relative_er_error": 0.011174858445806908,
+      "axis_residual": 7.460937649321889e-11,
+      "off_axis_residual": 1.712408872012303e-11
+    }
+  ],
+  "pairwise_slopes": {
+    "RZ": {
+      "first": {
+        "on": {
+          "er_error": [
+            -1.3797030660931942,
+            1.1783406211160024
+          ],
+          "ez_error": [
+            -1.8874374833743448,
+            1.2336639152020634
+          ],
+          "axis_residual": [
+            1.2414565469532781,
+            1.0084652192300463
+          ],
+          "off_axis_residual": [
+            -0.12828390756831298,
+            1.4476237081709646
+          ]
+        },
+        "off": {
+          "er_error": [
+            0.6074721114612511,
+            1.194465965276059
+          ],
+          "ez_error": [
+            -1.9495749676577556,
+            1.2862265313174304
+          ],
+          "axis_residual": [
+            -0.7627576169404359,
+            -0.8093522692963091
+          ],
+          "off_axis_residual": [
+            -1.090897023698713,
+            -1.2069200059665053
+          ]
+        }
+      },
+      "second": {
+        "on": {
+          "er_error": [
+            -1.3797030660931717,
+            1.1783406211160041
+          ],
+          "ez_error": [
+            -1.8874374833743364,
+            1.2336639152021085
+          ],
+          "axis_residual": [
+            1.2414565469542336,
+            1.0084652192300463
+          ],
+          "off_axis_residual": [
+            -0.12828390756056243,
+            1.4476237081508296
+          ]
+        },
+        "off": {
+          "er_error": [
+            0.6074721114612376,
+            1.194465965276059
+          ],
+          "ez_error": [
+            -1.9495749676577034,
+            1.2862265313174337
+          ],
+          "axis_residual": [
+            -0.7629204524113594,
+            -0.8076166243860483
+          ],
+          "off_axis_residual": [
+            -1.090897023698713,
+            -1.2069200059665053
+          ]
+        }
+      }
+    },
+    "RSPHERE": {
+      "first": {
+        "on": {
+          "relative_er_error": [
+            -2.648622432185539,
+            1.8467309583230163
+          ],
+          "axis_residual": [
+            1.5831054796099218,
+            1.7470429367541072
+          ],
+          "off_axis_residual": [
+            1.4133634682126193,
+            1.7784329486888553
+          ]
+        },
+        "off": {
+          "relative_er_error": [
+            0.40679139053936064,
+            -0.10228748567454352
+          ],
+          "axis_residual": [
+            -2.024125234933553,
+            0.3997214342322695
+          ],
+          "off_axis_residual": [
+            -1.456885318336362,
+            1.1806518746931838
+          ]
+        }
+      },
+      "second": {
+        "on": {
+          "relative_er_error": [
+            -2.648622432185539,
+            1.8467309583230163
+          ],
+          "axis_residual": [
+            1.5831054796099218,
+            1.7470429367541072
+          ],
+          "off_axis_residual": [
+            1.4133634682126193,
+            1.7784329486888553
+          ]
+        },
+        "off": {
+          "relative_er_error": [
+            0.40679139053936064,
+            -0.10228748567454352
+          ],
+          "axis_residual": [
+            -2.024125234933553,
+            0.3997214342322695
+          ],
+          "off_axis_residual": [
+            -1.456885318336362,
+            1.1806518746931838
+          ]
+        }
+      }
+    }
+  },
+  "second_family_correction_on_charge_boundary": true,
+  "interpretation": "The second independent family is materialized and its pairwise slopes are reported beside the first family. Formal closure remains open because the preregistration requires repeat-slope comparison under a declared tolerance and an independent charge interpretation; correction-on axis charge remains a boundary."
+}

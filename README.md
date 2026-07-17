@@ -1,6 +1,6 @@
 # PIC-tutor
 
-当前成书版本为 `v0.109`：在 v0.108 两密度复核基础上，新增 `128x256`、`ions.density=0.25*n0/0.5*n0/0.75*n0` 的三密度 shape family。species rho 比值对三种密度稳定，`0.25*n0` 与 `0.75*n0` 的 total-rho 序列一致，而 `0.5*n0` 的 shape=2/3/4 出现 sampled-axis cancellation；分类收窄为特定物种配比边界，不宣称 root cause、charge closure 或正式收敛阶已完成。
+当前成书版本为 `v0.110`：在 v0.109 三密度 RZ 对照基础上，重新执行正式收敛 study 的第二组 12 个 2-rank producer。RZ/RSPHERE correction-on 的 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`；该证据确认 gate 可复现，但不宣称 formal numerical order 或 axis-charge closure 已完成。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

@@ -2596,6 +2596,21 @@ AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在�
 
 维护台账见 `notes/code-reading/particles/72-deposition-geometry-order-gap-register.md`，由 `scripts/audit_deposition_geometry_order_gap_register.py` 验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。
 
+### 读者主线：从守恒问题走到可解释的输入选择
+
+到这里，读者不需要按 v0.x 的时间顺序记住每一次新增实验。更有用的阅读方式是把本章压缩成四个问题：
+
+1. **粒子走过一段轨迹后，网格上应该改变什么？**
+   旧电荷、新电荷和半步电流必须满足离散连续性方程；因此 Esirkepov 和 Villasenor-Buneman 的核心差别，是它们怎样把端点形函数或轨迹 crossing 变成守恒的面通量。
+2. **同一个算法为什么在不同几何上不能直接互相替代？**
+   Cartesian、RZ、RCYLINDER、RSPHERE 的网格自由度、轴处理和体积因子不同。某个几何的 `divE-rho` 通过，只能证明该几何、shape、时间步和诊断 consumer 的组合。
+3. **看到一个残差时，先怀疑什么？**
+   先分开 field error、all-cell charge、axis charge 和 off-axis charge，再检查粒子状态、时间层、stencil 和 inverse-volume scaling。不要用 all-cell 平均掩盖轴向局部误差，也不要用 correction-off 的局部 PASS 推断默认 correction-on 已修复。
+4. **怎样把证据转成输入决策？**
+   先查 geometry/AMR/时间层是否允许该 deposition path，再查 shape 和 guard-cell 预算，最后选择与当前 observable 对应的 analysis。输入选择的结论应写成“在这些条件下可复现”，而不是“这个算法永远更准确”。
+
+下面的版本化小节保留逐次实验的数字、命令和分类，适合作为证据索引；第一次阅读可以先跳到 `5.15` 的结论和 `5.16` 的练习，第二遍再用这些小节核对上述四个问题。
+
 ### 5.14.3 v0.75 沉积算法选择矩阵：先看几何和时间层，再看守恒证据
 
 前面各节已经分别解释了四个 current-deposition 家族，但读者在实际输入卡里首先面对的通常不是公式，而是“当前 case 应该选哪条路径”。下面的矩阵把选择顺序固定为：**geometry/grid 约束 -> explicit/implicit 时间层 -> source-side 守恒机制 -> 当前可引用证据**。
@@ -2843,6 +2858,14 @@ v0.107 的 `128x256`、`ions.density = 0.5*n0` family 显示 shape=2/3/4 的 tot
 三种密度的 species `rho_ions` axis on/off 比值完全一致，并随 shape 严格下降：`0.850000000/0.843478261/0.836500221/0.831672744`。total-rho 的结果则分成两类：`0.25*n0` 与 `0.75*n0` 都复现同一单调序列；`0.5*n0` 的 shape=1 仍为 `0.850000000`，但 shape=2/3/4 为 `1/1/1`。这说明抵消不是任意 density change 都会触发的普遍失效，而是 sampled axis cells 上特定 species ratio 与 shape 组合造成的合成 observable cancellation。
 
 三密度的 correction-on/off sibling 均通过粒子 ID 状态、off-axis rho、初始 `Er/Ez/divE`、MPI decomposition 和 `delta(rho)` species-sum 检查；源码仍显示 charge kernel 不读取 axis toggle，axis correction 位于后续 axis wrap/scaling consumer。当前分类收窄为 `RZ_NONNEUTRAL_AXIS_CORRECTION_TOTAL_RHO_SAMPLED_AXIS_CANCELLATION_SPECIAL_RATIO_BOUNDARY_OPEN`。该结果不识别 kernel root cause、不关闭 charge closure 或正式收敛阶。报告见 `runs/stage-c-validation/rz-axis-correction-nonneutral-density-triple-v0.109/contract.{json,md}`，说明见 `notes/code-reading/particles/90-rz-axis-correction-nonneutral-density-triple.md`。
+
+### 5.14.26 v0.110 formal convergence repeat-slope gate re-execution
+
+为确认正式收敛 study 的 repeat-slope gate 不是一次性运行产物，本轮在当前 WarpX binary 和 `FI_PROVIDER=tcp` 环境下重新执行预注册的第二组 family：RZ/RSPHERE 各有 `64/128/256` 三档 resolution、correction on/off，共 12 个 2-rank producer。所有 producer 均返回 0，并写出 `producer.log`、`warpx_used_inputs` 和 diagnostics。
+
+使用与第一组相同的 reader-side norm，RZ 分开报告 `Er/Ez/axis/off-axis`，RSPHERE 分开报告 `Er/axis/off-axis`，不做跨 geometry pooled fit。预注册的 correction-on gate 包含 14 个相邻 refinement comparison，固定 absolute slope-delta tolerance 为 `1e-8`；本轮 14/14 通过，最大绝对 slope 差为 `2.0135e-11`。correction-off 仍只作 numerical/reader-floor negative control，最大差为 `1.736e-3`，不进入 gate。
+
+因此当前分类仍为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`。这次重执行证明 repeat-slope gate 在当前环境可复现，但不把它升级为 formal numerical order，也不关闭 correction-on axis-charge correctness。报告见 `runs/stage-c-validation/formal-convergence-second-family-v0.110/contract.{json,md}` 和 `runs/stage-c-validation/formal-convergence-repeat-slope-gate-v0.110/contract.{json,md}`，说明见 `notes/code-reading/particles/91-formal-convergence-repeat-slope-gate-v0.110.md`。
 
 ## 5.15 本章结论
 

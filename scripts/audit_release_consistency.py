@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 
-CURRENT_VERSION = "v0.109"
+CURRENT_VERSION = "v0.110"
 
 
 def check(root: Path, relative: str, expected: str) -> dict[str, object]:
@@ -22,13 +22,13 @@ def build_report(root: Path) -> dict[str, object]:
     checks = [
         check(root, "README.md", f"当前成书版本为 `{CURRENT_VERSION}`"),
         check(root, "README.md", "拒绝 README 中已知的旧当前版本口径"),
-        check(root, "manuscript/README.md", f"当前 {CURRENT_VERSION} 合订 PDF"),
+        check(root, "manuscript/README.md", f"当前合订产物位于 `dist/pic-tutor-{CURRENT_VERSION}.{{md,html,pdf}}`"),
         check(root, "manuscript/VERSION.md", f"# PIC-tutor {CURRENT_VERSION}"),
-        check(root, "manuscript/VERSION.md", "scripts/verify_v109_build.py"),
+        check(root, "manuscript/VERSION.md", "scripts/verify_v110_build.py"),
         check(root, "docs/public-repo-release-audit.md", f"dist/pic-tutor-{CURRENT_VERSION}.pdf"),
-        check(root, "docs/v0.109-release-manifest.json", f'"release": "PIC-tutor {CURRENT_VERSION}"'),
-        check(root, "scripts/build_v109.py", f"pic-tutor-{CURRENT_VERSION}"),
-        check(root, "scripts/verify_v109_build.py", f"v0.109 artifact verification"),
+        check(root, "docs/v0.110-release-manifest.json", f'"release": "PIC-tutor {CURRENT_VERSION}"'),
+        check(root, "scripts/build_v110.py", f"pic-tutor-{CURRENT_VERSION}"),
+        check(root, "scripts/verify_v110_build.py", f"v0.110 artifact verification"),
     ]
     forbidden_current_refs = []
     for relative in ("README.md", "manuscript/README.md", "manuscript/VERSION.md"):

@@ -27,6 +27,25 @@ WarpX 官方理论文档把 PML、PEC、PMC、Silver-Mueller、周期边界和�
 
 这两篇笔记分别覆盖“参数如何进入 WarpX”和“PML 如何变成真实 split fields / sigma arrays”。对于边界模块，这个切分比直接按文件顺序扫描更有效，因为边界问题天然跨参数解析、主循环分派、场数组镜像和粒子沉积四层。
 
+## 本章的阅读路线：边界是一个闭合系统
+
+读者第一次读本章时，可以把所有边界问题放进同一条因果链：
+
+```text
+输入参数 -> field boundary / particle boundary -> guard cells 与 PML 子域
+          -> 场更新与粒子处理 -> rho/J 同步与 AMR 重建 -> 输出诊断
+```
+
+这条链解释了三个容易混淆的现象。第一，`PEC`、`PML` 和 `embedded boundary` 不是同一类对象：前者是场边界条件，第二者是吸收层的离散子域，第三者还要先生成 cut-cell 几何和粒子侧距离判定。第二，粒子被吸收、被记录或穿过周期边界，和场的 Maxwell 边界是否正确是两条需要分别验证的路径。第三，AMR 的难点不只是细网格上的局部更新，还包括 coarse/fine ownership、guard-cell 填充、moving window 和粒子/源项同步。
+
+因此每个边界案例都应按以下顺序阅读：
+
+1. 先确认边界参数的 owner、默认值和方向配对；
+2. 再确认边界进入哪个场/粒子分派，以及需要多少 guard cells；
+3. 最后选择与问题相符的 observable：反射率、残余场、能量账本、重启重复性、scraped-particle buffer 或 AMR route ledger。
+
+本章后面的版本化证据段不是另一套理论，而是这条链上不同节点的案例记录。通过一个 PML 反射率 gate，不代表 RZ 残余场、粒子入 PML 或 AMR transition-zone route ledger 也已证明；读者应始终沿 producer/consumer 和 observable 的边界解释结果。
+
 ## 7.0 v0.68 源码入口地图
 
 本章后续不能只按“边界条件”这个名词归类，因为 WarpX 中的边界语义会穿过参数解析、场数组 guard cell、PML split field、粒子删除/反射/记录、诊断和 AMR 重建。本节把当前 v0.68 的读代码入口固定如下：

@@ -1,0 +1,158 @@
+{
+  "contract": "formal convergence repeat-slope comparison gate",
+  "classification": "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN",
+  "scope": "RZ/RSPHERE independent families; correction-on gate and descriptive correction-off negative control",
+  "passed": true,
+  "comparison_count": 14,
+  "absolute_slope_delta_tolerance": 1e-08,
+  "gated_corrections": [
+    "on"
+  ],
+  "max_absolute_slope_delta": 2.013500477460184e-11,
+  "negative_control_max_absolute_slope_delta": 0.0017356449102607918,
+  "comparisons": [
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "metric": "er_error",
+      "interval": 1,
+      "first_slope": -1.3797030660931942,
+      "second_slope": -1.3797030660931717,
+      "absolute_delta": 2.2426505097428162e-14,
+      "passed": true
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "metric": "er_error",
+      "interval": 2,
+      "first_slope": 1.1783406211160024,
+      "second_slope": 1.1783406211160041,
+      "absolute_delta": 1.7763568394002505e-15,
+      "passed": true
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "metric": "ez_error",
+      "interval": 1,
+      "first_slope": -1.8874374833743448,
+      "second_slope": -1.8874374833743364,
+      "absolute_delta": 8.43769498715119e-15,
+      "passed": true
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "metric": "ez_error",
+      "interval": 2,
+      "first_slope": 1.2336639152020634,
+      "second_slope": 1.2336639152021085,
+      "absolute_delta": 4.5075054799781356e-14,
+      "passed": true
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "metric": "axis_residual",
+      "interval": 1,
+      "first_slope": 1.2414565469532781,
+      "second_slope": 1.2414565469542336,
+      "absolute_delta": 9.554579349924097e-13,
+      "passed": true
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "metric": "axis_residual",
+      "interval": 2,
+      "first_slope": 1.0084652192300463,
+      "second_slope": 1.0084652192300463,
+      "absolute_delta": 0.0,
+      "passed": true
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "metric": "off_axis_residual",
+      "interval": 1,
+      "first_slope": -0.12828390756831298,
+      "second_slope": -0.12828390756056243,
+      "absolute_delta": 7.750550201635065e-12,
+      "passed": true
+    },
+    {
+      "geometry": "RZ",
+      "correction": "on",
+      "metric": "off_axis_residual",
+      "interval": 2,
+      "first_slope": 1.4476237081709646,
+      "second_slope": 1.4476237081508296,
+      "absolute_delta": 2.013500477460184e-11,
+      "passed": true
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "metric": "relative_er_error",
+      "interval": 1,
+      "first_slope": -2.648622432185539,
+      "second_slope": -2.648622432185539,
+      "absolute_delta": 0.0,
+      "passed": true
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "metric": "relative_er_error",
+      "interval": 2,
+      "first_slope": 1.8467309583230163,
+      "second_slope": 1.8467309583230163,
+      "absolute_delta": 0.0,
+      "passed": true
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "metric": "axis_residual",
+      "interval": 1,
+      "first_slope": 1.5831054796099218,
+      "second_slope": 1.5831054796099218,
+      "absolute_delta": 0.0,
+      "passed": true
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "metric": "axis_residual",
+      "interval": 2,
+      "first_slope": 1.7470429367541072,
+      "second_slope": 1.7470429367541072,
+      "absolute_delta": 0.0,
+      "passed": true
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "metric": "off_axis_residual",
+      "interval": 1,
+      "first_slope": 1.4133634682126193,
+      "second_slope": 1.4133634682126193,
+      "absolute_delta": 0.0,
+      "passed": true
+    },
+    {
+      "geometry": "RSPHERE",
+      "correction": "on",
+      "metric": "off_axis_residual",
+      "interval": 2,
+      "first_slope": 1.7784329486888553,
+      "second_slope": 1.7784329486888553,
+      "absolute_delta": 0.0,
+      "passed": true
+    }
+  ],
+  "formal_order_closure": false,
+  "charge_boundary_remains_open": true,
+  "interpretation": "The two materialized families pass the preregistered slope-repeat gate. This is an order-comparison gate only; it does not establish a formal numerical order and does not close the correction-on axis-charge boundary."
+}

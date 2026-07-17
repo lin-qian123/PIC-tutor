@@ -1,7 +1,16 @@
 # TODO
 
+## 2026-07-17
+
+- [x] 将 `manuscript/VERSION.md` 与 `manuscript/README.md` 从发布日志改为读者导读：补充目标读者、学习路径、能力目标、证据分层和复现入口；完整历史记录移至 `docs/version-history-v0.110.md`。
+- [x] 在前言中明确“正文是教程，`docs/`/`notes/` 是证据层”，避免把版本号、合同和运行记录当成读者必须按时间阅读的章节。
+- [x] 完成读者视角入口审查：公式、源码调用链、案例和练习已经形成主线，但第 5-7 章仍保留较多按 v0.x 编号的证据增量小节，需继续做主题化编辑。
+- [ ] 将第 5 章 `5.14`、第 7 章 PML 证据段和第 9 章路线图中的版本化增量，改写成“问题 -> 原理 -> 证据 -> 限制 -> 练习”的读者顺序；详细运行合同保留在 `docs/`/`notes/`。
+- [ ] 完成至少一轮人工通读，检查术语首次出现、公式前置定义、代码片段上下文、章节过渡和练习是否真的能独立执行；自动审计不能替代这一步。
+
 ## 2026-07-13
 
+- [x] v0.110 在当前 WarpX binary 和 `FI_PROVIDER=tcp` 环境下重新执行正式收敛 study 第二组：RZ/RSPHERE 各 `64/128/256`、correction on/off，共 12 个真实 2-rank producer 全部返回 0；correction-on 14 项 repeat-slope gate 全部通过，最大绝对 slope 差 `2.0135e-11 < 1e-8`。分类仍为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`，不宣称 formal numerical order 或 axis-charge closure。
 - [x] v0.109 将非中性 RZ density family 扩展为 `0.25*n0/0.5*n0/0.75*n0` 三种密度：species axis 比值三者一致，`0.25*n0` 与 `0.75*n0` 的 total-rho shape 序列一致，`0.5*n0` 的 shape=2/3/4 为 sampled-axis cancellation。分类收窄为 `RZ_NONNEUTRAL_AXIS_CORRECTION_TOTAL_RHO_SAMPLED_AXIS_CANCELLATION_SPECIAL_RATIO_BOUNDARY_OPEN`，仍不宣称 kernel root cause 或 charge closure。
 - [x] v0.108 在 `128x256` 真实 2-rank RZ family 中加入 `ions.density=0.25*n0` 对照：species axis 比值对 `0.25/0.5*n0` 完全一致且随 shape 单调下降；total-rho 在 `0.25*n0` 恢复单调、在 `0.5*n0` 的 shape=2/3/4 因 species cancellation 为 `1/1/1`。分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_TOTAL_RHO_CANCELLATION_DENSITY_SENSITIVE_BOUNDARY_OPEN`，仍不宣称 kernel root cause 或 charge closure。
 - [x] v0.107 将非中性 RZ shape family 扩展到 `128x256` 真实 2-rank sibling：species axis 比值在 `64x128`/`128x256` 完全一致并随 shape 单调下降，但高分辨率 total-rho 的 shape=2/3/4 因 species cancellation 变为 `1/1/1`，最大跨分辨率差 `0.168327256`；分类为 `RZ_NONNEUTRAL_AXIS_CORRECTION_SHAPE_DEPENDENT_CROSS_RESOLUTION_BOUNDARY_OPEN`，保持 total-rho、charge closure 和 kernel root cause 开放。

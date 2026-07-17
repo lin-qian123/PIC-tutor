@@ -3787,14 +3787,12 @@ gather 和沉积内核，再从 <code>EvolveE/B</code> 进入 FDTD/PSATD
 restart、AMR level 初始化、外部场、species 注入器、粒子创建
 kernel、Gaussian beam、openPMD 文件注入和 projection divergence
 cleaning。</p>
-<p>本章以 WarpX <code>pkuHEDPbranch</code> 的 <code>8c488b1a9</code>
-源码快照为导航。阅读时可用
-<code>Source/Initialization/WarpXInitData.cpp</code> 中的
-<code>InitData()</code>、<code>InitFromScratch()</code>、<code>InitDiagnostics()</code>
-和 <code>AddExternalFields()</code>
-作为主入口；其他版本应按函数名检索。需要回查实现细节时，在
-<code>notes/code-reading/initialization/</code>
-中按问题选择下列笔记组，而不必按编号顺序阅读：</p>
+<p>阅读初始化代码时，应先围绕四个主入口建立因果关系：<code>InitData()</code>
+决定 fresh/restart 分叉，<code>InitFromScratch()</code> 建立初始
+level，<code>InitDiagnostics()</code>
+准备可观察输出，<code>AddExternalFields()</code>
+把外部场加入初态。使用不同 WarpX
+版本时，优先按这些函数的职责和调用关系检索，不要把行号、分支名称或笔记编号当作初始化语义。</p>
 <table>
 <colgroup>
 <col style="width: 50%" />
@@ -3803,27 +3801,29 @@ cleaning。</p>
 <thead>
 <tr>
 <th>读者问题</th>
-<th>建议源码笔记</th>
+<th>首先追踪的对象</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>程序启动后哪些参数在构造对象前已被锁定？</td>
-<td><code>00</code>、<code>08--09</code>：调用图与启动层</td>
+<td>参数读取、<code>WarpX::WarpX()</code> 与
+<code>ReadParameters()</code></td>
 </tr>
 <tr>
 <td>参数、level 字段和 <code>InitData()</code>
 的顺序如何落到对象上？</td>
-<td><code>10--13</code>：参数落点、组合限制、字段分配与后置消费</td>
+<td><code>InitFromScratch()</code>、level allocation 与 field data</td>
 </tr>
 <tr>
 <td>外场、species、粒子创建与散度修正分别如何进入初态？</td>
-<td><code>01--06</code>：外场、注入器、分布、创建 kernel 与 projection
-cleaner</td>
+<td><code>AddExternalFields()</code>、<code>PlasmaInjector</code>、粒子创建与
+projection cleaner</td>
 </tr>
 <tr>
-<td>哪些官方案例覆盖各初始化分支？</td>
-<td><code>14--16</code>：初始化验证地图</td>
+<td>哪些案例能区分不同初始化路径？</td>
+<td>initial distribution、space charge、external field 与 restart
+的观察量</td>
 </tr>
 </tbody>
 </table>
@@ -6083,12 +6083,11 @@ WarpX 初始化链的分层验证，而不是对 <code>3A ES1</code>
 <code>Evolve()</code>、<code>OneStep()</code>、<code>PushParticlesandDeposit()</code>、field
 solver 和 diagnostics
 都在这个已经离散化、分布式、带权重和边界条件的状态上工作。</p>
-<p>在本章采用的源码快照中，初始化到推进的交界由
-<code>Source/Evolve/WarpXEvolve.cpp</code> 承接：<code>Evolve()</code>
-负责外层时间步，<code>OneStep()</code> 负责 solver/AMR
-分派，<code>PushParticlesandDeposit()</code>
-才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史
-<code>3A ES1</code> 子程序的同名替代物。</p>
+<p>初始化到推进的交界由 <code>Evolve()</code>、<code>OneStep()</code> 与
+<code>PushParticlesandDeposit()</code>
+承接：前者负责外层时间步，第二者负责 solver/AMR
+分派，最后才把已经初始化的粒子和场送入实际粒子推进与沉积路径。历史 ES1
+的阶段名只提供物理职责的参照，不能替代这些现代对象和分支。</p>
 <p>进一步学习可沿以下方向展开：</p>
 <ul>
 <li>把 <code>InitLevelData()</code> 中每一类 field allocation 展开到

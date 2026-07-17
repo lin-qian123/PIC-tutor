@@ -2,14 +2,14 @@
 
 本章把 `WarpX::InitData()` 展开成一条完整的初始化链。它补足第 3 章中“初始化”只作为主循环前置步骤的不足：这里开始逐块解释 fresh run / restart、AMR level 初始化、外部场、species 注入器、粒子创建 kernel、Gaussian beam、openPMD 文件注入和 projection divergence cleaning。
 
-本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航。阅读时可用 `Source/Initialization/WarpXInitData.cpp` 中的 `InitData()`、`InitFromScratch()`、`InitDiagnostics()` 和 `AddExternalFields()` 作为主入口；其他版本应按函数名检索。需要回查实现细节时，在 `notes/code-reading/initialization/` 中按问题选择下列笔记组，而不必按编号顺序阅读：
+阅读初始化代码时，应先围绕四个主入口建立因果关系：`InitData()` 决定 fresh/restart 分叉，`InitFromScratch()` 建立初始 level，`InitDiagnostics()` 准备可观察输出，`AddExternalFields()` 把外部场加入初态。使用不同 WarpX 版本时，优先按这些函数的职责和调用关系检索，不要把行号、分支名称或笔记编号当作初始化语义。
 
-| 读者问题 | 建议源码笔记 |
+| 读者问题 | 首先追踪的对象 |
 |---|---|
-| 程序启动后哪些参数在构造对象前已被锁定？ | `00`、`08--09`：调用图与启动层 |
-| 参数、level 字段和 `InitData()` 的顺序如何落到对象上？ | `10--13`：参数落点、组合限制、字段分配与后置消费 |
-| 外场、species、粒子创建与散度修正分别如何进入初态？ | `01--06`：外场、注入器、分布、创建 kernel 与 projection cleaner |
-| 哪些官方案例覆盖各初始化分支？ | `14--16`：初始化验证地图 |
+| 程序启动后哪些参数在构造对象前已被锁定？ | 参数读取、`WarpX::WarpX()` 与 `ReadParameters()` |
+| 参数、level 字段和 `InitData()` 的顺序如何落到对象上？ | `InitFromScratch()`、level allocation 与 field data |
+| 外场、species、粒子创建与散度修正分别如何进入初态？ | `AddExternalFields()`、`PlasmaInjector`、粒子创建与 projection cleaner |
+| 哪些案例能区分不同初始化路径？ | initial distribution、space charge、external field 与 restart 的观察量 |
 
 ## 3A.1 初始化链为什么值得单独成章
 
@@ -1763,7 +1763,7 @@ inputs
 
 这个状态才是 PIC 时间推进的初始条件。后续 `Evolve()`、`OneStep()`、`PushParticlesandDeposit()`、field solver 和 diagnostics 都在这个已经离散化、分布式、带权重和边界条件的状态上工作。
 
-在本章采用的源码快照中，初始化到推进的交界由 `Source/Evolve/WarpXEvolve.cpp` 承接：`Evolve()` 负责外层时间步，`OneStep()` 负责 solver/AMR 分派，`PushParticlesandDeposit()` 才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史 `3A ES1` 子程序的同名替代物。
+初始化到推进的交界由 `Evolve()`、`OneStep()` 与 `PushParticlesandDeposit()` 承接：前者负责外层时间步，第二者负责 solver/AMR 分派，最后才把已经初始化的粒子和场送入实际粒子推进与沉积路径。历史 ES1 的阶段名只提供物理职责的参照，不能替代这些现代对象和分支。
 
 进一步学习可沿以下方向展开：
 

@@ -17,16 +17,9 @@
 
 版本号、运行合同和缺口台账记录的是书稿如何被维护，不是读者必须按时间顺序阅读的内容。它们集中放在 `docs/` 和 `notes/`，正文只在需要解释证据范围时引用它们。
 
-本书不是 WarpX 官方文档的翻译，也不是只讲公式的 PIC 理论笔记。它的主线是：先从 Vlasov-Maxwell / Vlasov-Poisson 这类连续模型出发，说明为什么需要宏粒子；再把宏粒子、网格、形函数、沉积和场求解拼成 PIC 算法；最后回到本机 `../warpx` 的真实源码，解释一个现代高性能 PIC 程序如何把这些步骤组织成可运行、可扩展、可验证的模拟软件。
+本书不是 WarpX 官方文档的翻译，也不是只讲公式的 PIC 理论笔记。它的主线是：先从 Vlasov-Maxwell / Vlasov-Poisson 这类连续模型出发，说明为什么需要宏粒子；再把宏粒子、网格、形函数、沉积和场求解拼成 PIC 算法；最后回到 WarpX 的 `Source/`、`Docs/`、`Examples/` 和 regression 入口，解释一个现代高性能 PIC 程序如何把这些步骤组织成可运行、可扩展、可验证的模拟软件。
 
-当前书稿绑定的源码状态是：
-
-- WarpX 分支：`pkuHEDPbranch`
-- WarpX commit：`063f8b586f04321e13150ae3e730e0794ca75cb1`
-- 主要源码入口：`../warpx/Source/`
-- 官方文档入口：`../warpx/Docs/source/`
-- 示例入口：`../warpx/Examples/`
-- regression 入口：`../warpx/Regression/`
+源码定位应优先依赖文件职责、函数名和调用关系，而不是固定 commit 或行号。例如，主循环从 `Evolve()` 与 `OneStep()` 开始，初始化从 `InitData()` 开始，粒子/源项主链从 `PushParticlesandDeposit()` 与 `SyncCurrentAndRho()` 开始。版本信息只用于复现实验和维护记录，不应改变读者对算法关系的理解。
 
 本书的每个技术判断都应尽量落到六类证据：物理方程、离散公式、WarpX 源码路径、输入参数、示例或测试、文献。DeepWiki、Zread 等 AI 解读页面可以用来快速找到模块名，但不能作为最终依据。
 

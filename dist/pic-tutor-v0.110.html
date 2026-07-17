@@ -897,19 +897,16 @@ case，却还不能回答“粒子在什么时间层被推进”“电流为什�
 <p>本书不是 WarpX 官方文档的翻译，也不是只讲公式的 PIC
 理论笔记。它的主线是：先从 Vlasov-Maxwell / Vlasov-Poisson
 这类连续模型出发，说明为什么需要宏粒子；再把宏粒子、网格、形函数、沉积和场求解拼成
-PIC 算法；最后回到本机 <code>../warpx</code>
-的真实源码，解释一个现代高性能 PIC
+PIC 算法；最后回到 WarpX 的
+<code>Source/</code>、<code>Docs/</code>、<code>Examples/</code> 和
+regression 入口，解释一个现代高性能 PIC
 程序如何把这些步骤组织成可运行、可扩展、可验证的模拟软件。</p>
-<p>当前书稿绑定的源码状态是：</p>
-<ul>
-<li>WarpX 分支：<code>pkuHEDPbranch</code></li>
-<li>WarpX
-commit：<code>063f8b586f04321e13150ae3e730e0794ca75cb1</code></li>
-<li>主要源码入口：<code>../warpx/Source/</code></li>
-<li>官方文档入口：<code>../warpx/Docs/source/</code></li>
-<li>示例入口：<code>../warpx/Examples/</code></li>
-<li>regression 入口：<code>../warpx/Regression/</code></li>
-</ul>
+<p>源码定位应优先依赖文件职责、函数名和调用关系，而不是固定 commit
+或行号。例如，主循环从 <code>Evolve()</code> 与 <code>OneStep()</code>
+开始，初始化从 <code>InitData()</code> 开始，粒子/源项主链从
+<code>PushParticlesandDeposit()</code> 与
+<code>SyncCurrentAndRho()</code>
+开始。版本信息只用于复现实验和维护记录，不应改变读者对算法关系的理解。</p>
 <p>本书的每个技术判断都应尽量落到六类证据：物理方程、离散公式、WarpX
 源码路径、输入参数、示例或测试、文献。DeepWiki、Zread 等 AI
 解读页面可以用来快速找到模块名，但不能作为最终依据。</p>

@@ -8,27 +8,15 @@
     "core_chapters_have_exercises": true
   },
   "passed": true,
-  "classification": "READER_FACING_CHAPTERS_5_7_PASS_FIELD_SOLVER_THEME_EDITING_OPEN",
-  "scope": "entry-point and learning-path audit; remaining versioned field-solver evidence sections require human editorial rewrite",
-  "versioned_chapter_heading_count": 13,
+  "classification": "READER_FACING_CHAPTERS_5_6_7_PASS_PUSHER_THEME_EDITING_OPEN",
+  "scope": "entry-point and learning-path audit; remaining versioned particle-pusher evidence section requires human editorial rewrite",
+  "versioned_chapter_heading_count": 1,
   "versioned_chapter_headings": [
-    "### 4.4.2 v0.74",
-    "### 6.6.1 v0.26",
-    "### 6.6.2 v0.27",
-    "### 6.6.3 v0.17",
-    "### 6.6.4 v0.18",
-    "### 6.6.5 v0.19",
-    "### 6.6.6 v0.20",
-    "### 6.6.7 v0.74",
-    "### 6.7.1 v0.28",
-    "### 6.8.1 v0.29",
-    "### 6.8.2 v0.30",
-    "### 6.8.3 v0.31",
-    "### 6.8.6 v0.74"
+    "### 4.4.2 v0.74"
   ],
   "project_record_word_count_in_entry_points": 4,
   "open_items": [
-    "第 6 章仍有按 v0.x 编号的证据增量小节",
+    "第 4 章仍有按 v0.x 编号的 Vay review 证据小节",
     "需要人工通读术语、公式、代码上下文、章节过渡和练习"
   ]
 }

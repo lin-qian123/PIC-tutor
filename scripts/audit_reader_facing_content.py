@@ -39,13 +39,13 @@ def main() -> int:
         "contract": "reader-facing content audit",
         "checks": checks,
         "passed": all(checks.values()),
-        "classification": "READER_FACING_CHAPTERS_5_7_PASS_FIELD_SOLVER_THEME_EDITING_OPEN",
-        "scope": "entry-point and learning-path audit; remaining versioned field-solver evidence sections require human editorial rewrite",
+        "classification": "READER_FACING_CHAPTERS_5_6_7_PASS_PUSHER_THEME_EDITING_OPEN",
+        "scope": "entry-point and learning-path audit; remaining versioned particle-pusher evidence section requires human editorial rewrite",
         "versioned_chapter_heading_count": len(version_markers),
         "versioned_chapter_headings": version_markers,
         "project_record_word_count_in_entry_points": len(project_record_words),
         "open_items": [
-            "第 6 章仍有按 v0.x 编号的证据增量小节",
+            "第 4 章仍有按 v0.x 编号的 Vay review 证据小节",
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ],
     }

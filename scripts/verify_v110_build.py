@@ -18,7 +18,7 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-EXPECTED_PDF_PAGES = 289
+EXPECTED_PDF_PAGES = 271
 
 
 def image_links(text: str) -> list[str]:
@@ -43,6 +43,7 @@ def main() -> None:
     # the tutorial's opening pages.
     source += "\n" + (ROOT / "docs" / "version-history-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-05-v0-evidence-ledger.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-06-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
     merged = MERGED_MARKDOWN.read_text(encoding="utf-8")
     html = HTML.read_text(encoding="utf-8", errors="ignore")
@@ -410,7 +411,8 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "| 173 |",
-                "| 243 |",
+                "| 183 |",
+                "| 189 |",
                 "短页为附录结尾的预期留白",
                 "全书人工通读、第三方材料许可和公开再分发仍需单独签收",
             )

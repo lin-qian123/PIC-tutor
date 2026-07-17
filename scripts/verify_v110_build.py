@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The current reader-facing layout, including particle and field-solver reading routes, has 264 pages.
-EXPECTED_PDF_PAGES = 264
+# The current reader-facing layout, including the PIC-loop reading route, has 265 pages.
+EXPECTED_PDF_PAGES = 265
 
 
 def image_links(text: str) -> list[str]:
@@ -62,6 +62,8 @@ def main() -> None:
     chapter_6 = (ROOT / "manuscript" / "chapters" / "06-field-solvers.md").read_text(
         encoding="utf-8"
     )
+    chapter_2 = (ROOT / "manuscript" / "chapters" / "02-pic-loop.md").read_text(encoding="utf-8")
+    chapter_3 = (ROOT / "manuscript" / "chapters" / "03-warpx-evolve.md").read_text(encoding="utf-8")
     chapter_7 = (ROOT / "manuscript" / "chapters" / "07-boundaries-amr.md").read_text(
         encoding="utf-8"
     )
@@ -97,6 +99,13 @@ def main() -> None:
                 "## 6.13 本章结论",
                 "先确定几何和物理目标，再确定 source 时间模型",
             )
+        ),
+        "chapter_2_3_reader_routes": all(
+            marker in chapter_2
+            for marker in ("## 2.11 本章结论", "先确定连续问题与可分辨尺度", "区分外层时间步和内部重复")
+        ) and all(
+            marker in chapter_3
+            for marker in ("追踪它何时变成网格、场、粒子和诊断", "InitData()", "OneStep()")
         ),
         "chapter_7_reader_closure": all(
             marker in chapter_7

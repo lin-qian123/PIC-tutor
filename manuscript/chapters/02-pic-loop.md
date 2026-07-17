@@ -2,7 +2,7 @@
 
 本章先不急着进入某一个 WarpX 函数。生产级 PIC 代码的困难不在于“有粒子、有网格、有 Maxwell 方程”这几个名词，而在于这些对象必须在离散时间层、离散空间布局、并行 guard cells、边界条件和守恒约束之间保持一致。后续逐行读 WarpX 时，本章给出判断代码是否“物理上在做正确事情”的基准。
 
-本章对应的源码阅读笔记保存在 `notes/code-reading/evolve/01-pic-time-layers.md` 和 `notes/code-reading/evolve/02-evolve-source-evidence.md`。书中的 WarpX 路径以 `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为准；读者使用其他版本时，应先按函数名和调用关系定位，而不要把行号或局部文件布局当作稳定 API。
+本章给出的函数名和调用关系是读代码的定位方法，而不是某一份源码树的版本标签。使用不同 WarpX 版本时，应先从 `Evolve()`、`OneStep()`、`PushParticlesandDeposit()` 和 `SyncCurrentAndRho()` 等职责明确的入口重新建立调用关系，而不要把行号或局部文件布局当作稳定 API。
 
 Yee 1966 在本书中只承担一个窄的历史定位：有限差分 Maxwell 方程通过合适的场点布置处理导体边界。它不能替代本章的 stencil、时间层或色散推导；这些内容由连续方程、离散推导和现代实现三层分别说明。`CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 与 `EvolveE.cpp` 的交叉定位可供读者复查，但现代代码不构成对历史论文逐式等价的证明。
 
@@ -674,4 +674,13 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 2. 用本章的 `\lambda_D` 讨论说明：为什么 `\Delta x \gg \lambda_D` 时，即使主循环稳定，也可能已经不是同一个物理 plasma。
 3. 对照 [Langmuir 阅读笔记](../../notes/code-reading/applications/00-langmuir-wave.md)，指出 `analysis_1d.py` 的两条核心断言分别对应本章哪两类理论边界。
 
-下一章将逐段解释这些源码，并把 `main.cpp`、`WarpX` 单例、`ReadParameters()`、`InitData()`、`ComputeDt()` 和 `Evolve()` 接成完整调用链。
+## 2.11 本章结论
+
+PIC 总循环的关键不在于依次调用“推粒子、沉积、推场”三个动作，而在于每个动作所使用的时间层和空间表示相容。读者应按以下顺序判断一条 PIC 路线：
+
+1. **先确定连续问题与可分辨尺度。**等离子体频率、Debye 长度、光波 CFL 和预期物理时间窗决定 `dt`、网格和粒子采样是否有机会描述目标问题。
+2. **再确定粒子与网格的交换方式。**gather、形函数和 `rho/J` deposition 必须共同满足连续性和离散布局要求；仅有稳定的场更新不能补偿不相容的源项。
+3. **区分外层时间步和内部重复。**implicit nonlinear iteration、JRhom 的 source 时间积分与 AMR subcycling 都可能在一个外层步内多次执行，但它们分别代表试探、积分和真实细层推进，不能混用同一类验证量解释。
+4. **最后用与问题匹配的 observable 验证。**Langmuir 的解析场与 `divE-rho/epsilon_0` 能检验指定输入下的波动和 Gauss-law 链；程序退出或 checksum 本身不能证明所有几何、边界和算法组合正确。
+
+这条顺序把连续 Vlasov--Maxwell 模型连接到真实的离散时间推进，也为第 3 章的生命周期调用图、第 4、5 章的粒子/沉积链和第 6 章的场求解器选择提供共同的时间层坐标。

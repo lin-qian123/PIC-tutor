@@ -213,6 +213,7 @@ JRhom 与 implicit：同一个外层 step 内部也可能有不同的时间合�
 基础文献与证据范围</a></li>
 <li><a href="#进一步阅读与练习" id="toc-进一步阅读与练习">2.10
 进一步阅读与练习</a></li>
+<li><a href="#本章结论" id="toc-本章结论">2.11 本章结论</a></li>
 </ul></li>
 <li><a href="#warpx-主演化路径生命周期初始化与-evolve" id="toc-warpx-主演化路径生命周期初始化与-evolve">3. WarpX
 主演化路径：生命周期、初始化与 <code>Evolve()</code></a>
@@ -408,7 +409,7 @@ lookup table 是采样器的一部分，不是可有可无的附属文件</a></l
 <li><a href="#不要被共同的-photon-名称误导强场-qed-与碰撞-qed-是两棵树" id="toc-不要被共同的-photon-名称误导强场-qed-与碰撞-qed-是两棵树">4.14.11
 不要被共同的 photon 名称误导：强场 QED 与碰撞 QED 是两棵树</a></li>
 </ul></li>
-<li><a href="#本章结论" id="toc-本章结论">4.15 本章结论</a></li>
+<li><a href="#本章结论-1" id="toc-本章结论-1">4.15 本章结论</a></li>
 <li><a href="#练习与复现实验" id="toc-练习与复现实验">4.16
 练习与复现实验</a></li>
 </ul></li>
@@ -506,7 +507,7 @@ residual：把局部诊断和算法错误分开</a></li>
 <li><a href="#收敛研究描述性趋势不是正式阶数" id="toc-收敛研究描述性趋势不是正式阶数">5.14.6
 收敛研究：描述性趋势不是正式阶数</a></li>
 </ul></li>
-<li><a href="#本章结论-1" id="toc-本章结论-1">5.15 本章结论</a></li>
+<li><a href="#本章结论-2" id="toc-本章结论-2">5.15 本章结论</a></li>
 <li><a href="#练习与源码定位-1" id="toc-练习与源码定位-1">5.16
 练习与源码定位</a></li>
 </ul></li>
@@ -604,7 +605,7 @@ solver：哪些是强判据，哪些只是输出回归</a></li>
 </ul></li>
 <li><a href="#练习与运行验证" id="toc-练习与运行验证">6.12
 练习与运行验证</a></li>
-<li><a href="#本章结论-2" id="toc-本章结论-2">6.13 本章结论</a></li>
+<li><a href="#本章结论-3" id="toc-本章结论-3">6.13 本章结论</a></li>
 </ul></li>
 <li><a href="#边界条件pml-与-amr" id="toc-边界条件pml-与-amr">7.
 边界条件、PML 与 AMR</a>
@@ -639,7 +640,7 @@ buffer</a></li>
 AMR transition zone：为什么最终 plotfile 不足以证明路由正确</a></li>
 <li><a href="#本章练习与源码定位" id="toc-本章练习与源码定位">7.10
 本章练习与源码定位</a></li>
-<li><a href="#本章结论-3" id="toc-本章结论-3">7.11 本章结论</a></li>
+<li><a href="#本章结论-4" id="toc-本章结论-4">7.11 本章结论</a></li>
 </ul></li>
 <li><a href="#诊断验证与案例" id="toc-诊断验证与案例">8.
 诊断、验证与案例</a>
@@ -761,7 +762,7 @@ diagnostics 的最小起点</a></li>
 练习与复现实验</a></li>
 <li><a href="#延伸验证路线" id="toc-延伸验证路线">8.16
 延伸验证路线</a></li>
-<li><a href="#本章结论-4" id="toc-本章结论-4">8.17 本章结论</a></li>
+<li><a href="#本章结论-5" id="toc-本章结论-5">8.17 本章结论</a></li>
 </ul></li>
 <li><a href="#文献路线与延伸阅读" id="toc-文献路线与延伸阅读">9.
 文献路线与延伸阅读</a>
@@ -798,7 +799,7 @@ A：第 5 章沉积文献</a></li>
 </ul></li>
 <li><a href="#成书的已知证据边界" id="toc-成书的已知证据边界">9.8
 成书的已知证据边界</a></li>
-<li><a href="#本章结论-5" id="toc-本章结论-5">9.9 本章结论</a></li>
+<li><a href="#本章结论-6" id="toc-本章结论-6">9.9 本章结论</a></li>
 <li><a href="#练习与复核" id="toc-练习与复核">9.10 练习与复核</a>
 <ul>
 <li><a href="#证据层分类练习" id="toc-证据层分类练习">9.10.1
@@ -1461,11 +1462,11 @@ Vlasov-Maxwell 到离散时间推进</h1>
 方程”这几个名词，而在于这些对象必须在离散时间层、离散空间布局、并行
 guard cells、边界条件和守恒约束之间保持一致。后续逐行读 WarpX
 时，本章给出判断代码是否“物理上在做正确事情”的基准。</p>
-<p>本章对应的源码阅读笔记保存在
-<code>notes/code-reading/evolve/01-pic-time-layers.md</code> 和
-<code>notes/code-reading/evolve/02-evolve-source-evidence.md</code>。书中的
-WarpX 路径以 <code>pkuHEDPbranch</code> 的 <code>8c488b1a9</code>
-源码快照为准；读者使用其他版本时，应先按函数名和调用关系定位，而不要把行号或局部文件布局当作稳定
+<p>本章给出的函数名和调用关系是读代码的定位方法，而不是某一份源码树的版本标签。使用不同
+WarpX 版本时，应先从
+<code>Evolve()</code>、<code>OneStep()</code>、<code>PushParticlesandDeposit()</code>
+和 <code>SyncCurrentAndRho()</code>
+等职责明确的入口重新建立调用关系，而不要把行号或局部文件布局当作稳定
 API。</p>
 <p>Yee 1966 在本书中只承担一个窄的历史定位：有限差分 Maxwell
 方程通过合适的场点布置处理导体边界。它不能替代本章的
@@ -2335,10 +2336,28 @@ measurements 如何改变“PIC 总循环”的解释方式。</li>
 阅读笔记</a>，指出 <code>analysis_1d.py</code>
 的两条核心断言分别对应本章哪两类理论边界。</li>
 </ol>
-<p>下一章将逐段解释这些源码，并把
-<code>main.cpp</code>、<code>WarpX</code>
-单例、<code>ReadParameters()</code>、<code>InitData()</code>、<code>ComputeDt()</code>
-和 <code>Evolve()</code> 接成完整调用链。</p>
+<h2 id="本章结论">2.11 本章结论</h2>
+<p>PIC
+总循环的关键不在于依次调用“推粒子、沉积、推场”三个动作，而在于每个动作所使用的时间层和空间表示相容。读者应按以下顺序判断一条
+PIC 路线：</p>
+<ol type="1">
+<li><strong>先确定连续问题与可分辨尺度。</strong>等离子体频率、Debye
+长度、光波 CFL 和预期物理时间窗决定
+<code>dt</code>、网格和粒子采样是否有机会描述目标问题。</li>
+<li><strong>再确定粒子与网格的交换方式。</strong>gather、形函数和
+<code>rho/J</code> deposition
+必须共同满足连续性和离散布局要求；仅有稳定的场更新不能补偿不相容的源项。</li>
+<li><strong>区分外层时间步和内部重复。</strong>implicit nonlinear
+iteration、JRhom 的 source 时间积分与 AMR subcycling
+都可能在一个外层步内多次执行，但它们分别代表试探、积分和真实细层推进，不能混用同一类验证量解释。</li>
+<li><strong>最后用与问题匹配的 observable 验证。</strong>Langmuir
+的解析场与 <code>divE-rho/epsilon_0</code> 能检验指定输入下的波动和
+Gauss-law 链；程序退出或 checksum
+本身不能证明所有几何、边界和算法组合正确。</li>
+</ol>
+<p>这条顺序把连续 Vlasov–Maxwell 模型连接到真实的离散时间推进，也为第 3
+章的生命周期调用图、第 4、5 章的粒子/沉积链和第 6
+章的场求解器选择提供共同的时间层坐标。</p>
 <!-- source: manuscript/chapters/03-warpx-evolve.md -->
 <h1 id="warpx-主演化路径生命周期初始化与-evolve">3. WarpX
 主演化路径：生命周期、初始化与 <code>Evolve()</code></h1>
@@ -2347,11 +2366,11 @@ measurements 如何改变“PIC 总循环”的解释方式。</li>
 进入，如何构造 <code>WarpX</code>
 对象，如何读取参数和初始化数据，如何计算步长，最后如何在
 <code>WarpXEvolve.cpp</code> 中把一个个 PIC step 推进下去。</p>
-<p>本章以 WarpX <code>pkuHEDPbranch</code> 的 <code>8c488b1a9</code>
-源码快照为导航；读者可将路径替换成自己安装的 WarpX
-源树，并优先按函数名而不是行号检索。更细的源码锚点整理在
-<code>notes/code-reading/evolve/00-lifecycle-and-callgraph.md</code> 和
-<code>notes/code-reading/evolve/02-evolve-source-evidence.md</code>。</p>
+<p>本章的任务是让读者能从一个输入出发，追踪它何时变成网格、场、粒子和诊断，再进入一个物理时间步。使用任何
+WarpX 源树时，都应优先按
+<code>main.cpp</code>、<code>InitData()</code>、<code>ComputeDt()</code>、<code>Evolve()</code>
+和 <code>OneStep()</code>
+的职责与调用关系检索，而不要把固定行号或某个分支名称当作算法语义。</p>
 <p><code>main.cpp</code> 负责生命周期，<code>WarpX</code>
 类建立模拟状态，<code>WarpXEvolve.cpp</code>
 组织时间推进，<code>WarpXInitData.cpp</code>
@@ -9796,7 +9815,7 @@ photon/lepton 的转化，沿 <code>ElementaryProcess</code>
 树阅读；若观察量是两个粒子或虚光子的 cell-local 配对、reaction weight
 或碰撞概率，沿 <code>BinaryCollision</code>
 树阅读。两棵树的输入参数、随机变量、守恒检查与适用范围不能互换。</p>
-<h2 id="本章结论">4.15 本章结论</h2>
+<h2 id="本章结论-1">4.15 本章结论</h2>
 <p>粒子推进器不等于孤立的 Boris 公式。一次 WarpX
 粒子更新同时连接时间层、场插值、动量更新、位置更新、沉积、边界和多物理创建。读者面对异常轨道、错误粒子数或不守恒的场时，可以按下列顺序缩小问题：</p>
 <ol type="1">
@@ -14291,7 +14310,7 @@ correction-on 的 axis-charge boundary 仍开放，correction-off 因接近
 numerical floor 只保留为负对照。读者可以把这些数据用作设计下一轮
 refinement study 的模板，但不应把描述性 slope
 写成程序或论文的正式收敛阶。</p>
-<h2 id="本章结论-1">5.15 本章结论</h2>
+<h2 id="本章结论-2">5.15 本章结论</h2>
 <p>沉积的物理底线是离散连续性方程，但读者不应把它理解成某一个
 <code>DepositCurrent()</code> kernel
 的孤立性质。它由形函数、粒子轨迹、旧/新电荷时间层、current kernel、AMR
@@ -17026,7 +17045,7 @@ Gauss law。</li>
 不可外推范围”写一页检查表；再指出其中哪一项需要第 5
 章的沉积/同步知识，哪一项需要第 7 章的边界/AMR 知识。</li>
 </ol>
-<h2 id="本章结论-2">6.13 本章结论</h2>
+<h2 id="本章结论-3">6.13 本章结论</h2>
 <p>场求解器的选择不是在“FDTD 还是
 PSATD”之间选一个名称，而是在以下四层约束之间做匹配：</p>
 <ol type="1">
@@ -18089,7 +18108,7 @@ gather、coarse gather、fine deposit 和 coarse deposit
 的条件；说明为什么当前没有 dedicated route-count regression
 时不能声称每条 route 已被单独验证。</li>
 </ol>
-<h2 id="本章结论-3">7.11 本章结论</h2>
+<h2 id="本章结论-4">7.11 本章结论</h2>
 <p>边界问题的正确读法不是先问“这个边界有没有打开”，而是顺序确认下列四件事：</p>
 <ol type="1">
 <li><strong>拓扑是否一致。</strong>field 与 particle 的 periodicity
@@ -20692,7 +20711,7 @@ analysis，区分短时统计漂移与可解释的总能量结论。</li>
 <li>改变 Langmuir 的模式数和拟合时间窗，检验频率测量对 sampling window
 的敏感性，避免把单一窗口拟合误读为完整色散验证。</li>
 </ul>
-<h2 id="本章结论-4">8.17 本章结论</h2>
+<h2 id="本章结论-5">8.17 本章结论</h2>
 <p>诊断的价值不在于输出文件越多，而在于每一个输出都与明确的物理问题、时间层和判据相连。读者可以用下面四步设计或审读一个诊断：</p>
 <ol type="1">
 <li><strong>先写问题和比较对象。</strong>例如是 Langmuir 的解析频率、PML
@@ -21150,7 +21169,7 @@ PASS/FAIL；<code>RUNTIME_LEDGER_UNPROVEN</code> 表示源码与 schema
 尚未输出账本；<code>CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN</code>
 表示可以计算描述性 order，但不能宣称正式阶数。</p>
 <p>缺口表的内部一致性检查只能保证正文和证据目录使用同一组术语，不表示本书已经达到终稿。</p>
-<h2 id="本章结论-5">9.9 本章结论</h2>
+<h2 id="本章结论-6">9.9 本章结论</h2>
 <p>本书已经不再只有书目而没有正文阅读资产，但也尚未达到“所有 primary
 sources fully closed”。更准确的概括是：</p>
 <ul>

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1248,
-  "total_bytes": 39154374,
+  "total_bytes": 39154767,
   "entries": [
     {
       "path": ".gitignore",
@@ -47,23 +47,23 @@
     },
     {
       "path": "TODO.md",
-      "bytes": 1416728,
-      "sha256": "aba3a0a4c747953db3e4d0ea473bb074c5ac2384c9bda769c2a54aa4701852c0"
+      "bytes": 1417257,
+      "sha256": "443dcb1872c99e8937544bef37f52d1338fdfe770c1fb3e027036c480f4b5939"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5243619,
-      "sha256": "2f32633dfdfb629fbc054da4702f637744f78e43fff74bcbf97d5077bc93c3b5"
+      "bytes": 5243009,
+      "sha256": "5df1f1c3dacd9b85c58840f000cbb227ff41092dbe21967325e42217a63e897e"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 851979,
-      "sha256": "b969384b812f006a1ddf1557df8b5d776f23aad78262f23f74d0b8ee6341a8aa"
+      "bytes": 851467,
+      "sha256": "b4392b911408f29dd2d99ade8aea95383a46045b086cf06b614823c758e84b09"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2988518,
-      "sha256": "16060c1d108ec6959c1f041d1b617e63dd095004e040bbd43e54b62fc6936e4c"
+      "bytes": 2989132,
+      "sha256": "dba61dfe51c4da07c3bf7c4f334d780dc6d1feda5eed2564f21842030250b50b"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 17192,
-      "sha256": "7eb480618e36751909a47c192cf0303ea90e0f010b33cbfe9a24ab95b3ec847f"
+      "bytes": 17674,
+      "sha256": "a545372e560fcdc829a16f360a4492407be946f272ad758779665f0439c11ddd"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -897,8 +897,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 8148,
-      "sha256": "e47fd5749cdae670388b5e55f7e202529eb4208b7220eadd37a08b9af8ccca58"
+      "bytes": 8480,
+      "sha256": "b600b57ebbd0590da266c6987ab8a417acf5c5e3d7b8e6ffad6810aec421667c"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2302,8 +2302,8 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 151466,
-      "sha256": "6bcca962b529b2db869476b16c167b1ed12a10883330f88b61f6d1e62575167d"
+      "bytes": 150954,
+      "sha256": "ffb8f75fa4de890bd653f28c8a033f217c79a434bc963bcb9b7a164946be8431"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
@@ -4562,8 +4562,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 6187,
-      "sha256": "7785e349eada49d95b9ed345be811f73bc0ad66f52bfb98bdd8ad0ffe781c744"
+      "bytes": 6257,
+      "sha256": "541ee0f039202a180ffea48b5bd44063e65240c5641e6e60381a719cfde8655e"
     },
     {
       "path": "scripts/audit_release_consistency.py",

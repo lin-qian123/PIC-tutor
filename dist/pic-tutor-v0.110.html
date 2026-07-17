@@ -372,9 +372,8 @@ products 复制语义</a></li>
 四类单粒子问题：该测什么，不能推出什么</a></li>
 <li><a href="#粒子诊断与外场两条不经过主网格场的路径" id="toc-粒子诊断与外场两条不经过主网格场的路径">4.13.9
 粒子诊断与外场：两条不经过主网格场的路径</a></li>
-<li><a href="#particle_boundary_scrapeparticle_data_python-与-single-precision-diagnostics粒子-python-接口的三类合同" id="toc-particle_boundary_scrapeparticle_data_python-与-single-precision-diagnostics粒子-python-接口的三类合同">4.13.10
-<code>particle_boundary_scrape</code>、<code>particle_data_python</code>
-与 single-precision diagnostics：粒子 Python 接口的三类合同</a></li>
+<li><a href="#边界缓冲区与-python-粒子操作能控制什么尚未覆盖什么" id="toc-边界缓冲区与-python-粒子操作能控制什么尚未覆盖什么">4.13.10
+边界缓冲区与 Python 粒子操作：能控制什么，尚未覆盖什么</a></li>
 <li><a href="#particle_boundary_interactionparticle_boundary_processparticle_thermal_boundary-与-plasma_lens_python" id="toc-particle_boundary_interactionparticle_boundary_processparticle_thermal_boundary-与-plasma_lens_python">4.13.11
 <code>particle_boundary_interaction</code>、<code>particle_boundary_process</code>、<code>particle_thermal_boundary</code>
 与 <code>plasma_lens_python</code></a></li>
@@ -8840,48 +8839,49 @@ tile 建立最近元件索引，把 boosted-frame 粒子坐标和步末
 <p>读这一节时可用两个问题自检：写出的 particle-field mesh
 是否等于从粒子数据重新归约的量？粒子所见的透镜场是否来自外场元件，而不是主网格场？前者要求同时比较数据归约和
 writer，后者要求同时比较元件几何、参考系变换和位置/动量的解析结果。</p>
-<h3 id="particle_boundary_scrapeparticle_data_python-与-single-precision-diagnostics粒子-python-接口的三类合同">4.13.10
-<code>particle_boundary_scrape</code>、<code>particle_data_python</code>
-与 single-precision diagnostics：粒子 Python 接口的三类合同</h3>
-<p>如果把 <code>Particles</code> 的 validation
-再往“接口层”收紧一层，还有三组很关键但容易被混成杂项的条目：</p>
+<h3 id="边界缓冲区与-python-粒子操作能控制什么尚未覆盖什么">4.13.10
+边界缓冲区与 Python 粒子操作：能控制什么，尚未覆盖什么</h3>
+<p><code>particle_boundary_scrape</code>、<code>particle_data_python</code>
+和 single-precision particle fields
+都不以轨道为主要观察量。它们分别回答：粒子被边界删除后在哪里可见，Python
+能否读写粒子状态并触发沉积，以及单精度归约是否已有可执行的误差检查。</p>
 <ul>
 <li><code>particle_boundary_scrape</code></li>
 <li><code>particle_data_python</code></li>
 <li><code>particle_fields_diags</code> single-precision FIXME</li>
 </ul>
-<p>它们共同验证的不是单粒子轨道，而是：</p>
+<p>阅读这些输入时，应把验证对象分成三层：</p>
 <ul>
 <li>scraped-particle buffer</li>
 <li>Python runtime attribute / injection / deposition wrapper</li>
 <li>单精度粒子 diagnostics 误差边界</li>
 </ul>
-<p><code>particle_boundary_scrape</code> 有两层证据。native 输入
-<code>inputs_test_3d_particle_scrape</code> 配一个立方体 EB
-和一束电子，<code>analysis_scrape.py</code> 只做最小但很硬的断言：</p>
+<h4 id="被删除的粒子主容器与边界缓冲区必须同时检查">被删除的粒子：主容器与边界缓冲区必须同时检查</h4>
+<p><code>particle_boundary_scrape</code> 的 native 输入配置一个立方体 EB
+和一束电子，<code>analysis_scrape.py</code> 做两个直接检查：</p>
 <ul>
 <li>第 40 步还应有 612 个电子</li>
 <li>第 60 步主 species 中电子数应变成 0</li>
 </ul>
 <p>这说明 <code>ScrapeParticlesAtEB()</code> 确实把撞到 embedded
 boundary 的粒子删掉了。</p>
-<p>但更强的是 PICMI 变体
-<code>inputs_test_3d_particle_scrape_picmi.py</code>。它在
-<code>sim.step(...)</code> 之后直接构造
-<code>ParticleBoundaryBufferWrapper()</code>，然后检查：</p>
+<p>PICMI 变体在 <code>sim.step(...)</code> 后构造
+<code>ParticleBoundaryBufferWrapper()</code>，并检查：</p>
 <ul>
 <li>EB buffer 中累计粒子数是 612</li>
 <li><code>stepScraped</code> 全都大于 40</li>
 <li>所有 rank 汇总后的 buffer 粒子总数仍是 612</li>
 <li><code>clear_buffer()</code> 之后 buffer size 回到 0</li>
 </ul>
-<p>所以这一组 regression 真正验证的是两层合同同时成立：</p>
+<p>因此读者应同时检查两个对象：</p>
 <ol type="1">
 <li>EB scraping 确实把粒子从主容器里删除</li>
 <li>删除掉的粒子确实进入了 Python 可访问、可清空的 boundary buffer</li>
 </ol>
-<p><code>particle_data_python</code> 则完全是另一类测试。它没有独立
-<code>analysis.py</code>，强断言直接写在 PICMI
+<h4 id="python-操作粒子属性注入与沉积是三条独立操作">Python
+操作粒子：属性、注入与沉积是三条独立操作</h4>
+<p><code>particle_data_python</code> 没有独立
+<code>analysis.py</code>，断言直接写在 PICMI
 输入脚本里，主要步骤是：</p>
 <ul>
 <li><code>sim.initialize_warpx()</code></li>
@@ -8901,49 +8901,41 @@ boundary 的粒子删掉了。</p>
 species</li>
 <li><code>PushPX()</code> 在推进前确实保存了旧位置</li>
 </ul>
-<p>也就是说，<code>particle_data_python</code> 这组 regression
-的本体不是“场或轨道物理”，而是：</p>
+<p>这组输入不检查某条特定的场或轨道物理，而是检查：</p>
 <ul>
 <li>Python 对 runtime attributes 的增删访问</li>
 <li>Python 注入粒子接口</li>
 <li>Python 手动沉积接口</li>
 <li>Python 到 C++ <code>save_previous_position</code> 运行时属性链</li>
 </ul>
-<p>从当前 Python binding
-源码再往下看，这组接口其实正好对应三层薄桥：PICMI
-<code>sim.particles</code> 只是 convenience property，真正返回的是
+<p>源码数据流也应分三层理解：PICMI <code>sim.particles</code> 返回
 pybind 暴露的 <code>WarpX::GetPartContainer()</code>；species
-级操作最终落在 <code>WarpXParticleContainer.cpp</code> 里诸如
-<code>add_n_particles(...)</code>、<code>deposit_current(...)</code>、<code>deposit_charge(...)</code>
-这些 binding；而 <code>beforestep</code> / <code>afterstep</code>
-一类注入回调则不是直接逐个注册到 C++，而是先进入 Python
-<code>CallbackFunctions</code> 聚合表，再以“每个 callback 名一个聚合
-callable”的形式注册给 <code>ExecutePythonCallback(name)</code>。因此
-<code>particle_data_python</code> 真正保护的是 PICMI convenience
-layer、pybind runtime object 和 callback bridge
-这三层一起成立，而不是单独某个 Python helper。</p>
-<p>这里还有一个必须保守记下来的实现边界：<code>test_2d_particle_attr_access_unique_picmi</code>
-名义上想验证 <code>--unique</code> 变体，但当前输入脚本里
-<code>add_particles(...)</code> 仍然硬编码
-<code>unique_particles=True</code>，并没有真正消费
-<code>args.unique</code>。所以这条条目现在更像是“命名上存在的分支”，不能写成已经覆盖了
-unique/non-unique 两种注入语义。</p>
-<p>同一条 Python
-粒子接口线里，<code>restart/inputs_test_2d_id_cpu_read_picmi.py</code>
-和 <code>restart/inputs_test_2d_runtime_components_picmi.py</code>
-也值得单独记下。前者当前真正验证的是 <code>idcpu</code>
-解包读取合同：脚本直接遍历 <code>pti[&quot;idcpu&quot;]</code>，再用
-<code>unpack_ids/unpack_cpus</code> 断言累计和等于
-<code>5050/0</code>。后者则把
+操作最终调用 <code>WarpXParticleContainer.cpp</code> 的
+<code>add_n_particles(...)</code>、<code>deposit_current(...)</code> 或
+<code>deposit_charge(...)</code>；<code>beforestep</code>/<code>afterstep</code>
+回调先进入 Python <code>CallbackFunctions</code>，再由
+<code>ExecutePythonCallback(name)</code> 调用。因而这组输入检查的是
+PICMI 外观、pybind 粒子对象和 callback bridge 的联合行为，而不是某个孤立
+Python helper。</p>
+<p>这里有一个明确的覆盖缺口：<code>test_2d_particle_attr_access_unique_picmi</code>
+虽传入 <code>--unique</code>，输入脚本的 <code>add_particles(...)</code>
+仍硬编码 <code>unique_particles=True</code>，没有消费
+<code>args.unique</code>。因此它不能证明 unique/non-unique
+两种注入语义都已经比较过。</p>
+<p>同一条接口线还区分两类 restart 读取。<code>id_cpu_read</code>
+输入遍历 <code>pti[&quot;idcpu&quot;]</code>，用
+<code>unpack_ids/unpack_cpus</code> 检查累计和为
+<code>5050/0</code>，所以它检查的是粒子 id/cpu
+的解包读取。runtime-components 输入把
 <code>add_real_comp(&quot;newPid&quot;)</code>、callback
-<code>add_particles(...)</code>、<code>get_real_comp_index(&quot;newPid&quot;)</code>
-和 <code>picmi.Checkpoint(...)</code> 绑在一起，证明动态 runtime
-component 与 checkpoint front-end 可以共存；但它对应的
-<code>test_2d_runtime_components_picmi_restart</code> 仍是
-<code>FIXME</code> scaffold，所以当前还不能写成“restart 后 runtime attrs
-已被完整强回归验证”。</p>
-<p>最后，<code>particle_fields_diags</code> 的 single-precision
-变体也要单独说明。当前不是完全没有这条线，而是：</p>
+注入、<code>get_real_comp_index(&quot;newPid&quot;)</code> 和
+<code>picmi.Checkpoint(...)</code> 放在一起，说明动态 component 可以进入
+checkpoint 前端；其 restart 目标虽然存在，但 analysis/checksum 都是
+<code>OFF</code>，因此不能据此断言 restart 后 runtime attributes
+已获完整验证。</p>
+<h4 id="单精度有分析程序不等于已有活跃回归">单精度：有分析程序不等于已有活跃回归</h4>
+<p><code>particle_fields_diags</code> 的 single-precision
+变体要单独理解：</p>
 <ul>
 <li><code>analysis_particle_diags_single.py</code> 已经存在</li>
 <li>它复用同一实现，只把容差放宽到 <code>5e-3</code></li>
@@ -8951,16 +8943,15 @@ component 与 checkpoint front-end 可以共存；但它对应的
 <code>test_3d_particle_fields_diags_single_precision</code> 仍被
 <code># FIXME</code> 注释掉</li>
 </ul>
-<p>因此最准确的表述应当是：</p>
+<p>因此可以支持的结论是：</p>
 <ul>
 <li>single-precision particle-field reductions 的 analysis
 预案已经随源码提供</li>
 <li>但它还不是活跃 regression</li>
 </ul>
-<p>把这三组并到一起之后，第 4 章里关于 <code>Particles</code> 的
-validation 图景就更完整了：不只是 pusher、collision、QED 和 diagnostics
-场输出，还有一整层 Python-side 粒子接口与 boundary-buffer / reduction
-的工程合同正在被回归保护。</p>
+<p>把这三组放在一起，读者就能避免三种常见误读：粒子从主容器消失不等于它可被
+Python 取回；Python 能写入属性不等于 restart
+语义已经完整验证；源码提供单精度分析程序不等于该变体正在被自动回归覆盖。</p>
 <h3 id="particle_boundary_interactionparticle_boundary_processparticle_thermal_boundary-与-plasma_lens_python">4.13.11
 <code>particle_boundary_interaction</code>、<code>particle_boundary_process</code>、<code>particle_thermal_boundary</code>
 与 <code>plasma_lens_python</code></h3>

@@ -53,6 +53,7 @@ def main() -> int:
             section_between(chapter_4, "### 4.13.7", "### 4.13.8"),
             section_between(chapter_4, "### 4.13.8", "### 4.13.9"),
             section_between(chapter_4, "### 4.13.9", "### 4.13.10"),
+            section_between(chapter_4, "### 4.13.10", "### 4.13.11"),
         )
     )
     chapter_4_project_record_markers = re.findall(

@@ -10,7 +10,7 @@
 
 v0.78 完成 Esirkepov 2001 CPC indexed abstract 与 arXiv 预印本的 bounded compare；该 contract 只确认发表版 metadata/abstract 级算法主张已归类，不把 publisher-PDF 缺口写成已关闭。
 
-当前 `dist/pic-tutor-v0.110.pdf` 页数以本轮构建验收为准；v0.75 及此前的构建记录均属于历史构建快照。
+当前 `dist/pic-tutor-v0.110.pdf` 页数以本轮构建验收为准；第 4.13.10 节现将边界 scraping 与 Python 粒子操作拆分为可读的容器、属性/注入/沉积和回归覆盖三层，明确 `particle_data_python` 的 `--unique` 形参未被输入实际消费，restart sibling 的 analysis/checksum 仍为 OFF，single-precision particle-fields 分析脚本尚未接入活跃回归。v0.75 及此前的构建记录均属于历史构建快照。
 
 v0.66 审计发现合订 Markdown/HTML 含本机绝对路径和不可随公共仓库迁移的绝对链接；v0.67 已在 release 构建层修复，v0.75 延续该检查，并将验证合同摘要、文献 triage、沉积算法选择矩阵和 paper asset contract 纳入公共 allowlist；论文 `references/` 原始资产仍按逐篇许可边界排除。
 
@@ -25,9 +25,9 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.110.pdf` | 2,988,518 bytes / 264 页 | 当前成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.110.html` | 5,243,619 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.110.md` | 851,979 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.110.pdf` | 2,989,132 bytes / 264 页 | 当前成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.110.html` | 5,243,009 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.110.md` | 851,467 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 

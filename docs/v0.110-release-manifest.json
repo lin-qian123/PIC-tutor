@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1248,
-  "total_bytes": 39158112,
+  "total_bytes": 39157740,
   "entries": [
     {
       "path": ".gitignore",
@@ -47,23 +47,23 @@
     },
     {
       "path": "TODO.md",
-      "bytes": 1415191,
-      "sha256": "a00f97678c8398363afa81c1d453336bb2a1d6de907307a6ea69c47b7392d770"
+      "bytes": 1415452,
+      "sha256": "e946a1098b5191ad226774c618cdfa88cfa1f0f465069eb5548437eb6b144883"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5245985,
-      "sha256": "bd91fffe90c0ef0ab5c0082e2bd6a32c4b24374cd2cc45b38cd025167806124b"
+      "bytes": 5245730,
+      "sha256": "a60f129dd74c8846c34c0ef0fca6e611c9fbaaca0787667fdf0573c7cb960cb5"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 853510,
-      "sha256": "d970eed6e26432bd416ac9c035ef80c4666b31ac8bf46903e11d63b7a107aeba"
+      "bytes": 853269,
+      "sha256": "33ae3d102cce71c18546cf425b90a34d66963833138c0d59544301599f68fc48"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2991310,
-      "sha256": "18c880a6db787b59a75205bcdfa1f75d36f9ca097321345c46812d286bbb3ff2"
+      "bytes": 2991007,
+      "sha256": "73de8cda7871d5929fe115f0428bc21ac69b3033b2fd9e3c8cabdf833f82085a"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 15312,
-      "sha256": "1f7ccfab1e55bee9061c0d64350ee34c0b3dd3ddf411a86783ba1dd854c3447b"
+      "bytes": 15719,
+      "sha256": "ed891c6fc1147648691b2c030389a60a5a4b9481c017be9c492eabfc1dbe3e99"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -898,7 +898,7 @@
     {
       "path": "docs/public-repo-release-audit.md",
       "bytes": 8148,
-      "sha256": "f3772ec50c84d165c72e235a3b6d16b48e35b8a57627d14242d5482ee5e1f9e5"
+      "sha256": "55b5983f039c5d4b1b9466a852bc376cd096c03b0cf37125b3f4c03c2c48951d"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2322,8 +2322,8 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 109071,
-      "sha256": "0ce7598e0ce78323b2ed42eb3d0599a8af85c2b38e1e6af6aa2455cc2a723e23"
+      "bytes": 108830,
+      "sha256": "4d718cb403b2a741a103233e6942f04258607f8ddd18697b6779bb9386246bb1"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",

@@ -1704,20 +1704,32 @@ $$
 
 ## 8.14 本章正文与源码同步合同
 
-本章的 producer/consumer/source 对应关系由 `scripts/audit_diagnostics_chapter_source_crosswalk.py` 维护。它把主循环调度、Full/BTD/BoundaryScraping 类型分派、`ComputeDiagFunctors` 与 flush、OpenPMD iteration 生命周期、reduced diagnostics 注册/写盘以及官方 analysis consumer 固定成 13 组检查。该合同只防止章节随源码和案例 wiring 漂移，不替代任何 case-local runtime physics gate、schema contract 或性能结论。
+读源码时可沿三条路线复核本章结论：
 
-后续修改本章时，应同步更新 `notes/code-reading/diagnostics/01-diagnostics-chapter-source-crosswalk.md` 和生成的 `contract.json`/`contract.md`。验证矩阵中的 physics analysis、writer/schema、checksum、performance 和 boundary 证据仍必须分栏表达；`MultiDiagnostics` 或 `WarpXOpenPMD` 的入口存在，也不能反向证明所有下游案例已经通过。
+- 主循环如何调度诊断；
+- Full、BTD 与 BoundaryScraping 如何分派；
+- `ComputeDiagFunctors`、flush 与 OpenPMD iteration 如何把字段变成可消费输出。
+
+交叉检查脚本会核对这 13 组入口是否仍能对应。它确保这里的源码导航不会随版本漂移，却不替代具体案例的物理 gate、writer/schema 检查或性能结论。
+
+因此阅读验证矩阵时，始终把 physics analysis、writer/schema、checksum、performance 和 boundary 分开：`MultiDiagnostics` 或 `WarpXOpenPMD` 入口存在，只说明诊断链被接入，不能反向证明每个下游案例都已通过。需要逐项复查源码时，应沿本章代码阅读索引中的 diagnostics 交叉对照笔记返回对应实现。
 
 ### 8.14.1 reduced diagnostics 最小输入合同
 
-本章将三类 reduced diagnostics 的最小输入入口单独收口：`FieldProbe` 使用官方 `reduced_diags/inputs_test_3d_reduced_diags` 的 point/line/plane 骨架，`ParticleHistogram2D` 使用 `laser_ion/inputs_test_2d_laser_ion_acc` 的 `z`--`uz` openPMD mesh 配置，`LoadBalanceCosts` 使用 `LBC.type = LoadBalanceCosts` 和官方 efficiency analysis。对应的 12 项只读检查由 `scripts/audit_diagnostics_minimal_inputs.py` 完成，报告见 `runs/stage-c-validation/diagnostics-minimal-inputs/contract.{json,md}`。
+三类 reduced diagnostics 的最小输入可以这样起步：
 
-这项合同只验证“最小输入、官方 consumer 和正文边界仍相互对应”。它不替代 `FieldProbe` 解析 diffraction gate，不把 `ParticleHistogram2D` writer/schema 变成物理收敛证明，也不把 `LoadBalanceCosts` 的效率比较与场精度混为同一类 physics gate。
+- `FieldProbe`：官方 reduced-diags 测试中的 point/line/plane 骨架；
+- `ParticleHistogram2D`：laser-ion 测试中的 `z`--`uz` openPMD mesh；
+- `LoadBalanceCosts`：`LBC.type = LoadBalanceCosts` 与官方 efficiency analysis。
+
+最小输入审计脚本可复核这三条输入、consumer 与正文说明仍相互对应。
+
+这些最小输入只回答“怎样产生该类输出”。它们不替代 `FieldProbe` 的解析 diffraction gate，不把 `ParticleHistogram2D` 的 writer/schema 变成物理收敛证明，也不把 `LoadBalanceCosts` 的效率比较与场精度混为同一类 physics gate。
 
 ## 8.15 练习与复现实验
 
-1. **证据分层题**：从验证矩阵中各选一个 physics gate、writer/schema contract 和 performance gate，说明它们的 producer、analysis 量和“不能支持的结论”。
-2. **reader-side 复现题**：使用 `scripts/analyze_collider_relevant_contract.py` 或 `scripts/analyze_particle_histogram2d_contract.py` 读取一个 case-local 产物，列出输入字段、输出文件和独立检查项。
+1. **证据分层题**：从验证矩阵中各选一个 physics gate、writer/schema 检查和 performance gate，说明它们的 producer、analysis 量和“不能支持的结论”。
+2. **reader-side 复现题**：使用 `scripts/analyze_collider_relevant_contract.py` 或 `scripts/analyze_particle_histogram2d_contract.py` 读取一个案例输出，列出输入字段、输出文件和独立检查项。
 3. **失败边界题**：解释为什么 FieldProbe coarse failure、uniform-plasma reader-side 能量漂移和 initial-distribution binary mismatch 都应保留在书中，而不能简单从验证矩阵中删除。
 
 ## 延伸验证路线

@@ -397,17 +397,16 @@ product</a></li>
 Schwinger：由网格场直接创建粒子对，不存在 source species</a></li>
 <li><a href="#三条机制分别该看什么数目之外还要看权重方向和守恒" id="toc-三条机制分别该看什么数目之外还要看权重方向和守恒">4.14.6
 三条机制分别该看什么：数目之外还要看权重、方向和守恒</a></li>
-<li><a href="#kernel-层真正的触发条件先推进-optical-depth再跑-event-pass" id="toc-kernel-层真正的触发条件先推进-optical-depth再跑-event-pass">4.14.7
-kernel 层真正的触发条件：先推进 optical depth，再跑 event pass</a></li>
-<li><a href="#wrapper-的职责边界warpx-管场与属性picsar-qed-管采样" id="toc-wrapper-的职责边界warpx-管场与属性picsar-qed-管采样">4.14.8
-wrapper 的职责边界：WarpX 管场与属性，PICSAR-QED 管采样</a></li>
-<li><a href="#quantum-synchrotron-与-breit-wheeler-的-source-语义不同" id="toc-quantum-synchrotron-与-breit-wheeler-的-source-语义不同">4.14.9
-Quantum Synchrotron 与 Breit-Wheeler 的 source 语义不同</a></li>
-<li><a href="#qed-table-不是附属数据而是-kernel-可执行性的前提" id="toc-qed-table-不是附属数据而是-kernel-可执行性的前提">4.14.10 QED
-table 不是附属数据，而是 kernel 可执行性的前提</a></li>
-<li><a href="#qedchifunctionsvirtual-photons-与-linear_breit_wheeler-其实属于两棵不同的树" id="toc-qedchifunctionsvirtual-photons-与-linear_breit_wheeler-其实属于两棵不同的树">4.14.11
-<code>QedChiFunctions</code>、virtual photons 与
-<code>linear_breit_wheeler</code> 其实属于两棵不同的树</a></li>
+<li><a href="#事件何时发生先演化-optical-depth再决定是否创建-product" id="toc-事件何时发生先演化-optical-depth再决定是否创建-product">4.14.7
+事件何时发生：先演化 optical depth，再决定是否创建 product</a></li>
+<li><a href="#分工边界warpx-提供粒子与场picsar-qed-提供采样内核" id="toc-分工边界warpx-提供粒子与场picsar-qed-提供采样内核">4.14.8
+分工边界：WarpX 提供粒子与场，PICSAR-QED 提供采样内核</a></li>
+<li><a href="#source-的命运不同辐射会保留-lepton成对产生会消耗-photon" id="toc-source-的命运不同辐射会保留-lepton成对产生会消耗-photon">4.14.9
+source 的命运不同：辐射会保留 lepton，成对产生会消耗 photon</a></li>
+<li><a href="#lookup-table-是采样器的一部分不是可有可无的附属文件" id="toc-lookup-table-是采样器的一部分不是可有可无的附属文件">4.14.10
+lookup table 是采样器的一部分，不是可有可无的附属文件</a></li>
+<li><a href="#不要被共同的-photon-名称误导强场-qed-与碰撞-qed-是两棵树" id="toc-不要被共同的-photon-名称误导强场-qed-与碰撞-qed-是两棵树">4.14.11
+不要被共同的 photon 名称误导：强场 QED 与碰撞 QED 是两棵树</a></li>
 </ul></li>
 <li><a href="#本章结论" id="toc-本章结论">4.15 本章结论</a></li>
 <li><a href="#练习与复现实验" id="toc-练习与复现实验">4.16
@@ -9531,8 +9530,8 @@ depth；</li>
 发射与 lepton 的统计状态，Breit-Wheeler 需要比较残余 photon、pairs
 与单事件守恒，Schwinger
 则以理论率窗口和电子/正电子权重配对为主。三条路径必须分别验证，不能用其中一条替代另外两条。</p>
-<h3 id="kernel-层真正的触发条件先推进-optical-depth再跑-event-pass">4.14.7
-kernel 层真正的触发条件：先推进 optical depth，再跑 event pass</h3>
+<h3 id="事件何时发生先演化-optical-depth再决定是否创建-product">4.14.7
+事件何时发生：先演化 optical depth，再决定是否创建 product</h3>
 <p>把入口层再往下读到
 <code>QEDPhotonEmission.H</code>、<code>QEDPairGeneration.H</code>
 和两个 engine wrapper，会发现 QED 事件触发并不是“在 event pass
@@ -9540,7 +9539,8 @@ kernel 层真正的触发条件：先推进 optical depth，再跑 event pass</h
 <p><code>PhotonEmissionFilterFunc</code> 和
 <code>PairGenerationFilterFunc</code> 都只做一件事：</p>
 <div class="sourceCode" id="cb135"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> <span class="op">(</span>opt_depth <span class="op">&lt;</span> <span class="fl">0.0</span><span class="op">_rt);</span></span></code></pre></div>
-<p>所以真正的统计演化发生在更早的 push 阶段：</p>
+<p>这表示 event pass 不负责从零开始抽样，而是消费先前 push
+已更新的状态。真正的统计演化发生在更早的 push 阶段：</p>
 <ul>
 <li><code>PhysicalParticleContainer::PushPX()</code> 里先用
 <code>QuantumSynchrotronEvolveOpticalDepth</code> 推进
@@ -9555,9 +9555,11 @@ kernel 层真正的触发条件：先推进 optical depth，再跑 event pass</h
 <li><code>doQedBreitWheeler()</code></li>
 </ul>
 <p>才会在 event pass 里通过 <code>filterCopyTransformParticles</code>
-真正触发事件。</p>
-<h3 id="wrapper-的职责边界warpx-管场与属性picsar-qed-管采样">4.14.8
-wrapper 的职责边界：WarpX 管场与属性，PICSAR-QED 管采样</h3>
+触发事件。调试“没有产生 photon/pair”时，应先检查
+<code>chi</code>、时间步和 optical depth 是否能跨过零，而不是只检查
+product species 是否存在。</p>
+<h3 id="分工边界warpx-提供粒子与场picsar-qed-提供采样内核">4.14.8
+分工边界：WarpX 提供粒子与场，PICSAR-QED 提供采样内核</h3>
 <p><code>QuantumSyncEngineWrapper.H</code> 和
 <code>BreitWheelerEngineWrapper.H</code> 不是又实现了一遍 QED
 理论，而是把 PICSAR-QED core 包成 WarpX 可在 GPU kernel 中调用的
@@ -9579,11 +9581,12 @@ functor：</p>
 <li>存取 <code>opticalDepthQSR/BW</code></li>
 <li>组织 <code>filterCopyTransformParticles</code></li>
 </ol>
-<p>这条分工线非常重要，因为它决定了后面再追 QED internals 时，哪些属于
-WarpX 容器/调度问题，哪些其实已经落到 PICSAR-QED 的 table
-和采样算法里了。</p>
-<h3 id="quantum-synchrotron-与-breit-wheeler-的-source-语义不同">4.14.9
-Quantum Synchrotron 与 Breit-Wheeler 的 source 语义不同</h3>
+<p>这条分工线给出了排错边界：gather、species 属性、tile 调度和 product
+容器属于 WarpX；给定 <code>chi</code> 后的概率演化与动量采样属于
+PICSAR-QED。不要把 table 或采样偏差误诊为 WarpX
+的粒子容器问题，也不要把错误的 field gather 归咎于采样器。</p>
+<h3 id="source-的命运不同辐射会保留-lepton成对产生会消耗-photon">4.14.9
+source 的命运不同：辐射会保留 lepton，成对产生会消耗 photon</h3>
 <p>两条 event kernel 都会先 gather <code>E/B</code>，但 source
 处理方式并不一样：</p>
 <ul>
@@ -9592,15 +9595,15 @@ Quantum Synchrotron 与 Breit-Wheeler 的 source 语义不同</h3>
 <li><code>PairGenerationTransformFunc</code> 会生成 electron/positron
 两个 product，并把 source photon 直接标记成 invalid。</li>
 </ul>
-<p>这正好解释了为什么：</p>
+<p>这解释了为什么两类分析需要不同的守恒与统计检查：</p>
 <ul>
 <li><code>analysis_quantum_sync.py</code> 要重点检查 source/product
 optical-depth 分布能否继续保持指数；</li>
 <li><code>analysis_breit_wheeler_core.py</code> 要重点检查 residual
 photons、丢失 photon 数和新 pairs 数之间的对应关系。</li>
 </ul>
-<h3 id="qed-table-不是附属数据而是-kernel-可执行性的前提">4.14.10 QED
-table 不是附属数据，而是 kernel 可执行性的前提</h3>
+<h3 id="lookup-table-是采样器的一部分不是可有可无的附属文件">4.14.10
+lookup table 是采样器的一部分，不是可有可无的附属文件</h3>
 <p>如果继续往 <code>QEDInternals/QuantumSyncEngineWrapper.cpp</code> 和
 <code>BreitWheelerEngineWrapper.cpp</code> 读，会发现 WarpX 当前的 QED
 wrapper 内部都不是只持有一张表，而是：</p>
@@ -9623,8 +9626,10 @@ wrapper 内部都不是只持有一张表，而是：</p>
 <li><code>build_pair_functor()</code></li>
 </ul>
 <p>都会先要求 <code>m_lookup_tables_initialized == true</code>。这说明
-WarpX 的 QED kernel 不是“有 wrapper
-就能跑”，而是必须先把表生命周期走完。</p>
+QED kernel 不是“有 wrapper
+就能跑”，而是必须先完成表的生命周期；出现初始化或运行时 table
+错误时，应先确认模式、输入文件和最小
+<code>chi</code>，再解释粒子统计结果。</p>
 <p><code>InitQED()</code> 里 <code>qed_qs.lookup_table_mode</code> 和
 <code>qed_bw.lookup_table_mode</code> 只允许三种模式：</p>
 <ul>
@@ -9662,12 +9667,12 @@ kernel 消费的不是“生成态”或“加载态”的 C++
 -&gt; build device functors
 -&gt; PushPX() 中演化 optical depth
 -&gt; event pass 中查表并生成 product particles</code></pre>
-<p>这也是为什么 examples 里的
+<p>所以 examples 中的
 <code>lookup_table_mode = builtin / load / generate</code>
-注释块，不只是输入模板，而是直接切换 QED kernel 的上游可执行合同。</p>
-<h3 id="qedchifunctionsvirtual-photons-与-linear_breit_wheeler-其实属于两棵不同的树">4.14.11
-<code>QedChiFunctions</code>、virtual photons 与
-<code>linear_breit_wheeler</code> 其实属于两棵不同的树</h3>
+不只是输入模板，而是直接选择 QED
+采样器的可执行上游；同一物理案例切换模式时，仍须核对表分辨率和来源是否适合目标精度。</p>
+<h3 id="不要被共同的-photon-名称误导强场-qed-与碰撞-qed-是两棵树">4.14.11
+不要被共同的 photon 名称误导：强场 QED 与碰撞 QED 是两棵树</h3>
 <p>继续沿源码往下追，会碰到一组很容易被误写进同一章法的名字：</p>
 <ul>
 <li><code>QedChiFunctions</code></li>
@@ -9675,7 +9680,9 @@ kernel 消费的不是“生成态”或“加载态”的 C++
 <li><code>linear_breit_wheeler</code></li>
 <li><code>linear_compton</code></li>
 </ul>
-<p>它们都带着 QED / photons 的标签，但并不共享同一套事件骨架。</p>
+<p>它们都带着 QED / photons
+的标签，却不共享同一套事件骨架。选模型前，先问过程由局部强场驱动，还是由
+cell 内两粒子配对驱动。</p>
 <p><code>QedChiFunctions.H</code> 本身只有两个薄包装：</p>
 <ul>
 <li><code>QedUtils::chi_ele_pos(...)</code></li>
@@ -9691,8 +9698,7 @@ photon-emission 采样</li>
 <li><code>BreitWheelerEngineWrapper</code> 的 optical-depth 与
 pair-generation 采样</li>
 </ol>
-<p>所以 <code>QedChiFunctions</code> 属于前面已经解释过的强场 QED
-树：</p>
+<p>因此 <code>QedChiFunctions</code> 属于强场 QED 树：</p>
 <pre class="text"><code>gather E/B
 -&gt; compute chi
 -&gt; evolve optical depth
@@ -9720,8 +9726,10 @@ pair-generation 采样</li>
 lepton species 重新采样一批辅助 photon species；旧 virtual photons
 会被下一步覆盖。3D 下若打开 beam-size
 effect，还会在垂直于动量的平面内给这些虚光子加上有限半径位移。</p>
-<p>因此 virtual photons 不是强场 QED 事件生成出来、随后继续 push 的
-product photons，而是碰撞模块临时重建的一份辅助 photon 分布。</p>
+<p>因此 virtual photons 不是强场 QED 事件生成、随后继续 push 的 product
+photons，而是碰撞模块每个 coarse step 重建的辅助 photon
+分布。若分析关注其空间分布或谱，应以 virtual-photon 专用输出和 analysis
+为准，不能借用 <code>opticalDepthBW</code> 的解释。</p>
 <p>接下来的 <code>linear_breit_wheeler</code> 与
 <code>linear_compton</code> 也继续留在碰撞树里。</p>
 <p><code>CollisionHandler.cpp</code> 对
@@ -9755,7 +9763,7 @@ Higginson 风格的 binary-collision 算法，控制参数是：</p>
 <li><code>lookup_table_mode</code></li>
 <li><code>photon_creation_energy_threshold</code></li>
 </ul>
-<p>因此，WarpX 当前至少有两棵名字都带 QED / photons 的树：</p>
+<p>因此，WarpX 至少有两棵名字都带 QED / photons 的树：</p>
 <ol type="1">
 <li>强场 QED / <code>ElementaryProcess</code>
 <ul>
@@ -9772,7 +9780,7 @@ Higginson 风格的 binary-collision 算法，控制参数是：</p>
 <li><code>ParticleCreationFunc</code></li>
 </ul></li>
 </ol>
-<p>这也是为什么 regression 也分成两组完全不同的证据：</p>
+<p>相应地，测试也分成两组不同的证据：</p>
 <ul>
 <li><code>analysis_quantum_sync.py</code>、<code>analysis_breit_wheeler_core.py</code>、<code>analysis_schwinger.py</code>
 <ul>
@@ -9783,8 +9791,12 @@ Higginson 风格的 binary-collision 算法，控制参数是：</p>
 <li>验证 virtual-photon 采样与 linear Breit-Wheeler 碰撞分叉</li>
 </ul></li>
 </ul>
-<p>如果不把这两棵树拆开，后面读 <code>BinaryCollision</code> 或继续追
-<code>QedChiFunctions</code> 时就会把不同层次的多物理路径混写。</p>
+<p>实际选择模型时，可用一个简短判据：若观察量是强场中的
+<code>chi</code>、optical depth、emission spectrum 或 source
+photon/lepton 的转化，沿 <code>ElementaryProcess</code>
+树阅读；若观察量是两个粒子或虚光子的 cell-local 配对、reaction weight
+或碰撞概率，沿 <code>BinaryCollision</code>
+树阅读。两棵树的输入参数、随机变量、守恒检查与适用范围不能互换。</p>
 <h2 id="本章结论">4.15 本章结论</h2>
 <p>粒子推进器不等于孤立的 Boris 公式。一次 WarpX 粒子 tile
 路线按以下顺序展开：</p>

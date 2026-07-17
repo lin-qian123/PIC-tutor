@@ -4,6 +4,8 @@
 
 当前 release 为 v0.110；本版重新执行正式收敛 study 的第二组 12 个 2-rank producer，correction-on 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`。分类为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`，不把该结果写成 formal order 或 axis-charge closure。第 1--9 章入口已完成读者化审读；第 2、3、3A、4、5、8、9 章的深层证据段也已移除开发过程措辞和绝对工作区路径，并把读者入口改为相对链接。第 2、3、3A、4、5、8 章已做有限视觉抽查。全书通读、route-count ledger、axis charge correctness、RZ implicit runtime、许可和公开再分发仍保持开放。
 
+全书正文扫描确认绝对工作区路径与开发过程标记均为零。第 5 章两张宽表已由列式矩阵改为分组证据列表，并在 PDF 第 158--159 页人工复核；这只关闭该处的版式风险，不替代全书通读。
+
 v0.78 完成 Esirkepov 2001 CPC indexed abstract 与 arXiv 预印本的 bounded compare；该 contract 只确认发表版 metadata/abstract 级算法主张已归类，不把 publisher-PDF 缺口写成已关闭。
 
 当前 `dist/pic-tutor-v0.110.pdf` 页数以本轮构建验收为准；v0.75 及此前的构建记录均属于历史构建快照。
@@ -21,9 +23,9 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.110.pdf` | 2,995,787 bytes / 270 页 | 当前成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.110.html` | 5,266,559 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.110.md` | 867,854 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.110.pdf` | 2,998,418 bytes / 270 页 | 当前成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.110.html` | 5,264,034 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.110.md` | 866,930 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 

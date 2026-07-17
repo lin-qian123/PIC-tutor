@@ -1744,7 +1744,7 @@ $$
 
 公式层之外，又对当前同级 `../warpx` checkout 做了只读 source audit。`scripts/audit_esirkepov_source_contract.py` 检查 `CurrentDeposition.H` 中的 14 个锚点全部存在：包括 `doEsirkepovDepositionShapeN`、`Compute_shifted_shape_factor`、`invdtd`、`one_third/one_sixth`、`sdxi/sdyj/sdzk`、三方向 old/new shape difference 和 `Jx/Jy/Jz` writeback。报告位于 `runs/stage-c-validation/esirkepov-source-contract/contract.{json,md}`；这证明当前源码仍 materialize 了正文所描述的 skeleton，但仍不是数值 kernel regression。三方汇总见 `runs/stage-c-validation/esirkepov-paper-source-runtime-crosswalk/contract.{json,md}` 与 `notes/code-reading/particles/62-esirkepov-paper-source-runtime-crosswalk.md`；其 `PASS/BOUNDARY` scope 和 publisher-PDF 缺失边界保持不变。
 
-在这个 Esirkepov skeleton 之上，本版又把 geometry/order 的源码审计从“函数名出现”推进到分支约束层。`scripts/audit_deposition_geometry_order_contract.py` 现在对 `CurrentDeposition.H` 的 `1D_Z/XZ/RZ/RCYLINDER/RSPHERE/3D` 宏、Vay 在 RZ/1D 的显式 abort、Vay 与 implicit 的互斥 guard，以及径向 geometry 不进入 shared-memory current kernel 的条件逐项检查；连同 charge ordinary/shared、算法分派和 shape=1/2/3/4 入口共 `69/69` 锚点通过。它证明的是当前 checkout 的编译分支和入口合同，不是所有 geometry × order 组合已经运行通过；对应报告为 `runs/stage-c-validation/deposition-geometry-order-source/contract.{json,md}`。
+在这个 Esirkepov skeleton 之上，geometry/order 的源码审计从“函数名出现”推进到分支约束层。`scripts/audit_deposition_geometry_order_contract.py` 对 `CurrentDeposition.H` 的 `1D_Z/XZ/RZ/RCYLINDER/RSPHERE/3D` 宏、Vay 在 RZ/1D 的显式 abort、Vay 与 implicit 的互斥 guard，以及径向 geometry 不进入 shared-memory current kernel 的条件逐项检查；连同 charge ordinary/shared、算法分派和 shape=1/2/3/4 入口共 `69/69` 锚点通过。它证明的是源码中的编译分支和入口合同，不是所有 geometry × order 组合已经运行通过；对应报告为 `runs/stage-c-validation/deposition-geometry-order-source/contract.{json,md}`。
 
 Villasenor 的组织方式则完全不同。`VillasenorDepositionShapeNKernel(...)` 在完成轨迹恢复和 boundary crop 之后，第一件事不是构造 shape difference，而是先统计整条轨迹的 `cell_crossings_x/y/z`，得到 `num_segments`，再按 crossing 逐段推进。3D 情况下，它甚至不会平均切段，而是每一轮都比较哪个方向先撞到下一条 crossing，并用最早发生的那个 crossing 定义当前段终点。也就是说，Villasenor 的第一性对象不是“一对 old/new shape 数组”，而是一条被真实 cell crossing 切开的粒子轨迹。
 
@@ -2074,14 +2074,14 @@ $$
 
 维度边界也必须如实记录：官方 RZ theta-implicit Villasenor 输入要求 `newton.linear_solver=petsc_ksp`，当前 `build_full` binary 未启用 `AMREX_USE_PETSC`，因此在 `NewtonSolver::Define()` 初始化阶段直接拒绝，未进入物理计算。随后只用命令行把同一输入的线性求解器覆盖为 `amrex_gmres` 做 control；它仍未进入物理时间推进，而是在 `WarpX::InitData() -> ThetaImplicitEM::Define() -> InitializeCurlCurlBCMasks()` 触发 `SIGILL`。因此当前 RZ blocker 不只是 PETSc 缺失，还包含 arm64 `build_full` 的 RZ theta-implicit boundary-mask 初始化失败。官方 1D planar-pinch sibling 则在 Newton 后的粒子边界处理路径出现 `SIGILL`，只落出初始诊断帧。三者均记录为构建/运行边界，而不是伪造为 Villasenor physics failure 或 pass。
 
-| 运行级 case | 主要分支 | 独立结果 | 证据边界 |
-|---|---|---|---|
-| `test_2d_theta_implicit_jfnk_vandb` | 2D、shape=2、周期、energy + Gauss law | `4.0980e-15` energy、`9.2951e-16` Gauss RMS，PASS | 官方 + independent，2-rank |
-| `test_2d_theta_implicit_jfnk_vandb_cropping` | 2D、shape=4、near-boundary cropping | `8.2275e-14` max charge error，PASS | 官方 + independent，未含强 energy ledger |
-| `test_2d_theta_implicit_jfnk_vandb_filtered` | 2D、shape=2、`warpx.use_filter=1` | `3.8931e-15` energy、`5.1401e-16` Gauss RMS，PASS | 官方 + independent，显式确认 filter 输入 |
-| `test_2d_theta_implicit_jfnk_vandb_picmi` | 2D PICMI、shape=2、Python `GMRESLinearSolver` | `4.0980e-15` energy、`9.5730e-16` Gauss RMS，PASS | Python-enabled build，保留 unused-input warning |
-| `test_rz_theta_implicit_dynamic_pinch` | RZ、shape=2、axis/insulator | PETSc 官方路径在 `NewtonSolver::Define()` 拒绝；`amrex_gmres` control 在 `InitializeCurlCurlBCMasks()` `SIGILL` | 未进入物理计算 |
-| `test_1d_theta_implicit_planar_pinch` | 1D、shape=2、planar pinch | Newton 后 `SIGILL`，仅初始帧 | 不作为通过证据 |
+运行级证据按可支持的结论可压缩为六项：
+
+1. `test_2d_theta_implicit_jfnk_vandb`：2D、shape=2、周期。总能量变化 `4.0980e-15`，Gauss RMS `9.2951e-16`，官方与独立读取均 PASS，覆盖 2-rank 主路径。
+2. `test_2d_theta_implicit_jfnk_vandb_cropping`：2D、shape=4、near-boundary cropping。最大 charge error `8.2275e-14`，PASS；它没有单独的强 energy ledger。
+3. `test_2d_theta_implicit_jfnk_vandb_filtered`：2D、shape=2、`warpx.use_filter=1`。总能量变化 `3.8931e-15`，Gauss RMS `5.1401e-16`，PASS，并显式确认 filter 输入。
+4. `test_2d_theta_implicit_jfnk_vandb_picmi`：2D PICMI、shape=2、Python `GMRESLinearSolver`。总能量变化 `4.0980e-15`，Gauss RMS `9.5730e-16`，PASS；Python-enabled build 仍保留 unused-input warning。
+5. `test_rz_theta_implicit_dynamic_pinch`：RZ、shape=2、axis/insulator。PETSc 官方路径在 `NewtonSolver::Define()` 拒绝；`amrex_gmres` control 在 `InitializeCurlCurlBCMasks()` 触发 `SIGILL`，未进入物理计算。
+6. `test_1d_theta_implicit_planar_pinch`：1D、shape=2、planar pinch。Newton 后触发 `SIGILL`，仅有初始帧，因此不作为通过证据。
 
 ### 5.11.3 Esirkepov 运行级维度证据：1D、2D 与 3D Langmuir
 
@@ -2098,19 +2098,22 @@ $$
 
 结果如下：
 
-| case-local 证据 | 维度/网格 | 官方理论场 gate | 独立 charge gate | 结论 |
-|---|---:|---:|---:|---|
-| `runs/stage-c-validation/esirkepov_langmuir_1d_mpi2/` | 1D，`128x1x1`，shape 1 | `1.7028e-3 < 0.05` | `8.3450e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_2d_mpi2/` | 2D，`128x128x1`，shape 1 | `1.2201e-2 < 0.0503` | `3.5650e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_2d_shape2_mpi2/` | 2D，`128x128x1`，shape 2 | `3.4096e-2 < 0.0503` | `3.1326e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_2d_shape3_mpi2/` | 2D，`128x128x1`，shape 3 | `4.6336e-2 < 0.0503` | `4.5607e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_2d_particle_shape_4_mpi2/` | 2D，`128x128x1`，shape 4 | `6.0165e-2 < 0.07` | `2.8977e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_3d_mpi2/` | 3D，`64x64x64`，shape 1 | `3.4040e-2 < 0.05` | `1.3029e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_2d_mr_mpi2/` | 2D MR，`max_level=1`、ratio 4、CKC/filter | `3.8068e-2 < 0.0503` | L0 `0.8828`、L1 `1.2005` | BOUNDARY |
+结果按维度与 shape 可直接阅读：
 
-这些证据把第 5 章的 Esirkepov 运行覆盖推进到 **1D/2D/3D + 2D shape=1/2/3/4 + 3D shape=1/2/3/4**。2D shape=4 的 `0.07` 场误差阈值来自官方 `analysis_2d.py` 对测试名中 `particle_shape_4` 的分支，而不是本项目临时放宽；2D shape=1/2/3 仍使用 `0.0503`，3D shape=1/2/3/4 使用官方 `0.05` field gate，所有 shape 都使用独立 `1e-11` charge residual gate。3D shape=2 的 field error 为 `3.5970e-2` 并通过；shape=3/4 在 `64^3` 的 field error 为 `6.7792e-2/8.7344e-2`，但同一输入的 `128^3` refined sibling 降至 `2.3515e-2/3.0644e-2` 并通过 field gate，charge residual 分别为 `4.3288e-12/3.0001e-12`。因此当前最准确的表述是：shape=3/4 的低分辨率 field boundary 具有分辨率敏感性，尚不足以包装成正式 convergence order。shape=0 的尝试在当前 `WarpX.cpp:1450` 初始化断言处拒绝，源码合同只允许 `particle_shape=1..4`，因此记录为 unsupported boundary，而不是失败的 physics case。MR overlay 的理论场 gate通过，但逐层 reader contract 在 L0/L1 分别得到 `0.8828/1.2005`，故当前只标记为 `BOUNDARY`，不把它升级成 AMR 守恒通过；新增的 15-anchor AMR source contract 已证明路由/同步源码骨架存在，新增的 7-anchor Python observability audit 也证明 generic register API 存在，但两者都不能替代中间场与 route-count 专门验证。当前 1–4 阶运行证据仍不能推出 AMR buffer、边界裁剪、RZ/RCYLINDER/RSPHERE 或 implicit 分支都已逐项等价，也不能替代尚未取得的 CPC publisher-PDF bounded compare。2D case 的 `direct -> esirkepov` 覆盖和 `rho/divE` 诊断字段只存在于本项目 case-local 输入副本中，不能写成上游官方注册回归；3D shape=2/3/4 及 refined siblings 也是 case-local override，不改变上游测试注册。独立 contract 的 JSON/Markdown 结果分别归档在各 case-local 目录中，汇总见 `runs/stage-c-validation/esirkepov_langmuir_3d_shape-matrix/contract.{json,md}`。
+- **1D，`128x1x1`，shape 1**：场误差 `1.7028e-3 < 0.05`，charge residual `8.3450e-12 < 1e-11`，PASS。
+- **2D，`128x128x1`，shape 1--4**：shape 1/2/3 的场误差为 `1.2201e-2/3.4096e-2/4.6336e-2`，均低于 `0.0503`；shape 4 的误差为 `6.0165e-2 < 0.07`。四种 shape 的 charge residual 为 `3.5650e-12/3.1326e-12/4.5607e-12/2.8977e-12`，均低于 `1e-11`，因此均 PASS。
+- **3D，`64x64x64`，shape 1**：场误差 `3.4040e-2 < 0.05`，charge residual `1.3029e-12 < 1e-11`，PASS。
+- **2D MR，`max_level=1`、ratio 4、CKC/filter**：理论场误差 `3.8068e-2 < 0.0503`，但逐层 charge residual 为 L0 `0.8828`、L1 `1.2005`，所以是 `BOUNDARY`，不是 AMR 守恒通过。
 
-本版又补入 shape=2 的 `128^3` refined sibling：field error 为 `1.2523e-2`，charge residual 为 `5.4174e-12`，同样通过双 gate。三种 shape 的 refined controls 均通过，但这仍是 case-local 分辨率证据，不足以包装成正式 convergence order。
+这些证据覆盖 **1D/2D/3D + 2D shape=1/2/3/4 + 3D shape=1/2/3/4**。2D shape=4 的 `0.07` 场误差阈值来自官方 `analysis_2d.py` 对测试名中 `particle_shape_4` 的分支，而不是临时放宽；2D shape=1/2/3 使用 `0.0503`，3D shape=1/2/3/4 使用官方 `0.05` field gate，所有 shape 都使用独立 `1e-11` charge residual gate。
+
+3D shape=2 的 field error 为 `3.5970e-2` 并通过。shape=3/4 在 `64^3` 的 field error 为 `6.7792e-2/8.7344e-2`，但同一输入的 `128^3` refined sibling 降至 `2.3515e-2/3.0644e-2` 并通过 field gate，charge residual 分别为 `4.3288e-12/3.0001e-12`。因此，shape=3/4 的低分辨率 field boundary 具有分辨率敏感性，尚不足以包装成正式 convergence order。shape=0 在 `WarpX.cpp:1450` 初始化断言处被拒绝，源码合同只允许 `particle_shape=1..4`，所以这是 unsupported boundary，而不是失败的 physics case。
+
+MR overlay 的理论场 gate 通过，但逐层 reader contract 在 L0/L1 分别得到 `0.8828/1.2005`，因此只能标记为 `BOUNDARY`，不能升级为 AMR 守恒通过。15-anchor AMR source contract 证明路由/同步源码骨架存在，7-anchor Python observability audit 证明 generic register API 存在；两者都不能替代中间场与 route-count 的专门验证。现有 1--4 阶运行证据也不能推出 AMR buffer、边界裁剪、RZ/RCYLINDER/RSPHERE 或 implicit 分支都已逐项等价，更不能替代尚未取得的 CPC publisher-PDF bounded compare。
+
+2D case 的 `direct -> esirkepov` 覆盖和 `rho/divE` 诊断字段仅存在于 case-local 输入副本中，不能写成上游官方注册回归；3D shape=2/3/4 及 refined siblings 也是 case-local override，不改变上游测试注册。独立 contract 的 JSON/Markdown 结果分别归档在各 case-local 目录中，汇总见 `runs/stage-c-validation/esirkepov_langmuir_3d_shape-matrix/contract.{json,md}`。
+
+shape=2 的 `128^3` refined sibling 的 field error 为 `1.2523e-2`，charge residual 为 `5.4174e-12`，同样通过双 gate。三种 shape 的 refined controls 均通过，但这仍是 case-local 分辨率证据，不足以包装成正式 convergence order。
 
 ## 5.12 沉积不只回 `rho/J`：WarpX 还把线性响应矩阵和统计矩交回网格
 
@@ -2528,7 +2531,7 @@ RZ + Esirkepov 还需要单独保留一个诊断边界：当前 2-rank case 的 
 
 RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on 的 residual 为 `4.166e-2/1.390e-2/4.142e-3`，correction off 为 `2.420e-11/9.843e-11/7.461e-11`；六个 field gate 都通过，但六个 charge gate 都未闭合。因此这条证据只能说明 axis/resolution 组合敏感，不能替代正式收敛研究或作为全局默认参数修改依据。该组 `256` case 必须使用专用 `warpx.rsphere` executable；若误用 `warpx.3d`，会在 boundary-array parser 阶段失败，不能作为物理结论。
 
-本版将 RCYLINDER/RSPHERE 的 shape=1/2/3/4 case-local siblings 统一纳入 `rho/divE` charge 矩阵。八条径向 `Er` field gate 全通过；RCYLINDER 的 charge residual 为 `4.711e-3/7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `4.166e-2/6.269e-2/6.928e-2/8.003e-2`，均高于 `1e-11` 强 gate，且最大值由轴向 cell 主导。该矩阵由 `scripts/summarize_radial_charge_shape_contract.py` 汇总到 `runs/stage-c-validation/esirkepov_radial_charge_shape-matrix/contract.{json,md}`；它关闭的是“径向 shape charge 证据分散”的索引缺口，不把 BOUNDARY 写成 Gauss-law PASS。
+RCYLINDER/RSPHERE 的 shape=1/2/3/4 case-local siblings 统一纳入 `rho/divE` charge 矩阵。八条径向 `Er` field gate 全通过；RCYLINDER 的 charge residual 为 `4.711e-3/7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `4.166e-2/6.269e-2/6.928e-2/8.003e-2`，均高于 `1e-11` 强 gate，且最大值由轴向 cell 主导。该矩阵由 `scripts/summarize_radial_charge_shape_contract.py` 汇总到 `runs/stage-c-validation/esirkepov_radial_charge_shape-matrix/contract.{json,md}`；它关闭的是“径向 shape charge 证据分散”的索引缺口，不把 BOUNDARY 写成 Gauss-law PASS。
 
 这组径向结果的源码合同现在也已单独验收：`scripts/audit_radial_axis_volume_contract.py` 固定了 `boundary.verboncoeur_axis_correction` 的默认值和解析入口，确认 RZ/RCYLINDER 使用 `1/3` 对 `1/4`、RSPHERE 使用 `1/4` 对 `1/8` 的轴体积因子，并确认 `ApplyInverseVolumeScalingToChargeDensity()` 在 `rho_fp` 与 `rho_buf` 路径中的调用时机。因而本节的准确边界是：径向 field shape coverage 已有运行证据，charge residual 的轴体积/诊断耦合也有源码映射，但尚未形成跨 geometry、shape、resolution 的统一强守恒合同。
 

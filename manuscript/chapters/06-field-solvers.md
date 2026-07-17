@@ -1895,7 +1895,7 @@ Chapter 13 则把这条统计图像压成了更直接的工程尺度。第一，
 
 再进一步，`Dawson 1983` 还明确说明：thermal-plasma wave diagnostics 至少要分成 power spectrum、time correlation 和 magnetized peak taxonomy 三层。power spectrum 的第一价值是把 Debye-cloud random continuum 和 collective plasma spike 分开，而不是单纯“看哪里有峰”；同时 `\Delta\omega \simeq 1/T` 又说明有限 run length 会直接限制谱结构的可解释性。对有外磁场的体系，谱图里还会出现 Bernstein harmonics、upper-hybrid peak、可动离子时的 ion-cyclotron / lower-hybrid peaks，以及 `\omega=0` 的 convective-cell / charged-flux-tube 结构。于是本章后面讨论噪声底、shape order、smoothing、spectral filtering 或 magnetized fluctuation 时，都不应只写“能量更小/更稳定”，而应继续问：谱是在 continuum 还是 discrete spike 上被改写、相关时间有多长、以及被改写的是哪一类 mode family。
 
-除了均匀带电球，当前本地 examples 里还有一个更偏工程器件侧、但同样有理论对照的静电强基准：`Examples/Physics_applications/pierce_diode/`。它把两平行板间的 1D Pierce diode 直接设到 Child-Langmuir 极限，输入里：
+除了均匀带电球，WarpX examples 里还有一个更偏工程器件侧、但同样有理论对照的静电强基准：`Examples/Physics_applications/pierce_diode/`。它把两平行板间的 1D Pierce diode 直接设到 Child-Langmuir 极限，输入里：
 
 - `warpx.do_electrostatic = labframe`
 - `boundary.potential_lo_z = 0`
@@ -1933,7 +1933,7 @@ elif re.match("test_1d_theta_implicit_picard", test_name):
 assert max_delta_E < tolerance_rel
 ```
 
-本项目已在当前 checkout 上完成 `inputs_test_1d_theta_implicit_picard` 的单进程复现。运行产物位于 `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/implicit_theta_picard`，共 101 个 reduced-diagnostic 样本；项目脚本 `scripts/analyze_implicit_theta_picard_contract.py` 与官方 `analysis_1d.py` 均通过：
+`inputs_test_1d_theta_implicit_picard` 的单进程复现归档于 `runs/stage-c-validation/implicit_theta_picard/`，共 101 个 reduced-diagnostic 样本；`scripts/analyze_implicit_theta_picard_contract.py` 与官方 `analysis_1d.py` 均通过：
 
 $$
 \max\left|\frac{W(t)-W(0)}{W(0)}\right|
@@ -1945,7 +1945,7 @@ $$
 
 `theta_implicit_picard` 要求接近机器精度，`semi_implicit_picard` 允许更大的能量误差。对 exactly energy-conserving implicit EM，`analysis_implicit.py` 还检查 Gauss law RMS：
 
-本项目随后在同一 checkout 上复现了 sibling `inputs_test_1d_semi_implicit_picard`。它同样输出 101 个 reduced-energy 样本，但采用半隐式 EM 的实际容差合同：
+相邻的 `inputs_test_1d_semi_implicit_picard` 同样输出 101 个 reduced-energy 样本，但采用半隐式 EM 的实际容差合同：
 
 $$
 \begin{array}{c|c|c|c}
@@ -1956,7 +1956,7 @@ $$
 \end{array}
 $$
 
-两条结果均由官方 `analysis_1d.py` 和项目独立脚本 `scripts/analyze_implicit_picard_energy_contract.py` 复核。这里不能把两档容差读成分析脚本不一致：它们对应的是两个不同的时间离散/场推进合同。theta-implicit 分支在该基准上把粒子与场总账本压到机器精度量级；semi-implicit 分支则以 `2.5e-5` 作为官方允许的能量漂移上界。运行产物分别归档于 `runs/stage-c-validation/implicit_theta_picard/` 和 `runs/stage-c-validation/implicit_semi_picard/`。
+两条结果均由官方 `analysis_1d.py` 和独立脚本 `scripts/analyze_implicit_picard_energy_contract.py` 复核。这里不能把两档容差读成分析脚本不一致：它们对应的是两个不同的时间离散/场推进合同。theta-implicit 分支在该基准上把粒子与场总账本压到机器精度量级；semi-implicit 分支则以 `2.5e-5` 作为官方允许的能量漂移上界。运行产物分别归档于 `runs/stage-c-validation/implicit_theta_picard/` 和 `runs/stage-c-validation/implicit_semi_picard/`。
 
 ```python
 drho = (rho - epsilon_0 * divE) / e / ne0

@@ -64,7 +64,7 @@ v0.110 重新执行了 RZ/RSPHERE 正式收敛 study 的第二组 12 个 2-rank 
 
 本书的每个技术判断都应尽量落到六类证据：物理方程、离散公式、WarpX 源码路径、输入参数、示例或测试、文献。DeepWiki、Zread 等 AI 解读页面可以用来快速找到模块名，但不能作为最终依据。
 
-本版先采用 Markdown-first 写法。这样做的原因是正文、源码路径、公式、后续 MinerU 论文笔记和本地运行记录都可以在同一个目录中增量维护。等样章和主线稳定后，再迁移到 Quarto 或 LaTeX book。
+本书采用 Markdown-first 写法。正文、源码路径、公式、论文笔记和运行证据因而可以在同一套文本工作流中维护；若未来需要更复杂的排版或出版流程，可再迁移到 Quarto 或 LaTeX book。
 
 本书默认使用以下记号：粒子位置为 $$\mathbf{x}_p$$，粒子动量为 $$\mathbf{u}_p=\gamma\mathbf{v}_p$$，电磁场为 $$\mathbf{E},\mathbf{B}$$，电荷和电流密度为 $$\rho,\mathbf{J}$$，粒子权重为 $$w_p$$，形函数为 $$S$$。网格量的上标表示时间层，例如 $$\mathbf{B}^{n+1/2}$$；粒子量一般按 leapfrog 交错在位置和动量时间层上。
 
@@ -504,7 +504,7 @@ $$
 
 基础章节当前允许直接作为正文证据、以及哪些条目仍只能写成 acquisition / metadata 边界，现统一收口到：
 
-- [基础章节文献清单](../docs/foundations-literature-list.md)
+- [基础章节文献清单](../../docs/foundations-literature-list.md)
 
 因此本章当前版本已经足够支撑后续源码阅读，但基础文献层仍不是最终完成态。后续还需要继续：
 
@@ -4461,7 +4461,7 @@ $$
 
 这里还要额外提醒一个记号陷阱：论文里 `J_{f,new}` 和 `J_{i,new}` 最后都被压成相同的显式标量函数，但这不表示它们是“同一个 Jacobian”。它们对应的是后半步和前半步那两条相反方向映射上的 determinant，因此恰恰是因为它们处在 reciprocal 位置，整步 Jacobian 才会严格回到 `1`。同样，论文对 Vay 的结论也不是“任何情况下都会立刻出现 attractor/repeller”。作者保留了一个例外边界：若磁场在时空上恒定，`J(x_i,u_i)/J(x_i,u_f)` 这串比值会 telescoping，再结合 `J(x,u)` 在有界区域里的有界性，不能直接推出灾难性体积失真。真正的问题是它缺少一般性的 volume-preservation，因此在 practical timestep 和更复杂轨道拓扑下更容易暴露出 resonance-island 与 trajectory-crossing 这类非物理后果。
 
-当前本地 regression 和这篇文献的配对仍需保守表述。`Examples/Tests/particle_pusher` 提供 force-free Higuera-Cary 强断言；Poincare 合同则验证 `x=0,p_x>0` 截面、`I_y` 顺序和解析 quartic reference。新增的 topology classifier 同时保留时间顺序和相空间中心角顺序；在 32³、2201-frame 长轨道上，后三种 pusher 的角排序候选均无自交或轨道间交叉，说明原先时间折线的交叉计数是连接顺序伪影，而不是物理 resonance-island 证据。14-species dense family 与 64³ `p_y=1.6/1.8` control 进一步显示 Vay 窗口漂移约 `6.5e-2`，控制组约 `1e-3`，但该 resonance-sensitive screen 仍不是 two-fold island 或 trajectory-crossing topology proof。
+这组 regression 和文献的配对仍需保守表述。`Examples/Tests/particle_pusher` 提供 force-free Higuera-Cary 强断言；Poincare 合同则验证 `x=0,p_x>0` 截面、`I_y` 顺序和解析 quartic reference。topology classifier 同时保留时间顺序和相空间中心角顺序；在 32³、2201-frame 长轨道上，后三种 pusher 的角排序候选均无自交或轨道间交叉，说明原先时间折线的交叉计数是连接顺序伪影，而不是物理 resonance-island 证据。14-species dense family 与 64³ `p_y=1.6/1.8` control 进一步显示 Vay 窗口漂移约 `6.5e-2`，控制组约 `1e-3`，但该 resonance-sensitive screen 仍不是 two-fold island 或 trajectory-crossing topology proof。
 
 `scripts/summarize_higuera_poincare_evidence.py` 将短轨道、长轨道、密集 `p_y` family、resonance screen 和 resolution screen 的证据等级统一为一份边界记录：短轨道是 `INSUFFICIENT_SAMPLING`；长轨道的 invariant/reference 与 angular-order candidate 通过但 topology 仍为 `REVIEW_REQUIRED`；密集族的 resonance screen 通过而解析 reference curve 和 cross-pusher candidate signature 保留边界。因此最强可写结论是“invariant 与局部 resonance-sensitive screen 已建立，论文等价 topology gate 尚未启用”。
 
@@ -5151,7 +5151,7 @@ if (!HasiAttrib("ionizationLevel")) {
 
 这里还有两个容易被漏掉的源码边界。
 
-第一，当前工作树里的 field ionization 只有 `ADK` 主链，没有独立 `OTB` 分支。官方参数文档对 `do_field_ionization` 的描述明确写的是 `using the ADK theory`，源码里读到的也只有 `do_adk_correction`、`adk_prefactor`、`adk_exp_prefactor` 和 `adk_power`。因此如果后面讨论 `OTB`，那只能作为“当前源码未实现的外部模型边界”，不能写成 `Ionization.*` 已有的一条并行实现。
+第一，WarpX 的 field ionization 只有 `ADK` 主链，没有独立 `OTB` 分支。官方参数文档对 `do_field_ionization` 的描述明确写的是 `using the ADK theory`，源码里读到的也只有 `do_adk_correction`、`adk_prefactor`、`adk_exp_prefactor` 和 `adk_power`。因此如果后面讨论 `OTB`，那只能作为“源码未实现的外部模型边界”，不能写成 `Ionization.*` 已有的一条并行实现。
 
 第二，`physical_element` 也不是“用户手工给一串电离能表”的接口。`InitIonizationModule()` 实际是通过 `ion_map_ids`、`ion_atomic_numbers` 和 `ion_energy_offsets` 从 WarpX 内建的 `table_ionization_energies` 里切出整段 successive ionization energies，再按当前运行时 `dt` 现算 ADK prefactor。因此 species 构造期不能完成这一步，真正原因不是代码组织习惯，而是 ADK 率已经把本步 `dt` 吸进了系数里。
 
@@ -5741,7 +5741,7 @@ $$
 3. `m_particle_thermalizer.applyThermalizer(*mypc)`
 4. collisions
 
-因此 thermalizer 的效果会先落到“已经通过边界筛选保留下来的粒子”上，再进入碰撞模块。它也不是硬墙式 momentum reset，而是在一个有法向、起止位置和渐进概率的 thermal region 内，对超过 `momentum_threshold` 的动量分量抽样重置为方差由 `theta` 决定的 Gaussian。当前本地并非完全没有 thermalizer 验证：`particle_absorbing_boundary` 会显式打开 `particle_thermalizer.*`，并用 `PhaseSpaceElectrons` 直方图断言吸收边界附近的反向高速电子权重显著降低；但这仍是 absorbing boundary、field-function laser、reduced diagnostic 和 thermalizer 的耦合 regression，不是 dedicated thermalizer-only 单测。
+因此 thermalizer 的效果会先落到“已经通过边界筛选保留下来的粒子”上，再进入碰撞模块。它也不是硬墙式 momentum reset，而是在一个有法向、起止位置和渐进概率的 thermal region 内，对超过 `momentum_threshold` 的动量分量抽样重置为方差由 `theta` 决定的 Gaussian。`particle_absorbing_boundary` 会显式打开 `particle_thermalizer.*`，并用 `PhaseSpaceElectrons` 直方图断言吸收边界附近的反向高速电子权重显著降低；但这仍是 absorbing boundary、field-function laser、reduced diagnostic 和 thermalizer 的耦合 regression，不是 dedicated thermalizer-only 单测。
 
 `Sorting` 则必须和前文 AMR coarse-fine 的 `PartitionParticlesInBuffers()` 区分开来。后者是物理分流，前者是全局性能阶段。`WarpXEvolve.cpp` 在 boundary 处理之后检查 `sort_intervals.contains(step+1)`，触发后调用：
 
@@ -6043,7 +6043,7 @@ plasmalens*.dEdx = ...
 - 粒子 diagnostics 可以把粒子属性重新压成 cell-centered field
 - 粒子侧外场可以完全绕过主网格场寄存器，直接通过 `GetExternalEBField` 进入 `PushPX()`
 
-accelerator lattice 自身也已经有当前本地很直接的强基准：`Examples/Tests/accelerator_lattice/hard_edged_quadrupoles*`。这组 tests 用单电子穿过 `drift + quad + drift + quad` 串联，analysis 直接从输入参数重建 `lattice.elements`、`drift.ds`、`quad.ds`、`quad.dEdx`，再用解析 hard-edged quadrupole 透镜公式逐段积分，要求最终 `x` 误差低于 `1%`、`u_x` 误差低于 `0.2%`。而 boosted-frame 与 moving-window 变体继续共用同一解析对照，因此这里真正被验证的不是“lattice 参数能读入”，而是 `HardEdgedQuadrupole + LatticeElementFinder + PushPX()` 的联合运行态合同。
+accelerator lattice 自身也有很直接的强基准：`Examples/Tests/accelerator_lattice/hard_edged_quadrupoles*`。这组 tests 用单电子穿过 `drift + quad + drift + quad` 串联，analysis 直接从输入参数重建 `lattice.elements`、`drift.ds`、`quad.ds`、`quad.dEdx`，再用解析 hard-edged quadrupole 透镜公式逐段积分，要求最终 `x` 误差低于 `1%`、`u_x` 误差低于 `0.2%`。而 boosted-frame 与 moving-window 变体继续共用同一解析对照，因此这里真正被验证的不是“lattice 参数能读入”，而是 `HardEdgedQuadrupole + LatticeElementFinder + PushPX()` 的联合运行态合同。
 
 这里还有一个需要在正文里说清的源码边界：`drift` 在 accelerator lattice 中只提供 `ds -> zs/ze` 的几何账本，不直接返回外场；运行期真正给粒子加 `E/B` 的只有 `HardEdgedQuadrupole` 和 `HardEdgedPlasmaLens` 两类 device element，而 `LatticeElementFinder` 做的是按 tile 建 nearest-element lookup table、把 boosted-frame 下的粒子坐标和步末 `z+v_z dt` 反变换回 lab frame、调用各元件 `get_field(...)`，最后再把累计场变回 boosted frame 后加进 `PushPX()` 的粒子外场。也就是说，`drift + quad + drift + quad` 里的 drift 只进入解析 beamline 几何和 residence 区间判定，不进入 runtime field accumulation。
 
@@ -6057,7 +6057,7 @@ accelerator lattice 自身也已经有当前本地很直接的强基准：`Examp
 
 ### 4.13.10 `particle_boundary_scrape`、`particle_data_python` 与 single-precision diagnostics：粒子 Python 接口的三类合同
 
-如果把 `Particles` 的 validation 再往“接口层”收紧一层，当前本地 checkout 里还有三组很关键但容易被混成杂项的条目：
+如果把 `Particles` 的 validation 再往“接口层”收紧一层，还有三组很关键但容易被混成杂项的条目：
 
 - `particle_boundary_scrape`
 - `particle_data_python`
@@ -6130,7 +6130,7 @@ accelerator lattice 自身也已经有当前本地很直接的强基准：`Examp
 
 ### 4.13.11 `particle_boundary_interaction`、`particle_boundary_process`、`particle_thermal_boundary` 与 `plasma_lens_python`
 
-在 `particle_boundary_scrape` 和 `particle_data_python` 之外，当前本地 checkout 里还有四组更靠近“边界行为 + Python front-end”的 regression：
+在 `particle_boundary_scrape` 和 `particle_data_python` 之外，还有四组更靠近“边界行为 + Python front-end”的 regression：
 
 - `particle_boundary_interaction`
 - `particle_boundary_process`
@@ -8647,7 +8647,7 @@ $$
 
 公式层之外，又对当前同级 `../warpx` checkout 做了只读 source audit。`scripts/audit_esirkepov_source_contract.py` 检查 `CurrentDeposition.H` 中的 14 个锚点全部存在：包括 `doEsirkepovDepositionShapeN`、`Compute_shifted_shape_factor`、`invdtd`、`one_third/one_sixth`、`sdxi/sdyj/sdzk`、三方向 old/new shape difference 和 `Jx/Jy/Jz` writeback。报告位于 `runs/stage-c-validation/esirkepov-source-contract/contract.{json,md}`；这证明当前源码仍 materialize 了正文所描述的 skeleton，但仍不是数值 kernel regression。三方汇总见 `runs/stage-c-validation/esirkepov-paper-source-runtime-crosswalk/contract.{json,md}` 与 `notes/code-reading/particles/62-esirkepov-paper-source-runtime-crosswalk.md`；其 `PASS/BOUNDARY` scope 和 publisher-PDF 缺失边界保持不变。
 
-在这个 Esirkepov skeleton 之上，本版又把 geometry/order 的源码审计从“函数名出现”推进到分支约束层。`scripts/audit_deposition_geometry_order_contract.py` 现在对 `CurrentDeposition.H` 的 `1D_Z/XZ/RZ/RCYLINDER/RSPHERE/3D` 宏、Vay 在 RZ/1D 的显式 abort、Vay 与 implicit 的互斥 guard，以及径向 geometry 不进入 shared-memory current kernel 的条件逐项检查；连同 charge ordinary/shared、算法分派和 shape=1/2/3/4 入口共 `69/69` 锚点通过。它证明的是当前 checkout 的编译分支和入口合同，不是所有 geometry × order 组合已经运行通过；对应报告为 `runs/stage-c-validation/deposition-geometry-order-source/contract.{json,md}`。
+在这个 Esirkepov skeleton 之上，geometry/order 的源码审计从“函数名出现”推进到分支约束层。`scripts/audit_deposition_geometry_order_contract.py` 对 `CurrentDeposition.H` 的 `1D_Z/XZ/RZ/RCYLINDER/RSPHERE/3D` 宏、Vay 在 RZ/1D 的显式 abort、Vay 与 implicit 的互斥 guard，以及径向 geometry 不进入 shared-memory current kernel 的条件逐项检查；连同 charge ordinary/shared、算法分派和 shape=1/2/3/4 入口共 `69/69` 锚点通过。它证明的是源码中的编译分支和入口合同，不是所有 geometry × order 组合已经运行通过；对应报告为 `runs/stage-c-validation/deposition-geometry-order-source/contract.{json,md}`。
 
 Villasenor 的组织方式则完全不同。`VillasenorDepositionShapeNKernel(...)` 在完成轨迹恢复和 boundary crop 之后，第一件事不是构造 shape difference，而是先统计整条轨迹的 `cell_crossings_x/y/z`，得到 `num_segments`，再按 crossing 逐段推进。3D 情况下，它甚至不会平均切段，而是每一轮都比较哪个方向先撞到下一条 crossing，并用最早发生的那个 crossing 定义当前段终点。也就是说，Villasenor 的第一性对象不是“一对 old/new shape 数组”，而是一条被真实 cell crossing 切开的粒子轨迹。
 
@@ -8977,14 +8977,14 @@ $$
 
 维度边界也必须如实记录：官方 RZ theta-implicit Villasenor 输入要求 `newton.linear_solver=petsc_ksp`，当前 `build_full` binary 未启用 `AMREX_USE_PETSC`，因此在 `NewtonSolver::Define()` 初始化阶段直接拒绝，未进入物理计算。随后只用命令行把同一输入的线性求解器覆盖为 `amrex_gmres` 做 control；它仍未进入物理时间推进，而是在 `WarpX::InitData() -> ThetaImplicitEM::Define() -> InitializeCurlCurlBCMasks()` 触发 `SIGILL`。因此当前 RZ blocker 不只是 PETSc 缺失，还包含 arm64 `build_full` 的 RZ theta-implicit boundary-mask 初始化失败。官方 1D planar-pinch sibling 则在 Newton 后的粒子边界处理路径出现 `SIGILL`，只落出初始诊断帧。三者均记录为构建/运行边界，而不是伪造为 Villasenor physics failure 或 pass。
 
-| 运行级 case | 主要分支 | 独立结果 | 证据边界 |
-|---|---|---|---|
-| `test_2d_theta_implicit_jfnk_vandb` | 2D、shape=2、周期、energy + Gauss law | `4.0980e-15` energy、`9.2951e-16` Gauss RMS，PASS | 官方 + independent，2-rank |
-| `test_2d_theta_implicit_jfnk_vandb_cropping` | 2D、shape=4、near-boundary cropping | `8.2275e-14` max charge error，PASS | 官方 + independent，未含强 energy ledger |
-| `test_2d_theta_implicit_jfnk_vandb_filtered` | 2D、shape=2、`warpx.use_filter=1` | `3.8931e-15` energy、`5.1401e-16` Gauss RMS，PASS | 官方 + independent，显式确认 filter 输入 |
-| `test_2d_theta_implicit_jfnk_vandb_picmi` | 2D PICMI、shape=2、Python `GMRESLinearSolver` | `4.0980e-15` energy、`9.5730e-16` Gauss RMS，PASS | Python-enabled build，保留 unused-input warning |
-| `test_rz_theta_implicit_dynamic_pinch` | RZ、shape=2、axis/insulator | PETSc 官方路径在 `NewtonSolver::Define()` 拒绝；`amrex_gmres` control 在 `InitializeCurlCurlBCMasks()` `SIGILL` | 未进入物理计算 |
-| `test_1d_theta_implicit_planar_pinch` | 1D、shape=2、planar pinch | Newton 后 `SIGILL`，仅初始帧 | 不作为通过证据 |
+运行级证据按可支持的结论可压缩为六项：
+
+1. `test_2d_theta_implicit_jfnk_vandb`：2D、shape=2、周期。总能量变化 `4.0980e-15`，Gauss RMS `9.2951e-16`，官方与独立读取均 PASS，覆盖 2-rank 主路径。
+2. `test_2d_theta_implicit_jfnk_vandb_cropping`：2D、shape=4、near-boundary cropping。最大 charge error `8.2275e-14`，PASS；它没有单独的强 energy ledger。
+3. `test_2d_theta_implicit_jfnk_vandb_filtered`：2D、shape=2、`warpx.use_filter=1`。总能量变化 `3.8931e-15`，Gauss RMS `5.1401e-16`，PASS，并显式确认 filter 输入。
+4. `test_2d_theta_implicit_jfnk_vandb_picmi`：2D PICMI、shape=2、Python `GMRESLinearSolver`。总能量变化 `4.0980e-15`，Gauss RMS `9.5730e-16`，PASS；Python-enabled build 仍保留 unused-input warning。
+5. `test_rz_theta_implicit_dynamic_pinch`：RZ、shape=2、axis/insulator。PETSc 官方路径在 `NewtonSolver::Define()` 拒绝；`amrex_gmres` control 在 `InitializeCurlCurlBCMasks()` 触发 `SIGILL`，未进入物理计算。
+6. `test_1d_theta_implicit_planar_pinch`：1D、shape=2、planar pinch。Newton 后触发 `SIGILL`，仅有初始帧，因此不作为通过证据。
 
 ### 5.11.3 Esirkepov 运行级维度证据：1D、2D 与 3D Langmuir
 
@@ -9001,19 +9001,22 @@ $$
 
 结果如下：
 
-| case-local 证据 | 维度/网格 | 官方理论场 gate | 独立 charge gate | 结论 |
-|---|---:|---:|---:|---|
-| `runs/stage-c-validation/esirkepov_langmuir_1d_mpi2/` | 1D，`128x1x1`，shape 1 | `1.7028e-3 < 0.05` | `8.3450e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_2d_mpi2/` | 2D，`128x128x1`，shape 1 | `1.2201e-2 < 0.0503` | `3.5650e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_2d_shape2_mpi2/` | 2D，`128x128x1`，shape 2 | `3.4096e-2 < 0.0503` | `3.1326e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_2d_shape3_mpi2/` | 2D，`128x128x1`，shape 3 | `4.6336e-2 < 0.0503` | `4.5607e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_2d_particle_shape_4_mpi2/` | 2D，`128x128x1`，shape 4 | `6.0165e-2 < 0.07` | `2.8977e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_3d_mpi2/` | 3D，`64x64x64`，shape 1 | `3.4040e-2 < 0.05` | `1.3029e-12 < 1e-11` | PASS |
-| `runs/stage-c-validation/esirkepov_langmuir_2d_mr_mpi2/` | 2D MR，`max_level=1`、ratio 4、CKC/filter | `3.8068e-2 < 0.0503` | L0 `0.8828`、L1 `1.2005` | BOUNDARY |
+结果按维度与 shape 可直接阅读：
 
-这些证据把第 5 章的 Esirkepov 运行覆盖推进到 **1D/2D/3D + 2D shape=1/2/3/4 + 3D shape=1/2/3/4**。2D shape=4 的 `0.07` 场误差阈值来自官方 `analysis_2d.py` 对测试名中 `particle_shape_4` 的分支，而不是本项目临时放宽；2D shape=1/2/3 仍使用 `0.0503`，3D shape=1/2/3/4 使用官方 `0.05` field gate，所有 shape 都使用独立 `1e-11` charge residual gate。3D shape=2 的 field error 为 `3.5970e-2` 并通过；shape=3/4 在 `64^3` 的 field error 为 `6.7792e-2/8.7344e-2`，但同一输入的 `128^3` refined sibling 降至 `2.3515e-2/3.0644e-2` 并通过 field gate，charge residual 分别为 `4.3288e-12/3.0001e-12`。因此当前最准确的表述是：shape=3/4 的低分辨率 field boundary 具有分辨率敏感性，尚不足以包装成正式 convergence order。shape=0 的尝试在当前 `WarpX.cpp:1450` 初始化断言处拒绝，源码合同只允许 `particle_shape=1..4`，因此记录为 unsupported boundary，而不是失败的 physics case。MR overlay 的理论场 gate通过，但逐层 reader contract 在 L0/L1 分别得到 `0.8828/1.2005`，故当前只标记为 `BOUNDARY`，不把它升级成 AMR 守恒通过；新增的 15-anchor AMR source contract 已证明路由/同步源码骨架存在，新增的 7-anchor Python observability audit 也证明 generic register API 存在，但两者都不能替代中间场与 route-count 专门验证。当前 1–4 阶运行证据仍不能推出 AMR buffer、边界裁剪、RZ/RCYLINDER/RSPHERE 或 implicit 分支都已逐项等价，也不能替代尚未取得的 CPC publisher-PDF bounded compare。2D case 的 `direct -> esirkepov` 覆盖和 `rho/divE` 诊断字段只存在于本项目 case-local 输入副本中，不能写成上游官方注册回归；3D shape=2/3/4 及 refined siblings 也是 case-local override，不改变上游测试注册。独立 contract 的 JSON/Markdown 结果分别归档在各 case-local 目录中，汇总见 `runs/stage-c-validation/esirkepov_langmuir_3d_shape-matrix/contract.{json,md}`。
+- **1D，`128x1x1`，shape 1**：场误差 `1.7028e-3 < 0.05`，charge residual `8.3450e-12 < 1e-11`，PASS。
+- **2D，`128x128x1`，shape 1--4**：shape 1/2/3 的场误差为 `1.2201e-2/3.4096e-2/4.6336e-2`，均低于 `0.0503`；shape 4 的误差为 `6.0165e-2 < 0.07`。四种 shape 的 charge residual 为 `3.5650e-12/3.1326e-12/4.5607e-12/2.8977e-12`，均低于 `1e-11`，因此均 PASS。
+- **3D，`64x64x64`，shape 1**：场误差 `3.4040e-2 < 0.05`，charge residual `1.3029e-12 < 1e-11`，PASS。
+- **2D MR，`max_level=1`、ratio 4、CKC/filter**：理论场误差 `3.8068e-2 < 0.0503`，但逐层 charge residual 为 L0 `0.8828`、L1 `1.2005`，所以是 `BOUNDARY`，不是 AMR 守恒通过。
 
-本版又补入 shape=2 的 `128^3` refined sibling：field error 为 `1.2523e-2`，charge residual 为 `5.4174e-12`，同样通过双 gate。三种 shape 的 refined controls 均通过，但这仍是 case-local 分辨率证据，不足以包装成正式 convergence order。
+这些证据覆盖 **1D/2D/3D + 2D shape=1/2/3/4 + 3D shape=1/2/3/4**。2D shape=4 的 `0.07` 场误差阈值来自官方 `analysis_2d.py` 对测试名中 `particle_shape_4` 的分支，而不是临时放宽；2D shape=1/2/3 使用 `0.0503`，3D shape=1/2/3/4 使用官方 `0.05` field gate，所有 shape 都使用独立 `1e-11` charge residual gate。
+
+3D shape=2 的 field error 为 `3.5970e-2` 并通过。shape=3/4 在 `64^3` 的 field error 为 `6.7792e-2/8.7344e-2`，但同一输入的 `128^3` refined sibling 降至 `2.3515e-2/3.0644e-2` 并通过 field gate，charge residual 分别为 `4.3288e-12/3.0001e-12`。因此，shape=3/4 的低分辨率 field boundary 具有分辨率敏感性，尚不足以包装成正式 convergence order。shape=0 在 `WarpX.cpp:1450` 初始化断言处被拒绝，源码合同只允许 `particle_shape=1..4`，所以这是 unsupported boundary，而不是失败的 physics case。
+
+MR overlay 的理论场 gate 通过，但逐层 reader contract 在 L0/L1 分别得到 `0.8828/1.2005`，因此只能标记为 `BOUNDARY`，不能升级为 AMR 守恒通过。15-anchor AMR source contract 证明路由/同步源码骨架存在，7-anchor Python observability audit 证明 generic register API 存在；两者都不能替代中间场与 route-count 的专门验证。现有 1--4 阶运行证据也不能推出 AMR buffer、边界裁剪、RZ/RCYLINDER/RSPHERE 或 implicit 分支都已逐项等价，更不能替代尚未取得的 CPC publisher-PDF bounded compare。
+
+2D case 的 `direct -> esirkepov` 覆盖和 `rho/divE` 诊断字段仅存在于 case-local 输入副本中，不能写成上游官方注册回归；3D shape=2/3/4 及 refined siblings 也是 case-local override，不改变上游测试注册。独立 contract 的 JSON/Markdown 结果分别归档在各 case-local 目录中，汇总见 `runs/stage-c-validation/esirkepov_langmuir_3d_shape-matrix/contract.{json,md}`。
+
+shape=2 的 `128^3` refined sibling 的 field error 为 `1.2523e-2`，charge residual 为 `5.4174e-12`，同样通过双 gate。三种 shape 的 refined controls 均通过，但这仍是 case-local 分辨率证据，不足以包装成正式 convergence order。
 
 ## 5.12 沉积不只回 `rho/J`：WarpX 还把线性响应矩阵和统计矩交回网格
 
@@ -9431,7 +9434,7 @@ RZ + Esirkepov 还需要单独保留一个诊断边界：当前 2-rank case 的 
 
 RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on 的 residual 为 `4.166e-2/1.390e-2/4.142e-3`，correction off 为 `2.420e-11/9.843e-11/7.461e-11`；六个 field gate 都通过，但六个 charge gate 都未闭合。因此这条证据只能说明 axis/resolution 组合敏感，不能替代正式收敛研究或作为全局默认参数修改依据。该组 `256` case 必须使用专用 `warpx.rsphere` executable；若误用 `warpx.3d`，会在 boundary-array parser 阶段失败，不能作为物理结论。
 
-本版将 RCYLINDER/RSPHERE 的 shape=1/2/3/4 case-local siblings 统一纳入 `rho/divE` charge 矩阵。八条径向 `Er` field gate 全通过；RCYLINDER 的 charge residual 为 `4.711e-3/7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `4.166e-2/6.269e-2/6.928e-2/8.003e-2`，均高于 `1e-11` 强 gate，且最大值由轴向 cell 主导。该矩阵由 `scripts/summarize_radial_charge_shape_contract.py` 汇总到 `runs/stage-c-validation/esirkepov_radial_charge_shape-matrix/contract.{json,md}`；它关闭的是“径向 shape charge 证据分散”的索引缺口，不把 BOUNDARY 写成 Gauss-law PASS。
+RCYLINDER/RSPHERE 的 shape=1/2/3/4 case-local siblings 统一纳入 `rho/divE` charge 矩阵。八条径向 `Er` field gate 全通过；RCYLINDER 的 charge residual 为 `4.711e-3/7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `4.166e-2/6.269e-2/6.928e-2/8.003e-2`，均高于 `1e-11` 强 gate，且最大值由轴向 cell 主导。该矩阵由 `scripts/summarize_radial_charge_shape_contract.py` 汇总到 `runs/stage-c-validation/esirkepov_radial_charge_shape-matrix/contract.{json,md}`；它关闭的是“径向 shape charge 证据分散”的索引缺口，不把 BOUNDARY 写成 Gauss-law PASS。
 
 这组径向结果的源码合同现在也已单独验收：`scripts/audit_radial_axis_volume_contract.py` 固定了 `boundary.verboncoeur_axis_correction` 的默认值和解析入口，确认 RZ/RCYLINDER 使用 `1/3` 对 `1/4`、RSPHERE 使用 `1/4` 对 `1/8` 的轴体积因子，并确认 `ApplyInverseVolumeScalingToChargeDensity()` 在 `rho_fp` 与 `rho_buf` 路径中的调用时机。因而本节的准确边界是：径向 field shape coverage 已有运行证据，charge residual 的轴体积/诊断耦合也有源码映射，但尚未形成跨 geometry、shape、resolution 的统一强守恒合同。
 
@@ -11488,7 +11491,7 @@ Chapter 13 则把这条统计图像压成了更直接的工程尺度。第一，
 
 再进一步，`Dawson 1983` 还明确说明：thermal-plasma wave diagnostics 至少要分成 power spectrum、time correlation 和 magnetized peak taxonomy 三层。power spectrum 的第一价值是把 Debye-cloud random continuum 和 collective plasma spike 分开，而不是单纯“看哪里有峰”；同时 `\Delta\omega \simeq 1/T` 又说明有限 run length 会直接限制谱结构的可解释性。对有外磁场的体系，谱图里还会出现 Bernstein harmonics、upper-hybrid peak、可动离子时的 ion-cyclotron / lower-hybrid peaks，以及 `\omega=0` 的 convective-cell / charged-flux-tube 结构。于是本章后面讨论噪声底、shape order、smoothing、spectral filtering 或 magnetized fluctuation 时，都不应只写“能量更小/更稳定”，而应继续问：谱是在 continuum 还是 discrete spike 上被改写、相关时间有多长、以及被改写的是哪一类 mode family。
 
-除了均匀带电球，当前本地 examples 里还有一个更偏工程器件侧、但同样有理论对照的静电强基准：`Examples/Physics_applications/pierce_diode/`。它把两平行板间的 1D Pierce diode 直接设到 Child-Langmuir 极限，输入里：
+除了均匀带电球，WarpX examples 里还有一个更偏工程器件侧、但同样有理论对照的静电强基准：`Examples/Physics_applications/pierce_diode/`。它把两平行板间的 1D Pierce diode 直接设到 Child-Langmuir 极限，输入里：
 
 - `warpx.do_electrostatic = labframe`
 - `boundary.potential_lo_z = 0`
@@ -11526,7 +11529,7 @@ elif re.match("test_1d_theta_implicit_picard", test_name):
 assert max_delta_E < tolerance_rel
 ```
 
-本项目已在当前 checkout 上完成 `inputs_test_1d_theta_implicit_picard` 的单进程复现。运行产物位于 `PIC-tutor/runs/stage-c-validation/implicit_theta_picard`，共 101 个 reduced-diagnostic 样本；项目脚本 `scripts/analyze_implicit_theta_picard_contract.py` 与官方 `analysis_1d.py` 均通过：
+`inputs_test_1d_theta_implicit_picard` 的单进程复现归档于 `runs/stage-c-validation/implicit_theta_picard/`，共 101 个 reduced-diagnostic 样本；`scripts/analyze_implicit_theta_picard_contract.py` 与官方 `analysis_1d.py` 均通过：
 
 $$
 \max\left|\frac{W(t)-W(0)}{W(0)}\right|
@@ -11538,7 +11541,7 @@ $$
 
 `theta_implicit_picard` 要求接近机器精度，`semi_implicit_picard` 允许更大的能量误差。对 exactly energy-conserving implicit EM，`analysis_implicit.py` 还检查 Gauss law RMS：
 
-本项目随后在同一 checkout 上复现了 sibling `inputs_test_1d_semi_implicit_picard`。它同样输出 101 个 reduced-energy 样本，但采用半隐式 EM 的实际容差合同：
+相邻的 `inputs_test_1d_semi_implicit_picard` 同样输出 101 个 reduced-energy 样本，但采用半隐式 EM 的实际容差合同：
 
 $$
 \begin{array}{c|c|c|c}
@@ -11549,7 +11552,7 @@ $$
 \end{array}
 $$
 
-两条结果均由官方 `analysis_1d.py` 和项目独立脚本 `scripts/analyze_implicit_picard_energy_contract.py` 复核。这里不能把两档容差读成分析脚本不一致：它们对应的是两个不同的时间离散/场推进合同。theta-implicit 分支在该基准上把粒子与场总账本压到机器精度量级；semi-implicit 分支则以 `2.5e-5` 作为官方允许的能量漂移上界。运行产物分别归档于 `runs/stage-c-validation/implicit_theta_picard/` 和 `runs/stage-c-validation/implicit_semi_picard/`。
+两条结果均由官方 `analysis_1d.py` 和独立脚本 `scripts/analyze_implicit_picard_energy_contract.py` 复核。这里不能把两档容差读成分析脚本不一致：它们对应的是两个不同的时间离散/场推进合同。theta-implicit 分支在该基准上把粒子与场总账本压到机器精度量级；semi-implicit 分支则以 `2.5e-5` 作为官方允许的能量漂移上界。运行产物分别归档于 `runs/stage-c-validation/implicit_theta_picard/` 和 `runs/stage-c-validation/implicit_semi_picard/`。
 
 ```python
 drho = (rho - epsilon_0 * divE) / e / ne0
@@ -12081,7 +12084,7 @@ if (lev == 0) {
 
 这些细节现在已经在 `notes/code-reading/boundary/02-pec-insulator-silver-mueller.md` 里拆开，后续可直接据此继续回填本章的 PEC/PMC/PECInsulator 小节。
 
-当前本地 checkout 里，PMC 还有一条很直接的场级 regression：`Examples/Tests/pec/inputs_test_3d_pmc_field`。它在 `z` 方向设 PMC、在局部区域初始化正弦 `Ey/Bx` 波包，然后用 `analysis_pec.py` 检查反射后的 standing wave 是否达到理论上的 constructive interference 振幅 `±2E_in`。因此这条测试验证的不是抽象“PMC 边界存在”，而是 PMC 通过交换 PEC 的 E/B 角色后，反射相位与站波振幅仍满足理论合同。
+PMC 还有一条很直接的场级 regression：`Examples/Tests/pec/inputs_test_3d_pmc_field`。它在 `z` 方向设 PMC、在局部区域初始化正弦 `Ey/Bx` 波包，然后用 `analysis_pec.py` 检查反射后的 standing wave 是否达到理论上的 constructive interference 振幅 `±2E_in`。因此这条测试验证的不是抽象“PMC 边界存在”，而是 PMC 通过交换 PEC 的 E/B 角色后，反射相位与站波振幅仍满足理论合同。
 
 Silver-Mueller 的 regression 则是另一条完全不同的口径。`Examples/Tests/silver_mueller/analysis.py` 直接读取最终 Full diagnostics，并要求所有场分量在脉冲离域后都满足
 
@@ -12095,7 +12098,7 @@ $$
 |E_{\mathrm{reflected}}| \ll |E_{\mathrm{incident}}|.
 $$
 
-当前本地 family 里共有四条最小基准：
+该 family 共有四条最小基准：
 
 - `test_1d_silver_mueller`
 - `test_2d_silver_mueller_x`
@@ -12104,7 +12107,7 @@ $$
 
 它们分别覆盖 1D 轴向出射、2D `x` 向出射、2D `z` 向出射，以及 RZ `z` 向出射；其中 RZ 版本还同时把 `r_lo = none` 的轴线正则性和 `absorbing_silver_mueller` 开放边界放到同一最小回归里。
 
-`PEC` 与 `PECInsulator` 的 regression 边界也应和上面区分开。当前本地 `pec` family 里至少有两组强 analysis：
+`PEC` 与 `PECInsulator` 的 regression 边界也应和上面区分开。`pec` family 里至少有两组强 analysis：
 
 1. `test_3d_pec_field` 与 `test_3d_pec_field_mr`
    这两条分别用 `analysis_pec.py` 和 `analysis_pec_mr.py` 检查反射后 standing-wave 的 `Ey_max/Ey_min` 是否接近理论 `±2E_in`。单级版本容差为 `1%`，MR 版本放宽到 `5%`。因此它们真正验证的是 PEC 场边界反射后的波振幅合同，而不是抽象“边界条件被支持”。

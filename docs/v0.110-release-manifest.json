@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1246,
-  "total_bytes": 39177335,
+  "total_bytes": 39177300,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1539224,
-      "sha256": "9c68ccb44a6d3cde14fef5728d3997541049bd55fbb2e75ecb8bc5bacbeadd24"
+      "bytes": 1539571,
+      "sha256": "1279ca08d79616ce79e9465786257d404912598927a9ad29453b1f1b03d517a5"
     },
     {
       "path": "TODO.md",
-      "bytes": 1406069,
-      "sha256": "9c9f1375aadb88cd4af0e59df68b9edcbe62012335337387008058c541d3bbac"
+      "bytes": 1406509,
+      "sha256": "dc5afa00ca17e10c369afea5fad9f690ce67e456a219bb8c7f1340fe292ae440"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5266559,
-      "sha256": "dea7ae0e38ef9f8d130cce9e74f67cd68585b599e84571ded8125eb2c22579b9"
+      "bytes": 5264034,
+      "sha256": "0aad5b3be440cab6f4e393c3000d901acdb3f700004e81258593ac9ac091740f"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 867854,
-      "sha256": "7d56b9dc9b978dec080f6fac7b2f72c79529f29c47d077d6a8c23e6de37aa167"
+      "bytes": 866930,
+      "sha256": "d35a559f448c119c9af50b3be542bf43bd57178862e76b00bf2125e43f487aa4"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2995787,
-      "sha256": "4f987aedde0babcabf205a5c1491b8b7f1f326a7002da3b1b058259cf61b2c0d"
+      "bytes": 2998418,
+      "sha256": "f36b6aec0b475e4eb118f02a786c285dfca7a374d9db7ddff873183a3fcabbc2"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 4365,
-      "sha256": "a69eb0d5719cdbe346dcb5a401a9a2ecf9cb9d9b8df2a8a350bca19dbfcf465f"
+      "bytes": 5104,
+      "sha256": "8a07573626ff824c116eb9f11473063ec5a31e29025376493bf9c5111b3df728"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 6508,
-      "sha256": "9b93ff607ab664b334ef0cfbea42d5a09b85fb6112109d11b3a9d294483bb3d0"
+      "bytes": 6756,
+      "sha256": "cba3ea58dca7a65dc39e091ddd0c6bdd409620e624c1998cbdbad48bf555d3b3"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2272,13 +2272,13 @@
     },
     {
       "path": "manuscript/chapters/00-preface.md",
-      "bytes": 3311,
-      "sha256": "1f52b1dfecc7552c87f584b7884dd3136ee0f27bc7fad92d4ce408d1f84911d2"
+      "bytes": 3297,
+      "sha256": "8c1892e08db56eb53b00c35cc362bd4a783eb7ec03ce2fe1d477487769192968"
     },
     {
       "path": "manuscript/chapters/01-kinetic-models.md",
-      "bytes": 18259,
-      "sha256": "5bc8600911197494ae68a0f55099f1f587bb59a5eca2034c9c22fe344fc1ba52"
+      "bytes": 18225,
+      "sha256": "224179a84bec6ef4d764b73f19a414405e46e21f4e3d6169a3bb45dac5544c24"
     },
     {
       "path": "manuscript/chapters/02-pic-loop.md",
@@ -2297,23 +2297,23 @@
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
-      "bytes": 153824,
-      "sha256": "d0f454ca541514ca1966ffc065b9b4aa20e8f1abcd12e9cbd470b4c6333d68fe"
+      "bytes": 153664,
+      "sha256": "e7d6e8716dc85d23f6e1dfd5b13d4918eba276b02c99ed8ffe1b935bf17df3ca"
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
-      "bytes": 201394,
-      "sha256": "1c50179410bfd7d538da4fe8983b93102834e373661af2cd2ae913bbac373e55"
+      "bytes": 200832,
+      "sha256": "c1fed7eeec8d91edcb3ab13876b81cea12d5e8b2378b8e3088b5aa525b8b853a"
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
-      "bytes": 121484,
-      "sha256": "985a3c746036b729ece8d1f4d5f4117e0c31bdb905399ca188836e877e4a7b3c"
+      "bytes": 121316,
+      "sha256": "73230652c8af1622b7575c5efe824840cc7ab8d4f9b77756a12c1c43a652ab6c"
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 45477,
-      "sha256": "7fda33253a7664ddb861246b9d9c6a2b3f35363a3e0d958d0ecb8fde2618332e"
+      "bytes": 45424,
+      "sha256": "835e55d072a3bb9e1a0a0124925c91f94ab1204402d98e96cee52591b79b85ad"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",

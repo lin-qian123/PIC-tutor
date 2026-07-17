@@ -8596,7 +8596,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 这样处理的好处是，本章当前可以继续放心用预印本支撑 `Eq.(23)` 到源码 loop 的主叙述，而不会把“尚未取得 publisher PDF”误写成“论文侧还完全不可引用”。
 
-不过这五项里其实已有一项可以先靠本地资产落下最小结论：**title wording 的确存在稳定差别。** 当前项目目录里的合法全文预印本标题是
+不过这五项里其实已有一项可以先靠已归档的资产落下最小结论：**title wording 的确存在稳定差别。** 合法全文预印本标题是
 
 - `Exact charge conservation scheme for Particle-in-Cell simulations for a big class of form-factors`
 
@@ -8606,7 +8606,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 这还不足以推出正文内容有何变化，但至少已经说明“预印本与发表版完全同题”这件事不能先验假定；后续 bounded compare 时，标题差异不是待发现项，而是已经确认存在、只是还未继续追踪到 abstract / section wording / equation typography 层。
 
-截至 2026-07-11，这条 compare 线又可以把“已核实”和“仍未核实”拆得更干净。arXiv 页面明确记录预印本于 1999-01-26 提交，题名为 `Exact charge conservation scheme for Particle-in-Cell simulations for a big class of form-factors`，并标注为 13 页、无图、10 条参考文献；公开书目信息则确认 CPC 发表版为 `Computer Physics Communications 135(2), 144-153 (2001)`，题名为 `Exact charge conservation scheme for Particle-in-Cell simulation with an arbitrary form-factor`，DOI 为 `10.1016/S0010-4655(00)00228-9`。这已经足以把“发表版身份”和“当前本地全文资产”分开记录，但仍不足以推出发表版正文的逐式编辑差异。
+这条 compare 线可以把“已核实”和“仍未核实”拆得更干净。arXiv 页面明确记录预印本于 1999-01-26 提交，题名为 `Exact charge conservation scheme for Particle-in-Cell simulations for a big class of form-factors`，并标注为 13 页、无图、10 条参考文献；公开书目信息则确认 CPC 发表版为 `Computer Physics Communications 135(2), 144-153 (2001)`，题名为 `Exact charge conservation scheme for Particle-in-Cell simulation with an arbitrary form-factor`，DOI 为 `10.1016/S0010-4655(00)00228-9`。这已经足以把“发表版身份”和“已归档全文资产”分开记录，但仍不足以推出发表版正文的逐式编辑差异。
 
 ### 5.11.1 论文、源码、代数合同与 runtime 证据的分层
 
@@ -8621,7 +8621,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 因此，本节后文的 “paper-backed + source-grounded + runtime-backed” 是证据层叠加，不是把最弱层自动升级成最强层。尤其是 `runtime consumer` 只能回答某个输入、几何和诊断合同是否成立；它不能反向证明 CPC 发表版逐式一致，也不能替代 `SyncCurrentAndRho()` 的独立同步合同。该分层与 `notes/code-reading/particles/44-esirkepov-cpc-bounded-comparison.md` 及 `docs/public-evidence-index.md` 的 boundary 分类保持一致。
 
-本项目把这次 bounded compare 单独记在 `notes/code-reading/particles/44-esirkepov-cpc-bounded-comparison.md`。因此，本章当前可以更准确地写成：发表版书目信息已核实，ScienceDirect 索引摘要还可以支持“任意 form-factor、直线轨迹假设、无需 Poisson solve、2D/3D demonstration”这组摘要级事实，但本地下载得到的仍是 HTML 访问响应而不是 PDF；预印本已完成 MinerU 和源码映射，`Eq.(23)` 到 `sdxi/sdyj/sdzk` 的主论证可以使用；但 abstract 的正式排版、section numbering、公式排版和 second-order spline 段落仍不能声称已经按 publisher PDF 逐页核过。
+这次 bounded compare 记录在 `notes/code-reading/particles/44-esirkepov-cpc-bounded-comparison.md`。因此，本章可以更准确地写成：发表版书目信息已核实，ScienceDirect 索引摘要还可以支持“任意 form-factor、直线轨迹假设、无需 Poisson solve、2D/3D demonstration”这组摘要级事实，但下载得到的仍是 HTML 访问响应而不是 PDF；预印本已完成 MinerU 和源码映射，`Eq.(23)` 到 `sdxi/sdyj/sdzk` 的主论证可以使用；但 abstract 的正式排版、section numbering、公式排版和 second-order spline 段落仍不能声称已经按 publisher PDF 逐页核过。
 
 同样，当前预印本也已经足够把论文内部的 section 结构稳定绑定到第 5 章的主叙述，而不必等发表版 PDF 才能继续写。更准确地说：
 
@@ -8643,13 +8643,13 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 |---|---|---|---|
 | Section 2：离散连续性方程 | arXiv 预印本全文、MinerU Markdown | `SyncCurrentAndRho()`、`divE-rho/epsilon_0` regression | preprint-backed + source-grounded |
 | Section 3：`W^1/W^2/W^3` density decomposition | 预印本公式与中文讲解 | `sx_old-sx_new`、`sy_old-sy_new`、`sz_old-sz_new` | preprint-backed + source-grounded |
-| Section 4：二阶 spline 算法骨架 | 预印本算法段落 | `compute_shifted_shape_factor`、`sdxi/sdyj/sdzk` prefix loops | preprint-backed + source-grounded |
+| Section 4：二阶 spline 算法骨架 | 预印本算法段落 | shifted-shape helper；`sdxi/sdyj/sdzk` prefix loops | preprint-backed + source-grounded |
 | CPC 发表版题名、卷期、页码、DOI和公开摘要 | ScienceDirect/公开书目元数据 | `Esirkepovcpc01` bibliography key | publication-metadata verified |
 | CPC 发表版 abstract、section numbering、`Eq.(23)` 排版、二阶 spline 文字 | indexed abstract compare 已完成；publisher PDF 仍未取得 | 摘要级主张可绑定，逐页公式仍无证据 | abstract verified / PDF open |
 
 这张表是本章当前的证据边界：前三行可以直接进入成书正文，第四行用于出版身份和引用信息，第五行现在可以支持摘要级算法主张，但不能写成发表版全文逐页核对。
 
-本版新增 `notes/code-reading/particles/63-esirkepov-publisher-abstract-compare.md` 与 `scripts/audit_esirkepov_publisher_abstract_compare.py`。该 bounded compare 将发表版公开索引摘要中的 Cartesian geometry、arbitrary quasi-particle form-factor、straight-line trajectory、无需 Poisson solve、唯一线性组合和 2D/3D demonstration，与 arXiv 预印本摘要中的 density decomposition、product-form n-dimensional form-factor 和 parabolic spline demonstration 逐项对齐。其证据等级为 `publication-metadata + indexed-abstract verified`，分类为 `PUBLISHER_METADATA_ABSTRACT_VERIFIED_PREPRINT_SOURCE_RUNTIME_PDF_MISSING`：摘要级证据已从“未分类”推进为可审计状态，但 `Eq.(23)` 排版、section numbering、发表版图表和二阶 spline 正文仍保持 PDF 缺口。
+`notes/code-reading/particles/63-esirkepov-publisher-abstract-compare.md` 与 `scripts/audit_esirkepov_publisher_abstract_compare.py` 将发表版公开索引摘要中的 Cartesian geometry、arbitrary quasi-particle form-factor、straight-line trajectory、无需 Poisson solve、唯一线性组合和 2D/3D demonstration，与 arXiv 预印本摘要中的 density decomposition、product-form n-dimensional form-factor 和 parabolic spline demonstration 逐项对齐。其证据等级为 `publication-metadata + indexed-abstract verified`，分类为 `PUBLISHER_METADATA_ABSTRACT_VERIFIED_PREPRINT_SOURCE_RUNTIME_PDF_MISSING`：摘要级证据已处于可审计状态，但 `Eq.(23)` 排版、section numbering、发表版图表和二阶 spline 正文仍保持 PDF 缺口。
 
 #### 发表版缺口审计契约
 
@@ -8657,7 +8657,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 因此，当前成书可以安全使用下面这条最强但不过度的结论：**Esirkepov 的守恒分解已达到预印本公式 + 当前 WarpX 源码 + 既有 runtime consumer 的三层交叉复核；CPC 发表版身份和摘要级事实已核实，但 publisher-PDF line-by-line compare 仍未完成。** 这个契约的分类是 `PREPRINT_FORMULA_SOURCE_RUNTIME_PUBLISHER_BOUNDARY_EXPLICIT`，通过只表示证据边界没有被误写，不表示出版社全文已经取得。
 
-为避免这条边界只停留在叙述层，本版新增 `scripts/audit_esirkepov_bounded_compare.py`，对本地预印本、`access-audit.md` 和五项 bounded compare 目标做可重复检查。当前报告 `runs/stage-c-validation/esirkepov-bounded-compare/contract.{json,md}` 的 8 项检查全部通过：预印本资产、发表版题名、DOI、Section 1--5、Eq.(23)、二阶 spline 线索和 publisher PDF 缺失状态均与当前项目材料一致。这个 contract 的分类仍是 `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING`，因此它完成的是“证据边界可审计化”，不是 CPC 定稿的逐行核对。
+为避免这条边界只停留在叙述层，`scripts/audit_esirkepov_bounded_compare.py` 对预印本、`access-audit.md` 和五项 bounded compare 目标做可重复检查。报告 `runs/stage-c-validation/esirkepov-bounded-compare/contract.{json,md}` 的 8 项检查全部通过：预印本资产、发表版题名、DOI、Section 1--5、Eq.(23)、二阶 spline 线索和 publisher PDF 缺失状态均与归档材料一致。这个 contract 的分类仍是 `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING`，因此它完成的是“证据边界可审计化”，不是 CPC 定稿的逐行核对。
 
 配套的本地读取包合同 `runs/stage-c-validation/esirkepov-2001-paper-asset/contract.{json,md}` 又确认了 13 页 arXiv PDF、39 张图片、MinerU 结构和第一轮中文讲解均完整。它补强的是“当前预印本资产可读且可复核”，不改变 publisher-formatted CPC PDF 仍缺失的判断。
 
@@ -8881,7 +8881,7 @@ new*new * one_third
 
 因此两条算法虽然都继承了同一类 tensor-product 守恒平均结构，但一个把它组织成 whole-orbit decomposition，另一个把它组织成 segment-local flux closure。这解释了为什么两段 kernel 看起来都会出现 `one_third/one_sixth`，但循环骨架、support 范围和几何语义仍然截然不同。
 
-这里同样值得把当前证据边界讲清。和 Esirkepov 那条线不同，`Villasenor-Buneman 1992` 在本项目里当前不只是 preprint-backed，而是已经基于本机现成 full-text PDF 与 MinerU 资产 materialize 到论文目录，因此第 5 章对 Villasenor 的 paper-backed 论证不再需要退回“只有源码、没有论文”的口径。当前正文已经可以稳定依赖的层次包括：
+这里同样值得把证据边界讲清。和 Esirkepov 那条线不同，`Villasenor-Buneman 1992` 不只是 preprint-backed，而是已有 full-text PDF 与 MinerU 资产归档在论文目录，因此第 5 章对 Villasenor 的 paper-backed 论证不再需要退回“只有源码、没有论文”的口径。正文可以稳定依赖的层次包括：
 
 1. “不把一般位移拆成正交 move” 这条历史动机；
 2. four-/seven-/ten-boundary move 的局部 boundary-flux 组织；
@@ -8992,9 +8992,9 @@ $$
 
 图 5-1：Villasenor 公式合同的两层证据。左侧把一条跨越多个 cell 的轨迹按 earliest crossing 切成局部 segment；右侧汇总四边界、segment、3D face 和 3D volume closure 的最大残差。该图只展示论文/几何层闭合，不把它升级为 WarpX kernel 等价或全 geometry/order 回归。
 
-在公式审计之外，本轮又对当前 `../warpx` checkout 做了只读源码合同核对。`scripts/audit_villasenor_source_contract.py` 的 16 个锚点全部通过，覆盖 `VillasenorDepositionShapeNKernel`、explicit/implicit entrypoint、三方向 `cell_crossings_*` 计数、`num_segments` 循环、final-segment/continuation 分支、`seg_factor_*` 和 `this_Jx/this_Jy/this_Jz` 写回。报告位于 `runs/stage-c-validation/villasenor-source-contract/contract.{json,md}`；它说明正文中的 crossing-driven segment skeleton 与当前源码仍一致，但仍不替代数值 kernel regression。
+在公式审计之外，`scripts/audit_villasenor_source_contract.py` 对 `../warpx` checkout 做只读源码合同核对，16 个锚点全部通过，覆盖 `VillasenorDepositionShapeNKernel`、explicit/implicit entrypoint、三方向 `cell_crossings_*` 计数、`num_segments` 循环、final-segment/continuation 分支、`seg_factor_*` 和 `this_Jx/this_Jy/this_Jz` 写回。报告位于 `runs/stage-c-validation/villasenor-source-contract/contract.{json,md}`；它说明正文中的 crossing-driven segment skeleton 与源码仍一致，但仍不替代数值 kernel regression。
 
-本轮又把 implicit Villasenor 从源码和公式层推进到官方 2-rank 运行级证据。官方 `test_2d_theta_implicit_jfnk_vandb` 使用 `shape=2`、周期边界和 theta-implicit Newton/JFNK；上游 `analysis_vandb_jfnk_2d.py` 与独立 `scripts/analyze_implicit_villasenor_contract.py` 均通过，最大总能量相对变化为 `4.0980e-15 < 2e-14`，Gauss-law RMS 为 `9.2951e-16 < 2e-15`，末态网格为 `40x40`，所有输出字段有限。报告归档于 `runs/stage-c-validation/implicit_villasenor_2d_jfnk_mpi2/contract.{json,md}`。
+官方 `test_2d_theta_implicit_jfnk_vandb` 将 implicit Villasenor 的证据从源码和公式层推进到 2-rank 运行级：它使用 `shape=2`、周期边界和 theta-implicit Newton/JFNK；上游 `analysis_vandb_jfnk_2d.py` 与独立 `scripts/analyze_implicit_villasenor_contract.py` 均通过，最大总能量相对变化为 `4.0980e-15 < 2e-14`，Gauss-law RMS 为 `9.2951e-16 < 2e-15`，末态网格为 `40x40`，所有输出字段有限。报告归档于 `runs/stage-c-validation/implicit_villasenor_2d_jfnk_mpi2/contract.{json,md}`。
 
 同一条独立 contract 又读取官方 `test_2d_theta_implicit_jfnk_vandb_cropping`：该 sibling 把 shape 提升到 `4`、网格缩小到 `16x16`，并打开 near-boundary cropping；官方 analysis 与独立读取均通过，末态 Gauss-law 最大绝对误差为 `8.2275e-14 < 1e-13`，RMS 为 `3.0023e-14`。这两条结果可以支持“2D implicit Villasenor 的普通 shape=2 路径和 shape=4 boundary-cropping 路径均有运行级守恒证据”，但不能外推到所有 geometry/order。
 
@@ -9015,7 +9015,7 @@ $$
 
 ### 5.11.3 Esirkepov 运行级维度证据：1D、2D 与 3D Langmuir
 
-前面的公式恒等式和源码合同只能证明局部结构；为了避免把它们误写成端到端证据，本轮又直接运行了 WarpX 官方 Langmuir 输入。官方 1D 和 3D 输入本身显式设置 `algo.current_deposition = esirkepov`；官方 2D 测试卡默认是 `direct`，本项目在 case-local 副本中只将这一项覆盖为 `esirkepov`，并补上官方 analysis 所需的 `rho/divE` 输出字段，因此它是可复查的验证 sibling，而不是 WarpX 上游已注册的 2D Esirkepov regression。
+前面的公式恒等式和源码合同只能证明局部结构；为了避免把它们误写成端到端证据，运行产物直接采用 WarpX 官方 Langmuir 输入。官方 1D 和 3D 输入本身显式设置 `algo.current_deposition = esirkepov`；官方 2D 测试卡默认是 `direct`，case-local 副本只将这一项覆盖为 `esirkepov`，并补上官方 analysis 所需的 `rho/divE` 输出字段，因此它是可复查的验证 sibling，而不是 WarpX 上游已注册的 2D Esirkepov regression。
 
 两条运行都使用当前 checkout 对应的 native binary、2 个 MPI rank 和 `OMP_NUM_THREADS=1`。官方 analysis 负责理论 Langmuir 场误差与其内置 charge-conservation gate；项目独立的 `scripts/analyze_esirkepov_langmuir_contract.py` 则重新读取最终 plotfile，检查 `Ex/Ey/Ez/Bx/By/Bz/jx/jy/jz/rho/divE` 的有限性，并独立计算
 
@@ -9436,7 +9436,7 @@ RZ + Esirkepov 还需要单独保留一个诊断边界：当前 2-rank case 的 
 最后将 correction-on shape=1/2/3/4 一起推进到 `256x512`：`Er/Ez` field gate 全通过，charge residual 分别为 `7.554e-4/8.990e-4/9.289e-4/9.729e-4`，均由 axis cell 主导。`scripts/summarize_rz_esirkepov_highres_shape_family.py` 将四条 case 收成 `runs/stage-c-validation/esirkepov_langmuir_rz_highres_shape-family/contract.{json,md}`。因此当前第 5 章可以明确区分：RZ 高分辨率 field shape family 已闭合，correction-on axis charge 仍未闭合，且不能从 shape=1 的 resolution trend 外推成完整守恒或默认参数修复。
 同一 `256x512` 分辨率下的 correction-off 对照显示：shape=1/2/3/4 的 `Er/Ez` field gate 也全部通过，charge residual 为 `1.639e-11/1.020e-11/8.399e-12/6.669e-12`，只有 shape=3/4 通过 `1e-11`。完整双侧矩阵由 `scripts/summarize_rz_esirkepov_highres_correction_family.py` 生成，报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_highres_correction-family/contract.{json,md}`。因此 correction-off 不是单向修复开关：它在高阶 shape=3/4 上局部闭合 charge，却在 shape=1/2 上保留边界；correction-on 则四阶均保留 axis charge boundary。
 
-本版新增统一的 `scripts/summarize_rz_esirkepov_charge_field_tradeoff.py` 汇总合同，对上述 7 组 RZ 证据做 12 项交叉检查：默认轴修正开启时 field gate 通过而 axis charge 仍为 `BOUNDARY`；关闭轴修正只在局部 sibling 上恢复 charge，不能替代默认配置；cleaning 对照显示 residual 由 axis cell 主导且对诊断路径敏感；更高 shape 与更高分辨率可以改善部分 correction-off case，但不能把它写成全局修复或正式收敛阶。该合同的准确分类是 `RZ_ESIRKEPOV_CHARGE_FIELD_TRADEOFF_SUMMARY_BOUNDARY_DEFAULT_AXIS_CHARGE_UNRESOLVED`，因此本章当前唯一稳健的结论是“field 已有覆盖，charge 仍需保留诊断边界”，而不是修改 WarpX 默认参数。
+统一的 `scripts/summarize_rz_esirkepov_charge_field_tradeoff.py` 汇总合同，对上述 7 组 RZ 证据做 12 项交叉检查：默认轴修正开启时 field gate 通过而 axis charge 仍为 `BOUNDARY`；关闭轴修正只在局部 sibling 上恢复 charge，不能替代默认配置；cleaning 对照显示 residual 由 axis cell 主导且对诊断路径敏感；更高 shape 与更高分辨率可以改善部分 correction-off case，但不能把它写成全局修复或正式收敛阶。该合同的准确分类是 `RZ_ESIRKEPOV_CHARGE_FIELD_TRADEOFF_SUMMARY_BOUNDARY_DEFAULT_AXIS_CHARGE_UNRESOLVED`，因此本章唯一稳健的结论是“field 已有覆盖，charge 仍需保留诊断边界”，而不是修改 WarpX 默认参数。
 
 ![](manuscript/assets/figures/rz-esirkepov-correction-tradeoff.png)
 
@@ -9484,7 +9484,7 @@ RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on
 
 ### 5.14.1 源码定位与结论范围
 
-本章的源码路径和行号不是静态的“参考链接”，而是必须随当前 WarpX checkout 重新核对的证据边界。为避免正文在源码演进后继续保留看似合理、实际已经漂移的描述，本项目新增 `scripts/audit_deposition_chapter_source_crosswalk.py`，对本节前面反复使用的代表性主张做分组检查：
+本章的源码路径和行号不是静态的“参考链接”，而是必须随 WarpX checkout 重新核对的证据边界。为避免正文在源码演进后继续保留看似合理、实际已经漂移的描述，`scripts/audit_deposition_chapter_source_crosswalk.py` 对本节前面反复使用的代表性主张做分组检查：
 
 | 正文层 | 当前源码锚点 | 这项检查能证明什么 | 不能证明什么 |
 |---|---|---|---|
@@ -9516,7 +9516,7 @@ Vay 这一行现在有了更具体的正向边界。`scripts/audit_vay_geometry_
 
 随后使用当前 `build_full` 的 `warpx.2d`/`warpx.3d` 在 case-local 目录中实际重放两张官方输入卡，并运行官方 `vay_deposition/analysis.py`。单进程 2D `diag1000050` 的 `divE-rho/epsilon_0` 相对误差为 `1.5542590389041434e-4 < 1e-3`，3D `diag1000025` 为 `2.9007226763170857e-4 < 1e-3`；`warpx_used_inputs` 和最终 plotfile 也均通过独立 contract。该结果分类为 `RUNTIME_SINGLE_RANK_OFFICIAL_ANALYSIS_PASS_2D_3D`，证明的是官方 analysis 的单进程 producer/consumer 复现，不把 CMake 要求的 2-rank 回归或完整 geometry/order product 偷换成已完成。详见 `notes/code-reading/particles/74-vay-runtime-consumer-contract.md`。
 
-在此基础上，又对同一组官方 2D/3D Cartesian 输入分别切换 `particle_shape=1/2/3/4`，八个单进程 producer（其中六个为本轮新增 sibling）均写出最终 plotfile，官方 analysis 的 `error_rel` 分别为 2D `1.4635e-4/1.4689e-4/1.5543e-4/1.6473e-4`、3D `2.8824e-4/2.7647e-4/2.9007e-4/3.0592e-4`，全部低于 `1e-3`。该结果分类为 `RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D`，只关闭支持的 Cartesian shape family 单进程证据缺口；shape family 的 2-rank 全组合、AMR、边界裁剪、RZ/1D 和正式收敛阶仍保持边界。详见 `notes/code-reading/particles/75-vay-shape-family-runtime-contract.md`。
+在此基础上，又对同一组官方 2D/3D Cartesian 输入分别切换 `particle_shape=1/2/3/4`，八个单进程 producer 均写出最终 plotfile，官方 analysis 的 `error_rel` 分别为 2D `1.4635e-4/1.4689e-4/1.5543e-4/1.6473e-4`、3D `2.8824e-4/2.7647e-4/2.9007e-4/3.0592e-4`，全部低于 `1e-3`。该结果分类为 `RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D`，只关闭支持的 Cartesian shape family 单进程证据缺口；shape family 的 2-rank 全组合、AMR、边界裁剪、RZ/1D 和正式收敛阶仍保持边界。详见 `notes/code-reading/particles/75-vay-shape-family-runtime-contract.md`。
 
 随后补做了官方 CMake 注册规模的 2-rank replay：2D 使用 `warpx.numprocs=2 1`，3D 使用 `warpx.numprocs=2 1 1`，最终 `divE-rho/epsilon_0` 相对误差分别为 `4.0411e-4` 和 `6.0266e-4`，均通过 `1e-3` gate。该结果分类为 `RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D`，关闭的是已注册 shape=3 Cartesian case 的 2-rank producer/consumer 缺口；它不外推到 shape family 的 2-rank 全组合、AMR、边界裁剪或正式收敛阶。详见 `notes/code-reading/particles/76-vay-mpi2-runtime-contract.md`。
 
@@ -12820,7 +12820,7 @@ $$
 
 图 8-1 的数据来自 `runs/stage-c-validation/langmuir_frequency_fit/langmuir_multi_1d_analysis.png`，由官方 Langmuir 输入和 `scripts/analyze_langmuir_frequency_fit.py` 生成；图像被复制到书稿专属 `manuscript/assets/figures/` 目录，避免正文依赖运行目录中的临时文件。
 
-当前本地 Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族分别复用 `analysis_1d.py`、`analysis_2d.py`、`analysis_3d.py`、`analysis_rz.py`，因此共享同一个“解析场解逐点比较”的主合同；其中 3D 版本还额外检查 selective particle output 和 openPMD 粒子位置上的 `Ex/Ey/Ez` 场采样。`analysis_utils.py` 又把 charge-conservation 检查做成条件分支，只在 Esirkepov、Vay deposition 或 PSATD current-correction 这些适用组合下强制比较 `divE` 与 `rho/\epsilon_0`。与之并列的 `langmuir_fluids` 则是另一棵冷流体验证树：它不只看 `E`，还把 `J` 和 `rho` 一起与解析冷流体解比较。需要单独记住的是，2D/3D/RZ 的 PICMI 变体目前大多仍是 `analysis=OFF` 的前端 + checksum scaffold，不应和原生输入的强物理断言混成同一等级。
+Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族分别复用 `analysis_1d.py`、`analysis_2d.py`、`analysis_3d.py`、`analysis_rz.py`，因此共享同一个“解析场解逐点比较”的主合同；其中 3D 版本还额外检查 selective particle output 和 openPMD 粒子位置上的 `Ex/Ey/Ez` 场采样。`analysis_utils.py` 又把 charge-conservation 检查做成条件分支，只在 Esirkepov、Vay deposition 或 PSATD current-correction 这些适用组合下强制比较 `divE` 与 `rho/\epsilon_0`。与之并列的 `langmuir_fluids` 则是另一棵冷流体验证树：它不只看 `E`，还把 `J` 和 `rho` 一起与解析冷流体解比较。需要单独记住的是，2D/3D/RZ 的 PICMI 变体目前大多仍是 `analysis=OFF` 的前端 + checksum scaffold，不应和原生输入的强物理断言混成同一等级。
 
 从应用综合章的角度，Langmuir wave 的价值不只是“有一个 textbook 解析解”，而是它把四条核心数值主线挂到了同一个最小物理问题上：
 
@@ -12893,7 +12893,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 
 这个例子更适合检查并行分解、粒子噪声、诊断输出和性能路径。因为物理结构简单，任何明显的非均匀场增长、粒子丢失或能量异常都容易被发现。
 
-但当前本地 `uniform_plasma` 目录里的 regression 边界需要写得更精确。`test_2d_uniform_plasma` 和 `test_3d_uniform_plasma` 在 `CMakeLists.txt` 中都没有独立 analysis，实际只依赖顶层 `Examples/analysis_default_regression.py` 提供 checksum 基线；因此它们更像是“full diagnostics / 并行噪声 / 最小工作流稳定性”基准，而不是独立的热等离子体物理 hard assert。真正的强断言在 `test_3d_uniform_plasma_restart`：它从 `chk000006` 恢复，再用 `Examples/analysis_default_restart.py` 逐字段比较 restart 与非 restart 输出，要求相对误差低于 `1e-12`。另外，名字里带 `uniform_plasma` 的 `test_3d_uniform_plasma_psatd_JRhom_CC1` 并不属于这个应用目录，而是 `nci_psatd_stability` 里的 PSATD 稳定性回归，它检查的是 `JRhom=CC1 + div cleaning` 后电场能量是否足够小，从而证明 NCI 被压制，而不是均匀热等离子体本身的统计性质。
+但 `uniform_plasma` 目录里的 regression 边界需要写得更精确。`test_2d_uniform_plasma` 和 `test_3d_uniform_plasma` 在 `CMakeLists.txt` 中都没有独立 analysis，实际只依赖顶层 `Examples/analysis_default_regression.py` 提供 checksum 基线；因此它们更像是“full diagnostics / 并行噪声 / 最小工作流稳定性”基准，而不是独立的热等离子体物理 hard assert。真正的强断言在 `test_3d_uniform_plasma_restart`：它从 `chk000006` 恢复，再用 `Examples/analysis_default_restart.py` 逐字段比较 restart 与非 restart 输出，要求相对误差低于 `1e-12`。另外，名字里带 `uniform_plasma` 的 `test_3d_uniform_plasma_psatd_JRhom_CC1` 并不属于这个应用目录，而是 `nci_psatd_stability` 里的 PSATD 稳定性回归，它检查的是 `JRhom=CC1 + div cleaning` 后电场能量是否足够小，从而证明 NCI 被压制，而不是均匀热等离子体本身的统计性质。
 
 这意味着 `uniform_plasma` 在应用综合章里最准确的角色不是“单一 physics benchmark”，而是最小热背景 workflow：
 
@@ -12949,7 +12949,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 - 尚不是独立物理解强断言；
 - 它的强 physics closure 仍需借相邻 `restart`、`energy_conserving_thermal_plasma` 和 `nci_psatd_stability` 三棵树来补齐。
 
-### 2026-07-12：checkpoint/restart 的真实证据
+### Checkpoint/restart 的运行证据
 
 为把上面的 restart 说明从源码和 CMake wiring 推进到运行级证据，案例在
 `runs/stage-c-validation/uniform_plasma_3d_mpi2/` 复现了同一组 3D 输入：基线从第 0 步运行到第 10 步，并在第 6 步写出
@@ -12958,7 +12958,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 官方 `../warpx/Examples/analysis_default_restart.py` 与项目内
 `scripts/analyze_uniform_plasma_restart.py` 都对两个末态 plotfile 的 level-0 covering grid 逐字段比较。共比较 37 个 field，包含 `Bx/By/Bz`、`Ex/Ey/Ez`、`jx/jy/jz`、`rho`，以及 `electrons` 的粒子位置、动量、权重和粒子 ID；独立 reader-side 对照的最大绝对误差为 `2.4414e-4`，最大相对误差为 `2.8631e-16`，通过官方 `1e-12` 容差。绝对误差来自量纲较大的场/电流数组，不能脱离相对误差单独解释。
 
-这一证据有两个必须同时保留的边界。第一，它直接证明的是 checkpoint 状态恢复、粒子/场续跑和末态 diagnostics 的 reproducibility，不是热平衡能量守恒或某个解析波的 physics gate。第二，WarpX 的 CMake 注册把该测试配置为 2-rank MPI；本轮已用本机 MPICH `mpiexec -n 2` 按官方兄弟目录布局真实补跑。官方 `analysis_default_restart.py` 对 37 个 field 全部通过，独立 reader-side 对照的最大相对误差为 `2.8631e-16 < 1e-12`。但仓库 checksum API 的 rank-specific 聚合参考与本地 2-rank producer 不一致，最大相对差为 `3.20e-2`；因此这里应写成“2-rank restart reproducibility evidence”，同时保留 checksum 非通过边界，不能把逐字段 restart pass 扩大成 checksum pass。
+这一证据有两个必须同时保留的边界。第一，它直接证明的是 checkpoint 状态恢复、粒子/场续跑和末态 diagnostics 的 reproducibility，不是热平衡能量守恒或某个解析波的 physics gate。第二，WarpX 的 CMake 注册把该测试配置为 2-rank MPI；使用 MPICH `mpiexec -n 2` 按官方兄弟目录布局执行后，官方 `analysis_default_restart.py` 对 37 个 field 全部通过，独立 reader-side 对照的最大相对误差为 `2.8631e-16 < 1e-12`。但仓库 checksum API 的 rank-specific 聚合参考与 2-rank producer 不一致，最大相对差为 `3.20e-2`；因此这里应写成“2-rank restart reproducibility evidence”，同时保留 checksum 非通过边界，不能把逐字段 restart pass 扩大成 checksum pass。
 
 为解释这一 checksum 边界，使用同一 WarpX binary 和官方输入分别生成 1-rank、2-rank 的非 restart 基线，并运行 `scripts/analyze_uniform_plasma_mpi_consistency.py`。两套 producer 的粒子总权重完全一致；field energy 相对差为 `1.9379e-2`，particle kinetic energy 相对差为 `8.9170e-4`，total energy 相对差为 `6.2269e-4`，physical-field 最大 L2 相对差为 `1.0185`。因此该 thermal/randomized uniform-plasma case 的 rank-invariant field contract 明确不成立，checksum 差异不能被解释成 restart 失败；只有 2-rank restart 的 plotfile-to-plotfile 一致性可写成通过证据。1-rank/2-rank 报告位于 `runs/stage-c-validation/uniform_plasma_3d_mpi2/uniform-plasma-mpi-consistency.{json,md}`。
 
@@ -13312,7 +13312,7 @@ laser-target applications
 
 入口：`../warpx/Examples/Physics_applications/plasma_acceleration/inputs_test_3d_plasma_acceleration_boosted`
 
-这一组也需要避免被过度解读。当前本地 `plasma_acceleration` family 在 `CMakeLists.txt` 中所有活跃 tests 都是 `analysis = OFF`，只复用目录内的 `analysis_default_regression.py` 做 checksum。因此它们不是 “PWFA 解析 benchmark”，而是应用工作流基线。
+这一组也需要避免被过度解读。`plasma_acceleration` family 在 `CMakeLists.txt` 中所有活跃 tests 都是 `analysis = OFF`，只复用目录内的 `analysis_default_regression.py` 做 checksum。因此它们不是 “PWFA 解析 benchmark”，而是应用工作流基线。
 
 但它们并不空泛。原生输入和 PICMI 输入合起来，已经覆盖了：
 
@@ -13713,7 +13713,7 @@ $$
 
 与之并列的 `test_3d_reduced_diags_load_balance_costs_*` 则完全不是物理场解对照。`analysis_reduced_diags_load_balance_costs.py` 根本不读 plotfile，而是直接从 `LBC.txt` 重建每个 rank 的总成本，再只断言 load balance 前后的效率满足 `efficiency_before < efficiency_after`。因此这组 tests 真正验证的是 `LoadBalanceCosts` 是否把并行运行态忠实暴露给 reduced output，而不是某个固定电磁场或粒子分布是否被精确重现。
 
-这里还要特别写清两个当前边界。第一，`test_3d_reduced_diags_load_balance_costs_timers_psatd` 这个名字在当前本地 checkout 里并没有真的把 solver 切到 `psatd`；它的 input 仍然只是 `inputs_base_3d + algo.load_balance_costs_update = Timers`。第二，`test_3d_reduced_diags_single_precision` 当前也只看到 `analysis_reduced_diags_impl.py` 里预留了 `single_precision=True` 的放宽容差代码路径，但没有看到 active CMake test/input。因此这两条都不能被夸大成当前活跃的强 regression。
+这里还要特别写清两个边界。第一，`test_3d_reduced_diags_load_balance_costs_timers_psatd` 这个名字并没有真的把 solver 切到 `psatd`；它的 input 仍然只是 `inputs_base_3d + algo.load_balance_costs_update = Timers`。第二，`test_3d_reduced_diags_single_precision` 也只看到 `analysis_reduced_diags_impl.py` 里预留了 `single_precision=True` 的放宽容差代码路径，但没有看到 active CMake test/input。因此这两条都不能被夸大成活跃的强 regression。
 
 这一层补上以后，第 8 章里 diagnostics 的主线已经不只是“有哪些类”，而是能同时回答：
 
@@ -13782,11 +13782,11 @@ amr.restart = "../.../chk000XXX"
 2. 想做标准化交换、粒子上附加场、RZ mode 或 richer metadata，优先 `openPMD`。
 3. 想保留完整运行态并支持 restart，只能用 `checkpoint`。
 
-当前本地 `restart/` 目录里还有两条很窄但很有代表性的 PICMI regression，把这三条经验压到了更细的接口层。`inputs_test_2d_id_cpu_read_picmi.py` 虽然也挂了 checkpoint 组件，但当前强断言其实是脚本内直接读取 `pti["idcpu"]` 并用 `unpack_ids/unpack_cpus` 验证粒子标识解包合同；`inputs_test_2d_runtime_components_picmi.py` 则把 `picmi.Checkpoint(...)`、`amr.restart=...` 参数解析和动态 `newPid` runtime component 放在一起，证明 checkpoint front-end 接线与 runtime-attribute 写入合同可以共存，但对应的 `test_2d_runtime_components_picmi_restart` 仍是 `FIXME` scaffold。这说明 checkpoint/PICMI 这条线已经有最小 regression 证明“前端能接上”，但还没有把“restart 后动态 runtime attrs 仍完全一致”升级成活跃强断言。
+`restart/` 目录里还有两条很窄但很有代表性的 PICMI regression，把这三条经验压到了更细的接口层。`inputs_test_2d_id_cpu_read_picmi.py` 虽然也挂了 checkpoint 组件，但当前强断言其实是脚本内直接读取 `pti["idcpu"]` 并用 `unpack_ids/unpack_cpus` 验证粒子标识解包合同；`inputs_test_2d_runtime_components_picmi.py` 则把 `picmi.Checkpoint(...)`、`amr.restart=...` 参数解析和动态 `newPid` runtime component 放在一起，证明 checkpoint front-end 接线与 runtime-attribute 写入合同可以共存，但对应的 `test_2d_runtime_components_picmi_restart` 仍是 `FIXME` scaffold。这说明 checkpoint/PICMI 这条线已经有最小 regression 证明“前端能接上”，但还没有把“restart 后动态 runtime attrs 仍完全一致”升级成活跃强断言。
 
-`BackTransformed` diagnostics 还有一条当前本地很值得保留的 RZ 强基准：`Examples/Tests/btd_rz/`。它不是只检查 RZ BTD 目录结构，而是从 `back_rz` openPMD 文件读取 back-transformed 轴上场剖面，直接拟合 boosted-frame Gaussian laser 还原到 lab frame 后的振幅、波长、包络持续时间和相位中心。因此这组例子说明：RZ `BackTransformed` diagnostics 已经不仅有 writer 合同，还有明确的物理重建合同。
+`BackTransformed` diagnostics 还有一条很值得保留的 RZ 强基准：`Examples/Tests/btd_rz/`。它不是只检查 RZ BTD 目录结构，而是从 `back_rz` openPMD 文件读取 back-transformed 轴上场剖面，直接拟合 boosted-frame Gaussian laser 还原到 lab frame 后的振幅、波长、包络持续时间和相位中心。因此这组例子说明：RZ `BackTransformed` diagnostics 已经不仅有 writer 合同，还有明确的物理重建合同。
 
-checkpoint/restart 这条线也有两类当前本地很值得区分的最小基准。`test_3d_acceleration` / `test_3d_acceleration_restart` 是最严格的一类：analysis 逐字段比较 restart 与非 restart plotfile，要求最大相对误差低于 `1e-12`，因此它真正验证的是 acceleration 基线上的 restart 可重复性，而不是某个独立“加速物理”现象。`test_3d_eb_picmi` 则更像一条前端 scaffold：它把 PICMI、embedded boundary、checkpoint 与 `amr.restart=...` 放进同一个最小脚本中，但当前活跃 test 仍主要依赖 checksum，显式 restart 变体还停在 `FIXME`。因此这条线目前证明的是“EB + PICMI + checkpoint 配线能接上”，而不是“EB restart 后所有状态都已有独立强断言覆盖”。
+checkpoint/restart 这条线也有两类很值得区分的最小基准。`test_3d_acceleration` / `test_3d_acceleration_restart` 是最严格的一类：analysis 逐字段比较 restart 与非 restart plotfile，要求最大相对误差低于 `1e-12`，因此它真正验证的是 acceleration 基线上的 restart 可重复性，而不是某个独立“加速物理”现象。`test_3d_eb_picmi` 则更像一条前端 scaffold：它把 PICMI、embedded boundary、checkpoint 与 `amr.restart=...` 放进同一个最小脚本中，但当前活跃 test 仍主要依赖 checksum，显式 restart 变体还停在 `FIXME`。因此这条线目前证明的是“EB + PICMI + checkpoint 配线能接上”，而不是“EB restart 后所有状态都已有独立强断言覆盖”。
 
 这条 `restart_eb` 边界还需要再强调一层：目录里虽然已经放着 `analysis_default_restart.py`，而且注释掉的 `test_3d_eb_picmi_restart` 也明确准备好了
 
@@ -14269,9 +14269,9 @@ FI_PROVIDER=tcp
 
 这不是物理参数，只是本机 MPI transport 的稳定性处理。正式实验记录必须把环境变量、binary 路径、输入文件、输出目录和分析脚本写入对应章节。
 
-## 2026-07-11 reader-side 验证增量
+## Langmuir 与均匀等离子体的运行证据
 
-本轮把本章末尾的两个后续任务推进到真实运行产物：
+下面三项运行产物分别覆盖 Langmuir 时间采样、均匀等离子体守恒统计和二者的分析入口：
 
 1. `runs/stage-c-validation/langmuir_frequency_fit/` 使用同一份 Langmuir 官方输入，只把 `diag1/openpmd.intervals` 从 `40` 改为 `1`，重新运行 80 步，得到 81 个逐步快照；
 2. `scripts/analyze_langmuir_frequency_fit.py` 对 `Ez` 的目标空间模做投影，并用两正交分量拟合时间频率，同时逐快照计算 `divE-rho/epsilon_0`；
@@ -14294,7 +14294,7 @@ Uniform-plasma 结果记录在 `runs/stage-c-validation/uniform_plasma_2d/unifor
 
 随后又把同一输入副本延长到 `100` 步，并每 `10` 步写出一个 plotfile；长时间序列报告位于 `runs/stage-c-validation/uniform_plasma_2d_long/uniform-plasma-conservation.md`。粒子总权重在全部 `11` 个快照中保持不变，末态总能量相对初态变化 `1.387e-2`，时间序列中的最大绝对相对偏差为 `2.518e-2`。这比单看 10 步终点更能说明当前 workflow 的短时热背景统计范围，但仍不足以构成热平衡能量守恒 gate；后者应与 `energy_conserving_thermal_plasma` 的专门 analysis 合同绑定。
 
-这条专门合同已经在本轮真实运行中闭合。`runs/stage-c-validation/energy_conserving_thermal_plasma_2d/` 使用官方 2D 输入运行 500 步，产生 `EF.txt` 和 `EP.txt` 六个 reduced-energy 样本；官方 `Examples/Tests/energy_conserving_thermal_plasma/analysis.py` 通过，新增的 `scripts/analyze_energy_conserving_thermal_plasma.py` 也复现同一 `EF+EP` 计算，得到最大总能量相对漂移 `1.031e-4`，低于官方 `3.000e-3` 阈值。由此可以把两类证据明确分开：uniform-plasma 负责粒子数、I/O 和热背景 workflow 统计，energy-conserving-thermal-plasma 才负责 energy-conserving gather 的强能量漂移 gate。
+这条专门合同由运行产物闭合。`runs/stage-c-validation/energy_conserving_thermal_plasma_2d/` 使用官方 2D 输入运行 500 步，产生 `EF.txt` 和 `EP.txt` 六个 reduced-energy 样本；官方 `Examples/Tests/energy_conserving_thermal_plasma/analysis.py` 通过，`scripts/analyze_energy_conserving_thermal_plasma.py` 也复现同一 `EF+EP` 计算，得到最大总能量相对漂移 `1.031e-4`，低于官方 `3.000e-3` 阈值。由此可以把两类证据明确分开：uniform-plasma 负责粒子数、I/O 和热背景 workflow 统计，energy-conserving-thermal-plasma 才负责 energy-conserving gather 的强能量漂移 gate。
 
 同一官方 family 的 1D sibling 也完成了复现：`runs/stage-c-validation/energy_conserving_thermal_plasma_1d/` 的 500 步运行和官方 analysis 均通过，最大漂移为 `3.009e-4`。`scripts/compare_energy_conserving_thermal_plasma_family.py` 将 1D/2D 两份报告汇总为 `runs/stage-c-validation/energy_conserving_thermal_plasma_family.md`，两者共享 `EF+EP`、`0.003` 阈值和 6 个采样点的验证合同，但不把两种几何的物理轨迹误写成数值等价。
 
@@ -14302,9 +14302,9 @@ Uniform-plasma 结果记录在 `runs/stage-c-validation/uniform_plasma_2d/unifor
 
 ![](manuscript/assets/figures/energy-conserving-thermal-plasma-1d-2d.png)
 
-### 2026-07-12：reduced diagnostics 与 full-state reference 对照
+### Reduced diagnostics 与 full-state reference 对照
 
-本轮按官方 2-rank 配置真实运行 `Examples/Tests/reduced_diags/inputs_test_3d_reduced_diags`，末态为 `diags/diag1000200`。官方 `analysis_reduced_diags.py` 从该 plotfile 重新计算粒子能量/动量、场能/动量、场最大值、rho 最大值、粒子数以及 `FR_Max/FR_Min/FR_Integral/Edotj` 等 parser-driven `FieldReduction`，再逐项与 `EP/EF/PP/PF/MF/MR/NP/FR_*/Edotj.txt` 对照。
+按官方 2-rank 配置执行 `Examples/Tests/reduced_diags/inputs_test_3d_reduced_diags` 后，末态为 `diags/diag1000200`。官方 `analysis_reduced_diags.py` 从该 plotfile 重新计算粒子能量/动量、场能/动量、场最大值、rho 最大值、粒子数以及 `FR_Max/FR_Min/FR_Integral/Edotj` 等 parser-driven `FieldReduction`，再逐项与 `EP/EF/PP/PF/MF/MR/NP/FR_*/Edotj.txt` 对照。
 
 共比较 60 个 reduced observable，官方 analysis 通过。除 field energy 外，最大相对误差为 `4.125e-13`；field energy 的相对误差为 `2.483e-1`，仍低于官方为 staggered Yee reduced energy 与 cell-centered plotfile reference 设置的专用 `0.3` 容差。项目内 `scripts/analyze_reduced_diags_contract.py` 保存了官方 analysis 的逐项摘要，报告位于 `runs/stage-c-validation/reduced_diags_3d_mpi2/reduced-diags-contract.md`。
 
@@ -14427,11 +14427,11 @@ $$
 
 图 8-10 由 `scripts/plot_gaussian_beam_focus_contract.py` 从 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/` 重新生成。
 
-完整官方 `Examples/Tests/initial_distribution/` input 现已用当前 `../warpx` checkout 重建后的 binary 复现。producer 和官方 `analysis.py` 均以 exit code `0` 结束，10 类分布的最大相对差为 `1.8931e-2 < 0.02`。仓库 checksum 默认 `rtol=1e-9` 观察到最大相对差 `3.18e-3`，反映随机采样而非初始化失败；在显式记录的 `rtol=5e-3` sampling tolerance 下通过。因此本项可以从“binary/source mismatch 未完成”升级为“官方分布 analysis 通过、随机 checksum 有条件通过”，但不宣称确定性 `1e-9` checksum 相等。证据目录为 `runs/stage-c-validation/initial_distribution_full_current/`。
+完整官方 `Examples/Tests/initial_distribution/` input 已由对应源码重建的 binary 复现。producer 和官方 `analysis.py` 均以 exit code `0` 结束，10 类分布的最大相对差为 `1.8931e-2 < 0.02`。仓库 checksum 默认 `rtol=1e-9` 观察到最大相对差 `3.18e-3`，反映随机采样而非初始化失败；在显式记录的 `rtol=5e-3` sampling tolerance 下通过。因此该案例的结论是“官方分布 analysis 通过、随机 checksum 有条件通过”，但不宣称确定性 `1e-9` checksum 相等。证据目录为 `runs/stage-c-validation/initial_distribution_full_current/`。
 
 ### 第 8 章验证矩阵：命令、产物与 gate
 
-本章的运行证据统一遵循同一目录约定：WarpX 原始输入只读复制到 `runs/stage-c-validation/<case>/inputs_test`，运行目录保存完整输出，项目脚本只读取该目录并生成 JSON/Markdown 摘要。下面的 `MPIEXEC`、`WARPX` 和 `PYTHON` 取决于本机环境；本轮实际使用的是 MPICH launcher、`warpx.3d/2d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES` 和 Python 环境中的 `yt/openpmd_api/openpmd_viewer`。
+本章的运行证据统一遵循同一目录约定：WarpX 原始输入只读复制到 `runs/stage-c-validation/<case>/inputs_test`，运行目录保存完整输出，分析脚本只读取该目录并生成 JSON/Markdown 摘要。下面的 `MPIEXEC`、`WARPX` 和 `PYTHON` 取决于读者的环境；这些产物使用 MPICH launcher、`warpx.3d/2d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES` 和含 `yt/openpmd_api/openpmd_viewer` 的 Python 环境生成。
 
 | 验证线 | producer / MPI | 项目级复现命令 | 主要 gate | 证据目录 |
 |---|---|---|---|---|
@@ -14550,7 +14550,7 @@ Vranic 2015 进一步补上了粒子 merge/resampling 这条应用线：论文�
 
 Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论文专属目录、50 页 PDF、MinerU Markdown、38 个图像资源、中文精读和独立 asset contract 均已存在。它支撑第 4 章对 agnostic down-sampling、局部权重噪声、严格守恒 thinning 和 merge/cluster 权衡的 paper-backed 解释，但论文的 PICADOR/hi-chi QED cascade 结果不替代 WarpX runtime evidence。
 
-其中 `Birdsall 1985` 因原书过长，当前项目采用分卷 PDF + 分卷 MinerU 的方式处理；这意味着它已经是 A 层资产，但仍不是“整本都已完全精读”。
+其中 `Birdsall 1985` 因原书过长，采用分卷 PDF + 分卷 MinerU 的方式处理；这意味着它已经是 A 层资产，但仍不是“整本都已完全精读”。
 
 ### 9.2.2 Particle pusher
 

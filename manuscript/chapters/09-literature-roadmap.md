@@ -64,7 +64,7 @@ Vranic 2015 进一步补上了粒子 merge/resampling 这条应用线：论文�
 
 Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论文专属目录、50 页 PDF、MinerU Markdown、38 个图像资源、中文精读和独立 asset contract 均已存在。它支撑第 4 章对 agnostic down-sampling、局部权重噪声、严格守恒 thinning 和 merge/cluster 权衡的 paper-backed 解释，但论文的 PICADOR/hi-chi QED cascade 结果不替代 WarpX runtime evidence。
 
-其中 `Birdsall 1985` 因原书过长，当前项目采用分卷 PDF + 分卷 MinerU 的方式处理；这意味着它已经是 A 层资产，但仍不是“整本都已完全精读”。
+其中 `Birdsall 1985` 因原书过长，采用分卷 PDF + 分卷 MinerU 的方式处理；这意味着它已经是 A 层资产，但仍不是“整本都已完全精读”。
 
 ### 9.2.2 Particle pusher
 

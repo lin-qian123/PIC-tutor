@@ -91,6 +91,17 @@ def main() -> None:
                 "### 9.10.3 延伸阅读排序练习",
             )
         ),
+        "chapter_9_reading_priority_order": all(
+            marker in source
+            for marker in (
+                "1. `Esirkepov 2001` 的 CPC 定稿 PDF",
+                "2. `Yee 1966`",
+                "3. `LeeCPC2015` 正文 PDF",
+                "4. `Hockney-Eastwood` 或其 article-level fallback",
+                "5. `Boris` 原始文献",
+            )
+        ),
+        "chapter_9_literature_gap_count": "这六条缺口里，`LeeCPC2015` 最特殊。" in source,
         "vay_2014_review_closure": all(
             marker in source
             for marker in (

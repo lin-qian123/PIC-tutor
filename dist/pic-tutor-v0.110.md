@@ -12652,7 +12652,7 @@ Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族�
 
 - 主程序运行成功，只能证明 workflow、writer、最小噪声背景和输出路径正常；
 - 官方 regression 本来就只有 `analysis_default_regression.py --path diags/diag1000010` 这一层 checksum；
-- 这条 2D 运行记录不包含独立的 openPMD 读取验证；需要该格式时，应按后文的 openPMD reader 案例另行执行 consumer。
+- 这条 2D case 的现有证据不包含独立的 openPMD 读取验证；需要该格式时，应按后文的 openPMD reader 案例另行执行 consumer。
 
 因此 `uniform_plasma` 的证据等级应表述为：
 
@@ -14310,7 +14310,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 | `Andriyash 2016` | 已 materialize 9 页 PDF、MinerU、26 张图、中文精读和 asset contract；来源是 quasi-cylindrical Fourier-Bessel PSATD | 第 6 章 RZ PSATD | 已从 PDF-only 推进到 full-text formula-backed；PLARES-PIC/WarpX 等价和 runtime reproduction 仍未完成 |
 | `LeeCPC2015` | 已有 7 页 eScholarship accepted/submitted manuscript、MinerU、13 张图、中文讲解和 source crosswalk；仍缺 publisher-formatted CPC PDF | 第 7 章 | accepted-manuscript-backed + source-grounded 已成立，但发表版差异和逐系数等价仍未完成 |
 
-这五条缺口里，`LeeCPC2015` 最特殊。它不是完全没工作，而是已经推进到：
+这六条缺口里，`LeeCPC2015` 最特殊。它不是完全没工作，而是已经推进到：
 
 - `access-audit.md`
 - `公式映射准备.md`
@@ -14344,11 +14344,11 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
    - 当前已有作者预印本，可支持第一轮论证；下一步是把预印本与 2001 CPC 发表版逐项对齐。
 2. `Yee 1966`
    - 直接补第 2 / 6 章里的原始 FDTD 入口。
-4. `LeeCPC2015` 正文 PDF
+3. `LeeCPC2015` 正文 PDF
    - 直接补第 7 章的 PML paper closure。
-5. `Hockney-Eastwood` 或其 article-level fallback
+4. `Hockney-Eastwood` 或其 article-level fallback
    - 继续补第 1 / 2 章的 particle-mesh foundations。
-6. `Boris` 原始文献
+5. `Boris` 原始文献
    - 已建立 `1970_Boris_Relativistic_plasma_simulation_optimization_of_a_hybrid_code` 的 metadata/access contract；DTIC PDF 仍受限流，当前只把书目身份固定下来。
    - 下一步是通过 DTIC 重试、机构访问或合法镜像获取原始 proceedings PDF，再补 MinerU 和逐页核对；在此之前不把 Birdsall 二手推导写成 Boris 原文证据。
    - 继续补第 4 章的 pusher 历史链。
@@ -14379,9 +14379,9 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 目标：
 
-- compare the current `Esirkepov 2001` arXiv preprint against the 2001 CPC publication PDF
-- deepen the current first-round Villasenor and Esirkepov Chinese notes into fuller formula-level walkthroughs
-- 把第 5 章从源码校准推进到论文-源码-测试三线闭环
+- 将当前 `Esirkepov 2001` 作者 arXiv 预印本与 2001 CPC 定稿逐项对照；
+- 将 Villasenor 与 Esirkepov 的第一轮中文笔记深化为按公式推进的讲解；
+- 把第 5 章从源码校准推进到论文、源码和测试三线闭环。
 
 适合原因：
 

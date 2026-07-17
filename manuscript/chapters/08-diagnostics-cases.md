@@ -192,7 +192,7 @@ Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族�
 
 - 主程序运行成功，只能证明 workflow、writer、最小噪声背景和输出路径正常；
 - 官方 regression 本来就只有 `analysis_default_regression.py --path diags/diag1000010` 这一层 checksum；
-- 这条 2D 运行记录不包含独立的 openPMD 读取验证；需要该格式时，应按后文的 openPMD reader 案例另行执行 consumer。
+- 这条 2D case 的现有证据不包含独立的 openPMD 读取验证；需要该格式时，应按后文的 openPMD reader 案例另行执行 consumer。
 
 因此 `uniform_plasma` 的证据等级应表述为：
 

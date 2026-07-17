@@ -75,7 +75,8 @@ def main() -> int:
                 "Muraviev 2021",
                 "agnostic",
                 "resampling",
-                "FULLTEXT_PAPER_BACKED_RESAMPLING_METHODS_WARPX_MAPPING_RUNTIME_SEPARATE",
+                "局部总权重",
+                "权重尾",
             )
         ),
     }

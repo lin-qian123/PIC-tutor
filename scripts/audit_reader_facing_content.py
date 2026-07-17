@@ -9,6 +9,13 @@ import re
 from pathlib import Path
 
 
+def section_between(text: str, start_heading: str, end_heading: str) -> str:
+    """Return a Markdown section without relying on its line number."""
+    start = text.index(start_heading)
+    end = text.index(end_heading, start)
+    return text[start:end]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
@@ -23,6 +30,7 @@ def main() -> int:
     chapters = sorted((root / "manuscript/chapters").glob("*.md"))
     chapter_text = "\n".join(path.read_text(encoding="utf-8") for path in chapters)
     chapter_9 = (root / "manuscript/chapters/09-literature-roadmap.md").read_text(encoding="utf-8")
+    chapter_4 = (root / "manuscript/chapters/04-particle-pushers.md").read_text(encoding="utf-8")
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -39,6 +47,16 @@ def main() -> int:
         r"current-checkout|维护台账|本机现成 PDF/MinerU|项目级 helper|交接记录",
         chapter_text,
     )
+    chapter_4_evidence_sections = "\n".join(
+        (
+            section_between(chapter_4, "### 4.4.1", "## 4.5"),
+            section_between(chapter_4, "### 4.13.7", "### 4.13.8"),
+        )
+    )
+    chapter_4_project_record_markers = re.findall(
+        r"runs/stage-c-validation|chapter-04-v0-evidence-ledger|资产合同|文献资产|FULLTEXT_PAPER_BACKED|access boundary",
+        chapter_4_evidence_sections,
+    )
     checks = {
         "version_is_reader_facing": "不是开发日志" in version and "读者在本版可以学到什么" in version,
         "manuscript_readme_is_reader_facing": "PIC 教程" in readme and "阅读路径" in readme and "不是面向维护者的提交记录" in readme,
@@ -50,6 +68,7 @@ def main() -> int:
             r"本机|本地资产|materialize|asset contract|access audit|metadata contract|source crosswalk|本地路径",
             chapter_9,
         ),
+        "chapter_4_uses_reader_facing_evidence_language": not chapter_4_project_record_markers,
         "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text
@@ -68,6 +87,7 @@ def main() -> int:
         "project_record_word_count_in_entry_points": len(project_record_words),
         "project_record_opening_markers": project_record_opening_markers,
         "project_record_body_markers": project_record_body_markers,
+        "chapter_4_project_record_markers": chapter_4_project_record_markers,
         "open_items": [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ],

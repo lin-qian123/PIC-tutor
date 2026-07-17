@@ -6590,20 +6590,21 @@ gyroradius”必须加限定：若用于位置推进的半步速度满足
 <code>\|\mathbf v^{i+1/2}\|=v_0</code>，则
 <code>R=v_0/\omega_c</code>；若把整数时刻速度直接当作
 <code>v_0</code>，仍会出现与 Boris 类似的放大因子。pusher
-的动量更新、半步速度定义和位置更新必须一起检查。当前已新增
-<code>scripts/analyze_vay_appendix_b_runtime_contract.py</code>：在无
-AMR/PML/自洽场的 81 帧 uniform-<code>B</code> case 上，Boris/Vay 的离散
-phase、position-update velocity proxy、gyroradius proxy
-和动量范数均通过窄 gate；Higuera-Cary 的 phase
-偏差作为独立观测保留。这个结果是 bounded proxy-level
-reproduction，仍不等价于直接读取 half-step velocity
-或论文图形逐点复现。</p>
-<p>本章两条核心 pusher 论文资产也已形成可重复合同：Vay 2008 的结果见
-<code>runs/stage-c-validation/vay-2008-paper-asset/contract.{json,md}</code>，Higuera-Cary
-2017 的结果见
-<code>runs/stage-c-validation/higuera-2017-paper-asset/contract.{json,md}</code>。两者均通过全文、MinerU、中文讲解、章节/源码映射和
-access boundary；后文涉及论文专门图形时，仍须遵守各自的 runtime
-reproduction 边界。</p>
+的动量更新、半步速度定义和位置更新必须一起检查。</p>
+<p>一个有用的最小验证是去掉自洽场、AMR 和
+PML，只保留均匀磁场，然后同时比较三类量：离散相位、由相邻位置差构造的速度
+proxy、以及由该 proxy 得到的
+gyroradius。这样的比较能够检查“公式中的半步速度是否与实际位置更新相容”，也能把
+Higuera–Cary 的相位行为与 Boris/Vay
+分开观察；它不能证明输出文件中存在可直接读取的 half-step
+速度，更不能代替论文图形的逐点复现。读者应把 Appendix B
+当成一个关于时间层的判别题，而不是把任何圆形轨道都视作该附录结论的证明。</p>
+<p>Vay 2008 与 Higuera–Cary 2017
+在本章承担不同作用：前者说明为何需要对相对论速度变换作修正，后者说明如何在
+Boris-like 结构中构造相对论不变量。两篇论文都应回到原文公式和本章给出的
+kernel
+对照阅读；只有在输入、观察量和容差明确相同的情况下，才可以讨论某个 WarpX
+例子是否复现了其中的专门结论。</p>
 <h3 id="用推进器谱系约束-vay-的结论范围">4.4.2 用推进器谱系约束 Vay
 的结论范围</h3>
 <p>Vay–Godfrey 2014 review 的读者价值，不是替 WarpX 的
@@ -6613,15 +6614,14 @@ pusher、场更新、current deposition、field gather、filtering
 离散链上。它提醒读者：推进行为不能只凭一条单粒子轨迹判断，场与源项怎样被离散、怎样被
 gather，同样会决定相对论计算的误差结构。</p>
 <p>因此第 4 章应按四层证据阅读：Vay 2008 解释 frame-consistency
-这一原始算法目标；本 review 给出推进器在完整 PIC 方法谱系中的位置；WarpX
-源码说明该源码快照中 kernel 的变量和时间层；case-local contract
-才能说明给定输入下实际运行过什么。任何一层都不能替代另一层，尤其不能把
-review 中的历史算法图或其他 PIC code 的结果写成 WarpX runtime PASS。</p>
-<p>需要核对文献原文、公式编号、9 页 PDF、MinerU 产物、43
-张图片或资产合同的读者，可转到
-<code>docs/chapter-04-v0-evidence-ledger.md</code>。这些材料支持追溯与复核，但不改变本节的核心判断：Vay
-是为特定相对论 frame-consistency
-问题设计的推进器，是否适用仍要同时检查粒子、场、沉积和诊断路径。</p>
+这一原始算法目标；该综述给出推进器在完整 PIC 方法谱系中的位置；WarpX
+源码说明本书采用的实现中 kernel
+的变量和时间层；明确输入和观察量的算例才说明某个条件下实际测到了什么。任何一层都不能替代另一层，尤其不能把综述中的历史算法图或其他
+PIC 程序的结果写成 WarpX 的验证结论。</p>
+<p>本节的核心判断不依赖于资料整理方式：Vay 是为特定的相对论
+frame-consistency
+问题设计的推进器。选择它之前，仍要同时检查粒子推进、场更新、沉积和诊断路径，而不能只依据一个
+mover 名称或一条单粒子轨道。</p>
 <h2 id="higuera-cary-pusherboris-like-结构的相对论修正">4.5 Higuera-Cary
 pusher：Boris-like 结构的相对论修正</h2>
 <p>Higuera-Cary pusher 的 WarpX 实现在
@@ -8516,19 +8516,19 @@ w_t=w_a+w_b,\qquad
 <p>确定夹角，并用动量 cell
 对角线选择平面，避免在原来没有展宽的方向凭空制造分布。论文还强调位置不能机械地都放在
 cluster 质心，而应从原粒子位置中抽取，以避免 merge cell
-中心出现人为密度尖峰。完整的按段落中文讲解和图 1–8 见
-<code>references/03_pic_foundations/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes-中文讲解.md</code>。</p>
+中心出现人为密度尖峰。论文的图和数值例子说明了这种构造怎样在具体分布中工作；阅读时应把它们视为合并算法的机制证据，而不是
+WarpX 默认设置的性能承诺。</p>
 <p>这与 WarpX 的 <code>VelocityCoincidenceThinning</code>
 存在清晰的结构映射：源码同样在 cell 内按速度空间分 bin，把 cluster
 压成两个粒子，并累计权重、加权动量和动能；<code>resampling_algorithm_target_weight</code>
 还因“两粒子输出”而在内部乘 2。论文的 Poisson merging-rate 公式、QED
 cascade speed-up 和分布复现结果则属于论文自己的 OSIRIS/QED
 案例，不能转写成 WarpX 已完成的 runtime physics proof。</p>
-<p>WarpX 的 <code>resampling</code> regression 主要提供粒子数、权重或
-checksum 层证据，缺少与论文 two-stream、magnetic-shower、QED-cascade
-案例一一对应的 dedicated consumer。因此这里能成立的结论是“论文方法与
-WarpX 结构已映射”，而不是 runtime 等价或 speed-up 已获证明。合同见
-<code>runs/stage-c-validation/vranic-2015-paper-asset/contract.{json,md}</code>。</p>
+<p>WarpX 的 <code>resampling</code> regression 主要检查粒子数、权重或
+checksum；它没有把论文中的 two-stream、magnetic-shower 和 QED-cascade
+逐一搬到相同的输入和诊断上。因此这里能成立的结论是“论文方法与 WarpX
+的结构可以对应”，而不是“WarpX
+已复现论文算例”或“加速比已被证明”。要评估一个重采样设置，至少还应比较重采样前后的局部总权重、动量、能量、空间分布和权重尾，而不能只看最终粒子数。</p>
 <h4 id="muraviev-2021agnostic-down-sampling-的论文-源码边界">Muraviev
 2021：agnostic down-sampling 的论文-源码边界</h4>
 <p>Vranic 2015 解释了“一个 cluster
@@ -8553,11 +8553,13 @@ average 下保持不变。</p>
 不足以证明重采样物理质量”的验证要求。论文的 PICADOR/hi-chi
 运行使用了自己的 QED cascade、Weibel 和 k-means 实验，不能把其 growth
 rate、运行时间、权重尾或图 1–12 数值直接写成 WarpX 结果。</p>
-<p>因此本节新增文献资产的准确分类是
-<code>FULLTEXT_PAPER_BACKED_RESAMPLING_METHODS_WARPX_MAPPING_RUNTIME_SEPARATE</code>：论文全文、MinerU、中文精读和图像资产已闭合，算法概念映射已建立，但
-WarpX 仍缺少同时读取重采样前后局部总权重、能量/动量、density variance 与
-weight-tail ceiling 的 dedicated consumer。资产合同见
-<code>runs/stage-c-validation/muraviev-2021-paper-asset/contract.{json,md}</code>。</p>
+<p>对 WarpX 而言，这篇论文最重要的启发是验证标准：算法名称、粒子数下降或
+checksum 一致都不足以说明分布质量。若要判断一次 thinning 或 merge
+是否可接受，应在同一空间单元和动量区间比较局部总权重、能量和三分量动量，另外报告
+density variance
+与权重尾；这些量分别对应守恒、统计代表性和数值稳定性。论文中
+PICADOR/hi-chi 的 QED cascade、Weibel
+等结果属于其自身的物理设置，不能直接充当 WarpX 的运行证据。</p>
 <h3 id="particle_pushersingle_particlelarmorphoton_pusher-的真实验证边界">4.13.8
 <code>particle_pusher</code>、<code>single_particle</code>、<code>larmor</code>、<code>photon_pusher</code>
 的真实验证边界</h3>

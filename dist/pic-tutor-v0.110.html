@@ -381,23 +381,22 @@ products 复制语义</a></li>
 <li><a href="#embedded-boundary从几何吸收和解析场选择验证量" id="toc-embedded-boundary从几何吸收和解析场选择验证量">4.13.13 Embedded
 boundary：从几何、吸收和解析场选择验证量</a></li>
 </ul></li>
-<li><a href="#qed不是一个统一开关而是三条不同的-product-species-事件链" id="toc-qed不是一个统一开关而是三条不同的-product-species-事件链">4.14
-QED：不是一个统一开关，而是三条不同的 product-species 事件链</a>
+<li><a href="#qed先分清-sourceproduct-与产生机制再谈参数" id="toc-qed先分清-sourceproduct-与产生机制再谈参数">4.14 QED：先分清
+source、product 与产生机制，再谈参数</a>
 <ul>
-<li><a href="#runtime-attribute-和-product-species-在构造期就锁定" id="toc-runtime-attribute-和-product-species-在构造期就锁定">4.14.1
-runtime attribute 和 product species 在构造期就锁定</a></li>
-<li><a href="#initqed-真正做的是-enginetable-装配不是事件执行" id="toc-initqed-真正做的是-enginetable-装配不是事件执行">4.14.2
-<code>InitQED()</code> 真正做的是 engine/table
-装配，不是事件执行</a></li>
-<li><a href="#主循环里的插入顺序field-ionization-后particle-injection-前" id="toc-主循环里的插入顺序field-ionization-后particle-injection-前">4.14.3
-主循环里的插入顺序：field ionization 后，particle injection 前</a></li>
-<li><a href="#quantum-synchrotron-与-breit-wheeler-都走-filtercopytransformparticles" id="toc-quantum-synchrotron-与-breit-wheeler-都走-filtercopytransformparticles">4.14.4
-Quantum Synchrotron 与 Breit-Wheeler 都走
-<code>filterCopyTransformParticles</code></a></li>
-<li><a href="#schwinger-是第三条完全不同的创建路径" id="toc-schwinger-是第三条完全不同的创建路径">4.14.5 Schwinger
-是第三条完全不同的创建路径</a></li>
-<li><a href="#regression-的三组-strongest-evidence" id="toc-regression-的三组-strongest-evidence">4.14.6 regression 的三组
-strongest evidence</a></li>
+<li><a href="#事件开始前谁是-source谁保存统计状态谁接收-product" id="toc-事件开始前谁是-source谁保存统计状态谁接收-product">4.14.1
+事件开始前：谁是 source，谁保存统计状态，谁接收 product</a></li>
+<li><a href="#初始化只准备采样条件事件要在后续时间步发生" id="toc-初始化只准备采样条件事件要在后续时间步发生">4.14.2
+初始化只准备采样条件，事件要在后续时间步发生</a></li>
+<li><a href="#时间位置在-field-ionization-后用户-injection-前处理-qed" id="toc-时间位置在-field-ionization-后用户-injection-前处理-qed">4.14.3
+时间位置：在 field ionization 后、用户 injection 前处理 QED</a></li>
+<li><a href="#两条-source-to-product-事件链转化时同时更新-source-与创建-product" id="toc-两条-source-to-product-事件链转化时同时更新-source-与创建-product">4.14.4
+两条 source-to-product 事件链：转化时同时更新 source 与创建
+product</a></li>
+<li><a href="#schwinger由网格场直接创建粒子对不存在-source-species" id="toc-schwinger由网格场直接创建粒子对不存在-source-species">4.14.5
+Schwinger：由网格场直接创建粒子对，不存在 source species</a></li>
+<li><a href="#三条机制分别该看什么数目之外还要看权重方向和守恒" id="toc-三条机制分别该看什么数目之外还要看权重方向和守恒">4.14.6
+三条机制分别该看什么：数目之外还要看权重、方向和守恒</a></li>
 <li><a href="#kernel-层真正的触发条件先推进-optical-depth再跑-event-pass" id="toc-kernel-层真正的触发条件先推进-optical-depth再跑-event-pass">4.14.7
 kernel 层真正的触发条件：先推进 optical depth，再跑 event pass</a></li>
 <li><a href="#wrapper-的职责边界warpx-管场与属性picsar-qed-管采样" id="toc-wrapper-的职责边界warpx-管场与属性picsar-qed-管采样">4.14.8
@@ -9362,8 +9361,8 @@ refinement level 的误差作为观察量；不能把通过的 checksum 当作�
 或 writer
 是否导出了预期的几何/粒子数据。不同问题需要不同的输出量，任何一个单独通过都不等于整个
 EB 物理闭合。</p>
-<h2 id="qed不是一个统一开关而是三条不同的-product-species-事件链">4.14
-QED：不是一个统一开关，而是三条不同的 product-species 事件链</h2>
+<h2 id="qed先分清-sourceproduct-与产生机制再谈参数">4.14 QED：先分清
+source、product 与产生机制，再谈参数</h2>
 <p>从 <code>Particles/</code> 入口再往下看，WarpX 当前的 QED
 主链至少分成三种完全不同的事件类型：</p>
 <ol type="1">
@@ -9372,8 +9371,8 @@ QED：不是一个统一开关，而是三条不同的 product-species 事件链
 <li>Schwinger：不以 source species
 为起点，而是直接由场在网格上创建对</li>
 </ol>
-<h3 id="runtime-attribute-和-product-species-在构造期就锁定">4.14.1
-runtime attribute 和 product species 在构造期就锁定</h3>
+<h3 id="事件开始前谁是-source谁保存统计状态谁接收-product">4.14.1
+事件开始前：谁是 source，谁保存统计状态，谁接收 product</h3>
 <p><code>PhysicalParticleContainer.cpp</code> 在构造期先决定：</p>
 <div class="sourceCode" id="cb129"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a>pp_species_name<span class="op">.</span>query<span class="op">(</span><span class="st">&quot;do_qed_quantum_sync&quot;</span><span class="op">,</span> <span class="va">m_do_qed_quantum_sync</span><span class="op">);</span></span>
 <span id="cb129-2"><a href="#cb129-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span><span class="va">m_do_qed_quantum_sync</span><span class="op">)</span> <span class="op">{</span></span>
@@ -9384,9 +9383,9 @@ runtime attribute 和 product species 在构造期就锁定</h3>
 <span id="cb129-7"><a href="#cb129-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span><span class="va">m_do_qed_breit_wheeler</span><span class="op">)</span> <span class="op">{</span></span>
 <span id="cb129-8"><a href="#cb129-8" aria-hidden="true" tabindex="-1"></a>    AddRealComp<span class="op">(</span><span class="st">&quot;opticalDepthBW&quot;</span><span class="op">);</span></span>
 <span id="cb129-9"><a href="#cb129-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>这不是小细节，而是 QED 和前面 field ionization
-一样，都先把“事件统计状态”写进 species 的 runtime attribute
-系统里。后面所有 QED 事件，首先都依赖：</p>
+<p>这不是实现细节，而是 QED 与 field ionization
+一样，先把“事件统计状态”写进 species 的 runtime attribute
+系统。读者随后追踪每一次事件时，应先找到：</p>
 <ul>
 <li><code>opticalDepthQSR</code></li>
 <li><code>opticalDepthBW</code></li>
@@ -9397,10 +9396,10 @@ species 再开 quantum synchrotron：</p>
 <div class="sourceCode" id="cb130"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a>WARPX_ALWAYS_ASSERT_WITH_MESSAGE<span class="op">(</span></span>
 <span id="cb130-2"><a href="#cb130-2" aria-hidden="true" tabindex="-1"></a>    test_quantum_sync <span class="op">==</span> <span class="dv">0</span><span class="op">,</span></span>
 <span id="cb130-3"><a href="#cb130-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ERROR: do_qed_quantum_sync can&#39;t be enabled for photon particles!&quot;</span><span class="op">);</span></span></code></pre></div>
-<p>也就是说，WarpX 在 species 层已经把“谁是 source、谁是
-product”分得很清楚。</p>
-<h3 id="initqed-真正做的是-enginetable-装配不是事件执行">4.14.2
-<code>InitQED()</code> 真正做的是 engine/table 装配，不是事件执行</h3>
+<p>因此，WarpX 在 species 层已经把“谁提供待转化粒子、谁保存 optical
+depth、谁接收新粒子”分开；只有先分清这些角色，才能正确解读后续的粒子数、动量与权重变化。</p>
+<h3 id="初始化只准备采样条件事件要在后续时间步发生">4.14.2
+初始化只准备采样条件，事件要在后续时间步发生</h3>
 <p><code>MultiParticleContainer::InitMultiPhysicsModules()</code> 在
 <code>InitData()</code>/<code>PostRestart()</code> 前先做：</p>
 <div class="sourceCode" id="cb131"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a>mapSpeciesProduct<span class="op">();</span></span>
@@ -9416,15 +9415,17 @@ product”分得很清楚。</p>
 <code>BreitWheelerEngine</code> 并按
 <code>qed_qs.*</code>、<code>qed_bw.*</code> 初始化 lookup tables。</li>
 </ol>
-<p>因此 <code>InitQED()</code> 的语义不是“提前跑一遍 QED”，而是把：</p>
+<p>因此 <code>InitQED()</code> 不是“提前跑一遍 QED”，而是在模拟开始或
+restart 后把下列采样条件固定：</p>
 <ul>
 <li>谁参与 quantum synchrotron</li>
 <li>谁参与 Breit-Wheeler</li>
 <li>表从 builtin/load/generate 哪条路径来</li>
 </ul>
-<p>全部固定下来。</p>
-<h3 id="主循环里的插入顺序field-ionization-后particle-injection-前">4.14.3
-主循环里的插入顺序：field ionization 后，particle injection 前</h3>
+<p>这一区分决定了排错顺序：初始化失败时先检查 product species 与 lookup
+table；粒子数或能谱异常时才追踪后续 push 与 event pass。</p>
+<h3 id="时间位置在-field-ionization-后用户-injection-前处理-qed">4.14.3
+时间位置：在 field ionization 后、用户 injection 前处理 QED</h3>
 <p>顶层主循环 <code>WarpXEvolve.cpp</code> 里，多物理顺序非常直接：</p>
 <div class="sourceCode" id="cb132"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a>doFieldIonization<span class="op">();</span></span>
 <span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -9441,12 +9442,13 @@ product”分得很清楚。</p>
 <li>用户 <code>particleinjection</code> callback 之前</li>
 <li>正常 <code>OneStep()</code> 之前</li>
 </ul>
-<p>也就是说，QED 不是像 collisions 那样嵌在 split-momentum push
-组织里，而是更早地直接消费当下的
-<code>Efield_aux/Bfield_aux</code>。</p>
-<h3 id="quantum-synchrotron-与-breit-wheeler-都走-filtercopytransformparticles">4.14.4
-Quantum Synchrotron 与 Breit-Wheeler 都走
-<code>filterCopyTransformParticles</code></h3>
+<p>这说明 QED 不像 collisions 那样嵌在 split-momentum push
+的组织里，而是更早地消费当下的
+<code>Efield_aux/Bfield_aux</code>。因此，若用户 callback 在
+<code>particleinjection</code> 中新增粒子，这些粒子不会在同一轮的 QED
+event pass 中被处理。</p>
+<h3 id="两条-source-to-product-事件链转化时同时更新-source-与创建-product">4.14.4
+两条 source-to-product 事件链：转化时同时更新 source 与创建 product</h3>
 <p><code>doQedQuantumSync()</code> 的骨架是：</p>
 <div class="sourceCode" id="cb133"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> Filter   <span class="op">=</span> phys_pc_ptr<span class="op">-&gt;</span>getPhotonEmissionFilterFunc<span class="op">();</span></span>
 <span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> CopyPhot <span class="op">=</span> copy_factory_phot<span class="op">.</span>getSmartCopy<span class="op">();</span></span>
@@ -9472,19 +9474,20 @@ Quantum Synchrotron 与 Breit-Wheeler 都走
 <span id="cb134-9"><a href="#cb134-9" aria-hidden="true" tabindex="-1"></a>    dst_ele_tile<span class="op">,</span> dst_pos_tile<span class="op">,</span> src_tile<span class="op">,</span></span>
 <span id="cb134-10"><a href="#cb134-10" aria-hidden="true" tabindex="-1"></a>    np_dst_ele<span class="op">,</span> np_dst_pos<span class="op">,</span></span>
 <span id="cb134-11"><a href="#cb134-11" aria-hidden="true" tabindex="-1"></a>    Filter<span class="op">,</span> CopyEle<span class="op">,</span> CopyPos<span class="op">,</span> Transform<span class="op">);</span></span></code></pre></div>
-<p>这两条链有一个很关键的共同点：QED 不是只在 product species 上
-<code>push_back</code> 一批新粒子，而是同时做三件事：</p>
+<p>这两条链有一个关键共同点：QED 不是只在 product species
+上增加一批新粒子，而是同时做三件事：</p>
 <ol type="1">
 <li>用 source 粒子的 optical depth 判断是否触发事件</li>
 <li>在 <code>Transform</code> 里读取主网格场和 external particle
 fields</li>
 <li>同时更新 source 状态并创建 product particles</li>
 </ol>
-<p>这和前面 field ionization 的
-<code>filterCopyTransformParticles</code> 思路很接近，但它依赖的是 QED
-engine 表和 optical-depth 统计变量。</p>
-<h3 id="schwinger-是第三条完全不同的创建路径">4.14.5 Schwinger
-是第三条完全不同的创建路径</h3>
+<p>这与前面 field ionization 的
+<code>filterCopyTransformParticles</code> 思路相近，但它依赖 QED engine
+表和 optical-depth 统计变量。验证时因此不能只计数 product，还要同时检查
+source 的剩余状态与能量/动量变化。</p>
+<h3 id="schwinger由网格场直接创建粒子对不存在-source-species">4.14.5
+Schwinger：由网格场直接创建粒子对，不存在 source species</h3>
 <p><code>doQEDSchwinger()</code> 不再从某个 source species
 复制，而是直接在网格上用：</p>
 <ul>
@@ -9500,10 +9503,11 @@ engine 表和 optical-depth 统计变量。</p>
 <li>非 RZ</li>
 <li>非 1D</li>
 </ul>
-<p>所以这里不能把 Schwinger 和前两条 source-&gt;product
-路径混写成同一类机制。</p>
-<h3 id="regression-的三组-strongest-evidence">4.14.6 regression 的三组
-strongest evidence</h3>
+<p>所以不能把 Schwinger 和前两条 source-to-product
+路径混写成同一类机制：它的观察起点是激活区域内的场和 pair
+产额，而不是某一 source species 的 optical depth。</p>
+<h3 id="三条机制分别该看什么数目之外还要看权重方向和守恒">4.14.6
+三条机制分别该看什么：数目之外还要看权重、方向和守恒</h3>
 <ul>
 <li><code>analysis_quantum_sync.py</code>：
 <ul>
@@ -9523,8 +9527,10 @@ depth；</li>
 <li>对应 Schwinger 的强场真空对产生合同。</li>
 </ul></li>
 </ul>
-<p>因此 “QED regression”
-不是一组同质测试，而是三条不同物理路径的独立证据。</p>
+<p>因此“QED 测试通过”不是单一结论：Quantum Synchrotron 需要同时看 photon
+发射与 lepton 的统计状态，Breit-Wheeler 需要比较残余 photon、pairs
+与单事件守恒，Schwinger
+则以理论率窗口和电子/正电子权重配对为主。三条路径必须分别验证，不能用其中一条替代另外两条。</p>
 <h3 id="kernel-层真正的触发条件先推进-optical-depth再跑-event-pass">4.14.7
 kernel 层真正的触发条件：先推进 optical depth，再跑 event pass</h3>
 <p>把入口层再往下读到

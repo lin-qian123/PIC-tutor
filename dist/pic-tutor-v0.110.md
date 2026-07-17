@@ -6318,7 +6318,7 @@ $$
 
 综上，embedded-boundary 验证至少应同时问四个问题：几何是否表示正确，场是否满足已知解析解，吸收是否留下数值电荷，Python 或 writer 是否导出了预期的几何/粒子数据。不同问题需要不同的输出量，任何一个单独通过都不等于整个 EB 物理闭合。
 
-## 4.14 QED：不是一个统一开关，而是三条不同的 product-species 事件链
+## 4.14 QED：先分清 source、product 与产生机制，再谈参数
 
 从 `Particles/` 入口再往下看，WarpX 当前的 QED 主链至少分成三种完全不同的事件类型：
 
@@ -6326,7 +6326,7 @@ $$
 2. Breit-Wheeler：photon source 产生 electron/positron products
 3. Schwinger：不以 source species 为起点，而是直接由场在网格上创建对
 
-### 4.14.1 runtime attribute 和 product species 在构造期就锁定
+### 4.14.1 事件开始前：谁是 source，谁保存统计状态，谁接收 product
 
 `PhysicalParticleContainer.cpp` 在构造期先决定：
 
@@ -6342,7 +6342,7 @@ if (m_do_qed_breit_wheeler) {
 }
 ```
 
-这不是小细节，而是 QED 和前面 field ionization 一样，都先把“事件统计状态”写进 species 的 runtime attribute 系统里。后面所有 QED 事件，首先都依赖：
+这不是实现细节，而是 QED 与 field ionization 一样，先把“事件统计状态”写进 species 的 runtime attribute 系统。读者随后追踪每一次事件时，应先找到：
 
 - `opticalDepthQSR`
 - `opticalDepthBW`
@@ -6357,9 +6357,9 @@ WARPX_ALWAYS_ASSERT_WITH_MESSAGE(
     "ERROR: do_qed_quantum_sync can't be enabled for photon particles!");
 ```
 
-也就是说，WarpX 在 species 层已经把“谁是 source、谁是 product”分得很清楚。
+因此，WarpX 在 species 层已经把“谁提供待转化粒子、谁保存 optical depth、谁接收新粒子”分开；只有先分清这些角色，才能正确解读后续的粒子数、动量与权重变化。
 
-### 4.14.2 `InitQED()` 真正做的是 engine/table 装配，不是事件执行
+### 4.14.2 初始化只准备采样条件，事件要在后续时间步发生
 
 `MultiParticleContainer::InitMultiPhysicsModules()` 在 `InitData()`/`PostRestart()` 前先做：
 
@@ -6375,15 +6375,15 @@ InitQED();
 2. 检查 product species 类型是否正确；
 3. 创建 `QuantumSynchrotronEngine` / `BreitWheelerEngine` 并按 `qed_qs.*`、`qed_bw.*` 初始化 lookup tables。
 
-因此 `InitQED()` 的语义不是“提前跑一遍 QED”，而是把：
+因此 `InitQED()` 不是“提前跑一遍 QED”，而是在模拟开始或 restart 后把下列采样条件固定：
 
 - 谁参与 quantum synchrotron
 - 谁参与 Breit-Wheeler
 - 表从 builtin/load/generate 哪条路径来
 
-全部固定下来。
+这一区分决定了排错顺序：初始化失败时先检查 product species 与 lookup table；粒子数或能谱异常时才追踪后续 push 与 event pass。
 
-### 4.14.3 主循环里的插入顺序：field ionization 后，particle injection 前
+### 4.14.3 时间位置：在 field ionization 后、用户 injection 前处理 QED
 
 顶层主循环 `WarpXEvolve.cpp` 里，多物理顺序非常直接：
 
@@ -6405,9 +6405,9 @@ OneStep(cur_time, dt[0], step);
 - 用户 `particleinjection` callback 之前
 - 正常 `OneStep()` 之前
 
-也就是说，QED 不是像 collisions 那样嵌在 split-momentum push 组织里，而是更早地直接消费当下的 `Efield_aux/Bfield_aux`。
+这说明 QED 不像 collisions 那样嵌在 split-momentum push 的组织里，而是更早地消费当下的 `Efield_aux/Bfield_aux`。因此，若用户 callback 在 `particleinjection` 中新增粒子，这些粒子不会在同一轮的 QED event pass 中被处理。
 
-### 4.14.4 Quantum Synchrotron 与 Breit-Wheeler 都走 `filterCopyTransformParticles`
+### 4.14.4 两条 source-to-product 事件链：转化时同时更新 source 与创建 product
 
 `doQedQuantumSync()` 的骨架是：
 
@@ -6442,15 +6442,15 @@ filterCopyTransformParticles<1>(
     Filter, CopyEle, CopyPos, Transform);
 ```
 
-这两条链有一个很关键的共同点：QED 不是只在 product species 上 `push_back` 一批新粒子，而是同时做三件事：
+这两条链有一个关键共同点：QED 不是只在 product species 上增加一批新粒子，而是同时做三件事：
 
 1. 用 source 粒子的 optical depth 判断是否触发事件
 2. 在 `Transform` 里读取主网格场和 external particle fields
 3. 同时更新 source 状态并创建 product particles
 
-这和前面 field ionization 的 `filterCopyTransformParticles` 思路很接近，但它依赖的是 QED engine 表和 optical-depth 统计变量。
+这与前面 field ionization 的 `filterCopyTransformParticles` 思路相近，但它依赖 QED engine 表和 optical-depth 统计变量。验证时因此不能只计数 product，还要同时检查 source 的剩余状态与能量/动量变化。
 
-### 4.14.5 Schwinger 是第三条完全不同的创建路径
+### 4.14.5 Schwinger：由网格场直接创建粒子对，不存在 source species
 
 `doQEDSchwinger()` 不再从某个 source species 复制，而是直接在网格上用：
 
@@ -6465,9 +6465,9 @@ filterCopyTransformParticles<1>(
 - 非 RZ
 - 非 1D
 
-所以这里不能把 Schwinger 和前两条 source->product 路径混写成同一类机制。
+所以不能把 Schwinger 和前两条 source-to-product 路径混写成同一类机制：它的观察起点是激活区域内的场和 pair 产额，而不是某一 source species 的 optical depth。
 
-### 4.14.6 regression 的三组 strongest evidence
+### 4.14.6 三条机制分别该看什么：数目之外还要看权重、方向和守恒
 
 - `analysis_quantum_sync.py`：
   - 检查 photon 数、权重、发射方向、能谱、以及 source/product optical depth 分布；
@@ -6479,7 +6479,7 @@ filterCopyTransformParticles<1>(
   - 检查理论率对应的 pair 数窗口，以及电子/正电子权重数组一致性；
   - 对应 Schwinger 的强场真空对产生合同。
 
-因此 “QED regression” 不是一组同质测试，而是三条不同物理路径的独立证据。
+因此“QED 测试通过”不是单一结论：Quantum Synchrotron 需要同时看 photon 发射与 lepton 的统计状态，Breit-Wheeler 需要比较残余 photon、pairs 与单事件守恒，Schwinger 则以理论率窗口和电子/正电子权重配对为主。三条路径必须分别验证，不能用其中一条替代另外两条。
 
 ### 4.14.7 kernel 层真正的触发条件：先推进 optical depth，再跑 event pass
 

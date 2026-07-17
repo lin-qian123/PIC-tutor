@@ -11638,18 +11638,20 @@ $$
 
 # 7. 边界条件、PML 与 AMR
 
-本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航。边界、PML、guard cell 与 AMR 的实现说明由 LeeCPC2015 accepted manuscript、源码交叉核对和 Cartesian/RZ PML 案例共同支撑；它们不能替代 publisher-formatted CPC PDF 的版本差异核对，也不能证明 `C1-C25`、Galilean `T2`、cleaning `F/G` 的逐项历史归因或 transition-zone 的完整 route ledger。
+边界、PML、guard cell 与 AMR 不是若干彼此独立的开关：它们共同决定 Maxwell 更新和粒子推进如何在有限计算域、多个 patch 与多个网格层级中闭合。本章的目标是让读者能够区分三类对象：场边界条件、吸收层的离散更新，以及粒子在 coarse/fine 区域的 gather/deposition 路线。
+
+关于 PML 的资料、WarpX 源码和 Cartesian/RZ 案例可以共同说明指定设置下的实现与可测结果；它们不能自动证明所有 PML 系数、所有 Galilean/cleaning 组合，或 transition zone 中每一条粒子路线都已被验证。阅读本章时，始终把“源码存在”“案例通过”和“可外推的物理结论”分开。
 
 边界条件在 PIC 中同时作用于场和粒子。场边界控制 Maxwell 方程如何在计算域边缘闭合；粒子边界控制宏粒子离开、反射、吸收、周期穿越或被记录的方式。二者不能混为一谈。
 
-WarpX 官方理论文档把 PML、PEC、PMC、Silver-Mueller、周期边界和嵌入边界放在 `Docs/source/theory/boundary_conditions.rst`。源码入口主要是：
+WarpX 官方理论文档将 PML、PEC、PMC、Silver-Mueller、周期边界和嵌入边界说明在 `Docs/source/theory/boundary_conditions.rst`。初次阅读时可先用下面的源码入口定位问题：
 
-- `../warpx/Source/BoundaryConditions/`
-- `../warpx/Source/Particles/ParticleBoundaries.cpp`
-- `../warpx/Source/Particles/ParticleBoundaries_K.H`
-- `../warpx/Source/Evolve/WarpXEvolve.cpp::HandleParticlesAtBoundaries`
+- `Source/BoundaryConditions/`
+- `Source/Particles/ParticleBoundaries.cpp`
+- `Source/Particles/ParticleBoundaries_K.H`
+- `Source/Evolve/WarpXEvolve.cpp::HandleParticlesAtBoundaries`
 
-配套源码笔记按参数、PML、导体边界、embedded boundary 和粒子 scraping 分类在 `notes/code-reading/boundary/` 与 `notes/code-reading/embedded-boundary/`。它们适合在需要核对细节时使用；第一次阅读应先沿本章的因果链理解边界为何同时跨参数解析、主循环分派、场数组镜像和粒子沉积。
+需要核对实现细节时，再回到参数、PML、导体边界、embedded boundary 和粒子 scraping 的代码阅读笔记。第一次阅读应先沿本章的因果链理解边界为何同时跨参数解析、主循环分派、场数组镜像和粒子沉积。
 
 ## 本章的阅读路线：边界是一个闭合系统
 
@@ -11686,7 +11688,7 @@ WarpX 官方理论文档把 PML、PEC、PMC、Silver-Mueller、周期边界和�
 | AMR 重建 | `RemakeLevel()` | 重映射后哪些场、粒子和 buffer 必须一起重建？ |
 | scraping | `BoundaryScrapingDiagnostics` | 粒子何时被记录，而不只是被删除？ |
 
-这些入口位于源码快照的 `Source/BoundaryConditions/`、`Source/Parallelization/`、`Source/Particles/` 与 `Source/Diagnostics/`；后文在首次使用时给出具体文件和行号。
+这些入口位于 WarpX 的 `Source/BoundaryConditions/`、`Source/Parallelization/`、`Source/Particles/` 与 `Source/Diagnostics/`；后文在首次使用时给出具体文件和行号。
 
 边界章节的主线可按以下闭合链阅读：
 
@@ -12400,11 +12402,16 @@ AMR 的 transition zone 同时影响 gather 和 deposition。粒子在细网格 
 2. **PML 证据题**：对照 `pml/analysis_pml_yee.py`、`analysis_pml_psatd.py` 和 RZ analysis，区分反射率强判据、末态 residual 判据和 checksum-only 证据。
 3. **AMR route 题**：阅读 `BuildBufferMasks()` 与 `PartitionParticlesInBuffers()`，画出一个粒子分别进入 fine gather、coarse gather、fine deposit 和 coarse deposit 的条件；说明为什么当前没有 dedicated route-count regression 时不能声称每条 route 已被单独验证。
 
-## 7.11 本章结论与源码同步
+## 7.11 本章结论
 
-本章的读法应始终沿同一条链展开：参数决定 field/particle boundary，边界和 PML 决定 guard-cell 与 split-field 更新，AMR 决定 coarse/fine route，最后由与问题匹配的 diagnostics 判断结果。`scripts/audit_boundary_amr_chapter_source_crosswalk.py` 检查 13 组代表性源码入口，防止正文的参数顺序、PML 生命周期、通信、regrid、moving window 和 scraping 说明随源码演进漂移；它不是 C++ 语义等价证明，也不是 runtime route-count proof。
+边界问题的正确读法不是先问“这个边界有没有打开”，而是顺序确认下列四件事：
 
-`test_2d_subcycling_mr` 的 2-rank 结果表明两层 AMR、有限的 E/B/J、moving-window 几何时间一致性和连续注入粒子生命周期可以共同完成；这是一条整体 workflow 证据，不替代 transition-zone 的 route ledger。要关闭该边界，必须在 `PartitionParticlesInBuffers()` 后取得 route count、weight、`current_buf/rho_buf`、coarsened-fine 与 owner-mask 的同一账本，而不能只增加末态 checksum。
+1. **拓扑是否一致。**field 与 particle 的 periodicity 必须沿同一坐标轴成对闭合；PEC、PMC、Silver-Mueller 和 embedded boundary 则对应不同的场或几何条件，不能用同一组输入语义代替。
+2. **离散更新是否在边界闭合。**PML 的 split fields、guard-cell 交换、rho/J 镜像或清零，以及粒子反射、吸收和 scraping 分属不同路径。需要分别知道哪一个数组在何时更新，而不能只观察最终粒子数或一个场快照。
+3. **AMR 状态是否共同迁移。**regrid 或 load balance 会同时影响 fields、粒子、buffer masks、PML/solver 容器和 diagnostics。coarse/fine 的 gather 与 deposition 也可在不同条件下切换，因此一个平滑的末态场不是 route 正确性的充分证据。
+4. **观察量是否匹配问题。**PML 可用反射率或残余场，边界粒子可用 scraping buffer，重启可用输出重复性，AMR transition zone 则需要分区后的 route count、weight、`rho/J` buffer、coarsened-fine 与 owner-mask 的共同账本。checksum 只能补充这些判据，不能替代它们。
+
+这四层构成本章与前后章节的连接：第 5、6 章决定沉积 source 和 Maxwell 更新如何生成，第 7 章检查这些量如何穿过边界、通信和网格层级，第 8 章再选择诊断把结果转化为可解释的证据。当前 AMR case 可以支持整体 workflow 已经走通，但仍不能把它写成 transition zone 的逐 route 验证；在 `PartitionParticlesInBuffers()` 之后没有对应账本之前，这个边界必须保留。
 
 
 <!-- source: manuscript/chapters/08-diagnostics-cases.md -->

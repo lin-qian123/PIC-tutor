@@ -32,6 +32,7 @@ def main() -> int:
     chapter_9 = (root / "manuscript/chapters/09-literature-roadmap.md").read_text(encoding="utf-8")
     chapter_4 = (root / "manuscript/chapters/04-particle-pushers.md").read_text(encoding="utf-8")
     chapter_6 = (root / "manuscript/chapters/06-field-solvers.md").read_text(encoding="utf-8")
+    chapter_7 = (root / "manuscript/chapters/07-boundaries-amr.md").read_text(encoding="utf-8")
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -73,6 +74,12 @@ def main() -> int:
         r"runs/stage-c-validation|scripts/audit_|contract\.json|维护边界|后续修改",
         chapter_6_closure,
     )
+    chapter_7_opening = section_between(chapter_7, "# 7. 边界条件、PML 与 AMR", "## 7.1")
+    chapter_7_closure = chapter_7[chapter_7.index("## 7.10") :]
+    chapter_7_project_record_markers = re.findall(
+        r"pkuHEDPbranch|8c488b1a9|accepted manuscript|scripts/audit_|正文-源码对应",
+        chapter_7_opening + chapter_7_closure,
+    )
     checks = {
         "version_is_reader_facing": "不是开发日志" in version and "读者在本版可以学到什么" in version,
         "manuscript_readme_is_reader_facing": "PIC 教程" in readme and "阅读路径" in readme and "不是面向维护者的提交记录" in readme,
@@ -96,6 +103,18 @@ def main() -> int:
             )
         )
         and not chapter_6_project_record_markers,
+        "chapter_7_has_reader_facing_boundary_closure": all(
+            marker in chapter_7_opening + chapter_7_closure
+            for marker in (
+                "边界是一个闭合系统",
+                "输入参数 -> field boundary / particle boundary",
+                "## 7.11 本章结论",
+                "拓扑是否一致",
+                "观察量是否匹配问题",
+                "PartitionParticlesInBuffers()",
+            )
+        )
+        and not chapter_7_project_record_markers,
         "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text
@@ -116,6 +135,7 @@ def main() -> int:
         "project_record_body_markers": project_record_body_markers,
         "chapter_4_project_record_markers": chapter_4_project_record_markers,
         "chapter_6_project_record_markers": chapter_6_project_record_markers,
+        "chapter_7_project_record_markers": chapter_7_project_record_markers,
         "open_items": [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ],

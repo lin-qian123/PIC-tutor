@@ -639,8 +639,7 @@ buffer</a></li>
 AMR transition zone：为什么最终 plotfile 不足以证明路由正确</a></li>
 <li><a href="#本章练习与源码定位" id="toc-本章练习与源码定位">7.10
 本章练习与源码定位</a></li>
-<li><a href="#本章结论与源码同步" id="toc-本章结论与源码同步">7.11
-本章结论与源码同步</a></li>
+<li><a href="#本章结论-3" id="toc-本章结论-3">7.11 本章结论</a></li>
 </ul></li>
 <li><a href="#诊断验证与案例" id="toc-诊断验证与案例">8.
 诊断、验证与案例</a>
@@ -797,7 +796,7 @@ A：第 5 章沉积文献</a></li>
 </ul></li>
 <li><a href="#成书的已知证据边界" id="toc-成书的已知证据边界">9.8
 成书的已知证据边界</a></li>
-<li><a href="#本章结论-3" id="toc-本章结论-3">9.9 本章结论</a></li>
+<li><a href="#本章结论-4" id="toc-本章结论-4">9.9 本章结论</a></li>
 <li><a href="#练习与复核" id="toc-练习与复核">9.10 练习与复核</a>
 <ul>
 <li><a href="#证据层分类练习" id="toc-证据层分类练习">9.10.1
@@ -17102,27 +17101,28 @@ curl 更新式，仍然无法证明真实 WarpX field solver 在完整 PIC loop
 中保持物理一致。</p>
 <!-- source: manuscript/chapters/07-boundaries-amr.md -->
 <h1 id="边界条件pml-与-amr">7. 边界条件、PML 与 AMR</h1>
-<p>本章以 WarpX <code>pkuHEDPbranch</code> 的 <code>8c488b1a9</code>
-源码快照为导航。边界、PML、guard cell 与 AMR 的实现说明由 LeeCPC2015
-accepted manuscript、源码交叉核对和 Cartesian/RZ PML
-案例共同支撑；它们不能替代 publisher-formatted CPC PDF
-的版本差异核对，也不能证明 <code>C1-C25</code>、Galilean
-<code>T2</code>、cleaning <code>F/G</code> 的逐项历史归因或
-transition-zone 的完整 route ledger。</p>
+<p>边界、PML、guard cell 与 AMR 不是若干彼此独立的开关：它们共同决定
+Maxwell 更新和粒子推进如何在有限计算域、多个 patch
+与多个网格层级中闭合。本章的目标是让读者能够区分三类对象：场边界条件、吸收层的离散更新，以及粒子在
+coarse/fine 区域的 gather/deposition 路线。</p>
+<p>关于 PML 的资料、WarpX 源码和 Cartesian/RZ
+案例可以共同说明指定设置下的实现与可测结果；它们不能自动证明所有 PML
+系数、所有 Galilean/cleaning 组合，或 transition zone
+中每一条粒子路线都已被验证。阅读本章时，始终把“源码存在”“案例通过”和“可外推的物理结论”分开。</p>
 <p>边界条件在 PIC 中同时作用于场和粒子。场边界控制 Maxwell
 方程如何在计算域边缘闭合；粒子边界控制宏粒子离开、反射、吸收、周期穿越或被记录的方式。二者不能混为一谈。</p>
-<p>WarpX 官方理论文档把
-PML、PEC、PMC、Silver-Mueller、周期边界和嵌入边界放在
-<code>Docs/source/theory/boundary_conditions.rst</code>。源码入口主要是：</p>
+<p>WarpX 官方理论文档将
+PML、PEC、PMC、Silver-Mueller、周期边界和嵌入边界说明在
+<code>Docs/source/theory/boundary_conditions.rst</code>。初次阅读时可先用下面的源码入口定位问题：</p>
 <ul>
-<li><code>../warpx/Source/BoundaryConditions/</code></li>
-<li><code>../warpx/Source/Particles/ParticleBoundaries.cpp</code></li>
-<li><code>../warpx/Source/Particles/ParticleBoundaries_K.H</code></li>
-<li><code>../warpx/Source/Evolve/WarpXEvolve.cpp::HandleParticlesAtBoundaries</code></li>
+<li><code>Source/BoundaryConditions/</code></li>
+<li><code>Source/Particles/ParticleBoundaries.cpp</code></li>
+<li><code>Source/Particles/ParticleBoundaries_K.H</code></li>
+<li><code>Source/Evolve/WarpXEvolve.cpp::HandleParticlesAtBoundaries</code></li>
 </ul>
-<p>配套源码笔记按参数、PML、导体边界、embedded boundary 和粒子 scraping
-分类在 <code>notes/code-reading/boundary/</code> 与
-<code>notes/code-reading/embedded-boundary/</code>。它们适合在需要核对细节时使用；第一次阅读应先沿本章的因果链理解边界为何同时跨参数解析、主循环分派、场数组镜像和粒子沉积。</p>
+<p>需要核对实现细节时，再回到参数、PML、导体边界、embedded boundary
+和粒子 scraping
+的代码阅读笔记。第一次阅读应先沿本章的因果链理解边界为何同时跨参数解析、主循环分派、场数组镜像和粒子沉积。</p>
 <h2 id="本章的阅读路线边界是一个闭合系统">本章的阅读路线：边界是一个闭合系统</h2>
 <p>读者第一次读本章时，可以把所有边界问题放进同一条因果链：</p>
 <pre class="text"><code>输入参数 -&gt; field boundary / particle boundary -&gt; guard cells 与 PML 子域
@@ -17213,7 +17213,7 @@ field、粒子删除/反射/记录、诊断和 AMR
 </tr>
 </tbody>
 </table>
-<p>这些入口位于源码快照的
+<p>这些入口位于 WarpX 的
 <code>Source/BoundaryConditions/</code>、<code>Source/Parallelization/</code>、<code>Source/Particles/</code>
 与
 <code>Source/Diagnostics/</code>；后文在首次使用时给出具体文件和行号。</p>
@@ -18087,22 +18087,32 @@ gather、coarse gather、fine deposit 和 coarse deposit
 的条件；说明为什么当前没有 dedicated route-count regression
 时不能声称每条 route 已被单独验证。</li>
 </ol>
-<h2 id="本章结论与源码同步">7.11 本章结论与源码同步</h2>
-<p>本章的读法应始终沿同一条链展开：参数决定 field/particle
-boundary，边界和 PML 决定 guard-cell 与 split-field 更新，AMR 决定
-coarse/fine route，最后由与问题匹配的 diagnostics
-判断结果。<code>scripts/audit_boundary_amr_chapter_source_crosswalk.py</code>
-检查 13 组代表性源码入口，防止正文的参数顺序、PML
-生命周期、通信、regrid、moving window 和 scraping
-说明随源码演进漂移；它不是 C++ 语义等价证明，也不是 runtime route-count
-proof。</p>
-<p><code>test_2d_subcycling_mr</code> 的 2-rank 结果表明两层 AMR、有限的
-E/B/J、moving-window
-几何时间一致性和连续注入粒子生命周期可以共同完成；这是一条整体 workflow
-证据，不替代 transition-zone 的 route ledger。要关闭该边界，必须在
-<code>PartitionParticlesInBuffers()</code> 后取得 route
-count、weight、<code>current_buf/rho_buf</code>、coarsened-fine 与
-owner-mask 的同一账本，而不能只增加末态 checksum。</p>
+<h2 id="本章结论-3">7.11 本章结论</h2>
+<p>边界问题的正确读法不是先问“这个边界有没有打开”，而是顺序确认下列四件事：</p>
+<ol type="1">
+<li><strong>拓扑是否一致。</strong>field 与 particle 的 periodicity
+必须沿同一坐标轴成对闭合；PEC、PMC、Silver-Mueller 和 embedded boundary
+则对应不同的场或几何条件，不能用同一组输入语义代替。</li>
+<li><strong>离散更新是否在边界闭合。</strong>PML 的 split
+fields、guard-cell 交换、rho/J 镜像或清零，以及粒子反射、吸收和 scraping
+分属不同路径。需要分别知道哪一个数组在何时更新，而不能只观察最终粒子数或一个场快照。</li>
+<li><strong>AMR 状态是否共同迁移。</strong>regrid 或 load balance
+会同时影响 fields、粒子、buffer masks、PML/solver 容器和
+diagnostics。coarse/fine 的 gather 与 deposition
+也可在不同条件下切换，因此一个平滑的末态场不是 route
+正确性的充分证据。</li>
+<li><strong>观察量是否匹配问题。</strong>PML
+可用反射率或残余场，边界粒子可用 scraping
+buffer，重启可用输出重复性，AMR transition zone 则需要分区后的 route
+count、weight、<code>rho/J</code> buffer、coarsened-fine 与 owner-mask
+的共同账本。checksum 只能补充这些判据，不能替代它们。</li>
+</ol>
+<p>这四层构成本章与前后章节的连接：第 5、6 章决定沉积 source 和 Maxwell
+更新如何生成，第 7 章检查这些量如何穿过边界、通信和网格层级，第 8
+章再选择诊断把结果转化为可解释的证据。当前 AMR case 可以支持整体
+workflow 已经走通，但仍不能把它写成 transition zone 的逐 route 验证；在
+<code>PartitionParticlesInBuffers()</code>
+之后没有对应账本之前，这个边界必须保留。</p>
 <!-- source: manuscript/chapters/08-diagnostics-cases.md -->
 <h1 id="诊断验证与案例">8. 诊断、验证与案例</h1>
 <p>PIC
@@ -21116,7 +21126,7 @@ PASS/FAIL；<code>RUNTIME_LEDGER_UNPROVEN</code> 表示源码与 schema
 尚未输出账本；<code>CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN</code>
 表示可以计算描述性 order，但不能宣称正式阶数。</p>
 <p>缺口表的内部一致性检查只能保证正文和证据目录使用同一组术语，不表示本书已经达到终稿。</p>
-<h2 id="本章结论-3">9.9 本章结论</h2>
+<h2 id="本章结论-4">9.9 本章结论</h2>
 <p>本书已经不再只有书目而没有正文阅读资产，但也尚未达到“所有 primary
 sources fully closed”。更准确的概括是：</p>
 <ul>

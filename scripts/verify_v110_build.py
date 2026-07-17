@@ -62,6 +62,9 @@ def main() -> None:
     chapter_6 = (ROOT / "manuscript" / "chapters" / "06-field-solvers.md").read_text(
         encoding="utf-8"
     )
+    chapter_7 = (ROOT / "manuscript" / "chapters" / "07-boundaries-amr.md").read_text(
+        encoding="utf-8"
+    )
     chapter_3a_numbers = [
         int(number)
         for number in re.findall(
@@ -93,6 +96,16 @@ def main() -> None:
                 "**跨章诊断题**",
                 "## 6.13 本章结论",
                 "先确定几何和物理目标，再确定 source 时间模型",
+            )
+        ),
+        "chapter_7_reader_closure": all(
+            marker in chapter_7
+            for marker in (
+                "## 本章的阅读路线：边界是一个闭合系统",
+                "## 7.11 本章结论",
+                "**拓扑是否一致。**",
+                "**观察量是否匹配问题。**",
+                "rho_buf/current_buf",
             )
         ),
         "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),

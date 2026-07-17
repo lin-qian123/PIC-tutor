@@ -8,15 +8,12 @@
     "core_chapters_have_exercises": true
   },
   "passed": true,
-  "classification": "READER_FACING_CHAPTERS_5_6_7_PASS_PUSHER_THEME_EDITING_OPEN",
-  "scope": "entry-point and learning-path audit; remaining versioned particle-pusher evidence section requires human editorial rewrite",
-  "versioned_chapter_heading_count": 1,
-  "versioned_chapter_headings": [
-    "### 4.4.2 v0.74"
-  ],
+  "classification": "READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_OPEN",
+  "scope": "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters",
+  "versioned_chapter_heading_count": 0,
+  "versioned_chapter_headings": [],
   "project_record_word_count_in_entry_points": 4,
   "open_items": [
-    "第 4 章仍有按 v0.x 编号的 Vay review 证据小节",
     "需要人工通读术语、公式、代码上下文、章节过渡和练习"
   ]
 }

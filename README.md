@@ -2,7 +2,7 @@
 
 当前成书版本为 `v0.110`：在 v0.109 三密度 RZ 对照基础上，重新执行正式收敛 study 的第二组 12 个 2-rank producer。RZ/RSPHERE correction-on 的 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`；该证据确认 gate 可复现，但不宣称 formal numerical order 或 axis-charge closure 已完成。
 
-当前读者版已完成第 5 章沉积、第 6 章场求解器和第 7 章边界/AMR 的主题化改写：正文按“问题 -> 原理 -> 证据 -> 限制 -> 练习”组织，逐版实验记录分别下沉至 `docs/chapter-05-v0-evidence-ledger.md`、`docs/chapter-06-v0-evidence-ledger.md` 和 `docs/chapter-07-v0-evidence-ledger.md`。读者审计只剩第 4 章 Vay review 的版本化小节；完整缺口见 `docs/current-book-gap-register.md`。
+当前读者版已完成第 4 章粒子推进器、第 5 章沉积、第 6 章场求解器和第 7 章边界/AMR 的主题化改写：正文按“问题 -> 原理 -> 证据 -> 限制 -> 练习”组织，逐版实验记录分别下沉至 `docs/chapter-04-v0-evidence-ledger.md` 至 `docs/chapter-07-v0-evidence-ledger.md`。读者审计已不再发现版本化章节标题；完整缺口见 `docs/current-book-gap-register.md`。
 
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 

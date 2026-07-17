@@ -1,8 +1,8 @@
 # Reader-facing content audit
 
-- classification: `READER_FACING_CHAPTERS_5_6_7_PASS_PUSHER_THEME_EDITING_OPEN`
-- scope: entry-point and learning-path audit; remaining versioned particle-pusher evidence section requires human editorial rewrite
-- versioned chapter headings remaining: `1`
+- classification: `READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_OPEN`
+- scope: entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters
+- versioned chapter headings remaining: `0`
 
 | check | status |
 |---|:---:|
@@ -14,5 +14,4 @@
 
 ## Open editorial work
 
-- 第 4 章仍有按 v0.x 编号的 Vay review 证据小节
 - 需要人工通读术语、公式、代码上下文、章节过渡和练习

@@ -357,13 +357,13 @@ $$
 
 本章两条核心 pusher 论文资产也已形成可重复合同：Vay 2008 的结果见 `runs/stage-c-validation/vay-2008-paper-asset/contract.{json,md}`，Higuera-Cary 2017 的结果见 `runs/stage-c-validation/higuera-2017-paper-asset/contract.{json,md}`。两者均通过全文、MinerU、中文讲解、章节/源码映射和 access boundary；后文涉及论文专门图形时，仍须遵守各自的 runtime reproduction 边界。
 
-### 4.4.2 v0.74 文献闭环：Vay--Godfrey 2014 review
+### 4.4.2 用推进器谱系约束 Vay 的结论范围
 
-Vay 与 Godfrey 的 2014 review 把粒子推进器放回完整 PIC 离散链：Maxwell 场更新、粒子 push、current deposition、field gather、filtering 和数值稳定性必须一起讨论。该文的 Boris relativistic rotation（式 29--35）与 Lorentz-invariant formulation（式 36--38）为本节的 Vay 2008 源码公式提供了历史和算法上下文，但 review 本身不是 `UpdateMomentumVay.H` 的函数级实现证明。
+Vay--Godfrey 2014 review 的读者价值，不是替 WarpX 的 `UpdateMomentumVay.H` 背书，而是把 Boris、Lorentz-invariant pusher、场更新、current deposition、field gather、filtering 与数值稳定性放在同一条 PIC 离散链上。它提醒读者：推进行为不能只凭一条单粒子轨迹判断，场与源项怎样被离散、怎样被 gather，同样会决定相对论计算的误差结构。
 
-本书已将 9 页 PDF、MinerU 原文、43 张抽取图、论文顺序中文精读和访问边界保存在 `references/01_reviews_surveys/2014_VayFRACAD2014_Modeling_of_relativistic_plasmas_with_the_Particle-In-Cell_method/`，并由 `scripts/audit_vay_2014_review_asset_contract.py` 验收。出版信息以期刊记录为准：*Comptes Rendus Mécanique* 342 (2014), 610--618，DOI `10.1016/j.crme.2014.07.006`。
+因此第 4 章应按四层证据阅读：Vay 2008 解释 frame-consistency 这一原始算法目标；本 review 给出推进器在完整 PIC 方法谱系中的位置；WarpX 源码说明当前 kernel 的变量和时间层；case-local contract 才能说明给定输入下实际运行过什么。任何一层都不能替代另一层，尤其不能把 review 中的历史算法图或其他 PIC code 的结果写成当前 WarpX runtime PASS。
 
-因此第 4 章的证据分层是：Vay 2008 负责 relativistic pusher 的原始算法，Vay--Godfrey 2014 review 负责把 Boris、Lorentz-invariant pusher 与场/源项/稳定性放入同一张方法谱系，WarpX 源码负责当前 kernel 的变量和时间层语义，case-local contract 负责有限运行证据。不能把 review 中的历史算法图或其他 PIC code 的结果直接写成当前 WarpX runtime PASS。
+需要核对文献原文、公式编号、9 页 PDF、MinerU 产物、43 张图片或资产合同的读者，可转到 `docs/chapter-04-v0-evidence-ledger.md`。这些材料支持追溯与复核，但不改变本节的核心判断：Vay 是为特定相对论 frame-consistency 问题设计的推进器，是否适用仍要同时检查粒子、场、沉积和诊断路径。
 
 ## 4.5 Higuera-Cary pusher：Boris-like 结构的相对论修正
 

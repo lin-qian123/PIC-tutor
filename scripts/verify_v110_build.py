@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# Reader-facing routes and the expanded notation appendix require 265 pages.
-EXPECTED_PDF_PAGES = 265
+# Reader-facing routes and the expanded notation appendix require 264 pages.
+EXPECTED_PDF_PAGES = 264
 
 
 def image_links(text: str) -> list[str]:

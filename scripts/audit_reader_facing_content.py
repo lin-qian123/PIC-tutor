@@ -34,12 +34,17 @@ def main() -> int:
         r"v0\.\d+\s*(?:校准说明|源码基线|的本章目标)|可审校长草稿|正式书稿版|后续扩写计划|本章当前依据|本章当前按|本机现成 PDF/MinerU|本机源码位置|本章当前引用|当前源码入口|项目目录 .*access audit|项目级 helper|交接记录",
         chapter_openings,
     )
+    project_record_body_markers = re.findall(
+        r"current-checkout|维护台账|本机现成 PDF/MinerU|项目级 helper|交接记录",
+        chapter_text,
+    )
     checks = {
         "version_is_reader_facing": "不是开发日志" in version and "读者在本版可以学到什么" in version,
         "manuscript_readme_is_reader_facing": "PIC 教程" in readme and "阅读路径" in readme and "不是面向维护者的提交记录" in readme,
         "preface_has_learning_outcomes": "读者应当能够" in preface and "如何使用本书" in preface,
         "history_is_separated": (root / "docs/version-history-v0.110.md").is_file(),
         "chapter_openings_are_reader_facing": not project_record_opening_markers,
+        "core_chapters_have_no_project_record_markers": not project_record_body_markers,
         "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text
@@ -57,6 +62,7 @@ def main() -> int:
         "versioned_prose_marker_count": len(versioned_prose_markers),
         "project_record_word_count_in_entry_points": len(project_record_words),
         "project_record_opening_markers": project_record_opening_markers,
+        "project_record_body_markers": project_record_body_markers,
         "open_items": [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ],

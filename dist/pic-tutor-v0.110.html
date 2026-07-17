@@ -11792,11 +11792,12 @@ deposition 的 implicit 路径去读。对 <span class="math inline">\(\rho\)</s
 都在容器/通信层完成，不在 <code>ChargeDeposition.H</code> kernel
 内完成。</li>
 </ol>
-<p>本节的 current-checkout source contract 由
-<code>scripts/audit_charge_deposition_bridge_contract.py</code>
-固定验收。它不是替代物理推导的测试，而是防止源码阅读中的关键桥接环节被误读或在后续版本漂移：当前
-13 个锚点覆盖 <code>icomp/time_shift_delta</code>、ABLASTR 的越界保护与
-CPU/GPU 暂存、形状函数分派、RZ 模式以及 atomic writeback。</p>
+<p>读者在升级 WarpX 后，应重新核对
+<code>icomp/time_shift_delta</code>、ABLASTR 的越界保护与 CPU/GPU
+暂存、形状函数分派、RZ 模式和 atomic
+writeback；这些入口共同决定本节的旧/新时间层与局部写回解释是否仍适用。<code>scripts/audit_charge_deposition_bridge_contract.py</code>
+将这 13
+个源码锚点做成可重复检查，但它只验证阅读入口没有漂移，不能替代这里的物理推导或数值验证。</p>
 <p>这组负面边界是本节的收口点：charge deposition 的局部 kernel
 是“单时间层 shape 加权的源项采样器”，而不是 charge-conserving current
 mover。离散连续性方程仍由后面的 current deposition 与
@@ -12436,10 +12437,8 @@ line-by-line compare 仍未完成。</strong> 这个契约的分类是
 缺失状态均与归档材料一致。这个 contract 的分类仍是
 <code>PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING</code>，因此它完成的是“证据边界可审计化”，不是
 CPC 定稿的逐行核对。</p>
-<p>配套的本地读取包合同
-<code>runs/stage-c-validation/esirkepov-2001-paper-asset/contract.{json,md}</code>
-又确认了 13 页 arXiv PDF、39 张图片、MinerU
-结构和第一轮中文讲解均完整。它补强的是“当前预印本资产可读且可复核”，不改变
+<p>书中引用的 Esirkepov 预印本、图像与中文讲解的可用性记录在
+<code>runs/stage-c-validation/esirkepov-2001-paper-asset/contract.{json,md}</code>。它保证读者可以复查本节采用的预印本材料，但不改变
 publisher-formatted CPC PDF 仍缺失的判断。</p>
 <p>公式层还增加了一项可复现的负责任验证：<code>scripts/verify_esirkepov_density_decomposition.py</code>
 用 10000 组确定性随机 old/new shape 分量检查</p>
@@ -14064,68 +14063,39 @@ route-count/intermediate-field 证明、RZ implicit Villasenor
 charge/Gauss-law。它展示的是九条证据行，不是完整 geometry × shape/order
 的笛卡尔积。</p>
 <h3 id="源码定位与结论范围">5.14.1 源码定位与结论范围</h3>
-<p>本章的源码路径和行号不是静态的“参考链接”，而是必须随 WarpX checkout
-重新核对的证据边界。为避免正文在源码演进后继续保留看似合理、实际已经漂移的描述，<code>scripts/audit_deposition_chapter_source_crosswalk.py</code>
-对本节前面反复使用的代表性主张做分组检查：</p>
-<table>
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
-<thead>
-<tr>
-<th>正文层</th>
-<th>源码快照锚点</th>
-<th>这项检查能证明什么</th>
-<th>不能证明什么</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>charge bridge</td>
-<td><code>WarpXParticleContainer.cpp</code> 的
-<code>icomp/time_shift_delta/LowerCorner</code> 与
-<code>deposit_charge</code></td>
-<td>旧/新 <code>rho</code> 时间层和普通/shared 路径仍有对应入口</td>
-<td>不证明所有运行时 component 值都正确</td>
-</tr>
-<tr>
-<td>ABLASTR bridge</td>
-<td><code>DepositCharge.H</code> 的
-<code>depos_lev</code>、<code>rel_ref_ratio</code>、GPU alias、CPU
-<code>lockAdd</code></td>
-<td>本文对 level 与 CPU/GPU 暂存的说明仍有源码表面</td>
-<td>不证明 CPU/GPU 数值结果等价</td>
-</tr>
-<tr>
-<td>implicit current</td>
-<td><code>CurrentDeposition.H</code> 的两条 implicit 入口和
-<code>xp_np1</code> 重建</td>
-<td>本文区分“端点恢复”和“共享守恒 kernel”的层次没有漂移</td>
-<td>不证明 RZ implicit runtime 已通过</td>
-</tr>
-<tr>
-<td>Villasenor kernel</td>
-<td><code>Villasenor</code> kernel
-family、<code>crop_at_boundary</code>、<code>cell_crossings</code>、<code>num_segments</code></td>
-<td>本文关于 crossing-driven segment loop 的入口仍存在</td>
-<td>不证明每种 geometry/order 都已运行</td>
-</tr>
-<tr>
-<td>shape/geometry</td>
-<td><code>ShapeFactors.H</code> 与 <code>ChargeDeposition.H</code> 的
-helper、shape 和 geometry 分支</td>
-<td>本文的 shape helper 与 RZ/径向分支指向该源码快照</td>
-<td>不替代 C++ 语义审计或完整笛卡尔积回归</td>
-</tr>
-</tbody>
-</table>
-<p>该合同当前为 <code>13/13</code>
-组通过。它的作用是维护“正文-源码”这条线，而不是把 source marker
-误写成物理验证；论文 publisher PDF 对照、完整 geometry/order runtime 和
-RZ implicit 运行边界仍按前文分类保留。</p>
+<p>本章的源码路径和行号是阅读起点，不是永久不变的 API。使用不同 WarpX
+版本时，先按函数名和调用关系定位，再检查下表中的物理职责是否仍存在；不要只因某个行号匹配就把后续版本当作本书源码快照的等价实现。<code>scripts/audit_deposition_chapter_source_crosswalk.py</code>
+可自动检查这些入口是否仍可找到：</p>
+<p>按下面五个问题阅读源码，比在一张宽表中比较路径更可靠：</p>
+<ol type="1">
+<li><strong>旧/新 <code>rho</code> 怎样区分时间层？</strong> 在
+<code>WarpXParticleContainer.cpp</code> 查
+<code>icomp</code>、<code>time_shift_delta</code>、<code>LowerCorner</code>
+与
+<code>deposit_charge</code>。这些入口支持本节的时间层解释，但不能证明某次运行的
+component 值一定正确。</li>
+<li><strong>粒子为何能直接沉到另一层？</strong> 在
+<code>DepositCharge.H</code> 查
+<code>depos_lev</code>、<code>rel_ref_ratio</code>、GPU alias 和 CPU
+<code>lockAdd</code>。它们说明 level 与暂存路径存在，不等于 CPU/GPU
+数值结果已经逐点等价。</li>
+<li><strong>隐式电流如何恢复端点？</strong> 在
+<code>CurrentDeposition.H</code> 查两条 implicit 入口和
+<code>xp_np1</code> 重建。它支持“端点恢复”和“共享守恒
+kernel”是两层职责，不能证明 RZ implicit runtime 已通过。</li>
+<li><strong>Villasenor 怎样处理多次 crossing？</strong> 在 Villasenor
+kernel family 查
+<code>crop_at_boundary</code>、<code>cell_crossings</code> 和
+<code>num_segments</code>。它支持 crossing-driven segment loop
+的解释，不能证明每个 geometry/order 组合都已运行。</li>
+<li><strong>shape 与径向几何在哪里分派？</strong> 在
+<code>ShapeFactors.H</code> 和 <code>ChargeDeposition.H</code> 查
+helper、shape 与 geometry 分支。它们把本节指向正确的源码快照，但不替代
+C++ 语义审计或完整笛卡尔积回归。</li>
+</ol>
+<p>这些入口检查的作用是维持“正文解释能回到源码”的可追踪性，而不是把函数名出现误写成物理验证。论文
+publisher PDF 对照、完整 geometry/order runtime 和 RZ implicit
+运行边界仍按前文分类保留。</p>
 <h3 id="覆盖范围与已知空白">5.14.2 覆盖范围与已知空白</h3>
 <p>上一张 coverage matrix
 解决了“已有证据分布在哪里”，但成书还需要明确记录“哪些组合仍然没有证据”。因此本节新增一份
@@ -14186,76 +14156,28 @@ runtime proof</td>
 </tr>
 </tbody>
 </table>
-<p>Vay
-这一行现在有了更具体的正向边界。<code>scripts/audit_vay_geometry_order_wiring.py</code>
-对当前官方测试目录做 <code>18/18</code>
-项只读核对：<code>vay_deposition</code> 提供 2D Cartesian/shape=3 和 3D
-Cartesian/shape=3 两条 <code>divE-rho/epsilon_0</code> analysis +
-checksum 入口，Langmuir 目录另有 2D/shape=4 sibling；源码同时保留
-<code>doVayDepositionShapeN&lt;1..4&gt;</code> 分派和 RZ/1D/implicit
-guard。报告见
-<code>runs/stage-c-validation/vay-geometry-order-wiring/contract.{json,md}</code>。</p>
-<p>这项结果关闭的是“Vay 官方 wiring 没有被统一登记”的索引缺口，分类仍是
-<code>SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY</code>：它不等于
-Vay 全部 geometry/order 的独立 runtime
-product，也不等于正式收敛阶。详细边界见
-<code>notes/code-reading/particles/73-vay-geometry-order-wiring-contract.md</code>。</p>
-<p>随后使用当前 <code>build_full</code> 的
-<code>warpx.2d</code>/<code>warpx.3d</code> 在 case-local
-目录中实际重放两张官方输入卡，并运行官方
-<code>vay_deposition/analysis.py</code>。单进程 2D
-<code>diag1000050</code> 的 <code>divE-rho/epsilon_0</code> 相对误差为
-<code>1.5542590389041434e-4 &lt; 1e-3</code>，3D
-<code>diag1000025</code> 为
-<code>2.9007226763170857e-4 &lt; 1e-3</code>；<code>warpx_used_inputs</code>
-和最终 plotfile 也均通过独立 contract。该结果分类为
-<code>RUNTIME_SINGLE_RANK_OFFICIAL_ANALYSIS_PASS_2D_3D</code>，证明的是官方
-analysis 的单进程 producer/consumer 复现，不把 CMake 要求的 2-rank
-回归或完整 geometry/order product 偷换成已完成。详见
-<code>notes/code-reading/particles/74-vay-runtime-consumer-contract.md</code>。</p>
-<p>在此基础上，又对同一组官方 2D/3D Cartesian 输入分别切换
-<code>particle_shape=1/2/3/4</code>，八个单进程 producer 均写出最终
-plotfile，官方 analysis 的 <code>error_rel</code> 分别为 2D
-<code>1.4635e-4/1.4689e-4/1.5543e-4/1.6473e-4</code>、3D
-<code>2.8824e-4/2.7647e-4/2.9007e-4/3.0592e-4</code>，全部低于
-<code>1e-3</code>。该结果分类为
-<code>RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D</code>，只关闭支持的
-Cartesian shape family 单进程证据缺口；shape family 的 2-rank
-全组合、AMR、边界裁剪、RZ/1D 和正式收敛阶仍保持边界。详见
-<code>notes/code-reading/particles/75-vay-shape-family-runtime-contract.md</code>。</p>
-<p>随后补做了官方 CMake 注册规模的 2-rank replay：2D 使用
-<code>warpx.numprocs=2 1</code>，3D 使用
-<code>warpx.numprocs=2 1 1</code>，最终 <code>divE-rho/epsilon_0</code>
-相对误差分别为 <code>4.0411e-4</code> 和 <code>6.0266e-4</code>，均通过
-<code>1e-3</code> gate。该结果分类为
-<code>RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D</code>，关闭的是已注册
-shape=3 Cartesian case 的 2-rank producer/consumer 缺口；它不外推到
-shape family 的 2-rank 全组合、AMR、边界裁剪或正式收敛阶。详见
-<code>notes/code-reading/particles/76-vay-mpi2-runtime-contract.md</code>。</p>
-<p>最后将 shape=1/2/4 的 2-rank sibling 补齐，并与 shape=3 官方 case
-合并成 8-case family：2D
-<code>error_rel=4.6717e-4/3.8191e-4/4.0411e-4/4.2829e-4</code>，3D
-<code>5.9792e-4/5.7441e-4/6.0266e-4/6.3559e-4</code>，均低于
-<code>1e-3</code>。该结果分类为
-<code>RUNTIME_2RANK_VAY_SHAPE_FAMILY_PASS_2D_3D_CASE_LOCAL</code>，关闭的是
-Cartesian shape=1..4 的两进程 case-local family 缺口；shape=1/2/4
-尚未成为上游 CMake 注册项，AMR、边界裁剪、RZ/1D、非 Cartesian geometry
-和正式收敛阶仍保持边界。详见
-<code>notes/code-reading/particles/77-vay-mpi2-shape-family-contract.md</code>。</p>
-<p>AMR 边界则不能按同一方式继续外推。源码快照中的
-<code>Source/WarpX.cpp</code> 在初始化阶段对
-<code>Vay &amp;&amp; maxLevel() &gt; 0</code> 直接触发
-<code>Vay deposition not implemented with mesh refinement</code>，并另有
-PSATD-only、RZ 和 1D guard。因此这里的准确结论不是“Vay AMR runtime
-失败”，而是“该源码快照在进入物理推进前显式拒绝 Vay + mesh
-refinement”；该源码边界由
-<code>scripts/audit_vay_amr_guard_contract.py</code> 固化为
-<code>SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED</code>。详见
-<code>notes/code-reading/particles/78-vay-amr-guard-contract.md</code>。</p>
-<p>维护台账见
-<code>notes/code-reading/particles/72-deposition-geometry-order-gap-register.md</code>，由
-<code>scripts/audit_deposition_geometry_order_gap_register.py</code>
-验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。</p>
+<p>Vay 的可用范围尤其需要按“能运行的条件”而不是算法名称来读。Vay 官方
+wiring 与源码/官方测试入口确认其 Cartesian 2D/3D 分派和 RZ/1D/implicit
+guard，分类为
+<code>SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY</code>。在该范围内，单进程
+Cartesian 2D/3D 的官方分析均通过 <code>1e-3</code> 的
+<code>divE-rho/epsilon_0</code>
+gate（<code>RUNTIME_SINGLE_RANK_OFFICIAL_ANALYSIS_PASS_2D_3D</code>）；把
+shape 扩到 <code>1..4</code>
+仍通过（<code>RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D</code>）。两进程下，官方
+shape=3
+输入通过（<code>RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D</code>），同样的
+Cartesian shape <code>1..4</code> case-local family
+也通过（<code>RUNTIME_2RANK_VAY_SHAPE_FAMILY_PASS_2D_3D_CASE_LOCAL</code>）。这些结果只能支持“当前源码快照中的
+Cartesian 配置可用”，不能外推到 AMR、边界裁剪、RZ、1D、非 Cartesian
+geometry 或正式收敛阶。</p>
+<p>对 AMR，准确结论更强也更窄：该源码快照在初始化阶段显式拒绝
+<code>Vay + mesh refinement</code>，并非一次进入物理推进后的数值失败；对应分类为
+<code>SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED</code>。读者应把它当作输入组合限制，并在尝试运行前检查，而不是用某个
+Cartesian 通过案例替代这条 guard。上述详细输入与分析记录保留在
+<code>notes/code-reading/particles/73-vay-geometry-order-wiring-contract.md</code>
+至
+<code>78-vay-amr-guard-contract.md</code>，供需要复查数字和配置的读者使用。</p>
 <h3 id="读者主线从守恒问题走到可解释的输入选择">读者主线：从守恒问题走到可解释的输入选择</h3>
 <p>到这里，读者不需要按 v0.x
 的时间顺序记住每一次新增实验。更有用的阅读方式是把本章压缩成四个问题：</p>
@@ -20984,10 +20906,10 @@ arXiv 预印本 + MinerU + 中文讲解；仍缺出版商 CPC PDF 对照</td>
 </tr>
 <tr>
 <td><code>Villasenor-Buneman 1992</code></td>
-<td>已建立 paper-specific 目录、access audit，并已 materialize 本机现成
-PDF + MinerU + 中文讲解</td>
+<td>已有论文 PDF、MinerU 转换和按论文顺序的中文讲解可供复查</td>
 <td>第 5 章</td>
-<td>已从纯源码缺口推进到 paper-backed，但中文讲解仍是第一轮结构精读</td>
+<td>可支撑 paper-backed
+的公式与源码对照；中文讲解仍是第一轮结构精读，不能代替逐图、逐记号的出版级校订</td>
 </tr>
 <tr>
 <td><code>Andriyash 2016</code></td>

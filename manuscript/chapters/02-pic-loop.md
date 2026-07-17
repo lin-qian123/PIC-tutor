@@ -645,19 +645,7 @@ flowchart TD
 
 都能在这条最小 Langmuir 主线上落到真实输入。
 
-当前本地最小运行记录已经建立在：
-
-- `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/langmuir_1d`
-
-对应命令：
-
-```bash
-env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
-  /Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.1d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES \
-  /Volumes/PHILIPS/programs/PIC/warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi
-```
-
-它对本章最重要的不是“程序成功退出”，而是：
+`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 的归档运行将本章的抽象结构落到可复查的误差量。它对本章最重要的不是“程序成功退出”，而是：
 
 - 解析场相对误差 `1.7027848999745115e-3 < 5e-2`
 - `divE-rho/\epsilon_0` 相对误差 `8.34503170903001e-12 < 1e-11`
@@ -691,22 +679,22 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 - `Hockney-Eastwood`
   - 当前原书与 article-level fallback 仍未 materialize 为项目内 full-text + MinerU 资产
 
-更完整的基础章节文献状态、local-materialization 状态和“可直接作为正文证据/只可作待补边界”的分工，统一见：
+更完整的基础章节文献状态、全文资产状态和“可直接作为正文证据/只可作待补边界”的分工，统一见：
 
-- [基础章节文献清单](/Volumes/PHILIPS/programs/PIC/PIC-tutor/docs/foundations-literature-list.md)
+- [基础章节文献清单](../../docs/foundations-literature-list.md)
 
 ## 2.10 进一步阅读与练习
 
 进一步阅读：
 
-1. [03-warpx-evolve.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/03-warpx-evolve.md)：把本章的 PIC loop 抽象结构接到 `main.cpp -> WarpX::Evolve()` 的真实调用链。
-2. [Birdsall 1985 中文讲解](/Volumes/PHILIPS/programs/PIC/PIC-tutor/references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation-中文讲解.md)：继续看 `\omega_p\Delta t`、`\lambda_D/\Delta x`、finite-grid aliasing 和 numerical heating。
-3. [Dawson 1983 中文讲解](/Volumes/PHILIPS/programs/PIC/PIC-tutor/references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/1983_Dawson_Particle_simulation_of_plasmas-中文讲解.md)：继续看 full EM、Darwin、quiet start 和 statistical measurements 如何改变“PIC 总循环”的解释方式。
+1. [第 3 章：WarpX 演化](03-warpx-evolve.md)：把本章的 PIC loop 抽象结构接到 `main.cpp -> WarpX::Evolve()` 的真实调用链。
+2. [Birdsall 1985 中文讲解](../../references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation-中文讲解.md)：继续看 `\omega_p\Delta t`、`\lambda_D/\Delta x`、finite-grid aliasing 和 numerical heating。
+3. [Dawson 1983 中文讲解](../../references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/1983_Dawson_Particle_simulation_of_plasmas-中文讲解.md)：继续看 full EM、Darwin、quiet start 和 statistical measurements 如何改变“PIC 总循环”的解释方式。
 
 练习题：
 
 1. 解释为什么 `ComputeDt()` 给出的可运行时间步，不自动保证 `\omega_p \Delta t \ll 1`。
 2. 用本章的 `\lambda_D` 讨论说明：为什么 `\Delta x \gg \lambda_D` 时，即使主循环稳定，也可能已经不是同一个物理 plasma。
-3. 对照 [00-langmuir-wave.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/notes/code-reading/applications/00-langmuir-wave.md)，指出 `analysis_1d.py` 的两条核心断言分别对应本章哪两类理论边界。
+3. 对照 [Langmuir 阅读笔记](../../notes/code-reading/applications/00-langmuir-wave.md)，指出 `analysis_1d.py` 的两条核心断言分别对应本章哪两类理论边界。
 
 下一章将逐段解释这些源码，并把 `main.cpp`、`WarpX` 单例、`ReadParameters()`、`InitData()`、`ComputeDt()` 和 `Evolve()` 接成完整调用链。

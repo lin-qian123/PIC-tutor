@@ -872,19 +872,7 @@ main.cpp
 -> diagnostics
 ```
 
-当前本地运行记录已经在：
-
-- `/Volumes/PHILIPS/programs/PIC/PIC-tutor/runs/stage-c-validation/langmuir_1d`
-
-实际命令：
-
-```bash
-env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
-  /Volumes/PHILIPS/programs/PIC/warpx/build_full/bin/warpx.1d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES \
-  /Volumes/PHILIPS/programs/PIC/warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi
-```
-
-它现在已经把本章的“主循环入口”压成了真实闭环：
+`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 的归档运行将本章的“主循环入口”压成了真实闭环：
 
 - 有源码路径
 - 有参数入口
@@ -892,21 +880,21 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 - 有输出目录 `diags/diag1000080`
 - 有物理检查量
 
-这说明本章讲的 `WarpX` 主类生命周期和 `Evolve()` 主链，不再只是静态调用图，而是已经有一条本地运行证据能够落回这些控制流节点。
+这说明本章讲的 `WarpX` 主类生命周期和 `Evolve()` 主链，不再只是静态调用图，而是有一条运行证据能够落回这些控制流节点。
 
 ## 3.13 进一步阅读与练习
 
 进一步阅读：
 
-1. [04-particle-pushers.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/04-particle-pushers.md)：继续从 `PushParticlesandDeposit()` 进入 `mypc->Evolve()` 和粒子推进器。
-2. [05-deposition-shapes.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/05-deposition-shapes.md)：继续展开 `SyncCurrentAndRho()`、沉积、guard/source synchronization。
-3. [00-lifecycle-and-callgraph.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/notes/code-reading/evolve/00-lifecycle-and-callgraph.md)、[03-subcycling-and-jrhom.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/notes/code-reading/evolve/03-subcycling-and-jrhom.md)、[05-moving-window.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/notes/code-reading/evolve/05-moving-window.md)：继续下钻本章只做第一轮压缩的分支。
+1. [第 4 章：粒子推进器](04-particle-pushers.md)：继续从 `PushParticlesandDeposit()` 进入 `mypc->Evolve()` 和粒子推进器。
+2. [第 5 章：沉积与形函数](05-deposition-shapes.md)：继续展开 `SyncCurrentAndRho()`、沉积、guard/source synchronization。
+3. [演化生命周期笔记](../../notes/code-reading/evolve/00-lifecycle-and-callgraph.md)、[subcycling 与 JRhom](../../notes/code-reading/evolve/03-subcycling-and-jrhom.md)、[moving window](../../notes/code-reading/evolve/05-moving-window.md)：继续下钻本章只做第一轮压缩的分支。
 
 练习题：
 
 1. 说明为什么 `WarpX::WarpX()` 里只能创建跨-level 外壳，而不能直接分配完整 `MultiFab` 主字段。
 2. 用本章的 `StoreCurrent()/RestoreCurrent()` 解释：为什么 subcycling 不能简单拿 fine current 覆盖 coarse current。
-3. 结合 [00-langmuir-wave.md](/Volumes/PHILIPS/programs/PIC/PIC-tutor/notes/code-reading/applications/00-langmuir-wave.md)，指出 `inputs_test_1d_langmuir_multi` 中哪些参数分别进入 `ReadParameters()`、`ComputeDt()` 和 `OneStep_nosub()` 的不同层次。
+3. 结合 [Langmuir 阅读笔记](../../notes/code-reading/applications/00-langmuir-wave.md)，指出 `inputs_test_1d_langmuir_multi` 中哪些参数分别进入 `ReadParameters()`、`ComputeDt()` 和 `OneStep_nosub()` 的不同层次。
 
 ## 3.14 本章小结
 

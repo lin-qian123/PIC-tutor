@@ -1168,19 +1168,7 @@ flowchart TD
 
 都能在这条最小 Langmuir 主线上落到真实输入。
 
-当前本地最小运行记录已经建立在：
-
-- `PIC-tutor/runs/stage-c-validation/langmuir_1d`
-
-对应命令：
-
-```bash
-env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
-  $WARPX_ROOT/build_full/bin/warpx.1d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES \
-  $WARPX_ROOT/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi
-```
-
-它对本章最重要的不是“程序成功退出”，而是：
+`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 的归档运行将本章的抽象结构落到可复查的误差量。它对本章最重要的不是“程序成功退出”，而是：
 
 - 解析场相对误差 `1.7027848999745115e-3 < 5e-2`
 - `divE-rho/\epsilon_0` 相对误差 `8.34503170903001e-12 < 1e-11`
@@ -1214,23 +1202,23 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 - `Hockney-Eastwood`
   - 当前原书与 article-level fallback 仍未 materialize 为项目内 full-text + MinerU 资产
 
-更完整的基础章节文献状态、local-materialization 状态和“可直接作为正文证据/只可作待补边界”的分工，统一见：
+更完整的基础章节文献状态、全文资产状态和“可直接作为正文证据/只可作待补边界”的分工，统一见：
 
-- [基础章节文献清单](../docs/foundations-literature-list.md)
+- [基础章节文献清单](../../docs/foundations-literature-list.md)
 
 ## 2.10 进一步阅读与练习
 
 进一步阅读：
 
-1. [03-warpx-evolve.md](../manuscript/chapters/03-warpx-evolve.md)：把本章的 PIC loop 抽象结构接到 `main.cpp -> WarpX::Evolve()` 的真实调用链。
-2. [Birdsall 1985 中文讲解](../references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation-中文讲解.md)：继续看 `\omega_p\Delta t`、`\lambda_D/\Delta x`、finite-grid aliasing 和 numerical heating。
-3. [Dawson 1983 中文讲解](../references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/1983_Dawson_Particle_simulation_of_plasmas-中文讲解.md)：继续看 full EM、Darwin、quiet start 和 statistical measurements 如何改变“PIC 总循环”的解释方式。
+1. [第 3 章：WarpX 演化](03-warpx-evolve.md)：把本章的 PIC loop 抽象结构接到 `main.cpp -> WarpX::Evolve()` 的真实调用链。
+2. [Birdsall 1985 中文讲解](../../references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation-中文讲解.md)：继续看 `\omega_p\Delta t`、`\lambda_D/\Delta x`、finite-grid aliasing 和 numerical heating。
+3. [Dawson 1983 中文讲解](../../references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/1983_Dawson_Particle_simulation_of_plasmas-中文讲解.md)：继续看 full EM、Darwin、quiet start 和 statistical measurements 如何改变“PIC 总循环”的解释方式。
 
 练习题：
 
 1. 解释为什么 `ComputeDt()` 给出的可运行时间步，不自动保证 `\omega_p \Delta t \ll 1`。
 2. 用本章的 `\lambda_D` 讨论说明：为什么 `\Delta x \gg \lambda_D` 时，即使主循环稳定，也可能已经不是同一个物理 plasma。
-3. 对照 [00-langmuir-wave.md](../notes/code-reading/applications/00-langmuir-wave.md)，指出 `analysis_1d.py` 的两条核心断言分别对应本章哪两类理论边界。
+3. 对照 [Langmuir 阅读笔记](../../notes/code-reading/applications/00-langmuir-wave.md)，指出 `analysis_1d.py` 的两条核心断言分别对应本章哪两类理论边界。
 
 下一章将逐段解释这些源码，并把 `main.cpp`、`WarpX` 单例、`ReadParameters()`、`InitData()`、`ComputeDt()` 和 `Evolve()` 接成完整调用链。
 
@@ -2111,19 +2099,7 @@ main.cpp
 -> diagnostics
 ```
 
-当前本地运行记录已经在：
-
-- `PIC-tutor/runs/stage-c-validation/langmuir_1d`
-
-实际命令：
-
-```bash
-env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
-  $WARPX_ROOT/build_full/bin/warpx.1d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES \
-  $WARPX_ROOT/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi
-```
-
-它现在已经把本章的“主循环入口”压成了真实闭环：
+`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 的归档运行将本章的“主循环入口”压成了真实闭环：
 
 - 有源码路径
 - 有参数入口
@@ -2131,21 +2107,21 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 - 有输出目录 `diags/diag1000080`
 - 有物理检查量
 
-这说明本章讲的 `WarpX` 主类生命周期和 `Evolve()` 主链，不再只是静态调用图，而是已经有一条本地运行证据能够落回这些控制流节点。
+这说明本章讲的 `WarpX` 主类生命周期和 `Evolve()` 主链，不再只是静态调用图，而是有一条运行证据能够落回这些控制流节点。
 
 ## 3.13 进一步阅读与练习
 
 进一步阅读：
 
-1. [04-particle-pushers.md](../manuscript/chapters/04-particle-pushers.md)：继续从 `PushParticlesandDeposit()` 进入 `mypc->Evolve()` 和粒子推进器。
-2. [05-deposition-shapes.md](../manuscript/chapters/05-deposition-shapes.md)：继续展开 `SyncCurrentAndRho()`、沉积、guard/source synchronization。
-3. [00-lifecycle-and-callgraph.md](../notes/code-reading/evolve/00-lifecycle-and-callgraph.md)、[03-subcycling-and-jrhom.md](../notes/code-reading/evolve/03-subcycling-and-jrhom.md)、[05-moving-window.md](../notes/code-reading/evolve/05-moving-window.md)：继续下钻本章只做第一轮压缩的分支。
+1. [第 4 章：粒子推进器](04-particle-pushers.md)：继续从 `PushParticlesandDeposit()` 进入 `mypc->Evolve()` 和粒子推进器。
+2. [第 5 章：沉积与形函数](05-deposition-shapes.md)：继续展开 `SyncCurrentAndRho()`、沉积、guard/source synchronization。
+3. [演化生命周期笔记](../../notes/code-reading/evolve/00-lifecycle-and-callgraph.md)、[subcycling 与 JRhom](../../notes/code-reading/evolve/03-subcycling-and-jrhom.md)、[moving window](../../notes/code-reading/evolve/05-moving-window.md)：继续下钻本章只做第一轮压缩的分支。
 
 练习题：
 
 1. 说明为什么 `WarpX::WarpX()` 里只能创建跨-level 外壳，而不能直接分配完整 `MultiFab` 主字段。
 2. 用本章的 `StoreCurrent()/RestoreCurrent()` 解释：为什么 subcycling 不能简单拿 fine current 覆盖 coarse current。
-3. 结合 [00-langmuir-wave.md](../notes/code-reading/applications/00-langmuir-wave.md)，指出 `inputs_test_1d_langmuir_multi` 中哪些参数分别进入 `ReadParameters()`、`ComputeDt()` 和 `OneStep_nosub()` 的不同层次。
+3. 结合 [Langmuir 阅读笔记](../../notes/code-reading/applications/00-langmuir-wave.md)，指出 `inputs_test_1d_langmuir_multi` 中哪些参数分别进入 `ReadParameters()`、`ComputeDt()` 和 `OneStep_nosub()` 的不同层次。
 
 ## 3.14 本章小结
 
@@ -2349,7 +2325,7 @@ pp_geometry.addarr("prob_hi", prob_hi);
 
 所以 `geometry.prob_lo/hi` 只是文档层“成对参数”的写法，真正 parser key 仍然是 `prob_lo` 和 `prob_hi`。`boundary.field_lo/hi`、`boundary.particle_lo/hi`、`boundary.potential_lo/hi_x/y/z`、`psatd.nox/noy/noz` 和 Schwinger 区域边界框也都属于这一类。
 
-还要再区分另一类：参数确实出现在 WarpX 手册里，但本地 WarpX 并不直接读取，而是由 AMReX 自己消费，WarpX 只消费结果。例如 `amr.ref_ratio` / `amr.ref_ratio_vect` 和 `amrex.async_out` / `amrex.async_out_nfiles`。当前本地 WarpX 源码没有独立的：
+还要再区分另一类：参数确实出现在 WarpX 手册里，但 WarpX 并不直接读取，而是由 AMReX 自己消费，WarpX 只消费结果。例如 `amr.ref_ratio` / `amr.ref_ratio_vect` 和 `amrex.async_out` / `amrex.async_out_nfiles`。本书引用的 WarpX 源树没有独立的：
 
 ```cpp
 ParmParse("amr").query("ref_ratio", ...)
@@ -3405,7 +3381,7 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 
 因此 laser 的人工天线粒子并不是一个只服务显式 solver 的简单边界 hack。它同样要遵守 implicit particle-centering 合同，并继续进入普通 `DepositCurrent()/DepositCharge()` 主链。
 
-当前本地 checkout 里，`parse_field_function` 的最明确真实用例是 `Examples/Tests/particle_absorbing_boundary/inputs_test_1d_particle_absorbing_boundary`。这个输入把：
+在本书引用的 WarpX 源树中，`parse_field_function` 的最明确真实用例是 `Examples/Tests/particle_absorbing_boundary/inputs_test_1d_particle_absorbing_boundary`。这个输入把：
 
 - `laser1.profile = parse_field_function`
 - `laser1.field_function(X,Y,t) = ...`
@@ -3456,7 +3432,7 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 1. BTD plotfile 与 BTD openPMD 的 `Ez` 是否逐点一致
 2. `random_fraction` 粒子子采样是否真的生效
 
-所以当前本地 WarpX checkout 对 laser 的回归支持应这样理解：
+因此，本书引用的 WarpX 源树对 laser 的回归支持应这样理解：
 
 - 注入本体：1D/2D 强，3D 较弱
 - `from_file`：强
@@ -3588,7 +3564,7 @@ beam.momentum_distribution_type = "at_rest"
 - `inputs_test_3d_focusing_gaussian_beam_photons` 不是新物理 benchmark，而是把同一聚焦束斑统计合同重复到 `species_type = photon` 路径；
 - `inputs_test_3d_gaussian_beam_picmi.py` 则主要覆盖 PICMI `GaussianBunchDistribution` 前端到 runtime attributes 的接线，当前主要依赖 checksum，而不是独立理论断言。
 
-这里还要诚实记录一个当前本地 checkout 的边界：`gaussian_beam/CMakeLists.txt` 给 `test_3d_focusing_gaussian_beam_from_openpmd` 指定了 `analysis.py`，但 `Examples/Tests/gaussian_beam/` 目录下当前没有这个文件。因此项目没有把缺失的官方文件伪装成已恢复，而是对同一个 native producer 输出执行了项目独立分析。1 rank 运行结果位于 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/`：openPMD iteration 0 读出 `1,999,966` 个宏粒子，总权重为 `1.999966e10`，81 个有效 z slice 上的最大相对束斑误差为：
+这里还要诚实记录一个源码边界：`gaussian_beam/CMakeLists.txt` 给 `test_3d_focusing_gaussian_beam_from_openpmd` 指定了 `analysis.py`，但 `Examples/Tests/gaussian_beam/` 目录下没有这个文件。因此本书不把缺失的官方文件伪装成已恢复，而是对同一个 native producer 输出执行独立分析。1 rank 运行结果位于 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/`：openPMD iteration 0 读出 `1,999,966` 个宏粒子，总权重为 `1.999966e10`，81 个有效 z slice 上的最大相对束斑误差为：
 
 $$
 \epsilon_{\sigma_x}=3.0515\times10^{-2}<0.051,
@@ -3607,7 +3583,7 @@ $$
 - `effective_potential_electrostatic` 用电子径向密度和解析 adiabatic expansion 基准比较，验证 effective-potential electrostatic solver；
 - `electrostatic_sphere_eb` 则用 `ChargeOnEB` reduced diag 和 `eb_covered` 场，验证 `InitEB()`、Poisson 边界条件和带导体球的初始势问题。
 
-最后一组是 `projection_div_cleaner`，它对应 3A.12 的 Poisson projection，而不是演化阶段的 `do_dive_cleaning`。当前本地 tests 已覆盖：
+最后一组是 `projection_div_cleaner`，它对应 3A.12 的 Poisson projection，而不是演化阶段的 `do_dive_cleaning`。相关 tests 已覆盖：
 
 1. RZ openPMD 文件外场版本；
 2. 3D PICMI 文件外场版本；

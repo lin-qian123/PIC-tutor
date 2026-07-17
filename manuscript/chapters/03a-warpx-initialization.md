@@ -165,7 +165,7 @@ pp_geometry.addarr("prob_hi", prob_hi);
 
 所以 `geometry.prob_lo/hi` 只是文档层“成对参数”的写法，真正 parser key 仍然是 `prob_lo` 和 `prob_hi`。`boundary.field_lo/hi`、`boundary.particle_lo/hi`、`boundary.potential_lo/hi_x/y/z`、`psatd.nox/noy/noz` 和 Schwinger 区域边界框也都属于这一类。
 
-还要再区分另一类：参数确实出现在 WarpX 手册里，但本地 WarpX 并不直接读取，而是由 AMReX 自己消费，WarpX 只消费结果。例如 `amr.ref_ratio` / `amr.ref_ratio_vect` 和 `amrex.async_out` / `amrex.async_out_nfiles`。当前本地 WarpX 源码没有独立的：
+还要再区分另一类：参数确实出现在 WarpX 手册里，但 WarpX 并不直接读取，而是由 AMReX 自己消费，WarpX 只消费结果。例如 `amr.ref_ratio` / `amr.ref_ratio_vect` 和 `amrex.async_out` / `amrex.async_out_nfiles`。本书引用的 WarpX 源树没有独立的：
 
 ```cpp
 ParmParse("amr").query("ref_ratio", ...)
@@ -1221,7 +1221,7 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 
 因此 laser 的人工天线粒子并不是一个只服务显式 solver 的简单边界 hack。它同样要遵守 implicit particle-centering 合同，并继续进入普通 `DepositCurrent()/DepositCharge()` 主链。
 
-当前本地 checkout 里，`parse_field_function` 的最明确真实用例是 `Examples/Tests/particle_absorbing_boundary/inputs_test_1d_particle_absorbing_boundary`。这个输入把：
+在本书引用的 WarpX 源树中，`parse_field_function` 的最明确真实用例是 `Examples/Tests/particle_absorbing_boundary/inputs_test_1d_particle_absorbing_boundary`。这个输入把：
 
 - `laser1.profile = parse_field_function`
 - `laser1.field_function(X,Y,t) = ...`
@@ -1272,7 +1272,7 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 1. BTD plotfile 与 BTD openPMD 的 `Ez` 是否逐点一致
 2. `random_fraction` 粒子子采样是否真的生效
 
-所以当前本地 WarpX checkout 对 laser 的回归支持应这样理解：
+因此，本书引用的 WarpX 源树对 laser 的回归支持应这样理解：
 
 - 注入本体：1D/2D 强，3D 较弱
 - `from_file`：强
@@ -1404,7 +1404,7 @@ beam.momentum_distribution_type = "at_rest"
 - `inputs_test_3d_focusing_gaussian_beam_photons` 不是新物理 benchmark，而是把同一聚焦束斑统计合同重复到 `species_type = photon` 路径；
 - `inputs_test_3d_gaussian_beam_picmi.py` 则主要覆盖 PICMI `GaussianBunchDistribution` 前端到 runtime attributes 的接线，当前主要依赖 checksum，而不是独立理论断言。
 
-这里还要诚实记录一个当前本地 checkout 的边界：`gaussian_beam/CMakeLists.txt` 给 `test_3d_focusing_gaussian_beam_from_openpmd` 指定了 `analysis.py`，但 `Examples/Tests/gaussian_beam/` 目录下当前没有这个文件。因此项目没有把缺失的官方文件伪装成已恢复，而是对同一个 native producer 输出执行了项目独立分析。1 rank 运行结果位于 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/`：openPMD iteration 0 读出 `1,999,966` 个宏粒子，总权重为 `1.999966e10`，81 个有效 z slice 上的最大相对束斑误差为：
+这里还要诚实记录一个源码边界：`gaussian_beam/CMakeLists.txt` 给 `test_3d_focusing_gaussian_beam_from_openpmd` 指定了 `analysis.py`，但 `Examples/Tests/gaussian_beam/` 目录下没有这个文件。因此本书不把缺失的官方文件伪装成已恢复，而是对同一个 native producer 输出执行独立分析。1 rank 运行结果位于 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/`：openPMD iteration 0 读出 `1,999,966` 个宏粒子，总权重为 `1.999966e10`，81 个有效 z slice 上的最大相对束斑误差为：
 
 $$
 \epsilon_{\sigma_x}=3.0515\times10^{-2}<0.051,
@@ -1423,7 +1423,7 @@ $$
 - `effective_potential_electrostatic` 用电子径向密度和解析 adiabatic expansion 基准比较，验证 effective-potential electrostatic solver；
 - `electrostatic_sphere_eb` 则用 `ChargeOnEB` reduced diag 和 `eb_covered` 场，验证 `InitEB()`、Poisson 边界条件和带导体球的初始势问题。
 
-最后一组是 `projection_div_cleaner`，它对应 3A.12 的 Poisson projection，而不是演化阶段的 `do_dive_cleaning`。当前本地 tests 已覆盖：
+最后一组是 `projection_div_cleaner`，它对应 3A.12 的 Poisson projection，而不是演化阶段的 `do_dive_cleaning`。相关 tests 已覆盖：
 
 1. RZ openPMD 文件外场版本；
 2. 3D PICMI 文件外场版本；

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1246,
-  "total_bytes": 39148715,
+  "total_bytes": 39135822,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1540349,
-      "sha256": "487c7a37c71c9a763843baa42bfaa499bd9ad469130f6b8ca07a8abf00666cf4"
+      "bytes": 1540891,
+      "sha256": "713e84538124a782b12e6c8f7f18b36c654af269ed655b7e54e99f9c83706eac"
     },
     {
       "path": "TODO.md",
-      "bytes": 1408958,
-      "sha256": "0d799d970726072d2c8aa21e2448628d84ddbb9f6ee7159f5ab052d5e7f20fd5"
+      "bytes": 1409511,
+      "sha256": "680974bd15815d8f6c5a9f98f1d2ffaed03b1713b5c3741a5cdc98f5337afab5"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5254445,
-      "sha256": "cb0f59b42003dba74e9984cc0339336e03c6c0ed2dc542c93d770ced0375e876"
+      "bytes": 5249931,
+      "sha256": "1ca32bdac6c1cbe872d57756f88790f1fa1d4e33972708ec1941c802d5a33766"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 858585,
-      "sha256": "52cd3e74da6c566f1dde1b6cca23f4f55811340a44ddd0316f05e24cdb6385be"
+      "bytes": 855133,
+      "sha256": "8ac6e96617a78bba8056694652abdb8430730b1321e60e8b5327c10c7e234e2d"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2989198,
-      "sha256": "d154c23ee918b0c51554c911cb3caa549dd1168815a1fdcf7409901d4adc3557"
+      "bytes": 2985994,
+      "sha256": "d95ad18bcdc13c292f0e28951fe76bb200cc3ec7c4c18ebe5f8440f98c66cc6a"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -203,7 +203,7 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
       "bytes": 768,
-      "sha256": "5f45b3b98b5d58390396c7422853d0d6b728ed6a7e8cab198811702b486dcc05"
+      "sha256": "c5f32e364c963f3ae092a1577b86f31b0ab9b2770bbc1ad43f6a61630e211f42"
     },
     {
       "path": "docs/editorial-quality-audit-v0.81.json",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 8193,
-      "sha256": "fbb5be310c65655b1a7caf0de8417a5d10c9dc94ea0d0b6e99e346f37d1ccf3e"
+      "bytes": 8719,
+      "sha256": "65fa89f240b629c6da9232ddd9f55c359a9346131e32889029993f5acf64a8e5"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -668,7 +668,7 @@
     {
       "path": "docs/pdf-layout-audit-v0.110.md",
       "bytes": 571,
-      "sha256": "8fa1d6e9456481edfeed2a83233996a63b76438e7fe261bf0b145d4cc8647e2e"
+      "sha256": "ef050271642ea083f1072a397b9360a889753594dcb1f55fabf4daae07875f54"
     },
     {
       "path": "docs/pdf-layout-audit-v0.82.json",
@@ -892,8 +892,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 7097,
-      "sha256": "47ee2edcf034f24e22ab29241aa325d016fe001064a49a635062f243e4a463b0"
+      "bytes": 7201,
+      "sha256": "7e597531d05500c8adec5ddf115472981f5304aad9424eccfe3d45f2e3ff7afe"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2317,13 +2317,13 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 112531,
-      "sha256": "457e5b7945de1c4c449d827d89e7e277b5ab73b90a505807fbba11a0a2935085"
+      "bytes": 109132,
+      "sha256": "4a742d2c835435f162ce3f082e416b8f7223d3512c2e37461e9b37959e4ffb55"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
-      "bytes": 19928,
-      "sha256": "554745baf25e5da3778c694d6e1828f1fba362ad947803136fc40bf1daee134f"
+      "bytes": 19875,
+      "sha256": "9a8aa90b2464a62c23133adf520093c94f626cb8694d78ed53504d4b8eb7ac21"
     },
     {
       "path": "notes/code-reading/README.md",
@@ -5952,8 +5952,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 21699,
-      "sha256": "465a2cee5b6ed42e2a0bb0affc61ccdd821308d254745b9f3e4a82b4f99d1438"
+      "bytes": 21703,
+      "sha256": "199a759176f15bb56ca1a0535c305bd9df7fa11fef4245b5805f884a9330b852"
     },
     {
       "path": "scripts/verify_v40_build.py",

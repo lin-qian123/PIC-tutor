@@ -6,11 +6,11 @@ PIC 程序的可信度来自验证，而不是来自输入文件能跑完。一�
 - 网格、粒子数、时间步是否分辨关键尺度；
 - 输出量是否足以检查守恒律和不稳定性；
 - 结果是否能和解析解、benchmark、regression 或文献对比；
-- 源码路径是否确实是本次运行用到的路径。
+- 源码和分析脚本是否确实覆盖了所声称的运行路径。
 
-本书当前第一批推荐案例是 Langmuir wave、uniform plasma 和 LWFA/PWFA。
+本章以 Langmuir wave、uniform plasma 和 LWFA/PWFA 作为三条诊断主线：解析波、热背景与应用工作流分别暴露不同的验证问题。
 
-在进入具体案例前，可以先记住 Dawson 1983 对 diagnostics 的一个老判断：simulation 的目标是 physics essence，而不是 detail。也就是说，diagnostics 的价值不在于“把所有字段和粒子都写出来”，而在于能否把大规模数值状态压成可解释的 observables、谱、守恒量和 reader-side 证据。对二维和三维模型，这种 diagnostics / visualization / postprocessing 的难度甚至可能不低于模型本身。这条判断和当前 WarpX worktree 的结构很一致：full diagnostics、reduced diagnostics、back-transformed diagnostics、checkpoint 以及 openPMD/plotfile reader-side analysis，都不该只按 writer 类型分类，而应按“是否真正提炼出目标 physics”来理解。
+在进入具体案例前，可以先记住 Dawson 1983 对 diagnostics 的一个老判断：simulation 的目标是 physics essence，而不是 detail。也就是说，diagnostics 的价值不在于“把所有字段和粒子都写出来”，而在于能否把大规模数值状态压成可解释的 observables、谱、守恒量和 reader-side 证据。对二维和三维模型，这种 diagnostics / visualization / postprocessing 的难度甚至可能不低于模型本身。WarpX 的 full diagnostics、reduced diagnostics、back-transformed diagnostics、checkpoint 以及 openPMD/plotfile reader-side analysis，都不该只按 writer 类型分类，而应按“是否真正提炼出目标 physics”来理解。
 
 同一篇综述还给了 diagnostics 的另一条很有价值的组织方式：先分 `measurements related to particle motion`，再分 `measurements related to waves`。前者典型的是 distribution function、phase space、drag、velocity diffusion；后者典型的是 field fluctuation level、time correlations、power spectrum 与 nonuniform-plasma normal modes。这种分法比“plotfile/reduced/openPMD/BTD”更接近物理问题本身，因为它直接对应读者真正要问的量：是想测输运系数、相关时间、噪声底、谱线，还是想重建某个本征模的空间结构。后面各案例如果只停在“输出了哪类文件”，而不说明它到底在测哪一类物理量，diagnostics 章节就会失焦。
 
@@ -62,7 +62,7 @@ $$
 
 在磁化等离子体中，peak taxonomy 本身也是物理结果。Bernstein harmonics、upper-hybrid、ion-cyclotron、lower-hybrid，以及 `\omega=0` 附近的 convective-cell / charged-flux-tube 结构，不能统一归类为“噪声峰”；它们需要结合外磁场、species mobility 和空间结构共同解释。对非均匀等离子体，若沿均匀方向先做 Fourier 分解，可在剩余坐标上构造 `\phi(k_x,y,\omega)`；再把离散频率 `\omega_1` 的信号分别与 `\sin\omega_1t`、`\cos\omega_1t` 做相关积分，就能恢复 mode amplitude、phase 和空间波函数。这里的积分窗口必须短于该 mode 的 damping time，否则初始 coherent oscillation 衰减后，随机粒子运动重新激发的任意相位会把空间结构洗掉。
 
-continuous spectrum 也不能自动当成无意义的背景。它可能包含局域在某一小块等离子体区域的真实振荡，也可能只是随机粒子运动的 continuum；后者需要进一步观察 `\delta v(\mathbf v,x,\omega)` 等 kinetic observable，而不是只凭势场或电场谱下结论。对 weak instability，随机初态的 `N^{-1/2}` 模涨落还会消耗可用的指数增长窗口，数量级上 `\gamma t\sim\frac12\ln N`；quiet-start / cell-neutral loading 的价值因此是提高可识别动态范围，而不是保证所有后续演化都更物理。上述统计链来自项目内 `Dawson 1983` 中文讲解的第 22、24--26、53--59 节；它支撑的是 diagnostics 设计原则，不替代当前 WarpX 各案例已有的具体 runtime gate。
+continuous spectrum 也不能自动当成无意义的背景。它可能包含局域在某一小块等离子体区域的真实振荡，也可能只是随机粒子运动的 continuum；后者需要进一步观察 `\delta v(\mathbf v,x,\omega)` 等 kinetic observable，而不是只凭势场或电场谱下结论。对 weak instability，随机初态的 `N^{-1/2}` 模涨落还会消耗可用的指数增长窗口，数量级上 `\gamma t\sim\frac12\ln N`；quiet-start / cell-neutral loading 的价值因此是提高可识别动态范围，而不是保证所有后续演化都更物理。上述统计链来自 Dawson 1983 的相关章节；它支撑的是 diagnostics 设计原则，不替代 WarpX 各案例已有的具体 runtime gate。
 此外，`Birdsall 1985` 的 `13-6` 提醒我们：即使线性介电关系显示稳定，相对漂移仍可能把自由能转入非线性相空间 clump 与 density hole；因此接近稳定阈值的案例还应保留 phase-space correlation 观察，而不能只看场能量或把它直接归类为 NCI。
 
 再往实现层压一步，Dawson 给的 quiet-start recipe 也不是抽象建议，而是明确的 phase-space construction：把相空间切成 cells，把每个空间 cell 内的目标速度分布 `P(v)` 归一到该 cell 的粒子数，再把 `P(v)` 分成等面积小区间，每个区间放一个粒子并赋予相应代表速度。对任意目标分布，还可以先构造 cumulative map `y(v)=\int_{-\infty}^{v}P(v')\,dv'`，再用其反函数把 `[0,1]` 上的均匀变量映射成所需速度分布。这说明 diagnostics 一侧讨论 noisy/quiet starts 时，不能只写“quiet start 降噪”，还要看到它真正交换掉了什么：它用更规则的有限粒子 phase-space covering 换取更大的 weak-effect dynamic range，但简单的 equal-area placement 对 tail 或低密度关键区域的分辨能力有限，于是后面才需要 weighted particles / many-size electrons 继续补这条短板。
@@ -89,11 +89,11 @@ $$
 
 这里的因子 2 来自电子和正电子两种可动带电粒子的对称贡献。动量微扰用正负相反的三角函数给出，使两个 species 产生相反响应。
 
-图 8-1 给出本地 81 个快照验证树末态的数值电场与解析场对照。两幅图使用同一纵轴尺度：左图为 simulation，右图为 theory。这个图只承担 reader-side 的波形 sanity check；严格的场误差、最终 Gauss-law 误差和频率拟合数值仍以紧随其后的报告和 gate 为准。
+图 8-1 给出 81 个快照序列末态的数值电场与解析场对照。两幅图使用同一纵轴尺度：左图为 simulation，右图为 theory。这个图只承担 reader-side 的波形 sanity check；严格的场误差、最终 Gauss-law 误差和频率拟合数值仍以紧随其后的 gate 为准。
 
 ![](../assets/figures/langmuir-field-vs-theory.png)
 
-图 8-1 的数据来自 `runs/stage-c-validation/langmuir_frequency_fit/langmuir_multi_1d_analysis.png`，由官方 Langmuir 输入和 `scripts/analyze_langmuir_frequency_fit.py` 生成；图像被复制到书稿专属 `manuscript/assets/figures/` 目录，避免正文依赖运行目录中的临时文件。
+图 8-1 由官方 Langmuir 输入和 `scripts/analyze_langmuir_frequency_fit.py` 生成；发布图像位于 `manuscript/assets/figures/`，正文不依赖临时运行目录。
 
 Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族分别复用 `analysis_1d.py`、`analysis_2d.py`、`analysis_3d.py`、`analysis_rz.py`，因此共享同一个“解析场解逐点比较”的主合同；其中 3D 版本还额外检查 selective particle output 和 openPMD 粒子位置上的 `Ex/Ey/Ez` 场采样。`analysis_utils.py` 又把 charge-conservation 检查做成条件分支，只在 Esirkepov、Vay deposition 或 PSATD current-correction 这些适用组合下强制比较 `divE` 与 `rho/\epsilon_0`。与之并列的 `langmuir_fluids` 则是另一棵冷流体验证树：它不只看 `E`，还把 `J` 和 `rho` 一起与解析冷流体解比较。需要单独记住的是，2D/3D/RZ 的 PICMI 变体目前大多仍是 `analysis=OFF` 的前端 + checksum scaffold，不应和原生输入的强物理断言混成同一等级。
 
@@ -139,7 +139,7 @@ Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族�
 - 解析场相对误差 `error_rel = 1.70e-3 < 5e-2`
 - `divE-rho/\epsilon_0` 相对误差 `8.35e-12 < 1e-11`
 
-因此 `Langmuir wave` 是运行级强基准，而不只是“源码上看起来应该能验证”的基准。读者可从 `Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 出发，用本机的 WarpX binary 和 `analysis_1d.py` 重建同一条验证链；后文的频率拟合报告补充了逐快照证据。
+因此 `Langmuir wave` 是运行级强基准，而不只是“源码上看起来应该能验证”的基准。读者可从 `Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 出发，用与源码快照匹配的 WarpX build 和 `analysis_1d.py` 重建同一条验证链；后文的频率拟合说明补充了逐快照证据。
 
 ## Uniform plasma
 
@@ -1680,31 +1680,27 @@ $$
 
 完整官方 `Examples/Tests/initial_distribution/` input 已由对应源码重建的 binary 复现。producer 和官方 `analysis.py` 均以 exit code `0` 结束，10 类分布的最大相对差为 `1.8931e-2 < 0.02`。仓库 checksum 默认 `rtol=1e-9` 观察到最大相对差 `3.18e-3`，反映随机采样而非初始化失败；在显式记录的 `rtol=5e-3` sampling tolerance 下通过。因此该案例的结论是“官方分布 analysis 通过、随机 checksum 有条件通过”，但不宣称确定性 `1e-9` checksum 相等。证据目录为 `runs/stage-c-validation/initial_distribution_full_current/`。
 
-### 第 8 章验证矩阵：命令、产物与 gate
+### 第 8 章验证矩阵：观察量、结论与边界
 
-本章的运行证据统一遵循同一目录约定：WarpX 原始输入只读复制到 `runs/stage-c-validation/<case>/inputs_test`，运行目录保存完整输出，分析脚本只读取该目录并生成 JSON/Markdown 摘要。下面的 `MPIEXEC`、`WARPX` 和 `PYTHON` 取决于读者的环境；这些产物使用 MPICH launcher、`warpx.3d/2d.MPI.OMP.DP.PDP.OPMD.FFT.EB.QED.GENQEDTABLES` 和含 `yt/openpmd_api/openpmd_viewer` 的 Python 环境生成。
+详细输入、命令、环境和原始报告属于复现实验材料；正文只保留读者解释结果所需的观察量、结论与限制。
 
-| 验证线 | producer / MPI | 项目级复现命令 | 主要 gate | 证据目录 |
-|---|---|---|---|---|
-| Langmuir | 官方 1D，1 rank | `python scripts/analyze_langmuir_frequency_fit.py ...` | 场误差 `1.70e-3`、最终守恒 `8.35e-12`、频率相对误差 `3.595e-4` | `runs/stage-c-validation/langmuir_frequency_fit/` |
-| Uniform plasma restart | 官方 3D，2 ranks | `python scripts/analyze_uniform_plasma_restart.py ...` | 37 个 field；最大相对误差 `2.8631e-16 < 1e-12`；checksum 参考另有 rank-specific 差异 | `runs/stage-c-validation/uniform_plasma_3d_mpi2/` |
-| Uniform plasma MPI consistency | 官方 3D，1/2 ranks | `python scripts/analyze_uniform_plasma_mpi_consistency.py ...` | 粒子总权重一致；field/particle/total energy 相对差分别为 `1.9379e-2/8.9170e-4/6.2269e-4`；不通过 rank-invariant field gate | `runs/stage-c-validation/uniform_plasma_3d_mpi2/uniform-plasma-mpi-consistency.{json,md}` |
-| Energy-conserving thermal plasma | 官方 1D/2D，1 rank | `python scripts/compare_energy_conserving_thermal_plasma_family.py ...` | 共同 `EF+EP` 漂移 `< 0.003` | `runs/stage-c-validation/energy_conserving_thermal_plasma_*` |
-| FieldProbe | 官方 coarse/refined，1/2 rank | `python scripts/compare_field_probe_resolution.py ...` | coarse `3.6703%` 失败；matched-time refined `0.3533%` 通过 | `runs/stage-c-validation/field_probe_*` |
-| Reduced observables | 官方 3D，2 rank | `python scripts/analyze_reduced_diags_contract.py ...` | 60 项；非 field-energy `<1e-12`，field-energy `<0.3` | `runs/stage-c-validation/reduced_diags_3d_mpi2/` |
-| LoadBalanceCosts | Heuristic/Timers，2 rank | `python scripts/analyze_load_balance_costs_contract.py ...` | `eta_after > eta_before` | `runs/stage-c-validation/load_balance_costs_*` |
-| ColliderRelevant | 官方 3D，2 rank | `python scripts/analyze_collider_relevant_contract.py ...` | chi/theta/ParticleExtrema 与 `dL/dt` 交叉一致 | `runs/stage-c-validation/collider_relevant_diags_3d_mpi2/` |
-| DifferentialLuminosity | leptons/AMR/photons，2 rank | `python scripts/analyze_diff_lumi_contract.py ...` | 1D/2D 高斯束解析谱 gate | `runs/stage-c-validation/diff_lumi_diag_*_mpi2/` |
-| ParticleHistogram2D | laser-ion，2 rank | `python scripts/analyze_particle_histogram2d_contract.py ...` | BP5 `0/100`、`1000x1000`、`uz-z`、有限非零数据 | `runs/stage-c-validation/laser_ion_histogram2d_mpi2/` |
-| BeamRelevant | 最小 3D，1 rank | `python scripts/analyze_beam_relevant_contract.py ...` | 24 列、截断 Gaussian charge/rms gate | `runs/stage-c-validation/beam_relevant_minimal_mpi1/` |
-| Full initial distribution | 官方 3D，1 rank | `PYTHONPATH=.../Tools/PostProcessing python .../initial_distribution/analysis.py` | 10 类分布；最大分析误差 `1.8931e-2 < 0.02`；checksum `rtol=5e-3` 通过 | `runs/stage-c-validation/initial_distribution_full_current/` |
-| Native Gaussian external file | gaussian_beam native，1 rank | `python scripts/analyze_gaussian_beam_focus_contract.py ...` | 81 z slices；sigma-x `< 5.1%`、sigma-y `< 3.8%` | `runs/stage-c-validation/gaussian_beam_native_openpmd/run/` |
-| RZ electrostatic sphere | 官方 RZ，1 rank | `python scripts/analyze_rz_charge_volume_contract.py ...` | 官方轴向场 L2 gate；全域 rho-volume/particle-charge mismatch `< 1%` | `runs/stage-c-validation/rz_electrostatic_sphere/` |
-| RZ Langmuir multimode | case-local RZ sibling，1 rank，3 modes | `python scripts/analyze_rz_langmuir_multimode_contract.py ...` | `m=1/2` 实虚分量非零；theta=0 native-field/writeback reconstruction `< 3.1e-16` | `runs/stage-c-validation/rz_langmuir_multimode/` |
+| 案例/诊断 | 观察量与可支持结论 | 仍需保留的边界 |
+|---|---|---|
+| Langmuir | 场误差 `1.70e-3`、最终守恒 `8.35e-12`、频率误差 `3.595e-4`；解析波与守恒链均通过 | 不替代多模式或完整色散研究 |
+| Uniform plasma restart | 37 个 field 的末态相对误差 `2.8631e-16 < 1e-12`；checkpoint/restart 可重复 | 不证明热平衡或跨 rank 场一致性 |
+| Uniform plasma MPI | 粒子总权重一致，但 rank-invariant field gate 不通过 | 不能把 checksum 差异写成 restart 失败 |
+| Thermal plasma | `EF+EP` 共同漂移 `<0.003` | 仅覆盖指定 family 和时间窗 |
+| FieldProbe | coarse `3.6703%` 失败；matched-time refined `0.3533%` 通过 | refined 结果不能反写为 coarse 输入通过 |
+| Reduced observables | 60 项与 full-state reference 对照；非 field-energy `<1e-12` | field-energy 使用独立的 `<0.3` 容差 |
+| LoadBalanceCosts | `eta_after > eta_before` | 验证效率改善，不验证场精度 |
+| ColliderRelevant / DifferentialLuminosity | 束流统计与 1D/2D 解析谱交叉验证 | 不替代 collider-QED 应用级复现 |
+| ParticleHistogram2D / BeamRelevant | writer schema、有限非零数据、截断 Gaussian charge/rms | 不给出粒子数正式收敛阶 |
+| Initial distribution / Gaussian beam | 分布 analysis 与束斑理论包络通过 | 随机 checksum 与缺失上游 analysis 保持边界 |
+| RZ sphere / RZ multimode | 场、rho-volume charge 与 mode writeback 的有界检查 | 不替代完整 RZ 诊断矩阵 |
 
 这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供当前 178 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
 
-当前证据等级应写成：Langmuir 已有运行级解析频率、场误差和最终守恒证据；uniform plasma 已有粒子数、能量统计和 checkpoint/restart 逐字段证据，但短时运行的总能量变化不能直接升级成热平衡守恒通过；FieldProbe 已确认 1/2-rank 输出一致，并通过 `lambda/32` 的 matched-time 解析 gate，但官方 `lambda/16` coarse case 仍失败；`reduced_diags` 已有 60 项 compact observable 与 full-state reference 的 2-rank 逐项通过证据，并有 Heuristic/Timers 两条 `LoadBalanceCosts` efficiency improvement 证据；`ColliderRelevant` 已有 2-rank 的 chi/角度/ParticleExtrema/dL/dt 聚合合同证据；`DifferentialLuminosity` 已有 leptons、AMR 和 photons 三组 1D/2D 解析谱通过证据；laser-ion 已有 `ParticleHistogram2D` 的 2-rank openPMD writer 合同证据；`BeamRelevant` 已有最小 3D 的 schema/截断高斯束统计合同证据；完整 initial-distribution family 已有当前 checkout 的官方分布 analysis 通过证据，并在显式 `5e-3` sampling tolerance 下通过 checksum，但不宣称 `1e-9` 确定性相等；native Gaussian external-file 变体已有 1-rank 项目级束斑物理合同，但官方 CMake analysis 缺失仍保留为 upstream registration 缺口；RZ electrostatic sphere 又补充了官方场/能量 gate 与独立 rho-volume charge closure；RZ 三模 Langmuir sibling 又补充了 `m>0` diagnostics writeback 和 theta=0 重建合同，但它是 project-level case-local evidence，不能替代官方单模 CMake analysis。JSON/Markdown 报告和脚本都保存在项目内，运行产物仍按 case-local 目录归档。
+本章的证据等级应按诊断问题分开理解：Langmuir 提供解析频率、场误差和最终守恒；uniform plasma 提供粒子数、能量统计和 checkpoint/restart 逐字段一致性，但短时总能量变化不等于热平衡守恒；FieldProbe 的 `lambda/32` matched-time 对照通过解析 gate，而官方 `lambda/16` coarse case 仍是失败证据；`reduced_diags` 将 compact observable 与 full-state reference 逐项对照，`LoadBalanceCosts` 则只验证效率改善；`ColliderRelevant`、`DifferentialLuminosity`、`ParticleHistogram2D` 和 `BeamRelevant` 分别验证其统计、谱或 writer 定义。RZ 多模 Langmuir 和 native Gaussian sibling 是有界案例证据，不能替代各自缺失的官方 analysis。每一项都必须沿验证矩阵中的 producer、consumer、observable 和限制阅读，不能用“已经运行”替代物理结论。
 
 ## 8.14 本章正文与源码同步合同
 
@@ -1724,10 +1720,9 @@ $$
 2. **reader-side 复现题**：使用 `scripts/analyze_collider_relevant_contract.py` 或 `scripts/analyze_particle_histogram2d_contract.py` 读取一个 case-local 产物，列出输入字段、输出文件和独立检查项。
 3. **失败边界题**：解释为什么 FieldProbe coarse failure、uniform-plasma reader-side 能量漂移和 initial-distribution binary mismatch 都应保留在书中，而不能简单从验证矩阵中删除。
 
-## 本章后续扩写
+## 延伸验证路线
 
-- [x] 加入第 8 章统一验证矩阵，列出 producer/MPI、项目级复现脚本、主要 gate 和 case-local 证据目录。
-- 继续把 `ComputeDiagFunctors/`、`ParticleIO`、`WarpXOpenPMD` 和 `FlushFormats/` 的字段计算与 writer 细节拆开。
-- 继续把 `FieldProbe`、`ParticleHistogram(2D)`、`LoadBalanceCosts` 这类 reduced diagnostics 的最小输入文件和后处理示例补成可直接运行的小节。
-- 延长 uniform plasma 运行窗口，并结合 `energy_conserving_thermal_plasma` 的强 analysis 设计可解释的总能量 gate。
-- 为 Langmuir reader-side 拟合补充多模式/不同时间窗的敏感性检查，避免把单一窗口拟合误读为完整色散验证。
+- 沿 `ComputeDiagFunctors/`、`ParticleIO`、`WarpXOpenPMD` 和 `FlushFormats/` 分开追踪字段计算、粒子采样与 writer 生命周期，避免把文件格式当成物理诊断。
+- 以 `FieldProbe`、`ParticleHistogram2D` 和 `LoadBalanceCosts` 的最小输入为例，分别复现解析 gate、writer/schema contract 和 performance gate。
+- 用更长的 uniform-plasma 时间窗，并结合 `energy_conserving_thermal_plasma` 的 analysis，区分短时统计漂移与可解释的总能量结论。
+- 改变 Langmuir 的模式数和拟合时间窗，检验频率测量对 sampling window 的敏感性，避免把单一窗口拟合误读为完整色散验证。

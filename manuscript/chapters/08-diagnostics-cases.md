@@ -1658,25 +1658,25 @@ $$
 
 `BeamRelevant` 是文本型束流诊断，和 `ColliderRelevant` 的逐粒子 `chi/theta` 统计不同。3D 路径固定输出 22 个物理量：位置与动量均值、`gamma` 均值、位置/动量/`gamma` rms、三方向 emittance、Twiss `alpha/beta` 以及总 charge；连同步列和时间列共 24 列。其实现先按粒子权重做并行归约，再从二阶矩构造 rms、emittance 和 Twiss 量，因此最小验证应同时检查 schema、权重聚合和几何分布，而不是只检查文件存在。
 
-本地保留官方 `initial_distribution` 中 `beam` 的参数，构造了只包含该 beam 与 `bmmntr = BeamRelevant` 的 3D、1-rank、`max_step=0` sibling。`scripts/analyze_beam_relevant_contract.py` 对 `bmmntr.txt` 做独立解析：输出为 1 行/24 列；`z_cut=2` 的截断高斯束 charge 期望值为 `-9.544997e-21 C`，实测为 `-9.544980e-21 C`，相对误差 `1.77e-6`；横向 rms 为 `0.249884/0.249765 m`，纵向 rms 为 `0.220356 m`，均通过 `2%` gate；均值、emittance、Twiss 相关输出均有限且满足正值边界。
+以官方 `initial_distribution` 中的 `beam` 参数为基准，可以用只包含该 beam、`bmmntr = BeamRelevant` 的 3D、1-rank、`max_step=0` 输入检查初始化束流矩。`scripts/analyze_beam_relevant_contract.py` 对 `bmmntr.txt` 的独立读取给出 1 行/24 列：`z_cut=2` 的截断高斯束 charge 期望值为 `-9.544997e-21 C`，实测为 `-9.544980e-21 C`，相对误差 `1.77e-6`；横向 rms 为 `0.249884/0.249765 m`，纵向 rms 为 `0.220356 m`，均通过 `2%` gate；均值、emittance、Twiss 相关输出均有限且满足正值边界。
 
-图 8-9 将这个初始化-only contract 的两个主要物理量画出来：左图是实际总 charge 相对于截断高斯期望值的比值，右图是三个位置 rms 与解析目标的对照。图中没有把单行输出扩展成虚假的时间演化；gamma、emittance 和 Twiss 量仍按报告中的 finite/positive checks 处理。
+图 8-9 将这个初始化检查的两个主要物理量画出来：左图是实际总 charge 相对于截断高斯期望值的比值，右图是三个位置 rms 与解析目标的对照。图中没有把单行输出扩展成虚假的时间演化；gamma、emittance 和 Twiss 量仍只要求满足有限性与正值边界。
 
 ![](../assets/figures/beam-relevant-contract.png)
 
-图 8-9 由 `scripts/plot_beam_relevant_contract.py` 从 `beam-relevant-contract.json` 重新生成。
+图 8-9 由 `scripts/plot_beam_relevant_contract.py` 从对应的束流矩检查结果重新生成。
 
-### Native external-file Gaussian beam：输入文件路径与束斑物理合同
+### Native external-file Gaussian beam：束斑理论包络检查
 
-`gaussian_beam/CMakeLists.txt` 中的 native `test_3d_focusing_gaussian_beam_from_openpmd` 当前仍引用目录内不存在的 `analysis.py`。项目因此保留官方 registration 缺口，同时直接运行其 prepare 脚本和 native input，使用 1 rank producer 生成 plotfile 与 BP5 openPMD 输出，再用 `scripts/analyze_gaussian_beam_focus_contract.py` 独立读取 iteration 0 的 `x/y/z/w`。
+`gaussian_beam/CMakeLists.txt` 中的 native `test_3d_focusing_gaussian_beam_from_openpmd` 仍引用目录内不存在的 `analysis.py`，所以不能把它表述为已恢复的上游 CMake regression。可用的物理检查是：由 prepare 脚本和 native input 生成 plotfile 与 BP5 openPMD 输出，再用 `scripts/analyze_gaussian_beam_focus_contract.py` 独立读取 iteration 0 的 `x/y/z/w`，与理论束斑包络比较。
 
-运行结果为 `1,999,966` 个宏粒子、总权重 `1.999966e10`、81 个有效 z slice；按 focal-distance 理论包络计算的最大相对误差为 `sigma_x = 3.0515e-2 < 0.051`、`sigma_y = 3.6214e-2 < 0.038`。官方 `analysis_focusing_beam.py` 也对同一输出正常结束。这个结果补足的是 native external-file 的项目级 physics gate，不应被表述为 WarpX upstream CMake 的 `analysis.py` 已经恢复；其证据目录为 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/`。
+该输入产生 `1,999,966` 个宏粒子、总权重 `1.999966e10` 和 81 个有效 z slice；按 focal-distance 理论包络计算的最大相对误差为 `sigma_x = 3.0515e-2 < 0.051`、`sigma_y = 3.6214e-2 < 0.038`。官方 `analysis_focusing_beam.py` 也能处理同一输出。这个结果支持外部文件初始化后的束斑包络检查，但不表示缺失的上游 `analysis.py` 已恢复；可复查产物位于 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/`。
 
-图 8-10 直接从同一 BP5 iteration 0 重建每个 z slice 的加权 `sigma_x`、`sigma_y`，并与 focal-distance 理论包络叠加。它展示的是 native external-file producer 的真实粒子输出与理论束斑合同，不是对缺失的 upstream `analysis.py` 的替代提交。
+图 8-10 直接从同一 BP5 iteration 0 重建每个 z slice 的加权 `sigma_x`、`sigma_y`，并与 focal-distance 理论包络叠加。它展示外部文件初始化后的真实粒子输出与理论束斑的一致性，而不是替代缺失的上游 `analysis.py`。
 
 ![](../assets/figures/gaussian-beam-focus-contract.png)
 
-图 8-10 由 `scripts/plot_gaussian_beam_focus_contract.py` 从 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/` 重新生成。
+图 8-10 由 `scripts/plot_gaussian_beam_focus_contract.py` 从对应的 Gaussian beam 输出重新生成。
 
 完整官方 `Examples/Tests/initial_distribution/` input 已由对应源码重建的 binary 复现。producer 和官方 `analysis.py` 均以 exit code `0` 结束，10 类分布的最大相对差为 `1.8931e-2 < 0.02`。仓库 checksum 默认 `rtol=1e-9` 观察到最大相对差 `3.18e-3`，反映随机采样而非初始化失败；在显式记录的 `rtol=5e-3` sampling tolerance 下通过。因此该案例的结论是“官方分布 analysis 通过、随机 checksum 有条件通过”，但不宣称确定性 `1e-9` checksum 相等。证据目录为 `runs/stage-c-validation/initial_distribution_full_current/`。
 

@@ -2,15 +2,9 @@
 
 本章开始进入 WarpX 源码。目标不是概括“WarpX 有一个 Evolve 函数”，而是建立一个可复查的调用图：程序从 `main.cpp` 进入，如何构造 `WarpX` 对象，如何读取参数和初始化数据，如何计算步长，最后如何在 `WarpXEvolve.cpp` 中把一个个 PIC step 推进下去。
 
-本章基于本地只读源码 `../warpx`，当前已读证据整理在 `notes/code-reading/evolve/00-lifecycle-and-callgraph.md` 和 `notes/code-reading/evolve/02-evolve-source-evidence.md`。
+本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航；读者可将路径替换成自己安装的 WarpX 源树，并优先按函数名而不是行号检索。更细的源码锚点整理在 `notes/code-reading/evolve/00-lifecycle-and-callgraph.md` 和 `notes/code-reading/evolve/02-evolve-source-evidence.md`。
 
-本章当前依据的 WarpX 源码版本是：
-
-- `../warpx`
-- 分支：`pkuHEDPbranch`
-- commit：`8c488b1a9`
-
-这些文件构成读本章时的源码导航图：`main.cpp` 负责生命周期，`WarpX` 类建立模拟状态，`WarpXEvolve.cpp` 组织时间推进，`WarpXInitData.cpp` 则准备首个时间步之前的状态。`OneStep_sub1()`、PSATD-JRhom 和 implicit solver 的入口会在本章中定位；场算法的离散公式、粒子的 nonlinear solve 参数和 mass-matrix kernel 分别在后续相关章节展开，避免在调用图中打断物理主线。
+`main.cpp` 负责生命周期，`WarpX` 类建立模拟状态，`WarpXEvolve.cpp` 组织时间推进，`WarpXInitData.cpp` 则准备首个时间步之前的状态。`OneStep_sub1()`、PSATD-JRhom 和 implicit solver 的入口会在本章中定位；场算法的离散公式、粒子的 nonlinear solve 参数和 mass-matrix kernel 分别在后续相关章节展开，避免在调用图中打断物理主线。
 
 ## 3.1 顶层入口：`main.cpp`
 
@@ -872,7 +866,7 @@ main.cpp
 -> diagnostics
 ```
 
-`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 的归档运行将本章的“主循环入口”压成了真实闭环：
+`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 可把本章的“主循环入口”压成一个可复现的闭环：
 
 - 有源码路径
 - 有参数入口
@@ -880,7 +874,7 @@ main.cpp
 - 有输出目录 `diags/diag1000080`
 - 有物理检查量
 
-这说明本章讲的 `WarpX` 主类生命周期和 `Evolve()` 主链，不再只是静态调用图，而是有一条运行证据能够落回这些控制流节点。
+这条路线把 `WarpX` 主类生命周期和 `Evolve()` 主链从静态调用图连接到输入、输出和可检查的物理量。它只覆盖这个 Langmuir 配置，不能据此推出所有 solver、几何或 AMR 分支都已验证。
 
 ## 3.13 进一步阅读与练习
 

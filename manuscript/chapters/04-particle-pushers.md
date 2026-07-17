@@ -2,15 +2,14 @@
 
 粒子推进器负责把单个宏粒子从一个时间层推进到下一个时间层。它表面上是局部单粒子算法，实际上依赖上一章建立的主循环条件：场必须已经填好 gather guard cells，粒子位置和动量必须处在正确 leapfrog 时间层，外场、电离电荷态、辐射反作用和 QED 选项也必须在进入 pusher 前准备好。
 
-本章对应源码笔记见 `notes/code-reading/particles/00-particle-evolve-callchain.md`、`notes/code-reading/particles/01-pusher-and-deposition-evidence.md`、`notes/code-reading/particles/02-gather-shape-deposition-kernels.md`、`notes/code-reading/particles/03-vay-higuera-cary-pushers.md`、`notes/code-reading/particles/24-thermalizer-validation-and-checksum-boundaries.md`、`notes/code-reading/particles/25-gather-variants-and-external-particle-fields.md`、`notes/code-reading/particles/26-pusher-single-particle-and-photon-validation-map.md`、`notes/code-reading/particles/27-particle-fields-plasma-lens-and-mpi-validation-map.md`、`notes/code-reading/particles/28-particle-diagnostics-python-interface-validation-map.md`、`notes/code-reading/particles/29-boundary-and-python-front-end-validation-map.md`、`notes/code-reading/particles/30-pml-eb-contact-and-mr-validation-map.md`、`notes/code-reading/particles/66-explicit-leapfrog-position-source-crosswalk.md` 和 `notes/code-reading/particles/68-position-update-output-staggering-contract.md`。
+需要回查实现时，先从 `notes/code-reading/particles/` 目录按下列编号进入：
 
-本章当前依据的 WarpX 源码版本是：
+- `00`：主调用链；
+- `01`--`03`：pusher、gather 与沉积接口；
+- `66`、`68`：时间层与输出位置；
+- `24`--`30`：collision、diagnostics、边界和 Python 接口的验证地图。
 
-- `../warpx`
-- 分支：`pkuHEDPbranch`
-- commit：`8c488b1a9`
-
-这些文件给出推进器的源码导航：`PushSelector.H` 选择算法，`UpdateMomentumBoris.H`、`UpdateMomentumVay.H` 和 `UpdateMomentumHigueraCary.H` 分别实现三类动量更新，`WarpXEvolve.cpp`、`MultiParticleContainer.cpp` 与 `PhysicalParticleContainer.cpp` 把它们放入主循环。阅读 Boris 推进时要特别区分半步磁旋转的 Birdsall--Langdon 半角关系，不能把旋转系数机械地除以二；`Examples/Tests/particle_pusher` 提供 Higuera--Cary force-free 路径的直接验证入口。
+本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航；其他版本应按函数名和调用关系检索。`PushSelector.H` 选择算法，`UpdateMomentumBoris.H`、`UpdateMomentumVay.H` 和 `UpdateMomentumHigueraCary.H` 分别实现三类动量更新，`WarpXEvolve.cpp`、`MultiParticleContainer.cpp` 与 `PhysicalParticleContainer.cpp` 把它们放入主循环。阅读 Boris 推进时要特别区分半步磁旋转的 Birdsall--Langdon 半角关系，不能把旋转系数机械地除以二；`Examples/Tests/particle_pusher` 提供 Higuera--Cary force-free 路径的直接验证入口。
 
 ## 4.1 连续 Lorentz 方程
 
@@ -194,7 +193,7 @@ WarpX 的单粒子动量推进分派在 `../warpx/Source/Particles/Pusher/PushSe
 
 这一节背后的经典来源可以直接回到 Birdsall-Langdon 1985 第一分卷 `4-3` 到 `4-5`。那里把磁推进的核心先写成几何分裂：电场部分是半步 impulse，磁场部分是速度空间旋转；随后再把旋转压成 `t=\tan(\theta/2)`、`s=2t/(1+t^2)`、`c=(1-t^2)/(1+t^2)` 这组半角变量，并进一步给出向量 Boris 形式。对本章来说，这个来源有两个价值。第一，WarpX 的 Boris 更新不是孤立经验公式，而是这条 “half-accel + rotation + half-accel” 离散合同的现代实现。第二，Birdsall 在 `4-5` 里明确区分了 `1d2v/1d3v` 和真正的一维动力学，这正好解释了为什么即使空间维数较低，本章后面讨论的 mover 仍必须保留多速度分量与磁旋转结构。
 
-Boris 1970 的原始历史位置需要单独标注边界：项目已固定 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但 2026-07-13 的 PDF 请求被限流，当前没有可逐页核对的会议论文 PDF、MinerU 或图集。因此本章的算法推导明确来自 Birdsall-Langdon 1985 的二手全文讲解，当前实现则回到 `../warpx/Source/Particles/Pusher/UpdateMomentumBoris.H` 和已有 runtime contract；这三层证据不应合并成“已完成 Boris 1970 原文精读”。边界由 `scripts/audit_boris_1970_metadata_contract.py` 固化；当前 checkout 的 kernel、half-push、半角重标定和 selector 分派则由 `scripts/audit_boris_source_crosswalk.py` 逐项检查。
+Boris 1970 的原始历史位置需要单独标注边界：本书保留 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但没有可逐页核对的会议论文 PDF、MinerU 或图集。因此本章的算法推导来自 Birdsall-Langdon 1985 的二手全文讲解，现代实现则回到 `Source/Particles/Pusher/UpdateMomentumBoris.H`；这三层证据不应合并成“已完成 Boris 1970 原文精读”。读者可用 `scripts/audit_boris_1970_metadata_contract.py` 核对书目边界，并用 `scripts/audit_boris_source_crosswalk.py` 核对该源码快照中的 kernel、half-push、半角重标定和 selector 分派。
 
 物理上可以先记住：
 
@@ -361,7 +360,7 @@ $$
 
 Vay--Godfrey 2014 review 的读者价值，不是替 WarpX 的 `UpdateMomentumVay.H` 背书，而是把 Boris、Lorentz-invariant pusher、场更新、current deposition、field gather、filtering 与数值稳定性放在同一条 PIC 离散链上。它提醒读者：推进行为不能只凭一条单粒子轨迹判断，场与源项怎样被离散、怎样被 gather，同样会决定相对论计算的误差结构。
 
-因此第 4 章应按四层证据阅读：Vay 2008 解释 frame-consistency 这一原始算法目标；本 review 给出推进器在完整 PIC 方法谱系中的位置；WarpX 源码说明当前 kernel 的变量和时间层；case-local contract 才能说明给定输入下实际运行过什么。任何一层都不能替代另一层，尤其不能把 review 中的历史算法图或其他 PIC code 的结果写成当前 WarpX runtime PASS。
+因此第 4 章应按四层证据阅读：Vay 2008 解释 frame-consistency 这一原始算法目标；本 review 给出推进器在完整 PIC 方法谱系中的位置；WarpX 源码说明该源码快照中 kernel 的变量和时间层；case-local contract 才能说明给定输入下实际运行过什么。任何一层都不能替代另一层，尤其不能把 review 中的历史算法图或其他 PIC code 的结果写成 WarpX runtime PASS。
 
 需要核对文献原文、公式编号、9 页 PDF、MinerU 产物、43 张图片或资产合同的读者，可转到 `docs/chapter-04-v0-evidence-ledger.md`。这些材料支持追溯与复核，但不改变本节的核心判断：Vay 是为特定相对论 frame-consistency 问题设计的推进器，是否适用仍要同时检查粒子、场、沉积和诊断路径。
 
@@ -1821,9 +1820,9 @@ $$
 
 确定夹角，并用动量 cell 对角线选择平面，避免在原来没有展宽的方向凭空制造分布。论文还强调位置不能机械地都放在 cluster 质心，而应从原粒子位置中抽取，以避免 merge cell 中心出现人为密度尖峰。完整的按段落中文讲解和图 1--8 见 `references/03_pic_foundations/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes-中文讲解.md`。
 
-这与当前 WarpX 的 `VelocityCoincidenceThinning` 存在清晰的结构映射：源码同样在 cell 内按速度空间分 bin，把 cluster 压成两个粒子，并累计权重、加权动量和动能；`resampling_algorithm_target_weight` 还因“两粒子输出”而在内部乘 2。论文的 Poisson merging-rate 公式、QED cascade speed-up 和分布复现结果则属于论文自己的 OSIRIS/QED 案例，不能转写成 WarpX 已完成的 runtime physics proof。
+这与 WarpX 的 `VelocityCoincidenceThinning` 存在清晰的结构映射：源码同样在 cell 内按速度空间分 bin，把 cluster 压成两个粒子，并累计权重、加权动量和动能；`resampling_algorithm_target_weight` 还因“两粒子输出”而在内部乘 2。论文的 Poisson merging-rate 公式、QED cascade speed-up 和分布复现结果则属于论文自己的 OSIRIS/QED 案例，不能转写成 WarpX 已完成的 runtime physics proof。
 
-当前 WarpX `resampling` regression 仍主要提供粒子数、权重或 checksum 层证据，缺少与论文 two-stream、magnetic-shower、QED-cascade 案例一一对应的 dedicated consumer。因此本节的准确分类是 `FULLTEXT_PAPER_BACKED_PARTICLE_MERGING_WARPX_MAPPING_RUNTIME_SEPARATE`：论文资产已经闭合，论文到 WarpX 的语义映射已建立，但 runtime 等价和 speed-up 仍保持边界。合同见 `runs/stage-c-validation/vranic-2015-paper-asset/contract.{json,md}`。
+WarpX 的 `resampling` regression 主要提供粒子数、权重或 checksum 层证据，缺少与论文 two-stream、magnetic-shower、QED-cascade 案例一一对应的 dedicated consumer。因此这里能成立的结论是“论文方法与 WarpX 结构已映射”，而不是 runtime 等价或 speed-up 已获证明。合同见 `runs/stage-c-validation/vranic-2015-paper-asset/contract.{json,md}`。
 
 #### Muraviev 2021：agnostic down-sampling 的论文-源码边界
 
@@ -1831,7 +1830,7 @@ Vranic 2015 解释了“一个 cluster 压成两个粒子时如何同时保持�
 
 论文比较了 `simple`、`leveling`、`globalLev`、`numberT`、`energyT`、`conserv`、`mergeAv` 和 `merge`。其中 `numberT` 严格保持 cell 总权重，`energyT` 严格保持 cell 总能量，`conserv` 可以把能量、三分量动量、总权重和空间中心矩组成线性不变量；反过来，`simple` 虽然最容易实现，却会产生很宽的局部权重尾，在 QED cascade 中可能制造无法被时间步解析的局部等离子体频率和非物理场增长。
 
-这篇论文与当前 WarpX 有三条可用的概念连接：一是 `LevelingThinning` 对低权重粒子的 leveling 思路；二是 `VelocityCoincidenceThinning` 在 velocity bin 内把 cluster 压成两个粒子的 merge 结构；三是“只看 checksum 不足以证明重采样物理质量”的验证要求。论文的 PICADOR/hi-chi 运行使用了自己的 QED cascade、Weibel 和 k-means 实验，不能把其 growth rate、运行时间、权重尾或图 1--12 数值直接写成 WarpX 结果。
+这篇论文与 WarpX 有三条可用的概念连接：一是 `LevelingThinning` 对低权重粒子的 leveling 思路；二是 `VelocityCoincidenceThinning` 在 velocity bin 内把 cluster 压成两个粒子的 merge 结构；三是“只看 checksum 不足以证明重采样物理质量”的验证要求。论文的 PICADOR/hi-chi 运行使用了自己的 QED cascade、Weibel 和 k-means 实验，不能把其 growth rate、运行时间、权重尾或图 1--12 数值直接写成 WarpX 结果。
 
 因此本节新增文献资产的准确分类是 `FULLTEXT_PAPER_BACKED_RESAMPLING_METHODS_WARPX_MAPPING_RUNTIME_SEPARATE`：论文全文、MinerU、中文精读和图像资产已闭合，算法概念映射已建立，但 WarpX 仍缺少同时读取重采样前后局部总权重、能量/动量、density variance 与 weight-tail ceiling 的 dedicated consumer。资产合同见 `runs/stage-c-validation/muraviev-2021-paper-asset/contract.{json,md}`。
 
@@ -2158,7 +2157,7 @@ accelerator lattice 自身也有很直接的强基准：`Examples/Tests/accelera
 
 因此最准确的表述应当是：
 
-- single-precision particle-field reductions 的 analysis 预案已经在本地源码树里
+- single-precision particle-field reductions 的 analysis 预案已经随源码提供
 - 但它还不是活跃 regression
 
 把这三组并到一起之后，第 4 章里关于 `Particles` 的 validation 图景就更完整了：不只是 pusher、collision、QED 和 diagnostics 场输出，还有一整层 Python-side 粒子接口与 boundary-buffer / reduction 的工程合同正在被回归保护。
@@ -2192,7 +2191,7 @@ accelerator lattice 自身也有很直接的强基准：`Examples/Tests/accelera
 
 - `scraped buffer + Python callback + custom reinjection model`
 
-在这些更复杂的边界 regression 之外，本地源码树里还有一个更“教科书式”的最小强基准：`Examples/Tests/boundaries/`。它不碰 embedded boundary、不碰 callback，也不依赖 reduced diagnostics，而是把三类 domain particle boundary 直接拆开测试：
+在这些更复杂的边界 regression 之外，源码中还有一个更“教科书式”的最小强基准：`Examples/Tests/boundaries/`。它不碰 embedded boundary、不碰 callback，也不依赖 reduced diagnostics，而是把三类 domain particle boundary 直接拆开测试：
 
 - `x` 方向 reflecting
 - `y` 方向 absorbing

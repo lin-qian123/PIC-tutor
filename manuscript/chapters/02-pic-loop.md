@@ -2,17 +2,9 @@
 
 本章先不急着进入某一个 WarpX 函数。生产级 PIC 代码的困难不在于“有粒子、有网格、有 Maxwell 方程”这几个名词，而在于这些对象必须在离散时间层、离散空间布局、并行 guard cells、边界条件和守恒约束之间保持一致。后续逐行读 WarpX 时，本章给出判断代码是否“物理上在做正确事情”的基准。
 
-本章对应的第一批源码阅读笔记保存在 `notes/code-reading/evolve/01-pic-time-layers.md` 和 `notes/code-reading/evolve/02-evolve-source-evidence.md`。
+本章对应的源码阅读笔记保存在 `notes/code-reading/evolve/01-pic-time-layers.md` 和 `notes/code-reading/evolve/02-evolve-source-evidence.md`。书中的 WarpX 路径以 `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为准；读者使用其他版本时，应先按函数名和调用关系定位，而不要把行号或局部文件布局当作稳定 API。
 
-本章当前依据的 WarpX 源码版本是：
-
-- `../warpx`
-- 分支：`pkuHEDPbranch`
-- commit：`8c488b1a9`
-
-这些源码路径给出本章的定位边界：本书讨论的是上述 checkout 所呈现的调用结构，而不是把本地文件路径当作可移植 API。Yee 1966 的 indexed abstract 和当前 WarpX `Source/Evolve/` 路径共同支持本章关于 Yee 网格、主循环和场更新位置的基本叙述；论文原文 PDF 与 Hockney--Eastwood 原书全文尚未纳入本书资产，因此本章不会把现代源码映射写成对历史文献公式的逐式证明。
-
-Yee 1966 的 indexed abstract 只支持一个窄的历史来源结论：Maxwell 方程可以被替换成有限差分方程，适当的 field-point placement 能处理 perfectly conducting surfaces，并以 conducting-cylinder scattering 作为例子。它足以解释为什么本章把 Yee 的空间交错和 PEC 边界放在同一条历史主线上，但不足以替代论文原始 stencil、时间层、色散推导或图表；对应 contract 见 `runs/stage-c-validation/yee-1966-indexed-abstract/contract.{json,md}`。当前 WarpX 的 `CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 和 `EvolveE.cpp` 之间的实现映射由 `scripts/audit_yee_source_crosswalk.py` 只读核对，但这仍是现代源码证据，不是 IEEE 原文逐式证明。
+Yee 1966 在本书中只承担一个窄的历史定位：有限差分 Maxwell 方程通过合适的场点布置处理导体边界。它不能替代本章的 stencil、时间层或色散推导；这些内容由连续方程、离散推导和现代实现三层分别说明。`CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 与 `EvolveE.cpp` 的交叉定位可供读者复查，但现代代码不构成对历史论文逐式等价的证明。
 
 ## 2.1 连续模型：Vlasov-Maxwell 系统
 
@@ -498,7 +490,7 @@ WarpX 的 `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` 正是围绕这些层
 
 ### 2.6.1 AMR subcycling：两个时间步不是同一个时间步的重复调用
 
-无 subcycling 时，第 0 层和更细层使用同一个外层时间步，`OneStep_nosub()` 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。当前 WarpX 的 `OneStep_sub1()` 在 `../warpx/Source/Evolve/WarpXEvolve.cpp:1040` 附近明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
+无 subcycling 时，第 0 层和更细层使用同一个外层时间步，`OneStep_nosub()` 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。本书采用的源码快照中，`OneStep_sub1()` 在 `Source/Evolve/WarpXEvolve.cpp` 附近明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
 
 令粗层时间步为 $Δt_c$，细层时间步为
 
@@ -645,12 +637,12 @@ flowchart TD
 
 都能在这条最小 Langmuir 主线上落到真实输入。
 
-`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 的归档运行将本章的抽象结构落到可复查的误差量。它对本章最重要的不是“程序成功退出”，而是：
+`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 给出一条可复现的最小验证路线。其记录的误差量说明，读者运行这个案例时不应只看“程序成功退出”，还应检查：
 
 - 解析场相对误差 `1.7027848999745115e-3 < 5e-2`
 - `divE-rho/\epsilon_0` 相对误差 `8.34503170903001e-12 < 1e-11`
 
-所以本章已经具备：
+因此，完成这个案例的最低验收应包括：
 
 - 参数示例
 - 最小运行案例
@@ -658,9 +650,9 @@ flowchart TD
 
 而不是只停在连续模型和离散方程层。
 
-## 2.9 本章当前基础文献清单
+## 2.9 基础文献与证据范围
 
-本章当前已经直接依托的基础来源是：
+本章直接依托的基础来源是：
 
 - `Birdsall 1985`
   - leapfrog 最小教学骨架
@@ -672,12 +664,10 @@ flowchart TD
   - full EM 时间步与 light mode / CFL 的关系
   - Darwin 作为 radiation-free low-frequency route
 
-本章当前还没有直接依托其正文细节的一手来源是：
+下列来源只作为继续阅读线索，不在本章中承担未核实的公式或数值结论：
 
 - `Yee 1966`
-  - 当前只到 metadata/acquisition 边界
 - `Hockney-Eastwood`
-  - 当前原书与 article-level fallback 仍未 materialize 为项目内 full-text + MinerU 资产
 
 更完整的基础章节文献状态、全文资产状态和“可直接作为正文证据/只可作待补边界”的分工，统一见：
 

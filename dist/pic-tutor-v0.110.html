@@ -164,8 +164,8 @@ bug，而是模型代价</a></li>
 长度、粒子数与统计时间尺度</a></li>
 <li><a href="#从连续模型到-pic-离散变量" id="toc-从连续模型到-pic-离散变量">1.11 从连续模型到 PIC
 离散变量</a></li>
-<li><a href="#本章当前文献边界" id="toc-本章当前文献边界">1.13
-本章当前文献边界</a></li>
+<li><a href="#证据范围与继续阅读" id="toc-证据范围与继续阅读">1.13
+证据范围与继续阅读</a></li>
 <li><a href="#练习与源码定位" id="toc-练习与源码定位">1.14
 练习与源码定位</a></li>
 </ul></li>
@@ -209,8 +209,8 @@ JRhom 与 implicit：同一个外层 step 内部也可能有不同的时间合�
 <li><a href="#本章后的源码阅读入口" id="toc-本章后的源码阅读入口">2.7
 本章后的源码阅读入口</a></li>
 <li><a href="#参数示例与最小运行案例" id="toc-参数示例与最小运行案例">2.8 参数示例与最小运行案例</a></li>
-<li><a href="#本章当前基础文献清单" id="toc-本章当前基础文献清单">2.9
-本章当前基础文献清单</a></li>
+<li><a href="#基础文献与证据范围" id="toc-基础文献与证据范围">2.9
+基础文献与证据范围</a></li>
 <li><a href="#进一步阅读与练习" id="toc-进一步阅读与练习">2.10
 进一步阅读与练习</a></li>
 </ul></li>
@@ -945,14 +945,14 @@ coarse-grained kinetic model 的一部分。</li>
 <li>PIC
 的主要误差不是单一来源，而是采样噪声、有限粒子权重、有限网格和离散时间层共同作用的结果。</li>
 </ol>
-<p>本章当前主要回链到：</p>
+<p>本章的阅读支点是：</p>
 <ul>
 <li><code>Birdsall 1985</code></li>
 <li><code>Dawson 1983</code></li>
-<li>本地已读的 <code>WarpX</code> 主循环与沉积/场求解章节</li>
+<li>第 2、3、5、6 章对 WarpX 主循环、沉积和场求解器的实现说明</li>
 </ul>
-<p>其中 <code>Hockney-Eastwood</code> 与 <code>Yee 1966</code> 仍在
-acquisition 阶段，当前不拿它们的未核实细节当正文证据。</p>
+<p><code>Hockney-Eastwood</code> 与 <code>Yee 1966</code>
+尚未作为可逐页核对的全文资产使用；本章不把无法核实的历史细节当作结论。读者应先把这里的连续模型、离散变量和误差边界读清，再进入源码章节。</p>
 <h2 id="vlasov-方程首先是相空间守恒律">1.1 Vlasov
 方程首先是相空间守恒律</h2>
 <p>对物种 <span class="math inline">\(s\)</span>，若忽略碰撞、衰变、电离和其他
@@ -1393,54 +1393,30 @@ self-force 的？</li>
 <li><code>ImplicitSolver</code></li>
 </ul>
 <p>都会被读成“工程控制流”，而不是“连续模型的离散化实现”。</p>
-<h2 id="本章当前文献边界">1.13 本章当前文献边界</h2>
-<p>本章当前正文已真正依托的文献边界是：</p>
+<h2 id="证据范围与继续阅读">1.13 证据范围与继续阅读</h2>
+<p>本章下列论述可直接回到两部已整理的基础来源：</p>
 <ul>
-<li><code>Birdsall 1985</code>
-<ul>
-<li>已精读并回填：
-<ul>
-<li>sheet model 的 randomization / correlation / thermalization
-时间尺度</li>
-<li>finite-grid / aliasing / fluctuation / heating 主线</li>
-</ul></li>
-</ul></li>
-<li><code>Dawson 1983</code>
-<ul>
-<li>已精读并回填：
-<ul>
-<li>numerical experiment 视角</li>
-<li>superparticle / weighted particles 的 kinetic 边界</li>
-<li>finite-size particles + grid + FFT-Poisson 的标准 electrostatic
-contract</li>
-</ul></li>
-</ul></li>
+<li><code>Birdsall 1985</code>：sheet model 的 randomization /
+correlation / thermalization 时间尺度，以及 finite-grid / aliasing /
+fluctuation / heating 主线。</li>
+<li><code>Dawson 1983</code>：numerical experiment 视角、superparticle /
+weighted particles 的 kinetic 边界，以及 finite-size particles、网格和
+FFT-Poisson 的 electrostatic contract。</li>
 </ul>
-<p>仍未在本章直接依赖其正文细节的文献是：</p>
+<p>下面两项适合作为后续补充阅读，但本章不依赖其未取得全文的细节：</p>
 <ul>
-<li><code>Hockney-Eastwood</code>
-<ul>
-<li>acquisition 尚未完成</li>
-</ul></li>
-<li><code>Yee 1966</code>
-<ul>
-<li>acquisition 尚未完成</li>
-</ul></li>
+<li><code>Hockney-Eastwood</code>：加权粒子、heating estimates 和
+optimum path 的经典表述。</li>
+<li><code>Yee 1966</code>：staggered FDTD
+与离散约束传播的原始出处。</li>
 </ul>
 <p>基础章节当前允许直接作为正文证据、以及哪些条目仍只能写成 acquisition
 / metadata 边界，现统一收口到：</p>
 <ul>
 <li><a href="../../docs/foundations-literature-list.md">基础章节文献清单</a></li>
 </ul>
-<p>因此本章当前版本已经足够支撑后续源码阅读，但基础文献层仍不是最终完成态。后续还需要继续：</p>
-<ol type="1">
-<li>补 <code>Hockney-Eastwood</code> 或其 article-level fallback 对
-weighted particles / heating estimates / optimum path 的原始证据；</li>
-<li>补 <code>Yee 1966</code> 对 staggered FDTD
-与离散约束传播的原始文献入口；</li>
-<li>再把本章和第 2 章之间关于 leapfrog、CFL、Debye
-长度、数值色散的边界继续压紧。</li>
-</ol>
+<p>第 2 章会把这里的 leapfrog、CFL、Debye
+长度和数值色散接到同一条离散主循环上。阅读其余文献时，应特别区分“连续模型的结论”“离散算法的结论”和“特定代码实现的行为”，不要用其中任一层代替另外两层。</p>
 <h2 id="练习与源码定位">1.14 练习与源码定位</h2>
 <ol type="1">
 <li><strong>变量桥接题</strong>：根据 1.11 的映射表，说明为什么
@@ -1450,7 +1426,7 @@ AMR/source-synchronization 场景出现。</li>
 <li><strong>尺度判断题</strong>：给定 <code>lambda_D/delta_x = 2</code>
 和
 <code>v_t Delta t/delta_x = 0.4</code>，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率还是时间推进约束。</li>
-<li><strong>源码定位题</strong>：在当前 WarpX checkout 中定位
+<li><strong>源码定位题</strong>：在所用 WarpX 源树中定位
 <code>PushParticlesandDeposit()</code>、<code>SyncCurrentAndRho()</code>
 和一个 field-solver
 入口，分别写出它们连接连续模型中哪一个对象：粒子输运、源项连续性还是
@@ -1464,33 +1440,17 @@ Vlasov-Maxwell 到离散时间推进</h1>
 方程”这几个名词，而在于这些对象必须在离散时间层、离散空间布局、并行
 guard cells、边界条件和守恒约束之间保持一致。后续逐行读 WarpX
 时，本章给出判断代码是否“物理上在做正确事情”的基准。</p>
-<p>本章对应的第一批源码阅读笔记保存在
+<p>本章对应的源码阅读笔记保存在
 <code>notes/code-reading/evolve/01-pic-time-layers.md</code> 和
-<code>notes/code-reading/evolve/02-evolve-source-evidence.md</code>。</p>
-<p>本章当前依据的 WarpX 源码版本是：</p>
-<ul>
-<li><code>../warpx</code></li>
-<li>分支：<code>pkuHEDPbranch</code></li>
-<li>commit：<code>8c488b1a9</code></li>
-</ul>
-<p>这些源码路径给出本章的定位边界：本书讨论的是上述 checkout
-所呈现的调用结构，而不是把本地文件路径当作可移植 API。Yee 1966 的
-indexed abstract 和当前 WarpX <code>Source/Evolve/</code>
-路径共同支持本章关于 Yee 网格、主循环和场更新位置的基本叙述；论文原文
-PDF 与 Hockney–Eastwood
-原书全文尚未纳入本书资产，因此本章不会把现代源码映射写成对历史文献公式的逐式证明。</p>
-<p>Yee 1966 的 indexed abstract 只支持一个窄的历史来源结论：Maxwell
-方程可以被替换成有限差分方程，适当的 field-point placement 能处理
-perfectly conducting surfaces，并以 conducting-cylinder scattering
-作为例子。它足以解释为什么本章把 Yee 的空间交错和 PEC
-边界放在同一条历史主线上，但不足以替代论文原始
-stencil、时间层、色散推导或图表；对应 contract 见
-<code>runs/stage-c-validation/yee-1966-indexed-abstract/contract.{json,md}</code>。当前
-WarpX 的
-<code>CartesianYeeAlgorithm.H</code>、<code>FiniteDifferenceSolver.cpp</code>、<code>EvolveB.cpp</code>
-和 <code>EvolveE.cpp</code> 之间的实现映射由
-<code>scripts/audit_yee_source_crosswalk.py</code>
-只读核对，但这仍是现代源码证据，不是 IEEE 原文逐式证明。</p>
+<code>notes/code-reading/evolve/02-evolve-source-evidence.md</code>。书中的
+WarpX 路径以 <code>pkuHEDPbranch</code> 的 <code>8c488b1a9</code>
+源码快照为准；读者使用其他版本时，应先按函数名和调用关系定位，而不要把行号或局部文件布局当作稳定
+API。</p>
+<p>Yee 1966 在本书中只承担一个窄的历史定位：有限差分 Maxwell
+方程通过合适的场点布置处理导体边界。它不能替代本章的
+stencil、时间层或色散推导；这些内容由连续方程、离散推导和现代实现三层分别说明。<code>CartesianYeeAlgorithm.H</code>、<code>FiniteDifferenceSolver.cpp</code>、<code>EvolveB.cpp</code>
+与 <code>EvolveE.cpp</code>
+的交叉定位可供读者复查，但现代代码不构成对历史论文逐式等价的证明。</p>
 <h2 id="连续模型vlasov-maxwell-系统">2.1 连续模型：Vlasov-Maxwell
 系统</h2>
 <p>对物种 <span class="math inline">\(s\)</span>，相空间分布函数 <span class="math inline">\(f_s(\mathbf{x},\mathbf{p},t)\)</span> 满足 Vlasov
@@ -1985,10 +1945,9 @@ subcycling：两个时间步不是同一个时间步的重复调用</h3>
 <p>无 subcycling 时，第 0
 层和更细层使用同一个外层时间步，<code>OneStep_nosub()</code>
 可以把粒子推进、source synchronization 和场推进看成一条统一的 <span class="math inline">\(n -&gt; n+1\)</span> 链。打开 subcycling
-后，这个图像不再成立。当前 WarpX 的 <code>OneStep_sub1()</code> 在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp:1040</code>
-附近明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio
-必须为 2。</p>
+后，这个图像不再成立。本书采用的源码快照中，<code>OneStep_sub1()</code>
+在 <code>Source/Evolve/WarpXEvolve.cpp</code> 附近明确限定：只支持两级
+mesh refinement，且每个方向的 refinement ratio 必须为 2。</p>
 <p>令粗层时间步为 <span class="math inline">\(Δt_c\)</span>，细层时间步为</p>
 <p><span class="math display">\[
 \Delta t_f=\frac{\Delta t_c}{2}.
@@ -2270,21 +2229,21 @@ source subinterval 或 nonlinear iteration，最后才判断某次
 </ul>
 <p>都能在这条最小 Langmuir 主线上落到真实输入。</p>
 <p><code>Examples/Tests/langmuir/inputs_test_1d_langmuir_multi</code>
-的归档运行将本章的抽象结构落到可复查的误差量。它对本章最重要的不是“程序成功退出”，而是：</p>
+给出一条可复现的最小验证路线。其记录的误差量说明，读者运行这个案例时不应只看“程序成功退出”，还应检查：</p>
 <ul>
 <li>解析场相对误差 <code>1.7027848999745115e-3 &lt; 5e-2</code></li>
 <li><code>divE-rho/\epsilon_0</code> 相对误差
 <code>8.34503170903001e-12 &lt; 1e-11</code></li>
 </ul>
-<p>所以本章已经具备：</p>
+<p>因此，完成这个案例的最低验收应包括：</p>
 <ul>
 <li>参数示例</li>
 <li>最小运行案例</li>
 <li>物理检查量</li>
 </ul>
 <p>而不是只停在连续模型和离散方程层。</p>
-<h2 id="本章当前基础文献清单">2.9 本章当前基础文献清单</h2>
-<p>本章当前已经直接依托的基础来源是：</p>
+<h2 id="基础文献与证据范围">2.9 基础文献与证据范围</h2>
+<p>本章直接依托的基础来源是：</p>
 <ul>
 <li><code>Birdsall 1985</code>
 <ul>
@@ -2300,17 +2259,10 @@ source subinterval 或 nonlinear iteration，最后才判断某次
 <li>Darwin 作为 radiation-free low-frequency route</li>
 </ul></li>
 </ul>
-<p>本章当前还没有直接依托其正文细节的一手来源是：</p>
+<p>下列来源只作为继续阅读线索，不在本章中承担未核实的公式或数值结论：</p>
 <ul>
-<li><code>Yee 1966</code>
-<ul>
-<li>当前只到 metadata/acquisition 边界</li>
-</ul></li>
-<li><code>Hockney-Eastwood</code>
-<ul>
-<li>当前原书与 article-level fallback 仍未 materialize 为项目内
-full-text + MinerU 资产</li>
-</ul></li>
+<li><code>Yee 1966</code></li>
+<li><code>Hockney-Eastwood</code></li>
 </ul>
 <p>更完整的基础章节文献状态、全文资产状态和“可直接作为正文证据/只可作待补边界”的分工，统一见：</p>
 <ul>
@@ -2353,17 +2305,12 @@ measurements 如何改变“PIC 总循环”的解释方式。</li>
 进入，如何构造 <code>WarpX</code>
 对象，如何读取参数和初始化数据，如何计算步长，最后如何在
 <code>WarpXEvolve.cpp</code> 中把一个个 PIC step 推进下去。</p>
-<p>本章基于本地只读源码 <code>../warpx</code>，当前已读证据整理在
+<p>本章以 WarpX <code>pkuHEDPbranch</code> 的 <code>8c488b1a9</code>
+源码快照为导航；读者可将路径替换成自己安装的 WarpX
+源树，并优先按函数名而不是行号检索。更细的源码锚点整理在
 <code>notes/code-reading/evolve/00-lifecycle-and-callgraph.md</code> 和
 <code>notes/code-reading/evolve/02-evolve-source-evidence.md</code>。</p>
-<p>本章当前依据的 WarpX 源码版本是：</p>
-<ul>
-<li><code>../warpx</code></li>
-<li>分支：<code>pkuHEDPbranch</code></li>
-<li>commit：<code>8c488b1a9</code></li>
-</ul>
-<p>这些文件构成读本章时的源码导航图：<code>main.cpp</code>
-负责生命周期，<code>WarpX</code>
+<p><code>main.cpp</code> 负责生命周期，<code>WarpX</code>
 类建立模拟状态，<code>WarpXEvolve.cpp</code>
 组织时间推进，<code>WarpXInitData.cpp</code>
 则准备首个时间步之前的状态。<code>OneStep_sub1()</code>、PSATD-JRhom 和
@@ -3756,7 +3703,7 @@ entry，当前最合适的样章输入仍然是：</p>
 -&gt; EvolveB/EvolveE/EvolveB
 -&gt; diagnostics</code></pre>
 <p><code>Examples/Tests/langmuir/inputs_test_1d_langmuir_multi</code>
-的归档运行将本章的“主循环入口”压成了真实闭环：</p>
+可把本章的“主循环入口”压成一个可复现的闭环：</p>
 <ul>
 <li>有源码路径</li>
 <li>有参数入口</li>
@@ -3764,9 +3711,9 @@ entry，当前最合适的样章输入仍然是：</p>
 <li>有输出目录 <code>diags/diag1000080</code></li>
 <li>有物理检查量</li>
 </ul>
-<p>这说明本章讲的 <code>WarpX</code> 主类生命周期和
-<code>Evolve()</code>
-主链，不再只是静态调用图，而是有一条运行证据能够落回这些控制流节点。</p>
+<p>这条路线把 <code>WarpX</code> 主类生命周期和 <code>Evolve()</code>
+主链从静态调用图连接到输入、输出和可检查的物理量。它只覆盖这个 Langmuir
+配置，不能据此推出所有 solver、几何或 AMR 分支都已验证。</p>
 <h2 id="进一步阅读与练习-1">3.13 进一步阅读与练习</h2>
 <p>进一步阅读：</p>
 <ol type="1">
@@ -3830,12 +3777,12 @@ gather 和沉积内核，再从 <code>EvolveE/B</code> 进入 FDTD/PSATD
 restart、AMR level 初始化、外部场、species 注入器、粒子创建
 kernel、Gaussian beam、openPMD 文件注入和 projection divergence
 cleaning。</p>
-<p>本章绑定本地源码 <code>../warpx</code>，分支
-<code>pkuHEDPbranch</code>，commit <code>8c488b1a9</code>。阅读时可用
+<p>本章以 WarpX <code>pkuHEDPbranch</code> 的 <code>8c488b1a9</code>
+源码快照为导航。阅读时可用
 <code>Source/Initialization/WarpXInitData.cpp</code> 中的
 <code>InitData()</code>、<code>InitFromScratch()</code>、<code>InitDiagnostics()</code>
 和 <code>AddExternalFields()</code>
-作为主导航点；下列笔记保留逐项源码锚点和更细的参数约束，供需要回查实现细节的读者使用：</p>
+作为主入口；其他版本应按函数名检索。下列笔记保留逐项源码锚点和更细的参数约束，供需要回查实现细节的读者使用：</p>
 <ul>
 <li><code>notes/code-reading/initialization/08-initialization-bootstrap.md</code></li>
 <li><code>notes/code-reading/initialization/09-preconstruct-parameter-locking.md</code></li>
@@ -3863,7 +3810,7 @@ cleaning。</p>
 <li><code>InitData()</code> 才在 fresh run / restart 之间分叉，并把 AMR
 level、粒子、诊断、PML、外场和初始静电/磁静场组织到第一步之前。</li>
 <li>species 注入、外部场、projection cleaning、openPMD/Gaussian beam
-等细节已有材料，但出版前还需要拆成更短的小节和图表。</li>
+分别有自己的参数、时间层和验证边界，不能笼统地称为“初始化完成”。</li>
 </ol>
 <p>PIC 程序的时间推进方程通常写成：</p>
 <p><span class="math display">\[
@@ -5438,8 +5385,8 @@ laser-target 骨架，field ionization、collisions 和 QED
 更适合承担“应用输入如何把这些模块挂到同一目标骨架上”的说明，而不应把不同层级的验证合同混写成一条单一主链。</p>
 <h2 id="a.13-初始化验证入口哪些-regressions-真正在兜底">3A.13
 初始化验证入口：哪些 regressions 真正在兜底</h2>
-<p>前面的 3A.1-3A.12 讲的是“源码如何初始化”；但如果没有本地 regressions
-对照，这些讲解很容易停留在静态阅读层。当前 WarpX 对
+<p>前面的 3A.1-3A.12 讲的是“源码如何初始化”；若没有可执行 regression
+对照，这些讲解很容易停留在静态阅读层。WarpX 对
 <code>Initialization</code>
 的验证并没有集中在一个目录里，而是分散在几组物理 test 中。</p>
 <p>第一组是 <code>Langmuir</code>。它通常被当成 evolve
@@ -5627,15 +5574,15 @@ histogram、束斑统计和解析分布逐条对照。这意味着它真正验�
 <code>PlasmaInjector</code>、<code>SpeciesUtils</code> 和
 momentum-dispatch 层的 built-in / parser
 初始化合同，而不只是“粒子能被建出来”。</p>
-<p>当前 checkout 的重建 binary 已成功运行官方完整输入，官方
-<code>analysis.py</code> 的最大相对差为
-<code>1.8931e-2 &lt; 0.02</code>。该结果修复了此前由预编译 binary 与源码
-checkout 不一致造成的假阻塞；运行命令和逐项结果见
+<p>对完整输入的已记录运行，官方 <code>analysis.py</code> 的最大相对差为
+<code>1.8931e-2 &lt; 0.02</code>；命令和逐项输出见
 <code>runs/stage-c-validation/initial_distribution_full_current/contract.md</code>。由于初始化使用随机采样，仓库
 checksum 的默认 <code>1e-9</code>
-不应被当作确定性合同；本次观测最大相对差为
-<code>3.18e-3</code>，仅在显式记录的 <code>5e-3</code> sampling
-tolerance 下通过。</p>
+不应被当作确定性合同；该运行的最大相对差为
+<code>3.18e-3</code>，在明确声明的 <code>5e-3</code> sampling tolerance
+下通过。读者在不同 MPI
+布局、随机数实现或编译选项下复现时，应比较统计量与容差，而不是期待逐位
+checksum 相同。</p>
 <p>第二组是 <code>initial_plasma_profile</code>。这组当前没有独立
 <code>analysis.py</code>，只有 checksum helper，但输入本身非常明确：</p>
 <ul>
@@ -6097,10 +6044,10 @@ WarpX 初始化链的分层验证，而不是对 <code>3A ES1</code>
 <code>Evolve()</code>、<code>OneStep()</code>、<code>PushParticlesandDeposit()</code>、field
 solver 和 diagnostics
 都在这个已经离散化、分布式、带权重和边界条件的状态上工作。</p>
-<p>这条初始化到推进的交界在当前 checkout 中由
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp</code>
-承接：<code>Evolve()</code> 负责外层时间步，<code>OneStep()</code> 负责
-solver/AMR 分派，<code>PushParticlesandDeposit()</code>
+<p>在本章采用的源码快照中，初始化到推进的交界由
+<code>Source/Evolve/WarpXEvolve.cpp</code> 承接：<code>Evolve()</code>
+负责外层时间步，<code>OneStep()</code> 负责 solver/AMR
+分派，<code>PushParticlesandDeposit()</code>
 才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史
 <code>3A ES1</code> 子程序的同名替代物。</p>
 <p>进一步学习可沿以下方向展开：</p>
@@ -6135,17 +6082,17 @@ beam optics 文献继续推导；</li>
 gather guard cells，粒子位置和动量必须处在正确 leapfrog
 时间层，外场、电离电荷态、辐射反作用和 QED 选项也必须在进入 pusher
 前准备好。</p>
-<p>本章对应源码笔记见
-<code>notes/code-reading/particles/00-particle-evolve-callchain.md</code>、<code>notes/code-reading/particles/01-pusher-and-deposition-evidence.md</code>、<code>notes/code-reading/particles/02-gather-shape-deposition-kernels.md</code>、<code>notes/code-reading/particles/03-vay-higuera-cary-pushers.md</code>、<code>notes/code-reading/particles/24-thermalizer-validation-and-checksum-boundaries.md</code>、<code>notes/code-reading/particles/25-gather-variants-and-external-particle-fields.md</code>、<code>notes/code-reading/particles/26-pusher-single-particle-and-photon-validation-map.md</code>、<code>notes/code-reading/particles/27-particle-fields-plasma-lens-and-mpi-validation-map.md</code>、<code>notes/code-reading/particles/28-particle-diagnostics-python-interface-validation-map.md</code>、<code>notes/code-reading/particles/29-boundary-and-python-front-end-validation-map.md</code>、<code>notes/code-reading/particles/30-pml-eb-contact-and-mr-validation-map.md</code>、<code>notes/code-reading/particles/66-explicit-leapfrog-position-source-crosswalk.md</code>
-和
-<code>notes/code-reading/particles/68-position-update-output-staggering-contract.md</code>。</p>
-<p>本章当前依据的 WarpX 源码版本是：</p>
+<p>需要回查实现时，先从 <code>notes/code-reading/particles/</code>
+目录按下列编号进入：</p>
 <ul>
-<li><code>../warpx</code></li>
-<li>分支：<code>pkuHEDPbranch</code></li>
-<li>commit：<code>8c488b1a9</code></li>
+<li><code>00</code>：主调用链；</li>
+<li><code>01</code>–<code>03</code>：pusher、gather 与沉积接口；</li>
+<li><code>66</code>、<code>68</code>：时间层与输出位置；</li>
+<li><code>24</code>–<code>30</code>：collision、diagnostics、边界和
+Python 接口的验证地图。</li>
 </ul>
-<p>这些文件给出推进器的源码导航：<code>PushSelector.H</code>
+<p>本章以 WarpX <code>pkuHEDPbranch</code> 的 <code>8c488b1a9</code>
+源码快照为导航；其他版本应按函数名和调用关系检索。<code>PushSelector.H</code>
 选择算法，<code>UpdateMomentumBoris.H</code>、<code>UpdateMomentumVay.H</code>
 和 <code>UpdateMomentumHigueraCary.H</code>
 分别实现三类动量更新，<code>WarpXEvolve.cpp</code>、<code>MultiParticleContainer.cpp</code>
@@ -6406,17 +6353,16 @@ impulse，磁场部分是速度空间旋转；随后再把旋转压成
 <code>1d2v/1d3v</code>
 和真正的一维动力学，这正好解释了为什么即使空间维数较低，本章后面讨论的
 mover 仍必须保留多速度分量与磁旋转结构。</p>
-<p>Boris 1970 的原始历史位置需要单独标注边界：项目已固定 J. P. Boris
-的会议论文书目和 DTIC <code>ADA023511</code> 入口，但 2026-07-13 的 PDF
-请求被限流，当前没有可逐页核对的会议论文 PDF、MinerU
-或图集。因此本章的算法推导明确来自 Birdsall-Langdon 1985
-的二手全文讲解，当前实现则回到
-<code>../warpx/Source/Particles/Pusher/UpdateMomentumBoris.H</code>
-和已有 runtime contract；这三层证据不应合并成“已完成 Boris 1970
-原文精读”。边界由
-<code>scripts/audit_boris_1970_metadata_contract.py</code> 固化；当前
-checkout 的 kernel、half-push、半角重标定和 selector 分派则由
-<code>scripts/audit_boris_source_crosswalk.py</code> 逐项检查。</p>
+<p>Boris 1970 的原始历史位置需要单独标注边界：本书保留 J. P. Boris
+的会议论文书目和 DTIC <code>ADA023511</code>
+入口，但没有可逐页核对的会议论文 PDF、MinerU
+或图集。因此本章的算法推导来自 Birdsall-Langdon 1985
+的二手全文讲解，现代实现则回到
+<code>Source/Particles/Pusher/UpdateMomentumBoris.H</code>；这三层证据不应合并成“已完成
+Boris 1970 原文精读”。读者可用
+<code>scripts/audit_boris_1970_metadata_contract.py</code>
+核对书目边界，并用 <code>scripts/audit_boris_source_crosswalk.py</code>
+核对该源码快照中的 kernel、half-push、半角重标定和 selector 分派。</p>
 <p>物理上可以先记住：</p>
 <ul>
 <li>Boris：经典、鲁棒、磁场部分近似旋转，长期性质好。</li>
@@ -6638,10 +6584,9 @@ pusher、场更新、current deposition、field gather、filtering
 gather，同样会决定相对论计算的误差结构。</p>
 <p>因此第 4 章应按四层证据阅读：Vay 2008 解释 frame-consistency
 这一原始算法目标；本 review 给出推进器在完整 PIC 方法谱系中的位置；WarpX
-源码说明当前 kernel 的变量和时间层；case-local contract
+源码说明该源码快照中 kernel 的变量和时间层；case-local contract
 才能说明给定输入下实际运行过什么。任何一层都不能替代另一层，尤其不能把
-review 中的历史算法图或其他 PIC code 的结果写成当前 WarpX runtime
-PASS。</p>
+review 中的历史算法图或其他 PIC code 的结果写成 WarpX runtime PASS。</p>
 <p>需要核对文献原文、公式编号、9 页 PDF、MinerU 产物、43
 张图片或资产合同的读者，可转到
 <code>docs/chapter-04-v0-evidence-ledger.md</code>。这些材料支持追溯与复核，但不改变本节的核心判断：Vay
@@ -8543,18 +8488,16 @@ w_t=w_a+w_b,\qquad
 cluster 质心，而应从原粒子位置中抽取，以避免 merge cell
 中心出现人为密度尖峰。完整的按段落中文讲解和图 1–8 见
 <code>references/03_pic_foundations/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes-中文讲解.md</code>。</p>
-<p>这与当前 WarpX 的 <code>VelocityCoincidenceThinning</code>
+<p>这与 WarpX 的 <code>VelocityCoincidenceThinning</code>
 存在清晰的结构映射：源码同样在 cell 内按速度空间分 bin，把 cluster
 压成两个粒子，并累计权重、加权动量和动能；<code>resampling_algorithm_target_weight</code>
 还因“两粒子输出”而在内部乘 2。论文的 Poisson merging-rate 公式、QED
 cascade speed-up 和分布复现结果则属于论文自己的 OSIRIS/QED
 案例，不能转写成 WarpX 已完成的 runtime physics proof。</p>
-<p>当前 WarpX <code>resampling</code> regression
-仍主要提供粒子数、权重或 checksum 层证据，缺少与论文
-two-stream、magnetic-shower、QED-cascade 案例一一对应的 dedicated
-consumer。因此本节的准确分类是
-<code>FULLTEXT_PAPER_BACKED_PARTICLE_MERGING_WARPX_MAPPING_RUNTIME_SEPARATE</code>：论文资产已经闭合，论文到
-WarpX 的语义映射已建立，但 runtime 等价和 speed-up 仍保持边界。合同见
+<p>WarpX 的 <code>resampling</code> regression 主要提供粒子数、权重或
+checksum 层证据，缺少与论文 two-stream、magnetic-shower、QED-cascade
+案例一一对应的 dedicated consumer。因此这里能成立的结论是“论文方法与
+WarpX 结构已映射”，而不是 runtime 等价或 speed-up 已获证明。合同见
 <code>runs/stage-c-validation/vranic-2015-paper-asset/contract.{json,md}</code>。</p>
 <h4 id="muraviev-2021agnostic-down-sampling-的论文-源码边界">Muraviev
 2021：agnostic down-sampling 的论文-源码边界</h4>
@@ -8573,7 +8516,7 @@ average 下保持不变。</p>
 可以把能量、三分量动量、总权重和空间中心矩组成线性不变量；反过来，<code>simple</code>
 虽然最容易实现，却会产生很宽的局部权重尾，在 QED cascade
 中可能制造无法被时间步解析的局部等离子体频率和非物理场增长。</p>
-<p>这篇论文与当前 WarpX 有三条可用的概念连接：一是
+<p>这篇论文与 WarpX 有三条可用的概念连接：一是
 <code>LevelingThinning</code> 对低权重粒子的 leveling 思路；二是
 <code>VelocityCoincidenceThinning</code> 在 velocity bin 内把 cluster
 压成两个粒子的 merge 结构；三是“只看 checksum
@@ -9029,7 +8972,7 @@ component 与 checkpoint front-end 可以共存；但它对应的
 <p>因此最准确的表述应当是：</p>
 <ul>
 <li>single-precision particle-field reductions 的 analysis
-预案已经在本地源码树里</li>
+预案已经随源码提供</li>
 <li>但它还不是活跃 regression</li>
 </ul>
 <p>把这三组并到一起之后，第 4 章里关于 <code>Particles</code> 的
@@ -9080,7 +9023,7 @@ boundary condition test，而是：</p>
 <li><code>scraped buffer + Python callback + custom reinjection model</code></li>
 </ul>
 <p>在这些更复杂的边界 regression
-之外，本地源码树里还有一个更“教科书式”的最小强基准：<code>Examples/Tests/boundaries/</code>。它不碰
+之外，源码中还有一个更“教科书式”的最小强基准：<code>Examples/Tests/boundaries/</code>。它不碰
 embedded boundary、不碰 callback，也不依赖 reduced
 diagnostics，而是把三类 domain particle boundary 直接拆开测试：</p>
 <ul>

@@ -2,7 +2,7 @@
 
 本章把 `WarpX::InitData()` 展开成一条完整的初始化链。它补足第 3 章中“初始化”只作为主循环前置步骤的不足：这里开始逐块解释 fresh run / restart、AMR level 初始化、外部场、species 注入器、粒子创建 kernel、Gaussian beam、openPMD 文件注入和 projection divergence cleaning。
 
-本章绑定本地源码 `../warpx`，分支 `pkuHEDPbranch`，commit `8c488b1a9`。阅读时可用 `Source/Initialization/WarpXInitData.cpp` 中的 `InitData()`、`InitFromScratch()`、`InitDiagnostics()` 和 `AddExternalFields()` 作为主导航点；下列笔记保留逐项源码锚点和更细的参数约束，供需要回查实现细节的读者使用：
+本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航。阅读时可用 `Source/Initialization/WarpXInitData.cpp` 中的 `InitData()`、`InitFromScratch()`、`InitDiagnostics()` 和 `AddExternalFields()` 作为主入口；其他版本应按函数名检索。下列笔记保留逐项源码锚点和更细的参数约束，供需要回查实现细节的读者使用：
 
 - `notes/code-reading/initialization/08-initialization-bootstrap.md`
 - `notes/code-reading/initialization/09-preconstruct-parameter-locking.md`
@@ -27,7 +27,7 @@
 
 1. `WarpX::WarpX()` 构造期只完成参数读取和跨 level 外壳创建。
 2. `InitData()` 才在 fresh run / restart 之间分叉，并把 AMR level、粒子、诊断、PML、外场和初始静电/磁静场组织到第一步之前。
-3. species 注入、外部场、projection cleaning、openPMD/Gaussian beam 等细节已有材料，但出版前还需要拆成更短的小节和图表。
+3. species 注入、外部场、projection cleaning、openPMD/Gaussian beam 分别有自己的参数、时间层和验证边界，不能笼统地称为“初始化完成”。
 
 PIC 程序的时间推进方程通常写成：
 
@@ -1353,7 +1353,7 @@ srcfab(i,j,k,n) = field_parser(x,y,z);
 
 ## 3A.13 初始化验证入口：哪些 regressions 真正在兜底
 
-前面的 3A.1-3A.12 讲的是“源码如何初始化”；但如果没有本地 regressions 对照，这些讲解很容易停留在静态阅读层。当前 WarpX 对 `Initialization` 的验证并没有集中在一个目录里，而是分散在几组物理 test 中。
+前面的 3A.1-3A.12 讲的是“源码如何初始化”；若没有可执行 regression 对照，这些讲解很容易停留在静态阅读层。WarpX 对 `Initialization` 的验证并没有集中在一个目录里，而是分散在几组物理 test 中。
 
 第一组是 `Langmuir`。它通常被当成 evolve 基准，但对初始化同样关键，因为它直接覆盖：
 
@@ -1480,7 +1480,7 @@ $$
 
 analysis 脚本把 reduced histogram、束斑统计和解析分布逐条对照。这意味着它真正验证的是 `PlasmaInjector`、`SpeciesUtils` 和 momentum-dispatch 层的 built-in / parser 初始化合同，而不只是“粒子能被建出来”。
 
-当前 checkout 的重建 binary 已成功运行官方完整输入，官方 `analysis.py` 的最大相对差为 `1.8931e-2 < 0.02`。该结果修复了此前由预编译 binary 与源码 checkout 不一致造成的假阻塞；运行命令和逐项结果见 `runs/stage-c-validation/initial_distribution_full_current/contract.md`。由于初始化使用随机采样，仓库 checksum 的默认 `1e-9` 不应被当作确定性合同；本次观测最大相对差为 `3.18e-3`，仅在显式记录的 `5e-3` sampling tolerance 下通过。
+对完整输入的已记录运行，官方 `analysis.py` 的最大相对差为 `1.8931e-2 < 0.02`；命令和逐项输出见 `runs/stage-c-validation/initial_distribution_full_current/contract.md`。由于初始化使用随机采样，仓库 checksum 的默认 `1e-9` 不应被当作确定性合同；该运行的最大相对差为 `3.18e-3`，在明确声明的 `5e-3` sampling tolerance 下通过。读者在不同 MPI 布局、随机数实现或编译选项下复现时，应比较统计量与容差，而不是期待逐位 checksum 相同。
 
 第二组是 `initial_plasma_profile`。这组当前没有独立 `analysis.py`，只有 checksum helper，但输入本身非常明确：
 
@@ -1785,7 +1785,7 @@ inputs
 
 这个状态才是 PIC 时间推进的初始条件。后续 `Evolve()`、`OneStep()`、`PushParticlesandDeposit()`、field solver 和 diagnostics 都在这个已经离散化、分布式、带权重和边界条件的状态上工作。
 
-这条初始化到推进的交界在当前 checkout 中由 `../warpx/Source/Evolve/WarpXEvolve.cpp` 承接：`Evolve()` 负责外层时间步，`OneStep()` 负责 solver/AMR 分派，`PushParticlesandDeposit()` 才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史 `3A ES1` 子程序的同名替代物。
+在本章采用的源码快照中，初始化到推进的交界由 `Source/Evolve/WarpXEvolve.cpp` 承接：`Evolve()` 负责外层时间步，`OneStep()` 负责 solver/AMR 分派，`PushParticlesandDeposit()` 才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史 `3A ES1` 子程序的同名替代物。
 
 进一步学习可沿以下方向展开：
 

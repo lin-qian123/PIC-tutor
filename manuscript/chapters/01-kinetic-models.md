@@ -13,13 +13,13 @@ $$
 3. 宏粒子、权重和 shape factor 不是数值技巧附会到物理上，而是 coarse-grained kinetic model 的一部分。
 4. PIC 的主要误差不是单一来源，而是采样噪声、有限粒子权重、有限网格和离散时间层共同作用的结果。
 
-本章当前主要回链到：
+本章的阅读支点是：
 
 - `Birdsall 1985`
 - `Dawson 1983`
-- 本地已读的 `WarpX` 主循环与沉积/场求解章节
+- 第 2、3、5、6 章对 WarpX 主循环、沉积和场求解器的实现说明
 
-其中 `Hockney-Eastwood` 与 `Yee 1966` 仍在 acquisition 阶段，当前不拿它们的未核实细节当正文证据。
+`Hockney-Eastwood` 与 `Yee 1966` 尚未作为可逐页核对的全文资产使用；本章不把无法核实的历史细节当作结论。读者应先把这里的连续模型、离散变量和误差边界读清，再进入源码章节。
 
 ## 1.1 Vlasov 方程首先是相空间守恒律
 
@@ -406,39 +406,26 @@ $$
 
 都会被读成“工程控制流”，而不是“连续模型的离散化实现”。
 
-## 1.13 本章当前文献边界
+## 1.13 证据范围与继续阅读
 
-本章当前正文已真正依托的文献边界是：
+本章下列论述可直接回到两部已整理的基础来源：
 
-- `Birdsall 1985`
-  - 已精读并回填：
-    - sheet model 的 randomization / correlation / thermalization 时间尺度
-    - finite-grid / aliasing / fluctuation / heating 主线
-- `Dawson 1983`
-  - 已精读并回填：
-    - numerical experiment 视角
-    - superparticle / weighted particles 的 kinetic 边界
-    - finite-size particles + grid + FFT-Poisson 的标准 electrostatic contract
+- `Birdsall 1985`：sheet model 的 randomization / correlation / thermalization 时间尺度，以及 finite-grid / aliasing / fluctuation / heating 主线。
+- `Dawson 1983`：numerical experiment 视角、superparticle / weighted particles 的 kinetic 边界，以及 finite-size particles、网格和 FFT-Poisson 的 electrostatic contract。
 
-仍未在本章直接依赖其正文细节的文献是：
+下面两项适合作为后续补充阅读，但本章不依赖其未取得全文的细节：
 
-- `Hockney-Eastwood`
-  - acquisition 尚未完成
-- `Yee 1966`
-  - acquisition 尚未完成
+- `Hockney-Eastwood`：加权粒子、heating estimates 和 optimum path 的经典表述。
+- `Yee 1966`：staggered FDTD 与离散约束传播的原始出处。
 
 基础章节当前允许直接作为正文证据、以及哪些条目仍只能写成 acquisition / metadata 边界，现统一收口到：
 
 - [基础章节文献清单](../../docs/foundations-literature-list.md)
 
-因此本章当前版本已经足够支撑后续源码阅读，但基础文献层仍不是最终完成态。后续还需要继续：
-
-1. 补 `Hockney-Eastwood` 或其 article-level fallback 对 weighted particles / heating estimates / optimum path 的原始证据；
-2. 补 `Yee 1966` 对 staggered FDTD 与离散约束传播的原始文献入口；
-3. 再把本章和第 2 章之间关于 leapfrog、CFL、Debye 长度、数值色散的边界继续压紧。
+第 2 章会把这里的 leapfrog、CFL、Debye 长度和数值色散接到同一条离散主循环上。阅读其余文献时，应特别区分“连续模型的结论”“离散算法的结论”和“特定代码实现的行为”，不要用其中任一层代替另外两层。
 
 ## 1.14 练习与源码定位
 
 1. **变量桥接题**：根据 1.11 的映射表，说明为什么 `rho_fp/rho_buf` 不能直接当作两个不同物理量，并指出它们分别在哪个 AMR/source-synchronization 场景出现。
 2. **尺度判断题**：给定 `lambda_D/delta_x = 2` 和 `v_t Delta t/delta_x = 0.4`，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率还是时间推进约束。
-3. **源码定位题**：在当前 WarpX checkout 中定位 `PushParticlesandDeposit()`、`SyncCurrentAndRho()` 和一个 field-solver 入口，分别写出它们连接连续模型中哪一个对象：粒子输运、源项连续性还是 Maxwell/Poisson 闭合。
+3. **源码定位题**：在所用 WarpX 源树中定位 `PushParticlesandDeposit()`、`SyncCurrentAndRho()` 和一个 field-solver 入口，分别写出它们连接连续模型中哪一个对象：粒子输运、源项连续性还是 Maxwell/Poisson 闭合。

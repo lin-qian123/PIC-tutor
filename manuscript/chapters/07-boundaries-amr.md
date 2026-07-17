@@ -1,6 +1,6 @@
 # 7. 边界条件、PML 与 AMR
 
-> v0.68 源码基线：本章按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重新校准入口。当前已具备边界、PML、guard-cell 与 AMR 的源码入口地图，LeeCPC2015 accepted manuscript、WarpX source crosswalk 和多条 Cartesian/RZ PML runtime evidence 也已接入；仍未关闭的是 publisher-formatted CPC PDF、`C1-C25`/Galilean `T2`/cleaning `F/G` 的逐项历史归因，以及真实 transition-zone route-count regression。
+> 源码定位范围：本章对应相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9`。边界、PML、guard cell 与 AMR 的入口地图，连同 LeeCPC2015 accepted manuscript、WarpX 源码交叉核对和 Cartesian/RZ PML 案例，共同支撑本章的实现说明。它们不能替代 publisher-formatted CPC PDF 的版本差异核对，也不能证明 `C1-C25`、Galilean `T2`、cleaning `F/G` 的逐项历史归因或 transition-zone 的完整 route ledger。
 
 边界条件在 PIC 中同时作用于场和粒子。场边界控制 Maxwell 方程如何在计算域边缘闭合；粒子边界控制宏粒子离开、反射、吸收、周期穿越或被记录的方式。二者不能混为一谈。
 
@@ -44,13 +44,13 @@ WarpX 官方理论文档把 PML、PEC、PMC、Silver-Mueller、周期边界和�
 2. 再确认边界进入哪个场/粒子分派，以及需要多少 guard cells；
 3. 最后选择与问题相符的 observable：反射率、残余场、能量账本、重启重复性、scraped-particle buffer 或 AMR route ledger。
 
-本章后面的版本化证据段不是另一套理论，而是这条链上不同节点的案例记录。通过一个 PML 反射率 gate，不代表 RZ 残余场、粒子入 PML 或 AMR transition-zone route ledger 也已证明；读者应始终沿 producer/consumer 和 observable 的边界解释结果。
+本章后面的案例段不是另一套理论，而是这条链上不同节点的检验。通过一个 PML 反射率 gate，不代表 RZ 残余场、粒子入 PML 或 AMR transition-zone route ledger 也已证明；读者应始终沿 producer/consumer 和 observable 的边界解释结果。
 
-## 7.0 v0.68 源码入口地图
+## 7.0 源码入口地图
 
-本章后续不能只按“边界条件”这个名词归类，因为 WarpX 中的边界语义会穿过参数解析、场数组 guard cell、PML split field、粒子删除/反射/记录、诊断和 AMR 重建。本节把当前 v0.68 的读代码入口固定如下：
+本章不能只按“边界条件”这个名词归类，因为 WarpX 中的边界语义会穿过参数解析、场数组 guard cell、PML split field、粒子删除/反射/记录、诊断和 AMR 重建。以下列出读代码时需要反复回查的入口：
 
-| 问题 | 当前入口 | v0.68 读法 |
+| 问题 | 源码入口 | 阅读要点 |
 |---|---|---|
 | field 与 particle 边界解析顺序 | `../warpx/Source/WarpX.cpp:274-296` | `MakeWarpX()` 先读 field boundary，再由 field periodic 掩码约束 particle boundary，最后才构造 `WarpX` 单例。 |
 | field boundary 参数与 periodic 一致性 | `../warpx/Source/BoundaryConditions/FieldBoundaries.cpp:22-80` | `boundary.field_lo/field_hi` 默认进入 `FieldBoundaryType::Default`，周期方向必须 lo/hi 成对闭合。 |

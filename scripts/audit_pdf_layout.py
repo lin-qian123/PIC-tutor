@@ -63,7 +63,7 @@ def main() -> int:
         "chapter_7_5_1_has_no_historical_comment": "<!--" not in source,
         "pdf_has_expected_boundary_sections": all(
             marker in "\n".join(page.extract_text() or "" for page in reader.pages)
-            for marker in ("7.5.1 用正确的 observable 判断 PML", "当前成书缺口登记")
+            for marker in ("7.5.1 用正确的 observable 判断 PML", "成书的已知证据边界")
         ),
     }
     result = {

@@ -18,7 +18,7 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-EXPECTED_PDF_PAGES = 271
+EXPECTED_PDF_PAGES = 270
 
 
 def image_links(text: str) -> list[str]:
@@ -86,8 +86,8 @@ def main() -> None:
             for marker in (
                 "## 9.10 练习与复核",
                 "### 9.10.1 证据层分类练习",
-                "### 9.10.2 合同复核练习",
-                "### 9.10.3 acquisition 排序练习",
+                "### 9.10.2 证据边界复核练习",
+                "### 9.10.3 延伸阅读排序练习",
             )
         ),
         "vay_2014_review_closure": all(
@@ -420,7 +420,7 @@ def main() -> None:
             marker in manual_spotcheck
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
-                "| 173 |",
+                "| 174 |",
                 "| 183 |",
                 "| 189 |",
                 "短页为附录结尾的预期留白",
@@ -431,10 +431,10 @@ def main() -> None:
         "current_gap_register": all(
             marker in source
             for marker in (
-                "## 9.8 当前成书缺口登记",
-                "docs/current-book-gap-register.md",
-                "当前八项缺口分别",
-                "scripts/audit_current_gap_register.py",
+                "## 9.8 成书的已知证据边界",
+                "两条 publisher access、三条 runtime/source boundary",
+                "formal numerical order",
+                "缺口表的内部一致性检查",
             )
         ),
         "transition_zone_runtime_activation": all(

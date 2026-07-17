@@ -58,8 +58,13 @@ def main() -> int:
         "register_heading": register.startswith("# PIC-tutor 当前成书缺口登记"),
         "all_ids_present": all(identifier in register for identifier in REGISTER_IDS),
         "evidence_paths_present": all((root / path).is_file() for path in evidence_paths),
-        "chapter_section": "## 9.8 当前成书缺口登记" in chapter,
-        "chapter_link": "docs/current-book-gap-register.md" in chapter and "scripts/audit_current_gap_register.py" in chapter,
+        "chapter_section": "## 9.8 成书的已知证据边界" in chapter,
+        "chapter_boundary_summary": all(marker in chapter for marker in (
+            "文献尚无全文",
+            "代码路径尚无运行账本",
+            "两条 publisher access、三条 runtime/source boundary",
+            "缺口表的内部一致性检查",
+        )),
         "rz_axis_stencil_evidence": all(marker in register for marker in (
             "rz-axis-divergence-stencil-v0.98/contract.json",
             "rz-axis-divergence-resolution-v0.99/contract.json",

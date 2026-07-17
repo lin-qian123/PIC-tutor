@@ -9626,9 +9626,9 @@ flowchart TD
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.6 校准说明：本章已把场推进主入口、FDTD stencil、PSATD/JRhom 谱推进、PML damping 和 regression 入口重新核到上述 checkout，并补入读者侧分派图和求解器对照表。旧版草稿里仍保留较长的理论和代码精读段落；若后续 WarpX 更新，优先重核下表中的入口，再更新小节中的源码块。
+下表是阅读场推进实现时的源码导航：它把主时间步、FDTD、PSATD/JRhom、PML 与可复查的案例入口连成一张图。读者应先用它确定某个算法位于主循环的哪个分支，再进入后文的离散公式与代码片段；源码升级后，这些入口也提供了重新核对正文的最小范围。
 
-| 主题 | 当前入口 | v0.6 证据边界 |
+| 主题 | 源码入口 | 可支持的结论范围 |
 |---|---|---|
 | 主时间步分支 | `../warpx/Source/Evolve/WarpXEvolve.cpp:564-641` | `SyncCurrentAndRho()` 后，PSATD 走 `PushPSATD()`，FDTD 走 `EvolveB(dt/2) -> EvolveE(dt) -> EvolveB(dt/2)` |
 | PSATD 推进 | `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:771-943` | current correction、Vay deposition、J/rho 谱变换、`PSATDPushSpectralFields()`、PML push 和边界回填 |
@@ -11928,7 +11928,7 @@ $$
 
 # 7. 边界条件、PML 与 AMR
 
-> v0.68 源码基线：本章按相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9` 重新校准入口。当前已具备边界、PML、guard-cell 与 AMR 的源码入口地图，LeeCPC2015 accepted manuscript、WarpX source crosswalk 和多条 Cartesian/RZ PML runtime evidence 也已接入；仍未关闭的是 publisher-formatted CPC PDF、`C1-C25`/Galilean `T2`/cleaning `F/G` 的逐项历史归因，以及真实 transition-zone route-count regression。
+> 源码定位范围：本章对应相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9`。边界、PML、guard cell 与 AMR 的入口地图，连同 LeeCPC2015 accepted manuscript、WarpX 源码交叉核对和 Cartesian/RZ PML 案例，共同支撑本章的实现说明。它们不能替代 publisher-formatted CPC PDF 的版本差异核对，也不能证明 `C1-C25`、Galilean `T2`、cleaning `F/G` 的逐项历史归因或 transition-zone 的完整 route ledger。
 
 边界条件在 PIC 中同时作用于场和粒子。场边界控制 Maxwell 方程如何在计算域边缘闭合；粒子边界控制宏粒子离开、反射、吸收、周期穿越或被记录的方式。二者不能混为一谈。
 
@@ -11972,13 +11972,13 @@ WarpX 官方理论文档把 PML、PEC、PMC、Silver-Mueller、周期边界和�
 2. 再确认边界进入哪个场/粒子分派，以及需要多少 guard cells；
 3. 最后选择与问题相符的 observable：反射率、残余场、能量账本、重启重复性、scraped-particle buffer 或 AMR route ledger。
 
-本章后面的版本化证据段不是另一套理论，而是这条链上不同节点的案例记录。通过一个 PML 反射率 gate，不代表 RZ 残余场、粒子入 PML 或 AMR transition-zone route ledger 也已证明；读者应始终沿 producer/consumer 和 observable 的边界解释结果。
+本章后面的案例段不是另一套理论，而是这条链上不同节点的检验。通过一个 PML 反射率 gate，不代表 RZ 残余场、粒子入 PML 或 AMR transition-zone route ledger 也已证明；读者应始终沿 producer/consumer 和 observable 的边界解释结果。
 
-## 7.0 v0.68 源码入口地图
+## 7.0 源码入口地图
 
-本章后续不能只按“边界条件”这个名词归类，因为 WarpX 中的边界语义会穿过参数解析、场数组 guard cell、PML split field、粒子删除/反射/记录、诊断和 AMR 重建。本节把当前 v0.68 的读代码入口固定如下：
+本章不能只按“边界条件”这个名词归类，因为 WarpX 中的边界语义会穿过参数解析、场数组 guard cell、PML split field、粒子删除/反射/记录、诊断和 AMR 重建。以下列出读代码时需要反复回查的入口：
 
-| 问题 | 当前入口 | v0.68 读法 |
+| 问题 | 源码入口 | 阅读要点 |
 |---|---|---|
 | field 与 particle 边界解析顺序 | `../warpx/Source/WarpX.cpp:274-296` | `MakeWarpX()` 先读 field boundary，再由 field periodic 掩码约束 particle boundary，最后才构造 `WarpX` 单例。 |
 | field boundary 参数与 periodic 一致性 | `../warpx/Source/BoundaryConditions/FieldBoundaries.cpp:22-80` | `boundary.field_lo/field_hi` 默认进入 `FieldBoundaryType::Default`，周期方向必须 lo/hi 成对闭合。 |
@@ -14484,7 +14484,7 @@ $$
 
 <!-- source: manuscript/chapters/09-literature-roadmap.md -->
 
-# 9. 文献路线与后续扩写计划
+# 9. 文献路线与延伸阅读
 
 本书的文献不是装饰，也不是章节末尾统一贴一串 BibTeX。它真正承担三类职责：
 
@@ -14492,9 +14492,7 @@ $$
 2. 给数值算法和代码实现提供历史与方法边界。
 3. 给 reader-side analysis、benchmark 和 regression 判据提供外部对照。
 
-因此本章不再把文献简单列成“推荐阅读书单”，而是把当前项目里已经 materialize 的论文资产、仍未闭环的 acquisition 缺口，以及它们与各章的绑定关系写成一张可执行路线图。
-
-对于全局 BibTeX 中尚未进入正式主题的条目，`docs/literature-pending-triage.md` 提供保守的候选主题、章节入口、优先级和下一步获取动作。它只是一张 acquisition/read queue：标题关键词不能替代全文阅读、MinerU 转换、逐段核对或正式章节证据。
+因此本章不把文献写成“推荐书单”，而是按证据强度和章节用途组织阅读路线：哪些来源能够支撑公式与机制，哪些只可提供历史线索，哪些问题仍应保留为开放边界。文献索引中的候选条目只能帮助定位主题；题名、DOI 或摘要不能替代全文阅读、公式核对和章节证据。
 
 ## 本章的读者用法：文献是论证工具，不是书目清单
 
@@ -14504,34 +14502,34 @@ $$
 2. 当前 WarpX 源码和运行案例分别提供了哪一层独立证据？
 3. 哪一步仍然只是相似性或摘要级线索，不能写成“论文已经证明 WarpX 当前实现”？
 
-这样读，文献路线图就服务于教程的理解路径：第 1-2 章优先建立 kinetic/PIC 基础，第 4-6 章用 pusher、deposition 和 solver 文献解释离散选择，第 7 章用边界文献校准 PML/AMR 的历史语义，第 8 章再把外部理论与实际诊断对照。后面的 acquisition 清单记录项目还缺什么，但不改变读者从概念到实现再到验证的主线。
+这样读，文献路线就服务于教程的理解路径：第 1-2 章优先建立 kinetic/PIC 基础，第 4-6 章用 pusher、deposition 和 solver 文献解释离散选择，第 7 章用边界文献校准 PML/AMR 的历史语义，第 8 章再把外部理论与实际诊断对照。未取得全文或尚未完成逐段核对的来源只定义结论边界，不改变读者从概念到实现再到验证的主线。
 
-## 9.1 当前项目的文献证据分层
+## 9.1 文献证据的使用层级
 
-当前本地文献证据有四层，强度不能混写：
+本书使用的文献证据有四层，强度不能混写：
 
-| 层级 | 当前项目中的典型形态 | 可支持的写法 | 当前限制 |
+| 层级 | 本书中的典型形态 | 可支持的写法 | 限制 |
 |---|---|---|---|
 | A. 已 materialize 的正文资产 | 本地 PDF + MinerU Markdown + `images/` + 中文讲解 + `reading-log.md` | 可直接作为正文一手证据 | 仍需作者自己对照具体公式、图和段落，而不是只看中文摘要 |
 | B. 已取得 PDF 但未完成精读 | 本地 PDF 存在，但还没有完整中文讲解或章节回填 | 可作为“已获取、待精读”的明确线索 | 不能把具体公式或图表当成已核实正文 |
 | C. metadata / abstract 级线索 | DOI、题名、摘要、访问审计、下载日志 | 可作为 acquisition 边界、章节缺口或后续计划 | 不能把摘要内容冒充成论文正文结论 |
 | D. 旁证或相关文献 | 主题相关但不是当前章的主引用，或并非同一 bibliographic item | 可作背景、旁证、术语线索 | 不能替代主引用本身 |
 
-当前项目的规则应保持为：
+阅读和写作时应遵守：
 
 - 只有 A 层资产，才允许在正文里写成“已核实的一手证据”。
 - B 层资产只能写成“已获取但尚待逐段讲解”。
 - C 层和 D 层只能写成 acquisition / 背景边界，不能抬成正文论证。
 
-这条规则尤其影响当前仍未闭环的 `Hockney-Eastwood`、`Yee 1966`、`Esirkepov 2001`、`Villasenor-Buneman 1992` 和 `LeeCPC2015`。
+这条规则尤其影响尚未完成全文或版本差异核对的 `Hockney-Eastwood`、`Yee 1966`、`Esirkepov 2001`、`Villasenor-Buneman 1992` 和 `LeeCPC2015`。
 
-## 9.2 当前已 materialize 的核心文献树
+## 9.2 支撑各章的核心文献
 
-按当前 `references/` 目录，已经完成 materialization 的核心文献主要集中在三条主线。
+本书已建立可核查阅读资产的核心文献主要集中在三条主线。
 
 ### 9.2.1 PIC foundations
 
-当前已 materialize：
+可供深入阅读：
 
 - `references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/`
 - `references/03_pic_foundations/1979_TajimaDawson_Laser_Electron_Accelerator/`
@@ -14556,7 +14554,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ### 9.2.2 Particle pusher
 
-当前已 materialize：
+可供深入阅读：
 
 - `references/04_particle_pushers_deposition_shapes/2008_VayPOP2008_Simulation_of_beams_or_plasmas_crossing_at_relativistic_velocity/`
 - `references/04_particle_pushers_deposition_shapes/2017_HigueraPOP2017_Structure-preserving_second-order_integration_of_relativistic_charged_particle_trajectories_in_electromagnetic_fields/`
@@ -14571,13 +14569,13 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ### 9.2.3 PSATD / Galilean / boosted-frame / NCI
 
-当前已 materialize：
+可供深入阅读：
 
 - `references/06_stability_filtering_nci/2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm/`
 - `references/06_stability_filtering_nci/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas/`
 - `references/06_stability_filtering_nci/2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates/`
 
-本版又 materialize `references/01_reviews_surveys/2014_VayFRACAD2014_Modeling_of_relativistic_plasmas_with_the_Particle-In-Cell_method/`：9 页 PDF、MinerU Markdown、43 张图片、论文顺序中文精读、access audit、reading log 和 asset contract。它为第 4 章的 Boris/Vay pusher 谱系、第 6 章的 PSATD/NCI 机制提供统一 review 入口；它不替代当前 WarpX 的源码 crosswalk、runtime contract 或论文图形逐点复现。
+`references/01_reviews_surveys/2014_VayFRACAD2014_Modeling_of_relativistic_plasmas_with_the_Particle-In-Cell_method/` 提供 9 页 PDF、MinerU Markdown、43 张图片和按论文顺序的中文精读。它为第 4 章的 Boris/Vay pusher 谱系、第 6 章的 PSATD/NCI 机制提供统一 review 入口；但不替代 WarpX 的源码交叉核对、案例验证或论文图形逐点复现。
 
 这三条线已经构成第 6 章目前最完整的一组 paper-backed 主干：
 
@@ -14585,15 +14583,15 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 - Lehe 2016：Galilean coordinates 消除 NCI 的核心离散论证；
 - Kirchen 2016：boosted-frame workflow 与稳定离散表示之间的应用层连接。
 
-本版又 materialize `Andriyash 2016`：`references/03_pic_foundations/2016_AndriyashPoP2016_Laser-plasma_interactions_with_a_Fourier-Bessel_particle-in-cell_method/` 保存 9 页 PDF、MinerU Markdown、26 张图片、论文顺序中文精读和 asset contract。它把 quasi-cylindrical Fourier-Bessel basis、PSATD 解析时间推进、`m±1` 横向 mode coupling 和 current-correction 公式从 PDF-only 线索推进为可引用的全文资产；但 PLARES-PIC 与 WarpX 的函数级等价、WarpX runtime reproduction 和论文图逐点复现仍保持边界。
+`Andriyash 2016` 的专属目录保存 9 页 PDF、MinerU Markdown、26 张图片和按论文顺序的中文精读。它为 quasi-cylindrical Fourier--Bessel basis、PSATD 解析时间推进、`m±1` 横向 mode coupling 和 current-correction 公式提供全文依据；但 PLARES-PIC 与 WarpX 的函数级等价、WarpX runtime reproduction 和论文图逐点复现仍保持边界。
 
 因此第 6 章当前虽然仍有 runtime validation 和 upstream handoff 的工程缺口，但在文献层已经不再是空心章节。
 
-## 9.3 当前最突出的未闭环文献缺口
+## 9.3 关键来源的已知边界
 
 以 `TajimaDawson1982` 为例，当前应把“正式来源已确认”和“正文已取得”分开记录：Crossref/AIP 元数据确认 *AIP Conference Proceedings* `91(1):69-93`、DOI `10.1063/1.33805` 及 canonical resource `https://pubs.aip.org/aip/acp/article/91/1/69-93/612300`；2026-07-13 本机请求该页面返回 Cloudflare HTTP `403`，所以本书不把 publisher PDF、MinerU Markdown 或逐式核对标记为已完成。FNAL 的 `p169.pdf` 是 Tajima 单作者的相关会议稿，只能作为主题旁证，不能替代 Tajima–Dawson 正式条目。
 
-本轮已将这份相关会议稿的实际全文资产 materialize 到 `references/03_pic_foundations/1982_Tajima_related_FNAL_conference_note_Laser_accelerator_by_plasma_waves/`：本地 PDF 为 26 页，附 MinerU Markdown、67 张抽取图、论文顺序中文讲解、access audit、reading log 和 `runs/stage-c-validation/tajima-1982-related-note/contract.{json,md}`。这使本书可以在有限边界内直接讲解 beat-wave 共振、前向 Raman 散射、电子俘获、退相位、自聚焦、丝化和相对论前向 Brillouin 散射；但该资产明确是 related single-author conference note，正式 Tajima--Dawson AIP item 仍是独立的全文缺失缺口。
+相关会议稿已整理在 `references/03_pic_foundations/1982_Tajima_related_FNAL_conference_note_Laser_accelerator_by_plasma_waves/`：其中包含 26 页 PDF、MinerU Markdown、67 张抽取图和按论文顺序的中文讲解。它可在有限范围内解释 beat-wave 共振、前向 Raman 散射、电子俘获、退相位、自聚焦、丝化和相对论前向 Brillouin 散射；但它是单作者相关会议稿，不能替代正式 Tajima--Dawson AIP 条目。
 
 如果按“哪一章会因为缺它而不够出版级”排序，当前最重要的缺口不是更多新论文，而是以下几条老而关键的 primary sources。
 
@@ -14614,11 +14612,11 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 也就是说，当前不是“不知道该怎么读”，而是“accepted manuscript 已可精读，仍缺 publisher-formatted CPC PDF 的版本差异核对”。
 
-## 9.4 各章当前的文献成熟度
+## 9.4 各章的文献覆盖范围
 
-把全书按章节看，当前文献成熟度并不均匀。
+全书各章的文献覆盖范围并不均匀。
 
-| 章节 | 当前文献成熟度 | 主要已闭环来源 | 主要缺口 |
+| 章节 | 文献覆盖程度 | 主要已核查来源 | 主要边界 |
 |---|---|---|---|
 | 第 1 章 动理学模型 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Hockney-Eastwood`、更细的 particle-mesh heating 原始文献 |
 | 第 2 章 PIC 总循环 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Yee 1966` 原始入口 |
@@ -14628,13 +14626,13 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 | 第 6 章 场求解器 | 高 | `Vay--Godfrey 2014`、`Godfrey 2014`、`Lehe 2016`、`Kirchen 2016` | 更多 validation/engineering 线，而不是 paper 主干 |
 | 第 7 章 边界、PML 与 AMR | 中等偏低 | `Berenger 1994/1996` 有 bibliographic anchor，源码和 regression 很强 | `LeeCPC2015` 正文仍缺 |
 | 第 8 章 诊断、验证与案例 | 中等 | `Dawson 1983` diagnostics 思路已可直接服务正文 | 还缺更多 case-specific benchmark papers |
-| 第 9 章 文献路线 | 本章即路线图 | 当前 `references/` 树和 `docs/literature-map.md` | 需要持续同步，而不是一次性写完 |
+| 第 9 章 文献路线 | 本章即路线图 | `references/` 树和 `docs/literature-map.md` | 新来源必须按证据层级重新归类 |
 
-这个表最重要的结论是：当前项目最缺 paper-backed 收口的不是第 6 章，而是第 5 章和第 7 章。
+这个表最重要的结论是：相较于第 6 章，第 5 章和第 7 章更需要补强可逐段核查的一手文献。
 
-## 9.5 acquisition 优先级的重新排序
+## 9.5 延伸阅读的优先顺序
 
-基于当前项目状态，后续 acquisition 不应再泛泛地“多找一些相关论文”，而应按成书影响排序：
+延伸阅读不应泛泛地“多找一些相关论文”，而应按对章节可信度的影响排序：
 
 1. `Esirkepov 2001` 的 CPC 定稿 PDF
    - 当前已有作者预印本，可支持第一轮论证；下一步是把预印本与 2001 CPC 发表版逐项对齐。
@@ -14649,15 +14647,15 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
    - 下一步是通过 DTIC 重试、机构访问或合法镜像获取原始 proceedings PDF，再补 MinerU 和逐页核对；在此之前不把 Birdsall 二手推导写成 Boris 原文证据。
    - 继续补第 4 章的 pusher 历史链。
 
-这个顺序和早期版本相比已经变了。原因很简单：第 6 章现在已有较强 paper 主干，而第 5 / 7 章的 paper closure 反而更薄。
+该顺序反映了证据分布：第 6 章已有较完整的论文主干，而第 5、7 章的原始文献支撑相对更薄。
 
-## 9.6 对 `docs/literature-map.md` 的使用边界
+## 9.6 文献索引的使用边界
 
-当前 `docs/literature-map.md` 已经不只是“列一下 BibTeX key”，而是承担三种作用：
+`docs/literature-map.md` 不只是 BibTeX key 列表，而是承担三种作用：
 
-1. 统计当前本地 PDF / topic 分布；
-2. 记录哪些核心文献已经 materialize；
-3. 记录哪些缺口当前只有 metadata / audit / fallback。
+1. 统计本地 PDF / topic 分布；
+2. 标明哪些核心文献已有可核查阅读资产；
+3. 标明哪些来源目前只有 metadata / audit / fallback。
 
 但它仍然是总索引，不适合直接拿来替代章节级写作清单。章节写作时更合理的做法是：
 
@@ -14667,11 +14665,11 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 也就是说，`literature-map` 是总表，不是每章的最终操作手册。
 
-## 9.7 下一轮最合理的文献推进目标
+## 9.7 两条延伸阅读路线
 
-如果下一轮继续走“一个大模块一个版本”的节奏，那么在本轮闭合 Muraviev resampling 资产后，最合理的文献模块不再是第 6 章，而是下面两条中的一条：
+若要进一步加强本书的文献基础，最值得优先投入的是下面两条路线：
 
-### 方案 A：第 5 章沉积文献闭环
+### 路线 A：第 5 章沉积文献
 
 目标：
 
@@ -14684,7 +14682,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 - 当前第 5 章是全书里最明显的“代码已读、文献未补”的章节之一；
 - 这条线一旦闭合，会显著提升前半本书的基础可信度。
 
-### 方案 B：第 7 章 PML 论文闭环
+### 路线 B：第 7 章 PML 文献
 
 目标：
 
@@ -14696,44 +14694,40 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 - 当前第 7 章源码和 regression 已经很强，只差 paper 正文闭环；
 - 一旦拿到 `LeeCPC2015` 正文，整章会从“强源码章”变成真正的 paper-backed 章节。
 
-在这两者之间，当前更推荐先走方案 A。原因是：
+在这两者之间，更推荐先走路线 A。原因是：
 
 - 方案 A 不强依赖外部授权状态；
 - 方案 B 仍可能被 PDF 获取问题卡住。
 
-### 9.7.1 文献资产与路线图同步合同
+### 9.7.1 文献索引的核查边界
 
-本章的路线图现在由 `scripts/audit_literature_roadmap_asset_contract.py` 做仓库内一致性检查。当前合同覆盖 A/B/C/D 证据层定义、核心文献目录、`docs/literature-map.md` 与生成式 inventory 的锚点，以及 `TajimaDawson1982`、`Esirkepov 2001`、`LeeCPC2015`、`Yee 1966`、`Hockney-Eastwood` 的缺口声明。Muraviev 2021 的专属资产合同另行检查全文、公式、图像和第 4 章映射。报告见 `runs/stage-c-validation/literature-roadmap-asset-contract/contract.{json,md}` 与 `runs/stage-c-validation/muraviev-2021-paper-asset/contract.{json,md}`。
+本章使用的 A/B/C/D 层级、核心目录和文献地图会通过仓库内检查保持一致。这个检查只说明“索引与本地资产状态一致”，不证明中文讲解已经逐式审校，不证明预印本与出版社排版版逐页等价，也不把 WarpX runtime 结果升级为论文全部物理结论的验证。读者据此判断引用强度时，应始终回到具体 PDF、公式和源码案例，而不是把索引条目当成证明本身。
 
-这个合同只说明“路线图与项目内资产状态一致”，不证明中文讲解已经逐式审校，不证明预印本与出版社排版版逐页等价，也不把 WarpX runtime 结果升级为论文全部物理结论的验证。后续新增或替换 primary source 时，应先更新合同，再同步本章与 `references/00_index`。
+## 9.8 成书的已知证据边界
 
-## 9.8 当前成书缺口登记
-
-v0.95 在 v0.94 的源码-诊断交叉审计之上，把两组 family 的 correction-on slope consistency 变成 14 项、`1e-8` 容差的可执行 gate；其 PASS 只说明重复 family 一致，不把 descriptive slope 升格成 formal numerical order，也不关闭 `SOURCE_DIAGNOSTIC_DISCRETIZATION_BOUNDARY` 下的 axis charge correctness。v0.91 的 rho/species decomposition 与 axis-dominated residual time profile继续作为独立证据层，不等于 `divE-rho` axis charge 闭合。人工全书通读、第三方材料许可和公开再分发仍需单独签收。
-
-文献路线图需要和运行/编辑缺口分开管理，否则“论文缺全文”和“代码没有 route ledger”会在 TODO 中互相遮蔽。当前项目把缺口登记在 `docs/current-book-gap-register.md`，每一行绑定证据、分类、下一步动作和关闭条件。当前八项缺口分别覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条 release editorial gate。
+本书把“文献尚无全文”“代码路径尚无运行账本”和“数值结论尚未闭合”分开处理，避免把不同类型的不确定性混成一句模糊的限制。当前缺口登记覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条发布编辑门槛。重复 family 的 slope 一致性只能说明该组重复计算相符；它不等于 formal numerical order，也不等于 axis charge correctness。
 
 本登记表的分类纪律是：`OPEN_EXTERNAL_ACCESS` 不是下载失败的同义词，而是当前没有合法可读取的目标全文；`PRE_PHYSICS_BOUNDARY` 表示尚未进入物理推进，不能写成 physics PASS/FAIL；`RUNTIME_LEDGER_UNPROVEN` 表示源码与 schema 已有，但真实 producer 尚未输出账本；`CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` 表示可以计算描述性 order，但不能宣称正式阶数。
 
-该表由 `scripts/audit_current_gap_register.py` 检查。合同通过仅表示当前正文和证据目录对同一组缺口使用一致口径，不表示本书已经达到终稿。
+缺口表的内部一致性检查只能保证正文和证据目录使用同一组术语，不表示本书已经达到终稿。
 
 ## 9.9 本章结论
 
-当前项目的文献工作已经跨过了“只有书目，没有正文资产”的阶段，但还远未到“全书 primary sources fully closed”的阶段。可以更准确地概括成：
+本书已经不再只有书目而没有正文阅读资产，但也尚未达到“所有 primary sources fully closed”。更准确的概括是：
 
 - foundations 线已有 `Birdsall 1985`、`Dawson 1983`、`Tajima-Dawson 1979`
 - pusher 线已有 `Vay 2008`、`Higuera-Cary 2017`
 - PSATD/NCI 线已有 `Godfrey 2014`、`Lehe 2016`、`Kirchen 2016`
 - PML 线已有较强源码与审计资产，但缺 `LeeCPC2015` 正文
-- deposition 线当前已建立 `Esirkepov 2001` 与 `Villasenor-Buneman 1992` 的 paper-specific 目录与 access audit；其中 `Esirkepov 2001` 已 materialize 作者 arXiv 预印本并完成第一轮 MinerU/中文讲解，`Villasenor-Buneman 1992` 也已从本机现成 PDF/MinerU 资产 materialize 到项目目录并完成第一轮中文讲解
+- deposition 线已建立 `Esirkepov 2001` 与 `Villasenor-Buneman 1992` 的专属目录和访问边界；其中 Esirkepov 作者 arXiv 预印本与 Villasenor--Buneman 本地 PDF 均已有 MinerU 和第一轮中文讲解
 
-因此，这条路线图给后续推进的核心约束不是“再多下载一些论文”，而是：
+因此，这条路线图给读者和作者的核心约束不是“再多下载一些论文”，而是：
 
 1. 优先补能直接改变章节可信度的 primary sources；
 2. 严格区分 materialized 正文资产和 metadata-level 线索；
-3. 把 acquisition、MinerU、中文精读和章节回填继续绑成同一条工作流。
+3. 将获取、文本转换、中文精读和章节回填视为同一条证据链。
 
-做到这三点，第 9 章才不是一个附录式书单，而是真正控制全书证据质量的总调度章。
+做到这三点，第 9 章才不是附录式书单，而是读者判断全书证据质量的导航章。
 
 ## 9.10 练习与复核
 
@@ -14741,20 +14735,11 @@ v0.95 在 v0.94 的源码-诊断交叉审计之上，把两组 family 的 correc
 
 从以下五项中各选一项，分别判断它属于 A、B、C 或 D 层，并写出判断所依据的本地路径：`Birdsall 1985`、`Yee 1966`、`Esirkepov 2001` 作者预印本、Tajima 1982 FNAL 相关会议稿、`LeeCPC2015` accepted manuscript。答案必须同时写出“可以支持的句子”和“不能支持的句子”。例如，不能因为某项有 DOI 或摘要，就把它写成“已完成全文精读”。
 
-### 9.10.2 合同复核练习
+### 9.10.2 证据边界复核练习
 
-在项目根目录运行：
+选择一条 A 层来源和一条 C 层来源，对照 `docs/public-evidence-index.md` 中的记录，分别写出它们支持与不支持的结论。解释为什么索引一致只能说明“路线图与本地资产一致”，不能证明论文出版社版本已取得，也不能证明 WarpX runtime 已复现论文全部结论。
 
-```bash
-python scripts/audit_literature_roadmap_asset_contract.py \
-  --project-root . \
-  --output-json runs/stage-c-validation/literature-roadmap-asset-contract/contract.json \
-  --output-md runs/stage-c-validation/literature-roadmap-asset-contract/contract.md
-```
-
-然后将合同中的 `12/12 PASS` 与 `docs/public-evidence-index.md` 中对应记录对照。解释为什么合同通过只能证明“路线图与本地资产一致”，不能证明论文出版社版本已取得，也不能证明 WarpX runtime 已复现论文全部结论。
-
-### 9.10.3 acquisition 排序练习
+### 9.10.3 延伸阅读排序练习
 
 从 `Hockney-Eastwood`、`Yee 1966`、`Esirkepov 2001` CPC 定稿、`LeeCPC2015` publisher PDF 和 Boris 1970 原始 proceedings 中选出下一项 acquisition 目标。用三列短表说明：它影响哪一章、当前已有哪一级证据、取得后会关闭哪一个具体边界。若目标仍受访问或许可限制，必须把“继续获取”和“先用现有证据回填正文”分成两个独立动作。
 

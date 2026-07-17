@@ -5,7 +5,7 @@
     "manuscript_readme_is_reader_facing": true,
     "preface_has_learning_outcomes": true,
     "history_is_separated": true,
-    "foundation_openings_are_reader_facing": true,
+    "chapter_openings_are_reader_facing": true,
     "core_chapters_have_exercises": true
   },
   "passed": true,

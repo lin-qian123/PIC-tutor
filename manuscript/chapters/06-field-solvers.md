@@ -6,9 +6,9 @@
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.6 校准说明：本章已把场推进主入口、FDTD stencil、PSATD/JRhom 谱推进、PML damping 和 regression 入口重新核到上述 checkout，并补入读者侧分派图和求解器对照表。旧版草稿里仍保留较长的理论和代码精读段落；若后续 WarpX 更新，优先重核下表中的入口，再更新小节中的源码块。
+下表是阅读场推进实现时的源码导航：它把主时间步、FDTD、PSATD/JRhom、PML 与可复查的案例入口连成一张图。读者应先用它确定某个算法位于主循环的哪个分支，再进入后文的离散公式与代码片段；源码升级后，这些入口也提供了重新核对正文的最小范围。
 
-| 主题 | 当前入口 | v0.6 证据边界 |
+| 主题 | 源码入口 | 可支持的结论范围 |
 |---|---|---|
 | 主时间步分支 | `../warpx/Source/Evolve/WarpXEvolve.cpp:564-641` | `SyncCurrentAndRho()` 后，PSATD 走 `PushPSATD()`，FDTD 走 `EvolveB(dt/2) -> EvolveE(dt) -> EvolveB(dt/2)` |
 | PSATD 推进 | `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:771-943` | current correction、Vay deposition、J/rho 谱变换、`PSATDPushSpectralFields()`、PML push 和边界回填 |

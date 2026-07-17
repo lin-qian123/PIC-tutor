@@ -18,8 +18,7 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The current reader-facing layout, including the boundary/AMR reading route, has 263 pages.
-# The current reader-facing layout, including the particle and deposition reading routes, has 264 pages.
+# The current reader-facing layout, including particle and field-solver reading routes, has 264 pages.
 EXPECTED_PDF_PAGES = 264
 
 
@@ -60,6 +59,9 @@ def main() -> None:
     chapter_6_numbers = chapter_subheading_numbers(
         ROOT / "manuscript" / "chapters" / "06-field-solvers.md", "6"
     )
+    chapter_6 = (ROOT / "manuscript" / "chapters" / "06-field-solvers.md").read_text(
+        encoding="utf-8"
+    )
     chapter_3a_numbers = [
         int(number)
         for number in re.findall(
@@ -83,6 +85,16 @@ def main() -> None:
         and len(chapter_5_numbers) == len(set(chapter_5_numbers)),
         "chapter_6_subheading_order": chapter_6_numbers == sorted(chapter_6_numbers)
         and len(chapter_6_numbers) == len(set(chapter_6_numbers)),
+        "chapter_6_reader_closure": all(
+            marker in chapter_6
+            for marker in (
+                "### 6.11.9 从源码入口回查验证量",
+                "## 6.12 练习与运行验证",
+                "**跨章诊断题**",
+                "## 6.13 本章结论",
+                "先确定几何和物理目标，再确定 source 时间模型",
+            )
+        ),
         "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),
         "chapter_1_source_exercise": all(
             marker in source

@@ -11593,21 +11593,35 @@ $$
 
 这个索引表也暴露了一个写作边界：有些 regression 是物理强判据，例如 Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum 或 restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum 说成完整物理验证。
 
-### 6.11.9 本章正文与源码同步合同
+### 6.11.9 从源码入口回查验证量
 
-本章的正文-源码对应关系由 `scripts/audit_field_solver_chapter_source_crosswalk.py` 维护。它把外层 `WarpXEvolve.cpp` 推进入口、FDTD/PML kernel、Cartesian spectral algorithm 分派、RZ spectral algorithm 分派，以及 regression consumer 的证据边界固定成 12 组可重复检查。该脚本检查的是代表性入口是否仍存在、章节是否仍明确写出对应路径；它不是 C++ 语义等价证明，也不替代实际运行和论文推导。
+当读者需要把一条输入参数、一个离散更新式和一个测试结果连起来时，最短的回查路线不是从所有类定义开始，而是依次回答三个问题：
 
-因此，后续修改 FieldSolver 章节时应同时更新三处：正文的算法解释、`notes/code-reading/fieldsolver/43-fieldsolver-chapter-source-crosswalk.md` 的维护边界、以及脚本输出的 `contract.json`/`contract.md`。当某个入口迁移或重命名时，先确认新的 dispatch 和 consumer，再改正文；不要把 checksum-only 测试升级为物理强判据。
+1. **哪一个顶层分派选择了这条算法？**从 `WarpXEvolve.cpp` 的 `OneStep` 路线开始，确认这是 FDTD、标准/ Galilean PSATD、JRhom、静电/静磁、隐式还是 Hybrid PIC。
+2. **该路线在一个时间步中消费什么 source？**对 FDTD/PML 回到 `EvolveB/EvolveE` 及 PML 更新；对 PSATD 回到谱场推进与历史 `J/rho`；对隐式路线回到 residual 和迭代器；对 Hybrid 回到 Ohm kernel 和 B 场子步。
+3. **哪个 analysis 量能回答当前物理问题？**反射率对应 PML，电场能量与 `divE-rho` 对应 NCI/Gauss law，解析 Langmuir 场对应波动误差，总能量和迭代信息对应隐式离散守恒。checksum 只能回答输出是否回归，不能替代这些量。
+
+这条三问路线也给出阅读源码时的停止条件：找到一个函数名或一次 `assert` 还不足以说明算法正确；必须能说清它所在的时间层、它消费的场或 source，以及该测试实际测量的 observable。反过来，测试通过也不表示任意几何、边界、AMR 层数或沉积方式都已被证明正确。
 
 ## 6.12 练习与运行验证
 
 1. **solver 分派题**：给定 `algo.maxwell_solver`、`psatd.JRhom`、`m_implicit_solver` 和 AMR subcycling 四个开关，使用第 2 章决策图判断它们分别会落到哪一个 `OneStep` 入口，并列出一个不允许的组合。
-2. **源码定位题**：从 `EvolveB/EvolveE`、`PushPSATD`、`ImplicitSolver::ComputeRHS` 中各选一个入口，指出它消费的是 `J/rho`、谱空间历史源项还是 nonlinear residual。
-3. **最小运行题**：复现 `runs/stage-c-validation/implicit_theta_picard/` 与 `implicit_semi_picard/` 的独立能量合同，解释两者为什么分别使用 `1e-14` 与 `2.5e-5` 容差，而不能只比较“是否通过”。
+2. **源码与观察量题**：从 `EvolveB/EvolveE`、`PushPSATD`、`ImplicitSolver::ComputeRHS` 中各选一个入口，指出它消费的是 `J/rho`、谱空间历史 source 还是 nonlinear residual；再为该入口选择一个能检验它的 observable，并写出该 observable 不能证明的结论。
+3. **最小运行设计题**：比较官方 `Examples/Tests/implicit/inputs_test_1d_theta_implicit_picard` 与 `inputs_test_1d_semi_implicit_picard`。在运行前阅读它们共用的 `analysis_1d.py`，记录总能量、两条容差和各自算法类型；运行后解释为何 `1.0e-14` 与 `2.5e-5` 不能只被理解成“一个更好、一个更差”，以及为什么两者都不能单独证明其他几何或边界下的 Gauss law。
+4. **跨章诊断题**：选择一个 PML 或 NCI case，按照“分派 -> source 时间层 -> observable -> 不可外推范围”写一页检查表；再指出其中哪一项需要第 5 章的沉积/同步知识，哪一项需要第 7 章的边界/AMR 知识。
 
-### 6.12.1 本章验证链的结论
+## 6.13 本章结论
 
-综合这些脚本，FieldSolver 的验证链可以这样归纳：
+场求解器的选择不是在“FDTD 还是 PSATD”之间选一个名称，而是在以下四层约束之间做匹配：
+
+1. **表示与几何。**Cartesian、RZ、RCYLINDER/RSPHERE 所允许的场表示、谱基和轴条件不同；不能把 Cartesian Fourier 公式直接移到 RZ 的 Hankel/azimuthal-mode 表示中。
+2. **source 的时间模型。**标准 PSATD、Galilean/averaged PSATD 与 JRhom 对 `J/rho` 的时间处理不同；current correction、沉积选择和 source 同步因此属于求解器选择的一部分，而不是后处理开关。
+3. **边界、通信与耦合。**PML split fields、guard cells、AMR coarse/fine 同步、隐式 residual 与 Hybrid Ohm 子步都决定离散更新是否能在完整 PIC loop 中闭合。它们将在第 7 章按边界和 AMR 路线继续展开。
+4. **与问题匹配的验证量。**PML 应看反射率或残余场，NCI 应看场能与 Gauss-law residual，Langmuir 应看解析场，隐式算法应同时看能量、charge/Gauss-law 和迭代信息。checksum 只是一类输出回归证据。
+
+因此，本章最后的判断顺序是：先确定几何和物理目标，再确定 source 时间模型与允许的算法组合，随后沿真实 `OneStep` 路线检查边界/同步，最后用对应 observable 解释结果。若其中任一步缺失，就不应把一次成功运行写成“某类场求解器已经普遍正确”。这条顺序把第 4、5 章的粒子推进和沉积带入 Maxwell 更新，也为第 7、8 章的边界诊断和案例解释提供了共同坐标。
+
+下表将本章的主要验证问题压缩为一张选择表：
 
 | 求解器路径 | analysis 量 | 主要检查 |
 |---|---|---|
@@ -11617,7 +11631,7 @@ $$
 | Implicit EM | 总能量漂移、Gauss RMS、Newton/GMRES 迭代数 | 隐式离散守恒和求解器结构 |
 | Hybrid Ohm | 谱采样、增长率 RMS、阻尼/重联图像、checksum | Ohm solver 的物理 benchmark 和输出回归 |
 
-这也决定后续写作方式：场求解器的“正确性”不能只靠某一个 `assert`，而要把连续方程、离散公式、源码时间层、边界/同步和 regression analysis 合起来看。否则，单独贴 `EvolveE.cpp` 的 curl 更新式，仍然无法证明真实 WarpX field solver 在完整 PIC loop 中保持物理一致。
+这也说明，场求解器的“正确性”不能只靠某一个 `assert`，而要把连续方程、离散公式、源码时间层、边界/同步和 regression analysis 合起来看。否则，单独贴 `EvolveE.cpp` 的 curl 更新式，仍然无法证明真实 WarpX field solver 在完整 PIC loop 中保持物理一致。
 
 
 <!-- source: manuscript/chapters/07-boundaries-amr.md -->

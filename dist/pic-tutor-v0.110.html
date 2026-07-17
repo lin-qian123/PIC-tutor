@@ -599,14 +599,12 @@ law 与求解器迭代数</a></li>
 solver：哪些是强判据，哪些只是输出回归</a></li>
 <li><a href="#具体-regression-入口索引" id="toc-具体-regression-入口索引">6.11.8 具体 regression
 入口索引</a></li>
-<li><a href="#本章正文与源码同步合同" id="toc-本章正文与源码同步合同">6.11.9 本章正文与源码同步合同</a></li>
+<li><a href="#从源码入口回查验证量" id="toc-从源码入口回查验证量">6.11.9
+从源码入口回查验证量</a></li>
 </ul></li>
 <li><a href="#练习与运行验证" id="toc-练习与运行验证">6.12
-练习与运行验证</a>
-<ul>
-<li><a href="#本章验证链的结论" id="toc-本章验证链的结论">6.12.1
-本章验证链的结论</a></li>
-</ul></li>
+练习与运行验证</a></li>
+<li><a href="#本章结论-2" id="toc-本章结论-2">6.13 本章结论</a></li>
 </ul></li>
 <li><a href="#边界条件pml-与-amr" id="toc-边界条件pml-与-amr">7.
 边界条件、PML 与 AMR</a>
@@ -755,7 +753,7 @@ external-file Gaussian beam：束斑理论包络检查</a></li>
 <li><a href="#第-8-章验证矩阵观察量结论与边界" id="toc-第-8-章验证矩阵观察量结论与边界">第 8
 章验证矩阵：观察量、结论与边界</a></li>
 </ul></li>
-<li><a href="#本章正文与源码同步合同-1" id="toc-本章正文与源码同步合同-1">8.14 本章正文与源码同步合同</a>
+<li><a href="#本章正文与源码同步合同" id="toc-本章正文与源码同步合同">8.14 本章正文与源码同步合同</a>
 <ul>
 <li><a href="#reduced-diagnostics-最小输入合同" id="toc-reduced-diagnostics-最小输入合同">8.14.1 reduced diagnostics
 最小输入合同</a></li>
@@ -799,7 +797,7 @@ A：第 5 章沉积文献</a></li>
 </ul></li>
 <li><a href="#成书的已知证据边界" id="toc-成书的已知证据边界">9.8
 成书的已知证据边界</a></li>
-<li><a href="#本章结论-2" id="toc-本章结论-2">9.9 本章结论</a></li>
+<li><a href="#本章结论-3" id="toc-本章结论-3">9.9 本章结论</a></li>
 <li><a href="#练习与复核" id="toc-练习与复核">9.10 练习与复核</a>
 <ul>
 <li><a href="#证据层分类练习" id="toc-证据层分类练习">9.10.1
@@ -16982,38 +16980,78 @@ Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum
 restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML
 restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum
 说成完整物理验证。</p>
-<h3 id="本章正文与源码同步合同">6.11.9 本章正文与源码同步合同</h3>
-<p>本章的正文-源码对应关系由
-<code>scripts/audit_field_solver_chapter_source_crosswalk.py</code>
-维护。它把外层 <code>WarpXEvolve.cpp</code> 推进入口、FDTD/PML
-kernel、Cartesian spectral algorithm 分派、RZ spectral algorithm
-分派，以及 regression consumer 的证据边界固定成 12
-组可重复检查。该脚本检查的是代表性入口是否仍存在、章节是否仍明确写出对应路径；它不是
-C++ 语义等价证明，也不替代实际运行和论文推导。</p>
-<p>因此，后续修改 FieldSolver
-章节时应同时更新三处：正文的算法解释、<code>notes/code-reading/fieldsolver/43-fieldsolver-chapter-source-crosswalk.md</code>
-的维护边界、以及脚本输出的
-<code>contract.json</code>/<code>contract.md</code>。当某个入口迁移或重命名时，先确认新的
-dispatch 和 consumer，再改正文；不要把 checksum-only
-测试升级为物理强判据。</p>
+<h3 id="从源码入口回查验证量">6.11.9 从源码入口回查验证量</h3>
+<p>当读者需要把一条输入参数、一个离散更新式和一个测试结果连起来时，最短的回查路线不是从所有类定义开始，而是依次回答三个问题：</p>
+<ol type="1">
+<li><strong>哪一个顶层分派选择了这条算法？</strong>从
+<code>WarpXEvolve.cpp</code> 的 <code>OneStep</code> 路线开始，确认这是
+FDTD、标准/ Galilean PSATD、JRhom、静电/静磁、隐式还是 Hybrid PIC。</li>
+<li><strong>该路线在一个时间步中消费什么 source？</strong>对 FDTD/PML
+回到 <code>EvolveB/EvolveE</code> 及 PML 更新；对 PSATD
+回到谱场推进与历史 <code>J/rho</code>；对隐式路线回到 residual
+和迭代器；对 Hybrid 回到 Ohm kernel 和 B 场子步。</li>
+<li><strong>哪个 analysis 量能回答当前物理问题？</strong>反射率对应
+PML，电场能量与 <code>divE-rho</code> 对应 NCI/Gauss law，解析 Langmuir
+场对应波动误差，总能量和迭代信息对应隐式离散守恒。checksum
+只能回答输出是否回归，不能替代这些量。</li>
+</ol>
+<p>这条三问路线也给出阅读源码时的停止条件：找到一个函数名或一次
+<code>assert</code>
+还不足以说明算法正确；必须能说清它所在的时间层、它消费的场或
+source，以及该测试实际测量的
+observable。反过来，测试通过也不表示任意几何、边界、AMR
+层数或沉积方式都已被证明正确。</p>
 <h2 id="练习与运行验证">6.12 练习与运行验证</h2>
 <ol type="1">
 <li><strong>solver 分派题</strong>：给定
 <code>algo.maxwell_solver</code>、<code>psatd.JRhom</code>、<code>m_implicit_solver</code>
 和 AMR subcycling 四个开关，使用第 2 章决策图判断它们分别会落到哪一个
 <code>OneStep</code> 入口，并列出一个不允许的组合。</li>
-<li><strong>源码定位题</strong>：从
+<li><strong>源码与观察量题</strong>：从
 <code>EvolveB/EvolveE</code>、<code>PushPSATD</code>、<code>ImplicitSolver::ComputeRHS</code>
-中各选一个入口，指出它消费的是 <code>J/rho</code>、谱空间历史源项还是
-nonlinear residual。</li>
-<li><strong>最小运行题</strong>：复现
-<code>runs/stage-c-validation/implicit_theta_picard/</code> 与
-<code>implicit_semi_picard/</code>
-的独立能量合同，解释两者为什么分别使用 <code>1e-14</code> 与
-<code>2.5e-5</code> 容差，而不能只比较“是否通过”。</li>
+中各选一个入口，指出它消费的是 <code>J/rho</code>、谱空间历史 source
+还是 nonlinear residual；再为该入口选择一个能检验它的
+observable，并写出该 observable 不能证明的结论。</li>
+<li><strong>最小运行设计题</strong>：比较官方
+<code>Examples/Tests/implicit/inputs_test_1d_theta_implicit_picard</code>
+与
+<code>inputs_test_1d_semi_implicit_picard</code>。在运行前阅读它们共用的
+<code>analysis_1d.py</code>，记录总能量、两条容差和各自算法类型；运行后解释为何
+<code>1.0e-14</code> 与 <code>2.5e-5</code>
+不能只被理解成“一个更好、一个更差”，以及为什么两者都不能单独证明其他几何或边界下的
+Gauss law。</li>
+<li><strong>跨章诊断题</strong>：选择一个 PML 或 NCI case，按照“分派
+-&gt; source 时间层 -&gt; observable -&gt;
+不可外推范围”写一页检查表；再指出其中哪一项需要第 5
+章的沉积/同步知识，哪一项需要第 7 章的边界/AMR 知识。</li>
 </ol>
-<h3 id="本章验证链的结论">6.12.1 本章验证链的结论</h3>
-<p>综合这些脚本，FieldSolver 的验证链可以这样归纳：</p>
+<h2 id="本章结论-2">6.13 本章结论</h2>
+<p>场求解器的选择不是在“FDTD 还是
+PSATD”之间选一个名称，而是在以下四层约束之间做匹配：</p>
+<ol type="1">
+<li><strong>表示与几何。</strong>Cartesian、RZ、RCYLINDER/RSPHERE
+所允许的场表示、谱基和轴条件不同；不能把 Cartesian Fourier 公式直接移到
+RZ 的 Hankel/azimuthal-mode 表示中。</li>
+<li><strong>source 的时间模型。</strong>标准 PSATD、Galilean/averaged
+PSATD 与 JRhom 对 <code>J/rho</code> 的时间处理不同；current
+correction、沉积选择和 source
+同步因此属于求解器选择的一部分，而不是后处理开关。</li>
+<li><strong>边界、通信与耦合。</strong>PML split fields、guard
+cells、AMR coarse/fine 同步、隐式 residual 与 Hybrid Ohm
+子步都决定离散更新是否能在完整 PIC loop 中闭合。它们将在第 7 章按边界和
+AMR 路线继续展开。</li>
+<li><strong>与问题匹配的验证量。</strong>PML 应看反射率或残余场，NCI
+应看场能与 Gauss-law residual，Langmuir
+应看解析场，隐式算法应同时看能量、charge/Gauss-law 和迭代信息。checksum
+只是一类输出回归证据。</li>
+</ol>
+<p>因此，本章最后的判断顺序是：先确定几何和物理目标，再确定 source
+时间模型与允许的算法组合，随后沿真实 <code>OneStep</code>
+路线检查边界/同步，最后用对应 observable
+解释结果。若其中任一步缺失，就不应把一次成功运行写成“某类场求解器已经普遍正确”。这条顺序把第
+4、5 章的粒子推进和沉积带入 Maxwell 更新，也为第 7、8
+章的边界诊断和案例解释提供了共同坐标。</p>
+<p>下表将本章的主要验证问题压缩为一张选择表：</p>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -17057,7 +17095,7 @@ L2、粒子势能/动能</td>
 </tr>
 </tbody>
 </table>
-<p>这也决定后续写作方式：场求解器的“正确性”不能只靠某一个
+<p>这也说明，场求解器的“正确性”不能只靠某一个
 <code>assert</code>，而要把连续方程、离散公式、源码时间层、边界/同步和
 regression analysis 合起来看。否则，单独贴 <code>EvolveE.cpp</code> 的
 curl 更新式，仍然无法证明真实 WarpX field solver 在完整 PIC loop
@@ -20580,7 +20618,7 @@ Langmuir 和 native Gaussian sibling
 是有界案例证据，不能替代各自缺失的官方
 analysis。每一项都必须沿验证矩阵中的 producer、consumer、observable
 和限制阅读，不能用“已经运行”替代物理结论。</p>
-<h2 id="本章正文与源码同步合同-1">8.14 本章正文与源码同步合同</h2>
+<h2 id="本章正文与源码同步合同">8.14 本章正文与源码同步合同</h2>
 <p>读源码时可沿三条路线复核本章结论：</p>
 <ul>
 <li>主循环如何调度诊断；</li>
@@ -21078,7 +21116,7 @@ PASS/FAIL；<code>RUNTIME_LEDGER_UNPROVEN</code> 表示源码与 schema
 尚未输出账本；<code>CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN</code>
 表示可以计算描述性 order，但不能宣称正式阶数。</p>
 <p>缺口表的内部一致性检查只能保证正文和证据目录使用同一组术语，不表示本书已经达到终稿。</p>
-<h2 id="本章结论-2">9.9 本章结论</h2>
+<h2 id="本章结论-3">9.9 本章结论</h2>
 <p>本书已经不再只有书目而没有正文阅读资产，但也尚未达到“所有 primary
 sources fully closed”。更准确的概括是：</p>
 <ul>

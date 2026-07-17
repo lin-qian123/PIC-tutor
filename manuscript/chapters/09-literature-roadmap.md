@@ -51,7 +51,7 @@
 - `references/03_pic_foundations/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes/`
 - `references/03_pic_foundations/2021_MuravievCPC2021_Strategies_for_particle_resampling_in_PIC_simulations/`
 
-其中 `TajimaDawson1979` 现已通过独立的 `runs/stage-c-validation/tajima-dawson-1979-asset/contract.{json,md}` 收口为 paper-backed full-text asset：4 页 PDF、MinerU Markdown、11 张图和中文精读均已存在。它支撑的是最早期 `driver -> wake -> trapping -> acceleration` 与 LWFA scaling；合同同时保留“不替代现代 WarpX regression”的边界。
+其中 `TajimaDawson1979` 已具备 4 页 PDF、MinerU Markdown、11 张图和中文精读；材料记录位于 `runs/stage-c-validation/tajima-dawson-1979-asset/contract.{json,md}`。它支撑最早期 `driver -> wake -> trapping -> acceleration` 与 LWFA scaling 的解释，但不替代现代 WarpX regression。
 
 这些基础资产已经足以支撑：
 
@@ -60,9 +60,9 @@
 - 第 8 章中 diagnostics、spectrum、correlation time、weak instability dynamic range 的讨论；
 - LWFA 最早 scaling baseline 的历史入口。
 
-Vranic 2015 进一步补上了粒子 merge/resampling 这条应用线：论文专属目录、24 页 PDF、MinerU Markdown、32 张图、中文讲解和独立 asset contract 均已存在。它支撑第 4 章对“两粒子局部守恒 merge”的 paper-backed 解释，但不替代 WarpX `VelocityCoincidenceThinning` 的逐行等价或 dedicated runtime consumer。
+Vranic 2015 进一步补上了粒子 merge/resampling 这条应用线：24 页 PDF、MinerU Markdown、32 张图和中文讲解可供复查。它支撑第 4 章对“两粒子局部守恒 merge”的一手文献解释，但不替代 WarpX `VelocityCoincidenceThinning` 的逐行等价或专门 runtime consumer。
 
-Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论文专属目录、50 页 PDF、MinerU Markdown、38 个图像资源、中文精读和独立 asset contract 均已存在。它支撑第 4 章对 agnostic down-sampling、局部权重噪声、严格守恒 thinning 和 merge/cluster 权衡的 paper-backed 解释，但论文的 PICADOR/hi-chi QED cascade 结果不替代 WarpX runtime evidence。
+Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：50 页 PDF、MinerU Markdown、38 个图像资源和中文精读可供复查。它支撑第 4 章对 agnostic down-sampling、局部权重噪声、严格守恒 thinning 和 merge/cluster 权衡的一手文献解释，但论文的 PICADOR/hi-chi QED cascade 结果不替代 WarpX runtime evidence。
 
 其中 `Birdsall 1985` 因原书过长，采用分卷 PDF + 分卷 MinerU 的方式处理；这意味着它已经是 A 层资产，但仍不是“整本都已完全精读”。
 
@@ -103,7 +103,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ## 9.3 关键来源的已知边界
 
-以 `TajimaDawson1982` 为例，当前应把“正式来源已确认”和“正文已取得”分开记录：Crossref/AIP 元数据确认 *AIP Conference Proceedings* `91(1):69-93`、DOI `10.1063/1.33805` 及 canonical resource `https://pubs.aip.org/aip/acp/article/91/1/69-93/612300`；2026-07-13 本机请求该页面返回 Cloudflare HTTP `403`，所以本书不把 publisher PDF、MinerU Markdown 或逐式核对标记为已完成。FNAL 的 `p169.pdf` 是 Tajima 单作者的相关会议稿，只能作为主题旁证，不能替代 Tajima–Dawson 正式条目。
+以 `TajimaDawson1982` 为例，应把“正式来源已确认”和“正文已取得”分开记录：Crossref/AIP 元数据确认 *AIP Conference Proceedings* `91(1):69-93`、DOI `10.1063/1.33805` 及 canonical resource `https://pubs.aip.org/aip/acp/article/91/1/69-93/612300`；截至 2026-07-13，该页面返回 Cloudflare HTTP `403`，所以本书不把 publisher PDF、MinerU Markdown 或逐式核对标记为已完成。FNAL 的 `p169.pdf` 是 Tajima 单作者的相关会议稿，只能作为主题旁证，不能替代 Tajima–Dawson 正式条目。
 
 相关会议稿已整理在 `references/03_pic_foundations/1982_Tajima_related_FNAL_conference_note_Laser_accelerator_by_plasma_waves/`：其中包含 26 页 PDF、MinerU Markdown、67 张抽取图和按论文顺序的中文讲解。它可在有限范围内解释 beat-wave 共振、前向 Raman 散射、电子俘获、退相位、自聚焦、丝化和相对论前向 Brillouin 散射；但它是单作者相关会议稿，不能替代正式 Tajima--Dawson AIP 条目。
 
@@ -111,12 +111,12 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 | 缺口 | 当前状态 | 主要影响章节 | 当前可替代程度 |
 |---|---|---|---|
-| `Hockney-Eastwood` 原书 | 仅有 BibTeX 与 fallback article 线索；无本地合法 PDF | 第 1、2、5、6 章 | 只能部分由 `Birdsall 1985` 与 `Dawson 1983` 顶住 |
-| `Yee 1966` | metadata/DOI 已清楚；无本地 PDF/MinerU | 第 2、6 章 | 可暂由源码与后继 FDTD 文献支撑，但缺原始历史入口 |
-| `Esirkepov 2001` | 已建立 paper-specific 目录、access audit，并已 materialize 作者 arXiv 预印本 + MinerU + 中文讲解；仍缺出版商 CPC PDF 对照 | 第 5 章 | 已从纯源码缺口推进到 preprint-backed，但还未完成 CPC 定稿核对 |
+| `Hockney-Eastwood` 原书 | 仅有 BibTeX 与 fallback article 线索；尚无可公开核查的全文 | 第 1、2、5、6 章 | 只能部分由 `Birdsall 1985` 与 `Dawson 1983` 顶住 |
+| `Yee 1966` | metadata/DOI 已清楚；尚无全文与 MinerU 转换 | 第 2、6 章 | 可暂由源码与后继 FDTD 文献支撑，但缺原始历史入口 |
+| `Esirkepov 2001` | 作者 arXiv 预印本、MinerU 和中文讲解可供复查；仍缺出版商 CPC PDF 对照 | 第 5 章 | 可支撑 preprint-backed 解释，但还未完成 CPC 定稿核对 |
 | `Villasenor-Buneman 1992` | 已有论文 PDF、MinerU 转换和按论文顺序的中文讲解可供复查 | 第 5 章 | 可支撑 paper-backed 的公式与源码对照；中文讲解仍是第一轮结构精读，不能代替逐图、逐记号的出版级校订 |
-| `Andriyash 2016` | 已 materialize 9 页 PDF、MinerU、26 张图、中文精读和 asset contract；来源是 quasi-cylindrical Fourier-Bessel PSATD | 第 6 章 RZ PSATD | 已从 PDF-only 推进到 full-text formula-backed；PLARES-PIC/WarpX 等价和 runtime reproduction 仍未完成 |
-| `LeeCPC2015` | 已有 7 页 eScholarship accepted/submitted manuscript、MinerU、13 张图、中文讲解和 source crosswalk；仍缺 publisher-formatted CPC PDF | 第 7 章 | accepted-manuscript-backed + source-grounded 已成立，但发表版差异和逐系数等价仍未完成 |
+| `Andriyash 2016` | 9 页 PDF、MinerU、26 张图和中文精读可供复查；主题为 quasi-cylindrical Fourier-Bessel PSATD | 第 6 章 RZ PSATD | 可支撑全文公式解释；PLARES-PIC/WarpX 等价和 runtime reproduction 仍未完成 |
+| `LeeCPC2015` | 已有 7 页 eScholarship accepted/submitted manuscript、MinerU、13 张图和中文讲解；仍缺 publisher-formatted CPC PDF | 第 7 章 | accepted-manuscript-backed + source-grounded 已成立，但发表版差异和逐系数等价仍未完成 |
 
 这六条缺口里，`LeeCPC2015` 最特殊。它不是完全没工作，而是已经推进到：
 
@@ -135,7 +135,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 | 第 1 章 动理学模型 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Hockney-Eastwood`、更细的 particle-mesh heating 原始文献 |
 | 第 2 章 PIC 总循环 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Yee 1966` 原始入口 |
 | 第 3/3A 章 主循环与初始化 | 中低 | 以源码为主 | 需要把基础文献和工程论文绑定得更明确 |
-| 第 4 章 粒子推进器 | 中高 | `Boris 1970` metadata contract、`Birdsall 1985`、`Vay 2008`、`Higuera-Cary 2017` | 原始 Boris 1970 会议论文 PDF 仍缺 |
+| 第 4 章 粒子推进器 | 中高 | `Boris 1970` 书目信息、`Birdsall 1985`、`Vay 2008`、`Higuera-Cary 2017` | 原始 Boris 1970 会议论文 PDF 仍缺 |
 | 第 5 章 沉积与形函数 | 中等 | Esirkepov 与 Villasenor 两条 charge-conserving 主线都已有第一轮 paper-backed 资产 | 仍需把两篇论文系统回写正文；Esirkepov 还缺 CPC 定稿对照 |
 | 第 6 章 场求解器 | 高 | `Vay--Godfrey 2014`、`Godfrey 2014`、`Lehe 2016`、`Kirchen 2016` | 更多 validation/engineering 线，而不是 paper 主干 |
 | 第 7 章 边界、PML 与 AMR | 中等偏低 | `Berenger 1994/1996` 有 bibliographic anchor，源码和 regression 很强 | `LeeCPC2015` 正文仍缺 |
@@ -157,7 +157,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 4. `Hockney-Eastwood` 或其 article-level fallback
    - 继续补第 1 / 2 章的 particle-mesh foundations。
 5. `Boris` 原始文献
-   - 已建立 `1970_Boris_Relativistic_plasma_simulation_optimization_of_a_hybrid_code` 的 metadata/access contract；DTIC PDF 仍受限流，当前只把书目身份固定下来。
+   - `1970_Boris_Relativistic_plasma_simulation_optimization_of_a_hybrid_code` 的书目信息已核实；DTIC PDF 仍受限流，因此目前只把书目身份视为确定。
    - 下一步是通过 DTIC 重试、机构访问或合法镜像获取原始 proceedings PDF，再补 MinerU 和逐页核对；在此之前不把 Birdsall 二手推导写成 Boris 原文证据。
    - 继续补第 4 章的 pusher 历史链。
 
@@ -167,7 +167,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 `docs/literature-map.md` 不只是 BibTeX key 列表，而是承担三种作用：
 
-1. 统计本地 PDF / topic 分布；
+1. 统计可用 PDF / topic 分布；
 2. 标明哪些核心文献已有可核查阅读资产；
 3. 标明哪些来源目前只有 metadata / audit / fallback。
 
@@ -215,7 +215,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ### 9.7.1 文献索引的核查边界
 
-本章使用的 A/B/C/D 层级、核心目录和文献地图会通过仓库内检查保持一致。这个检查只说明“索引与本地资产状态一致”，不证明中文讲解已经逐式审校，不证明预印本与出版社排版版逐页等价，也不把 WarpX runtime 结果升级为论文全部物理结论的验证。读者据此判断引用强度时，应始终回到具体 PDF、公式和源码案例，而不是把索引条目当成证明本身。
+本章使用的 A/B/C/D 层级、核心目录和文献地图会通过仓库内检查保持一致。这个检查只说明“索引与可用材料的状态一致”，不证明中文讲解已经逐式审校，不证明预印本与出版社排版版逐页等价，也不把 WarpX runtime 结果升级为论文全部物理结论的验证。读者据此判断引用强度时，应始终回到具体 PDF、公式和源码案例，而不是把索引条目当成证明本身。
 
 ## 9.8 成书的已知证据边界
 
@@ -233,12 +233,12 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 - pusher 线已有 `Vay 2008`、`Higuera-Cary 2017`
 - PSATD/NCI 线已有 `Godfrey 2014`、`Lehe 2016`、`Kirchen 2016`
 - PML 线已有较强源码与审计资产，但缺 `LeeCPC2015` 正文
-- deposition 线已建立 `Esirkepov 2001` 与 `Villasenor-Buneman 1992` 的专属目录和访问边界；其中 Esirkepov 作者 arXiv 预印本与 Villasenor--Buneman 本地 PDF 均已有 MinerU 和第一轮中文讲解
+- deposition 线的 `Esirkepov 2001` 作者 arXiv 预印本与 `Villasenor-Buneman 1992` 全文均已有 MinerU 和第一轮中文讲解；Esirkepov 的 publisher-formatted CPC PDF 仍是明确的访问边界
 
 因此，这条路线图给读者和作者的核心约束不是“再多下载一些论文”，而是：
 
 1. 优先补能直接改变章节可信度的 primary sources；
-2. 严格区分 materialized 正文资产和 metadata-level 线索；
+2. 严格区分可逐段核查的正文材料和仅有 metadata-level 的线索；
 3. 将获取、文本转换、中文精读和章节回填视为同一条证据链。
 
 做到这三点，第 9 章才不是附录式书单，而是读者判断全书证据质量的导航章。
@@ -247,11 +247,11 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ### 9.10.1 证据层分类练习
 
-从以下五项中各选一项，分别判断它属于 A、B、C 或 D 层，并写出判断所依据的本地路径：`Birdsall 1985`、`Yee 1966`、`Esirkepov 2001` 作者预印本、Tajima 1982 FNAL 相关会议稿、`LeeCPC2015` accepted manuscript。答案必须同时写出“可以支持的句子”和“不能支持的句子”。例如，不能因为某项有 DOI 或摘要，就把它写成“已完成全文精读”。
+从以下五项中各选一项，分别判断它属于 A、B、C 或 D 层，并写出判断所依据的书中路径：`Birdsall 1985`、`Yee 1966`、`Esirkepov 2001` 作者预印本、Tajima 1982 FNAL 相关会议稿、`LeeCPC2015` accepted manuscript。答案必须同时写出“可以支持的句子”和“不能支持的句子”。例如，不能因为某项有 DOI 或摘要，就把它写成“已完成全文精读”。
 
 ### 9.10.2 证据边界复核练习
 
-选择一条 A 层来源和一条 C 层来源，对照 `docs/public-evidence-index.md` 中的记录，分别写出它们支持与不支持的结论。解释为什么索引一致只能说明“路线图与本地资产一致”，不能证明论文出版社版本已取得，也不能证明 WarpX runtime 已复现论文全部结论。
+选择一条 A 层来源和一条 C 层来源，对照 `docs/public-evidence-index.md` 中的记录，分别写出它们支持与不支持的结论。解释为什么索引一致只能说明“路线图与可用材料一致”，不能证明论文出版社版本已取得，也不能证明 WarpX runtime 已复现论文全部结论。
 
 ### 9.10.3 延伸阅读排序练习
 

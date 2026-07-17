@@ -22,6 +22,7 @@ def main() -> int:
     preface = (root / "manuscript/chapters/00-preface.md").read_text(encoding="utf-8")
     chapters = sorted((root / "manuscript/chapters").glob("*.md"))
     chapter_text = "\n".join(path.read_text(encoding="utf-8") for path in chapters)
+    chapter_9 = (root / "manuscript/chapters/09-literature-roadmap.md").read_text(encoding="utf-8")
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -45,6 +46,10 @@ def main() -> int:
         "history_is_separated": (root / "docs/version-history-v0.110.md").is_file(),
         "chapter_openings_are_reader_facing": not project_record_opening_markers,
         "core_chapters_have_no_project_record_markers": not project_record_body_markers,
+        "chapter_9_uses_reader_facing_evidence_language": not re.search(
+            r"本机|本地资产|materialize|asset contract|access audit|metadata contract|source crosswalk|本地路径",
+            chapter_9,
+        ),
         "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text

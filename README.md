@@ -10,6 +10,8 @@
 
 本轮继续清理第 4 至 6 章深层的 `v0.x` 叙事，将 RZ Esirkepov 证据改按观测量、适用范围和未闭合边界说明。读者审计现要求全部正文无版本标记；第 5 章 RZ evidence page 已使用独立 PDF 渲染器复核。
 
+第 8 章应用案例也已从 worktree/项目状态措辞改为“案例能支持什么、不能支持什么”的证据叙述；`LWFA/PWFA` 应用结论页已视觉抽查。
+
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 
 当前接续工作又完成 Vranic 2015 粒子合并论文资产：24 页 PDF、MinerU Markdown、32 张图、中文精读和 `11/11` asset contract 已通过；第 4 章已建立与 WarpX `VelocityCoincidenceThinning` 的有界映射，不把论文案例写成 WarpX runtime PASS。

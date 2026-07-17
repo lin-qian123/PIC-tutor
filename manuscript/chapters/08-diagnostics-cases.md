@@ -25,7 +25,7 @@ PIC 程序的可信度来自验证，而不是来自输入文件能跑完。一�
 - field fluctuations
   - 不是先看整张场图，而是先看每个 `k` mode 的 time-averaged modal energy 是否满足热平衡与 shape-modified fluctuation 预期。
 
-这条合同对当前 worktree 的意义很直接：后面不论是 `uniform_plasma` 的 noisy thermal background、Langmuir family 的 fluctuation floor，还是 thermal-plasma energy/stability families，都更应该被组织成“这些 reader-side measurements 能否稳定恢复理论里真正关心的统计量”，而不是“导出了哪些字段文件”。
+这条合同对本书案例的意义很直接：后面不论是 `uniform_plasma` 的 noisy thermal background、Langmuir family 的 fluctuation floor，还是 thermal-plasma energy/stability families，都更应该被组织成“这些 reader-side measurements 能否稳定恢复理论里真正关心的统计量”，而不是“导出了哪些字段文件”。
 
 如果再往前推进一层，Dawson 的 wave-side diagnostics 还要求继续区分：
 
@@ -97,7 +97,7 @@ $$
 
 当前本地 Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族分别复用 `analysis_1d.py`、`analysis_2d.py`、`analysis_3d.py`、`analysis_rz.py`，因此共享同一个“解析场解逐点比较”的主合同；其中 3D 版本还额外检查 selective particle output 和 openPMD 粒子位置上的 `Ex/Ey/Ez` 场采样。`analysis_utils.py` 又把 charge-conservation 检查做成条件分支，只在 Esirkepov、Vay deposition 或 PSATD current-correction 这些适用组合下强制比较 `divE` 与 `rho/\epsilon_0`。与之并列的 `langmuir_fluids` 则是另一棵冷流体验证树：它不只看 `E`，还把 `J` 和 `rho` 一起与解析冷流体解比较。需要单独记住的是，2D/3D/RZ 的 PICMI 变体目前大多仍是 `analysis=OFF` 的前端 + checksum scaffold，不应和原生输入的强物理断言混成同一等级。
 
-从应用综合章的角度，Langmuir wave 的价值不只是“有一个 textbook 解析解”，而是它把当前 worktree 里的四条主线挂到了同一个最小物理问题上：
+从应用综合章的角度，Langmuir wave 的价值不只是“有一个 textbook 解析解”，而是它把四条核心数值主线挂到了同一个最小物理问题上：
 
 1. 初始化
    - `NUniformPerCell`
@@ -122,7 +122,7 @@ $$
    - on-particle `Ex/Ey/Ez`
    都已经有现成 analysis 脚本消费。
 
-这也是为什么 `Examples/Tests/langmuir/` 在当前项目里不是“一个普通回归目录”，而是应用综合章最适合先收口的第一条主线。它已经把：
+这也是为什么 `Examples/Tests/langmuir/` 不只是一个普通回归目录，而是应用综合章最适合先理解的第一条主线。它把：
 
 ```text
 冷等离子体解析振荡
@@ -151,7 +151,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 - 解析场相对误差 `error_rel = 1.70e-3 < 5e-2`
 - `divE-rho/\epsilon_0` 相对误差 `8.35e-12 < 1e-11`
 
-所以 `Langmuir wave` 现在在本项目里已经是运行级强基准，而不只是“源码上看起来应该能验证”的强基准。
+因此 `Langmuir wave` 是运行级强基准，而不只是“源码上看起来应该能验证”的基准。
 
 ## Uniform plasma
 
@@ -218,7 +218,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 - 官方 regression 本来就只有 `analysis_default_regression.py --path diags/diag1000010` 这一层 checksum；
 - 这轮历史运行记录没有复跑 checksum 脚本；当前环境已有 `yt`，但仍缺 `openpmd_viewer`，所以 openPMD 分支仍未在本地验证。
 
-所以 `uniform_plasma` 当前在本项目里的最准确状态仍然是：
+因此 `uniform_plasma` 的证据等级应表述为：
 
 - 已有运行级 baseline；
 - 尚不是独立物理解强断言；
@@ -226,7 +226,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 
 ### 2026-07-12：checkpoint/restart 的真实证据
 
-为了把上面的 restart 说明从源码和 CMake wiring 推进到运行级证据，本项目在
+为把上面的 restart 说明从源码和 CMake wiring 推进到运行级证据，案例在
 `runs/stage-c-validation/uniform_plasma_3d_mpi2/` 复现了同一组 3D 输入：基线从第 0 步运行到第 10 步，并在第 6 步写出
 `diags/chk000006`；restart sibling 从该 checkpoint 继续运行到第 10 步。两条路径最终都写出 `diags/diag1000010`。
 
@@ -235,7 +235,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 
 这一证据有两个必须同时保留的边界。第一，它直接证明的是 checkpoint 状态恢复、粒子/场续跑和末态 diagnostics 的 reproducibility，不是热平衡能量守恒或某个解析波的 physics gate。第二，WarpX 的 CMake 注册把该测试配置为 2-rank MPI；本轮已用本机 MPICH `mpiexec -n 2` 按官方兄弟目录布局真实补跑。官方 `analysis_default_restart.py` 对 37 个 field 全部通过，独立 reader-side 对照的最大相对误差为 `2.8631e-16 < 1e-12`。但仓库 checksum API 的 rank-specific 聚合参考与本地 2-rank producer 不一致，最大相对差为 `3.20e-2`；因此这里应写成“2-rank restart reproducibility evidence”，同时保留 checksum 非通过边界，不能把逐字段 restart pass 扩大成 checksum pass。
 
-为解释这一 checksum 边界，又用同一当前 WarpX binary 和官方输入分别生成 1-rank、2-rank 的非 restart 基线，并运行 `scripts/analyze_uniform_plasma_mpi_consistency.py`。两套 producer 的粒子总权重完全一致；field energy 相对差为 `1.9379e-2`，particle kinetic energy 相对差为 `8.9170e-4`，total energy 相对差为 `6.2269e-4`，physical-field 最大 L2 相对差为 `1.0185`。因此该 thermal/randomized uniform-plasma case 的 rank-invariant field contract 明确不成立，checksum 差异不能被解释成 restart 失败；本项目只把 2-rank restart 的 plotfile-to-plotfile 一致性写成通过证据。1-rank/2-rank 报告位于 `runs/stage-c-validation/uniform_plasma_3d_mpi2/uniform-plasma-mpi-consistency.{json,md}`。
+为解释这一 checksum 边界，使用同一 WarpX binary 和官方输入分别生成 1-rank、2-rank 的非 restart 基线，并运行 `scripts/analyze_uniform_plasma_mpi_consistency.py`。两套 producer 的粒子总权重完全一致；field energy 相对差为 `1.9379e-2`，particle kinetic energy 相对差为 `8.9170e-4`，total energy 相对差为 `6.2269e-4`，physical-field 最大 L2 相对差为 `1.0185`。因此该 thermal/randomized uniform-plasma case 的 rank-invariant field contract 明确不成立，checksum 差异不能被解释成 restart 失败；只有 2-rank restart 的 plotfile-to-plotfile 一致性可写成通过证据。1-rank/2-rank 报告位于 `runs/stage-c-validation/uniform_plasma_3d_mpi2/uniform-plasma-mpi-consistency.{json,md}`。
 
 图 8-11 将这条边界压成两个可读的面板：左图显示 2-rank 相对 1-rank 的全局能量比，右图显示 `B/E/J/rho` 各组 physical field 的最大 L2 相对误差。左图说明粒子动能和总能量仍接近，但右图说明逐场 rank-invariant gate 并未成立；虚线是参考值或 `1e-12` machine-level gate，不是本案例已经通过的物理阈值。
 
@@ -245,7 +245,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 
 ## LWFA/PWFA
 
-应用综合章的下一条主线不应再写成单独的 `plasma_acceleration`。当前本地 worktree 里，更准确的组织方式是把：
+应用综合章的下一条主线不应再写成单独的 `plasma_acceleration`。在案例库中，更准确的组织方式是把：
 
 - `Examples/Physics_applications/laser_acceleration/`
 - `Examples/Physics_applications/plasma_acceleration/`
@@ -363,9 +363,9 @@ OFF  # analysis
 
 但当前并没有目录内统一的 wakefield physics hard assert。尤其要保留一个源码树边界：3D PICMI 输入文件目前仍未像 native 输入那样真正使用 boosted frame，所以不能把它说成 native boosted PWFA 的等价前端。
 
-### 当前 worktree 中这条应用主线真正成立的结论
+### `LWFA/PWFA` 案例能够支持的结论
 
-把 `LWFA/PWFA` 重新收束之后，当前本地证据支持的最强结论是：
+将 `LWFA/PWFA` 重新收束后，案例证据支持的最强结论是：
 
 1. `laser_acceleration`
    - 是 `LWFA runtime matrix`
@@ -390,7 +390,7 @@ wakefield acceleration runtime architectures
 
 ## Laser ion / plasma mirror / RPA/TNSA
 
-这一条应用主线必须写得比目录名更谨慎。当前本地 worktree 里真正可落到 application tree 的 laser-target 入口只有两个：
+这一条应用主线必须写得比目录名更谨慎。案例库中真正可落到 application tree 的 laser-target 入口只有两个：
 
 - `Examples/Physics_applications/laser_ion/`
 - `Examples/Physics_applications/plasma_mirror/`
@@ -462,7 +462,7 @@ README 里的 `analysis_histogram_2D.py` 和 `plot_2d.py` 仍然很重要，但�
 
 ### `RPA/TNSA`：当前属于物理解释层，不属于本地应用目录层
 
-这条边界如果不写清，很容易把文献中的机制标签误写成当前 worktree 已有的独立本地 examples。当前最强、也最保守的结论只能是：
+这条边界如果不写清，很容易把文献中的机制标签误写成案例库已有的独立 examples。最强、也最保守的结论只能是：
 
 1. `laser_ion`
    - 是激光打固体平面靶的本地应用骨架；
@@ -473,7 +473,7 @@ README 里的 `analysis_histogram_2D.py` 和 `plot_2d.py` 仍然很重要，但�
    - 也没有独立 `tnsa_*`
    application tree。
 
-因此，这条应用综合章在当前 worktree 里更准确的组织方式是：
+因此，这条应用综合章更准确的组织方式是：
 
 ```text
 laser-target applications
@@ -484,7 +484,7 @@ laser-target applications
 
 ## Capacitive discharge
 
-这条应用线在当前 worktree 里不该再混成普通 `collision/*` 附属条目。它更准确的角色是：
+这条应用线不应混成普通 `collision/*` 附属条目。它更准确的角色是：
 
 - `PIC-MCC low-temperature plasma application tree`
 
@@ -536,7 +536,7 @@ laser-target applications
 
 并与内置 Turner case-1 参考离子密度 profile 做 `allclose`。
 
-因此当前 worktree 里最强的 physics contract 是：
+因此该案例最强的 physics contract 是：
 
 - final averaged ion density profile
 - against Turner benchmark case 1
@@ -604,7 +604,7 @@ laser-target applications
 
 ## Magnetic reconnection
 
-当前 worktree 里，磁重联这条应用线最准确的入口不是一般 `Fluids/`，而是：
+磁重联这条应用线最准确的入口不是一般 `Fluids/`，而是：
 
 - `Examples/Tests/ohm_solver_magnetic_reconnection/`
 
@@ -710,7 +710,7 @@ magnetic_reconnection
 
 ## Beam-beam / luminosity / FEL / ion extraction
 
-这一条应用综合主线最容易被误写成单一“束流例子”列表，但当前 worktree 里的四类入口其实承担着不同层级的合同：
+这一条应用综合主线最容易被误写成单一“束流例子”列表，但案例库中的四类入口其实承担着不同层级的合同：
 
 - `DifferentialLuminosity`
 - `beam_beam_collision`

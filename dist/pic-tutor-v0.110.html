@@ -670,8 +670,8 @@ wave</a></li>
 是 runtime matrix，不是统一 wake benchmark</a></li>
 <li><a href="#pwfaplasma_acceleration-是-workflow-matrix不是解析-wake-benchmark" id="toc-pwfaplasma_acceleration-是-workflow-matrix不是解析-wake-benchmark">PWFA：<code>plasma_acceleration</code>
 是 workflow matrix，不是解析 wake benchmark</a></li>
-<li><a href="#当前-worktree-中这条应用主线真正成立的结论" id="toc-当前-worktree-中这条应用主线真正成立的结论">当前 worktree
-中这条应用主线真正成立的结论</a></li>
+<li><a href="#lwfapwfa-案例能够支持的结论" id="toc-lwfapwfa-案例能够支持的结论"><code>LWFA/PWFA</code>
+案例能够支持的结论</a></li>
 </ul></li>
 <li><a href="#laser-ion-plasma-mirror-rpatnsa" id="toc-laser-ion-plasma-mirror-rpatnsa">Laser ion / plasma mirror /
 RPA/TNSA</a>
@@ -18551,7 +18551,7 @@ regime 和 decorrelation 后的近线性 regime；</li>
 modal energy 是否满足热平衡与 shape-modified fluctuation 预期。</li>
 </ul></li>
 </ul>
-<p>这条合同对当前 worktree 的意义很直接：后面不论是
+<p>这条合同对本书案例的意义很直接：后面不论是
 <code>uniform_plasma</code> 的 noisy thermal background、Langmuir family
 的 fluctuation floor，还是 thermal-plasma energy/stability
 families，都更应该被组织成“这些 reader-side measurements
@@ -18716,8 +18716,7 @@ PSATD current-correction 这些适用组合下强制比较 <code>divE</code> 与
 PICMI 变体目前大多仍是 <code>analysis=OFF</code> 的前端 + checksum
 scaffold，不应和原生输入的强物理断言混成同一等级。</p>
 <p>从应用综合章的角度，Langmuir wave 的价值不只是“有一个 textbook
-解析解”，而是它把当前 worktree
-里的四条主线挂到了同一个最小物理问题上：</p>
+解析解”，而是它把四条核心数值主线挂到了同一个最小物理问题上：</p>
 <ol type="1">
 <li>初始化
 <ul>
@@ -18750,7 +18749,7 @@ scaffold，不应和原生输入的强物理断言混成同一等级。</p>
 </ul></li>
 </ol>
 <p>这也是为什么 <code>Examples/Tests/langmuir/</code>
-在当前项目里不是“一个普通回归目录”，而是应用综合章最适合先收口的第一条主线。它已经把：</p>
+不只是一个普通回归目录，而是应用综合章最适合先理解的第一条主线。它把：</p>
 <pre class="text"><code>冷等离子体解析振荡
 -&gt; parser 初始化
 -&gt; gather / pusher / deposition / solver
@@ -18774,8 +18773,8 @@ scaffold，不应和原生输入的强物理断言混成同一等级。</p>
 <li><code>divE-rho/\epsilon_0</code> 相对误差
 <code>8.35e-12 &lt; 1e-11</code></li>
 </ul>
-<p>所以 <code>Langmuir wave</code>
-现在在本项目里已经是运行级强基准，而不只是“源码上看起来应该能验证”的强基准。</p>
+<p>因此 <code>Langmuir wave</code>
+是运行级强基准，而不只是“源码上看起来应该能验证”的基准。</p>
 <h2 id="uniform-plasma">Uniform plasma</h2>
 <p>入口：<code>../warpx/Examples/Physics_applications/uniform_plasma/inputs_test_2d_uniform_plasma</code></p>
 <p>关键设置：</p>
@@ -18869,8 +18868,7 @@ workflow、writer、最小噪声背景和输出路径正常；</li>
 <code>yt</code>，但仍缺 <code>openpmd_viewer</code>，所以 openPMD
 分支仍未在本地验证。</li>
 </ul>
-<p>所以 <code>uniform_plasma</code>
-当前在本项目里的最准确状态仍然是：</p>
+<p>因此 <code>uniform_plasma</code> 的证据等级应表述为：</p>
 <ul>
 <li>已有运行级 baseline；</li>
 <li>尚不是独立物理解强断言；</li>
@@ -18880,8 +18878,7 @@ workflow、writer、最小噪声背景和输出路径正常；</li>
 </ul>
 <h3 id="checkpointrestart-的真实证据">2026-07-12：checkpoint/restart
 的真实证据</h3>
-<p>为了把上面的 restart 说明从源码和 CMake wiring
-推进到运行级证据，本项目在
+<p>为把上面的 restart 说明从源码和 CMake wiring 推进到运行级证据，案例在
 <code>runs/stage-c-validation/uniform_plasma_3d_mpi2/</code>
 复现了同一组 3D 输入：基线从第 0 步运行到第 10 步，并在第 6 步写出
 <code>diags/chk000006</code>；restart sibling 从该 checkpoint
@@ -18908,8 +18905,8 @@ reader-side 对照的最大相对误差为
 <code>3.20e-2</code>；因此这里应写成“2-rank restart reproducibility
 evidence”，同时保留 checksum 非通过边界，不能把逐字段 restart pass
 扩大成 checksum pass。</p>
-<p>为解释这一 checksum 边界，又用同一当前 WarpX binary
-和官方输入分别生成 1-rank、2-rank 的非 restart 基线，并运行
+<p>为解释这一 checksum 边界，使用同一 WarpX binary 和官方输入分别生成
+1-rank、2-rank 的非 restart 基线，并运行
 <code>scripts/analyze_uniform_plasma_mpi_consistency.py</code>。两套
 producer 的粒子总权重完全一致；field energy 相对差为
 <code>1.9379e-2</code>，particle kinetic energy 相对差为
@@ -18917,8 +18914,8 @@ producer 的粒子总权重完全一致；field energy 相对差为
 <code>6.2269e-4</code>，physical-field 最大 L2 相对差为
 <code>1.0185</code>。因此该 thermal/randomized uniform-plasma case 的
 rank-invariant field contract 明确不成立，checksum 差异不能被解释成
-restart 失败；本项目只把 2-rank restart 的 plotfile-to-plotfile
-一致性写成通过证据。1-rank/2-rank 报告位于
+restart 失败；只有 2-rank restart 的 plotfile-to-plotfile
+一致性可写成通过证据。1-rank/2-rank 报告位于
 <code>runs/stage-c-validation/uniform_plasma_3d_mpi2/uniform-plasma-mpi-consistency.{json,md}</code>。</p>
 <p>图 8-11 将这条边界压成两个可读的面板：左图显示 2-rank 相对 1-rank
 的全局能量比，右图显示 <code>B/E/J/rho</code> 各组 physical field 的最大
@@ -18932,8 +18929,7 @@ machine-level gate，不是本案例已经通过的物理阈值。</p>
 重新生成；该图展示的是并行证据边界，不是新的强 physics benchmark。</p>
 <h2 id="lwfapwfa">LWFA/PWFA</h2>
 <p>应用综合章的下一条主线不应再写成单独的
-<code>plasma_acceleration</code>。当前本地 worktree
-里，更准确的组织方式是把：</p>
+<code>plasma_acceleration</code>。在案例库中，更准确的组织方式是把：</p>
 <ul>
 <li><code>Examples/Physics_applications/laser_acceleration/</code></li>
 <li><code>Examples/Physics_applications/plasma_acceleration/</code></li>
@@ -19089,10 +19085,9 @@ antenna，而是 relativistic bunch。</p>
 assert。尤其要保留一个源码树边界：3D PICMI 输入文件目前仍未像 native
 输入那样真正使用 boosted frame，所以不能把它说成 native boosted PWFA
 的等价前端。</p>
-<h3 id="当前-worktree-中这条应用主线真正成立的结论">当前 worktree
-中这条应用主线真正成立的结论</h3>
-<p>把 <code>LWFA/PWFA</code>
-重新收束之后，当前本地证据支持的最强结论是：</p>
+<h3 id="lwfapwfa-案例能够支持的结论"><code>LWFA/PWFA</code>
+案例能够支持的结论</h3>
+<p>将 <code>LWFA/PWFA</code> 重新收束后，案例证据支持的最强结论是：</p>
 <ol type="1">
 <li><code>laser_acceleration</code>
 <ul>
@@ -19120,8 +19115,8 @@ acceleration，最自然的章节结构不是简单按目录分，而是：</p>
 -&gt; beam-driven branch (PWFA)</code></pre>
 <h2 id="laser-ion-plasma-mirror-rpatnsa">Laser ion / plasma mirror /
 RPA/TNSA</h2>
-<p>这一条应用主线必须写得比目录名更谨慎。当前本地 worktree 里真正可落到
-application tree 的 laser-target 入口只有两个：</p>
+<p>这一条应用主线必须写得比目录名更谨慎。案例库中真正可落到 application
+tree 的 laser-target 入口只有两个：</p>
 <ul>
 <li><code>Examples/Physics_applications/laser_ion/</code></li>
 <li><code>Examples/Physics_applications/plasma_mirror/</code></li>
@@ -19201,8 +19196,8 @@ surface-plasma workflow baseline</h3>
 <li>high-harmonic benchmark</li>
 </ul>
 <h3 id="rpatnsa当前属于物理解释层不属于本地应用目录层"><code>RPA/TNSA</code>：当前属于物理解释层，不属于本地应用目录层</h3>
-<p>这条边界如果不写清，很容易把文献中的机制标签误写成当前 worktree
-已有的独立本地 examples。当前最强、也最保守的结论只能是：</p>
+<p>这条边界如果不写清，很容易把文献中的机制标签误写成案例库已有的独立
+examples。最强、也最保守的结论只能是：</p>
 <ol type="1">
 <li><code>laser_ion</code>
 <ul>
@@ -19218,13 +19213,13 @@ surface-plasma workflow baseline</h3>
 <li>也没有独立 <code>tnsa_*</code> application tree。</li>
 </ul></li>
 </ol>
-<p>因此，这条应用综合章在当前 worktree 里更准确的组织方式是：</p>
+<p>因此，这条应用综合章更准确的组织方式是：</p>
 <pre class="text"><code>laser-target applications
 -&gt; laser_ion
 -&gt; plasma_mirror
 -&gt; RPA/TNSA as mechanism labels, not standalone local trees</code></pre>
 <h2 id="capacitive-discharge">Capacitive discharge</h2>
-<p>这条应用线在当前 worktree 里不该再混成普通 <code>collision/*</code>
+<p>这条应用线不应混成普通 <code>collision/*</code>
 附属条目。它更准确的角色是：</p>
 <ul>
 <li><code>PIC-MCC low-temperature plasma application tree</code></li>
@@ -19278,7 +19273,7 @@ ion-density profile</h3>
 </ul>
 <p>并与内置 Turner case-1 参考离子密度 profile 做
 <code>allclose</code>。</p>
-<p>因此当前 worktree 里最强的 physics contract 是：</p>
+<p>因此该案例最强的 physics contract 是：</p>
 <ul>
 <li>final averaged ion density profile</li>
 <li>against Turner benchmark case 1</li>
@@ -19357,8 +19352,7 @@ TODO”。所以 <code>inputs_test_3d_plasma_acceleration_picmi.py</code>
 当前只能诚实记成 non-boosted PICMI scaffold，不能误写成原生 boosted PWFA
 的等价前端。</p>
 <h2 id="magnetic-reconnection">Magnetic reconnection</h2>
-<p>当前 worktree 里，磁重联这条应用线最准确的入口不是一般
-<code>Fluids/</code>，而是：</p>
+<p>磁重联这条应用线最准确的入口不是一般 <code>Fluids/</code>，而是：</p>
 <ul>
 <li><code>Examples/Tests/ohm_solver_magnetic_reconnection/</code></li>
 </ul>
@@ -19477,8 +19471,7 @@ coverage 的另一半</h3>
 != scalar hard-assert benchmark</code></pre>
 <h2 id="beam-beam-luminosity-fel-ion-extraction">Beam-beam / luminosity
 / FEL / ion extraction</h2>
-<p>这一条应用综合主线最容易被误写成单一“束流例子”列表，但当前 worktree
-里的四类入口其实承担着不同层级的合同：</p>
+<p>这一条应用综合主线最容易被误写成单一“束流例子”列表，但案例库中的四类入口其实承担着不同层级的合同：</p>
 <ul>
 <li><code>DifferentialLuminosity</code></li>
 <li><code>beam_beam_collision</code></li>

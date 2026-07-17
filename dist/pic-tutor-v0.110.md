@@ -6877,13 +6877,9 @@ flowchart TD
 
 本章对应源码笔记见 `notes/code-reading/particles/00-particle-evolve-callchain.md`、`notes/code-reading/particles/01-pusher-and-deposition-evidence.md` 和 `notes/code-reading/particles/02-gather-shape-deposition-kernels.md`。
 
-本章当前依据的 WarpX 源码版本是：
+本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航；其他版本应按函数名和调用关系检索。阅读实现时，先把三层分开：`ShapeFactors.H` 定义 0--4 阶形函数，`WarpXParticleContainer::DepositCurrent()` / `DepositCharge()` 负责 tile 级分派和桥接，`Particles/Deposition/CurrentDeposition.H` 承载 Direct、Esirkepov、Villasenor 和 Vay 的 current kernel。`Examples/Tests/langmuir/analysis_utils.py` 与 `Examples/Tests/vay_deposition/analysis.py` 提供代表性的 `divE-rho/epsilon_0` consumer，但每个 consumer 都只覆盖其给定的几何、时间层和输入条件。
 
-- `../warpx`
-- 分支：`pkuHEDPbranch`
-- commit：`8c488b1a9`
-
-本章当前按同级 `../warpx` checkout 逐段复核了 `ShapeFactors.H`、`WarpXParticleContainer.cpp`、`PhysicalParticleContainer.cpp` 与 `CurrentDeposition.H` 的沉积主链。组织上分成三层：`ShapeFactors.H` 定义 0-4 阶形函数，`WarpXParticleContainer::DepositCurrent()` / `DepositCharge()` 负责 tile 级分派与桥接合同，`Particles/Deposition/CurrentDeposition.H` 承载 Direct、Esirkepov、Villasenor 和 Vay 的实际 current kernel。验证证据以 `Examples/Tests/langmuir/analysis_utils.py` 和 `Examples/Tests/vay_deposition/analysis.py` 的 `divE-rho/epsilon_0` 检查为主。相应 primary deposition 文献目录与 access audit 已建立；其中 `Esirkepov 2001` 已通过作者 arXiv 预印本完成第一轮 MinerU 与中文讲解，`Villasenor-Buneman 1992` 也已从本机现成 PDF/MinerU 资产 materialize 到项目目录并补出第一轮中文讲解。因此本章现在不再只是单侧的 Esirkepov paper-backed 论证，而是两条 charge-conserving 路径都已经开始拥有第一手论文支撑；剩余工作主要转成把这两篇论文系统地回写成更出版化的正文。
+本章引用 Esirkepov 2001 的作者预印本来解释 `W^1/W^2/W^3`、`Eq.(23)` 和二阶 spline 的构造；CPC 发表版的书目信息和摘要已核实，但没有可逐页核对的 publisher PDF。Villasenor-Buneman 1992 则可作为 crossing-based deposition 的全文来源。两条路径的论文、源码和运行证据将在 5.11 与 5.14 分层说明，不能相互替代。
 
 Birdsall-Langdon 在 `Plasma Physics via Computer Simulation` 第一分卷的 `4-6` 到 `4-8` 给了一个很硬的理论边界：只要粒子通过空间网格被观测和求场，它就不再表现成零厚度 point particle，而必须被理解成具有有效形状因子 `S(x)`、频域响应 `S(k)` 的 finite-size cloud。这样一来，shape order 不是单纯“更光滑的插值公式”，而是同时改写三件事：
 
@@ -6917,10 +6913,9 @@ Birdsall 在 Chapter 13 又把这条 shape-factor 主线往“长期数值健康
 
 所以本章讨论 shape order 时，不能只写“更高阶更光滑、噪声更低”。更准确的说法是：shape order、cloud width 和 smoothing policy 一起决定了热等离子体多久会因为 finite-grid effects 累积出不可忽略的数值自热。
 
-这里的 Hockney 1971 依据已从单纯书目线索提升为摘要级证据：项目目录 `references/02_books_lecture_notes/1971_HockneyJCP1971_Measurements_of_collision_and_heating_times_in_a_two-dimensional_thermal_computer_plasma/` 保存了 IBM Research 作者机构页面、access audit 和摘要级中文讲解；`scripts/audit_hockney_1971_abstract_contract.py` 的 8 项检查全部通过。摘要支持 `tau_coll/tau_pe`、电场能量涨落、`(omega_pe Delta t)_opt` 和 `K_2` 分层的定量路线，但没有本地 publisher PDF，因此本段仍不声称论文正文或图表已逐段核对。
-同一条 heating 证据线还包括 Abe et al. 1975 的摘要级 `sigma(K_g)` 与 correlation-time 观测；它补充的是短时 fluctuation 的统计量，而不是 Hockney 长时 `tau_H` 的替代。Abe 的 publisher PDF 同样未取得，因此这里只使用 `runs/stage-c-validation/abe-1975-abstract/contract.{json,md}` 固定的窄边界。
+Hockney 1971 的可用证据限于摘要级：它支持 `tau_coll/tau_pe`、电场能量涨落、`(omega_pe Delta t)_opt` 和 `K_2` 的定量路线，但不能支持对正文或图表的逐段解读。Abe et al. 1975 的摘要级 `sigma(K_g)` 与 correlation-time 观测补充短时 fluctuation 的统计量，不能替代 Hockney 的长时 `tau_H` 结论。
 
-同一条 particle-mesh 文献线又补上了两篇 1974 摘要级来源。Hockney、Goel 与 Eastwood 的 QPM/PPPM 摘要把 Gaussian cloud、potential shaping、mesh noise 和 sub-mesh resolution 放到同一个模型谱系；Eastwood 与 Hockney 的 force-shaping 摘要则把 NGP/CIC/九点 charge-sharing hierarchy、potential correction 与 force-law angular anisotropy 直接联系起来。两篇各 8 项检查都在 `runs/stage-c-validation/particle-mesh-1974-abstract/contract.{json,md}` 通过，但由于 full text 仍缺，本段只使用其摘要级历史定位，不把摘要数值包装成 WarpX 当前 kernel 的复现结果。
+两篇 1974 摘要级来源补足了 particle-mesh 的历史定位：QPM/PPPM 把 Gaussian cloud、potential shaping、mesh noise 和 sub-mesh resolution 放到同一模型谱系；force shaping 则把 NGP/CIC/九点 charge-sharing hierarchy、potential correction 与 force-law angular anisotropy 联系起来。它们没有全文支撑，因而不能把摘要中的数值或设置当作 WarpX kernel 的复现结果。
 
 `Dawson 1983` 则把同一条线往前退回到更基础的动机层：finite-size particles 的第一性目的不是“插值更方便”，而是先把 point-charge 的近距离大冲量软化掉，从而压低不想要的 collisional effects，同时保住长程 Coulomb collective behavior。也正因为粒子已经被改写成有限尺寸 cloud，空间上比 cloud 更细的电荷起伏本来就不再分辨，grid 才成为一种自然的 coarse-grained source representation。这条综述级表述很适合放在本章开头，因为它比直接从 `ShapeFactors.H` 展开更清楚地交代了：shape、charge sharing 和 sampled density 本来就是同一个物理建模决定的三个侧面。
 
@@ -6937,7 +6932,7 @@ $$
 
 这里 \(S_i\) 是粒子形函数对网格自由度 \(i\) 的权重。形函数阶数越高，粒子影响的网格范围越大，噪声通常越低，但 stencil、guard cell 和通信成本也更高。
 
-WarpX 中 shape 阶数通过 `nox/noy/noz` 等内部变量进入 gather 和 deposition 分派。当前源码里，0-4 阶权重的唯一基础定义在 `../warpx/Source/Particles/ShapeFactors.H:27-156`；current deposition 再在 `../warpx/Source/Particles/WarpXParticleContainer.cpp:654-930` 根据 `WarpX::nox` 与 `CurrentDepositionAlgo` 选择 `doEsirkepovDepositionShapeN<N>()`、`doVillasenorDepositionShapeN*<N>()`、`doVayDepositionShapeN<N>()` 或 direct `doDepositionShapeN<N>()`。因此读者应把 `nox/noy/noz` 看成“shape order 的全局分派键”，而不是某一个 kernel 的局部参数。
+WarpX 中 shape 阶数通过 `nox/noy/noz` 等内部变量进入 gather 和 deposition 分派。源码快照中，0-4 阶权重的唯一基础定义在 `Source/Particles/ShapeFactors.H:27-156`；current deposition 再在 `Source/Particles/WarpXParticleContainer.cpp:654-930` 根据 `WarpX::nox` 与 `CurrentDepositionAlgo` 选择 `doEsirkepovDepositionShapeN<N>()`、`doVillasenorDepositionShapeN*<N>()`、`doVayDepositionShapeN<N>()` 或 direct `doDepositionShapeN<N>()`。因此读者应把 `nox/noy/noz` 看成“shape order 的全局分派键”，而不是某一个 kernel 的局部参数。
 
 ## 5.2 `ShapeFactors.H`：WarpX 实际使用的 0 到 4 阶形函数
 
@@ -8301,7 +8296,7 @@ const amrex::Real relative_time = 0._rt;
 
 ## 5.11 Esirkepov current deposition：用新旧形函数差构造连续性方程
 
-阅读 Esirkepov 论文时，最容易发生的记号错位是把论文的方向分解、WarpX 的前缀累加变量和最终网格电流分量直接画等号。它们可以建立结构对应，但不是同一个层次的对象。当前源码审计固定下表作为本章的记号入口：
+阅读 Esirkepov 论文时，最容易发生的记号错位是把论文的方向分解、WarpX 的前缀累加变量和最终网格电流分量直接画等号。它们可以建立结构对应，但不是同一个层次的对象。本章采用的源码快照以下表作为记号入口：
 
 | 论文层对象 | WarpX 当前实现 | 读者应保留的边界 |
 |---|---|---|
@@ -8312,7 +8307,7 @@ const amrex::Real relative_time = 0._rt;
 | transverse tensor-product factor | `one_third/one_sixth` 组成 old-old、old-new、new-old、new-new 混合平均 | 该对应由预印本与源码核对得到，不表示 CPC 定稿已逐页比较 |
 | current normalization | `invdtd.x/y/z = transverse inverse cell area / dt` | 不能把三个分量都简化成单独的 `1/dt` |
 
-这张表对应的 14 个源码锚点由 `scripts/audit_esirkepov_notation_contract.py` 验收，报告见 `runs/stage-c-validation/esirkepov-notation-source-contract/contract.{json,md}`。它关闭的是论文记号到当前 checkout 变量的映射歧义，不替代 `SyncCurrent()`、AMR coarse-fine、边界同步或全 geometry/order runtime regression。
+这张表对应的 14 个源码锚点由 `scripts/audit_esirkepov_notation_contract.py` 检查，报告见 `runs/stage-c-validation/esirkepov-notation-source-contract/contract.{json,md}`。它消除的是论文记号到该源码快照变量的映射歧义，不替代 `SyncCurrent()`、AMR coarse-fine、边界同步或全 geometry/order runtime regression。
 
 Esirkepov 入口在 `../warpx/Source/Particles/Deposition/CurrentDeposition.H:675-723`：
 
@@ -8516,40 +8511,26 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 这条对应对第 5 章很关键，因为它说明 `Eq.(23)` 在源码里并没有“蒸发成一堆经验循环”，而是被压缩进了三组方向前缀累加的循环骨架本身。
 
-更进一步，项目内预印本已经足够把 `Eq.(23)` 的结构写清：每个方向的 `W^m` 都是八个 old/new corner-like shape 值的线性组合，而且只出现两种系数 `1/3` 与 `1/6`。这说明 WarpX 里显式写出来的 `one_third` / `one_sixth` 不是局部数值调味，而是论文唯一性分解的直接遗留物；当前源码中横向平均项的结构，并不是“为了让公式看起来对称”，而是为了让三方向分解在加总后精确回到总的 shape 差分。
+预印本已足够把 `Eq.(23)` 的结构写清：每个方向的 `W^m` 都是八个 old/new corner-like shape 值的线性组合，而且只出现两种系数 `1/3` 与 `1/6`。这说明 WarpX 里显式写出来的 `one_third` / `one_sixth` 不是局部数值调味，而是论文唯一性分解的直接遗留物；源码快照中横向平均项的结构，并不是“为了让公式看起来对称”，而是为了让三方向分解在加总后精确回到总的 shape 差分。
 
-这里还应把论文的 claim 再说硬一点。`Esirkepov 2001` 并没有把 `density decomposition` 当成众多可选配方之一，而是明确声称：在线性、零位移退化、坐标置换对称和总差分守恒这些自然条件下，这就是定义粒子相关电流的唯一允许过程。这样回头看 WarpX 的 `sdxi/sdyj/sdzk + one_third/one_sixth`，它们就不再只是“当前实现选用的一组常数”，而更接近一条被论文唯一性条件挑出来、随后在现代 tensor-product kernel 里程序化保存下来的结构。
+这里还应把论文的 claim 再说硬一点。`Esirkepov 2001` 并没有把 `density decomposition` 当成众多可选配方之一，而是明确声称：在线性、零位移退化、坐标置换对称和总差分守恒这些自然条件下，这就是定义粒子相关电流的唯一允许过程。这样回头看 WarpX 的 `sdxi/sdyj/sdzk + one_third/one_sixth`，它们就不再只是“实现选用的一组常数”，而更接近一条被论文唯一性条件挑出来、随后在现代 tensor-product kernel 里程序化保存下来的结构。
 
-不过这里也要把当前证据层级说清。第 5 章现在对 Esirkepov 的 paper-backed 论证，已经不再只是“源码猜测”，但它当前绑定的是项目内已经 materialize 的作者 arXiv 预印本 `physics/9901047`，而不是 Elsevier `Computer Physics Communications 135(2)` 的 publisher-formatted 定稿 PDF。也就是说，本章现在已经可以稳定依赖以下几层结论：
+这里需要把证据层级说清。关于 Esirkepov 的论文论证使用作者 arXiv 预印本 `physics/9901047`，而不是 Elsevier `Computer Physics Communications 135(2)` 的 publisher-formatted 定稿 PDF。因此可直接依赖的结论是：
 
 1. `Eq.(23)` 的 `W^1/W^2/W^3` 结构与 `1/3,1/6` 系数；
 2. `density decomposition` 的唯一性口径；
 3. 二阶 spline / tensor-product form-factor 如何压成可编程局部算法；
 4. 这些 paper-level 结构在 WarpX `sdxi/sdyj/sdzk + one_third/one_sixth` 中的程序化对应。
 
-但本章仍不应提前声称“2001 CPC 发表版已逐行核对”。当前本机 access audit 只证明了两件事：ScienceDirect 的 article/PDF 端点存在，而当前命令行环境访问 PDF 仍返回 `HTTP/2 403`；相对地，arXiv 预印本在同日复核下继续可达。因此更准确的正文边界应是：**Esirkepov 当前已经达到 preprint-backed + source-grounded，但还没有完成 publisher-PDF line-by-line compare**。
-
-一旦后续拿到 CPC 定稿，本章最值得优先做的不是泛泛“再看一遍论文”，而是按五个窄目标做 bounded compare：
-
-1. title wording；
-2. abstract wording；
-3. section titles and numbering；
-4. `Eq.(23)` 及其前后 `density decomposition` 公式；
-5. second-order spline form-factor 那一节算法说明。
-
-这样处理的好处是，本章当前可以继续放心用预印本支撑 `Eq.(23)` 到源码 loop 的主叙述，而不会把“尚未取得 publisher PDF”误写成“论文侧还完全不可引用”。
-
-不过这五项里其实已有一项可以先靠已归档的资产落下最小结论：**title wording 的确存在稳定差别。** 合法全文预印本标题是
+但本章不应声称“2001 CPC 发表版已逐行核对”。可读的预印本支撑 `Eq.(23)` 到源码 loop 的主叙述；发表版只支持书目信息和摘要级事实。两种标题确有稳定差别：预印本是
 
 - `Exact charge conservation scheme for Particle-in-Cell simulations for a big class of form-factors`
 
-而本地 `access-audit.md`、DOI 记录与 WarpX bibliography 对应的 CPC 发表版标题则是
+而 CPC 发表版是
 
 - `Exact charge conservation scheme for Particle-in-Cell simulation with an arbitrary form-factor`
 
-这还不足以推出正文内容有何变化，但至少已经说明“预印本与发表版完全同题”这件事不能先验假定；后续 bounded compare 时，标题差异不是待发现项，而是已经确认存在、只是还未继续追踪到 abstract / section wording / equation typography 层。
-
-这条 compare 线可以把“已核实”和“仍未核实”拆得更干净。arXiv 页面明确记录预印本于 1999-01-26 提交，题名为 `Exact charge conservation scheme for Particle-in-Cell simulations for a big class of form-factors`，并标注为 13 页、无图、10 条参考文献；公开书目信息则确认 CPC 发表版为 `Computer Physics Communications 135(2), 144-153 (2001)`，题名为 `Exact charge conservation scheme for Particle-in-Cell simulation with an arbitrary form-factor`，DOI 为 `10.1016/S0010-4655(00)00228-9`。这已经足以把“发表版身份”和“已归档全文资产”分开记录，但仍不足以推出发表版正文的逐式编辑差异。
+标题差异不能推出正文内容有何变化，但说明预印本与发表版不能被预设为逐字相同。发表版身份为 `Computer Physics Communications 135(2), 144-153 (2001)`，DOI 为 `10.1016/S0010-4655(00)00228-9`；abstract、section wording、`Eq.(23)` 排版和二阶 spline 说明仍须以 publisher PDF 为准。
 
 ### 5.11.1 论文、源码、代数合同与 runtime 证据的分层
 
@@ -8558,7 +8539,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 | 证据层 | 当前材料 | 可以支持的结论 | 不能支持的结论 |
 |---|---|---|---|
 | 论文/索引摘要 | 作者 arXiv 预印本、CPC 书目信息与 indexed abstract | `W^1/W^2/W^3`、`Eq.(23)`、arbitrary form-factor、直线轨迹、无需 Poisson solve 的 paper-level 叙述 | CPC 定稿的逐页排版、section 编号和逐式编辑差异 |
-| 当前源码 | `ShapeFactors.H`、`CurrentDeposition.H`、`WarpXParticleContainer.cpp` | old/new shape 对齐、`sdxi/sdyj/sdzk` 前缀循环、`1/3/1/6` 混合平均、几何/执行分支 | 所有 geometry/order 组合都已端到端等价 |
+| 源码快照 | `ShapeFactors.H`、`CurrentDeposition.H`、`WarpXParticleContainer.cpp` | old/new shape 对齐、`sdxi/sdyj/sdzk` 前缀循环、`1/3/1/6` 混合平均、几何/执行分支 | 所有 geometry/order 组合都已端到端等价 |
 | 代数/源码合同 | `audit_esirkepov_notation_contract.py`、`verify_esirkepov_density_decomposition.py` 与 bounded compare | 记号映射、密度分解和有限样本公式恒等式在当前定义下成立 | 公式恒等式自动等价于 GPU kernel 或 AMR source synchronization |
 | runtime consumer | 1D/2D/3D Langmuir、RZ、RCYLINDER/RSPHERE 与 MR contracts | 指定案例和边界下的 field/charge/observable 结果及其 `PASS/BOUNDARY` 分类 | 从局部案例外推完整 Cartesian product、默认参数修复或正式收敛阶 |
 
@@ -8582,7 +8563,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 为了避免把“论文结构已能对回源码”误读成“发表版逐页已核对”，当前证据矩阵固定如下：
 
-| 论文层次 | 本地可用证据 | WarpX 对应 | 当前证据等级 |
+| 论文层次 | 可用证据 | WarpX 对应 | 证据等级 |
 |---|---|---|---|
 | Section 2：离散连续性方程 | arXiv 预印本全文、MinerU Markdown | `SyncCurrentAndRho()`、`divE-rho/epsilon_0` regression | preprint-backed + source-grounded |
 | Section 3：`W^1/W^2/W^3` density decomposition | 预印本公式与中文讲解 | `sx_old-sx_new`、`sy_old-sy_new`、`sz_old-sz_new` | preprint-backed + source-grounded |
@@ -8590,15 +8571,15 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 | CPC 发表版题名、卷期、页码、DOI和公开摘要 | ScienceDirect/公开书目元数据 | `Esirkepovcpc01` bibliography key | publication-metadata verified |
 | CPC 发表版 abstract、section numbering、`Eq.(23)` 排版、二阶 spline 文字 | indexed abstract compare 已完成；publisher PDF 仍未取得 | 摘要级主张可绑定，逐页公式仍无证据 | abstract verified / PDF open |
 
-这张表是本章当前的证据边界：前三行可以直接进入成书正文，第四行用于出版身份和引用信息，第五行现在可以支持摘要级算法主张，但不能写成发表版全文逐页核对。
+这张表给出本章的证据边界：前三行可以直接进入正文，第四行用于出版身份和引用信息，第五行可以支持摘要级算法主张，但不能写成发表版全文逐页核对。
 
 `notes/code-reading/particles/63-esirkepov-publisher-abstract-compare.md` 与 `scripts/audit_esirkepov_publisher_abstract_compare.py` 将发表版公开索引摘要中的 Cartesian geometry、arbitrary quasi-particle form-factor、straight-line trajectory、无需 Poisson solve、唯一线性组合和 2D/3D demonstration，与 arXiv 预印本摘要中的 density decomposition、product-form n-dimensional form-factor 和 parabolic spline demonstration 逐项对齐。其证据等级为 `publication-metadata + indexed-abstract verified`，分类为 `PUBLISHER_METADATA_ABSTRACT_VERIFIED_PREPRINT_SOURCE_RUNTIME_PDF_MISSING`：摘要级证据已处于可审计状态，但 `Eq.(23)` 排版、section numbering、发表版图表和二阶 spline 正文仍保持 PDF 缺口。
 
-#### 发表版缺口审计契约
+#### 发表版证据边界
 
-本章把 Esirkepov 2001 的剩余缺口单独固化为 `scripts/audit_esirkepov_publication_boundary_contract.py`。它检查四件容易被版本漂移破坏的事情：本地 13 页预印本及其 39 张 MinerU 图片仍在，`Eq.(23)` 到 `one_third/one_sixth`、`sdxi/sdyj/sdzk` 的公式-源码映射仍在，CPC 题名/DOI/卷页信息和 `HTTP 403` 的 publisher-PDF 访问边界仍被记录，以及本章仍明确写出 **不能把它写成 CPC 定稿逐式已核对**。
+`scripts/audit_esirkepov_publication_boundary_contract.py` 固定四项边界：13 页预印本及其 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 题名/DOI/卷页信息及 publisher-PDF 的访问边界，以及 **不能把它写成 CPC 定稿逐式已核对** 的正文限制。
 
-因此，当前成书可以安全使用下面这条最强但不过度的结论：**Esirkepov 的守恒分解已达到预印本公式 + 当前 WarpX 源码 + 既有 runtime consumer 的三层交叉复核；CPC 发表版身份和摘要级事实已核实，但 publisher-PDF line-by-line compare 仍未完成。** 这个契约的分类是 `PREPRINT_FORMULA_SOURCE_RUNTIME_PUBLISHER_BOUNDARY_EXPLICIT`，通过只表示证据边界没有被误写，不表示出版社全文已经取得。
+因此，本章可使用的最强但不过度的结论是：**Esirkepov 的守恒分解已有预印本公式、该源码快照和代表性 runtime consumer 的三层交叉复核；CPC 发表版身份和摘要级事实已核实，但 publisher-PDF line-by-line compare 仍未完成。** 这个契约的分类是 `PREPRINT_FORMULA_SOURCE_RUNTIME_PUBLISHER_BOUNDARY_EXPLICIT`，通过只表示证据边界没有被误写，不表示出版社全文已经取得。
 
 为避免这条边界只停留在叙述层，`scripts/audit_esirkepov_bounded_compare.py` 对预印本、`access-audit.md` 和五项 bounded compare 目标做可重复检查。报告 `runs/stage-c-validation/esirkepov-bounded-compare/contract.{json,md}` 的 8 项检查全部通过：预印本资产、发表版题名、DOI、Section 1--5、Eq.(23)、二阶 spline 线索和 publisher PDF 缺失状态均与归档材料一致。这个 contract 的分类仍是 `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING`，因此它完成的是“证据边界可审计化”，不是 CPC 定稿的逐行核对。
 
@@ -8615,7 +8596,7 @@ $$
 
 该脚本只验证论文 Eq.(23) 的代数分解，不替代 WarpX kernel、网格散度或端到端 regression；但它把 `1/2` 横向平均和 `1/3` 三重差分项的局部恒等式从“文字解释”提升为可重复执行的 formula-level check。用固定 seed `2001` 的 `10000` 组样本运行时，最大残差为 `8.8818e-16 <= 2e-15`；JSON/Markdown 证据归档于 `runs/stage-c-validation/esirkepov-density-decomposition/contract.{json,md}`。
 
-公式层之外，又对当前同级 `../warpx` checkout 做了只读 source audit。`scripts/audit_esirkepov_source_contract.py` 检查 `CurrentDeposition.H` 中的 14 个锚点全部存在：包括 `doEsirkepovDepositionShapeN`、`Compute_shifted_shape_factor`、`invdtd`、`one_third/one_sixth`、`sdxi/sdyj/sdzk`、三方向 old/new shape difference 和 `Jx/Jy/Jz` writeback。报告位于 `runs/stage-c-validation/esirkepov-source-contract/contract.{json,md}`；这证明当前源码仍 materialize 了正文所描述的 skeleton，但仍不是数值 kernel regression。三方汇总见 `runs/stage-c-validation/esirkepov-paper-source-runtime-crosswalk/contract.{json,md}` 与 `notes/code-reading/particles/62-esirkepov-paper-source-runtime-crosswalk.md`；其 `PASS/BOUNDARY` scope 和 publisher-PDF 缺失边界保持不变。
+公式层之外，`scripts/audit_esirkepov_source_contract.py` 对该源码快照做只读检查，确认 `CurrentDeposition.H` 中的 14 个锚点存在：`doEsirkepovDepositionShapeN`、`Compute_shifted_shape_factor`、`invdtd`、`one_third/one_sixth`、`sdxi/sdyj/sdzk`、三方向 old/new shape difference 和 `Jx/Jy/Jz` writeback。报告位于 `runs/stage-c-validation/esirkepov-source-contract/contract.{json,md}`；这证明正文所描述的 skeleton 仍有源码对应，但不是数值 kernel regression。三方汇总见 `runs/stage-c-validation/esirkepov-paper-source-runtime-crosswalk/contract.{json,md}` 与 `notes/code-reading/particles/62-esirkepov-paper-source-runtime-crosswalk.md`。
 
 在这个 Esirkepov skeleton 之上，geometry/order 的源码审计从“函数名出现”推进到分支约束层。`scripts/audit_deposition_geometry_order_contract.py` 对 `CurrentDeposition.H` 的 `1D_Z/XZ/RZ/RCYLINDER/RSPHERE/3D` 宏、Vay 在 RZ/1D 的显式 abort、Vay 与 implicit 的互斥 guard，以及径向 geometry 不进入 shared-memory current kernel 的条件逐项检查；连同 charge ordinary/shared、算法分派和 shape=1/2/3/4 入口共 `69/69` 锚点通过。它证明的是源码中的编译分支和入口合同，不是所有 geometry × order 组合已经运行通过；对应报告为 `runs/stage-c-validation/deposition-geometry-order-source/contract.{json,md}`。
 
@@ -8836,7 +8817,7 @@ new*new * one_third
 
 ### 5.11.2 Villasenor-Buneman 公式级审计：四边界、重复分段与三维交叉项
 
-项目内的 Villasenor-Buneman 1992 full-text PDF 与 MinerU Markdown 现在已经完成第一轮公式级核对。论文以局部原点为最近的 cell-boundary 交点，对单位方形粒子的四边界运动写出：
+Villasenor-Buneman 1992 的全文 PDF 与 MinerU Markdown 已完成第一轮公式级核对。论文以局部原点为最近的 cell-boundary 交点，对单位方形粒子的四边界运动写出：
 
 $$
 \begin{aligned}
@@ -8847,7 +8828,7 @@ J_{y2} &= \Delta y\left(\frac12+x+\frac12\Delta x\right).
 \end{aligned}
 $$
 
-这四式的核心不是某个固定阶数的 shape kernel，而是“主方向位移 × 横向扫掠宽度的旧/新平均”。因此在当前 WarpX `XZ/RZ` kernel 中，对应关系应读成：主方向的 displacement 或 cell weight，乘以横向 old/new node weight 的平均，再乘 `seg_factor = dt_seg/dt`。现代源码还要额外承载 arbitrary shape order、几何分支、boundary crop 和 segment-local writeback，所以不能把源码中的表达式当成论文四式的逐字复制。
+这四式的核心不是某个固定阶数的 shape kernel，而是“主方向位移 × 横向扫掠宽度的旧/新平均”。因此在本书使用的源码快照的 `XZ/RZ` kernel 中，对应关系应读成：主方向的 displacement 或 cell weight，乘以横向 old/new node weight 的平均，再乘 `seg_factor = dt_seg/dt`。现代源码还要额外承载 arbitrary shape order、几何分支、boundary crop 和 segment-local writeback，所以不能把源码中的表达式当成论文四式的逐字复制。
 
 论文对 seven-boundary 和 ten-boundary 也没有另起两套独立电流公式。seven-boundary 先按第一次 complementary-mesh crossing 把轨迹分成两段，例如：
 
@@ -8960,7 +8941,7 @@ $$
 
 前面的公式恒等式和源码合同只能证明局部结构；为了避免把它们误写成端到端证据，运行产物直接采用 WarpX 官方 Langmuir 输入。官方 1D 和 3D 输入本身显式设置 `algo.current_deposition = esirkepov`；官方 2D 测试卡默认是 `direct`，case-local 副本只将这一项覆盖为 `esirkepov`，并补上官方 analysis 所需的 `rho/divE` 输出字段，因此它是可复查的验证 sibling，而不是 WarpX 上游已注册的 2D Esirkepov regression。
 
-两条运行都使用当前 checkout 对应的 native binary、2 个 MPI rank 和 `OMP_NUM_THREADS=1`。官方 analysis 负责理论 Langmuir 场误差与其内置 charge-conservation gate；项目独立的 `scripts/analyze_esirkepov_langmuir_contract.py` 则重新读取最终 plotfile，检查 `Ex/Ey/Ez/Bx/By/Bz/jx/jy/jz/rho/divE` 的有限性，并独立计算
+两条运行均使用本章源码快照对应的 native binary、2 个 MPI rank 和 `OMP_NUM_THREADS=1`。官方 analysis 负责理论 Langmuir 场误差与其内置 charge-conservation gate；`scripts/analyze_esirkepov_langmuir_contract.py` 则重新读取最终 plotfile，检查 `Ex/Ey/Ez/Bx/By/Bz/jx/jy/jz/rho/divE` 的有限性，并独立计算
 
 $$
 \epsilon_{\mathrm{charge}}
@@ -9145,7 +9126,7 @@ species 打开 `do_temperature_deposition` 后，`PhysicalParticleContainer::All
 
 因此 source synchronization 的时序本身就是 solver-algorithm contract 的一部分，不是沉积后永远立刻做的固定尾声。
 
-这里还有一条容易被一句话摘要吃掉的实现边界：`PSATD + 非 periodic single box + Vay deposition` 并不是“什么都不做，等后面统一处理”，而是会先对 `current_fp_vay` 单独做 filter，而且当前源码旁边直接留着注释：
+这里还有一条容易被一句话摘要吃掉的实现边界：`PSATD + 非 periodic single box + Vay deposition` 并不是“什么都不做，等后面统一处理”，而是会先对 `current_fp_vay` 单独做 filter，而且源码旁边直接留着注释：
 
 ```cpp
 // TODO This works only without mesh refinement
@@ -9350,9 +9331,9 @@ $$
 
 源码中 current deposition 和 charge deposition 都会检查 shape 是否能放进 guard cells。例如 current deposition 在 `WarpXParticleContainer.cpp:416-446` 计算 `shape_extent` 和 `range`；shared-memory charge deposition 在 `WarpXParticleContainer.cpp:1527-1556` 做类似检查，普通 charge deposition 则经 `Source/ablastr/particles/DepositCharge.H` 的桥接路径处理本地 tile 与 guard 区。这些检查不是性能细节，而是物理离散化安全条件。
 
-当前 checkout 的 geometry/order 分派可以压成下面这张证据表。表中的“源码覆盖”来自 `scripts/audit_deposition_geometry_order_contract.py` 的 53 个锚点；“运行证据”只列已经实际运行过的组合，不能由源码入口自动推导。
+该源码快照的 geometry/order 分派可压成下面这张证据表。表中的“源码覆盖”来自 `scripts/audit_deposition_geometry_order_contract.py` 的 53 个锚点；“运行证据”只列已经实际运行过的组合，不能由源码入口自动推导。
 
-| 路径 | 源码覆盖 | 当前运行证据 | 仍未关闭的边界 |
+| 路径 | 源码覆盖 | 代表性运行证据 | 仍未关闭的边界 |
 |---|---|---|---|
 | `DepositCharge()` ordinary/shared | 1D_Z、XZ、RZ、RCYLINDER、RSPHERE、3D；shape 1/2/3/4 | 1D/2D/3D charge/Gauss-law siblings；2D shape 1/2/3/4；RZ charge/inverse-volume | RCYLINDER/RSPHERE 的逐阶 charge/Gauss-law runtime 矩阵仍不完整 |
 | Direct current | 1D_Z、XZ、RZ、RCYLINDER、RSPHERE、3D；shape 1/2/3/4；implicit 入口 | 既有 Langmuir、Vay/Direct 相关回归和源码 contract | 不能据此推出所有几何、边界裁剪和 implicit 组合等价 |
@@ -9360,7 +9341,7 @@ $$
 | Villasenor | shape 1/2/3/4；显式与 implicit skeleton | 2D implicit native、filtered、shape=4 cropping、PICMI；公式级 contract | RZ 因 PETSc/build 边界未形成运行级证据，其他几何/阶数组合仍需逐项核对 |
 | Vay | shape 1/2/3/4 | 既有 `vay_deposition` regression | 几何与边界裁剪的全组合覆盖仍未完成 |
 
-因此，本节现在可以安全地说“当前源码提供了哪些分派入口”，但不能把它缩写成“所有入口都已验证”。尤其是 RCYLINDER/RSPHERE 只在 source contract 中确认了编译期 geometry branch；它们与 RZ 的坐标压缩、逆体积和模式写回语义不能互相替代。
+因此，本节可以说明该源码快照提供哪些分派入口，但不能把它缩写成“所有入口都已验证”。尤其是 RCYLINDER/RSPHERE 只在 source contract 中确认了编译期 geometry branch；它们与 RZ 的坐标压缩、逆体积和模式写回语义不能互相替代。
 
 RZ + Esirkepov 还需要单独保留一个诊断边界：当前 2-rank case 的 `Er/Ez` field contract 通过，但同面 `divE-rho/epsilon0` residual 为 `3.593e-3`，而官方 `analysis_utils.py` 本来也明确跳过 RZ Esirkepov 的强 charge gate。原因不能简单归结为“kernel 已经错误”：`DivEFunctor` 与 `RhoFunctor` 分别从场求解器和重新沉积的 charge density 构造诊断量，再经过各自的 node/cell、mode 与插值路径。完整源码语义与可复现命令见 `notes/code-reading/particles/46-rz-esirkepov-charge-boundary.md`；本书将其标为 `BOUNDARY`，不把 field PASS 升级为守恒 PASS。
 
@@ -9432,13 +9413,13 @@ RCYLINDER/RSPHERE 的 shape=1/2/3/4 case-local siblings 统一纳入 `rho/divE` 
 
 本章的源码路径和行号不是静态的“参考链接”，而是必须随 WarpX checkout 重新核对的证据边界。为避免正文在源码演进后继续保留看似合理、实际已经漂移的描述，`scripts/audit_deposition_chapter_source_crosswalk.py` 对本节前面反复使用的代表性主张做分组检查：
 
-| 正文层 | 当前源码锚点 | 这项检查能证明什么 | 不能证明什么 |
+| 正文层 | 源码快照锚点 | 这项检查能证明什么 | 不能证明什么 |
 |---|---|---|---|
 | charge bridge | `WarpXParticleContainer.cpp` 的 `icomp/time_shift_delta/LowerCorner` 与 `deposit_charge` | 旧/新 `rho` 时间层和普通/shared 路径仍有对应入口 | 不证明所有运行时 component 值都正确 |
 | ABLASTR bridge | `DepositCharge.H` 的 `depos_lev`、`rel_ref_ratio`、GPU alias、CPU `lockAdd` | 本文对 level 与 CPU/GPU 暂存的说明仍有源码表面 | 不证明 CPU/GPU 数值结果等价 |
 | implicit current | `CurrentDeposition.H` 的两条 implicit 入口和 `xp_np1` 重建 | 本文区分“端点恢复”和“共享守恒 kernel”的层次没有漂移 | 不证明 RZ implicit runtime 已通过 |
-| Villasenor kernel | `VillasenorDepositionShapeNKernel`、`crop_at_boundary`、`cell_crossings`、`num_segments` | 本文关于 crossing-driven segment loop 的入口仍存在 | 不证明每种 geometry/order 都已运行 |
-| shape/geometry | `ShapeFactors.H` 与 `ChargeDeposition.H` 的 helper、shape 和 geometry 分支 | 本文的 shape helper 与 RZ/径向分支指向当前源码 | 不替代 C++ 语义审计或完整笛卡尔积回归 |
+| Villasenor kernel | `Villasenor` kernel family、`crop_at_boundary`、`cell_crossings`、`num_segments` | 本文关于 crossing-driven segment loop 的入口仍存在 | 不证明每种 geometry/order 都已运行 |
+| shape/geometry | `ShapeFactors.H` 与 `ChargeDeposition.H` 的 helper、shape 和 geometry 分支 | 本文的 shape helper 与 RZ/径向分支指向该源码快照 | 不替代 C++ 语义审计或完整笛卡尔积回归 |
 
 该合同当前为 `13/13` 组通过。它的作用是维护“正文-源码”这条线，而不是把 source marker 误写成物理验证；论文 publisher PDF 对照、完整 geometry/order runtime 和 RZ implicit 运行边界仍按前文分类保留。
 
@@ -9468,7 +9449,7 @@ Vay 这一行现在有了更具体的正向边界。`scripts/audit_vay_geometry_
 
 最后将 shape=1/2/4 的 2-rank sibling 补齐，并与 shape=3 官方 case 合并成 8-case family：2D `error_rel=4.6717e-4/3.8191e-4/4.0411e-4/4.2829e-4`，3D `5.9792e-4/5.7441e-4/6.0266e-4/6.3559e-4`，均低于 `1e-3`。该结果分类为 `RUNTIME_2RANK_VAY_SHAPE_FAMILY_PASS_2D_3D_CASE_LOCAL`，关闭的是 Cartesian shape=1..4 的两进程 case-local family 缺口；shape=1/2/4 尚未成为上游 CMake 注册项，AMR、边界裁剪、RZ/1D、非 Cartesian geometry 和正式收敛阶仍保持边界。详见 `notes/code-reading/particles/77-vay-mpi2-shape-family-contract.md`。
 
-AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在初始化阶段对 `Vay && maxLevel() > 0` 直接触发 `Vay deposition not implemented with mesh refinement`，并另有 PSATD-only、RZ 和 1D guard。因此这里的准确结论不是“Vay AMR runtime 失败”，而是“当前 checkout 在进入物理推进前显式拒绝 Vay + mesh refinement”；该源码边界由 `scripts/audit_vay_amr_guard_contract.py` 固化为 `SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED`。详见 `notes/code-reading/particles/78-vay-amr-guard-contract.md`。
+AMR 边界则不能按同一方式继续外推。源码快照中的 `Source/WarpX.cpp` 在初始化阶段对 `Vay && maxLevel() > 0` 直接触发 `Vay deposition not implemented with mesh refinement`，并另有 PSATD-only、RZ 和 1D guard。因此这里的准确结论不是“Vay AMR runtime 失败”，而是“该源码快照在进入物理推进前显式拒绝 Vay + mesh refinement”；该源码边界由 `scripts/audit_vay_amr_guard_contract.py` 固化为 `SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED`。详见 `notes/code-reading/particles/78-vay-amr-guard-contract.md`。
 
 维护台账见 `notes/code-reading/particles/72-deposition-geometry-order-gap-register.md`，由 `scripts/audit_deposition_geometry_order_gap_register.py` 验收。它关闭的是“缺口没有统一、可复核登记”的文档缺陷，不关闭上表中的物理或运行级缺口。
 
@@ -9485,7 +9466,7 @@ AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在�
 4. **怎样把证据转成输入决策？**
    先查 geometry/AMR/时间层是否允许该 deposition path，再查 shape 和 guard-cell 预算，最后选择与当前 observable 对应的 analysis。输入选择的结论应写成“在这些条件下可复现”，而不是“这个算法永远更准确”。
 
-下面的版本化小节保留逐次实验的数字、命令和分类，适合作为证据索引；第一次阅读可以先跳到 `5.15` 的结论和 `5.16` 的练习，第二遍再用这些小节核对上述四个问题。
+后续小节保留代表性实验的数字、命令和分类，适合作为证据索引；第一次阅读可以先跳到 `5.15` 的结论和 `5.16` 的练习，第二遍再用这些小节核对上述四个问题。
 
 ### 5.14.3 选择沉积算法：先问约束，再问精度
 
@@ -9495,20 +9476,20 @@ AMR 边界则不能按同一方式继续外推。当前 `Source/WarpX.cpp` 在�
 |---|---|---|---|---|
 | 离散目标 | 速度加权源项，不自动满足离散连续性 | 由新旧形函数差构造守恒电流 | 由 cell crossing 分段构造面通量 | 专用两阶段 `D`-field 组织 |
 | 轨迹信息 | 当前时间层速度 | 新旧端点和对齐后的 shape | 端点、crossing 与 segment fraction | 显式 push 和专用 `D` 字段 |
-| 时间层 | 显式/隐式均有，但守恒性需另验 | 有显式/隐式入口 | 显式/隐式共享 segment backend | 当前 checkout 仅显式 |
-| 当前强约束 | 不能由 current correction 自动升级为守恒算法 | 几何、shared-memory 与 collocation 分支需逐项查 guard | geometry/order 组合需逐项验证 | `Vay + AMR` 在初始化阶段明确拒绝 |
+| 时间层 | 显式/隐式均有，但守恒性需另验 | 有显式/隐式入口 | 显式/隐式共享 segment backend | 该源码快照仅显式 |
+| 主要约束 | 不能由 current correction 自动升级为守恒算法 | 几何、shared-memory 与 collocation 分支需逐项查 guard | geometry/order 组合需逐项验证 | `Vay + AMR` 在初始化阶段明确拒绝 |
 | 典型诊断 | 非守恒对照 | `divE-rho/epsilon_0`、charge residual | 能量/Gauss-law 与 crossing-sensitive case | Cartesian case 的 `divE-rho/epsilon_0` |
 
 这张表支持的是输入前的排查顺序，而不是算法排名。单个 Langmuir case 的通过不能推出 RZ axis、AMR、boundary crop、全部 shape 或其他诊断量同样可靠。
 
 ### 5.14.4 读懂证据：公式、源码和运行结果各回答什么
 
-同一个“算法正确”的说法至少包含三件不同的事：论文或代数是否说明了离散构造，当前源码是否含有相应实现入口，以及给定 case 是否通过指定 observable。三层证据必须并列，而不能互相替代。
+同一个“算法正确”的说法至少包含三件不同的事：论文或代数是否说明了离散构造，该源码快照是否含有相应实现入口，以及给定 case 是否通过指定 observable。三层证据必须并列，而不能互相替代。
 
 | 证据层 | 它能回答的问题 | 它不能回答的问题 |
 |---|---|---|
 | 论文与公式 | 离散构造为什么应满足某种守恒或一致性 | WarpX 的每个分支是否逐式相同，或某个 case 是否通过 |
-| 当前源码 | 哪个 geometry、时间层和 guard 把算法接入主循环 | 所有输入、并行规模和数值参数下的物理正确性 |
+| 源码快照 | 哪个 geometry、时间层和 guard 把算法接入主循环 | 所有输入、并行规模和数值参数下的物理正确性 |
 | producer + consumer | 指定输入和指定误差范数下，输出是否满足 gate | 未运行的 geometry、shape、AMR 或更强物理结论 |
 
 因此，读者在引用本章的结论时应写明 scope。例如，Esirkepov 有预印本公式、当前 kernel 和代表性 runtime consumer 的三层交叉证据；这不等价于 CPC 定稿已逐式对照，也不等价于完整 geometry × order × AMR 覆盖。Villasenor-Buneman 的二维 implicit case 也不能替代 RZ runtime。Vay 的 Cartesian 2-rank family 通过，只能说明当前支持的 Cartesian 范围；它不改变源码对 AMR、RZ 与 1D 的限制。
@@ -9566,11 +9547,7 @@ flowchart TD
 
 # 6. 电磁场求解器
 
-本章当前依据的 WarpX 源码版本是：
-
-- 只读源码路径：`../warpx`
-- 分支：`pkuHEDPbranch`
-- commit：`8c488b1a9`
+本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航；其他版本应按函数名和调用关系检索。
 
 下表是阅读场推进实现时的源码导航：它把主时间步、FDTD、PSATD/JRhom、PML 与可复查的案例入口连成一张图。读者应先用它确定某个算法位于主循环的哪个分支，再进入后文的离散公式与代码片段；源码升级后，这些入口也提供了重新核对正文的最小范围。
 

@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# Reader-facing edits removed obsolete process narration; the verified v0.110 layout is 269 pages.
-EXPECTED_PDF_PAGES = 269
+# Chapter 5 reader-facing edits condensed the verified v0.110 layout to 268 pages.
+EXPECTED_PDF_PAGES = 268
 
 
 def image_links(text: str) -> list[str]:

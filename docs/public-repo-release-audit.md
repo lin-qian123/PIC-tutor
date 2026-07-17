@@ -2,7 +2,7 @@
 
 审计日期：2026-07-18
 
-当前 release 为 v0.110；本版重新执行正式收敛 study 的第二组 12 个 2-rank producer，correction-on 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`。分类为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`，不把该结果写成 formal order 或 axis-charge closure。第 1--9 章入口已完成读者化审读；第 2、3、3A、4、5、8、9 章的深层证据段也已移除开发过程措辞和绝对工作区路径，并把读者入口改为相对链接。最新连续阅读将第 1--7 章和 3A 章的本地运行史改为源码快照、复现入口与适用范围；第 1 章补足 Debye 与统计尺度定义，第 2 章将时间组织和 AMR subcycling 改为离散一致性说明，第 3、3A 章将 Mermaid 源码和宽对象表改为可打印的路线表与对象落点说明，并在第 24、29、42、48 页视觉抽查。第 5 章补回形函数、守恒、时间层和 AMR 同步的读者主线，第 6 章按算法假设、可支持结论与证据边界重组，第 7 章则以边界闭合系统串联场、粒子、PML、guard cell 与 AMR。第 8 章的宽命令台账已替换为跨页的“观察量、结论与边界”矩阵，并在第 257--258 页视觉抽查；第 9 章统一为可核查性分层。其他章节的 Mermaid 清理、全书通读、route-count ledger、axis charge correctness、RZ implicit runtime、许可和公开再分发仍保持开放。
+当前 release 为 v0.110；本版重新执行正式收敛 study 的第二组 12 个 2-rank producer，correction-on 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`。分类为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`，不把该结果写成 formal order 或 axis-charge closure。第 1--9 章入口已完成读者化审读；第 2、3、3A、4、5、8、9 章的深层证据段也已移除开发过程措辞和绝对工作区路径，并把读者入口改为相对链接。第 3 至 7 章原先会在 PDF 中泄露的 Mermaid 流程现均已替换为可打印的决策表、编号路线或闭合链；第 6 章宽求解器表改为分组路径速查，第 7 章以参数、场/PML、AMR 与粒子诊断串联边界闭合系统。第 171--172、208--209 页已视觉抽查，且 264 页 PDF 的全页文本扫描未检出 `flowchart` 或 `-->`。全书通读、route-count ledger、axis charge correctness、RZ implicit runtime、许可和公开再分发仍保持开放。
 
 全书正文扫描确认绝对工作区路径与开发过程标记均为零。第 5 章两张宽表已由列式矩阵改为分组证据列表，并在 PDF 第 158--159 页人工复核；这只关闭该处的版式风险，不替代全书通读。
 
@@ -23,9 +23,9 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.110.pdf` | 2,986,230 bytes / 265 页 | 当前成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.110.html` | 5,247,173 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.110.md` | 853,010 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.110.pdf` | 2,987,260 bytes / 264 页 | 当前成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.110.html` | 5,244,548 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.110.md` | 852,577 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 

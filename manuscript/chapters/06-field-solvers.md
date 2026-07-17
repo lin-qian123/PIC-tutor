@@ -17,43 +17,22 @@
 
 这些符号分别位于源码快照的 `Source/Evolve/`、`Source/FieldSolver/` 和 `Source/BoundaryConditions/`；后文在首次展开每条链时给出具体文件和行号。先用函数名定位，再读离散公式，能避免把同名的 `Evolve*` 或 `PsatdAlgorithm*` 当作同一个数值路径。
 
-```mermaid
-flowchart TD
-    A["OneStep_nosub: particles pushed and J/rho synchronized"] --> B{"algo.maxwell_solver"}
-    B -->|"Yee / CKC / HybridPIC / ECT"| C["FDTD branch"]
-    C --> D["EvolveF/G half step"]
-    D --> E["EvolveB(dt/2)"]
-    E --> F["FillBoundaryB"]
-    F --> G["EvolveE(dt) or MacroscopicEvolveE(dt)"]
-    G --> H["FillBoundaryE"]
-    H --> I["EvolveF/G half step"]
-    I --> J["EvolveB(dt/2)"]
-    J --> K{"do_pml"}
-    K -->|"yes"| L["DampPML and fill moving-window guards"]
-    K -->|"no"| M["safe guard-cell fill if requested"]
-    B -->|"PSATD"| N["PushPSATD"]
-    N --> O["Correct/Vay-transform J and rho"]
-    O --> P["FFT E/B and optional F/G"]
-    P --> Q["SpectralSolver::pushSpectralFields"]
-    Q --> R["Inverse FFT and optional averaged fields"]
-    R --> S{"PML enabled"}
-    S -->|"yes"| T["PML::PushPSATD or PML_RZ::PushPSATD"]
-    S -->|"no"| U["Apply field boundaries"]
-    A --> V{"psatd.JRhom"}
-    V -->|"enabled"| W["OneStep_JRhom: skip normal deposition, redeposit J/rho over subintervals"]
-    W --> Q
-```
+在 `OneStep_nosub()` 已完成粒子推进和 `J/rho` 同步后，场推进按下列路线分派：
 
-| 求解器路径 | 输入/开关 | 主源码入口 | 数值含义 | 读者检查点 |
-|---|---|---|---|---|
-| Yee FDTD | `algo.maxwell_solver = yee`，staggered grid | `FiniteDifferenceSolver/EvolveB.cpp`、`EvolveE.cpp`、`CartesianYeeAlgorithm.H` | 交错网格上的 curl 更新，受 CFL 限制 | `EvolveB(dt/2) -> EvolveE(dt) -> EvolveB(dt/2)` 是否和主循环顺序一致 |
-| CKC FDTD | `algo.maxwell_solver = ckc` | `CartesianCKCAlgorithm.H` 经同一 `EvolveB/E` 模板实例化 | 扩展 stencil 降低数值色散 | B 更新是否走 CKC 的横向加权 `Upward` 算子 |
-| Nodal FDTD | collocated/nodal grid | `CartesianNodalAlgorithm.H` 经同一 `EvolveB/E` 模板实例化 | E/B 无 Yee 交错，差分算子变为中心形式 | `UpwardDx` 与 `DownwardDx` 是否退化为同一中心差分 |
-| 标准 PSATD | `algo.maxwell_solver = psatd`，`v_galilean = 0` | `WarpX::PushPSATD()`、`SpectralSolver.cpp`、`PsatdAlgorithmGalilean.cpp` | Fourier 空间解析推进 Maxwell 线性部分 | J/rho 是否先完成 current correction 或 Vay deposition |
-| Galilean PSATD | `psatd.v_galilean` 非零 | `SpectralSolver.cpp:75-82`，`PsatdAlgorithmGalilean.cpp` | 在 Galilean 坐标中降低 boosted-frame NCI | current correction 是否使用 Galilean 连续性公式 |
-| PML FDTD | field boundary 为 PML 且非 PSATD 路径 | `EvolveBPML.cpp`、`EvolveEPML.cpp`、`WarpXEvolvePML.cpp` | split-field curl 更新加 sigma damping | split components 是否经 `PML::Exchange()` 回填常规场 |
-| PML PSATD | PSATD 与 PML 同时打开 | `PML::PushPSATD()`、`PsatdAlgorithmPml.cpp`、`PML_RZ.cpp` | PML 区域单独谱推进或 RZ PML 谱推进 | PML push 是否发生在主域 `PSATDPushSpectralFields()` 之后 |
-| JRhom PSATD | `psatd.JRhom = CL1/LQ4/...` | `WarpX::OneStep_JRhom()`、`PsatdAlgorithmJRhom*` | 一个 PIC 步内多次沉积 J/rho 并用多项式源项推进 | 是否禁用 Vay/Galilean/current correction，并按子区间重沉积 |
+1. **Yee、CKC、HybridPIC 或 ECT 的 FDTD 路径**：`EvolveF/G(dt/2) -> EvolveB(dt/2) -> FillBoundaryB -> EvolveE(dt) 或 MacroscopicEvolveE(dt) -> FillBoundaryE -> EvolveF/G(dt/2) -> EvolveB(dt/2)`；随后根据 PML 是否开启，执行 `DampPML` 与 moving-window guard 填充，或执行需要的常规 guard 填充。
+2. **PSATD 路径**：`PushPSATD()` 先对 `J/rho` 做 current correction 或 Vay transform，再对 `E/B` 和可选 `F/G` 作 FFT，由 `SpectralSolver::pushSpectralFields` 推进，随后 inverse FFT 并处理可选时间平均场；PML 开启时再进入 `PML::PushPSATD` 或 `PML_RZ::PushPSATD`，否则应用场边界。
+3. **JRhom 路径**：`OneStep_JRhom()` 跳过普通单次沉积，在多个 subinterval 重新沉积 `J/rho`，每个子区间都进入同一 PSATD 谱推进链。
+
+### 路径选择速查
+
+- **Yee FDTD。** 选择 `algo.maxwell_solver = yee` 与交错网格；实现入口是 `FiniteDifferenceSolver/EvolveB.cpp`、`EvolveE.cpp` 和 `CartesianYeeAlgorithm.H`。它在交错网格上更新 curl，受 CFL 条件限制。读代码时先核对主循环是否保持 `EvolveB(dt/2) -> EvolveE(dt) -> EvolveB(dt/2)` 的时间顺序。
+- **CKC FDTD。** 选择 `algo.maxwell_solver = ckc`；同一 `EvolveB/E` 模板由 `CartesianCKCAlgorithm.H` 实例化。它用扩展 stencil 降低数值色散；检查 B 更新是否调用带横向加权的 CKC `Upward` 算子。
+- **Nodal FDTD。** 在 collocated/nodal grid 上，`CartesianNodalAlgorithm.H` 仍通过同一 `EvolveB/E` 模板工作，但 E/B 不再采用 Yee 交错。检查 `UpwardDx` 和 `DownwardDx` 是否退化为同一中心差分，就能确认此路径的空间离散。
+- **标准 PSATD。** 选择 `algo.maxwell_solver = psatd` 且 `v_galilean = 0`；主入口为 `WarpX::PushPSATD()`、`SpectralSolver.cpp` 与 `PsatdAlgorithmGalilean.cpp`。它在 Fourier 空间解析推进 Maxwell 的线性部分；先确认 `J/rho` 已经过 current correction 或 Vay deposition，再追踪谱推进。
+- **Galilean PSATD。** 当 `psatd.v_galilean` 非零时，`SpectralSolver.cpp:75-82` 选择 `PsatdAlgorithmGalilean.cpp` 中的算法。在 Galilean 坐标中它用于降低 boosted-frame 的 NCI；检查 current correction 是否使用 Galilean 连续性公式。
+- **带 PML 的 FDTD。** 当 field boundary 为 PML 且并非 PSATD 路径时，`EvolveBPML.cpp`、`EvolveEPML.cpp` 和 `WarpXEvolvePML.cpp` 更新带 sigma damping 的 split fields。检查 split components 是否经过 `PML::Exchange()` 回填到常规场。
+- **带 PML 的 PSATD。** PSATD 与 PML 同时开启时，入口是 `PML::PushPSATD()`、`PsatdAlgorithmPml.cpp` 和 `PML_RZ.cpp`。PML 区域单独执行谱推进；确认 PML push 发生在主域 `PSATDPushSpectralFields()` 之后。
+- **JRhom PSATD。** 选择 `psatd.JRhom = CL1/LQ4/...` 后，`WarpX::OneStep_JRhom()` 和 `PsatdAlgorithmJRhom*` 在一个 PIC 步内多次沉积 `J/rho`，并以多项式源项推进。检查该路径是否禁用 Vay、Galilean 与普通 current correction，并在每个子区间重新沉积源项。
 
 电磁 PIC 的场求解器离散 Maxwell 方程。显式 FDTD 的经典代表是 Yee 算法：电场和磁场在空间上交错，在时间上也交错。抽象地写，
 
@@ -80,27 +59,17 @@ WarpX 的场推进封装在 `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp`�
 
 真正的 FDTD stencil 在 `Source/FieldSolver/FiniteDifferenceSolver/` 中，例如 `EvolveB.cpp`、`EvolveE.cpp`、`EvolveBPML.cpp`、`EvolveEPML.cpp`。当前已新增第一篇源码精读 `notes/code-reading/fieldsolver/00-fieldsolver-dispatch.md`，开始逐块展开这些文件。
 
-`WarpX::EvolveB()` 的顶层路由在 `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:945-996`：
+`WarpX::EvolveB()` 的顶层路由在 `WarpXPushFieldsEM.cpp:945-996`。省略函数形参与非关键参数后，核心分派为：
 
 ```cpp
-void
-WarpX::EvolveB (int lev, PatchType patch_type, amrex::Real a_dt, SubcyclingHalf subcycling_half, amrex::Real start_time)
-{
-    // Evolve B field in regular cells
-    if (patch_type == PatchType::fine) {
-        m_fdtd_solver_fp[lev]->EvolveB( m_fields,
-                                        lev,
-                                        patch_type,
-                                        m_flag_info_face[lev], m_borrowing[lev], a_dt );
-    } else {
-        m_fdtd_solver_cp[lev]->EvolveB( m_fields,
-                                        lev,
-                                        patch_type,
-                                        m_flag_info_face[lev], m_borrowing[lev], a_dt );
-    }
+if (patch_type == PatchType::fine) {
+    m_fdtd_solver_fp[lev]->EvolveB(...);
+} else {
+    m_fdtd_solver_cp[lev]->EvolveB(...);
+}
 ```
 
-`FiniteDifferenceSolver::EvolveB()` 的 Cartesian 主 kernel 在 `../warpx/Source/FieldSolver/FiniteDifferenceSolver/EvolveB.cpp:130-211`：
+`FiniteDifferenceSolver::EvolveB()` 的 Cartesian 主 kernel 在 `EvolveB.cpp:130-211`：
 
 ```cpp
 Bx(i, j, k) += dt * T_Algo::UpwardDz(Ey, coefs_z, n_coefs_z, i, j, k)
@@ -119,7 +88,7 @@ $$
 \partial_t\mathbf{B}=-\nabla_h\times\mathbf{E}.
 $$
 
-`FiniteDifferenceSolver::EvolveE()` 的 Cartesian 主 kernel 在 `../warpx/Source/FieldSolver/FiniteDifferenceSolver/EvolveE.cpp:119-235`：
+`FiniteDifferenceSolver::EvolveE()` 的 Cartesian 主 kernel 在 `EvolveE.cpp:119-235`：
 
 ```cpp
 Ex(i, j, k) += c2 * dt * (

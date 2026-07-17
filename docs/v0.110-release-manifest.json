@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1246,
-  "total_bytes": 39135341,
+  "total_bytes": 39133871,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1542549,
-      "sha256": "e265f43b4d6eaa820db5b6c953ee01106882ee540d886d02853df3ae2d99ad5d"
+      "bytes": 1542497,
+      "sha256": "0765528a147bfc20efbdd9ac60c4e81644620beca87d98a34b8241ffb25fa1bb"
     },
     {
       "path": "TODO.md",
-      "bytes": 1411613,
-      "sha256": "5d864e441265a52205f382d019202e33f03e79e19a70286ba35459699bb42b0f"
+      "bytes": 1412224,
+      "sha256": "c0c8fec0402d79f459ae4c5e32e5259bda36b962262f2f190e348747b147ae03"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5247173,
-      "sha256": "1bdf6fbfa4dfac1398284a692627dac9966bcdc7528e2c348df20c1bb582ccd5"
+      "bytes": 5244548,
+      "sha256": "5e6729107a12b0019f8880742daec21190cf022ba37c4b920e033f81d05d937d"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 853010,
-      "sha256": "5a6b65973fcd26bccf95170dd452283903437ebeeca28909b1720515c60a9907"
+      "bytes": 852577,
+      "sha256": "ec2d5f2c5884fb0b0a21df995a05fe220c63a16635ba64782842687b3e28b5d5"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2986230,
-      "sha256": "dcae739a8632bac2cdb4bdd59d93d29a140b265da77d05452eaacb7b9edd9f6a"
+      "bytes": 2987260,
+      "sha256": "936dda022fca7fdb372ecaf5405ba48eab91a7893ae55d9d6dda798d3692c152"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -203,7 +203,7 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
       "bytes": 768,
-      "sha256": "6956c925528a829bef994f81ad03102b1f41f6e023ef24d226b49c1a58fad8b8"
+      "sha256": "b283f8830ca5e452d533416addfbe631c0b99537470097a14686452a848f2435"
     },
     {
       "path": "docs/editorial-quality-audit-v0.81.json",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 10953,
-      "sha256": "59cfed527bdef38340bd1a29fb2b75b81d8d2d85f3ad6509759300ee3551d657"
+      "bytes": 11804,
+      "sha256": "92336aa7fb931a7d8787b44e4809ebef3a6ec163d6706f1de3581c92c53ecea3"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -668,7 +668,7 @@
     {
       "path": "docs/pdf-layout-audit-v0.110.md",
       "bytes": 571,
-      "sha256": "d94e3b0cb7c4c83d89e846cce4e27c11128de8a12054bfbcf8216a502ed18caf"
+      "sha256": "cc8394f337401b1641ede39130b82919e62e8c36242870558784c22377399bc1"
     },
     {
       "path": "docs/pdf-layout-audit-v0.82.json",
@@ -892,8 +892,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 7497,
-      "sha256": "fdc13aa9f246350688372fc78ce1a4fba355512ce2762f7fd9ce6afe94ab5f1d"
+      "bytes": 7071,
+      "sha256": "b0f1e769183d0ccfd856f22466b72e84c9d24edff94934073661a576c8802ce2"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2307,13 +2307,13 @@
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
-      "bytes": 120421,
-      "sha256": "7094d4ef3edd23767849bff797eaf807a753e7182adc50dfaa86524111a92302"
+      "bytes": 119946,
+      "sha256": "f030f09282303a4b9387477364abed91fb2f4cbf1d31ba4c51cb1cbfa8d09d20"
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 43015,
-      "sha256": "8516c522ace7940cfeb1dde3e0540301641f9b08a20ea18a5b5d9722f950a887"
+      "bytes": 43057,
+      "sha256": "38a9fdd1ef04d5bda5fa76c0f0b473d0cc054308171761de787a1840c34939b6"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
@@ -5952,8 +5952,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 21700,
-      "sha256": "d3aa9729c5a9d139ad52fb5268f16b930d2b344bdc8d2977d5dad71f3631d65b"
+      "bytes": 21707,
+      "sha256": "a1ba83f8775169a70b267754ee16e990edc0c37967643021aafd651715ead79a"
     },
     {
       "path": "scripts/verify_v40_build.py",

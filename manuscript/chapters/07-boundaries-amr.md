@@ -50,23 +50,12 @@ WarpX 官方理论文档把 PML、PEC、PMC、Silver-Mueller、周期边界和�
 
 这些入口位于源码快照的 `Source/BoundaryConditions/`、`Source/Parallelization/`、`Source/Particles/` 与 `Source/Diagnostics/`；后文在首次使用时给出具体文件和行号。
 
-把这些入口串起来，边界章节的主线应当是：
+边界章节的主线可按以下闭合链阅读：
 
-```mermaid
-flowchart TD
-    A["WarpX::MakeWarpX()"] --> B["parse_field_boundaries()"]
-    B --> C["periodicity array"]
-    C --> D["parse_particle_boundaries()"]
-    B --> E["ApplyE/B field boundary"]
-    E --> F["PEC / PMC / PECInsulator / Silver-Mueller / axis"]
-    E --> G["Apply rho/J reflective boundary"]
-    E --> H["PML split fields and current damping"]
-    H --> I["WarpXComm FillBoundary and PML exchange"]
-    I --> J["GuardCellManager guard budgets"]
-    J --> K["AMR regrid / RemakeLevel / EB factory"]
-    D --> L["Handle particle boundaries and buffers"]
-    L --> M["BoundaryScrapingDiagnostics"]
-```
+1. `WarpX::MakeWarpX()` 调用 `parse_field_boundaries()`，由 field 边界构造 periodicity array，再据此调用 `parse_particle_boundaries()`。
+2. 场路径分别应用 `E/B` 边界、PEC/PMC/PECInsulator/Silver-Mueller/axis 条件和反射型 `rho/J` 边界；PML 则维护 split fields 与电流 damping。
+3. `WarpXComm` 的 `FillBoundary` 与 PML exchange 让边界数据进入相邻 patch；`GuardCellManager` 据此决定 guard 宽度，AMR regrid、`RemakeLevel()` 与 EB factory 再重建相应状态。
+4. 粒子路径由 `HandleParticlesAtBoundaries` 处理边界和 buffer；需要记录而非只删除的粒子进入 `BoundaryScrapingDiagnostics`。
 
 因此，后续解释边界时要同时回答三类问题：输入参数如何被约束，场和粒子的运行时边界动作在哪里发生，以及这些动作怎样与 PML、guard cell、AMR 和 diagnostics 互相交叉。
 

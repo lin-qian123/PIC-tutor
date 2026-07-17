@@ -31,7 +31,7 @@ def main() -> int:
     versioned_prose_markers = re.findall(r"\bv0\.\d+", chapter_text)
     project_record_words = re.findall(r"发布|审计合同|当前版本|本版新增|本轮新增|运行合同", version + readme, re.MULTILINE)
     project_record_opening_markers = re.findall(
-        r"v0\.\d+\s*(?:校准说明|源码基线|的本章目标)|可审校长草稿|正式书稿版|后续扩写计划|本章当前依据|本章当前按|本机现成 PDF/MinerU|项目目录 .*access audit",
+        r"v0\.\d+\s*(?:校准说明|源码基线|的本章目标)|可审校长草稿|正式书稿版|后续扩写计划|本章当前依据|本章当前按|本机现成 PDF/MinerU|本机源码位置|本章当前引用|当前源码入口|项目目录 .*access audit|项目级 helper|交接记录",
         chapter_openings,
     )
     checks = {

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1246,
-  "total_bytes": 39159825,
+  "total_bytes": 39158400,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1540174,
-      "sha256": "38a9a11c4fc3cb1d45df61b3598ec5a47e33ac157ea32a9f302cc4522ab0ba7c"
+      "bytes": 1540267,
+      "sha256": "077214111fa59313bd45c20f3f4d459dba096d96e19e7b6f2042c7b3e9d9ecc7"
     },
     {
       "path": "TODO.md",
-      "bytes": 1407643,
-      "sha256": "4ec92a364a396d862a14bb277b09d5b96e8e1ace47c5d258975fcf96fff66389"
+      "bytes": 1408322,
+      "sha256": "3ff81ad478e0de08b84f7021000793a19a0b88a774e0193f41bcf2292e2222aa"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5258175,
-      "sha256": "44462398512c80277998eb71226a7dbaabbb2e42cf68b9d29ad3f2fff348688b"
+      "bytes": 5257200,
+      "sha256": "d4f850fc27407497b6fe252b229a42adf8b3a9c9ee88fdd4e5f89d109cff0f5a"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 861881,
-      "sha256": "1eeed1acfa5cbe512a83b572cf6a98b2db13d2afb3127851918bbb03f7d53721"
+      "bytes": 860994,
+      "sha256": "2287f830516b8a11217e68667977acc2af3e2a437aafef2155dee2c072d1bf11"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2993036,
-      "sha256": "a8bca5bb2fa2ad9ff36db623bc39aac6ec1e94fd0335555f8ca1a4fe9400afa9"
+      "bytes": 2992791,
+      "sha256": "e9ebb495ba5dd72e7285f040a531a8af86675c73ad74312a5379d588f5a346d6"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 6867,
-      "sha256": "a111384b3dd6a299d7757269d034a3d99adbf5124a36bbef30c5a41a2d0ff25b"
+      "bytes": 7508,
+      "sha256": "193ea4a2ff90dc6e177a6a631f2b3f5f9e6317ef097184aa87b8aaf70429970d"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 6950,
-      "sha256": "5bc2cef023c053532845775229ff074013ecd7099112b4f8612c0e5b1410d241"
+      "bytes": 7019,
+      "sha256": "ad49834bab4afbb6c9731bb4797026891a312a73105ad0284c2b84a9da7d952c"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2307,8 +2307,8 @@
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
-      "bytes": 121308,
-      "sha256": "8e604202ae9b746428106e4eceda1c0367d82af7798ce781ff0c30ca49af962d"
+      "bytes": 120421,
+      "sha256": "7094d4ef3edd23767849bff797eaf807a753e7182adc50dfaa86524111a92302"
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
@@ -4552,8 +4552,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 4350,
-      "sha256": "bddf3457b7d83f75cf9e4819cea88ca730260658ba67694f352bc2059796b35a"
+      "bytes": 4437,
+      "sha256": "7d56c573d33f20a1a7369bdef392d4668daae25c0382b995ef7e40c72f8b62f6"
     },
     {
       "path": "scripts/audit_release_consistency.py",

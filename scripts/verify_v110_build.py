@@ -18,7 +18,7 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-EXPECTED_PDF_PAGES = 323
+EXPECTED_PDF_PAGES = 289
 
 
 def image_links(text: str) -> list[str]:
@@ -42,6 +42,8 @@ def main() -> None:
     # matter; keep it in the verification surface without putting it back into
     # the tutorial's opening pages.
     source += "\n" + (ROOT / "docs" / "version-history-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-05-v0-evidence-ledger.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
     merged = MERGED_MARKDOWN.read_text(encoding="utf-8")
     html = HTML.read_text(encoding="utf-8", errors="ignore")
     reader = PdfReader(str(PDF))
@@ -57,11 +59,11 @@ def main() -> None:
     checks = {
         "pdf_pages": len(reader.pages) == EXPECTED_PDF_PAGES,
         "source_image_links": len(image_links(source)) == 16,
-        "merged_image_links": len(image_links(merged)) == 16,
+        "merged_image_links": len(image_links(merged)) == 15,
         "image_links_relative": all(
             not link.startswith("/") for link in image_links(source) + image_links(merged)
         ),
-        "html_embedded_images": html.count("data:image/png;base64,") >= 16,
+        "html_embedded_images": html.count("data:image/png;base64,") >= 15,
         "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
         "chapter_5_subheading_order": chapter_5_numbers == sorted(chapter_5_numbers)
@@ -105,7 +107,7 @@ def main() -> None:
         "chapter_5_geometry_order_gap_register": all(
             marker in source
             for marker in (
-                "### 5.14.2 geometry/order coverage gap register",
+                "### 5.14.2 覆盖范围与已知空白",
                 "negative-space contract",
                 "RZ 默认 axis correction 下的 charge residual",
                 "跨 geometry/shape 的正式收敛阶",
@@ -407,9 +409,9 @@ def main() -> None:
             marker in manual_spotcheck
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
-                "| 184 |",
-                "| 191 |",
-                "新增段落与路径均在版心内",
+                "| 173 |",
+                "| 243 |",
+                "短页为附录结尾的预期留白",
                 "全书人工通读、第三方材料许可和公开再分发仍需单独签收",
             )
         ),

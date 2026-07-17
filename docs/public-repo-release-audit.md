@@ -21,9 +21,9 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.110.pdf` | 3,408,911 bytes / 323 页 | 当前成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.110.html` | 5,799,468 bytes | 自包含 MathJax + 16 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.110.md` | 1,106,858 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.110.pdf` | 3,104,243 bytes / 289 页 | 当前成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.110.html` | 5,392,305 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.110.md` | 943,677 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 
@@ -38,7 +38,7 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 建议纳入公共仓库的项目内资产：
 
 - `AGENTS.md`、`README.md`、`TODO.md`；
-- `manuscript/` 书稿源、`manuscript/assets/figures/` 16 张验证图和 `manuscript/VERSION.md`；
+- `manuscript/` 书稿源、`manuscript/assets/figures/` 15 张验证图和 `manuscript/VERSION.md`；
 - `scripts/build_v110.py`、`scripts/verify_v110_build.py`、`scripts/audit_reader_facing_content.py`、`scripts/audit_release_consistency.py`、`scripts/audit_rz_axis_correction_nonneutral_control.py`、`scripts/audit_rz_axis_correction_nonneutral_shape_family.py`、`scripts/audit_rz_axis_correction_nonneutral_density_triple.py`、`scripts/run_formal_convergence_repeat_family.py`、`scripts/analyze_formal_convergence_repeat_family.py`、`scripts/audit_formal_convergence_repeat_slope_gate.py` 及书稿引用的项目分析脚本；
 - `docs/` 中的项目说明、验证矩阵、读者视角编辑审查和本发布审计；
 - `docs/public-evidence-index.{json,md}`；

@@ -2,6 +2,8 @@
 
 当前成书版本为 `v0.110`：在 v0.109 三密度 RZ 对照基础上，重新执行正式收敛 study 的第二组 12 个 2-rank producer。RZ/RSPHERE correction-on 的 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`；该证据确认 gate 可复现，但不宣称 formal numerical order 或 axis-charge closure 已完成。
 
+当前读者版已完成第 5 章沉积和第 7 章边界/AMR 的主题化改写：正文按“问题 -> 原理 -> 证据 -> 限制 -> 练习”组织，逐版实验记录分别下沉至 `docs/chapter-05-v0-evidence-ledger.md` 和 `docs/chapter-07-v0-evidence-ledger.md`。v0.110 合订产物为 289 页；读者审计只剩第 6 章 PSATD/RZ/收敛段的版本化证据需要同样改写，完整缺口见 `docs/current-book-gap-register.md`。
+
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 
 当前接续工作又完成 Vranic 2015 粒子合并论文资产：24 页 PDF、MinerU Markdown、32 张图、中文精读和 `11/11` asset contract 已通过；第 4 章已建立与 WarpX `VelocityCoincidenceThinning` 的有界映射，不把论文案例写成 WarpX runtime PASS。
@@ -78,7 +80,7 @@
 
 v0.76 延续 `docs/public-evidence-index.{json,md}`：从本地 contract 生成去本机路径摘要，保留原始 PASS/FAIL/UNKNOWN 状态，并单独标识 boundary、unproven、missing 证据；同时公开 `docs/literature-pending-triage.md` 的 acquisition/read queue。原始 `runs/` 仍不纳入公共发布；摘要只提供可迁移的证据目录，不替代原始运行报告。
 
-当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.83，并拒绝 README 中已知的旧当前版本口径。
+当前发布元数据可用 `python scripts/audit_release_consistency.py` 做一致性审计；它检查当前版本、构建脚本、版本说明、发布审计和 manifest 是否指向同一 v0.110，并拒绝 README 中已知的旧当前版本口径。
 
 2026-07-13：新增 Boris 1970 论文专属 metadata/access contract，记录 DTIC `ADA023511` 的书目身份和 PDF 限流边界；第 4 章采用 Birdsall 1985 二手推导与 WarpX `UpdateMomentumBoris.H` 源码解释，未把原始 proceedings 全文缺口隐藏为已完成精读。
 

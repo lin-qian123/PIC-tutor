@@ -1,8 +1,8 @@
 # Reader-facing content audit
 
-- classification: `READER_FACING_ENTRY_POINTS_PASS_CHAPTER_THEME_EDITING_OPEN`
-- scope: entry-point and learning-path audit; remaining versioned evidence sections require human editorial rewrite
-- versioned chapter headings remaining: `53`
+- classification: `READER_FACING_CHAPTERS_5_7_PASS_FIELD_SOLVER_THEME_EDITING_OPEN`
+- scope: entry-point and learning-path audit; remaining versioned field-solver evidence sections require human editorial rewrite
+- versioned chapter headings remaining: `13`
 
 | check | status |
 |---|:---:|
@@ -14,5 +14,5 @@
 
 ## Open editorial work
 
-- 第 5-7 章仍有按 v0.x 编号的证据增量小节
+- 第 6 章仍有按 v0.x 编号的证据增量小节
 - 需要人工通读术语、公式、代码上下文、章节过渡和练习

@@ -60,10 +60,10 @@ def main() -> int:
         # four complete usage rules; reject only genuinely empty/truncated pages.
         "all_pages_have_extractable_text": bool(page_lengths) and min(page_lengths) >= 250,
         "chapter_7_5_1_has_no_overwide_rendered_table": all(columns <= 4 for _, columns in section_tables),
-        "chapter_7_5_1_preserved_source_comment_balanced": len(re.findall(r"<!--.*?-->", source, flags=re.DOTALL)) == 1,
+        "chapter_7_5_1_has_no_historical_comment": "<!--" not in source,
         "pdf_has_expected_boundary_sections": all(
             marker in "\n".join(page.extract_text() or "" for page in reader.pages)
-            for marker in ("7.5.1 v0.9 边界 regression 入口索引", "当前成书缺口登记")
+            for marker in ("7.5.1 用正确的 observable 判断 PML", "当前成书缺口登记")
         ),
     }
     result = {

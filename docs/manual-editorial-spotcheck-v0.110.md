@@ -1,25 +1,24 @@
 # v0.110 PDF manual editorial spotcheck
 
-日期：2026-07-13
+日期：2026-07-17
 
 本记录是有限的人工视觉抽查，不等同于全书通读、许可确认或公开再分发签收。
 
 ## 方法
 
-从 `dist/pic-tutor-v0.110.pdf` 渲染第 1、184、191、192、193、198、288、331 页为 PNG，并用本地图像查看器检查页边界、长 inline code、标题层级、列表、表格和页码。第 184 页是 rho-side family 说明页，第 191-193 页覆盖 formal convergence、repeat stability、源码-诊断交叉审计和本版 axis divergence stencil 段落，第 198 页覆盖本版 repeat-slope gate 段落，第 288 页覆盖 transition-zone runtime activation 段落，第 331 页是第 9 章当前缺口登记页。
+从 `dist/pic-tutor-v0.110.pdf` 渲染第 1、173、174、231、243、285、289 页为 PNG，并用本地图像查看器检查页边界、长 inline code、标题层级、列表、表格和页码。第 173-174 页覆盖第 5 章改写后的读者主线、算法选择表、RZ axis residual 与收敛研究；第 231 页覆盖第 7 章阅读路线和边界入口表；第 243 页覆盖 AMR transition zone 的证据边界表；第 285 页覆盖第 9 章文献推进与缺口登记；第 289 页检查末页短附录的完整性。
 
 ## 结果
 
 | 页码 | 检查内容 | 结果 |
 |---:|---|:---:|
 | 1 | v0.110 标题、目录点线、章节页码和左右边界 | PASS；未见重叠、截断或越界 |
-| 184 | rho-side shape family 数值、长路径、表格和页码 | PASS；新增段落与路径均在版心内 |
-| 191 | 第 5.14.10/5.14.11 标题、slope 对照和 repeat stability | PASS；新增段落与路径均在版心内 |
-| 192 | 第 5.14.11/5.14.12 repeat stability 和 slope gate | PASS；新增段落与长路径均在版心内 |
-| 193 | 第 5.14.13 源码-诊断交叉审计、第 5.14.14/5.14.15/5.14.16 axis divergence stencil 和结论 | PASS；未见右侧溢出或段落遮挡 |
-| 198 | 第 5.14.26 repeat-slope gate、长路径和表格 | PASS；新增段落与路径均在版心内 |
-| 288 | transition-zone runtime activation、长分类标识和路线图 | PASS；新增段落、代码标识和图均在版心内 |
-| 331 | 第 9.8 缺口登记、枚举分类、段落和页码 | PASS；未见右侧溢出或段落遮挡 |
+| 173 | 第 5 章读者主线、算法选择表和证据矩阵 | PASS；表格、长术语和页码均在版心内 |
+| 174 | RZ axis residual、收敛研究和本章结论 | PASS；新增段落与长路径均在版心内 |
+| 231 | 第 7 章阅读路线、边界因果链和入口表 | PASS；五列表格与长源码路径未见右侧溢出 |
+| 243 | transition zone 的证据边界表、练习与总结 | PASS；表格、代码标识和段落均在版心内 |
+| 285 | 文献推进方案和当前成书缺口登记入口 | PASS；列表、长路径和页码完整 |
+| 289 | 末页短附录与页码 | PASS；短页为附录结尾的预期留白，未见截断 |
 
 ## 边界
 

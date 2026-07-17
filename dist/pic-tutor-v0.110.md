@@ -533,7 +533,7 @@ $$
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.2 校准说明：本章已把主循环相关源码路径同步到当前 WarpX 目录结构 `Source/Evolve/`，并重核 `Evolve()`、`OneStep_nosub()` 与 FDTD/PSATD 分支的关键行号。Yee 1966 现在已有 indexed-abstract-backed 资产和 9 项本地 contract，但 IEEE 原文 PDF/MinerU 仍未取得；Hockney-Eastwood 原书及其完整正文也仍未 materialize，因此本章继续不把这些缺口伪装成全文闭环引用。
+这些源码路径给出本章的定位边界：本书讨论的是上述 checkout 所呈现的调用结构，而不是把本地文件路径当作可移植 API。Yee 1966 的 indexed abstract 和当前 WarpX `Source/Evolve/` 路径共同支持本章关于 Yee 网格、主循环和场更新位置的基本叙述；论文原文 PDF 与 Hockney--Eastwood 原书全文尚未纳入本书资产，因此本章不会把现代源码映射写成对历史文献公式的逐式证明。
 
 Yee 1966 的 indexed abstract 只支持一个窄的历史来源结论：Maxwell 方程可以被替换成有限差分方程，适当的 field-point placement 能处理 perfectly conducting surfaces，并以 conducting-cylinder scattering 作为例子。它足以解释为什么本章把 Yee 的空间交错和 PEC 边界放在同一条历史主线上，但不足以替代论文原始 stencil、时间层、色散推导或图表；对应 contract 见 `runs/stage-c-validation/yee-1966-indexed-abstract/contract.{json,md}`。当前 WarpX 的 `CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 和 `EvolveE.cpp` 之间的实现映射由 `scripts/audit_yee_source_crosswalk.py` 只读核对，但这仍是现代源码证据，不是 IEEE 原文逐式证明。
 
@@ -1249,7 +1249,7 @@ env OMP_NUM_THREADS=1 FI_PROVIDER=tcp \
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.2 校准说明：本章已按当前 checkout 复核 `main.cpp`、`WarpX.H`、`WarpX.cpp`、`Source/Evolve/WarpXEvolve.cpp` 与 `Source/Initialization/WarpXInitData.cpp` 的主链行号。本章现已补入 `OneStep_sub1()`、PSATD-JRhom 和 implicit solver 的主入口与时间组织边界；更细的场算法公式、粒子 nonlinear solve 参数和 mass-matrix kernel 仍分别留在第 5/6 章及配套源码笔记中。
+这些文件构成读本章时的源码导航图：`main.cpp` 负责生命周期，`WarpX` 类建立模拟状态，`WarpXEvolve.cpp` 组织时间推进，`WarpXInitData.cpp` 则准备首个时间步之前的状态。`OneStep_sub1()`、PSATD-JRhom 和 implicit solver 的入口会在本章中定位；场算法的离散公式、粒子的 nonlinear solve 参数和 mass-matrix kernel 分别在后续相关章节展开，避免在调用图中打断物理主线。
 
 ## 3.1 顶层入口：`main.cpp`
 
@@ -2186,7 +2186,7 @@ flowchart TD
 
 本章把 `WarpX::InitData()` 展开成一条完整的初始化链。它补足第 3 章中“初始化”只作为主循环前置步骤的不足：这里开始逐块解释 fresh run / restart、AMR level 初始化、外部场、species 注入器、粒子创建 kernel、Gaussian beam、openPMD 文件注入和 projection divergence cleaning。
 
-本章绑定本地源码 `../warpx`，分支 `pkuHEDPbranch`，commit `8c488b1a9`。v0.2 已复核 `Source/Initialization/WarpXInitData.cpp` 中 `InitData()`、`InitFromScratch()`、`InitDiagnostics()`、`AddExternalFields()` 的主链行号，并把本章定位从“材料堆叠”调整为“可审校长草稿”。详细源码笔记见：
+本章绑定本地源码 `../warpx`，分支 `pkuHEDPbranch`，commit `8c488b1a9`。阅读时可用 `Source/Initialization/WarpXInitData.cpp` 中的 `InitData()`、`InitFromScratch()`、`InitDiagnostics()` 和 `AddExternalFields()` 作为主导航点；下列笔记保留逐项源码锚点和更细的参数约束，供需要回查实现细节的读者使用：
 
 - `notes/code-reading/initialization/08-initialization-bootstrap.md`
 - `notes/code-reading/initialization/09-preconstruct-parameter-locking.md`
@@ -2207,7 +2207,7 @@ flowchart TD
 
 ## 3A.1 初始化链为什么值得单独成章
 
-v0.2 的本章目标不是继续扩张所有初始化分支，而是把读者最需要的三层边界钉牢：
+理解初始化时，先把以下三层边界分开：
 
 1. `WarpX::WarpX()` 构造期只完成参数读取和跨 level 外壳创建。
 2. `InitData()` 才在 fresh run / restart 之间分叉，并把 AMR level、粒子、诊断、PML、外场和初始静电/磁静场组织到第一步之前。
@@ -2231,7 +2231,7 @@ $$
 6. 对外部 `A/B` 场做 projection divergence cleaning。
 7. 输出第 0 步 diagnostics，并检查 guard cell、solver 配置和 known issue。
 
-这一章先给出正式书稿版的主干，后续章节会继续把每个子函数扩成更细的逐行讲解。
+本章先建立从程序启动到第一个时间步的主干；在需要实现级细节时，再回到相应源码笔记和源码位置逐项核对。
 
 ## 3A.2 启动层先于 `InitData()`：MPI、AMReX、FFT、PETSc 与运行时契约
 
@@ -2859,7 +2859,7 @@ struct InjectorMomentum
 
 这不是普通虚函数多态，而是 GPU kernel 友好的平铺对象。后续 `AddPlasma()` 可以在 device 上用 `getMomentum()` 采样单粒子动量，用 `getBulkMomentum()` 得到平均漂移速度。
 
-## 3A.7 `AddParticles()`：按注入类型进入创建函数
+## 3A.8 `AddParticles()`：按注入类型进入创建函数
 
 源码位置：`../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:194-260`。
 
@@ -2916,7 +2916,7 @@ PhysicalParticleContainer::AddParticles (int lev)
 
 这个函数说明：`PlasmaInjector` 中可能同时保存多种初始化信息，但最终创建时按 flag 调用不同路径。
 
-## 3A.8 体注入 `AddPlasma()`：候选粒子、密度、动量和权重
+## 3A.9 体注入 `AddPlasma()`：候选粒子、密度、动量和权重
 
 体注入的核心思想是：先按 cell 和 `num_particles_per_cell` 创建候选粒子，然后用真实 density/bounds 筛掉无效粒子，并把有效粒子写入 SoA。
 
@@ -3017,7 +3017,7 @@ pa[PIdx::uz][ip] = u.z;
 
 因此 `InjectorMomentum` 返回的 `u` 是无量纲 `\gamma\beta`，粒子数组中存的是 `\gamma v`。
 
-## 3A.9 Gaussian beam：显式束流列表注入
+## 3A.10 Gaussian beam：显式束流列表注入
 
 Gaussian beam 不使用 `InjectorDensity`，而是在 IO rank 上显式随机生成粒子列表。
 
@@ -3087,7 +3087,7 @@ z = z - (v_z - v_dot_n*n_z) * t;
 
 如果设置 symmetrization，代码为每个样本生成 4 或 8 个镜像粒子，并把权重除以阶数。这降低横向低阶统计噪声。
 
-## 3A.10 openPMD 粒子文件：文件粒子列表注入
+## 3A.11 openPMD 粒子文件：文件粒子列表注入
 
 `external_file` 路径在构造期先打开 openPMD 文件，读取可选 `charge/mass`。源码位置：`../warpx/Source/Initialization/PlasmaInjector.cpp:483-584`。
 
@@ -3157,7 +3157,7 @@ if (plasma_injector.insideBounds(x, y, z)) {
 
 openPMD 文件中的 momentum 是物理动量 `p`。除以质量得到 `p/m=\gamma v`，这正是 WarpX 粒子数组的 `ux/uy/uz` 量纲。文件中的 `weighting` 直接成为宏粒子权重；`q_tot` 只产生 warning，不会重标定权重。
 
-## 3A.11 Projection divergence cleaning：外部 `A/B` 场的初始约束修正
+## 3A.12 Projection divergence cleaning：外部 `A/B` 场的初始约束修正
 
 如果外部加载的 `B` 或矢势 `A` 在离散网格上不满足散度约束，WarpX 可用 projection 方法清理。
 
@@ -3535,9 +3535,9 @@ srcfab(i,j,k,n) = field_parser(x,y,z);
 
 从源码链看，这三条分叉接入的位置也不同。field ionization 在 species 构造期只先记住 `do_field_ionization`，真正的 `InitIonizationModule()`、`mapSpeciesProduct()` 和 `doFieldIonization()` 要到 `MultiParticleContainer::InitMultiPhysicsModules()` 与推进循环里才发生；collisions 则走 `CollisionHandler` 和 `collision_names`，并额外受 `collisions.split_momentum_push` 的 operator ordering 影响；QED 又只在 `#ifdef WARPX_QED` 编译路径下才会继续增加 `opticalDepthQSR/BW`、product species 映射和 `InitQED()`。所以，`laser_ion` 更适合承担“应用输入如何把这些模块挂到同一目标骨架上”的说明，而不应把不同层级的验证合同混写成一条单一主链。
 
-## 3A.12 初始化验证入口：哪些 regressions 真正在兜底
+## 3A.13 初始化验证入口：哪些 regressions 真正在兜底
 
-前面的 3A.1-3A.11 讲的是“源码如何初始化”；但如果没有本地 regressions 对照，这些讲解很容易停留在静态阅读层。当前 WarpX 对 `Initialization` 的验证并没有集中在一个目录里，而是分散在几组物理 test 中。
+前面的 3A.1-3A.12 讲的是“源码如何初始化”；但如果没有本地 regressions 对照，这些讲解很容易停留在静态阅读层。当前 WarpX 对 `Initialization` 的验证并没有集中在一个目录里，而是分散在几组物理 test 中。
 
 第一组是 `Langmuir`。它通常被当成 evolve 基准，但对初始化同样关键，因为它直接覆盖：
 
@@ -3607,7 +3607,7 @@ $$
 - `effective_potential_electrostatic` 用电子径向密度和解析 adiabatic expansion 基准比较，验证 effective-potential electrostatic solver；
 - `electrostatic_sphere_eb` 则用 `ChargeOnEB` reduced diag 和 `eb_covered` 场，验证 `InitEB()`、Poisson 边界条件和带导体球的初始势问题。
 
-最后一组是 `projection_div_cleaner`，它对应 3A.11 的 Poisson projection，而不是演化阶段的 `do_dive_cleaning`。当前本地 tests 已覆盖：
+最后一组是 `projection_div_cleaner`，它对应 3A.12 的 Poisson projection，而不是演化阶段的 `do_dive_cleaning`。当前本地 tests 已覆盖：
 
 1. RZ openPMD 文件外场版本；
 2. 3D PICMI 文件外场版本；
@@ -3925,7 +3925,7 @@ analysis 则从 `sim_parameters.dpkl` 读回参数，构造 Connor et al. 风格
 
 16. effective-potential electrostatic：`effective_potential_electrostatic`
 
-## 3A.13 从 Birdsall `3A ES1` 到 WarpX：历史最小程序骨架的现代映射
+## 3A.14 从 Birdsall `3A ES1` 到 WarpX：历史最小程序骨架的现代映射
 
 Birdsall and Langdon 的 `3A ES1` 是一份很好的历史参照，因为它把一维静电 PIC 的最小程序压缩成一条容易检查的阶段链：
 
@@ -3949,7 +3949,7 @@ INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY
 
 这条映射也解释了为什么 `Langmuir` regression 可以同时作为初始化和演化入口：它检查的不是某个名为 `SETRHO` 的函数，而是初始粒子/密度、初始场、后续推进和最终解析频率之间的组合合同。相反，`initial_distribution`、`space_charge_initialization`、`load_external_field` 与 `projection_div_cleaner` 分别覆盖粒子分布、初始 self-field、外部场装填和初始散度修正的更窄路径。它们共同支撑的是现代 WarpX 初始化链的分层验证，而不是对 `3A ES1` 原程序做逐行复现。
 
-## 3A.14 本章小结：初始化状态怎样进入第一步推进
+## 3A.15 本章小结：初始化状态怎样进入第一步推进
 
 到 `InitData()` 结束时，WarpX 已经完成：
 
@@ -3971,14 +3971,14 @@ inputs
 
 这条初始化到推进的交界在当前 checkout 中由 `../warpx/Source/Evolve/WarpXEvolve.cpp` 承接：`Evolve()` 负责外层时间步，`OneStep()` 负责 solver/AMR 分派，`PushParticlesandDeposit()` 才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史 `3A ES1` 子程序的同名替代物。
 
-后续扩写方向：
+进一步学习可沿以下方向展开：
 
 - 把 `InitLevelData()` 中每一类 field allocation 展开到 root/fieldsolver 章节；
 - 把 Gaussian beam 的 emittance/focal distance 公式结合 accelerator beam optics 文献继续推导；
 - 把 openPMD 文件格式与 WarpX 单位约定加入诊断/I/O 章节；
-- 判断 initialization 验证层是否已经阶段性收口，并切回下一未完成模块。
+- 为不同初始化路径设计可重复的验证案例，并记录它们各自能说明的边界。
 
-## 3A.15 练习与最小复现
+## 3A.16 练习与最小复现
 
 1. **fresh/restart 定位题**：沿 `WarpXInitData.cpp` 追踪 `InitData()`，说明 `ComputeDt()` 为什么只出现在 fresh-run 分支，以及 restart 为什么必须进入 `PostRestart()`。
 2. **初始化顺序题**：解释 `AmrCore::InitFromScratch()`、`AllocLevelData()`、`mypc->AllocData()`、`mypc->InitData()` 和 `InitPML()` 的先后关系；指出把粒子初始化提前到 AMR level 创建之前会破坏哪类对象合同。
@@ -3999,7 +3999,7 @@ inputs
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.3 校准说明：本章已按当前 checkout 复核 `UpdateMomentumBoris.H`、`PushSelector.H`、`UpdateMomentumVay.H`、`UpdateMomentumHigueraCary.H`、`WarpXEvolve.cpp`、`MultiParticleContainer.cpp` 与 `PhysicalParticleContainer.cpp` 的主链行号。尤其需要注意：当前 Boris half push 不再简单把磁旋转系数减半，而是按 Birdsall-Langdon 半角关系重标定 `t`，因此本章已同步修正旧草稿中的 `bconst` 写法。`Examples/Tests/particle_pusher` 仍是本章当前最直接的 Higuera-Cary force-free 强验证入口。
+这些文件给出推进器的源码导航：`PushSelector.H` 选择算法，`UpdateMomentumBoris.H`、`UpdateMomentumVay.H` 和 `UpdateMomentumHigueraCary.H` 分别实现三类动量更新，`WarpXEvolve.cpp`、`MultiParticleContainer.cpp` 与 `PhysicalParticleContainer.cpp` 把它们放入主循环。阅读 Boris 推进时要特别区分半步磁旋转的 Birdsall--Langdon 半角关系，不能把旋转系数机械地除以二；`Examples/Tests/particle_pusher` 提供 Higuera--Cary force-free 路径的直接验证入口。
 
 ## 4.1 连续 Lorentz 方程
 

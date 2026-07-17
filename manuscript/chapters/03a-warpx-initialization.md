@@ -2,7 +2,7 @@
 
 本章把 `WarpX::InitData()` 展开成一条完整的初始化链。它补足第 3 章中“初始化”只作为主循环前置步骤的不足：这里开始逐块解释 fresh run / restart、AMR level 初始化、外部场、species 注入器、粒子创建 kernel、Gaussian beam、openPMD 文件注入和 projection divergence cleaning。
 
-本章绑定本地源码 `../warpx`，分支 `pkuHEDPbranch`，commit `8c488b1a9`。v0.2 已复核 `Source/Initialization/WarpXInitData.cpp` 中 `InitData()`、`InitFromScratch()`、`InitDiagnostics()`、`AddExternalFields()` 的主链行号，并把本章定位从“材料堆叠”调整为“可审校长草稿”。详细源码笔记见：
+本章绑定本地源码 `../warpx`，分支 `pkuHEDPbranch`，commit `8c488b1a9`。阅读时可用 `Source/Initialization/WarpXInitData.cpp` 中的 `InitData()`、`InitFromScratch()`、`InitDiagnostics()` 和 `AddExternalFields()` 作为主导航点；下列笔记保留逐项源码锚点和更细的参数约束，供需要回查实现细节的读者使用：
 
 - `notes/code-reading/initialization/08-initialization-bootstrap.md`
 - `notes/code-reading/initialization/09-preconstruct-parameter-locking.md`
@@ -23,7 +23,7 @@
 
 ## 3A.1 初始化链为什么值得单独成章
 
-v0.2 的本章目标不是继续扩张所有初始化分支，而是把读者最需要的三层边界钉牢：
+理解初始化时，先把以下三层边界分开：
 
 1. `WarpX::WarpX()` 构造期只完成参数读取和跨 level 外壳创建。
 2. `InitData()` 才在 fresh run / restart 之间分叉，并把 AMR level、粒子、诊断、PML、外场和初始静电/磁静场组织到第一步之前。
@@ -47,7 +47,7 @@ $$
 6. 对外部 `A/B` 场做 projection divergence cleaning。
 7. 输出第 0 步 diagnostics，并检查 guard cell、solver 配置和 known issue。
 
-这一章先给出正式书稿版的主干，后续章节会继续把每个子函数扩成更细的逐行讲解。
+本章先建立从程序启动到第一个时间步的主干；在需要实现级细节时，再回到相应源码笔记和源码位置逐项核对。
 
 ## 3A.2 启动层先于 `InitData()`：MPI、AMReX、FFT、PETSc 与运行时契约
 
@@ -675,7 +675,7 @@ struct InjectorMomentum
 
 这不是普通虚函数多态，而是 GPU kernel 友好的平铺对象。后续 `AddPlasma()` 可以在 device 上用 `getMomentum()` 采样单粒子动量，用 `getBulkMomentum()` 得到平均漂移速度。
 
-## 3A.7 `AddParticles()`：按注入类型进入创建函数
+## 3A.8 `AddParticles()`：按注入类型进入创建函数
 
 源码位置：`../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:194-260`。
 
@@ -732,7 +732,7 @@ PhysicalParticleContainer::AddParticles (int lev)
 
 这个函数说明：`PlasmaInjector` 中可能同时保存多种初始化信息，但最终创建时按 flag 调用不同路径。
 
-## 3A.8 体注入 `AddPlasma()`：候选粒子、密度、动量和权重
+## 3A.9 体注入 `AddPlasma()`：候选粒子、密度、动量和权重
 
 体注入的核心思想是：先按 cell 和 `num_particles_per_cell` 创建候选粒子，然后用真实 density/bounds 筛掉无效粒子，并把有效粒子写入 SoA。
 
@@ -833,7 +833,7 @@ pa[PIdx::uz][ip] = u.z;
 
 因此 `InjectorMomentum` 返回的 `u` 是无量纲 `\gamma\beta`，粒子数组中存的是 `\gamma v`。
 
-## 3A.9 Gaussian beam：显式束流列表注入
+## 3A.10 Gaussian beam：显式束流列表注入
 
 Gaussian beam 不使用 `InjectorDensity`，而是在 IO rank 上显式随机生成粒子列表。
 
@@ -903,7 +903,7 @@ z = z - (v_z - v_dot_n*n_z) * t;
 
 如果设置 symmetrization，代码为每个样本生成 4 或 8 个镜像粒子，并把权重除以阶数。这降低横向低阶统计噪声。
 
-## 3A.10 openPMD 粒子文件：文件粒子列表注入
+## 3A.11 openPMD 粒子文件：文件粒子列表注入
 
 `external_file` 路径在构造期先打开 openPMD 文件，读取可选 `charge/mass`。源码位置：`../warpx/Source/Initialization/PlasmaInjector.cpp:483-584`。
 
@@ -973,7 +973,7 @@ if (plasma_injector.insideBounds(x, y, z)) {
 
 openPMD 文件中的 momentum 是物理动量 `p`。除以质量得到 `p/m=\gamma v`，这正是 WarpX 粒子数组的 `ux/uy/uz` 量纲。文件中的 `weighting` 直接成为宏粒子权重；`q_tot` 只产生 warning，不会重标定权重。
 
-## 3A.11 Projection divergence cleaning：外部 `A/B` 场的初始约束修正
+## 3A.12 Projection divergence cleaning：外部 `A/B` 场的初始约束修正
 
 如果外部加载的 `B` 或矢势 `A` 在离散网格上不满足散度约束，WarpX 可用 projection 方法清理。
 
@@ -1351,9 +1351,9 @@ srcfab(i,j,k,n) = field_parser(x,y,z);
 
 从源码链看，这三条分叉接入的位置也不同。field ionization 在 species 构造期只先记住 `do_field_ionization`，真正的 `InitIonizationModule()`、`mapSpeciesProduct()` 和 `doFieldIonization()` 要到 `MultiParticleContainer::InitMultiPhysicsModules()` 与推进循环里才发生；collisions 则走 `CollisionHandler` 和 `collision_names`，并额外受 `collisions.split_momentum_push` 的 operator ordering 影响；QED 又只在 `#ifdef WARPX_QED` 编译路径下才会继续增加 `opticalDepthQSR/BW`、product species 映射和 `InitQED()`。所以，`laser_ion` 更适合承担“应用输入如何把这些模块挂到同一目标骨架上”的说明，而不应把不同层级的验证合同混写成一条单一主链。
 
-## 3A.12 初始化验证入口：哪些 regressions 真正在兜底
+## 3A.13 初始化验证入口：哪些 regressions 真正在兜底
 
-前面的 3A.1-3A.11 讲的是“源码如何初始化”；但如果没有本地 regressions 对照，这些讲解很容易停留在静态阅读层。当前 WarpX 对 `Initialization` 的验证并没有集中在一个目录里，而是分散在几组物理 test 中。
+前面的 3A.1-3A.12 讲的是“源码如何初始化”；但如果没有本地 regressions 对照，这些讲解很容易停留在静态阅读层。当前 WarpX 对 `Initialization` 的验证并没有集中在一个目录里，而是分散在几组物理 test 中。
 
 第一组是 `Langmuir`。它通常被当成 evolve 基准，但对初始化同样关键，因为它直接覆盖：
 
@@ -1423,7 +1423,7 @@ $$
 - `effective_potential_electrostatic` 用电子径向密度和解析 adiabatic expansion 基准比较，验证 effective-potential electrostatic solver；
 - `electrostatic_sphere_eb` 则用 `ChargeOnEB` reduced diag 和 `eb_covered` 场，验证 `InitEB()`、Poisson 边界条件和带导体球的初始势问题。
 
-最后一组是 `projection_div_cleaner`，它对应 3A.11 的 Poisson projection，而不是演化阶段的 `do_dive_cleaning`。当前本地 tests 已覆盖：
+最后一组是 `projection_div_cleaner`，它对应 3A.12 的 Poisson projection，而不是演化阶段的 `do_dive_cleaning`。当前本地 tests 已覆盖：
 
 1. RZ openPMD 文件外场版本；
 2. 3D PICMI 文件外场版本；
@@ -1741,7 +1741,7 @@ analysis 则从 `sim_parameters.dpkl` 读回参数，构造 Connor et al. 风格
 
 16. effective-potential electrostatic：`effective_potential_electrostatic`
 
-## 3A.13 从 Birdsall `3A ES1` 到 WarpX：历史最小程序骨架的现代映射
+## 3A.14 从 Birdsall `3A ES1` 到 WarpX：历史最小程序骨架的现代映射
 
 Birdsall and Langdon 的 `3A ES1` 是一份很好的历史参照，因为它把一维静电 PIC 的最小程序压缩成一条容易检查的阶段链：
 
@@ -1765,7 +1765,7 @@ INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY
 
 这条映射也解释了为什么 `Langmuir` regression 可以同时作为初始化和演化入口：它检查的不是某个名为 `SETRHO` 的函数，而是初始粒子/密度、初始场、后续推进和最终解析频率之间的组合合同。相反，`initial_distribution`、`space_charge_initialization`、`load_external_field` 与 `projection_div_cleaner` 分别覆盖粒子分布、初始 self-field、外部场装填和初始散度修正的更窄路径。它们共同支撑的是现代 WarpX 初始化链的分层验证，而不是对 `3A ES1` 原程序做逐行复现。
 
-## 3A.14 本章小结：初始化状态怎样进入第一步推进
+## 3A.15 本章小结：初始化状态怎样进入第一步推进
 
 到 `InitData()` 结束时，WarpX 已经完成：
 
@@ -1787,14 +1787,14 @@ inputs
 
 这条初始化到推进的交界在当前 checkout 中由 `../warpx/Source/Evolve/WarpXEvolve.cpp` 承接：`Evolve()` 负责外层时间步，`OneStep()` 负责 solver/AMR 分派，`PushParticlesandDeposit()` 才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史 `3A ES1` 子程序的同名替代物。
 
-后续扩写方向：
+进一步学习可沿以下方向展开：
 
 - 把 `InitLevelData()` 中每一类 field allocation 展开到 root/fieldsolver 章节；
 - 把 Gaussian beam 的 emittance/focal distance 公式结合 accelerator beam optics 文献继续推导；
 - 把 openPMD 文件格式与 WarpX 单位约定加入诊断/I/O 章节；
-- 判断 initialization 验证层是否已经阶段性收口，并切回下一未完成模块。
+- 为不同初始化路径设计可重复的验证案例，并记录它们各自能说明的边界。
 
-## 3A.15 练习与最小复现
+## 3A.16 练习与最小复现
 
 1. **fresh/restart 定位题**：沿 `WarpXInitData.cpp` 追踪 `InitData()`，说明 `ComputeDt()` 为什么只出现在 fresh-run 分支，以及 restart 为什么必须进入 `PostRestart()`。
 2. **初始化顺序题**：解释 `AmrCore::InitFromScratch()`、`AllocLevelData()`、`mypc->AllocData()`、`mypc->InitData()` 和 `InitPML()` 的先后关系；指出把粒子初始化提前到 AMR level 创建之前会破坏哪类对象合同。

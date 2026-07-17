@@ -21,16 +21,16 @@
   "table_issues": [],
   "artifacts": {
     "pic-tutor-v0.110.md": {
-      "bytes": 874199,
-      "sha256": "65d11a7904d9e7d099c7cd5d69d91cf36af63a4e9dfda1f20043d2879c6e7fe8"
+      "bytes": 874252,
+      "sha256": "17dd48df7780024a4253359987a727eb8c07f749e161abe90167cb99d4f4a6e1"
     },
     "pic-tutor-v0.110.html": {
-      "bytes": 5276587,
-      "sha256": "b24c0170719b50f41e065720730f1305735a091e6b6301f6e4e0143ff115c1b7"
+      "bytes": 5276592,
+      "sha256": "813acedb38229879002e69584538ce4fb40da85785b58ab425d021ef36efc426"
     },
     "pic-tutor-v0.110.pdf": {
-      "bytes": 3008240,
-      "sha256": "13ffc41f5b941f780bf34865732a508fe8f369fadf234d52901e8151977e8ab3"
+      "bytes": 3008311,
+      "sha256": "cc9bb88c67e10d831f5ed792700d0c86e6aa7284e42d74359a3d47efa36d28b4"
     }
   }
 }

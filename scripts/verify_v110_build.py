@@ -57,6 +57,14 @@ def main() -> None:
     chapter_6_numbers = chapter_subheading_numbers(
         ROOT / "manuscript" / "chapters" / "06-field-solvers.md", "6"
     )
+    chapter_3a_numbers = [
+        int(number)
+        for number in re.findall(
+            r"^## 3A\.(\d+)\b",
+            (ROOT / "manuscript" / "chapters" / "03a-warpx-initialization.md").read_text(encoding="utf-8"),
+            re.MULTILINE,
+        )
+    ]
 
     checks = {
         "pdf_pages": len(reader.pages) == EXPECTED_PDF_PAGES,
@@ -72,6 +80,7 @@ def main() -> None:
         and len(chapter_5_numbers) == len(set(chapter_5_numbers)),
         "chapter_6_subheading_order": chapter_6_numbers == sorted(chapter_6_numbers)
         and len(chapter_6_numbers) == len(set(chapter_6_numbers)),
+        "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),
         "chapter_9_exercises": all(
             marker in source
             for marker in (

@@ -10,7 +10,7 @@
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.2 校准说明：本章已把主循环相关源码路径同步到当前 WarpX 目录结构 `Source/Evolve/`，并重核 `Evolve()`、`OneStep_nosub()` 与 FDTD/PSATD 分支的关键行号。Yee 1966 现在已有 indexed-abstract-backed 资产和 9 项本地 contract，但 IEEE 原文 PDF/MinerU 仍未取得；Hockney-Eastwood 原书及其完整正文也仍未 materialize，因此本章继续不把这些缺口伪装成全文闭环引用。
+这些源码路径给出本章的定位边界：本书讨论的是上述 checkout 所呈现的调用结构，而不是把本地文件路径当作可移植 API。Yee 1966 的 indexed abstract 和当前 WarpX `Source/Evolve/` 路径共同支持本章关于 Yee 网格、主循环和场更新位置的基本叙述；论文原文 PDF 与 Hockney--Eastwood 原书全文尚未纳入本书资产，因此本章不会把现代源码映射写成对历史文献公式的逐式证明。
 
 Yee 1966 的 indexed abstract 只支持一个窄的历史来源结论：Maxwell 方程可以被替换成有限差分方程，适当的 field-point placement 能处理 perfectly conducting surfaces，并以 conducting-cylinder scattering 作为例子。它足以解释为什么本章把 Yee 的空间交错和 PEC 边界放在同一条历史主线上，但不足以替代论文原始 stencil、时间层、色散推导或图表；对应 contract 见 `runs/stage-c-validation/yee-1966-indexed-abstract/contract.{json,md}`。当前 WarpX 的 `CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 和 `EvolveE.cpp` 之间的实现映射由 `scripts/audit_yee_source_crosswalk.py` 只读核对，但这仍是现代源码证据，不是 IEEE 原文逐式证明。
 

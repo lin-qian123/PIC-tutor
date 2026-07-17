@@ -10,7 +10,7 @@
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.3 校准说明：本章已按当前 checkout 复核 `UpdateMomentumBoris.H`、`PushSelector.H`、`UpdateMomentumVay.H`、`UpdateMomentumHigueraCary.H`、`WarpXEvolve.cpp`、`MultiParticleContainer.cpp` 与 `PhysicalParticleContainer.cpp` 的主链行号。尤其需要注意：当前 Boris half push 不再简单把磁旋转系数减半，而是按 Birdsall-Langdon 半角关系重标定 `t`，因此本章已同步修正旧草稿中的 `bconst` 写法。`Examples/Tests/particle_pusher` 仍是本章当前最直接的 Higuera-Cary force-free 强验证入口。
+这些文件给出推进器的源码导航：`PushSelector.H` 选择算法，`UpdateMomentumBoris.H`、`UpdateMomentumVay.H` 和 `UpdateMomentumHigueraCary.H` 分别实现三类动量更新，`WarpXEvolve.cpp`、`MultiParticleContainer.cpp` 与 `PhysicalParticleContainer.cpp` 把它们放入主循环。阅读 Boris 推进时要特别区分半步磁旋转的 Birdsall--Langdon 半角关系，不能把旋转系数机械地除以二；`Examples/Tests/particle_pusher` 提供 Higuera--Cary force-free 路径的直接验证入口。
 
 ## 4.1 连续 Lorentz 方程
 

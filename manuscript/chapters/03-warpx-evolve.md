@@ -10,7 +10,7 @@
 - 分支：`pkuHEDPbranch`
 - commit：`8c488b1a9`
 
-v0.2 校准说明：本章已按当前 checkout 复核 `main.cpp`、`WarpX.H`、`WarpX.cpp`、`Source/Evolve/WarpXEvolve.cpp` 与 `Source/Initialization/WarpXInitData.cpp` 的主链行号。本章现已补入 `OneStep_sub1()`、PSATD-JRhom 和 implicit solver 的主入口与时间组织边界；更细的场算法公式、粒子 nonlinear solve 参数和 mass-matrix kernel 仍分别留在第 5/6 章及配套源码笔记中。
+这些文件构成读本章时的源码导航图：`main.cpp` 负责生命周期，`WarpX` 类建立模拟状态，`WarpXEvolve.cpp` 组织时间推进，`WarpXInitData.cpp` 则准备首个时间步之前的状态。`OneStep_sub1()`、PSATD-JRhom 和 implicit solver 的入口会在本章中定位；场算法的离散公式、粒子的 nonlinear solve 参数和 mass-matrix kernel 分别在后续相关章节展开，避免在调用图中打断物理主线。
 
 ## 3.1 顶层入口：`main.cpp`
 

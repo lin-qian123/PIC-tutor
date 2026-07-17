@@ -12,12 +12,6 @@
       "forbidden_path_counts": {},
       "absolute_local_link_count": 0,
       "passed": true
-    },
-    {
-      "path": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/dist/pic-tutor-v0.110.pdf",
-      "forbidden_path_counts": {},
-      "absolute_local_link_count": 0,
-      "passed": true
     }
   ],
   "passed": true,

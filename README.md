@@ -4,6 +4,8 @@
 
 当前读者版已完成第 4 章粒子推进器、第 5 章沉积、第 6 章场求解器和第 7 章边界/AMR 的主题化改写：正文按“问题 -> 原理 -> 证据 -> 限制 -> 练习”组织，逐版实验记录分别下沉至 `docs/chapter-04-v0-evidence-ledger.md` 至 `docs/chapter-07-v0-evidence-ledger.md`。读者审计已不再发现版本化章节标题；完整缺口见 `docs/current-book-gap-register.md`。
 
+本轮人工阅读已覆盖第 1 至 4 章的章节入口及第 3A 章初始化链的目录、交界和练习页：修复 `3A.7` 重复编号并将第 2 至 4 章残留的版本校准措辞改为读者可用的源码导航。它是有限人工抽查，不替代全书通读、第三方材料许可确认或公开再分发签收。
+
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 
 当前接续工作又完成 Vranic 2015 粒子合并论文资产：24 页 PDF、MinerU Markdown、32 张图、中文精读和 `11/11` asset contract 已通过；第 4 章已建立与 WarpX `VelocityCoincidenceThinning` 的有界映射，不把论文案例写成 WarpX runtime PASS。

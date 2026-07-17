@@ -10,6 +10,7 @@
 | `manuscript_readme_is_reader_facing` | `PASS` |
 | `preface_has_learning_outcomes` | `PASS` |
 | `history_is_separated` | `PASS` |
+| `foundation_openings_are_reader_facing` | `PASS` |
 | `core_chapters_have_exercises` | `PASS` |
 
 ## Open editorial work

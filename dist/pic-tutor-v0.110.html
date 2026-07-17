@@ -284,15 +284,15 @@ nonlinear solver、JFNK 与 mass-matrix：<code>J</code>
 初始化：<code>PlasmaInjector</code> 是参数总容器</a></li>
 <li><a href="#a.7-密度和动量分布从文本参数到-functor" id="toc-a.7-密度和动量分布从文本参数到-functor">3A.7
 密度和动量分布：从文本参数到 functor</a></li>
-<li><a href="#a.7-addparticles按注入类型进入创建函数" id="toc-a.7-addparticles按注入类型进入创建函数">3A.7
+<li><a href="#a.8-addparticles按注入类型进入创建函数" id="toc-a.8-addparticles按注入类型进入创建函数">3A.8
 <code>AddParticles()</code>：按注入类型进入创建函数</a></li>
-<li><a href="#a.8-体注入-addplasma候选粒子密度动量和权重" id="toc-a.8-体注入-addplasma候选粒子密度动量和权重">3A.8 体注入
+<li><a href="#a.9-体注入-addplasma候选粒子密度动量和权重" id="toc-a.9-体注入-addplasma候选粒子密度动量和权重">3A.9 体注入
 <code>AddPlasma()</code>：候选粒子、密度、动量和权重</a></li>
-<li><a href="#a.9-gaussian-beam显式束流列表注入" id="toc-a.9-gaussian-beam显式束流列表注入">3A.9 Gaussian
+<li><a href="#a.10-gaussian-beam显式束流列表注入" id="toc-a.10-gaussian-beam显式束流列表注入">3A.10 Gaussian
 beam：显式束流列表注入</a></li>
-<li><a href="#a.10-openpmd-粒子文件文件粒子列表注入" id="toc-a.10-openpmd-粒子文件文件粒子列表注入">3A.10 openPMD
+<li><a href="#a.11-openpmd-粒子文件文件粒子列表注入" id="toc-a.11-openpmd-粒子文件文件粒子列表注入">3A.11 openPMD
 粒子文件：文件粒子列表注入</a></li>
-<li><a href="#a.11-projection-divergence-cleaning外部-ab-场的初始约束修正" id="toc-a.11-projection-divergence-cleaning外部-ab-场的初始约束修正">3A.11
+<li><a href="#a.12-projection-divergence-cleaning外部-ab-场的初始约束修正" id="toc-a.12-projection-divergence-cleaning外部-ab-场的初始约束修正">3A.12
 Projection divergence cleaning：外部 <code>A/B</code>
 场的初始约束修正</a>
 <ul>
@@ -300,14 +300,14 @@ Projection divergence cleaning：外部 <code>A/B</code>
 antenna 与 profile 分派：laser 初始化并不走
 <code>PlasmaInjector</code></a></li>
 </ul></li>
-<li><a href="#a.12-初始化验证入口哪些-regressions-真正在兜底" id="toc-a.12-初始化验证入口哪些-regressions-真正在兜底">3A.12
+<li><a href="#a.13-初始化验证入口哪些-regressions-真正在兜底" id="toc-a.13-初始化验证入口哪些-regressions-真正在兜底">3A.13
 初始化验证入口：哪些 regressions 真正在兜底</a></li>
-<li><a href="#a.13-从-birdsall-3a-es1-到-warpx历史最小程序骨架的现代映射" id="toc-a.13-从-birdsall-3a-es1-到-warpx历史最小程序骨架的现代映射">3A.13
+<li><a href="#a.14-从-birdsall-3a-es1-到-warpx历史最小程序骨架的现代映射" id="toc-a.14-从-birdsall-3a-es1-到-warpx历史最小程序骨架的现代映射">3A.14
 从 Birdsall <code>3A ES1</code> 到
 WarpX：历史最小程序骨架的现代映射</a></li>
-<li><a href="#a.14-本章小结初始化状态怎样进入第一步推进" id="toc-a.14-本章小结初始化状态怎样进入第一步推进">3A.14
+<li><a href="#a.15-本章小结初始化状态怎样进入第一步推进" id="toc-a.15-本章小结初始化状态怎样进入第一步推进">3A.15
 本章小结：初始化状态怎样进入第一步推进</a></li>
-<li><a href="#a.15-练习与最小复现" id="toc-a.15-练习与最小复现">3A.15
+<li><a href="#a.16-练习与最小复现" id="toc-a.16-练习与最小复现">3A.16
 练习与最小复现</a></li>
 </ul></li>
 <li><a href="#粒子推进器从-lorentz-方程到-pushpx" id="toc-粒子推进器从-lorentz-方程到-pushpx">4. 粒子推进器：从 Lorentz
@@ -1471,13 +1471,12 @@ guard cells、边界条件和守恒约束之间保持一致。后续逐行读 Wa
 <li>分支：<code>pkuHEDPbranch</code></li>
 <li>commit：<code>8c488b1a9</code></li>
 </ul>
-<p>v0.2 校准说明：本章已把主循环相关源码路径同步到当前 WarpX 目录结构
-<code>Source/Evolve/</code>，并重核
-<code>Evolve()</code>、<code>OneStep_nosub()</code> 与 FDTD/PSATD
-分支的关键行号。Yee 1966 现在已有 indexed-abstract-backed 资产和 9
-项本地 contract，但 IEEE 原文 PDF/MinerU 仍未取得；Hockney-Eastwood
-原书及其完整正文也仍未
-materialize，因此本章继续不把这些缺口伪装成全文闭环引用。</p>
+<p>这些源码路径给出本章的定位边界：本书讨论的是上述 checkout
+所呈现的调用结构，而不是把本地文件路径当作可移植 API。Yee 1966 的
+indexed abstract 和当前 WarpX <code>Source/Evolve/</code>
+路径共同支持本章关于 Yee 网格、主循环和场更新位置的基本叙述；论文原文
+PDF 与 Hockney–Eastwood
+原书全文尚未纳入本书资产，因此本章不会把现代源码映射写成对历史文献公式的逐式证明。</p>
 <p>Yee 1966 的 indexed abstract 只支持一个窄的历史来源结论：Maxwell
 方程可以被替换成有限差分方程，适当的 field-point placement 能处理
 perfectly conducting surfaces，并以 conducting-cylinder scattering
@@ -2369,13 +2368,14 @@ measurements 如何改变“PIC 总循环”的解释方式。</li>
 <li>分支：<code>pkuHEDPbranch</code></li>
 <li>commit：<code>8c488b1a9</code></li>
 </ul>
-<p>v0.2 校准说明：本章已按当前 checkout 复核
-<code>main.cpp</code>、<code>WarpX.H</code>、<code>WarpX.cpp</code>、<code>Source/Evolve/WarpXEvolve.cpp</code>
-与 <code>Source/Initialization/WarpXInitData.cpp</code>
-的主链行号。本章现已补入 <code>OneStep_sub1()</code>、PSATD-JRhom 和
-implicit solver 的主入口与时间组织边界；更细的场算法公式、粒子 nonlinear
-solve 参数和 mass-matrix kernel 仍分别留在第 5/6
-章及配套源码笔记中。</p>
+<p>这些文件构成读本章时的源码导航图：<code>main.cpp</code>
+负责生命周期，<code>WarpX</code>
+类建立模拟状态，<code>WarpXEvolve.cpp</code>
+组织时间推进，<code>WarpXInitData.cpp</code>
+则准备首个时间步之前的状态。<code>OneStep_sub1()</code>、PSATD-JRhom 和
+implicit solver 的入口会在本章中定位；场算法的离散公式、粒子的 nonlinear
+solve 参数和 mass-matrix kernel
+分别在后续相关章节展开，避免在调用图中打断物理主线。</p>
 <h2 id="顶层入口main.cpp">3.1 顶层入口：<code>main.cpp</code></h2>
 <p>WarpX 的可执行入口在
 <code>../warpx/Source/main.cpp</code>。主函数的控制流非常短：</p>
@@ -3840,10 +3840,11 @@ restart、AMR level 初始化、外部场、species 注入器、粒子创建
 kernel、Gaussian beam、openPMD 文件注入和 projection divergence
 cleaning。</p>
 <p>本章绑定本地源码 <code>../warpx</code>，分支
-<code>pkuHEDPbranch</code>，commit <code>8c488b1a9</code>。v0.2 已复核
-<code>Source/Initialization/WarpXInitData.cpp</code> 中
-<code>InitData()</code>、<code>InitFromScratch()</code>、<code>InitDiagnostics()</code>、<code>AddExternalFields()</code>
-的主链行号，并把本章定位从“材料堆叠”调整为“可审校长草稿”。详细源码笔记见：</p>
+<code>pkuHEDPbranch</code>，commit <code>8c488b1a9</code>。阅读时可用
+<code>Source/Initialization/WarpXInitData.cpp</code> 中的
+<code>InitData()</code>、<code>InitFromScratch()</code>、<code>InitDiagnostics()</code>
+和 <code>AddExternalFields()</code>
+作为主导航点；下列笔记保留逐项源码锚点和更细的参数约束，供需要回查实现细节的读者使用：</p>
 <ul>
 <li><code>notes/code-reading/initialization/08-initialization-bootstrap.md</code></li>
 <li><code>notes/code-reading/initialization/09-preconstruct-parameter-locking.md</code></li>
@@ -3864,8 +3865,7 @@ cleaning。</p>
 </ul>
 <h2 id="a.1-初始化链为什么值得单独成章">3A.1
 初始化链为什么值得单独成章</h2>
-<p>v0.2
-的本章目标不是继续扩张所有初始化分支，而是把读者最需要的三层边界钉牢：</p>
+<p>理解初始化时，先把以下三层边界分开：</p>
 <ol type="1">
 <li><code>WarpX::WarpX()</code> 构造期只完成参数读取和跨 level
 外壳创建。</li>
@@ -3893,7 +3893,7 @@ field。</li>
 <li>输出第 0 步 diagnostics，并检查 guard cell、solver 配置和 known
 issue。</li>
 </ol>
-<p>这一章先给出正式书稿版的主干，后续章节会继续把每个子函数扩成更细的逐行讲解。</p>
+<p>本章先建立从程序启动到第一个时间步的主干；在需要实现级细节时，再回到相应源码笔记和源码位置逐项核对。</p>
 <h2 id="a.2-启动层先于-initdatampiamrexfftpetsc-与运行时契约">3A.2
 启动层先于 <code>InitData()</code>：MPI、AMReX、FFT、PETSc
 与运行时契约</h2>
@@ -4689,7 +4689,7 @@ union。源码位置：<code>../warpx/Source/Initialization/InjectorMomentum.H:4
 <p>这不是普通虚函数多态，而是 GPU kernel 友好的平铺对象。后续
 <code>AddPlasma()</code> 可以在 device 上用 <code>getMomentum()</code>
 采样单粒子动量，用 <code>getBulkMomentum()</code> 得到平均漂移速度。</p>
-<h2 id="a.7-addparticles按注入类型进入创建函数">3A.7
+<h2 id="a.8-addparticles按注入类型进入创建函数">3A.8
 <code>AddParticles()</code>：按注入类型进入创建函数</h2>
 <p>源码位置：<code>../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:194-260</code>。</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
@@ -4738,7 +4738,7 @@ union。源码位置：<code>../warpx/Source/Initialization/InjectorMomentum.H:4
 <span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>这个函数说明：<code>PlasmaInjector</code>
 中可能同时保存多种初始化信息，但最终创建时按 flag 调用不同路径。</p>
-<h2 id="a.8-体注入-addplasma候选粒子密度动量和权重">3A.8 体注入
+<h2 id="a.9-体注入-addplasma候选粒子密度动量和权重">3A.9 体注入
 <code>AddPlasma()</code>：候选粒子、密度、动量和权重</h2>
 <p>体注入的核心思想是：先按 cell 和 <code>num_particles_per_cell</code>
 创建候选粒子，然后用真实 density/bounds 筛掉无效粒子，并把有效粒子写入
@@ -4814,7 +4814,7 @@ u_z&#39;=\gamma_b(u_z-\beta_b\gamma).
 <span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>pa<span class="op">[</span>PIdx<span class="op">::</span>uz<span class="op">][</span>ip<span class="op">]</span> <span class="op">=</span> u<span class="op">.</span>z<span class="op">;</span></span></code></pre></div>
 <p>因此 <code>InjectorMomentum</code> 返回的 <code>u</code> 是无量纲
 <code>\gamma\beta</code>，粒子数组中存的是 <code>\gamma v</code>。</p>
-<h2 id="a.9-gaussian-beam显式束流列表注入">3A.9 Gaussian
+<h2 id="a.10-gaussian-beam显式束流列表注入">3A.10 Gaussian
 beam：显式束流列表注入</h2>
 <p>Gaussian beam 不使用 <code>InjectorDensity</code>，而是在 IO rank
 上显式随机生成粒子列表。</p>
@@ -4870,7 +4870,7 @@ t =
 <span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> z <span class="op">-</span> <span class="op">(</span>v_z <span class="op">-</span> v_dot_n<span class="op">*</span>n_z<span class="op">)</span> <span class="op">*</span> t<span class="op">;</span></span></code></pre></div>
 <p>如果设置 symmetrization，代码为每个样本生成 4 或 8
 个镜像粒子，并把权重除以阶数。这降低横向低阶统计噪声。</p>
-<h2 id="a.10-openpmd-粒子文件文件粒子列表注入">3A.10 openPMD
+<h2 id="a.11-openpmd-粒子文件文件粒子列表注入">3A.11 openPMD
 粒子文件：文件粒子列表注入</h2>
 <p><code>external_file</code> 路径在构造期先打开 openPMD 文件，读取可选
 <code>charge/mass</code>。源码位置：<code>../warpx/Source/Initialization/PlasmaInjector.cpp:483-584</code>。</p>
@@ -4929,7 +4929,7 @@ t =
 量纲。文件中的 <code>weighting</code>
 直接成为宏粒子权重；<code>q_tot</code> 只产生
 warning，不会重标定权重。</p>
-<h2 id="a.11-projection-divergence-cleaning外部-ab-场的初始约束修正">3A.11
+<h2 id="a.12-projection-divergence-cleaning外部-ab-场的初始约束修正">3A.12
 Projection divergence cleaning：外部 <code>A/B</code>
 场的初始约束修正</h2>
 <p>如果外部加载的 <code>B</code> 或矢势 <code>A</code>
@@ -5444,9 +5444,9 @@ laser-target 骨架，field ionization、collisions 和 QED
 <code>opticalDepthQSR/BW</code>、product species 映射和
 <code>InitQED()</code>。所以，<code>laser_ion</code>
 更适合承担“应用输入如何把这些模块挂到同一目标骨架上”的说明，而不应把不同层级的验证合同混写成一条单一主链。</p>
-<h2 id="a.12-初始化验证入口哪些-regressions-真正在兜底">3A.12
+<h2 id="a.13-初始化验证入口哪些-regressions-真正在兜底">3A.13
 初始化验证入口：哪些 regressions 真正在兜底</h2>
-<p>前面的 3A.1-3A.11 讲的是“源码如何初始化”；但如果没有本地 regressions
+<p>前面的 3A.1-3A.12 讲的是“源码如何初始化”；但如果没有本地 regressions
 对照，这些讲解很容易停留在静态阅读层。当前 WarpX 对
 <code>Initialization</code>
 的验证并没有集中在一个目录里，而是分散在几组物理 test 中。</p>
@@ -5548,7 +5548,7 @@ solver；</li>
 reduced diag 和 <code>eb_covered</code> 场，验证
 <code>InitEB()</code>、Poisson 边界条件和带导体球的初始势问题。</li>
 </ul>
-<p>最后一组是 <code>projection_div_cleaner</code>，它对应 3A.11 的
+<p>最后一组是 <code>projection_div_cleaner</code>，它对应 3A.12 的
 Poisson projection，而不是演化阶段的
 <code>do_dive_cleaning</code>。当前本地 tests 已覆盖：</p>
 <ol type="1">
@@ -5988,7 +5988,7 @@ RMS 误差。因此它的真实验证对象是：</p>
 <li>effective-potential
 electrostatic：<code>effective_potential_electrostatic</code></li>
 </ol>
-<h2 id="a.13-从-birdsall-3a-es1-到-warpx历史最小程序骨架的现代映射">3A.13 从
+<h2 id="a.14-从-birdsall-3a-es1-到-warpx历史最小程序骨架的现代映射">3A.14 从
 Birdsall <code>3A ES1</code> 到 WarpX：历史最小程序骨架的现代映射</h2>
 <p>Birdsall and Langdon 的 <code>3A ES1</code>
 是一份很好的历史参照，因为它把一维静电 PIC
@@ -6088,7 +6088,7 @@ solver、外场和 <code>initialize_self_fields</code>
 self-field、外部场装填和初始散度修正的更窄路径。它们共同支撑的是现代
 WarpX 初始化链的分层验证，而不是对 <code>3A ES1</code>
 原程序做逐行复现。</p>
-<h2 id="a.14-本章小结初始化状态怎样进入第一步推进">3A.14
+<h2 id="a.15-本章小结初始化状态怎样进入第一步推进">3A.15
 本章小结：初始化状态怎样进入第一步推进</h2>
 <p>到 <code>InitData()</code> 结束时，WarpX 已经完成：</p>
 <pre class="text"><code>inputs
@@ -6112,17 +6112,16 @@ solver 和 diagnostics
 solver/AMR 分派，<code>PushParticlesandDeposit()</code>
 才把已经初始化的粒子和场送入实际粒子推进与沉积路径。这里的路径引用只用于固定现代实现入口，仍不把它们改写成历史
 <code>3A ES1</code> 子程序的同名替代物。</p>
-<p>后续扩写方向：</p>
+<p>进一步学习可沿以下方向展开：</p>
 <ul>
 <li>把 <code>InitLevelData()</code> 中每一类 field allocation 展开到
 root/fieldsolver 章节；</li>
 <li>把 Gaussian beam 的 emittance/focal distance 公式结合 accelerator
 beam optics 文献继续推导；</li>
 <li>把 openPMD 文件格式与 WarpX 单位约定加入诊断/I/O 章节；</li>
-<li>判断 initialization
-验证层是否已经阶段性收口，并切回下一未完成模块。</li>
+<li>为不同初始化路径设计可重复的验证案例，并记录它们各自能说明的边界。</li>
 </ul>
-<h2 id="a.15-练习与最小复现">3A.15 练习与最小复现</h2>
+<h2 id="a.16-练习与最小复现">3A.16 练习与最小复现</h2>
 <ol type="1">
 <li><strong>fresh/restart 定位题</strong>：沿
 <code>WarpXInitData.cpp</code> 追踪 <code>InitData()</code>，说明
@@ -6155,14 +6154,14 @@ gather guard cells，粒子位置和动量必须处在正确 leapfrog
 <li>分支：<code>pkuHEDPbranch</code></li>
 <li>commit：<code>8c488b1a9</code></li>
 </ul>
-<p>v0.3 校准说明：本章已按当前 checkout 复核
-<code>UpdateMomentumBoris.H</code>、<code>PushSelector.H</code>、<code>UpdateMomentumVay.H</code>、<code>UpdateMomentumHigueraCary.H</code>、<code>WarpXEvolve.cpp</code>、<code>MultiParticleContainer.cpp</code>
-与 <code>PhysicalParticleContainer.cpp</code>
-的主链行号。尤其需要注意：当前 Boris half push
-不再简单把磁旋转系数减半，而是按 Birdsall-Langdon 半角关系重标定
-<code>t</code>，因此本章已同步修正旧草稿中的 <code>bconst</code>
-写法。<code>Examples/Tests/particle_pusher</code> 仍是本章当前最直接的
-Higuera-Cary force-free 强验证入口。</p>
+<p>这些文件给出推进器的源码导航：<code>PushSelector.H</code>
+选择算法，<code>UpdateMomentumBoris.H</code>、<code>UpdateMomentumVay.H</code>
+和 <code>UpdateMomentumHigueraCary.H</code>
+分别实现三类动量更新，<code>WarpXEvolve.cpp</code>、<code>MultiParticleContainer.cpp</code>
+与 <code>PhysicalParticleContainer.cpp</code> 把它们放入主循环。阅读
+Boris 推进时要特别区分半步磁旋转的 Birdsall–Langdon
+半角关系，不能把旋转系数机械地除以二；<code>Examples/Tests/particle_pusher</code>
+提供 Higuera–Cary force-free 路径的直接验证入口。</p>
 <h2 id="连续-lorentz-方程">4.1 连续 Lorentz 方程</h2>
 <p>WarpX 对带质量粒子推进的基本方程是相对论 Lorentz 方程。令</p>
 <p><span class="math display">\[

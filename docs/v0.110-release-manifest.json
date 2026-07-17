@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 1246,
-  "total_bytes": 39151535,
+  "entry_count": 1248,
+  "total_bytes": 39160468,
   "entries": [
     {
       "path": ".gitignore",
@@ -47,23 +47,23 @@
     },
     {
       "path": "TODO.md",
-      "bytes": 1413093,
-      "sha256": "a87db64503a7a3611b84fae02323c9eac9582a15aae9ed5fc72c216cdbac89b8"
+      "bytes": 1413579,
+      "sha256": "c992ddf47d88e88c109f076fb1f41ca7b65968261a2bee079478ca3de53e1620"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5248685,
-      "sha256": "b5234ddb2c2518397f2bec960d850dad99e85ad65afd73b096c6b144f71d04d5"
+      "bytes": 5248889,
+      "sha256": "a68e82a92824b54555e080b6f31ff659378097bd72bcc460af571caaf2833f19"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 855540,
-      "sha256": "37baed8fa5c9a5773bb4452d15e6db509e45741a3b2add6c9ff2b750438c9cd7"
+      "bytes": 855733,
+      "sha256": "33c9a45db75d76af31ddd2862cc977b511a9f116361827a9dd6b1280400f2501"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2992062,
-      "sha256": "cd7950d72be1d27b6bdbf4e4914bd98c54866001397e55e47b758755e064b338"
+      "bytes": 2992365,
+      "sha256": "2de44f505241906cd4f7bf0b84cd214afa5eb20674383e776607ae14e240e789"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -92,8 +92,8 @@
     },
     {
       "path": "docs/current-book-gap-register.md",
-      "bytes": 9409,
-      "sha256": "71939712267b52c703bdc9b3a5546fd66180fa5637d7b4f8481138f72dcfb9c5"
+      "bytes": 9641,
+      "sha256": "995534e0bee5daba6f187ca0beafe8cb94ed7c5ed22ba3e6798dd10775d3d9c6"
     },
     {
       "path": "docs/editorial-quality-audit-v0.100.json",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 12847,
-      "sha256": "074cc50caaa5c5a83bbf310b9f307a4280e33232e829da430443740601230a50"
+      "bytes": 13222,
+      "sha256": "ff08024f000b89e551c7a5d81000dc70131d3505463543b50ecf1aedd1102e21"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -831,6 +831,11 @@
       "sha256": "87e4d60ea782c3cbc4ae367eb457f7ab4e5f484be41a7f5c450e5db0eba9be03"
     },
     {
+      "path": "docs/public-distribution-risk-register-v0.110.md",
+      "bytes": 2046,
+      "sha256": "de2ead1b1c14947f67d6f50ee51c4c2250bb014d6862723a41610b6444f72913"
+    },
+    {
       "path": "docs/public-evidence-index.json",
       "bytes": 128071,
       "sha256": "0056de49d76b9cf7116123ae6fedfad4d20f398df968c5a8c454c1013bd1acdf"
@@ -892,8 +897,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 7310,
-      "sha256": "5c7c6d286fd631887a615bb189b34cf2e907d71c604e9b7711341e17fac8c498"
+      "bytes": 7798,
+      "sha256": "baa7abe77ca9963e477700652d58beab37a16d8a304f50e352a0d5966ad91708"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2322,8 +2327,8 @@
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
-      "bytes": 19858,
-      "sha256": "0ca70b5fb840a285b107cb34894aa08d615ce34a58cfaa35f27d165403707ee8"
+      "bytes": 20051,
+      "sha256": "ecbd1220dd55af2ebf96b08d7b4c78cdcea3caaea8e773737b6a5bbb3a228820"
     },
     {
       "path": "notes/code-reading/README.md",
@@ -4312,8 +4317,8 @@
     },
     {
       "path": "scripts/audit_current_gap_register.py",
-      "bytes": 9059,
-      "sha256": "925829992254cb3c86e32b871ff4bef9b3b5b4482d3e2370bb402b84dbbedd90"
+      "bytes": 9418,
+      "sha256": "87815971d332f330b6965440165d6c12ad0d721c94bb80f9ca72a24fb5280d3f"
     },
     {
       "path": "scripts/audit_deposition_algorithm_selection_contract.py",
@@ -4524,6 +4529,11 @@
       "path": "scripts/audit_psatd_literature_strategy_contract.py",
       "bytes": 5370,
       "sha256": "99d2220f47612d8defbe87011a66201900f9c7b8125dd4dee2209511b9bfff91"
+    },
+    {
+      "path": "scripts/audit_public_distribution_boundary.py",
+      "bytes": 3601,
+      "sha256": "799873ce4240be611f3d29f11b33dc26aa905137a813a569796da42b8c2fb22c"
     },
     {
       "path": "scripts/audit_public_release_paths.py",
@@ -5952,8 +5962,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 22177,
-      "sha256": "8eedacaaa92095e1d61231b01fa0cff26aa08e41de5d945550bbf49a0639febb"
+      "bytes": 22630,
+      "sha256": "a03055f1b6c75c349711335963c23a4f31b04d9dcc7e7d7b4dcc48fddb80790f"
     },
     {
       "path": "scripts/verify_v40_build.py",

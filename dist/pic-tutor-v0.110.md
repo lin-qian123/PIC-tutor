@@ -14411,7 +14411,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：论
 
 ## 9.8 成书的已知证据边界
 
-本书把“文献尚无全文”“代码路径尚无运行账本”和“数值结论尚未闭合”分开处理，避免把不同类型的不确定性混成一句模糊的限制。当前缺口登记覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条发布编辑门槛。重复 family 的 slope 一致性只能说明该组重复计算相符；它不等于 formal numerical order，也不等于 axis charge correctness。
+本书把“文献尚无全文”“代码路径尚无运行账本”“数值结论尚未闭合”和“第三方材料能否公开再分发”分开处理，避免把不同类型的不确定性混成一句模糊的限制。当前缺口登记覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条发布编辑门槛。公开 release manifest 排除 `references/` 只能约束未来 staging，不能替代对 public branch 已跟踪材料和 Git 历史的授权审查。重复 family 的 slope 一致性只能说明该组重复计算相符；它不等于 formal numerical order，也不等于 axis charge correctness。
 
 本登记表的分类纪律是：`OPEN_EXTERNAL_ACCESS` 不是下载失败的同义词，而是当前没有合法可读取的目标全文；`PRE_PHYSICS_BOUNDARY` 表示尚未进入物理推进，不能写成 physics PASS/FAIL；`RUNTIME_LEDGER_UNPROVEN` 表示源码与 schema 已有，但真实 producer 尚未输出账本；`CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` 表示可以计算描述性 order，但不能宣称正式阶数。
 

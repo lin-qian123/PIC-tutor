@@ -6,6 +6,8 @@
 
 全书正文扫描确认绝对工作区路径与开发过程标记均为零。第 5 章两张宽表已由列式矩阵改为分组证据列表，并在 PDF 第 158--159 页人工复核；这只关闭该处的版式风险，不替代全书通读。
 
+**公开分发阻断项：**remote 当前为 public，Git 实际跟踪 `references/` 下 `2,425` 个文件（`52` 个 PDF、`2,259` 个图片，约 `190.7 MB`），根目录没有项目许可证。release manifest 排除 `references/` 并不会从 public branch、clone 或 Git 历史中移除这些材料；详见 `docs/public-distribution-risk-register-v0.110.md`。在维护者决定逐项授权、分支移除/历史策略和项目许可证前，本审计不签收公开再分发。
+
 v0.78 完成 Esirkepov 2001 CPC indexed abstract 与 arXiv 预印本的 bounded compare；该 contract 只确认发表版 metadata/abstract 级算法主张已归类，不把 publisher-PDF 缺口写成已关闭。
 
 当前 `dist/pic-tutor-v0.110.pdf` 页数以本轮构建验收为准；v0.75 及此前的构建记录均属于历史构建快照。
@@ -23,9 +25,9 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.110.pdf` | 2,992,062 bytes / 265 页 | 当前成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.110.html` | 5,248,685 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.110.md` | 855,540 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.110.pdf` | 2,992,365 bytes / 265 页 | 当前成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.110.html` | 5,248,889 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.110.md` | 855,733 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 

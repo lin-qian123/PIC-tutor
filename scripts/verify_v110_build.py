@@ -52,6 +52,7 @@ def main() -> None:
     reader = PdfReader(str(PDF))
     pdf_text = "\n".join(page.extract_text() or "" for page in reader.pages)
     manual_spotcheck = MANUAL_SPOTCHECK.read_text(encoding="utf-8") if MANUAL_SPOTCHECK.exists() else ""
+    distribution_risk = (ROOT / "docs/public-distribution-risk-register-v0.110.md").read_text(encoding="utf-8")
     chapter_5_numbers = chapter_subheading_numbers(
         ROOT / "manuscript" / "chapters" / "05-deposition-shapes.md", "5"
     )
@@ -102,6 +103,11 @@ def main() -> None:
             )
         ),
         "chapter_9_literature_gap_count": "这六条缺口里，`LeeCPC2015` 最特殊。" in source,
+        "public_distribution_boundary_registered": (
+            "release manifest 排除 `references/` 只能约束未来 staging" in source
+            and "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED" in distribution_risk
+            and (ROOT / "scripts/audit_public_distribution_boundary.py").is_file()
+        ),
         "vay_2014_review_closure": all(
             marker in source
             for marker in (

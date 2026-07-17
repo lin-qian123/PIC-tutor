@@ -14120,27 +14120,23 @@ $$
 
 本章的证据等级应按诊断问题分开理解：Langmuir 提供解析频率、场误差和最终守恒；uniform plasma 提供粒子数、能量统计和 checkpoint/restart 逐字段一致性，但短时总能量变化不等于热平衡守恒；FieldProbe 的 `lambda/32` matched-time 对照通过解析 gate，而官方 `lambda/16` coarse case 仍是失败证据；`reduced_diags` 将 compact observable 与 full-state reference 逐项对照，`LoadBalanceCosts` 则只验证效率改善；`ColliderRelevant`、`DifferentialLuminosity`、`ParticleHistogram2D` 和 `BeamRelevant` 分别验证其统计、谱或 writer 定义。RZ 多模 Langmuir 和 native Gaussian sibling 是有界案例证据，不能替代各自缺失的官方 analysis。每一项都必须沿验证矩阵中的 producer、consumer、observable 和限制阅读，不能用“已经运行”替代物理结论。
 
-## 8.14 本章正文与源码同步合同
+## 8.14 从诊断入口到可解释证据
 
-读源码时可沿三条路线复核本章结论：
+面对一个新案例，先不要从“它写出了哪个文件”开始判断结果，而要依次回答三个问题：
 
-- 主循环如何调度诊断；
-- Full、BTD 与 BoundaryScraping 如何分派；
-- `ComputeDiagFunctors`、flush 与 OpenPMD iteration 如何把字段变成可消费输出。
+1. **要测的物理量是什么，处在哪个时间层？**主循环决定诊断何时采样；Full、BTD 与 BoundaryScraping 的差别决定你得到的是全状态、回到实验室系的快照，还是粒子边界事件。
+2. **这个量怎样从模拟状态变成输出？**`ComputeDiagFunctors` 负责字段派生量，粒子采样和 `flush` 决定归约或 writer 的时机，OpenPMD iteration 则给出可由分析器读取的时间序列坐标。
+3. **输出能够支持什么结论？**解析 comparison 是 physics evidence，writer/schema 检查说明数据形状可消费，checksum 说明指定输出回归，performance gate 只说明效率指标。它们不能互相升级。
 
-交叉检查脚本会核对这 13 组入口是否仍能对应。它确保这里的源码导航不会随版本漂移，却不替代具体案例的物理 gate、writer/schema 检查或性能结论。
+因此，`MultiDiagnostics` 或 `WarpXOpenPMD` 的入口存在，只说明诊断链被接入，不能反向证明每个下游案例都已通过。阅读验证矩阵时，应先从观察量和预期物理行为选择 case，再追踪生成该量的 consumer；不要把“文件已生成”误写为“物理机制已验证”。
 
-因此阅读验证矩阵时，始终把 physics analysis、writer/schema、checksum、performance 和 boundary 分开：`MultiDiagnostics` 或 `WarpXOpenPMD` 入口存在，只说明诊断链被接入，不能反向证明每个下游案例都已通过。需要逐项复查源码时，应沿本章代码阅读索引中的 diagnostics 交叉对照笔记返回对应实现。
-
-### 8.14.1 reduced diagnostics 最小输入合同
+### 8.14.1 三类 reduced diagnostics 的最小起点
 
 三类 reduced diagnostics 的最小输入可以这样起步：
 
 - `FieldProbe`：官方 reduced-diags 测试中的 point/line/plane 骨架；
 - `ParticleHistogram2D`：laser-ion 测试中的 `z`--`uz` openPMD mesh；
 - `LoadBalanceCosts`：`LBC.type = LoadBalanceCosts` 与官方 efficiency analysis。
-
-最小输入审计脚本可复核这三条输入、consumer 与正文说明仍相互对应。
 
 这些最小输入只回答“怎样产生该类输出”。它们不替代 `FieldProbe` 的解析 diffraction gate，不把 `ParticleHistogram2D` 的 writer/schema 变成物理收敛证明，也不把 `LoadBalanceCosts` 的效率比较与场精度混为同一类 physics gate。
 
@@ -14150,12 +14146,23 @@ $$
 2. **reader-side 复现题**：使用 `scripts/analyze_collider_relevant_contract.py` 或 `scripts/analyze_particle_histogram2d_contract.py` 读取一个案例输出，列出输入字段、输出文件和独立检查项。
 3. **失败边界题**：解释为什么 FieldProbe coarse failure、uniform-plasma reader-side 能量漂移和 initial-distribution binary mismatch 都应保留在书中，而不能简单从验证矩阵中删除。
 
-## 延伸验证路线
+## 8.16 延伸验证路线
 
 - 沿 `ComputeDiagFunctors/`、`ParticleIO`、`WarpXOpenPMD` 和 `FlushFormats/` 分开追踪字段计算、粒子采样与 writer 生命周期，避免把文件格式当成物理诊断。
 - 以 `FieldProbe`、`ParticleHistogram2D` 和 `LoadBalanceCosts` 的最小输入为例，分别复现解析 gate、writer/schema contract 和 performance gate。
 - 用更长的 uniform-plasma 时间窗，并结合 `energy_conserving_thermal_plasma` 的 analysis，区分短时统计漂移与可解释的总能量结论。
 - 改变 Langmuir 的模式数和拟合时间窗，检验频率测量对 sampling window 的敏感性，避免把单一窗口拟合误读为完整色散验证。
+
+## 8.17 本章结论
+
+诊断的价值不在于输出文件越多，而在于每一个输出都与明确的物理问题、时间层和判据相连。读者可以用下面四步设计或审读一个诊断：
+
+1. **先写问题和比较对象。**例如是 Langmuir 的解析频率、PML 的残余场、束流的相空间矩，还是 checkpoint/restart 的可重复性；不同问题要求不同 reference，而不是同一个通用 checksum。
+2. **再选状态与时间层。**确定需要全场、粒子、reduced observable、BTD 还是 boundary event，并明确采样发生在推进、同步或输出的哪一个阶段。
+3. **为结论配对证据等级。**物理 gate、writer/schema、性能量和输出回归应分别报告；只有与理论或独立 reference 比较的量才能支持相应的物理断言。
+4. **保留失败与不可外推范围。**FieldProbe coarse failure、随机初始化的有限采样误差、跨 rank 的 field 差异和缺失的上游 analysis 都是结果的一部分。删除它们会让验证矩阵看似更整齐，却会削弱读者判断可信度的能力。
+
+这条路线把第 4--7 章的算法、沉积、场更新与边界条件接到第 8 章的可观测量上：只有先知道一个量在何处产生、何时同步、由哪个 writer 或 analysis 消费，才能解释它究竟在验证哪一段 PIC 链。第 9 章将进一步说明如何为这些结论选择文献证据，并区分全文、摘要和源码案例各自能支持的范围。
 
 
 <!-- source: manuscript/chapters/09-literature-roadmap.md -->

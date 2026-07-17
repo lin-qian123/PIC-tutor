@@ -166,9 +166,16 @@ def main() -> None:
                 "SOURCE_AND_RUNTIME_SELECTION_MATRIX_WITH_EXPLICIT_BOUNDARIES",
             )
         ),
-        "chapter_8_source_contract_heading": "## 8.14 本章正文与源码同步合同" in source
-        and "### 8.14.1 本章正文与源码同步合同" not in source,
-        "chapter_8_minimal_diagnostics_section": "### 8.14.1 reduced diagnostics 最小输入合同" in source,
+        "chapter_8_reader_navigation": all(
+            marker in source
+            for marker in (
+                "## 8.14 从诊断入口到可解释证据",
+                "### 8.14.1 三类 reduced diagnostics 的最小起点",
+                "## 8.17 本章结论",
+                "先写问题和比较对象",
+                "保留失败与不可外推范围",
+            )
+        ),
         "chapter_5_geometry_order_gap_register": all(
             marker in source
             for marker in (

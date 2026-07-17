@@ -752,14 +752,16 @@ external-file Gaussian beam：束斑理论包络检查</a></li>
 <li><a href="#第-8-章验证矩阵观察量结论与边界" id="toc-第-8-章验证矩阵观察量结论与边界">第 8
 章验证矩阵：观察量、结论与边界</a></li>
 </ul></li>
-<li><a href="#本章正文与源码同步合同" id="toc-本章正文与源码同步合同">8.14 本章正文与源码同步合同</a>
+<li><a href="#从诊断入口到可解释证据" id="toc-从诊断入口到可解释证据">8.14 从诊断入口到可解释证据</a>
 <ul>
-<li><a href="#reduced-diagnostics-最小输入合同" id="toc-reduced-diagnostics-最小输入合同">8.14.1 reduced diagnostics
-最小输入合同</a></li>
+<li><a href="#三类-reduced-diagnostics-的最小起点" id="toc-三类-reduced-diagnostics-的最小起点">8.14.1 三类 reduced
+diagnostics 的最小起点</a></li>
 </ul></li>
 <li><a href="#练习与复现实验-1" id="toc-练习与复现实验-1">8.15
 练习与复现实验</a></li>
-<li><a href="#延伸验证路线" id="toc-延伸验证路线">延伸验证路线</a></li>
+<li><a href="#延伸验证路线" id="toc-延伸验证路线">8.16
+延伸验证路线</a></li>
+<li><a href="#本章结论-4" id="toc-本章结论-4">8.17 本章结论</a></li>
 </ul></li>
 <li><a href="#文献路线与延伸阅读" id="toc-文献路线与延伸阅读">9.
 文献路线与延伸阅读</a>
@@ -796,7 +798,7 @@ A：第 5 章沉积文献</a></li>
 </ul></li>
 <li><a href="#成书的已知证据边界" id="toc-成书的已知证据边界">9.8
 成书的已知证据边界</a></li>
-<li><a href="#本章结论-4" id="toc-本章结论-4">9.9 本章结论</a></li>
+<li><a href="#本章结论-5" id="toc-本章结论-5">9.9 本章结论</a></li>
 <li><a href="#练习与复核" id="toc-练习与复核">9.10 练习与复核</a>
 <ul>
 <li><a href="#证据层分类练习" id="toc-证据层分类练习">9.10.1
@@ -20628,24 +20630,26 @@ Langmuir 和 native Gaussian sibling
 是有界案例证据，不能替代各自缺失的官方
 analysis。每一项都必须沿验证矩阵中的 producer、consumer、observable
 和限制阅读，不能用“已经运行”替代物理结论。</p>
-<h2 id="本章正文与源码同步合同">8.14 本章正文与源码同步合同</h2>
-<p>读源码时可沿三条路线复核本章结论：</p>
-<ul>
-<li>主循环如何调度诊断；</li>
-<li>Full、BTD 与 BoundaryScraping 如何分派；</li>
-<li><code>ComputeDiagFunctors</code>、flush 与 OpenPMD iteration
-如何把字段变成可消费输出。</li>
-</ul>
-<p>交叉检查脚本会核对这 13
-组入口是否仍能对应。它确保这里的源码导航不会随版本漂移，却不替代具体案例的物理
-gate、writer/schema 检查或性能结论。</p>
-<p>因此阅读验证矩阵时，始终把 physics
-analysis、writer/schema、checksum、performance 和 boundary
-分开：<code>MultiDiagnostics</code> 或 <code>WarpXOpenPMD</code>
-入口存在，只说明诊断链被接入，不能反向证明每个下游案例都已通过。需要逐项复查源码时，应沿本章代码阅读索引中的
-diagnostics 交叉对照笔记返回对应实现。</p>
-<h3 id="reduced-diagnostics-最小输入合同">8.14.1 reduced diagnostics
-最小输入合同</h3>
+<h2 id="从诊断入口到可解释证据">8.14 从诊断入口到可解释证据</h2>
+<p>面对一个新案例，先不要从“它写出了哪个文件”开始判断结果，而要依次回答三个问题：</p>
+<ol type="1">
+<li><strong>要测的物理量是什么，处在哪个时间层？</strong>主循环决定诊断何时采样；Full、BTD
+与 BoundaryScraping
+的差别决定你得到的是全状态、回到实验室系的快照，还是粒子边界事件。</li>
+<li><strong>这个量怎样从模拟状态变成输出？</strong><code>ComputeDiagFunctors</code>
+负责字段派生量，粒子采样和 <code>flush</code> 决定归约或 writer
+的时机，OpenPMD iteration 则给出可由分析器读取的时间序列坐标。</li>
+<li><strong>输出能够支持什么结论？</strong>解析 comparison 是 physics
+evidence，writer/schema 检查说明数据形状可消费，checksum
+说明指定输出回归，performance gate
+只说明效率指标。它们不能互相升级。</li>
+</ol>
+<p>因此，<code>MultiDiagnostics</code> 或 <code>WarpXOpenPMD</code>
+的入口存在，只说明诊断链被接入，不能反向证明每个下游案例都已通过。阅读验证矩阵时，应先从观察量和预期物理行为选择
+case，再追踪生成该量的
+consumer；不要把“文件已生成”误写为“物理机制已验证”。</p>
+<h3 id="三类-reduced-diagnostics-的最小起点">8.14.1 三类 reduced
+diagnostics 的最小起点</h3>
 <p>三类 reduced diagnostics 的最小输入可以这样起步：</p>
 <ul>
 <li><code>FieldProbe</code>：官方 reduced-diags 测试中的
@@ -20655,7 +20659,6 @@ point/line/plane 骨架；</li>
 <li><code>LoadBalanceCosts</code>：<code>LBC.type = LoadBalanceCosts</code>
 与官方 efficiency analysis。</li>
 </ul>
-<p>最小输入审计脚本可复核这三条输入、consumer 与正文说明仍相互对应。</p>
 <p>这些最小输入只回答“怎样产生该类输出”。它们不替代
 <code>FieldProbe</code> 的解析 diffraction gate，不把
 <code>ParticleHistogram2D</code> 的 writer/schema
@@ -20674,7 +20677,7 @@ producer、analysis 量和“不能支持的结论”。</li>
 failure、uniform-plasma reader-side 能量漂移和 initial-distribution
 binary mismatch 都应保留在书中，而不能简单从验证矩阵中删除。</li>
 </ol>
-<h2 id="延伸验证路线">延伸验证路线</h2>
+<h2 id="延伸验证路线">8.16 延伸验证路线</h2>
 <ul>
 <li>沿
 <code>ComputeDiagFunctors/</code>、<code>ParticleIO</code>、<code>WarpXOpenPMD</code>
@@ -20689,6 +20692,27 @@ analysis，区分短时统计漂移与可解释的总能量结论。</li>
 <li>改变 Langmuir 的模式数和拟合时间窗，检验频率测量对 sampling window
 的敏感性，避免把单一窗口拟合误读为完整色散验证。</li>
 </ul>
+<h2 id="本章结论-4">8.17 本章结论</h2>
+<p>诊断的价值不在于输出文件越多，而在于每一个输出都与明确的物理问题、时间层和判据相连。读者可以用下面四步设计或审读一个诊断：</p>
+<ol type="1">
+<li><strong>先写问题和比较对象。</strong>例如是 Langmuir 的解析频率、PML
+的残余场、束流的相空间矩，还是 checkpoint/restart
+的可重复性；不同问题要求不同 reference，而不是同一个通用 checksum。</li>
+<li><strong>再选状态与时间层。</strong>确定需要全场、粒子、reduced
+observable、BTD 还是 boundary
+event，并明确采样发生在推进、同步或输出的哪一个阶段。</li>
+<li><strong>为结论配对证据等级。</strong>物理
+gate、writer/schema、性能量和输出回归应分别报告；只有与理论或独立
+reference 比较的量才能支持相应的物理断言。</li>
+<li><strong>保留失败与不可外推范围。</strong>FieldProbe coarse
+failure、随机初始化的有限采样误差、跨 rank 的 field 差异和缺失的上游
+analysis
+都是结果的一部分。删除它们会让验证矩阵看似更整齐，却会削弱读者判断可信度的能力。</li>
+</ol>
+<p>这条路线把第 4–7 章的算法、沉积、场更新与边界条件接到第 8
+章的可观测量上：只有先知道一个量在何处产生、何时同步、由哪个 writer 或
+analysis 消费，才能解释它究竟在验证哪一段 PIC 链。第 9
+章将进一步说明如何为这些结论选择文献证据，并区分全文、摘要和源码案例各自能支持的范围。</p>
 <!-- source: manuscript/chapters/09-literature-roadmap.md -->
 <h1 id="文献路线与延伸阅读">9. 文献路线与延伸阅读</h1>
 <p>本书的文献不是装饰，也不是章节末尾统一贴一串
@@ -21126,7 +21150,7 @@ PASS/FAIL；<code>RUNTIME_LEDGER_UNPROVEN</code> 表示源码与 schema
 尚未输出账本；<code>CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN</code>
 表示可以计算描述性 order，但不能宣称正式阶数。</p>
 <p>缺口表的内部一致性检查只能保证正文和证据目录使用同一组术语，不表示本书已经达到终稿。</p>
-<h2 id="本章结论-4">9.9 本章结论</h2>
+<h2 id="本章结论-5">9.9 本章结论</h2>
 <p>本书已经不再只有书目而没有正文阅读资产，但也尚未达到“所有 primary
 sources fully closed”。更准确的概括是：</p>
 <ul>

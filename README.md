@@ -10,6 +10,8 @@
 
 第 7 章的入口与结尾现从边界闭合问题出发：先区分 field/particle 拓扑、PML/guard-cell 离散更新、AMR 状态迁移和匹配的观察量，再说明 transition zone 为何仍缺逐 route 账本。读者审计会拒绝把分支快照、论文访问状态和维护脚本写回这条主线；PDF 第 207、219 页已人工复核。
 
+第 8 章的结尾现从诊断设计出发：先定义物理问题和时间层，再追踪输出 consumer，并区分 physics gate、writer/schema、checksum 与性能证据；失败案例和不可外推范围保留在结论中。PDF 第 255--256 页已人工复核。
+
 第 9 章的文献路线也已统一为“可核查材料、可支持结论、访问边界”：不再以本机资产或内部处理流程描述论文。PDF 第 258、261 页已人工复核；读者审计对该章单独拒绝 `materialize`、内部 contract 名和本机路径措辞。
 
 当前读者版已完成第 4 章粒子推进器、第 5 章沉积、第 6 章场求解器和第 7 章边界/AMR 的主题化改写：正文按“问题 -> 原理 -> 证据 -> 限制 -> 练习”组织，逐版实验记录分别下沉至 `docs/chapter-04-v0-evidence-ledger.md` 至 `docs/chapter-07-v0-evidence-ledger.md`。读者审计已不再发现版本化章节标题；完整缺口见 `docs/current-book-gap-register.md`。

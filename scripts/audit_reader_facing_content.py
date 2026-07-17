@@ -33,6 +33,7 @@ def main() -> int:
     chapter_4 = (root / "manuscript/chapters/04-particle-pushers.md").read_text(encoding="utf-8")
     chapter_6 = (root / "manuscript/chapters/06-field-solvers.md").read_text(encoding="utf-8")
     chapter_7 = (root / "manuscript/chapters/07-boundaries-amr.md").read_text(encoding="utf-8")
+    chapter_8 = (root / "manuscript/chapters/08-diagnostics-cases.md").read_text(encoding="utf-8")
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -80,6 +81,11 @@ def main() -> int:
         r"pkuHEDPbranch|8c488b1a9|accepted manuscript|scripts/audit_|正文-源码对应",
         chapter_7_opening + chapter_7_closure,
     )
+    chapter_8_closure = chapter_8[chapter_8.index("## 8.14") :]
+    chapter_8_project_record_markers = re.findall(
+        r"本章正文与源码同步合同|交叉检查脚本|最小输入审计脚本|runs/stage-c-validation",
+        chapter_8_closure,
+    )
     checks = {
         "version_is_reader_facing": "不是开发日志" in version and "读者在本版可以学到什么" in version,
         "manuscript_readme_is_reader_facing": "PIC 教程" in readme and "阅读路径" in readme and "不是面向维护者的提交记录" in readme,
@@ -115,6 +121,17 @@ def main() -> int:
             )
         )
         and not chapter_7_project_record_markers,
+        "chapter_8_has_reader_facing_diagnostics_closure": all(
+            marker in chapter_8_closure
+            for marker in (
+                "从诊断入口到可解释证据",
+                "要测的物理量是什么，处在哪个时间层？",
+                "三类 reduced diagnostics 的最小起点",
+                "本章结论",
+                "先写问题和比较对象",
+            )
+        )
+        and not chapter_8_project_record_markers,
         "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text
@@ -136,6 +153,7 @@ def main() -> int:
         "chapter_4_project_record_markers": chapter_4_project_record_markers,
         "chapter_6_project_record_markers": chapter_6_project_record_markers,
         "chapter_7_project_record_markers": chapter_7_project_record_markers,
+        "chapter_8_project_record_markers": chapter_8_project_record_markers,
         "open_items": [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ],

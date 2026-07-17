@@ -7,6 +7,7 @@
 - [x] 完成第 5 章结论与练习的读者化收束：将发布和后续补足口吻改为连续性观察量、算法约束、charge/current/sync 链和证据范围的判断路线；练习新增 current-correction/Vay 观察量设计与公式/源码/运行边界辨析。重建候选为 264 页，PDF 第 169--171 页及第 6 章交界已人工复核。
 - [x] 完成第 6 章结尾的读者化收束：将源码同步合同改为“分派、source 时间层、observable”三问回查路线，补齐以几何、source 时间模型、边界/耦合和验证量组织的本章结论；练习改用官方 Picard case 与跨章节诊断设计。读者审计新增第 6 章结尾专属检查，重建候选保持 264 页，PDF 第 206--208 页及第 7 章交界已人工复核。
 - [x] 完成第 7 章入口与结尾的读者化收束：移除分支快照、accepted-manuscript 状态和源码同步合同口吻，以 field/particle 拓扑、PML/guard-cell 更新、AMR 状态迁移和观察量选择组织边界闭合路线；保留 transition-zone route ledger 未闭合的物理边界。读者审计新增第 7 章入口/结尾专属检查，重建候选保持 264 页，PDF 第 207、219 页及第 8 章交界已人工复核。
+- [x] 完成第 8 章结尾的读者化收束：将源码同步合同改为诊断问题、时间层、consumer 与证据等级的三问路线，新增以比较对象、状态/时间层、证据分级和失败边界组织的本章结论。读者审计新增第 8 章结尾专属检查，重建候选保持 264 页，PDF 第 255--256 页及第 9 章交界已人工复核。
 - [x] 完成第 4.14.7--4.14.11 节 QED 后半段的读者化：将 optical-depth 触发、WarpX/PICSAR-QED 分工、source 命运、lookup table 生命周期以及强场 QED 与 virtual-photon/BinaryCollision 两棵树改按模型选择、观察量和排错边界组织。重建候选保持 263 页，PDF 第 114--116 页已人工复核。
 - [x] 完成第 4.14.1--4.14.6 节 QED 事件链的读者化：按 source/product 角色、初始化与事件的时间分离、field ionization 后的调度位置、source/product 同时更新、Schwinger 的网格场起点和三类观察量组织，删除装配和 regression 清单口吻。读者审计覆盖扩展至第 4.14 节；重建候选保持 263 页，PDF 第 111--113 页已人工复核。
 - [x] 完成第 4.13.13 节 embedded-boundary 的读者化：将 PEC cavity、本征模旋转、Airy 衍射、PICMI 几何数组、吸收伪电荷、BoundaryScraping 记账和静电球解析解改按验证对象与可外推范围组织；明确可视化 helper、输入内自检、独立 analysis 与 checksum 的区别。读者审计覆盖扩展至该节；重建候选保持 263 页，PDF 第 110--112 页已人工复核。

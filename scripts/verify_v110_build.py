@@ -19,7 +19,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # The current reader-facing layout, including the boundary/AMR reading route, has 263 pages.
-EXPECTED_PDF_PAGES = 263
+# The current reader-facing layout, including the particle and deposition reading routes, has 264 pages.
+EXPECTED_PDF_PAGES = 264
 
 
 def image_links(text: str) -> list[str]:

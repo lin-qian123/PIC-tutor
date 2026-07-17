@@ -2599,23 +2599,18 @@ RZ Esirkepov 是本章最容易被误读的例子。默认 axis correction 下�
 
 ## 5.15 本章结论
 
-沉积的物理底线是离散连续性方程。WarpX 的工程实现把它拆成多层：
+沉积的物理底线是离散连续性方程，但读者不应把它理解成某一个 `DepositCurrent()` kernel 的孤立性质。它由形函数、粒子轨迹、旧/新电荷时间层、current kernel、AMR 同步和场边界共同决定。面对 `divE-rho` 残差、异常噪声或边界电荷时，可按以下顺序判断：
 
-这条链按时间层可写成：
+1. **先定义要守住的量。**比较的是局部 `rho`、电流、离散连续性、Gauss law、场解析解，还是粒子统计矩？这些量的时间层和诊断 consumer 不同，不能把一个通过的场误差直接当作 charge closure。
+2. **再选择与轨迹信息相容的电流算法。**Direct 是直观的速度加权对照；Esirkepov 由新旧形函数差构造守恒电流；Villasenor--Buneman 按 crossing 分段构造面通量；Vay 使用专用的两阶段 `D` 场组织。几何、显式/隐式时间层、grid layout 和 AMR 限制先于“哪一个更精确”的比较。
+3. **把 charge、current 与同步视为一条链。**`PhysicalParticleContainer::Evolve()` 写入旧 `rho` component 0，轨迹进入 `DepositCurrent(relative_time=-0.5 dt)`，推进后状态写入新 `rho` component 1；随后 `SyncCurrentAndRho()` 处理 guard、物种求和、fine/coarse 合并、filter 和边界，再交给 field solver。跳过其中任一层，都不能把 tile 级沉积解释成求解器实际消费的源项。
+4. **用与问题匹配的证据收束结论。**解析 Langmuir 波和 `divE-rho/epsilon_0` 可检验指定输入下的场/源一致性；crossing 或公式恒等式可解释离散构造；源码入口说明可用分派。三者相互补充，不能互相替代。RZ axis、径向几何、AMR transition zone 和隐式路径仍应按各自的观察量保留边界，不从 Cartesian 通过案例外推。
 
-1. `PhysicalParticleContainer::Evolve()` 先写入 `rho` component 0，再调用 `PushPX()` 推进位置与动量。
-2. 推进后的轨迹进入 `DepositCurrent(relative_time=-0.5 dt)`，由 `WarpXParticleContainer::DepositCurrent()` 选择 Esirkepov、Villasenor、Vay 或 Direct 路径。
-3. 同一推进后状态写入 `rho` component 1，并由 `WarpXParticleContainer::DepositCharge()` 调用 charge shape kernel。
-4. `SyncCurrentAndRho()` 合并两类源项的 guard、粗细层和边界信息，最后才由 field solver 消费。
-
-对读者而言，这张责任矩阵明确了 current kernel、charge kernel 和同步层的职责边界；`DepositCharge()` / ABLASTR / `ChargeDeposition.H` 的主要职责也已由此定位。仍需加强的是出版级证据与表达，而不是继续扩大局部 kernel 的职责：
-
-1. 取得合法的 CPC publisher PDF 后，完成 `Esirkepov 2001` 与预印本在 title、abstract、section numbering、`Eq.(23)` 和二阶 spline 段落上的 bounded compare；
-2. 对本章源码路径、公式编号和宽表格做最终出版级精修，并继续补足尚未覆盖的 geometry/order 分支，再转向后续尚未闭合的成书模块。
+第 6 章将从这里接手已经同步的 `rho/J`，讨论不同 Maxwell solver 如何消费它们；第 7 章继续解释边界、PML 和 AMR 如何改变 source 的有效定义；第 8 章则把本章涉及的场、粒子与守恒量组织成 diagnostics。
 
 ## 5.16 练习与源码定位
 
 1. **连续性方程题**：从 `rho` 的 old/new 时间层出发，解释为什么 Direct current deposition 不能自动保证 `Delta t div_h J = rho_old - rho_new`，而 Esirkepov/Villasenor 必须引入轨迹或 crossing 信息。
 2. **源码定位题**：分别定位 `DepositCharge()`、`DepositCurrent()` 和 `SyncCurrentAndRho()` 的入口，给每个函数写出一个“它负责什么”和一个“它不负责什么”的边界。
-3. **公式复核题**：运行 `python scripts/verify_esirkepov_density_decomposition.py`，再对照 `notes/code-reading/particles/45-villasenor-formula-level-audit.md`，说明公式级恒等式通过为什么仍不能替代端到端 Gauss-law regression。
-4. **Villasenor 几何题**：运行 `python scripts/verify_villasenor_formula_contract.py --samples 10000`，解释四边界 flux closure、crossing-split displacement closure 和 Eq.(36) 三维 volume closure 分别验证了哪一层，为什么仍不能推出 `CurrentDeposition.H` 的所有 geometry/order 分支等价。
+3. **观察量设计题**：选择 `Examples/Tests/langmuir/` 的一个 current-correction 或 Vay-deposition 变体，列出它比较的场量、source 一致性量和容差；写出一个该 case 不能证明的 geometry、AMR 或时间层结论。
+4. **公式与运行边界题**：运行 `python scripts/verify_esirkepov_density_decomposition.py`，再对照 `notes/code-reading/particles/45-villasenor-formula-level-audit.md`，说明公式级恒等式、源码分派和端到端 Gauss-law regression 分别回答什么，为什么三者不能替代。

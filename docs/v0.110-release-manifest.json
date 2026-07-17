@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1246,
-  "total_bytes": 39158400,
+  "total_bytes": 39148715,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1540267,
-      "sha256": "077214111fa59313bd45c20f3f4d459dba096d96e19e7b6f2042c7b3e9d9ecc7"
+      "bytes": 1540349,
+      "sha256": "487c7a37c71c9a763843baa42bfaa499bd9ad469130f6b8ca07a8abf00666cf4"
     },
     {
       "path": "TODO.md",
-      "bytes": 1408322,
-      "sha256": "3ff81ad478e0de08b84f7021000793a19a0b88a774e0193f41bcf2292e2222aa"
+      "bytes": 1408958,
+      "sha256": "0d799d970726072d2c8aa21e2448628d84ddbb9f6ee7159f5ab052d5e7f20fd5"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5257200,
-      "sha256": "d4f850fc27407497b6fe252b229a42adf8b3a9c9ee88fdd4e5f89d109cff0f5a"
+      "bytes": 5254445,
+      "sha256": "cb0f59b42003dba74e9984cc0339336e03c6c0ed2dc542c93d770ced0375e876"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 860994,
-      "sha256": "2287f830516b8a11217e68667977acc2af3e2a437aafef2155dee2c072d1bf11"
+      "bytes": 858585,
+      "sha256": "52cd3e74da6c566f1dde1b6cca23f4f55811340a44ddd0316f05e24cdb6385be"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2992791,
-      "sha256": "e9ebb495ba5dd72e7285f040a531a8af86675c73ad74312a5379d588f5a346d6"
+      "bytes": 2989198,
+      "sha256": "d154c23ee918b0c51554c911cb3caa549dd1168815a1fdcf7409901d4adc3557"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -203,7 +203,7 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
       "bytes": 768,
-      "sha256": "0384e52db4afae5780f004ce7b149ab404a819d228d4704848f269df79ee5a17"
+      "sha256": "5f45b3b98b5d58390396c7422853d0d6b728ed6a7e8cab198811702b486dcc05"
     },
     {
       "path": "docs/editorial-quality-audit-v0.81.json",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 7508,
-      "sha256": "193ea4a2ff90dc6e177a6a631f2b3f5f9e6317ef097184aa87b8aaf70429970d"
+      "bytes": 8193,
+      "sha256": "fbb5be310c65655b1a7caf0de8417a5d10c9dc94ea0d0b6e99e346f37d1ccf3e"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -668,7 +668,7 @@
     {
       "path": "docs/pdf-layout-audit-v0.110.md",
       "bytes": 571,
-      "sha256": "40c8730e4274aeedca0e0d9a933a88a699261138e39240f0f66c8db298f5a572"
+      "sha256": "8fa1d6e9456481edfeed2a83233996a63b76438e7fe261bf0b145d4cc8647e2e"
     },
     {
       "path": "docs/pdf-layout-audit-v0.82.json",
@@ -892,8 +892,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 7019,
-      "sha256": "ad49834bab4afbb6c9731bb4797026891a312a73105ad0284c2b84a9da7d952c"
+      "bytes": 7097,
+      "sha256": "47ee2edcf034f24e22ab29241aa325d016fe001064a49a635062f243e4a463b0"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2312,8 +2312,8 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 45424,
-      "sha256": "835e55d072a3bb9e1a0a0124925c91f94ab1204402d98e96cee52591b79b85ad"
+      "bytes": 43015,
+      "sha256": "8516c522ace7940cfeb1dde3e0540301641f9b08a20ea18a5b5d9722f950a887"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
@@ -5953,7 +5953,7 @@
     {
       "path": "scripts/verify_v110_build.py",
       "bytes": 21699,
-      "sha256": "5074f889e16e8f3f41299db51c2d26bca9be85ae6bb4f07bdf22d1eb03c961cb"
+      "sha256": "465a2cee5b6ed42e2a0bb0affc61ccdd821308d254745b9f3e4a82b4f99d1438"
     },
     {
       "path": "scripts/verify_v40_build.py",

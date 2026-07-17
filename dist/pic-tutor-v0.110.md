@@ -11853,7 +11853,7 @@ $$
 
 # 7. 边界条件、PML 与 AMR
 
-> 源码定位范围：本章对应相邻 `../warpx` 的 `pkuHEDPbranch / 8c488b1a9`。边界、PML、guard cell 与 AMR 的入口地图，连同 LeeCPC2015 accepted manuscript、WarpX 源码交叉核对和 Cartesian/RZ PML 案例，共同支撑本章的实现说明。它们不能替代 publisher-formatted CPC PDF 的版本差异核对，也不能证明 `C1-C25`、Galilean `T2`、cleaning `F/G` 的逐项历史归因或 transition-zone 的完整 route ledger。
+本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航。边界、PML、guard cell 与 AMR 的实现说明由 LeeCPC2015 accepted manuscript、源码交叉核对和 Cartesian/RZ PML 案例共同支撑；它们不能替代 publisher-formatted CPC PDF 的版本差异核对，也不能证明 `C1-C25`、Galilean `T2`、cleaning `F/G` 的逐项历史归因或 transition-zone 的完整 route ledger。
 
 边界条件在 PIC 中同时作用于场和粒子。场边界控制 Maxwell 方程如何在计算域边缘闭合；粒子边界控制宏粒子离开、反射、吸收、周期穿越或被记录的方式。二者不能混为一谈。
 
@@ -11864,21 +11864,7 @@ WarpX 官方理论文档把 PML、PEC、PMC、Silver-Mueller、周期边界和�
 - `../warpx/Source/Particles/ParticleBoundaries_K.H`
 - `../warpx/Source/Evolve/WarpXEvolve.cpp::HandleParticlesAtBoundaries`
 
-当前边界源码精读已建立两篇基础笔记：
-
-- `notes/code-reading/boundary/00-field-boundary-parameters.md`
-- `notes/code-reading/boundary/01-pml-data-and-update.md`
-
-随后又补入：
-
-- `notes/code-reading/boundary/02-pec-insulator-silver-mueller.md`
-- `notes/code-reading/boundary/03-boundary-parameter-table.md`
-- `notes/code-reading/boundary/04-silver-mueller-internal-stencil.md`
-- `notes/code-reading/embedded-boundary/00-eb-initialization.md`
-- `notes/code-reading/embedded-boundary/01-face-extensions.md`
-- `notes/code-reading/embedded-boundary/02-particle-scraping-and-deposition-near-eb.md`
-
-这两篇笔记分别覆盖“参数如何进入 WarpX”和“PML 如何变成真实 split fields / sigma arrays”。对于边界模块，这个切分比直接按文件顺序扫描更有效，因为边界问题天然跨参数解析、主循环分派、场数组镜像和粒子沉积四层。
+配套源码笔记按参数、PML、导体边界、embedded boundary 和粒子 scraping 分类在 `notes/code-reading/boundary/` 与 `notes/code-reading/embedded-boundary/`。它们适合在需要核对细节时使用；第一次阅读应先沿本章的因果链理解边界为何同时跨参数解析、主循环分派、场数组镜像和粒子沉积。
 
 ## 本章的阅读路线：边界是一个闭合系统
 
@@ -11903,18 +11889,19 @@ WarpX 官方理论文档把 PML、PEC、PMC、Silver-Mueller、周期边界和�
 
 本章不能只按“边界条件”这个名词归类，因为 WarpX 中的边界语义会穿过参数解析、场数组 guard cell、PML split field、粒子删除/反射/记录、诊断和 AMR 重建。以下列出读代码时需要反复回查的入口：
 
-| 问题 | 源码入口 | 阅读要点 |
+| 问题 | 核心函数/文件 | 读者问题 |
 |---|---|---|
-| field 与 particle 边界解析顺序 | `../warpx/Source/WarpX.cpp:274-296` | `MakeWarpX()` 先读 field boundary，再由 field periodic 掩码约束 particle boundary，最后才构造 `WarpX` 单例。 |
-| field boundary 参数与 periodic 一致性 | `../warpx/Source/BoundaryConditions/FieldBoundaries.cpp:22-80` | `boundary.field_lo/field_hi` 默认进入 `FieldBoundaryType::Default`，周期方向必须 lo/hi 成对闭合。 |
-| particle boundary 参数与 field periodic 继承 | `../warpx/Source/Particles/ParticleBoundaries.cpp:18-97` | 若用户未显式写 `boundary.particle_lo/hi`，field periodic 会把相同方向的 particle boundary 改成 periodic；构造函数层默认仍是 absorbing。 |
-| E/B 物理边界施加 | `../warpx/Source/BoundaryConditions/WarpXFieldBoundaries.cpp:51-255` | PEC、PMC、PECInsulator、Silver-Mueller 和轴边界集中在这里分派；Silver-Mueller 只挂在 level 0 的 `B` first half-push。 |
-| rho/J 镜像与导体内清零 | `../warpx/Source/BoundaryConditions/WarpXFieldBoundaries.cpp:257-302` | 反射/热粒子边界和 PEC/PMC 类 field boundary 会触发 rho/J 的反射边界处理；PECInsulator 还会在导体内清零平行分量。 |
-| PML 数据与推进 | `../warpx/Source/BoundaryConditions/PML.H`、`PML.cpp`、`WarpXEvolvePML.cpp`、`PML_current.H` | PML 不是一个单独边界开关，而是一组 split fields、sigma/kappa 系数、current damping 和推进分支。第 6 章已经覆盖场求解器侧入口，本章继续补边界侧语义。 |
-| FillBoundary、PML exchange 与 guard cell 检查 | `../warpx/Source/Parallelization/WarpXComm.cpp:703-916` | E/B 顶层 `FillBoundary*()` 会进入 PML exchange/fill 和普通 `MultiFab::FillBoundary`，并在 guard 数不足时直接断言。 |
-| guard-cell 数量预算 | `../warpx/Source/Parallelization/GuardCellManager.cpp:35-140`、`:300-390` | guard cell 由粒子 shape、field stencil、NCI、moving window、subcycling、safe mode 和 implicit 分支共同决定；不是 AMR 后临时补的常数。 |
-| AMR/load-balance 后边界 buffer 与场数组重建 | `../warpx/Source/Parallelization/WarpXRegrid.cpp:140-230` | load balance 后会重分布 particle boundary buffer；`RemakeLevel()` 按原 `nGrowVect()` 重建 field MultiFab，并在 EB 路径使用 `guard_cells.ng_FieldSolver.max()`。moving window 的运行时入口另在 `../warpx/Source/Utils/WarpXMovingWindow.cpp:357` 的 `MoveWindow()`。 |
-| boundary scraping 诊断 | `../warpx/Source/Diagnostics/BoundaryScrapingDiagnostics.cpp:27-126`、`../warpx/Source/Particles/ParticleBoundaries_K.H` | 粒子离开域或撞到 EB 后不只是删除，也可能进入 boundary buffer，再由 scraping diagnostics 输出。 |
+| 边界解析 | `MakeWarpX()` | field periodic 为何约束 particle boundary？ |
+| field 参数 | `FieldBoundaries` | 为何 periodic 必须在 lo/hi 成对闭合？ |
+| particle 参数 | `ParticleBoundaries` | 何时继承 periodic，何时保持 absorbing？ |
+| 场边界 | `WarpXFieldBoundaries` | PEC、PMC、Silver-Mueller 和轴边界怎样分派？ |
+| 源项边界 | `ApplyRhoJ` | rho/J 何时镜像，何时在导体内清零？ |
+| PML | `PML` / `DampPML()` | split field 和电流 damping 如何协同？ |
+| guard cells | `WarpXComm` / `GuardCellManager` | 哪些物理和数值选择决定通信宽度？ |
+| AMR 重建 | `RemakeLevel()` | 重映射后哪些场、粒子和 buffer 必须一起重建？ |
+| scraping | `BoundaryScrapingDiagnostics` | 粒子何时被记录，而不只是被删除？ |
+
+这些入口位于源码快照的 `Source/BoundaryConditions/`、`Source/Parallelization/`、`Source/Particles/` 与 `Source/Diagnostics/`；后文在首次使用时给出具体文件和行号。
 
 把这些入口串起来，边界章节的主线应当是：
 
@@ -12184,7 +12171,7 @@ PML 的问题不是“是否开了吸收边界”，而是出射波、不同 sol
 
 前文的 `PML`、`SigmaBox`、`DampPML()` 与 `push_ex_pml_current()` 解释了吸收层如何在源码中被构造和推进：每个 split component 按自身 staggering 和阻尼方向更新，粒子电流也要分摊到对应的 split field。源码入口说明“程序有这条机制”，运行 consumer 才回答“这条机制在某个 case 中的可观测结果”。
 
-读者应把 PML 证据固定为三层：理论或文献解释吸收的目标，当前源码解释系数和分派，regression/analysis 限定一个 measurable outcome。LeeCPC2015 的 accepted manuscript 与当前 PSATD-PML 源码可以支持机制和公式映射的讨论，但 publisher-formatted PDF 的逐式差异仍未完成；同样，Cartesian、RZ、cleaning 和粒子入 PML 也必须保持各自的 observable 边界。
+读者应把 PML 证据固定为三层：理论或文献解释吸收的目标，源码快照解释系数和分派，regression/analysis 限定一个 measurable outcome。LeeCPC2015 的 accepted manuscript 与 PSATD-PML 源码可以支持机制和公式映射的讨论，但 publisher-formatted PDF 的逐式差异仍未完成；同样，Cartesian、RZ、cleaning 和粒子入 PML 也必须保持各自的 observable 边界。
 
 
 ## 7.6 Embedded boundary 先是几何初始化和辅助标记系统
@@ -12467,7 +12454,7 @@ amrex::Real const dt_fraction = amrex::bisect( 0.0, 1.0,
 4. 后续删除逻辑真正清除粒子；
 5. 若启用 `save_particles_at_eb`，则 `ParticleBoundaryBuffer` 回溯到 `phi=0` 交点并记录 scraped 事件。
 
-`Examples/Tests/embedded_circle/` 给这条链提供了一个很实用但证据层级较弱的本地入口。它不是 `electrostatic_sphere_eb` 那类解析 `phi/Er` 强基准，也不是 `point_of_contact_eb` 那类直接检查交点几何的强 analysis，而是一个 2D circular EB workflow baseline：
+`Examples/Tests/embedded_circle/` 为这条链提供了一个实用但证据层级较弱的入口。它不是 `electrostatic_sphere_eb` 那类解析 `phi/Er` 强基准，也不是 `point_of_contact_eb` 那类直接检查交点几何的强 analysis，而是一个 2D circular EB workflow baseline：
 
 - `eb_implicit_function` 定义圆形导体
 - `eb_potential = -10` 进入电静求解
@@ -12476,7 +12463,7 @@ amrex::Real const dt_fraction = amrex::bisect( 0.0, 1.0,
 - 两个 species 都打开 `save_particles_at_eb = 1`
 - `diag3` 用 `BoundaryScraping` openPMD 写出 scraped 粒子
 
-当前 `CMakeLists.txt` 中这条 test 没有独立 `analysis.py`，只保留 checksum helper。因此它在本章里更适合承担：
+该 `CMakeLists.txt` 中的 test 没有独立 `analysis.py`，只保留 checksum helper。因此它在本章里更适合承担：
 
 - EB geometry + electrostatic + MCC + BoundaryScraping 的联合工作流基线
 
@@ -12484,7 +12471,7 @@ amrex::Real const dt_fraction = amrex::bisect( 0.0, 1.0,
 
 domain boundary buffer 的收集时机也要一起记住。`WarpXEvolve.cpp` 里先执行 `mypc->ApplyBoundaryConditions()`，随后立刻调用 `m_particle_boundary_buffer->gatherParticlesFromDomainBoundaries(*mypc, cur_time)`，最后才在 EB 路径后统一 `deleteInvalidParticles()`。因此 buffer 记录依赖的是“粒子还在容器里、但已经越界或即将失效”的中间态，而不是从被删除后的粒子列表回溯出来。对 `save_particles_at_xlo/.../eb`、`BoundaryScrapingDiagnostic` 和 Python buffer 接口来说，这个顺序决定了 scraped 数据为什么能同时保留 step、时间偏移和边界法向。
 
-周期边界有一个关键规则：如果某个方向的场边界是 periodic，该方向粒子边界也必须 periodic。这个规则在过去本机验证中已经用本地运行、源码和文档确认过；非周期边界则不要求 field 和 particle 边界字面一致。正式章节需要把对应源码错误消息和参数验证写入本章。
+周期边界有一个关键规则：如果某个方向的场边界是 periodic，该方向粒子边界也必须 periodic；非周期边界则不要求 field 和 particle 边界字面一致。这一规则由本章 7.1 的参数解析和断言直接约束，不能从“某次运行没有报错”反推。
 
 AMR 的目标是把计算资源集中在物理上需要高分辨率的区域。但 PIC 的 AMR 比流体 AMR 更难，因为宏粒子穿过 refinement interface 时会看到不同网格上的插值场，容易产生 self-force、短波反射和电荷/电流不一致。WarpX 官方 `Docs/source/theory/amr.rst` 特别强调两个问题：mesh refinement interface 附近的 spurious self-force，以及电磁波在粗细网格界面处的反射和放大。
 
@@ -12624,11 +12611,11 @@ AMR 的 transition zone 同时影响 gather 和 deposition。粒子在细网格 
 
 `PartitionParticlesInBuffers()` 是理解这条路径的关键入口。它在一个 tile 内给出 `nfine_gather` 与 `nfine_deposit`，随后同步阶段才会把 buffer 与 coarse/fine 数据合并。因而强验证需要在分区之后、同步之前观察 route counts 或中间账本；只读取最终 plotfile，只能给出间接证据。
 
-| 证据层 | 当前能说明什么 | 仍不能说明什么 |
+| 证据层 | 能说明什么 | 仍不能说明什么 |
 |---|---|---|
-| 当前源码 | buffer mask、`nfine_gather/nfine_deposit`、`aux/cax/fp/buf` 和同步入口存在且相互对应 | 每个 route 在真实 case 中都被独立命中 |
+| 源码快照 | buffer mask、`nfine_gather/nfine_deposit`、`aux/cax/fp/buf` 和同步入口存在且相互对应 | 每个 route 在真实 case 中都被独立命中 |
 | 现有 MR case | subcycling、moving window、PML 或解析场 consumer 可验证整体运行完整性 | `fine/coarse gather/deposit` 的逐粒子分区 |
-| route-count schema | 未来 reduced diagnostic 可检查 count、weight、`rho/J` 与 post-sync closure | 当前 WarpX 已经输出这些数据 |
+| route-count schema | 专用 diagnostic 应检查 count、weight、`rho/J` 与 post-sync closure | WarpX 已经输出这些数据 |
 | runtime activation | 已有 AMR workflow 确实调用了 partition/sync 分支 | 没有 route id、pre-sync buffer 或 owner-mask 数值账本 |
 
 因此，本章对 transition zone 的准确结论是：源码路径已核、整体 MR workflow 有运行证据、专用 route ledger 仍未实现。不要把末态 checksum、解析场误差或 profiling marker 写成 branch-level route proof。
@@ -12641,9 +12628,9 @@ AMR 的 transition zone 同时影响 gather 和 deposition。粒子在细网格 
 
 ## 7.11 本章结论与源码同步
 
-本章的读法应始终沿同一条链展开：参数决定 field/particle boundary，边界和 PML 决定 guard-cell 与 split-field 更新，AMR 决定 coarse/fine route，最后由与问题匹配的 diagnostics 判断结果。`scripts/audit_boundary_amr_chapter_source_crosswalk.py` 维护 13 组代表性源码入口，防止正文的参数顺序、PML 生命周期、通信、regrid、moving window 和 scraping 说明随 checkout 漂移；它不是 C++ 语义等价证明，也不是 runtime route-count proof。
+本章的读法应始终沿同一条链展开：参数决定 field/particle boundary，边界和 PML 决定 guard-cell 与 split-field 更新，AMR 决定 coarse/fine route，最后由与问题匹配的 diagnostics 判断结果。`scripts/audit_boundary_amr_chapter_source_crosswalk.py` 检查 13 组代表性源码入口，防止正文的参数顺序、PML 生命周期、通信、regrid、moving window 和 scraping 说明随源码演进漂移；它不是 C++ 语义等价证明，也不是 runtime route-count proof。
 
-当前 `test_2d_subcycling_mr` 的 2-rank 运行表明两层 AMR、有限的 E/B/J、moving-window 几何时间一致性和连续注入粒子生命周期可以共同完成；这是一条整体 workflow 证据，不替代 transition-zone 的 route ledger。下一步需要在 `PartitionParticlesInBuffers()` 后添加只在测试启用时运行的轻量计数器，再用真实 `current_buf/rho_buf`、coarsened-fine 与 owner-mask 数据验证同一账本。
+`test_2d_subcycling_mr` 的 2-rank 结果表明两层 AMR、有限的 E/B/J、moving-window 几何时间一致性和连续注入粒子生命周期可以共同完成；这是一条整体 workflow 证据，不替代 transition-zone 的 route ledger。要关闭该边界，必须在 `PartitionParticlesInBuffers()` 后取得 route count、weight、`current_buf/rho_buf`、coarsened-fine 与 owner-mask 的同一账本，而不能只增加末态 checksum。
 
 
 <!-- source: manuscript/chapters/08-diagnostics-cases.md -->

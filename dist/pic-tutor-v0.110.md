@@ -520,7 +520,10 @@ $$
 
 1. **变量桥接题**：根据 1.11 的映射表，说明为什么 `rho_fp/rho_buf` 不能直接当作两个不同物理量，并指出它们分别在哪个 AMR/source-synchronization 场景出现。
 2. **尺度判断题**：给定 `lambda_D/delta_x = 0.5` 和 `v_t Delta t/delta_x = 1.2`，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率、粒子跨单元输运还是时间推进约束。
-3. **源码定位题**：在所用 WarpX 源树中定位 `PushParticlesandDeposit()`、`SyncCurrentAndRho()` 和一个 field-solver 入口，分别写出它们连接连续模型中哪一个对象：粒子输运、源项连续性还是 Maxwell/Poisson 闭合。
+3. **源码定位题**：从 `Source/Evolve/WarpXEvolve.cpp` 的 `OneStep_nosub()` 开始，而不是从全局搜索结果中猜入口。完成下列三步，并交付一个三行表格（函数、连续对象、调用后可认为“已准备好”的数据）：
+   - 记录 `PushParticlesandDeposit()` 与 `SyncCurrentAndRho()` 的相对次序；前者对应粒子输运和源项沉积，后者应使场求解前的 `J/rho` 经滤波、guard-cell/MR 同步和边界处理而可被消费。
+   - 打开 `WarpX::SyncCurrentAndRho()` 的定义，列出其中至少两项 source 数据准备动作，并说明它们为什么不能由连续方程本身自动保证。
+   - 任选一个场更新分支：PSATD 路线继续定位 `PushPSATD()`（定义在 `Source/FieldSolver/WarpXPushFieldsEM.cpp`）；FDTD 路线则定位 `EvolveB()`/`EvolveE()` 的调用。说明该分支把哪一种离散 Maxwell 闭合推进到下一时间层。
 
 
 <!-- source: manuscript/chapters/02-pic-loop.md -->

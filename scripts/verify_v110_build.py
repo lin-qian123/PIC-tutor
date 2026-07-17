@@ -83,6 +83,16 @@ def main() -> None:
         "chapter_6_subheading_order": chapter_6_numbers == sorted(chapter_6_numbers)
         and len(chapter_6_numbers) == len(set(chapter_6_numbers)),
         "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),
+        "chapter_1_source_exercise": all(
+            marker in source
+            for marker in (
+                "## 1.14 练习与源码定位",
+                "`Source/Evolve/WarpXEvolve.cpp`",
+                "`OneStep_nosub()`",
+                "`SyncCurrentAndRho()`",
+                "`PushPSATD()`",
+            )
+        ),
         "chapter_9_exercises": all(
             marker in source
             for marker in (

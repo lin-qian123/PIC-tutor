@@ -3,6 +3,7 @@
 ## 2026-07-18
 
 - [ ] 公开再分发阻断：GitHub remote 已确认是 public，但 Git 跟踪 `references/` 下 `2,425` 个第三方文件（`52` 个 PDF、`2,259` 个图片，约 `190.7 MB`），且根目录没有项目许可证。`v0.110` manifest 排除 `references/` 不能移除 public branch 或历史中的材料。维护者需明确选择逐项授权保留、从 public branch 移除并决定历史策略，或临时转 private；详见 `docs/public-distribution-risk-register-v0.110.md`。
+- [x] 完成第 4.13.9 节粒子诊断与外场的读者化：将 particle-field 归约、repeated/hard-edged plasma lens、accelerator lattice 与 drift 的作用改按读者问题和源码数据流组织，删除不属于粒子算法的 MPI 接口状态；同步消除下一节 Python 接口段的超长行。读者审计覆盖扩展至该节；重建候选保持 264 页，PDF 第 103--105 页已人工复核。
 - [x] 完成第 4.13.8 节单粒子验证的读者化：按 force-free 带电推进、沉积/过滤、diagnostics 时间层、光子传播与组合 Larmor 基线重组正文，移除目录、报告和产物名口吻，保留数值、源码入口与不能外推的边界。读者审计覆盖扩展至该节；重建候选保持 264 页，PDF 第 101--103 页已人工复核。
 - [x] 完成第 4 章 Vay 与重采样文献段的读者化：将 Appendix B 的均匀磁场检查改写为时间层判别、观察量和不能证明的结论；将 Vranic/Muraviev 段改为局部守恒、统计代表性和权重尾的验证标准，移除内部资产、运行报告和分类码口吻。读者审计新增该深层段的拒绝检查，Vranic/Muraviev 资料审计分别为 11/11、10/10 通过；重建候选保持 264 页，PDF 第 76--77、101 页已人工复核。
 - [x] 完成第 8 章诊断收束段的读者化：源码同步和 reduced diagnostics 最小输入现按源码阅读问题、输出类型和不能替代的物理验证组织；与束流矩/Gaussian beam 段合并重建为 264 页候选，构建验收通过。

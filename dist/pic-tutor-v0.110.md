@@ -5826,9 +5826,9 @@ $$
 
 把它们都叫作“单粒子测试”，会掩盖观察量、源码路径和可支持结论之间最关键的差别。
 
-### 4.13.9 `particle_fields_diags` 与 `plasma_lens`：粒子 diagnostics 和粒子侧外场的两类强验证
+### 4.13.9 粒子诊断与外场：两条不经过主网格场的路径
 
-在这组“单粒子/推进器” validation 之外，还有两类更适合回填第 4 章正文的粒子相关 regression：
+在“单粒子/推进器”之外，`particle_fields_diags` 与 `plasma_lens` 分别回答两个不同的问题：怎样把粒子属性归约为网格诊断量，以及怎样在不读取主网格场的条件下给粒子施加外场。
 
 - `particle_fields_diags`
 - `plasma_lens`
@@ -5869,7 +5869,7 @@ analysis 会同时做三件事：
 - `ParticleReductionFunctor` 如何把粒子归约成 cell-centered diagnostics field
 - plotfile 与 openPMD writer 在这一层是否一致
 
-这条 regression 说明：WarpX 不仅能把粒子作为散点写出去，还能把 species 内的粒子数据按 parser 合同重新投影成网格诊断量。
+这说明 WarpX 不仅能把粒子作为散点写出去，还能按用户给出的 parser 表达式把 species 内的粒子数据重新投影成网格诊断量。
 
 `plasma_lens` 则落在粒子侧外场主链上。analysis 不是读主网格场，而是直接比较两颗测试电子穿过 lens 序列后的：
 
@@ -5909,22 +5909,16 @@ plasmalens*.dEdx = ...
 - boosted-frame plasma-lens 反变换后一致性
 - short-lens residence correction
 
-也就是说，这一组 regression 对第 4 章的重要补充不是“又一个轨道图”，而是：
+这一组的教学意义不是“又一条轨道”，而是两条与普通自洽场推进不同的路径：
 
 - 粒子 diagnostics 可以把粒子属性重新压成 cell-centered field
 - 粒子侧外场可以完全绕过主网格场寄存器，直接通过 `GetExternalEBField` 进入 `PushPX()`
 
-accelerator lattice 自身也有很直接的强基准：`Examples/Tests/accelerator_lattice/hard_edged_quadrupoles*`。这组 tests 用单电子穿过 `drift + quad + drift + quad` 串联，analysis 直接从输入参数重建 `lattice.elements`、`drift.ds`、`quad.ds`、`quad.dEdx`，再用解析 hard-edged quadrupole 透镜公式逐段积分，要求最终 `x` 误差低于 `1%`、`u_x` 误差低于 `0.2%`。而 boosted-frame 与 moving-window 变体继续共用同一解析对照，因此这里真正被验证的不是“lattice 参数能读入”，而是 `HardEdgedQuadrupole + LatticeElementFinder + PushPX()` 的联合运行态合同。
+accelerator lattice 还有一个直接的解析基准：`Examples/Tests/accelerator_lattice/hard_edged_quadrupoles*`。单电子穿过 `drift + quad + drift + quad` 串联，分析从输入重建 `lattice.elements`、`drift.ds`、`quad.ds`、`quad.dEdx`，再按 hard-edged quadrupole 的解析透镜公式逐段积分，要求最终 `x` 误差低于 `1%`、`u_x` 误差低于 `0.2%`。boosted-frame 与 moving-window 变体继续使用同一解析对照，因此这里检查的不是“lattice 参数能读入”，而是 `HardEdgedQuadrupole`、`LatticeElementFinder` 与 `PushPX()` 能否共同给出正确的粒子偏转。
 
-这里还有一个需要在正文里说清的源码边界：`drift` 在 accelerator lattice 中只提供 `ds -> zs/ze` 的几何账本，不直接返回外场；运行期真正给粒子加 `E/B` 的只有 `HardEdgedQuadrupole` 和 `HardEdgedPlasmaLens` 两类 device element，而 `LatticeElementFinder` 做的是按 tile 建 nearest-element lookup table、把 boosted-frame 下的粒子坐标和步末 `z+v_z dt` 反变换回 lab frame、调用各元件 `get_field(...)`，最后再把累计场变回 boosted frame 后加进 `PushPX()` 的粒子外场。也就是说，`drift + quad + drift + quad` 里的 drift 只进入解析 beamline 几何和 residence 区间判定，不进入 runtime field accumulation。
+这里还有一个必须分清的源码边界：`drift` 只把长度 `ds` 转成 beamline 的 `zs/ze` 几何区间，不直接返回外场。真正给粒子累加 `E/B` 的是 `HardEdgedQuadrupole` 与 `HardEdgedPlasmaLens`；`LatticeElementFinder` 按 tile 建立最近元件索引，把 boosted-frame 粒子坐标和步末 `z+v_zdt` 变回实验室系，调用各元件的 `get_field(...)`，再把累计场变回 boosted frame 后交给 `PushPX()`。所以 `drift + quad + drift + quad` 中的 drift 只影响解析 beamline 几何和 residence 区间判定，不参与外场累加。
 
-至于 `pass_mpi_communicator`，当前更适合留在 regression 索引和工程状态里，不需要占正文篇幅。它现在的真实状态是：
-
-- PICMI / Python 层已经暴露 `mpi_comm` 参数
-- 但 `_libwarpx.py` 仍对非空 `mpi_comm` 直接报“not yet supported”
-- 因此 CMake 中 analysis/checksum 都是 OFF
-
-它验证的是 Python/MPI 初始化接口，而不是粒子算法本体。
+读这一节时可用两个问题自检：写出的 particle-field mesh 是否等于从粒子数据重新归约的量？粒子所见的透镜场是否来自外场元件，而不是主网格场？前者要求同时比较数据归约和 writer，后者要求同时比较元件几何、参考系变换和位置/动量的解析结果。
 
 ### 4.13.10 `particle_boundary_scrape`、`particle_data_python` 与 single-precision diagnostics：粒子 Python 接口的三类合同
 
@@ -5959,7 +5953,7 @@ accelerator lattice 自身也有很直接的强基准：`Examples/Tests/accelera
 1. EB scraping 确实把粒子从主容器里删除
 2. 删除掉的粒子确实进入了 Python 可访问、可清空的 boundary buffer
 
-`particle_data_python` 则完全是另一类测试。它没有独立 `analysis.py`，强断言直接写在 PICMI 输入脚本里。`inputs_test_2d_particle_attr_access_picmi.py` 会：
+`particle_data_python` 则完全是另一类测试。它没有独立 `analysis.py`，强断言直接写在 PICMI 输入脚本里，主要步骤是：
 
 - `sim.initialize_warpx()`
 - `sim.particles.get("electrons")`

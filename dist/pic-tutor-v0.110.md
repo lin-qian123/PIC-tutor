@@ -5687,16 +5687,16 @@ Vranic 2015 解释了“一个 cluster 压成两个粒子时如何同时保持�
 
 对 WarpX 而言，这篇论文最重要的启发是验证标准：算法名称、粒子数下降或 checksum 一致都不足以说明分布质量。若要判断一次 thinning 或 merge 是否可接受，应在同一空间单元和动量区间比较局部总权重、能量和三分量动量，另外报告 density variance 与权重尾；这些量分别对应守恒、统计代表性和数值稳定性。论文中 PICADOR/hi-chi 的 QED cascade、Weibel 等结果属于其自身的物理设置，不能直接充当 WarpX 的运行证据。
 
-### 4.13.8 `particle_pusher`、`single_particle`、`larmor`、`photon_pusher` 的真实验证边界
+### 4.13.8 四类单粒子问题：该测什么，不能推出什么
 
-`Particles` 目录里还有一组很容易被简单统称为“单粒子 test”的 regression：
+`particle_pusher`、`single_particle`、`larmor` 和 `photon_pusher` 都只有很少的粒子，却不是同一种“单粒子测试”：
 
 - `particle_pusher`
 - `single_particle`
 - `larmor`
 - `photon_pusher`
 
-但把 inputs、analysis 和源码入口对起来之后，它们其实测的是四种不同合同。
+读者首先要问的不是粒子数，而是每个输入固定了哪一种物理情形、比较了哪个观察量，以及该比较没有覆盖什么。
 
 `particle_pusher` 是最直接的一条。输入里固定：
 
@@ -5724,29 +5724,23 @@ $$
 
 这整条 relativistic Higuera-Cary push 主链做强断言。
 
-归档的单进程复现位于 `runs/stage-c-validation/particle_pusher_higuera/`：
-
-- 末态 plotfile：`diags/diag1010000`
-- 分析脚本：`scripts/analyze_particle_pusher_contract.py`
-- 合同报告：`particle-pusher-contract.json`、`particle-pusher-contract.md`
-
-实际末态为 `current_time = 100.00000000001425`，单个 positron 的
+该输入得到的
 
 $$
-\max |x| = 1.1430664323700516\times 10^{-4}
+\max |x|=1.1430664324\times10^{-4},
 $$
 
-小于官方 `1e-3` 容差，且官方 `analysis.py` 与分析脚本都通过。这个证据将“Higuera-Cary force-free 主链确实被执行”从静态输入/源码判断推进到运行级验证，但它仍然只覆盖单进程、单粒子、恒定外场和 `x approximately 0` 这一条合同，不等价于对 Boris/Vay/Higuera-Cary 三者的完整轨道 benchmark。
+低于 `10^{-3}` 容差。它支持“此 force-free 条件下的相对论推进和位置更新彼此相容”，但只覆盖单粒子、恒定外场和横向偏移这一观察量，不能替代三种推进器的完整轨道、能量或相空间基准。
 
-在同一官方输入上只替换 `algo.particle_pusher` 后，case-local sibling 给出如下对照：
+在同一输入中只替换 `algo.particle_pusher`，可得到一个有意窄化的算法对照：
 
 | pusher | 末态 $\max|x|$ | `1e-3` gate | 解释 |
 | --- | ---: | ---: | --- |
 | Boris | `2.3213958529e3` | FAIL | force-free cancellation 在这个高相对论设置下明显失真 |
 | Vay | `1.0795497978e-4` | PASS | 保留较好的 relativistic frame/cancellation 行为 |
-| Higuera-Cary | `1.1430664324e-4` | PASS | 在该合同下与 Vay 同量级 |
+| Higuera--Cary | `1.1430664324e-4` | PASS | 在该观察量上与 Vay 同量级 |
 
-完整 sibling JSON/Markdown 对照报告位于 `runs/stage-c-validation/particle_pusher_siblings/`，由 `scripts/compare_particle_pusher_siblings.py` 重建。必须保留其证据等级：三组使用的是官方输入加 pusher-only override 的 case-local 对照，不是 `CMakeLists.txt` 注册的三条独立官方 regression；它支持的是 force-free cancellation 的差异提示，不替代 boosted-frame、Poincare section 或长期能量/相空间 benchmark。
+三组不是三份独立的官方输入，而是对同一个 force-free 问题的 pusher-only 对照。因此它只支持相对论 cancellation 的差异提示，不替代 boosted-frame、Poincare section 或长期能量/相空间 benchmark。
 
 `single_particle` 则必须拆成两类。
 
@@ -5772,19 +5766,13 @@ analysis 先在 Python 里手动做 half-backward、5 步 leapfrog、再加 half
 
 也就是说，它验证的不是 Boris 物理轨道误差，而是“输出给 diagnostics 的速度是否和位置处在同一时间层”。
 
-这条路径的单进程复现位于 `runs/stage-c-validation/single_particle_synchronize_velocity/`：
+第 5 个诊断步的模拟/理论值分别为：
 
-- 末态 plotfile：`diags/diag1000005`
-- 分析脚本：`scripts/analyze_single_particle_synchronization.py`
-- 合同报告：`single-particle-sync-contract.json`、`single-particle-sync-contract.md`
+- $z=2.2985203786002786/2.2985203756075920$；
+- $u_z=879410.0053860814/879410.0053860815$；
+- 相对速度误差为 `1.3237889e-16 < 1e-15`。
 
-第 5 个诊断步的理论/模拟结果为：
-
-- $z = 2.2985203786002786 / 2.2985203756075920$；
-- $u_z = 879410.0053860814 / 879410.0053860815$；
-- 相对速度误差 `1.3237889e-16 < 1e-15`。
-
-这条运行证据支持的是 diagnostics time-level synchronization，不应被误写成单粒子 pusher 的独立轨道精度 benchmark。
+这支持的是 diagnostics time-level synchronization，不应被误写成单粒子 pusher 的独立轨道精度 benchmark。
 
 `photon_pusher` 又是另一类。输入里建了 16 个 photon species，覆盖：
 
@@ -5804,18 +5792,12 @@ $$
 - `UpdatePosition(...)` 里的 massless branch
 - photon 不做 charge/current deposition 的合同
 
-该官方 regression 的单进程复现位于 `runs/stage-c-validation/photon_pusher/`：
-
-- 末态 plotfile：`diags/diag1000050`
-- 分析脚本：`scripts/analyze_photon_pusher_contract.py`
-- 合同报告：`photon-pusher-contract.json`、`photon-pusher-contract.md`
-
 16 个 photon species 的末态最大相对误差为：
 
 - 位置直线传播：`6.0986372e-16 < 1e-14`；
 - 动量保持：`1.7217530e-16 < 2.2204460e-16`。
 
-这条证据支持的是无质量粒子的 `c` 速率传播、方向保持和不参与带电粒子 current deposition 的路径，不应与 Boris/Vay/Higuera-Cary 的带电动量旋转合同混写。
+这条证据支持的是无质量粒子的 `c` 速率传播、方向保持和不参与带电粒子 current deposition 的路径，不应与 Boris/Vay/Higuera--Cary 的带电动量旋转混写。
 
 最后 `larmor` 反而要最保守。它输入里组合了：
 
@@ -5826,21 +5808,23 @@ $$
 - `warpx.do_dive_cleaning = 1`
 - full/raw diagnostics
 
-但 `CMakeLists.txt` 里没有独立 analysis，只有 checksum。因此当前更准确的说法是：
+但 `CMakeLists.txt` 里没有独立 analysis，只有 checksum。因此更准确的说法是：
 
-- 这是一个 charged-particle gyro-motion 与 external-particle-field、MR、PML、div-cleaning 组合稳定性的应用级 checksum 基线
-- 不是已经有独立解析半径/回旋频率对照的强单粒子 analysis
+- 这是 charged-particle gyro-motion 与 external-particle-field、MR、PML、div-cleaning 组合稳定性的 checksum 基线；
+- 它不是已有独立解析半径/回旋频率对照的强单粒子 analysis。
 
-单进程 Larmor 运行由 `scripts/analyze_larmor_continuum_audit.py` 做 uniform-(B_y) 连续轨道审计，末态位于 `runs/stage-c-validation/larmor_single_process/diags/diag1000010`。按 2D XZ 面内的 `particle_momentum_x/z` 读取后，电子/正电子的轨迹相对位移误差均为 `1.28285096e-2`，动量相对误差均为 `9.69641193e-2`。这不是一个失败的官方 regression：checksum 仍是官方合同；它说明在 MR/PML/div-cleaning 组合下，直接把连续 uniform-(B) 解析轨道当成严格 gate 并不成立。因此本章继续把 larmor 标为 checksum-only，并把该审计报告定位为“为什么暂不升级强物理 gate”的证据。
+若把这个组合输入直接同连续 uniform-`B_y` 轨道比较，电子和正电子的轨迹相对位移误差都是 `1.28285096e-2`，动量相对误差都是 `9.69641193e-2`。这不否定 checksum 的作用；它只说明 MR/PML/divergence-cleaning 的组合已经超出连续单粒子解析解的假设。因此本章把它保留为 checksum-only 基线，不能用它升级为强物理 gate。
 
-这组 regression 目前能明确支持的结论是：
+这四类输入共同给出一个实用的阅读法：
 
-- Higuera-Cary force-free relativistic push：有强 analysis。
-- diagnostics 半步速度同步：有强 analysis。
-- bilinear current filter：有强 analysis。
-- photon 直线传播与动量守恒：有强 analysis。
-- Larmor 半径/频率独立解析对照：当前这组里没有看到，不能夸大。
-- Larmor 连续轨道审计：已运行，但当前只作为 diagnostic evidence，未升级为强 gate。
+- Higuera--Cary force-free relativistic push：检查相对论推进链。
+- diagnostics 半步速度同步：检查输出时间层。
+- bilinear current filter：检查沉积后的网格量。
+- photon 直线传播与动量守恒：检查无质量传播。
+- Larmor 半径/频率独立解析对照：这组输入没有提供，不能夸大。
+- Larmor 连续轨道比较：只用于说明为何不能把该组合输入提升为强 gate。
+
+把它们都叫作“单粒子测试”，会掩盖观察量、源码路径和可支持结论之间最关键的差别。
 
 ### 4.13.9 `particle_fields_diags` 与 `plasma_lens`：粒子 diagnostics 和粒子侧外场的两类强验证
 

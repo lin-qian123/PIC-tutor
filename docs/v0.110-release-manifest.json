@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1246,
-  "total_bytes": 39135822,
+  "total_bytes": 39142462,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1540891,
-      "sha256": "713e84538124a782b12e6c8f7f18b36c654af269ed655b7e54e99f9c83706eac"
+      "bytes": 1541449,
+      "sha256": "e60373d4249ca02f2eb598bf7016755a4f5b4602e92c1c2877fd86213c7b678f"
     },
     {
       "path": "TODO.md",
-      "bytes": 1409511,
-      "sha256": "680974bd15815d8f6c5a9f98f1d2ffaed03b1713b5c3741a5cdc98f5337afab5"
+      "bytes": 1410066,
+      "sha256": "bf62966dadf817cddaffaa3193671e7246397833e22d69d8b208a5729d0fe8f8"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5249931,
-      "sha256": "1ca32bdac6c1cbe872d57756f88790f1fa1d4e33972708ec1941c802d5a33766"
+      "bytes": 5250782,
+      "sha256": "c16a8e5fc2ddbfa43215a0ad8fb2d3cc0d575c1802cc0f8b1c2b0c759d0b557d"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 855133,
-      "sha256": "8ac6e96617a78bba8056694652abdb8430730b1321e60e8b5327c10c7e234e2d"
+      "bytes": 855745,
+      "sha256": "d9cccd6ab7f68b2a9067563783756fe5aa3db102f457c1939c6bea28fd605239"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2985994,
-      "sha256": "d95ad18bcdc13c292f0e28951fe76bb200cc3ec7c4c18ebe5f8440f98c66cc6a"
+      "bytes": 2988702,
+      "sha256": "9f8df09747f0a76657aadc70511143e9a3ef60959132dda750db214b356d9ff6"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 8719,
-      "sha256": "65fa89f240b629c6da9232ddd9f55c359a9346131e32889029993f5acf64a8e5"
+      "bytes": 9302,
+      "sha256": "bc99d6805f4022abb70ec9ab1f4ee3e70ddb07a38f8c9b28183c36d97968daa4"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 7201,
-      "sha256": "7e597531d05500c8adec5ddf115472981f5304aad9424eccfe3d45f2e3ff7afe"
+      "bytes": 7362,
+      "sha256": "942265a581606516839828f71ef57a784eb84993c70cdd341d73ce9e627bbce5"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2277,13 +2277,13 @@
     },
     {
       "path": "manuscript/chapters/01-kinetic-models.md",
-      "bytes": 18245,
-      "sha256": "c4fe7a24e8c5c826e23c5e4ef55411841003a04968e132ec17c12cdf190d793d"
+      "bytes": 18992,
+      "sha256": "9418d52db03113674c745bdabf4daa418cf5b36e2d2a288d1d9cb612a10d4f56"
     },
     {
       "path": "manuscript/chapters/02-pic-loop.md",
-      "bytes": 32790,
-      "sha256": "8d00abb1f6f76fd9658acbf58e487a20146e7e46d9dc2d902d3bc95c2ea9e319"
+      "bytes": 32655,
+      "sha256": "01891fbb43b06c24fb3b22ba30a9d3ba2d524d6d5ff52e9934253f98f317f5ed"
     },
     {
       "path": "manuscript/chapters/03-warpx-evolve.md",

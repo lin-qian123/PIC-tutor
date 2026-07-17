@@ -94,7 +94,7 @@ $$
 - `Dawson 1983`
 - 第 2、3、5、6 章对 WarpX 主循环、沉积和场求解器的实现说明
 
-`Hockney-Eastwood` 与 `Yee 1966` 尚未作为可逐页核对的全文资产使用；本章不把无法核实的历史细节当作结论。读者应先把这里的连续模型、离散变量和误差边界读清，再进入源码章节。
+`Hockney-Eastwood` 与 `Yee 1966` 在本书中只作为补充书目信息，而不作为可逐页核对的全文依据；本章不把无法核实的历史细节当作结论。读者应先把这里的连续模型、离散变量和误差边界读清，再进入源码章节。
 
 ## 1.1 Vlasov 方程首先是相空间守恒律
 
@@ -342,7 +342,7 @@ $$
 
 都很重要。
 
-## 1.8 shape factor 不是插值细节，而是粒子-网格合同
+## 1.8 shape factor 不是插值细节，而是粒子-网格耦合规则
 
 若把粒子源项沉积到网格单元或网格点 \(i\)，最基本的电荷密度形式是
 
@@ -395,7 +395,7 @@ $$
 1. sampled density 会生成 alias branches；
 2. shape factor 会修改 fluctuation spectrum；
 3. finite `\Delta x` 和 finite `\Delta t` 会把 continuum 改写成带离散谱结构和 effective transport 的系统；
-4. 若离散合同处理不好，噪声会演化成 numerical heating、drag、diffusion，甚至弱不稳定增长率的误判。
+4. 若离散耦合处理不好，噪声会演化成 numerical heating、drag、diffusion，甚至弱不稳定增长率的误判。
 
 因此，本书后面凡是说“噪声更小”“结果更平滑”，都不应只停在图像层，而应继续问：
 
@@ -407,7 +407,24 @@ $$
 
 `Birdsall 1985` 对 sheet model 的讨论给了一个比教科书定义更适合写进程序书的视角。
 
-首先，Debye 长度 \(\lambda_D\) 和 Debye 球内粒子数 \(N_D\) 不是孤立的公式，而是“这个 plasma 是否能被当作 collective medium”与“统计噪声会以什么尺度渗入观测量”的共同边界。
+首先，在线性、近 Maxwellian 的三维等离子体中，热速率 \(v_t\)、等离子体频率和 Debye 长度可写为
+
+$$
+v_t=\sqrt{\frac{k_B T_s}{m_s}},
+\qquad
+\omega_{ps}=\sqrt{\frac{n_s q_s^2}{\epsilon_0m_s}},
+\qquad
+\lambda_{Ds}=\frac{v_t}{\omega_{ps}}
+=\sqrt{\frac{\epsilon_0 k_B T_s}{n_s q_s^2}}.
+$$
+
+其中 \(n_s\) 是物种数密度，\(T_s\) 是温度，\(k_B\) 是 Boltzmann 常数。对应的 Debye 球内粒子数近似为
+
+$$
+N_D\sim (4\pi/3)n_s\lambda_{Ds}^3.
+$$
+
+这些量的精确定义会随单位制、速度矩约定、磁化程度和 reduced geometry 改变；这里使用它们是为了建立尺度判断，而不是把二维或轴对称计算机械地当成三维 Debye 球。Debye 长度 \(\lambda_D\) 和 Debye 球内粒子数 \(N_D\) 因而不是孤立的公式，而是“这个 plasma 是否能被当作 collective medium”与“统计噪声会以什么尺度渗入观测量”的共同边界。
 
 其次，在 reduced model 下，
 
@@ -431,12 +448,12 @@ $$
 
 ## 1.11 从连续模型到 PIC 离散变量
 
-前面的方程还没有直接变成程序里的数组。PIC 的第一步不是把分布函数存成一个高维网格，而是用带权粒子样本代表它，再用网格上的有限差分或谱变量承载场。可以把这条映射写成下面的最小合同：
+前面的方程还没有直接变成程序里的数组。PIC 的第一步不是把分布函数存成一个高维网格，而是用带权粒子样本代表它，再用网格上的有限差分或谱变量承载场。可以把这条映射写成下面的最小对应关系：
 
 | 连续对象 | PIC 离散载体 | 典型时间层/位置 | 在 WarpX 代码中应如何理解 |
 | --- | --- | --- | --- |
 | $f_s(x,p,t)$ | 物种粒子的位置、动量、权重集合 | $x_p^n,p_p^{n-1/2},w_p$ | `ParticleContainer` 中的粒子样本，不是一个逐点存储的分布函数 |
-| $ρ(x,t)$ | shape-weighted charge density | $ρ^n$ 或 `rho^{n+1/2}` | 由粒子沉积得到；`rho_fp` 与 `rho_buf` 还可能分别属于 fine 与 coarse-buffer 路径 |
+| $ρ(x,t)$ | shape-weighted charge density | $ρ^n$ 或 $\rho^{n+1/2}$ | 由粒子沉积得到；`rho_fp` 与 `rho_buf` 还可能分别属于 fine 与 coarse-buffer 路径 |
 | $J(x,t)$ | trajectory-based current density | 通常跨越 $n -> n+1$ | Esirkepov/Villasenor 等 current deposition 需要 old/new 轨迹或等价的 crossing 信息 |
 | $E,B$ | staggered/collocated grid fields | 由 solver 规定 | `Efield_*`、`Bfield_*` 的后缀表示时间层、网格位置或辅助副本，不能只按变量名猜物理时刻 |
 | 连续性方程 | 离散 source synchronization | 每个粒子推进步或 solver stage | `SyncCurrentAndRho()`、guard exchange、AMR average-down 等共同完成可供场求解器使用的 source |
@@ -453,13 +470,13 @@ $$
 Δt (∇_h·J)_i = ρ_i^n - ρ_i^{n+1}.
 $$
 
-这里的第二式不是说所有 current deposition 都在程序中显式先算出左右两边，而是说明它们必须共享同一条离散连续性合同。也因此，
+这里的第二式不是说所有 current deposition 都在程序中显式先算出左右两边，而是说明它们必须满足同一条离散连续性关系。也因此，
 
 - `DepositCharge()` 负责单时间层的 $ρ$ 采样及其时间层、几何和 AMR 桥接；
 - `DepositCurrent()` 及其 Esirkepov/Villasenor 等路径负责轨迹输运产生的 $J$；
 - `SyncCurrentAndRho()` 负责把不同 level、边界和 source buffer 中的结果整理成 solver 可消费的源项。
 
-这三层不能合并成“粒子把电荷写到网格”一句话。后续第 5 章会从 kernel 角度展开，第 6 章则会继续说明不同 field solver 如何消费这些 source。附录 A 给出 `rho_fp`、`rho_buf`、`current_fp`、`current_buf` 和 `lev` 等项目内变量的速查定义。
+这三层不能合并成“粒子把电荷写到网格”一句话。后续第 5 章会从 kernel 角度展开，第 6 章则会继续说明不同 field solver 如何消费这些 source。附录 A 给出 `rho_fp`、`rho_buf`、`current_fp`、`current_buf` 和 `lev` 等 WarpX 实现变量的速查定义。
 ## 1.12 这一章对后面源码章节的真正约束
 
 到这里，后续读 WarpX 代码时至少要带着下面这些硬问题，而不是只盯函数名：
@@ -483,7 +500,7 @@ $$
 
 ## 1.13 证据范围与继续阅读
 
-本章下列论述可直接回到两部已整理的基础来源：
+本章下列论述可直接回到两部已提供逐段讲解的基础来源：
 
 - `Birdsall 1985`：sheet model 的 randomization / correlation / thermalization 时间尺度，以及 finite-grid / aliasing / fluctuation / heating 主线。
 - `Dawson 1983`：numerical experiment 视角、superparticle / weighted particles 的 kinetic 边界，以及 finite-size particles、网格和 FFT-Poisson 的 electrostatic contract。
@@ -493,7 +510,7 @@ $$
 - `Hockney-Eastwood`：加权粒子、heating estimates 和 optimum path 的经典表述。
 - `Yee 1966`：staggered FDTD 与离散约束传播的原始出处。
 
-基础章节当前允许直接作为正文证据、以及哪些条目仍只能写成 acquisition / metadata 边界，现统一收口到：
+基础章节中哪些来源可直接支撑正文、哪些只能提供书目信息，见：
 
 - [基础章节文献清单](../../docs/foundations-literature-list.md)
 
@@ -502,7 +519,7 @@ $$
 ## 1.14 练习与源码定位
 
 1. **变量桥接题**：根据 1.11 的映射表，说明为什么 `rho_fp/rho_buf` 不能直接当作两个不同物理量，并指出它们分别在哪个 AMR/source-synchronization 场景出现。
-2. **尺度判断题**：给定 `lambda_D/delta_x = 2` 和 `v_t Delta t/delta_x = 0.4`，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率还是时间推进约束。
+2. **尺度判断题**：给定 `lambda_D/delta_x = 0.5` 和 `v_t Delta t/delta_x = 1.2`，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率、粒子跨单元输运还是时间推进约束。
 3. **源码定位题**：在所用 WarpX 源树中定位 `PushParticlesandDeposit()`、`SyncCurrentAndRho()` 和一个 field-solver 入口，分别写出它们连接连续模型中哪一个对象：粒子输运、源项连续性还是 Maxwell/Poisson 闭合。
 
 
@@ -682,7 +699,7 @@ $$
 
 所以本章这里先压实一个最重要的判断：
 
-- `ComputeDt()` 保证的是一层离散稳定性和时间步组织契约；
+- `ComputeDt()` 保证的是一层离散稳定性和时间步组织约束；
 - `\omega_p \Delta t` 是否足够小，仍然是物理建模和分辨率设计问题。
 
 ### 2.3.2 `\lambda_D` 不只是一条长度定义，它直接约束 `\Delta x`
@@ -892,7 +909,7 @@ $$
 
 这里的 `Upward/Downward` 不只是“正向/反向”，而是在 nodal 与 cell-centered 位置之间搬运离散导数。正是这种 staggered 几何，让 Yee 在保持二阶精度的同时把 `E/B` 交错布置起来。
 
-### 2.4.3 `Yee / Nodal / CKC` 的差别本质上是离散色散合同不同
+### 2.4.3 `Yee / Nodal / CKC` 的差别本质上是离散色散关系不同
 
 对 collocated/nodal solver，WarpX 的 `CartesianNodalAlgorithm` 不再用 staggered 前后差分，而是直接用中心差分。`../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianNodalAlgorithm.H:71-102`：
 
@@ -959,8 +976,8 @@ FDTD 在实空间用局部 stencil 近似 curl。PSATD 则在谱空间解析积�
 
 这条分界线和前面几节正好连起来：
 
-- `leapfrog` 规定了粒子、场和源项的时间层合同；
-- `\omega_p` 与 `\lambda_D` 规定了 plasma 自身是否被当前 `\Delta t/\Delta x` 分辨；
+- `leapfrog` 规定了粒子、场和源项的时间层关系；
+- `\omega_p` 与 `\lambda_D` 规定了 plasma 自身是否被给定的 `\Delta t/\Delta x` 分辨；
 - `CFL` 规定了 Maxwell 更新是否还能保持离散因果；
 - `Yee/Nodal/CKC/PSATD` 则进一步决定同一组 `\Delta t,\Delta x` 会把波动相速度、群速度和 aliasing 改写成什么样。
 
@@ -983,9 +1000,9 @@ WarpX 在 `OneStep_nosub()` 内部把两者清楚分开：
 
 这意味着本书后续讲 field solver 时不能把“Maxwell solver”写成单一算法。`algo.maxwell_solver` 的选择会改变主循环内的场推进、同步、边界和可用功能。
 
-## 2.6 一个真实 PIC step 的工程层次
+## 2.6 一个完整 PIC step 的离散组织
 
-把物理动作映射到生产代码，一个时间步至少包含这些层次：
+把物理动作映射到程序实现，一个时间步至少包含这些层次：
 
 1. 用户 callback、信号、诊断、负载均衡和步长更新。
 2. 场 gather 前的 guard cell 与 auxiliary field 准备。
@@ -1000,7 +1017,7 @@ WarpX 的 `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` 正是围绕这些层
 
 ### 2.6.1 AMR subcycling：两个时间步不是同一个时间步的重复调用
 
-无 subcycling 时，第 0 层和更细层使用同一个外层时间步，`OneStep_nosub()` 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。本书采用的源码快照中，`OneStep_sub1()` 在 `Source/Evolve/WarpXEvolve.cpp` 附近明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
+无 subcycling 时，第 0 层和更细层使用同一个外层时间步，`OneStep_nosub()` 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。本书采用的源码快照中，`OneStep_sub1()` 明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
 
 令粗层时间步为 $Δt_c$，细层时间步为
 
@@ -1012,10 +1029,10 @@ $$
 
 | 阶段 | 细层 | 粗层/母网格 | 源项职责 |
 | --- | --- | --- | --- |
-| 第一个半周期 | 推进一次粒子和场，步长 $Δt_f$ | 暂不完成整步 | `current_fp`、`rho_fp` 先 restrict 到 coarse patch |
-| 中间同步 | 细层已到 $t+Δt_f$ | 粗层推进到相应中间时间 | `AddCurrentFromFineLevelandSumBoundary()` 与 `AddRhoFromFineLevelandSumBoundary()` 合并细层、粗层和 buffer 源 |
-| 第二个半周期 | 再推进一次粒子和场，步长 $Δt_f$ | 继续完成粗层剩余半步 | 第二次 fine source 经 restrict/add 后参与粗层后半步场更新 |
-| 粗层周期末 | 到 $t+Δt_c$ | 到 $t+Δt_c$ | 粗细层场、源项和 guard cells 重新达到可交换状态 |
+| 第一个半周期 | 推进一次粒子和场，步长 $Δt_f$ | 暂不完成整步 | 将 `current_fp`、`rho_fp` 限制到 coarse patch |
+| 中间同步 | 细层已到 $t+Δt_f$ | 粗层推进到相应中间时间 | 合并细层、粗层和 buffer 中的源项 |
+| 第二个半周期 | 再推进一次粒子和场，步长 $Δt_f$ | 继续完成粗层剩余半步 | 第二段细层源项限制/合并后参与粗层场更新 |
+| 粗层周期末 | 到 $t+Δt_c$ | 到 $t+Δt_c$ | 粗细层的场、源项和 guard cells 重新同步 |
 
 因此，subcycling 不是简单地把 `OneStep_nosub()` 调两次。粗层粒子只推进一次，而细层粒子推进两次；粗层场的更新还要消费两个细层时间片上累积并平均/合成后的电流。源码中的调用顺序可以压缩成：
 
@@ -1037,7 +1054,7 @@ $$
 
 这里的 `restrict` 和 `add` 不能与普通 guard-cell exchange 混为一谈：前者改变的是 coarse/fine source 的层级表示，后者只是同一层相邻 patch 间的数据可见性。对电荷来说，`rho_buf` 还可能来自 transition-zone 粒子在 coarse 几何上的直接沉积；因此 subcycling 中的 source 合成既不是“把 fine `rho` 全部平均下来”这么简单，也不是由场求解器自动补齐。
 
-当前实现还显式禁止 electrostatic solver 与 subcycling 组合。这个限制写在 `OneStep_sub1()` 的入口断言中，原因不是 electrostatic 不能使用 AMR，而是这条 subcycling 例程的时间组织只为显式 electromagnetic field advance 编写，不能把 Poisson/electrostatic 路径的源项和场解时序悄悄套进来。
+本书采用的源码快照显式禁止 electrostatic solver 与 subcycling 组合。这个限制写在 `OneStep_sub1()` 的入口断言中，原因不是 electrostatic 不能使用 AMR，而是这条 subcycling 例程的时间组织只为显式 electromagnetic field advance 编写，不能把 Poisson/electrostatic 路径的源项和场解时序悄悄套进来。
 
 所以读 AMR PIC loop 时要同时检查四个不变量：
 
@@ -1046,13 +1063,13 @@ $$
 3. 两个细层时间片的 current/rho 是否分别完成 restrict、边界合并和 coarse source add；
 4. 粗细层字段与 auxiliary/guard data 是否在下一次 gather 前重新可见。
 
-这四项共同构成 AMR subcycling 的时间合同。缺少其中任何一项，都可能得到“每个 patch 都成功更新”但跨层电荷守恒、场相位或粒子 gather 已经不一致的结果。
+这四项共同构成 AMR subcycling 的时间一致性条件。缺少其中任何一项，都可能得到“每个 patch 都成功更新”但跨层电荷守恒、场相位或粒子 gather 已经不一致的结果。
 
 ### 2.6.2 JRhom 与 implicit：同一个外层 step 内部也可能有不同的时间合同
 
-标准 `OneStep_nosub()`、PSATD-JRhom 和 implicit solver 都可能被外层 `WarpX::OneStep()` 视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。当前源码的分派关系是：
+标准 `OneStep_nosub()`、PSATD-JRhom 和 implicit solver 都可能被外层 `WarpX::OneStep()` 视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。本书采用的源码快照中的分派关系是：
 
-| 路径 | 外层入口 | 源项/粒子时间组织 | 场推进特点 | 当前组合边界 |
+| 路径 | 外层入口 | 源项/粒子时间组织 | 场推进特点 | 组合边界 |
 | --- | --- | --- | --- | --- |
 | 标准显式 electromagnetic PIC | `OneStep_nosub()` | 一次粒子推进，得到 `J` 与 `rho`，随后统一 `SyncCurrentAndRho()` | FDTD 的 `B-E-B` 或一次 PSATD 推进 | 可与普通显式 collision placement 组合 |
 | PSATD-JRhom | `OneStep_JRhom()` | 先推进粒子但跳过普通沉积，再按 `rho/J` 时间依赖在 `Δt` 内做多次相对时间沉积 | 每个 deposit interval 都执行一次谱空间场推进；可选跨 `2Δt` 时间平均 | 只支持 PSATD；`current_correction` 不支持；split momentum collision push 不支持 |
@@ -1084,7 +1101,7 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 
 本书后续章节的阅读规则因此固定为：先识别外层物理时间步，再识别内部的 source subinterval 或 nonlinear iteration，最后才判断某次 `PushParticlesandDeposit()` 是物理推进、试探性 RHS 构造，还是历史源项重建。
 
-读者可以用下面这张决策图快速定位一个输入卡实际采用的时间合同：
+读者可以用下面这张决策图快速定位一个输入卡采用的时间组织：
 
 ```mermaid
 flowchart TD
@@ -1123,7 +1140,7 @@ flowchart TD
 
 ## 2.8 参数示例与最小运行案例
 
-如果把本章压回一个最小、可运行、可验证的输入骨架，当前最合适的入口还是：
+如果把本章压回一个最小、可运行、可验证的输入骨架，可从下面的官方案例开始：
 
 - `../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
 
@@ -1143,7 +1160,7 @@ flowchart TD
 - `\omega_p`
 - `\lambda_D`
 - FDTD curl 更新
-- `rho/J` 连续性合同
+- `rho/J` 连续性关系
 
 都能在这条最小 Langmuir 主线上落到真实输入。
 
@@ -1179,7 +1196,7 @@ flowchart TD
 - `Yee 1966`
 - `Hockney-Eastwood`
 
-更完整的基础章节文献状态、全文资产状态和“可直接作为正文证据/只可作待补边界”的分工，统一见：
+更完整的基础章节文献范围，以及哪些来源可直接支持正文、哪些仅提供书目信息，见：
 
 - [基础章节文献清单](../../docs/foundations-literature-list.md)
 

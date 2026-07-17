@@ -19,7 +19,7 @@ $$
 - `Dawson 1983`
 - 第 2、3、5、6 章对 WarpX 主循环、沉积和场求解器的实现说明
 
-`Hockney-Eastwood` 与 `Yee 1966` 尚未作为可逐页核对的全文资产使用；本章不把无法核实的历史细节当作结论。读者应先把这里的连续模型、离散变量和误差边界读清，再进入源码章节。
+`Hockney-Eastwood` 与 `Yee 1966` 在本书中只作为补充书目信息，而不作为可逐页核对的全文依据；本章不把无法核实的历史细节当作结论。读者应先把这里的连续模型、离散变量和误差边界读清，再进入源码章节。
 
 ## 1.1 Vlasov 方程首先是相空间守恒律
 
@@ -267,7 +267,7 @@ $$
 
 都很重要。
 
-## 1.8 shape factor 不是插值细节，而是粒子-网格合同
+## 1.8 shape factor 不是插值细节，而是粒子-网格耦合规则
 
 若把粒子源项沉积到网格单元或网格点 \(i\)，最基本的电荷密度形式是
 
@@ -320,7 +320,7 @@ $$
 1. sampled density 会生成 alias branches；
 2. shape factor 会修改 fluctuation spectrum；
 3. finite `\Delta x` 和 finite `\Delta t` 会把 continuum 改写成带离散谱结构和 effective transport 的系统；
-4. 若离散合同处理不好，噪声会演化成 numerical heating、drag、diffusion，甚至弱不稳定增长率的误判。
+4. 若离散耦合处理不好，噪声会演化成 numerical heating、drag、diffusion，甚至弱不稳定增长率的误判。
 
 因此，本书后面凡是说“噪声更小”“结果更平滑”，都不应只停在图像层，而应继续问：
 
@@ -332,7 +332,24 @@ $$
 
 `Birdsall 1985` 对 sheet model 的讨论给了一个比教科书定义更适合写进程序书的视角。
 
-首先，Debye 长度 \(\lambda_D\) 和 Debye 球内粒子数 \(N_D\) 不是孤立的公式，而是“这个 plasma 是否能被当作 collective medium”与“统计噪声会以什么尺度渗入观测量”的共同边界。
+首先，在线性、近 Maxwellian 的三维等离子体中，热速率 \(v_t\)、等离子体频率和 Debye 长度可写为
+
+$$
+v_t=\sqrt{\frac{k_B T_s}{m_s}},
+\qquad
+\omega_{ps}=\sqrt{\frac{n_s q_s^2}{\epsilon_0m_s}},
+\qquad
+\lambda_{Ds}=\frac{v_t}{\omega_{ps}}
+=\sqrt{\frac{\epsilon_0 k_B T_s}{n_s q_s^2}}.
+$$
+
+其中 \(n_s\) 是物种数密度，\(T_s\) 是温度，\(k_B\) 是 Boltzmann 常数。对应的 Debye 球内粒子数近似为
+
+$$
+N_D\sim (4\pi/3)n_s\lambda_{Ds}^3.
+$$
+
+这些量的精确定义会随单位制、速度矩约定、磁化程度和 reduced geometry 改变；这里使用它们是为了建立尺度判断，而不是把二维或轴对称计算机械地当成三维 Debye 球。Debye 长度 \(\lambda_D\) 和 Debye 球内粒子数 \(N_D\) 因而不是孤立的公式，而是“这个 plasma 是否能被当作 collective medium”与“统计噪声会以什么尺度渗入观测量”的共同边界。
 
 其次，在 reduced model 下，
 
@@ -356,12 +373,12 @@ $$
 
 ## 1.11 从连续模型到 PIC 离散变量
 
-前面的方程还没有直接变成程序里的数组。PIC 的第一步不是把分布函数存成一个高维网格，而是用带权粒子样本代表它，再用网格上的有限差分或谱变量承载场。可以把这条映射写成下面的最小合同：
+前面的方程还没有直接变成程序里的数组。PIC 的第一步不是把分布函数存成一个高维网格，而是用带权粒子样本代表它，再用网格上的有限差分或谱变量承载场。可以把这条映射写成下面的最小对应关系：
 
 | 连续对象 | PIC 离散载体 | 典型时间层/位置 | 在 WarpX 代码中应如何理解 |
 | --- | --- | --- | --- |
 | $f_s(x,p,t)$ | 物种粒子的位置、动量、权重集合 | $x_p^n,p_p^{n-1/2},w_p$ | `ParticleContainer` 中的粒子样本，不是一个逐点存储的分布函数 |
-| $ρ(x,t)$ | shape-weighted charge density | $ρ^n$ 或 `rho^{n+1/2}` | 由粒子沉积得到；`rho_fp` 与 `rho_buf` 还可能分别属于 fine 与 coarse-buffer 路径 |
+| $ρ(x,t)$ | shape-weighted charge density | $ρ^n$ 或 $\rho^{n+1/2}$ | 由粒子沉积得到；`rho_fp` 与 `rho_buf` 还可能分别属于 fine 与 coarse-buffer 路径 |
 | $J(x,t)$ | trajectory-based current density | 通常跨越 $n -> n+1$ | Esirkepov/Villasenor 等 current deposition 需要 old/new 轨迹或等价的 crossing 信息 |
 | $E,B$ | staggered/collocated grid fields | 由 solver 规定 | `Efield_*`、`Bfield_*` 的后缀表示时间层、网格位置或辅助副本，不能只按变量名猜物理时刻 |
 | 连续性方程 | 离散 source synchronization | 每个粒子推进步或 solver stage | `SyncCurrentAndRho()`、guard exchange、AMR average-down 等共同完成可供场求解器使用的 source |
@@ -378,13 +395,13 @@ $$
 Δt (∇_h·J)_i = ρ_i^n - ρ_i^{n+1}.
 $$
 
-这里的第二式不是说所有 current deposition 都在程序中显式先算出左右两边，而是说明它们必须共享同一条离散连续性合同。也因此，
+这里的第二式不是说所有 current deposition 都在程序中显式先算出左右两边，而是说明它们必须满足同一条离散连续性关系。也因此，
 
 - `DepositCharge()` 负责单时间层的 $ρ$ 采样及其时间层、几何和 AMR 桥接；
 - `DepositCurrent()` 及其 Esirkepov/Villasenor 等路径负责轨迹输运产生的 $J$；
 - `SyncCurrentAndRho()` 负责把不同 level、边界和 source buffer 中的结果整理成 solver 可消费的源项。
 
-这三层不能合并成“粒子把电荷写到网格”一句话。后续第 5 章会从 kernel 角度展开，第 6 章则会继续说明不同 field solver 如何消费这些 source。附录 A 给出 `rho_fp`、`rho_buf`、`current_fp`、`current_buf` 和 `lev` 等项目内变量的速查定义。
+这三层不能合并成“粒子把电荷写到网格”一句话。后续第 5 章会从 kernel 角度展开，第 6 章则会继续说明不同 field solver 如何消费这些 source。附录 A 给出 `rho_fp`、`rho_buf`、`current_fp`、`current_buf` 和 `lev` 等 WarpX 实现变量的速查定义。
 ## 1.12 这一章对后面源码章节的真正约束
 
 到这里，后续读 WarpX 代码时至少要带着下面这些硬问题，而不是只盯函数名：
@@ -408,7 +425,7 @@ $$
 
 ## 1.13 证据范围与继续阅读
 
-本章下列论述可直接回到两部已整理的基础来源：
+本章下列论述可直接回到两部已提供逐段讲解的基础来源：
 
 - `Birdsall 1985`：sheet model 的 randomization / correlation / thermalization 时间尺度，以及 finite-grid / aliasing / fluctuation / heating 主线。
 - `Dawson 1983`：numerical experiment 视角、superparticle / weighted particles 的 kinetic 边界，以及 finite-size particles、网格和 FFT-Poisson 的 electrostatic contract。
@@ -418,7 +435,7 @@ $$
 - `Hockney-Eastwood`：加权粒子、heating estimates 和 optimum path 的经典表述。
 - `Yee 1966`：staggered FDTD 与离散约束传播的原始出处。
 
-基础章节当前允许直接作为正文证据、以及哪些条目仍只能写成 acquisition / metadata 边界，现统一收口到：
+基础章节中哪些来源可直接支撑正文、哪些只能提供书目信息，见：
 
 - [基础章节文献清单](../../docs/foundations-literature-list.md)
 
@@ -427,5 +444,5 @@ $$
 ## 1.14 练习与源码定位
 
 1. **变量桥接题**：根据 1.11 的映射表，说明为什么 `rho_fp/rho_buf` 不能直接当作两个不同物理量，并指出它们分别在哪个 AMR/source-synchronization 场景出现。
-2. **尺度判断题**：给定 `lambda_D/delta_x = 2` 和 `v_t Delta t/delta_x = 0.4`，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率还是时间推进约束。
+2. **尺度判断题**：给定 `lambda_D/delta_x = 0.5` 和 `v_t Delta t/delta_x = 1.2`，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率、粒子跨单元输运还是时间推进约束。
 3. **源码定位题**：在所用 WarpX 源树中定位 `PushParticlesandDeposit()`、`SyncCurrentAndRho()` 和一个 field-solver 入口，分别写出它们连接连续模型中哪一个对象：粒子输运、源项连续性还是 Maxwell/Poisson 闭合。

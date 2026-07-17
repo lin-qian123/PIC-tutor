@@ -172,7 +172,7 @@ $$
 
 所以本章这里先压实一个最重要的判断：
 
-- `ComputeDt()` 保证的是一层离散稳定性和时间步组织契约；
+- `ComputeDt()` 保证的是一层离散稳定性和时间步组织约束；
 - `\omega_p \Delta t` 是否足够小，仍然是物理建模和分辨率设计问题。
 
 ### 2.3.2 `\lambda_D` 不只是一条长度定义，它直接约束 `\Delta x`
@@ -382,7 +382,7 @@ $$
 
 这里的 `Upward/Downward` 不只是“正向/反向”，而是在 nodal 与 cell-centered 位置之间搬运离散导数。正是这种 staggered 几何，让 Yee 在保持二阶精度的同时把 `E/B` 交错布置起来。
 
-### 2.4.3 `Yee / Nodal / CKC` 的差别本质上是离散色散合同不同
+### 2.4.3 `Yee / Nodal / CKC` 的差别本质上是离散色散关系不同
 
 对 collocated/nodal solver，WarpX 的 `CartesianNodalAlgorithm` 不再用 staggered 前后差分，而是直接用中心差分。`../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianNodalAlgorithm.H:71-102`：
 
@@ -449,8 +449,8 @@ FDTD 在实空间用局部 stencil 近似 curl。PSATD 则在谱空间解析积�
 
 这条分界线和前面几节正好连起来：
 
-- `leapfrog` 规定了粒子、场和源项的时间层合同；
-- `\omega_p` 与 `\lambda_D` 规定了 plasma 自身是否被当前 `\Delta t/\Delta x` 分辨；
+- `leapfrog` 规定了粒子、场和源项的时间层关系；
+- `\omega_p` 与 `\lambda_D` 规定了 plasma 自身是否被给定的 `\Delta t/\Delta x` 分辨；
 - `CFL` 规定了 Maxwell 更新是否还能保持离散因果；
 - `Yee/Nodal/CKC/PSATD` 则进一步决定同一组 `\Delta t,\Delta x` 会把波动相速度、群速度和 aliasing 改写成什么样。
 
@@ -473,9 +473,9 @@ WarpX 在 `OneStep_nosub()` 内部把两者清楚分开：
 
 这意味着本书后续讲 field solver 时不能把“Maxwell solver”写成单一算法。`algo.maxwell_solver` 的选择会改变主循环内的场推进、同步、边界和可用功能。
 
-## 2.6 一个真实 PIC step 的工程层次
+## 2.6 一个完整 PIC step 的离散组织
 
-把物理动作映射到生产代码，一个时间步至少包含这些层次：
+把物理动作映射到程序实现，一个时间步至少包含这些层次：
 
 1. 用户 callback、信号、诊断、负载均衡和步长更新。
 2. 场 gather 前的 guard cell 与 auxiliary field 准备。
@@ -490,7 +490,7 @@ WarpX 的 `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` 正是围绕这些层
 
 ### 2.6.1 AMR subcycling：两个时间步不是同一个时间步的重复调用
 
-无 subcycling 时，第 0 层和更细层使用同一个外层时间步，`OneStep_nosub()` 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。本书采用的源码快照中，`OneStep_sub1()` 在 `Source/Evolve/WarpXEvolve.cpp` 附近明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
+无 subcycling 时，第 0 层和更细层使用同一个外层时间步，`OneStep_nosub()` 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。本书采用的源码快照中，`OneStep_sub1()` 明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
 
 令粗层时间步为 $Δt_c$，细层时间步为
 
@@ -502,10 +502,10 @@ $$
 
 | 阶段 | 细层 | 粗层/母网格 | 源项职责 |
 | --- | --- | --- | --- |
-| 第一个半周期 | 推进一次粒子和场，步长 $Δt_f$ | 暂不完成整步 | `current_fp`、`rho_fp` 先 restrict 到 coarse patch |
-| 中间同步 | 细层已到 $t+Δt_f$ | 粗层推进到相应中间时间 | `AddCurrentFromFineLevelandSumBoundary()` 与 `AddRhoFromFineLevelandSumBoundary()` 合并细层、粗层和 buffer 源 |
-| 第二个半周期 | 再推进一次粒子和场，步长 $Δt_f$ | 继续完成粗层剩余半步 | 第二次 fine source 经 restrict/add 后参与粗层后半步场更新 |
-| 粗层周期末 | 到 $t+Δt_c$ | 到 $t+Δt_c$ | 粗细层场、源项和 guard cells 重新达到可交换状态 |
+| 第一个半周期 | 推进一次粒子和场，步长 $Δt_f$ | 暂不完成整步 | 将 `current_fp`、`rho_fp` 限制到 coarse patch |
+| 中间同步 | 细层已到 $t+Δt_f$ | 粗层推进到相应中间时间 | 合并细层、粗层和 buffer 中的源项 |
+| 第二个半周期 | 再推进一次粒子和场，步长 $Δt_f$ | 继续完成粗层剩余半步 | 第二段细层源项限制/合并后参与粗层场更新 |
+| 粗层周期末 | 到 $t+Δt_c$ | 到 $t+Δt_c$ | 粗细层的场、源项和 guard cells 重新同步 |
 
 因此，subcycling 不是简单地把 `OneStep_nosub()` 调两次。粗层粒子只推进一次，而细层粒子推进两次；粗层场的更新还要消费两个细层时间片上累积并平均/合成后的电流。源码中的调用顺序可以压缩成：
 
@@ -527,7 +527,7 @@ $$
 
 这里的 `restrict` 和 `add` 不能与普通 guard-cell exchange 混为一谈：前者改变的是 coarse/fine source 的层级表示，后者只是同一层相邻 patch 间的数据可见性。对电荷来说，`rho_buf` 还可能来自 transition-zone 粒子在 coarse 几何上的直接沉积；因此 subcycling 中的 source 合成既不是“把 fine `rho` 全部平均下来”这么简单，也不是由场求解器自动补齐。
 
-当前实现还显式禁止 electrostatic solver 与 subcycling 组合。这个限制写在 `OneStep_sub1()` 的入口断言中，原因不是 electrostatic 不能使用 AMR，而是这条 subcycling 例程的时间组织只为显式 electromagnetic field advance 编写，不能把 Poisson/electrostatic 路径的源项和场解时序悄悄套进来。
+本书采用的源码快照显式禁止 electrostatic solver 与 subcycling 组合。这个限制写在 `OneStep_sub1()` 的入口断言中，原因不是 electrostatic 不能使用 AMR，而是这条 subcycling 例程的时间组织只为显式 electromagnetic field advance 编写，不能把 Poisson/electrostatic 路径的源项和场解时序悄悄套进来。
 
 所以读 AMR PIC loop 时要同时检查四个不变量：
 
@@ -536,13 +536,13 @@ $$
 3. 两个细层时间片的 current/rho 是否分别完成 restrict、边界合并和 coarse source add；
 4. 粗细层字段与 auxiliary/guard data 是否在下一次 gather 前重新可见。
 
-这四项共同构成 AMR subcycling 的时间合同。缺少其中任何一项，都可能得到“每个 patch 都成功更新”但跨层电荷守恒、场相位或粒子 gather 已经不一致的结果。
+这四项共同构成 AMR subcycling 的时间一致性条件。缺少其中任何一项，都可能得到“每个 patch 都成功更新”但跨层电荷守恒、场相位或粒子 gather 已经不一致的结果。
 
 ### 2.6.2 JRhom 与 implicit：同一个外层 step 内部也可能有不同的时间合同
 
-标准 `OneStep_nosub()`、PSATD-JRhom 和 implicit solver 都可能被外层 `WarpX::OneStep()` 视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。当前源码的分派关系是：
+标准 `OneStep_nosub()`、PSATD-JRhom 和 implicit solver 都可能被外层 `WarpX::OneStep()` 视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。本书采用的源码快照中的分派关系是：
 
-| 路径 | 外层入口 | 源项/粒子时间组织 | 场推进特点 | 当前组合边界 |
+| 路径 | 外层入口 | 源项/粒子时间组织 | 场推进特点 | 组合边界 |
 | --- | --- | --- | --- | --- |
 | 标准显式 electromagnetic PIC | `OneStep_nosub()` | 一次粒子推进，得到 `J` 与 `rho`，随后统一 `SyncCurrentAndRho()` | FDTD 的 `B-E-B` 或一次 PSATD 推进 | 可与普通显式 collision placement 组合 |
 | PSATD-JRhom | `OneStep_JRhom()` | 先推进粒子但跳过普通沉积，再按 `rho/J` 时间依赖在 `Δt` 内做多次相对时间沉积 | 每个 deposit interval 都执行一次谱空间场推进；可选跨 `2Δt` 时间平均 | 只支持 PSATD；`current_correction` 不支持；split momentum collision push 不支持 |
@@ -574,7 +574,7 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 
 本书后续章节的阅读规则因此固定为：先识别外层物理时间步，再识别内部的 source subinterval 或 nonlinear iteration，最后才判断某次 `PushParticlesandDeposit()` 是物理推进、试探性 RHS 构造，还是历史源项重建。
 
-读者可以用下面这张决策图快速定位一个输入卡实际采用的时间合同：
+读者可以用下面这张决策图快速定位一个输入卡采用的时间组织：
 
 ```mermaid
 flowchart TD
@@ -613,7 +613,7 @@ flowchart TD
 
 ## 2.8 参数示例与最小运行案例
 
-如果把本章压回一个最小、可运行、可验证的输入骨架，当前最合适的入口还是：
+如果把本章压回一个最小、可运行、可验证的输入骨架，可从下面的官方案例开始：
 
 - `../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
 
@@ -633,7 +633,7 @@ flowchart TD
 - `\omega_p`
 - `\lambda_D`
 - FDTD curl 更新
-- `rho/J` 连续性合同
+- `rho/J` 连续性关系
 
 都能在这条最小 Langmuir 主线上落到真实输入。
 
@@ -669,7 +669,7 @@ flowchart TD
 - `Yee 1966`
 - `Hockney-Eastwood`
 
-更完整的基础章节文献状态、全文资产状态和“可直接作为正文证据/只可作待补边界”的分工，统一见：
+更完整的基础章节文献范围，以及哪些来源可直接支持正文、哪些仅提供书目信息，见：
 
 - [基础章节文献清单](../../docs/foundations-literature-list.md)
 

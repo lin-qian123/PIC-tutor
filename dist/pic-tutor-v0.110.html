@@ -156,8 +156,8 @@ Vlasov-Poisson / electrostatic 极限不是另一套世界</a></li>
 宏粒子不是假粒子，而是 coarse-grained 分布函数载体</a></li>
 <li><a href="#权重可以不同但不是没有代价" id="toc-权重可以不同但不是没有代价">1.7
 权重可以不同，但不是没有代价</a></li>
-<li><a href="#shape-factor-不是插值细节而是粒子-网格合同" id="toc-shape-factor-不是插值细节而是粒子-网格合同">1.8 shape factor
-不是插值细节，而是粒子-网格合同</a></li>
+<li><a href="#shape-factor-不是插值细节而是粒子-网格耦合规则" id="toc-shape-factor-不是插值细节而是粒子-网格耦合规则">1.8 shape factor
+不是插值细节，而是粒子-网格耦合规则</a></li>
 <li><a href="#pic-的噪声不是-bug而是模型代价" id="toc-pic-的噪声不是-bug而是模型代价">1.9 PIC 的噪声不是
 bug，而是模型代价</a></li>
 <li><a href="#debye-长度粒子数与统计时间尺度" id="toc-debye-长度粒子数与统计时间尺度">1.10 Debye
@@ -193,13 +193,13 @@ FDTD 场更新的数学骨架</a>
 <code>CFL</code> 不是经验参数，而是离散 Maxwell 更新的因果上界</a></li>
 <li><a href="#数值色散从这里开始连续光锥被离散-stencil-改写" id="toc-数值色散从这里开始连续光锥被离散-stencil-改写">2.4.2
 数值色散从这里开始：连续光锥被离散 stencil 改写</a></li>
-<li><a href="#yee-nodal-ckc-的差别本质上是离散色散合同不同" id="toc-yee-nodal-ckc-的差别本质上是离散色散合同不同">2.4.3
-<code>Yee / Nodal / CKC</code> 的差别本质上是离散色散合同不同</a></li>
+<li><a href="#yee-nodal-ckc-的差别本质上是离散色散关系不同" id="toc-yee-nodal-ckc-的差别本质上是离散色散关系不同">2.4.3
+<code>Yee / Nodal / CKC</code> 的差别本质上是离散色散关系不同</a></li>
 </ul></li>
 <li><a href="#psatd-与-fdtd-的主循环差异" id="toc-psatd-与-fdtd-的主循环差异">2.5 PSATD 与 FDTD
 的主循环差异</a></li>
-<li><a href="#一个真实-pic-step-的工程层次" id="toc-一个真实-pic-step-的工程层次">2.6 一个真实 PIC step
-的工程层次</a>
+<li><a href="#一个完整-pic-step-的离散组织" id="toc-一个完整-pic-step-的离散组织">2.6 一个完整 PIC step
+的离散组织</a>
 <ul>
 <li><a href="#amr-subcycling两个时间步不是同一个时间步的重复调用" id="toc-amr-subcycling两个时间步不是同一个时间步的重复调用">2.6.1 AMR
 subcycling：两个时间步不是同一个时间步的重复调用</a></li>
@@ -952,7 +952,7 @@ coarse-grained kinetic model 的一部分。</li>
 <li>第 2、3、5、6 章对 WarpX 主循环、沉积和场求解器的实现说明</li>
 </ul>
 <p><code>Hockney-Eastwood</code> 与 <code>Yee 1966</code>
-尚未作为可逐页核对的全文资产使用；本章不把无法核实的历史细节当作结论。读者应先把这里的连续模型、离散变量和误差边界读清，再进入源码章节。</p>
+在本书中只作为补充书目信息，而不作为可逐页核对的全文依据；本章不把无法核实的历史细节当作结论。读者应先把这里的连续模型、离散变量和误差边界读清，再进入源码章节。</p>
 <h2 id="vlasov-方程首先是相空间守恒律">1.1 Vlasov
 方程首先是相空间守恒律</h2>
 <p>对物种 <span class="math inline">\(s\)</span>，若忽略碰撞、衰变、电离和其他
@@ -1202,8 +1202,8 @@ graining；</li>
 <li>reduced-dimension weighting compensation</li>
 </ul>
 <p>都很重要。</p>
-<h2 id="shape-factor-不是插值细节而是粒子-网格合同">1.8 shape factor
-不是插值细节，而是粒子-网格合同</h2>
+<h2 id="shape-factor-不是插值细节而是粒子-网格耦合规则">1.8 shape factor
+不是插值细节，而是粒子-网格耦合规则</h2>
 <p>若把粒子源项沉积到网格单元或网格点 <span class="math inline">\(i\)</span>，最基本的电荷密度形式是</p>
 <p><span class="math display">\[
 \rho_i^n
@@ -1254,7 +1254,7 @@ bug，而是模型代价</h2>
 <li>shape factor 会修改 fluctuation spectrum；</li>
 <li>finite <code>\Delta x</code> 和 finite <code>\Delta t</code> 会把
 continuum 改写成带离散谱结构和 effective transport 的系统；</li>
-<li>若离散合同处理不好，噪声会演化成 numerical
+<li>若离散耦合处理不好，噪声会演化成 numerical
 heating、drag、diffusion，甚至弱不稳定增长率的误判。</li>
 </ol>
 <p>因此，本书后面凡是说“噪声更小”“结果更平滑”，都不应只停在图像层，而应继续问：</p>
@@ -1267,9 +1267,25 @@ heating、drag、diffusion，甚至弱不稳定增长率的误判。</li>
 长度、粒子数与统计时间尺度</h2>
 <p><code>Birdsall 1985</code> 对 sheet model
 的讨论给了一个比教科书定义更适合写进程序书的视角。</p>
-<p>首先，Debye 长度 <span class="math inline">\(\lambda_D\)</span> 和
+<p>首先，在线性、近 Maxwellian 的三维等离子体中，热速率 <span class="math inline">\(v_t\)</span>、等离子体频率和 Debye 长度可写为</p>
+<p><span class="math display">\[
+v_t=\sqrt{\frac{k_B T_s}{m_s}},
+\qquad
+\omega_{ps}=\sqrt{\frac{n_s q_s^2}{\epsilon_0m_s}},
+\qquad
+\lambda_{Ds}=\frac{v_t}{\omega_{ps}}
+=\sqrt{\frac{\epsilon_0 k_B T_s}{n_s q_s^2}}.
+\]</span></p>
+<p>其中 <span class="math inline">\(n_s\)</span> 是物种数密度，<span class="math inline">\(T_s\)</span> 是温度，<span class="math inline">\(k_B\)</span> 是 Boltzmann 常数。对应的 Debye
+球内粒子数近似为</p>
+<p><span class="math display">\[
+N_D\sim (4\pi/3)n_s\lambda_{Ds}^3.
+\]</span></p>
+<p>这些量的精确定义会随单位制、速度矩约定、磁化程度和 reduced geometry
+改变；这里使用它们是为了建立尺度判断，而不是把二维或轴对称计算机械地当成三维
+Debye 球。Debye 长度 <span class="math inline">\(\lambda_D\)</span> 和
 Debye 球内粒子数 <span class="math inline">\(N_D\)</span>
-不是孤立的公式，而是“这个 plasma 是否能被当作 collective
+因而不是孤立的公式，而是“这个 plasma 是否能被当作 collective
 medium”与“统计噪声会以什么尺度渗入观测量”的共同边界。</p>
 <p>其次，在 reduced model 下，</p>
 <p><span class="math display">\[
@@ -1293,7 +1309,7 @@ medium”与“统计噪声会以什么尺度渗入观测量”的共同边界�
 </ul>
 <h2 id="从连续模型到-pic-离散变量">1.11 从连续模型到 PIC 离散变量</h2>
 <p>前面的方程还没有直接变成程序里的数组。PIC
-的第一步不是把分布函数存成一个高维网格，而是用带权粒子样本代表它，再用网格上的有限差分或谱变量承载场。可以把这条映射写成下面的最小合同：</p>
+的第一步不是把分布函数存成一个高维网格，而是用带权粒子样本代表它，再用网格上的有限差分或谱变量承载场。可以把这条映射写成下面的最小对应关系：</p>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -1320,8 +1336,7 @@ medium”与“统计噪声会以什么尺度渗入观测量”的共同边界�
 <tr>
 <td><span class="math inline">\(ρ(x,t)\)</span></td>
 <td>shape-weighted charge density</td>
-<td><span class="math inline">\(ρ^n\)</span> 或
-<code>rho^{n+1/2}</code></td>
+<td><span class="math inline">\(ρ^n\)</span> 或 <span class="math inline">\(\rho^{n+1/2}\)</span></td>
 <td>由粒子沉积得到；<code>rho_fp</code> 与 <code>rho_buf</code>
 还可能分别属于 fine 与 coarse-buffer 路径</td>
 </tr>
@@ -1358,7 +1373,7 @@ deposition 可以直接对粒子位置取样：</p>
 Δt (∇_h·J)_i = ρ_i^n - ρ_i^{n+1}.
 \]</span></p>
 <p>这里的第二式不是说所有 current deposition
-都在程序中显式先算出左右两边，而是说明它们必须共享同一条离散连续性合同。也因此，</p>
+都在程序中显式先算出左右两边，而是说明它们必须满足同一条离散连续性关系。也因此，</p>
 <ul>
 <li><code>DepositCharge()</code> 负责单时间层的 <span class="math inline">\(ρ\)</span> 采样及其时间层、几何和 AMR 桥接；</li>
 <li><code>DepositCurrent()</code> 及其 Esirkepov/Villasenor
@@ -1370,7 +1385,7 @@ buffer 中的结果整理成 solver 可消费的源项。</li>
 角度展开，第 6 章则会继续说明不同 field solver 如何消费这些 source。附录
 A 给出
 <code>rho_fp</code>、<code>rho_buf</code>、<code>current_fp</code>、<code>current_buf</code>
-和 <code>lev</code> 等项目内变量的速查定义。 ## 1.12
+和 <code>lev</code> 等 WarpX 实现变量的速查定义。 ## 1.12
 这一章对后面源码章节的真正约束</p>
 <p>到这里，后续读 WarpX
 代码时至少要带着下面这些硬问题，而不是只盯函数名：</p>
@@ -1394,7 +1409,7 @@ self-force 的？</li>
 </ul>
 <p>都会被读成“工程控制流”，而不是“连续模型的离散化实现”。</p>
 <h2 id="证据范围与继续阅读">1.13 证据范围与继续阅读</h2>
-<p>本章下列论述可直接回到两部已整理的基础来源：</p>
+<p>本章下列论述可直接回到两部已提供逐段讲解的基础来源：</p>
 <ul>
 <li><code>Birdsall 1985</code>：sheet model 的 randomization /
 correlation / thermalization 时间尺度，以及 finite-grid / aliasing /
@@ -1410,8 +1425,7 @@ optimum path 的经典表述。</li>
 <li><code>Yee 1966</code>：staggered FDTD
 与离散约束传播的原始出处。</li>
 </ul>
-<p>基础章节当前允许直接作为正文证据、以及哪些条目仍只能写成 acquisition
-/ metadata 边界，现统一收口到：</p>
+<p>基础章节中哪些来源可直接支撑正文、哪些只能提供书目信息，见：</p>
 <ul>
 <li><a href="../../docs/foundations-literature-list.md">基础章节文献清单</a></li>
 </ul>
@@ -1423,9 +1437,9 @@ optimum path 的经典表述。</li>
 <code>rho_fp/rho_buf</code>
 不能直接当作两个不同物理量，并指出它们分别在哪个
 AMR/source-synchronization 场景出现。</li>
-<li><strong>尺度判断题</strong>：给定 <code>lambda_D/delta_x = 2</code>
-和
-<code>v_t Delta t/delta_x = 0.4</code>，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率还是时间推进约束。</li>
+<li><strong>尺度判断题</strong>：给定
+<code>lambda_D/delta_x = 0.5</code> 和
+<code>v_t Delta t/delta_x = 1.2</code>，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率、粒子跨单元输运还是时间推进约束。</li>
 <li><strong>源码定位题</strong>：在所用 WarpX 源树中定位
 <code>PushParticlesandDeposit()</code>、<code>SyncCurrentAndRho()</code>
 和一个 field-solver
@@ -1597,7 +1611,7 @@ Langmuir 振荡、electrostatic shielding 或弱不稳定增长率。</p>
 <p>所以本章这里先压实一个最重要的判断：</p>
 <ul>
 <li><code>ComputeDt()</code>
-保证的是一层离散稳定性和时间步组织契约；</li>
+保证的是一层离散稳定性和时间步组织约束；</li>
 <li><code>\omega_p \Delta t</code>
 是否足够小，仍然是物理建模和分辨率设计问题。</li>
 </ul>
@@ -1829,8 +1843,8 @@ D_x^-F_i=\frac{F_i-F_{i-1}}{\Delta x}.
 <p>这里的 <code>Upward/Downward</code> 不只是“正向/反向”，而是在 nodal
 与 cell-centered 位置之间搬运离散导数。正是这种 staggered 几何，让 Yee
 在保持二阶精度的同时把 <code>E/B</code> 交错布置起来。</p>
-<h3 id="yee-nodal-ckc-的差别本质上是离散色散合同不同">2.4.3
-<code>Yee / Nodal / CKC</code> 的差别本质上是离散色散合同不同</h3>
+<h3 id="yee-nodal-ckc-的差别本质上是离散色散关系不同">2.4.3
+<code>Yee / Nodal / CKC</code> 的差别本质上是离散色散关系不同</h3>
 <p>对 collocated/nodal solver，WarpX 的
 <code>CartesianNodalAlgorithm</code> 不再用 staggered
 前后差分，而是直接用中心差分。<code>../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianNodalAlgorithm.H:71-102</code>：</p>
@@ -1893,9 +1907,9 @@ domain decomposition、边界、current correction
 </ul>
 <p>这条分界线和前面几节正好连起来：</p>
 <ul>
-<li><code>leapfrog</code> 规定了粒子、场和源项的时间层合同；</li>
+<li><code>leapfrog</code> 规定了粒子、场和源项的时间层关系；</li>
 <li><code>\omega_p</code> 与 <code>\lambda_D</code> 规定了 plasma
-自身是否被当前 <code>\Delta t/\Delta x</code> 分辨；</li>
+自身是否被给定的 <code>\Delta t/\Delta x</code> 分辨；</li>
 <li><code>CFL</code> 规定了 Maxwell 更新是否还能保持离散因果；</li>
 <li><code>Yee/Nodal/CKC/PSATD</code> 则进一步决定同一组
 <code>\Delta t,\Delta x</code> 会把波动相速度、群速度和 aliasing
@@ -1924,9 +1938,9 @@ domain decomposition、边界、current correction
 <p>这意味着本书后续讲 field solver 时不能把“Maxwell
 solver”写成单一算法。<code>algo.maxwell_solver</code>
 的选择会改变主循环内的场推进、同步、边界和可用功能。</p>
-<h2 id="一个真实-pic-step-的工程层次">2.6 一个真实 PIC step
-的工程层次</h2>
-<p>把物理动作映射到生产代码，一个时间步至少包含这些层次：</p>
+<h2 id="一个完整-pic-step-的离散组织">2.6 一个完整 PIC step
+的离散组织</h2>
+<p>把物理动作映射到程序实现，一个时间步至少包含这些层次：</p>
 <ol type="1">
 <li>用户 callback、信号、诊断、负载均衡和步长更新。</li>
 <li>场 gather 前的 guard cell 与 auxiliary field 准备。</li>
@@ -1946,8 +1960,8 @@ subcycling：两个时间步不是同一个时间步的重复调用</h3>
 层和更细层使用同一个外层时间步，<code>OneStep_nosub()</code>
 可以把粒子推进、source synchronization 和场推进看成一条统一的 <span class="math inline">\(n -&gt; n+1\)</span> 链。打开 subcycling
 后，这个图像不再成立。本书采用的源码快照中，<code>OneStep_sub1()</code>
-在 <code>Source/Evolve/WarpXEvolve.cpp</code> 附近明确限定：只支持两级
-mesh refinement，且每个方向的 refinement ratio 必须为 2。</p>
+明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio
+必须为 2。</p>
 <p>令粗层时间步为 <span class="math inline">\(Δt_c\)</span>，细层时间步为</p>
 <p><span class="math display">\[
 \Delta t_f=\frac{\Delta t_c}{2}.
@@ -1973,28 +1987,26 @@ mesh refinement，且每个方向的 refinement ratio 必须为 2。</p>
 <td>第一个半周期</td>
 <td>推进一次粒子和场，步长 <span class="math inline">\(Δt_f\)</span></td>
 <td>暂不完成整步</td>
-<td><code>current_fp</code>、<code>rho_fp</code> 先 restrict 到 coarse
+<td>将 <code>current_fp</code>、<code>rho_fp</code> 限制到 coarse
 patch</td>
 </tr>
 <tr>
 <td>中间同步</td>
 <td>细层已到 <span class="math inline">\(t+Δt_f\)</span></td>
 <td>粗层推进到相应中间时间</td>
-<td><code>AddCurrentFromFineLevelandSumBoundary()</code> 与
-<code>AddRhoFromFineLevelandSumBoundary()</code> 合并细层、粗层和 buffer
-源</td>
+<td>合并细层、粗层和 buffer 中的源项</td>
 </tr>
 <tr>
 <td>第二个半周期</td>
 <td>再推进一次粒子和场，步长 <span class="math inline">\(Δt_f\)</span></td>
 <td>继续完成粗层剩余半步</td>
-<td>第二次 fine source 经 restrict/add 后参与粗层后半步场更新</td>
+<td>第二段细层源项限制/合并后参与粗层场更新</td>
 </tr>
 <tr>
 <td>粗层周期末</td>
 <td>到 <span class="math inline">\(t+Δt_c\)</span></td>
 <td>到 <span class="math inline">\(t+Δt_c\)</span></td>
-<td>粗细层场、源项和 guard cells 重新达到可交换状态</td>
+<td>粗细层的场、源项和 guard cells 重新同步</td>
 </tr>
 </tbody>
 </table>
@@ -2022,7 +2034,7 @@ guard-cell exchange 混为一谈：前者改变的是 coarse/fine source
 transition-zone 粒子在 coarse 几何上的直接沉积；因此 subcycling 中的
 source 合成既不是“把 fine <code>rho</code>
 全部平均下来”这么简单，也不是由场求解器自动补齐。</p>
-<p>当前实现还显式禁止 electrostatic solver 与 subcycling
+<p>本书采用的源码快照显式禁止 electrostatic solver 与 subcycling
 组合。这个限制写在 <code>OneStep_sub1()</code> 的入口断言中，原因不是
 electrostatic 不能使用 AMR，而是这条 subcycling 例程的时间组织只为显式
 electromagnetic field advance 编写，不能把 Poisson/electrostatic
@@ -2037,13 +2049,13 @@ coarse source add；</li>
 前重新可见。</li>
 </ol>
 <p>这四项共同构成 AMR subcycling
-的时间合同。缺少其中任何一项，都可能得到“每个 patch
+的时间一致性条件。缺少其中任何一项，都可能得到“每个 patch
 都成功更新”但跨层电荷守恒、场相位或粒子 gather 已经不一致的结果。</p>
 <h3 id="jrhom-与-implicit同一个外层-step-内部也可能有不同的时间合同">2.6.2
 JRhom 与 implicit：同一个外层 step 内部也可能有不同的时间合同</h3>
 <p>标准 <code>OneStep_nosub()</code>、PSATD-JRhom 和 implicit solver
 都可能被外层 <code>WarpX::OneStep()</code>
-视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。当前源码的分派关系是：</p>
+视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。本书采用的源码快照中的分派关系是：</p>
 <table>
 <colgroup>
 <col style="width: 20%" />
@@ -2058,7 +2070,7 @@ JRhom 与 implicit：同一个外层 step 内部也可能有不同的时间合�
 <th>外层入口</th>
 <th>源项/粒子时间组织</th>
 <th>场推进特点</th>
-<th>当前组合边界</th>
+<th>组合边界</th>
 </tr>
 </thead>
 <tbody>
@@ -2143,7 +2155,7 @@ iteration，也会把时间积分和求解器迭代混为一谈。</p>
 source subinterval 或 nonlinear iteration，最后才判断某次
 <code>PushParticlesandDeposit()</code> 是物理推进、试探性 RHS
 构造，还是历史源项重建。</p>
-<p>读者可以用下面这张决策图快速定位一个输入卡实际采用的时间合同：</p>
+<p>读者可以用下面这张决策图快速定位一个输入卡采用的时间组织：</p>
 <pre class="mermaid"><code>flowchart TD
     A[&quot;WarpX::OneStep(t, dt)&quot;] --&gt; B{&quot;m_implicit_solver?&quot;}
     B --&gt;|&quot;yes&quot;| C[&quot;ImplicitSolver::OneStep&quot;]
@@ -2205,7 +2217,7 @@ source subinterval 或 nonlinear iteration，最后才判断某次
 </tbody>
 </table>
 <h2 id="参数示例与最小运行案例">2.8 参数示例与最小运行案例</h2>
-<p>如果把本章压回一个最小、可运行、可验证的输入骨架，当前最合适的入口还是：</p>
+<p>如果把本章压回一个最小、可运行、可验证的输入骨架，可从下面的官方案例开始：</p>
 <ul>
 <li><code>../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi</code></li>
 </ul>
@@ -2225,7 +2237,7 @@ source subinterval 或 nonlinear iteration，最后才判断某次
 <li><code>\omega_p</code></li>
 <li><code>\lambda_D</code></li>
 <li>FDTD curl 更新</li>
-<li><code>rho/J</code> 连续性合同</li>
+<li><code>rho/J</code> 连续性关系</li>
 </ul>
 <p>都能在这条最小 Langmuir 主线上落到真实输入。</p>
 <p><code>Examples/Tests/langmuir/inputs_test_1d_langmuir_multi</code>
@@ -2264,7 +2276,7 @@ source subinterval 或 nonlinear iteration，最后才判断某次
 <li><code>Yee 1966</code></li>
 <li><code>Hockney-Eastwood</code></li>
 </ul>
-<p>更完整的基础章节文献状态、全文资产状态和“可直接作为正文证据/只可作待补边界”的分工，统一见：</p>
+<p>更完整的基础章节文献范围，以及哪些来源可直接支持正文、哪些仅提供书目信息，见：</p>
 <ul>
 <li><a href="../../docs/foundations-literature-list.md">基础章节文献清单</a></li>
 </ul>

@@ -8,6 +8,8 @@
 
 第 5 至 9 章的章节入口也已完成读者化审读：第 6、7 章改为源码导航与案例边界，第 9 章改为文献证据层级、延伸阅读和已知边界；相应合订版已重新构建为 270 页。第 9 章入口、证据层级表、已知边界和末页附录已视觉抽查，仍不等同于逐页全书通读。
 
+本轮继续清理第 4 至 6 章深层的 `v0.x` 叙事，将 RZ Esirkepov 证据改按观测量、适用范围和未闭合边界说明。读者审计现要求全部正文无版本标记；第 5 章 RZ evidence page 已使用独立 PDF 渲染器复核。
+
 当前接续工作已为第 9 章建立 `docs/literature-pending-triage.md`：对 literature map 中仍待分类的 81 条 BibTeX 条目给出保守的候选主题、章节入口和获取优先级；这是 acquisition/read queue，不是全文阅读或正文证据。
 
 当前接续工作又完成 Vranic 2015 粒子合并论文资产：24 页 PDF、MinerU Markdown、32 张图、中文精读和 `11/11` asset contract 已通过；第 4 章已建立与 WarpX `VelocityCoincidenceThinning` 的有界映射，不把论文案例写成 WarpX runtime PASS。

@@ -455,7 +455,7 @@ PSATDForwardTransformRho(rho_fp_string, rho_cp_string, 1, rho_new);
 PSATDBackwardTransformJ(current_fp_string, current_cp_string);
 ```
 
-v0.5 需要特别记住两个实现边界。第一，`fft_periodic_single_box` 分支会在 `:791-837` 内完成 current correction 或 Vay deposition 的 k-space 处理；非 periodic single box 分支在 `:839-899` 里还会在 correction/Vay 后调用 `SyncCurrent()`、`SyncRho()` 或 `SumBoundaryJ()`。第二，真正的场推进顺序是 `PSATDForwardTransformEB()` `:901-902`、可选 RZ PML push `:904-907`、`F/G` transform `:909-911`、`PSATDPushSpectralFields()` `:913-914`、再做 `E/B/F/G` 反变换 `:916-926`；最后才进入每层 PML push 和物理边界条件 `:928-940`。
+这里需要特别记住两个实现边界。第一，`fft_periodic_single_box` 分支会在 `:791-837` 内完成 current correction 或 Vay deposition 的 k-space 处理；非 periodic single box 分支在 `:839-899` 里还会在 correction/Vay 后调用 `SyncCurrent()`、`SyncRho()` 或 `SumBoundaryJ()`。第二，真正的场推进顺序是 `PSATDForwardTransformEB()` `:901-902`、可选 RZ PML push `:904-907`、`F/G` transform `:909-911`、`PSATDPushSpectralFields()` `:913-914`、再做 `E/B/F/G` 反变换 `:916-926`；最后才进入每层 PML push 和物理边界条件 `:928-940`。
 
 `SpectralSolver` 本身只负责建立 k-space、spectral field storage 和选择具体算法。当前分派入口是 `../warpx/Source/FieldSolver/SpectralSolver/SpectralSolver.cpp:26-143`：
 

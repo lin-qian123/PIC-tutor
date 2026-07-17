@@ -6,6 +6,7 @@
     "preface_has_learning_outcomes": true,
     "history_is_separated": true,
     "chapter_openings_are_reader_facing": true,
+    "core_chapters_have_no_versioned_prose": true,
     "core_chapters_have_exercises": true
   },
   "passed": true,
@@ -13,6 +14,7 @@
   "scope": "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters",
   "versioned_chapter_heading_count": 0,
   "versioned_chapter_headings": [],
+  "versioned_prose_marker_count": 0,
   "project_record_word_count_in_entry_points": 4,
   "project_record_opening_markers": [],
   "open_items": [

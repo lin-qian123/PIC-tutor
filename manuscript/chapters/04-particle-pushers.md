@@ -168,7 +168,7 @@ if (momentum_push_type == MomentumPushType::SecondHalf || momentum_push_type == 
 
 文件注释 `:13-18` 说明 `FirstHalf` 和 `SecondHalf` 可以分裂执行，并且连续执行应与一次 `Full` 更新数学等价。这正好服务于 `WarpXEvolve.cpp` 中把碰撞放在 momentum push 中间的路径。
 
-这里有一个 v0.3 必须补上的实现细节：当前 WarpX 的 half momentum push 不是简单把 `q dt B/(2m\gamma)` 再乘 `1/2`。代码在 `UpdateMomentumBoris.H:44-57` 使用
+这里有一个必须区分的实现细节：WarpX 的 half momentum push 不是简单把 `q dt B/(2m\gamma)` 再乘 `1/2`。代码在 `UpdateMomentumBoris.H:44-57` 使用
 
 $$
 \frac{|t_{\mathrm{half}}|}{|t_{\mathrm{full}}|}
@@ -498,7 +498,7 @@ $$
 
 当前本地 regression 和这篇文献的配对仍需保守表述。`Examples/Tests/particle_pusher` 提供 force-free Higuera-Cary 强断言；Poincare 合同则验证 `x=0,p_x>0` 截面、`I_y` 顺序和解析 quartic reference。新增的 topology classifier 同时保留时间顺序和相空间中心角顺序；在 32³、2201-frame 长轨道上，后三种 pusher 的角排序候选均无自交或轨道间交叉，说明原先时间折线的交叉计数是连接顺序伪影，而不是物理 resonance-island 证据。14-species dense family 与 64³ `p_y=1.6/1.8` control 进一步显示 Vay 窗口漂移约 `6.5e-2`，控制组约 `1e-3`，但该 resonance-sensitive screen 仍不是 two-fold island 或 trajectory-crossing topology proof。
 
-本版新增 `scripts/summarize_higuera_poincare_evidence.py`，把短轨道、长轨道、密集 `p_y` family、resonance screen 和 resolution screen 的证据等级统一成一份边界合同：短轨道是 `INSUFFICIENT_SAMPLING`；长轨道的 invariant/reference 与 angular-order candidate 通过但 topology 仍为 `REVIEW_REQUIRED`；密集族的 resonance screen 通过而解析 reference curve 和 cross-pusher candidate signature 保留边界。因此当前最强可写结论是“invariant 与局部 resonance-sensitive screen 已建立，论文等价 topology gate 尚未启用”，完整说明见 `notes/code-reading/particles/69-higuera-poincare-evidence-boundary.md` 和 `runs/stage-c-validation/higuera-poincare-evidence-summary/contract.{json,md}`。
+`scripts/summarize_higuera_poincare_evidence.py` 将短轨道、长轨道、密集 `p_y` family、resonance screen 和 resolution screen 的证据等级统一为一份边界记录：短轨道是 `INSUFFICIENT_SAMPLING`；长轨道的 invariant/reference 与 angular-order candidate 通过但 topology 仍为 `REVIEW_REQUIRED`；密集族的 resonance screen 通过而解析 reference curve 和 cross-pusher candidate signature 保留边界。因此最强可写结论是“invariant 与局部 resonance-sensitive screen 已建立，论文等价 topology gate 尚未启用”。
 
 ## 4.6 从 `MultiParticleContainer` 到 `PhysicalParticleContainer`
 

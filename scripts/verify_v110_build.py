@@ -246,40 +246,37 @@ def main() -> None:
                 "axis residual 都高于 off-axis residual",
             )
         ),
-        "rz_rho_observable_family": all(
-            marker in source
-            for marker in (
-                "shape=1/2/3/4 的 rho-side species decomposition 观测 family",
-                "rho-observable-family/contract.{json,md}",
-                "不关闭同面 `divE-rho` axis charge boundary",
-            )
+        "rz_rho_observable_family": (
+            (ROOT / "runs/stage-c-validation/esirkepov_langmuir_rz_rho-observable-family/contract.json").is_file()
+            and all(marker in source for marker in (
+                "将同一 reader-side observable 扩展到 shape=1/2/3/4 的统一 family 后",
+                "这补齐的是 rho-side species decomposition 的 shape coverage",
+                "同面 axis residual 仍保持 `BOUNDARY`",
+            ))
         ),
-        "rz_axis_residual_profile": all(
-            marker in source
-            for marker in (
-                "v0.89 对同一批 `256x512`、2-rank RZ sibling 进一步做径向 profile",
-                "axis-residual-profile/contract.{json,md}",
+        "rz_axis_residual_profile": (
+            (ROOT / "runs/stage-c-validation/esirkepov_langmuir_rz_axis-residual-profile/contract.json").is_file()
+            and all(marker in source for marker in (
+                "对同一批 `256x512`、2-rank RZ sibling 做径向 profile",
                 "8 个 case 的全局 profile maximum 都落在 `r=0`",
-                "AXIS_DOMINATED_READER_SIDE_RESIDUAL_PROFILE",
-            )
+                "不区分 axis volume scaling、staggering/interpolation、mode handling 和 deposition kernel",
+            ))
         ),
-        "rz_axis_residual_time_profile": all(
-            marker in source
-            for marker in (
-                "v0.90 将该 profile 扩展到相同 8 个 case 的全部数值 plotfile",
-                "axis-residual-time-profile/contract.{json,md}",
+        "rz_axis_residual_time_profile": (
+            (ROOT / "runs/stage-c-validation/esirkepov_langmuir_rz_axis-residual-time-profile/contract.json").is_file()
+            and all(marker in source for marker in (
+                "将该 profile 扩展到相同 8 个 case 的全部数值 plotfile",
                 "16 个 evolved frames 的最大值全部仍在 `r=0`",
-                "POST_INITIAL_AXIS_DOMINATED_READER_SIDE_RESIDUAL_TIME_PROFILE",
-            )
+                "不关闭 `divE-rho`、current closure 或 formal convergence boundary",
+            ))
         ),
-        "rz_rho_species_time_profile": all(
-            marker in source
-            for marker in (
-                "v0.91 对同一 8 个 case 的 `rho`、`rho_electrons` 和 `rho_ions` 做了全时间 species decomposition",
-                "rho-species-time-profile/contract.{json,md}",
+        "rz_rho_species_time_profile": (
+            (ROOT / "runs/stage-c-validation/esirkepov_langmuir_rz_rho-species-time-profile/contract.json").is_file()
+            and all(marker in source for marker in (
+                "对同一 8 个 case 的 `rho`、`rho_electrons` 和 `rho_ions` 做全时间 species decomposition",
                 "16 个 evolved frames 的最大相对差",
-                "EVOLVED_TIME_RHO_SPECIES_DECOMPOSITION_PASS_AXIS_CHARGE_SEPARATE",
-            )
+                "仍不关闭独立的 `divE-rho` axis residual",
+            ))
         ),
         "rz_axis_divergence_stencil_alignment": all(
             marker in source

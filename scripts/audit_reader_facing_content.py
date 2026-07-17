@@ -28,6 +28,7 @@ def main() -> int:
     )
 
     version_markers = re.findall(r"^### .*v0\.\d+", chapter_text, re.MULTILINE)
+    versioned_prose_markers = re.findall(r"\bv0\.\d+", chapter_text)
     project_record_words = re.findall(r"发布|审计合同|当前版本|本版新增|本轮新增|运行合同", version + readme, re.MULTILINE)
     project_record_opening_markers = re.findall(
         r"v0\.\d+\s*(?:校准说明|源码基线|的本章目标)|可审校长草稿|正式书稿版|后续扩写计划",
@@ -39,6 +40,7 @@ def main() -> int:
         "preface_has_learning_outcomes": "读者应当能够" in preface and "如何使用本书" in preface,
         "history_is_separated": (root / "docs/version-history-v0.110.md").is_file(),
         "chapter_openings_are_reader_facing": not project_record_opening_markers,
+        "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text
             for marker in ("练习", "源码定位", "复现实验")
@@ -52,6 +54,7 @@ def main() -> int:
         "scope": "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters",
         "versioned_chapter_heading_count": len(version_markers),
         "versioned_chapter_headings": version_markers,
+        "versioned_prose_marker_count": len(versioned_prose_markers),
         "project_record_word_count_in_entry_points": len(project_record_words),
         "project_record_opening_markers": project_record_opening_markers,
         "open_items": [

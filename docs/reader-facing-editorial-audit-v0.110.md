@@ -11,6 +11,7 @@
 | `preface_has_learning_outcomes` | `PASS` |
 | `history_is_separated` | `PASS` |
 | `chapter_openings_are_reader_facing` | `PASS` |
+| `core_chapters_have_no_versioned_prose` | `PASS` |
 | `core_chapters_have_exercises` | `PASS` |
 
 ## Open editorial work

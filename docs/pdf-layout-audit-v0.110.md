@@ -2,7 +2,7 @@
 
 - classification: `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED`
 - PDF pages: `270`
-- minimum extracted page characters: `838` (page `248`)
+- minimum extracted page characters: `659` (page `258`)
 
 | check | status |
 |---|:---:|

@@ -6348,8 +6348,8 @@ pusher。</p>
 <code>SecondHalf</code> 可以分裂执行，并且连续执行应与一次
 <code>Full</code> 更新数学等价。这正好服务于
 <code>WarpXEvolve.cpp</code> 中把碰撞放在 momentum push 中间的路径。</p>
-<p>这里有一个 v0.3 必须补上的实现细节：当前 WarpX 的 half momentum push
-不是简单把 <code>q dt B/(2m\gamma)</code> 再乘 <code>1/2</code>。代码在
+<p>这里有一个必须区分的实现细节：WarpX 的 half momentum push 不是简单把
+<code>q dt B/(2m\gamma)</code> 再乘 <code>1/2</code>。代码在
 <code>UpdateMomentumBoris.H:44-57</code> 使用</p>
 <p><span class="math display">\[
 \frac{|t_{\mathrm{half}}|}{|t_{\mathrm{full}}|}
@@ -6855,19 +6855,15 @@ resonance-island 证据。14-species dense family 与 64³
 <code>6.5e-2</code>，控制组约 <code>1e-3</code>，但该
 resonance-sensitive screen 仍不是 two-fold island 或 trajectory-crossing
 topology proof。</p>
-<p>本版新增
-<code>scripts/summarize_higuera_poincare_evidence.py</code>，把短轨道、长轨道、密集
-<code>p_y</code> family、resonance screen 和 resolution screen
-的证据等级统一成一份边界合同：短轨道是
+<p><code>scripts/summarize_higuera_poincare_evidence.py</code>
+将短轨道、长轨道、密集 <code>p_y</code> family、resonance screen 和
+resolution screen 的证据等级统一为一份边界记录：短轨道是
 <code>INSUFFICIENT_SAMPLING</code>；长轨道的 invariant/reference 与
 angular-order candidate 通过但 topology 仍为
 <code>REVIEW_REQUIRED</code>；密集族的 resonance screen 通过而解析
 reference curve 和 cross-pusher candidate signature
-保留边界。因此当前最强可写结论是“invariant 与局部 resonance-sensitive
-screen 已建立，论文等价 topology gate 尚未启用”，完整说明见
-<code>notes/code-reading/particles/69-higuera-poincare-evidence-boundary.md</code>
-和
-<code>runs/stage-c-validation/higuera-poincare-evidence-summary/contract.{json,md}</code>。</p>
+保留边界。因此最强可写结论是“invariant 与局部 resonance-sensitive screen
+已建立，论文等价 topology gate 尚未启用”。</p>
 <h2 id="从-multiparticlecontainer-到-physicalparticlecontainer">4.6 从
 <code>MultiParticleContainer</code> 到
 <code>PhysicalParticleContainer</code></h2>
@@ -14069,9 +14065,8 @@ correction-on/off 对照；红色虚线是 <code>1e-11</code> charge gate。所�
 field gate 均通过，但 correction-on 的 axis residual 仍约为
 <code>O(1e-3)</code>，correction-off 的 charge 结果随 shape
 变化，不能据此修改全局默认值或宣称正式收敛阶。</p>
-<p>为了避免把不同诊断量混成一个结论，v0.47 又对上述 shape=2/3/4
-correction-on refined sibling 直接读取
-<code>rho</code>、<code>rho_electrons</code> 和
+<p>为避免把不同诊断量混成一个结论，对上述 shape=2/3/4 correction-on
+refined sibling 直接读取 <code>rho</code>、<code>rho_electrons</code> 和
 <code>rho_ions</code>。末态 <code>rho-(rho_electrons+rho_ions)</code>
 的相对差分别为 <code>1.303e-14/1.228e-14/1.343e-14</code>，说明 species
 decomposition 在 rho-side 已达到机器精度；三个 case 的 integrated-rho
@@ -14080,71 +14075,51 @@ decomposition 在 rho-side 已达到机器精度；三个 case 的 integrated-rh
 <code>divE-rho</code>、current closure 或完整 Gauss-law contract：同一批
 case 的 axis <code>divE-rho</code> residual 仍为
 <code>2.177e-3/2.353e-3/2.552e-3</code>。脚本为
-<code>scripts/analyze_rz_esirkepov_rho_observable.py</code>，报告见
-<code>runs/stage-c-validation/esirkepov_langmuir_rz_rho-observable/contract.{json,md}</code>。</p>
-<p>v0.88 将同一 reader-side observable 扩展到 shape=1/2/3/4 的统一
-family：四个 shape 的末态 <code>rho-(rho_electrons+rho_ions)</code>
-相对差为
+<code>scripts/analyze_rz_esirkepov_rho_observable.py</code>。</p>
+<p>将同一 reader-side observable 扩展到 shape=1/2/3/4 的统一 family
+后，四个 shape 的末态 <code>rho-(rho_electrons+rho_ions)</code> 相对差为
 <code>9.124e-15/1.303e-14/1.228e-14/1.343e-14</code>，integrated-rho
 漂移相对 <code>abs(rho)</code> scale 为
 <code>6.495e-6/2.371e-6/2.729e-6/3.354e-6</code>。这补齐的是 rho-side
 species decomposition 的 shape coverage，不是 <code>divE-rho</code>
-守恒闭合；同面 axis residual 仍保持 <code>BOUNDARY</code>。统一报告见
-<code>runs/stage-c-validation/esirkepov_langmuir_rz_rho-observable-family/contract.{json,md}</code>，说明见
-<code>notes/code-reading/particles/70-rz-esirkepov-rho-observable-family.md</code>。</p>
-<p>v0.89 对同一批 <code>256x512</code>、2-rank RZ sibling 进一步做径向
+守恒闭合；同面 axis residual 仍保持 <code>BOUNDARY</code>。</p>
+<p>对同一批 <code>256x512</code>、2-rank RZ sibling 做径向
 profile：把同面 <code>abs(divE-rho/epsilon_0)</code> 按
 <code>r=0</code>、<code>r=1</code> 和 <code>r&gt;=2</code>
 分层。correction-on/default 的 shape=1/2/3/4 最大值分别为
 <code>7.554e-4/8.990e-4/9.289e-4/9.729e-4</code>，而 correction-off 为
 <code>1.639e-11/1.020e-11/8.399e-12/6.669e-12</code>；8 个 case 的全局
 profile maximum 都落在 <code>r=0</code>，且 <code>r=0</code> 高于近轴与
-off-axis 分层。这个结果的分类为
-<code>AXIS_DOMINATED_READER_SIDE_RESIDUAL_PROFILE</code>，把当前
-reader-side 观测定位为 axis-dominated，但不区分 axis volume
-scaling、staggering/interpolation、mode handling 和 deposition
+off-axis 分层。这将 reader-side 观测定位为 axis-dominated，但不区分 axis
+volume scaling、staggering/interpolation、mode handling 和 deposition
 kernel，也不关闭默认 correction-on 的 <code>divE-rho</code>
-boundary。报告见
-<code>runs/stage-c-validation/esirkepov_langmuir_rz_axis-residual-profile/contract.{json,md}</code>，说明见
-<code>notes/code-reading/particles/71-rz-esirkepov-axis-residual-profile.md</code>。</p>
-<p>v0.90 将该 profile 扩展到相同 8 个 case 的全部数值
+boundary。</p>
+<p>将该 profile 扩展到相同 8 个 case 的全部数值
 plotfile：<code>diag1000000</code> 初始化帧、<code>diag1000040</code>
-中间帧和 <code>diag1000080</code> 末帧共 24
-帧。初始化帧保留在合同中但排除 evolved-time 分类，因为 <code>t=0</code>
-的零场基线不适合与推进后的 <code>divE-rho</code>
-残差使用同一解释。排除初始化帧后，16 个 evolved frames 的最大值全部仍在
-<code>r=0</code>，因此 axis dominance
-不是单一末帧偶然现象。该时间合同分类为
-<code>POST_INITIAL_AXIS_DOMINATED_READER_SIDE_RESIDUAL_TIME_PROFILE</code>，报告见
-<code>runs/stage-c-validation/esirkepov_langmuir_rz_axis-residual-time-profile/contract.{json,md}</code>，说明见
-<code>notes/code-reading/particles/72-rz-esirkepov-axis-residual-time-profile.md</code>。这仍不能区分轴体积缩放、staggering/interpolation、mode
+中间帧和 <code>diag1000080</code> 末帧共 24 帧。初始化帧排除在
+evolved-time 分类外，因为 <code>t=0</code> 的零场基线不适合与推进后的
+<code>divE-rho</code> 残差使用同一解释。排除初始化帧后，16 个 evolved
+frames 的最大值全部仍在 <code>r=0</code>，因此 axis dominance
+不是单一末帧偶然现象。这仍不能区分轴体积缩放、staggering/interpolation、mode
 handling 与 deposition kernel，也不关闭 <code>divE-rho</code>、current
 closure 或 formal convergence boundary。</p>
-<p>v0.91 对同一 8 个 case 的
-<code>rho</code>、<code>rho_electrons</code> 和 <code>rho_ions</code>
-做了全时间 species decomposition：初始化 <code>diag1000000</code>
-的相对差约为 <code>1.37e-2/1.93e-2/1.96e-2/2.28e-2</code>，但排除该
-pre-evolution baseline 后，16 个 evolved frames 的最大相对差分别为
-correction-on
+<p>对同一 8 个 case 的 <code>rho</code>、<code>rho_electrons</code> 和
+<code>rho_ions</code> 做全时间 species decomposition：初始化
+<code>diag1000000</code> 的相对差约为
+<code>1.37e-2/1.93e-2/1.96e-2/2.28e-2</code>，但排除该 pre-evolution
+baseline 后，16 个 evolved frames 的最大相对差分别为 correction-on
 <code>1.854e-14/1.636e-14/1.591e-14/1.435e-14</code>、correction-off
 <code>1.599e-14/1.389e-14/1.341e-14/1.347e-14</code>，全部通过
-<code>1e-12</code> gate。该合同分类为
-<code>EVOLVED_TIME_RHO_SPECIES_DECOMPOSITION_PASS_AXIS_CHARGE_SEPARATE</code>，说明
-<code>rho</code> 组装在 evolved-time reader-side
-已与物种和保持机器精度一致；报告见
-<code>runs/stage-c-validation/esirkepov_langmuir_rz_rho-species-time-profile/contract.{json,md}</code>，说明见
-<code>notes/code-reading/particles/73-rz-esirkepov-rho-species-time-profile.md</code>。这仍不关闭独立的
+<code>1e-12</code> gate。这说明 <code>rho</code> 组装在 evolved-time
+reader-side 已与物种和保持机器精度一致；仍不关闭独立的
 <code>divE-rho</code> axis residual、current
 closure、轴体积耦合或正式收敛。</p>
-<p>v0.93 对 v0.92 的两组 RZ/RSPHERE family 做 correction-on axis charge
-repeat stability：6 个 correction-on level 的 axis residual 在两组
+<p>对两组 RZ/RSPHERE family 做 correction-on axis charge repeat
+stability 检查后，6 个 correction-on level 的 axis residual 在两组
 family 之间全部通过 <code>1e-10</code> 相对重复容差，且每个 level 的
 axis residual 都高于对应 off-axis residual。correction-off 的 RZ
 低残差已接近 reader/numerical
-floor，因此只报告绝对值与相对差，不把放大的相对末位差作为失败。该合同分类为
-<code>REPEAT_STABLE_AXIS_CHARGE_BOUNDARY_NOT_KERNEL_ROOT_CAUSE</code>，报告见
-<code>runs/stage-c-validation/rz-axis-charge-repeat-stability-v0.93/contract.{json,md}</code>，说明见
-<code>notes/code-reading/particles/75-rz-axis-charge-repeat-stability.md</code>。这强化的是稳定的
+floor，因此只报告绝对值与相对差，不把放大的相对末位差作为失败。这强化的是稳定的
 reader-side boundary，不关闭 deposition kernel root cause、current
 closure 或正式 order。</p>
 <p>同一诊断也已扩展到 RCYLINDER/RSPHERE shape=1：默认 correction 下
@@ -14657,11 +14632,10 @@ refinement study 的模板，但不应把描述性 slope
     I --&gt; K[&quot;SyncCurrentAndRho&quot;]
     J --&gt; K
     K --&gt; L[&quot;field solver&quot;]</code></pre>
-<p>对当前项目推进而言，本章已经可以用这张责任矩阵把 current
-kernel、charge kernel
-和同步层的边界稳定地交给读者；<code>DepositCharge()</code> / ABLASTR /
-<code>ChargeDeposition.H</code> 的主要职责边界也已在当前 v0.68
-源码基线上阶段闭合。剩余工作应集中在出版级证据和表达，而不是继续扩大局部
+<p>对读者而言，这张责任矩阵明确了 current kernel、charge kernel
+和同步层的职责边界；<code>DepositCharge()</code> / ABLASTR /
+<code>ChargeDeposition.H</code>
+的主要职责也已由此定位。仍需加强的是出版级证据与表达，而不是继续扩大局部
 kernel 的职责：</p>
 <ol type="1">
 <li>取得合法的 CPC publisher PDF 后，完成 <code>Esirkepov 2001</code>
@@ -15241,8 +15215,7 @@ mesh refinement 分支处理 <code>J/rho</code>：</p>
 <span id="cb217-5"><a href="#cb217-5" aria-hidden="true" tabindex="-1"></a><span class="op">::</span>PSATDCurrentCorrection<span class="op">(</span>finest_level<span class="op">,</span> spectral_solver_fp<span class="op">,</span> spectral_solver_cp<span class="op">);</span></span>
 <span id="cb217-6"><a href="#cb217-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb217-7"><a href="#cb217-7" aria-hidden="true" tabindex="-1"></a>PSATDBackwardTransformJ<span class="op">(</span>current_fp_string<span class="op">,</span> current_cp_string<span class="op">);</span></span></code></pre></div>
-<p>v0.5
-需要特别记住两个实现边界。第一，<code>fft_periodic_single_box</code>
+<p>这里需要特别记住两个实现边界。第一，<code>fft_periodic_single_box</code>
 分支会在 <code>:791-837</code> 内完成 current correction 或 Vay
 deposition 的 k-space 处理；非 periodic single box 分支在
 <code>:839-899</code> 里还会在 correction/Vay 后调用

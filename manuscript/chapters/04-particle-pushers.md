@@ -2857,18 +2857,18 @@ optional GenerateVirtualPhotons()
 
 ## 4.15 本章结论
 
-粒子推进器不等于孤立的 Boris 公式。一次 WarpX 粒子 tile 路线按以下顺序展开：
+粒子推进器不等于孤立的 Boris 公式。一次 WarpX 粒子更新同时连接时间层、场插值、动量更新、位置更新、沉积、边界和多物理创建。读者面对异常轨道、错误粒子数或不守恒的场时，可以按下列顺序缩小问题：
 
-1. `PushParticlesandDeposit()` 调用 `MultiParticleContainer::Evolve()`，逐物种调度粒子推进与源项沉积。
-2. `PhysicalParticleContainer::Evolve()` 在局部 tile 上安排推前电荷、push、current 与推后电荷。
-3. `rho` component 0 记录旧时间层电荷，随后 `PushPX()` 进入粒子 kernel。
-4. `doGatherShapeN()` 从网格取得粒子场，`doParticleMomentumPush()` 选择 Boris、Vay、Higuera-Cary 或 RR 的动量更新。
-5. `UpdatePosition()` 用半步速度更新位置；current deposition 与 `rho` component 1 构造下一步场推进所需的电荷和电流。
+1. **先确定观察量和时间层。**位置、机械动量、`rho`、current、scraped buffer 和 reduced diagnostic 不一定在同一时刻；先写清比较的是单粒子轨道、粒子数、场残余还是守恒量。
+2. **再追 tile 的带电粒子主链。**`PushParticlesandDeposit()` 经 `MultiParticleContainer::Evolve()` 进入 `PhysicalParticleContainer::Evolve()`；`rho` component 0 保存旧时间层，`doGatherShapeN()` 取得粒子场，`doParticleMomentumPush()` 选择 Boris、Vay、Higuera--Cary 或 RR，`UpdatePosition()` 用半步速度更新位置，随后沉积 current 与下一时间层的 `rho` component 1。
+3. **把边界与 AMR 当成独立观察问题。**粒子消失、scraped 接触几何、PML 残余场和 coarse/fine 组合 checksum 分别需要不同输出；其中只有解析基准或守恒量比较能支持更强的物理结论。
+4. **最后选择正确的产生模型。**强场 QED 沿 `chi -> optical depth -> lookup table -> source/product` 路线读取；virtual photons、linear Breit-Wheeler 与 linear Compton 则沿 cell-local `BinaryCollision` 路线读取。两者不能以相同参数或相同守恒检查互相替代。
 
-后续继续深入时，应分别追踪三个子问题：`doGatherShapeN()` 的形函数插值、`doParticleMomentumPush()` 的具体 pusher 公式、`DepositCurrent/DepositCharge()` 的守恒沉积算法。
+这条路线也给出了后续章节的接口：第 5 章解释 `DepositCurrent/DepositCharge()` 的守恒沉积，第 6 章解释场如何推进，第 7 章解释 PML、AMR 与边界，第 8 章说明如何把上述观察量写成可判断的 diagnostics。
 
 ## 4.16 练习与复现实验
 
 1. **pusher 对照题**：比较 Boris、Vay 与 Higuera-Cary 的同类案例结果，解释为什么 Boris 的大位移不能简单归结为“代码运行失败”，而应联系 force-free relativistic pusher 的适用条件判断。
 2. **源码定位题**：从 `PhysicalParticleContainer::Evolve()` 定位 `doGatherShapeN()`、momentum push、`UpdatePosition` 和 current/charge deposition，画出一次粒子 tile loop 的四个时间层节点。
 3. **最小复现实验**：运行官方 `particle_pusher` 或 `photon_pusher` analysis，并分别记录位置、动量和是否发生电流沉积的观测量；说明带电 pusher 的位置误差和无质量 photon 的位置/动量误差为何不能共用同一容差。
+4. **QED 路线题**：选择 `Examples/Tests/qed/` 的 quantum-synchrotron 或 Breit-Wheeler case，列出 source、product、`opticalDepthQSR/BW`、主观察量和一个不能由该 case 证明的结论；再说明为什么同一张表不能用 `linear_breit_wheeler` 的碰撞参数替代。

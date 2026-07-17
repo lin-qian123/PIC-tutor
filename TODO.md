@@ -3,6 +3,7 @@
 ## 2026-07-18
 
 - [ ] 公开再分发阻断：GitHub remote 已确认是 public，但 Git 跟踪 `references/` 下 `2,425` 个第三方文件（`52` 个 PDF、`2,259` 个图片，约 `190.7 MB`），且根目录没有项目许可证。`v0.110` manifest 排除 `references/` 不能移除 public branch 或历史中的材料。维护者需明确选择逐项授权保留、从 public branch 移除并决定历史策略，或临时转 private；详见 `docs/public-distribution-risk-register-v0.110.md`。
+- [x] 完成第 4 章结论与练习的读者化收束：以时间层、tile 主链、边界/AMR 观察量和 strong-field/collision QED 模型选择构成本章排错路线；新增基于官方 QED analysis 的路线题，并把读者审计覆盖扩展至章末结论。重建候选保持 263 页，PDF 第 117--119 页及第 5 章交界已人工复核。
 - [x] 完成第 4.14.7--4.14.11 节 QED 后半段的读者化：将 optical-depth 触发、WarpX/PICSAR-QED 分工、source 命运、lookup table 生命周期以及强场 QED 与 virtual-photon/BinaryCollision 两棵树改按模型选择、观察量和排错边界组织。重建候选保持 263 页，PDF 第 114--116 页已人工复核。
 - [x] 完成第 4.14.1--4.14.6 节 QED 事件链的读者化：按 source/product 角色、初始化与事件的时间分离、field ionization 后的调度位置、source/product 同时更新、Schwinger 的网格场起点和三类观察量组织，删除装配和 regression 清单口吻。读者审计覆盖扩展至第 4.14 节；重建候选保持 263 页，PDF 第 111--113 页已人工复核。
 - [x] 完成第 4.13.13 节 embedded-boundary 的读者化：将 PEC cavity、本征模旋转、Airy 衍射、PICMI 几何数组、吸收伪电荷、BoundaryScraping 记账和静电球解析解改按验证对象与可外推范围组织；明确可视化 helper、输入内自检、独立 analysis 与 checksum 的区别。读者审计覆盖扩展至该节；重建候选保持 263 页，PDF 第 110--112 页已人工复核。

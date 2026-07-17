@@ -2,7 +2,7 @@
 
 审计日期：2026-07-18
 
-当前 release 为 v0.110；本版重新执行正式收敛 study 的第二组 12 个 2-rank producer，correction-on 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`。分类为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`，不把该结果写成 formal order 或 axis-charge closure。第 1--9 章入口已完成读者化审读；第 1 章的源码定位练习现从 `OneStep_nosub()` 起步，并要求读者产出粒子沉积、source 同步和场更新的三行调用表。第 5 章进一步将源码交叉检查改为读者问题导航，并把 Vay 结果收束为可用范围和不可外推边界；第 9 章统一采用可核查材料、可支持结论与访问边界的文献语言。第 2、3、3A、4、5、8、9 章的深层证据段也已移除开发过程措辞和绝对工作区路径，并把读者入口改为相对链接。第 3 至 7 章原先会在 PDF 中泄露的 Mermaid 流程现均已替换为可打印的决策表、编号路线或闭合链；第 6 章宽求解器表改为分组路径速查，第 7 章以参数、场/PML、AMR 与粒子诊断串联边界闭合系统。第 4 章现进一步区分边界 callback 的撞击事件、接触 writer 的几何时间量、particle-aware PML 的残余场、PEC/衍射/静电球的解析观察量，以及 QED 的 source/product、事件时序、lookup table 生命周期和 strong-field/collision 分叉；附录 A 现在区分输入 `gamma*beta`、内部 `gamma*v` 和输出 metadata 的动量约定，并补充 AMR 数组生命周期提示。第 15、106--116、167--169、258、261 页已视觉抽查，且 263 页 PDF 的全页文本扫描未检出 `flowchart` 或 `-->`。全书通读、route-count ledger、axis charge correctness、RZ implicit runtime、许可和公开再分发仍保持开放。
+当前 release 为 v0.110；本版重新执行正式收敛 study 的第二组 12 个 2-rank producer，correction-on 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`。分类为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`，不把该结果写成 formal order 或 axis-charge closure。第 1--9 章入口已完成读者化审读；第 1 章的源码定位练习现从 `OneStep_nosub()` 起步，并要求读者产出粒子沉积、source 同步和场更新的三行调用表。第 5 章进一步将源码交叉检查改为读者问题导航，并把 Vay 结果收束为可用范围和不可外推边界；第 9 章统一采用可核查材料、可支持结论与访问边界的文献语言。第 2、3、3A、4、5、8、9 章的深层证据段也已移除开发过程措辞和绝对工作区路径，并把读者入口改为相对链接。第 3 至 7 章原先会在 PDF 中泄露的 Mermaid 流程现均已替换为可打印的决策表、编号路线或闭合链；第 6 章宽求解器表改为分组路径速查，第 7 章以参数、场/PML、AMR 与粒子诊断串联边界闭合系统。第 4 章现已将边界、PML、AMR 和两类 QED 分叉收束为从时间层、tile 主链到观察量和模型选择的排错路线，并在章末加入官方 QED analysis 练习；附录 A 现在区分输入 `gamma*beta`、内部 `gamma*v` 和输出 metadata 的动量约定，并补充 AMR 数组生命周期提示。第 15、106--119、167--169、258、261 页已视觉抽查，且 263 页 PDF 的全页文本扫描未检出 `flowchart` 或 `-->`。全书通读、route-count ledger、axis charge correctness、RZ implicit runtime、许可和公开再分发仍保持开放。
 
 全书正文扫描确认绝对工作区路径与开发过程标记均为零。第 5 章两张宽表已由列式矩阵改为分组证据列表，并在 PDF 第 158--159 页人工复核；这只关闭该处的版式风险，不替代全书通读。
 
@@ -25,9 +25,9 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.110.pdf` | 2,994,890 bytes / 263 页 | 当前成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.110.html` | 5,247,326 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.110.md` | 855,927 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.110.pdf` | 2,995,630 bytes / 263 页 | 当前成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.110.html` | 5,248,532 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.110.md` | 857,025 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 

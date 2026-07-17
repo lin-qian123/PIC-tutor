@@ -1101,27 +1101,14 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 
 本书后续章节的阅读规则因此固定为：先识别外层物理时间步，再识别内部的 source subinterval 或 nonlinear iteration，最后才判断某次 `PushParticlesandDeposit()` 是物理推进、试探性 RHS 构造，还是历史源项重建。
 
-读者可以用下面这张决策图快速定位一个输入卡采用的时间组织：
+读者可以用下表快速定位一个输入卡采用的时间组织：
 
-```mermaid
-flowchart TD
-    A["WarpX::OneStep(t, dt)"] --> B{"m_implicit_solver?"}
-    B -->|"yes"| C["ImplicitSolver::OneStep"]
-    C --> C1["nonlinear iteration / RHS source rebuild"]
-    C1 --> C2["one physical step committed"]
-    B -->|"no"| D{"psatd.JRhom?"}
-    D -->|"yes"| E["OneStep_JRhom"]
-    E --> E1["multiple relative-time rho/J deposits"]
-    E1 --> E2["PSATD spectral advances"]
-    D -->|"no"| F{"AMR subcycling?"}
-    F -->|"yes"| G["OneStep_sub1"]
-    G --> G1["fine: two dt/2 advances"]
-    G1 --> G2["restrict/add fine source to coarse"]
-    G2 --> G3["coarse: one dt advance"]
-    F -->|"no"| H["OneStep_nosub"]
-    H --> H1["push/deposit -> SyncCurrentAndRho"]
-    H1 --> H2["FDTD or PSATD field advance"]
-```
+| 优先判断 | 进入路径 | 这一外层步内部发生什么 |
+|---|---|---|
+| `m_implicit_solver` 已创建 | `ImplicitSolver::OneStep()` | 多次 nonlinear iteration/RHS source rebuild，最后才提交一个物理时间步 |
+| `psatd.JRhom` 开启 | `OneStep_JRhom()` | 多个相对时间的 `rho/J` 沉积区间和对应的 PSATD 谱推进 |
+| AMR subcycling 开启 | `OneStep_sub1()` | 细层做两次 `dt/2` 推进并限制/合并源项，粗层做一次 `dt` 推进 |
+| 以上均否 | `OneStep_nosub()` | push/deposit、`SyncCurrentAndRho()`，再进行 FDTD 或 PSATD 场推进 |
 
 图中三种“内部多次执行”含义不同：implicit 的重复是求解器试探，JRhom 的重复是同一物理时间步内的源项时间积分，subcycling 的重复则是真实的细层物理推进。只有最后完成的外层调用才代表一次可提交的物理时间步。
 
@@ -1131,12 +1118,12 @@ flowchart TD
 
 | 目标 | 入口 |
 |---|---|
-| 看外层时间步如何组织 | `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` |
-| 看显式电磁无 subcycling 的标准 step | `../warpx/Source/Evolve/WarpXEvolve.cpp:507-646` |
-| 看主循环如何进入粒子容器 | `../warpx/Source/Evolve/WarpXEvolve.cpp:1311-1415` |
-| 看两级 AMR subcycling 的细/粗层时间组织 | `../warpx/Source/Evolve/WarpXEvolve.cpp:1040-1265` |
-| 看 JRhom 的多次相对时间沉积与谱推进 | `../warpx/Source/Evolve/WarpXEvolve.cpp:843-1042` |
-| 看 implicit RHS 中的粒子推进与 source synchronization | `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:784-853` |
+| 看外层时间步如何组织 | `WarpXEvolve.cpp`: `Evolve()` |
+| 看显式电磁无 subcycling 的标准 step | `WarpXEvolve.cpp`: `OneStep_nosub()` |
+| 看主循环如何进入粒子容器 | `WarpXEvolve.cpp`: `PushParticlesandDeposit()` |
+| 看两级 AMR subcycling 的细/粗层时间组织 | `WarpXEvolve.cpp`: `OneStep_sub1()` |
+| 看 JRhom 的多次相对时间沉积与谱推进 | `WarpXEvolve.cpp`: `OneStep_JRhom()` |
+| 看 implicit RHS 中的粒子推进与 source synchronization | `ImplicitSolver.cpp`: `PreRHSOp()` |
 
 ## 2.8 参数示例与最小运行案例
 
@@ -1438,64 +1425,13 @@ InitPML();
 
 因此 `PML` 是初始化末段附加上的 patch 级边界对象，而不是和 `Efield_fp/Bfield_fp` 同时由 `AllocLevelMFs()` 常规分配的主网格字段。
 
-把这四条线压成同一张状态图，会更不容易误读：
+把对象落点按路径分开读，会比把构造、分配和初始化末段塞进同一张宽表更清楚：
 
-```mermaid
-flowchart TD
-    A["MakeWarpX()"] --> B["WarpX::WarpX()"]
-    B --> B1["ReadParameters()"]
-    B --> B2["创建跨-level 外壳:
-    mypc
-    electrostatic solver object
-    hybrid model object
-    solver pointer arrays"]
-    B --> B3["只 resize per-level containers:
-    istep/nsubsteps
-    t_old/t_new
-    dt"]
-
-    B --> C["AmrCore::InitFromScratch()"]
-    C --> D["MakeNewLevelFromScratch()"]
-    D --> E["AllocLevelData()"]
-    E --> E1["guard_cells.Init()"]
-    E --> F["AllocLevelMFs()"]
-
-    F --> F1["standard fields:
-    Efield_fp/Bfield_fp/current_fp/rho_fp/phi_fp"]
-    F --> F2["implicit first-layer fields:
-    current_fp_non_suborbit
-    E_old"]
-    F --> F3["hybrid first-layer fields:
-    electron pressure
-    temp rho/current
-    plasma/external current"]
-    F --> F4["effective potential:
-    no extra level-only field family;
-    reuse rho_fp/phi_fp"]
-
-    C --> G["m_implicit_solver->Define()
-    CreateParticleAttributes()"]
-    C --> H["mypc->AllocData()
-    mypc->InitData()"]
-    C --> I["InitPML()"]
-    I --> I1["附加 PML patch objects;
-    not born inside AllocLevelMFs()"]
-
-    G --> J["later implicit linear-stage prep"]
-    J --> J1["InitializeMassMatrices():
-    MassMatrices_X/Y/Z
-    MassMatrices_PC"]
-```
-
-同样也可以压成一张对象落点表：
-
-| 路线 | 构造期 `WarpX::WarpX()` | level 分配期 `AllocLevelMFs()` | 初始化末段 / 后续 |
-|---|---|---|---|
-| 标准场 | 只准备容器外壳 | `Efield_fp/Bfield_fp/current_fp/rho_fp/phi_fp` | 后续 `InitLevelData()` 填物理值 |
-| `effective potential` | 创建 `EffectivePotentialES` 对象 | 不额外分专用字段，复用 `rho_fp/phi_fp` | 由静电求解器后续消费 |
-| `hybrid PIC` | 创建 `HybridPICModel` 对象 | `hybrid_*` 字段写入共享 `m_fields` | `HybridPICModel::InitData()` 编译 parser、准备外加电流/矢势 |
-| `implicit` | solver 对象已存在 | 只分 `current_fp_non_suborbit`、`E_old` | `Define()`、`CreateParticleAttributes()`，再到 `InitializeMassMatrices()` |
-| `PML` | 仅参数/开关已知 | 不在此时创建 PML patch | `InitPML()` 用真实 `boxArray/dm/dt/m_fields` 延后创建 |
+- **标准场**：构造期只准备容器外壳；`AllocLevelMFs()` 分配 `Efield_fp`、`Bfield_fp`、`current_fp`、`rho_fp` 和 `phi_fp`；`InitLevelData()` 再填入物理初值。
+- **effective potential**：构造期创建 `EffectivePotentialES`；level 分配期不另建专用字段，而是复用 `rho_fp/phi_fp`；静电求解器随后按 effective-potential 语义消费这些字段。
+- **hybrid PIC**：构造期创建 `HybridPICModel`；level 分配期把 `hybrid_*` 字段放入共享 `m_fields`；`HybridPICModel::InitData()` 再编译 parser 并准备外加电流和矢势。
+- **implicit**：solver 对象在构造期已存在；level 分配期先分配 `current_fp_non_suborbit` 与 `E_old`；随后 `Define()`、`CreateParticleAttributes()` 和 `InitializeMassMatrices()` 逐步补齐隐式响应数据。
+- **PML**：构造期只知道参数和开关，`AllocLevelMFs()` 也不创建 PML patch；`InitPML()` 在获得真实 `boxArray`、`DistributionMapping`、`dt` 和 `m_fields` 后再创建边界对象。
 
 ## 3.4 `InitData()`：把状态准备到可推进
 
@@ -1725,13 +1661,13 @@ else:
 | electrostatic / HybridPIC | `:405-445` | 粒子推进但跳过标准电磁沉积路径，场解在外层后处理。 |
 | 标准电磁无 MR | `:448-467` | 进入 `OneStep_nosub()` 或 PSATD-JRhom。 |
 | 有 MR 无 subcycling | `:469-474` | 仍进入 `OneStep_nosub()`，所有 level 使用同一步长推进。 |
-| 有 MR 且 subcycling | `:475-492` | 进入 `OneStep_sub1()`，当前限制最多两个 level。 |
+| 有 MR 且 subcycling | `:475-492` | 进入 `OneStep_sub1()`；本书采用的源码快照限制最多两个 level。 |
 
 几个断言值得后续单独讲：
 
-- JRhom 与 split momentum collision 当前不能组合，见 `Source/Evolve/WarpXEvolve.cpp:456-459`。
-- subcycling 当前要求 `finest_level == 1`，见 `:477-480`。
-- subcycling 与 split momentum collision 当前也不能组合，见 `:481-484`。
+- JRhom 与 split momentum collision 不能组合，见 `Source/Evolve/WarpXEvolve.cpp:456-459`。
+- subcycling 要求 `finest_level == 1`，见 `:477-480`。
+- subcycling 与 split momentum collision 也不能组合，见 `:481-484`。
 
 这些不是文档层面的“建议”，而是源码级功能边界。
 
@@ -1985,8 +1921,8 @@ for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
 
 这条线路还有两条必须写清的功能限制：
 
-1. `JRhom` 当前不支持 FDTD，只能走 PSATD。
-2. `JRhom` 当前和 `current_correction`、`Vay deposition` 都不兼容；源码层会把 `current_correction` 关掉，并显式禁止 `Vay deposition` 和 JRhom 组合。
+1. `JRhom` 不支持 FDTD，只能走 PSATD。
+2. `JRhom` 和 `current_correction`、`Vay deposition` 都不兼容；源码层会把 `current_correction` 关掉，并显式禁止 `Vay deposition` 和 JRhom 组合。
 
 所以这一支的真实定位是：它不是“PSATD 上再附加一个任意可叠加的小修正”，而是 PSATD 自身的一种替代性时间积分组织方式。
 
@@ -2059,7 +1995,7 @@ $$
 
 ## 3.12 参数示例与最小运行闭环
 
-如果把本章压成一个最小、可执行、可回查的 runtime entry，当前最合适的样章输入仍然是：
+如果把本章压成一个最小、可执行、可回查的演化入口，可从下面的官方样章输入开始：
 
 - `../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
 
@@ -2091,7 +2027,6 @@ main.cpp
 
 - 有源码路径
 - 有参数入口
-- 有可执行命令
 - 有输出目录 `diags/diag1000080`
 - 有物理检查量
 
@@ -2113,33 +2048,15 @@ main.cpp
 
 ## 3.14 本章小结
 
-本章建立了 WarpX 主演化路径的第一张精确地图：
+本章建立的主演化路线可压缩为下表。它按读者追踪一个输入从启动到一次时间步所需要的顺序排列，而不是按源码文件的出现顺序排列：
 
-```mermaid
-flowchart TD
-    A["main.cpp"] --> B["WarpX::GetInstance"]
-    B --> C["WarpX::WarpX"]
-    C --> D["ReadParameters"]
-    C --> E["MultiParticleContainer"]
-    B --> F["InitData"]
-    F --> G["ComputeDt"]
-    F --> H["InitFromScratch / InitFromCheckpoint"]
-    H --> I["mypc->AllocData / InitData"]
-    F --> J["PML / diagnostics / initial fields"]
-    F --> K["Evolve"]
-    K --> L["per-step callbacks, load balance, ionization, injection"]
-    L --> M["OneStep"]
-    M --> N["implicit solver"]
-    M --> O["electrostatic / HybridPIC particle path"]
-    M --> P["OneStep_nosub"]
-    M --> Q["OneStep_sub1"]
-    M --> R["OneStep_JRhom"]
-    P --> S["PushParticlesandDeposit"]
-    S --> T["mypc->Evolve"]
-    P --> U["SyncCurrentAndRho"]
-    P --> V["PushPSATD or EvolveB/EvolveE/EvolveB"]
-    K --> W["moving window, boundaries, diagnostics, stop"]
-```
+| 阶段 | 关键入口 | 读者应确认的问题 |
+|---|---|---|
+| 启动与构造 | `main.cpp -> GetInstance() -> WarpX::WarpX() -> ReadParameters()` | 哪些参数和 solver 分支在建立网格前已确定？ |
+| 初始化 | `InitData() -> ComputeDt() -> InitFromScratch/InitFromCheckpoint` | 初始 level、粒子、场、PML 和 diagnostics 是否在第一步前就绪？ |
+| 外层推进 | `Evolve()` | 每一步前后有哪些 callback、负载均衡、注入、边界和诊断动作？ |
+| 单步分派 | `OneStep()` | 此输入走 implicit、electrostatic/HybridPIC、`OneStep_nosub()`、subcycling 还是 JRhom？ |
+| 显式主链 | `PushParticlesandDeposit() -> SyncCurrentAndRho() -> PushPSATD` 或 `EvolveB/EvolveE/EvolveB` | 粒子输运、源项同步和场推进是否使用相容的时间层？ |
 
 后续章节将从 `mypc->Evolve()` 进入粒子推进、field gather 和沉积内核，再从 `EvolveE/B` 进入 FDTD/PSATD 场求解器。
 
@@ -2150,24 +2067,14 @@ flowchart TD
 
 本章把 `WarpX::InitData()` 展开成一条完整的初始化链。它补足第 3 章中“初始化”只作为主循环前置步骤的不足：这里开始逐块解释 fresh run / restart、AMR level 初始化、外部场、species 注入器、粒子创建 kernel、Gaussian beam、openPMD 文件注入和 projection divergence cleaning。
 
-本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航。阅读时可用 `Source/Initialization/WarpXInitData.cpp` 中的 `InitData()`、`InitFromScratch()`、`InitDiagnostics()` 和 `AddExternalFields()` 作为主入口；其他版本应按函数名检索。下列笔记保留逐项源码锚点和更细的参数约束，供需要回查实现细节的读者使用：
+本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航。阅读时可用 `Source/Initialization/WarpXInitData.cpp` 中的 `InitData()`、`InitFromScratch()`、`InitDiagnostics()` 和 `AddExternalFields()` 作为主入口；其他版本应按函数名检索。需要回查实现细节时，在 `notes/code-reading/initialization/` 中按问题选择下列笔记组，而不必按编号顺序阅读：
 
-- `notes/code-reading/initialization/08-initialization-bootstrap.md`
-- `notes/code-reading/initialization/09-preconstruct-parameter-locking.md`
-- `notes/code-reading/initialization/10-readparameters-runtime-landing.md`
-- `notes/code-reading/initialization/11-readparameters-combination-constraints.md`
-- `notes/code-reading/initialization/12-alloclevelmfs-specialized-branches.md`
-- `notes/code-reading/initialization/13-initdata-postallocation-consumption.md`
-- `notes/code-reading/initialization/14-initialization-validation-map.md`
-- `notes/code-reading/initialization/15-initialization-validation-map-external-relativistic-openbc.md`
-- `notes/code-reading/initialization/16-initialization-validation-map-density-magnetostatic-nodal.md`
-- `notes/code-reading/initialization/00-init-callgraph.md`
-- `notes/code-reading/initialization/01-external-fields.md`
-- `notes/code-reading/initialization/02-plasma-injector.md`
-- `notes/code-reading/initialization/03-density-momentum-dispatch.md`
-- `notes/code-reading/initialization/04-particle-creation-kernels.md`
-- `notes/code-reading/initialization/05-projection-div-cleaner.md`
-- `notes/code-reading/initialization/06-gaussian-beam-openpmd-injection.md`
+| 读者问题 | 建议源码笔记 |
+|---|---|
+| 程序启动后哪些参数在构造对象前已被锁定？ | `00`、`08--09`：调用图与启动层 |
+| 参数、level 字段和 `InitData()` 的顺序如何落到对象上？ | `10--13`：参数落点、组合限制、字段分配与后置消费 |
+| 外场、species、粒子创建与散度修正分别如何进入初态？ | `01--06`：外场、注入器、分布、创建 kernel 与 projection cleaner |
+| 哪些官方案例覆盖各初始化分支？ | `14--16`：初始化验证地图 |
 
 ## 3A.1 初始化链为什么值得单独成章
 
@@ -2197,7 +2104,7 @@ $$
 
 本章先建立从程序启动到第一个时间步的主干；在需要实现级细节时，再回到相应源码笔记和源码位置逐项核对。
 
-## 3A.2 启动层先于 `InitData()`：MPI、AMReX、FFT、PETSc 与运行时契约
+## 3A.2 启动层先于 `InitData()`：MPI、AMReX、FFT、PETSc 与启动前提
 
 前面的初始化笔记大多从 `WarpX::InitData()` 往后讲，但 WarpX 真正的初始化链更早就开始了。`main.cpp` 最外层先做的是：
 
@@ -2220,7 +2127,7 @@ main (int argc, char* argv[]) {
 1. 初始化 MPI、AMReX、FFT，以及可选 PETSc。
 2. 覆盖一批 AMReX 默认 parser 行为。
 3. 解析 geometry、periodicity 和整数数组表达式。
-4. 锁定 `geometry.dims`、moving window 和 warning policy 这类全局运行时契约。
+4. 锁定 `geometry.dims`、moving window 和 warning policy 这类全局运行前提。
 
 这一层主要分布在：
 
@@ -2605,24 +2512,12 @@ else
 
 物理上，restart 应该恢复一个已经离散一致的状态；fresh run 则必须从输入参数构造这种一致状态。后面讲的外部场、初始粒子、Gaussian beam、openPMD 注入和 projection cleaning，主要属于 fresh run 路径。
 
-可以把 fresh run 与 restart 的责任边界压缩成下面的读者侧流程图：
+可以把 fresh run 与 restart 的责任边界压缩成下面的初始化路线表：
 
-```mermaid
-flowchart TD
-    A["WarpX::InitData"] --> B{"restart_chkfile empty?"}
-    B -->|"no: restart"| C["InitFromCheckpoint"]
-    C --> C1["restore AMR levels, fields, particles, time"]
-    C1 --> C2["PostRestart"]
-    C2 --> Z["initial state ready for Evolve"]
-    B -->|"yes: fresh run"| D["ComputeDt"]
-    D --> E["InitFromScratch"]
-    E --> E1["AmrCore::InitFromScratch"]
-    E1 --> E2["AllocLevelData / solver state"]
-    E2 --> E3["mypc->AllocData / InitData"]
-    E3 --> E4["external fields and PML"]
-    E4 --> F["initial diagnostics"]
-    F --> Z
-```
+| 输入状态 | 主要调用顺序 | 进入 `Evolve()` 前必须具备的状态 |
+|---|---|---|
+| checkpoint restart | `InitFromCheckpoint() -> PostRestart()` | 从 checkpoint 恢复 AMR level、fields、particles 和时间层，再完成 restart 后处理 |
+| fresh run | `ComputeDt() -> InitFromScratch() -> AllocLevelData() -> mypc->AllocData()/InitData() -> external fields/PML -> InitDiagnostics()` | 根据输入重新建立 AMR、solver、粒子、外部场和初始 diagnostics |
 
 这张图的重点不是列出每一个初始化 helper，而是固定数据来源的不可互换性：restart 路径恢复已经离散化的状态，fresh run 路径才负责从参数重新物化 AMR、solver、粒子、外部场和初始 diagnostics。后面的 `PlasmaInjector`、Gaussian beam、openPMD 文件注入和 projection cleaning 都必须放在 fresh-run 分支内理解，不能被误写成 restart 的重复初始化。
 
@@ -3945,8 +3840,8 @@ inputs
 ## 3A.16 练习与最小复现
 
 1. **fresh/restart 定位题**：沿 `WarpXInitData.cpp` 追踪 `InitData()`，说明 `ComputeDt()` 为什么只出现在 fresh-run 分支，以及 restart 为什么必须进入 `PostRestart()`。
-2. **初始化顺序题**：解释 `AmrCore::InitFromScratch()`、`AllocLevelData()`、`mypc->AllocData()`、`mypc->InitData()` 和 `InitPML()` 的先后关系；指出把粒子初始化提前到 AMR level 创建之前会破坏哪类对象合同。
-3. **复现实验题**：选取 `Examples/Tests/initial_distribution/` 中一个当前 binary 能运行的输入，记录 `warpx_used_inputs`、首个 diagnostics 和粒子 species 数量；若遇到 binary/input checkout 不匹配，保留 abort 位置并说明它为什么不能被当作通过证据。
+2. **初始化顺序题**：解释 `AmrCore::InitFromScratch()`、`AllocLevelData()`、`mypc->AllocData()`、`mypc->InitData()` 和 `InitPML()` 的先后关系；指出把粒子初始化提前到 AMR level 创建之前会破坏哪类对象一致性。
+3. **复现实验题**：选取 `Examples/Tests/initial_distribution/` 中一个与所用 WarpX build 匹配的输入，检查实际生效的输入副本、首个 diagnostics 和粒子 species 数量；若输入与 build 不匹配而 abort，应定位该限制并说明它为什么不能作为初始化正确性的反证或通过证据。
 
 
 <!-- source: manuscript/chapters/04-particle-pushers.md -->

@@ -2,24 +2,14 @@
 
 本章把 `WarpX::InitData()` 展开成一条完整的初始化链。它补足第 3 章中“初始化”只作为主循环前置步骤的不足：这里开始逐块解释 fresh run / restart、AMR level 初始化、外部场、species 注入器、粒子创建 kernel、Gaussian beam、openPMD 文件注入和 projection divergence cleaning。
 
-本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航。阅读时可用 `Source/Initialization/WarpXInitData.cpp` 中的 `InitData()`、`InitFromScratch()`、`InitDiagnostics()` 和 `AddExternalFields()` 作为主入口；其他版本应按函数名检索。下列笔记保留逐项源码锚点和更细的参数约束，供需要回查实现细节的读者使用：
+本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航。阅读时可用 `Source/Initialization/WarpXInitData.cpp` 中的 `InitData()`、`InitFromScratch()`、`InitDiagnostics()` 和 `AddExternalFields()` 作为主入口；其他版本应按函数名检索。需要回查实现细节时，在 `notes/code-reading/initialization/` 中按问题选择下列笔记组，而不必按编号顺序阅读：
 
-- `notes/code-reading/initialization/08-initialization-bootstrap.md`
-- `notes/code-reading/initialization/09-preconstruct-parameter-locking.md`
-- `notes/code-reading/initialization/10-readparameters-runtime-landing.md`
-- `notes/code-reading/initialization/11-readparameters-combination-constraints.md`
-- `notes/code-reading/initialization/12-alloclevelmfs-specialized-branches.md`
-- `notes/code-reading/initialization/13-initdata-postallocation-consumption.md`
-- `notes/code-reading/initialization/14-initialization-validation-map.md`
-- `notes/code-reading/initialization/15-initialization-validation-map-external-relativistic-openbc.md`
-- `notes/code-reading/initialization/16-initialization-validation-map-density-magnetostatic-nodal.md`
-- `notes/code-reading/initialization/00-init-callgraph.md`
-- `notes/code-reading/initialization/01-external-fields.md`
-- `notes/code-reading/initialization/02-plasma-injector.md`
-- `notes/code-reading/initialization/03-density-momentum-dispatch.md`
-- `notes/code-reading/initialization/04-particle-creation-kernels.md`
-- `notes/code-reading/initialization/05-projection-div-cleaner.md`
-- `notes/code-reading/initialization/06-gaussian-beam-openpmd-injection.md`
+| 读者问题 | 建议源码笔记 |
+|---|---|
+| 程序启动后哪些参数在构造对象前已被锁定？ | `00`、`08--09`：调用图与启动层 |
+| 参数、level 字段和 `InitData()` 的顺序如何落到对象上？ | `10--13`：参数落点、组合限制、字段分配与后置消费 |
+| 外场、species、粒子创建与散度修正分别如何进入初态？ | `01--06`：外场、注入器、分布、创建 kernel 与 projection cleaner |
+| 哪些官方案例覆盖各初始化分支？ | `14--16`：初始化验证地图 |
 
 ## 3A.1 初始化链为什么值得单独成章
 
@@ -49,7 +39,7 @@ $$
 
 本章先建立从程序启动到第一个时间步的主干；在需要实现级细节时，再回到相应源码笔记和源码位置逐项核对。
 
-## 3A.2 启动层先于 `InitData()`：MPI、AMReX、FFT、PETSc 与运行时契约
+## 3A.2 启动层先于 `InitData()`：MPI、AMReX、FFT、PETSc 与启动前提
 
 前面的初始化笔记大多从 `WarpX::InitData()` 往后讲，但 WarpX 真正的初始化链更早就开始了。`main.cpp` 最外层先做的是：
 
@@ -72,7 +62,7 @@ main (int argc, char* argv[]) {
 1. 初始化 MPI、AMReX、FFT，以及可选 PETSc。
 2. 覆盖一批 AMReX 默认 parser 行为。
 3. 解析 geometry、periodicity 和整数数组表达式。
-4. 锁定 `geometry.dims`、moving window 和 warning policy 这类全局运行时契约。
+4. 锁定 `geometry.dims`、moving window 和 warning policy 这类全局运行前提。
 
 这一层主要分布在：
 
@@ -457,24 +447,12 @@ else
 
 物理上，restart 应该恢复一个已经离散一致的状态；fresh run 则必须从输入参数构造这种一致状态。后面讲的外部场、初始粒子、Gaussian beam、openPMD 注入和 projection cleaning，主要属于 fresh run 路径。
 
-可以把 fresh run 与 restart 的责任边界压缩成下面的读者侧流程图：
+可以把 fresh run 与 restart 的责任边界压缩成下面的初始化路线表：
 
-```mermaid
-flowchart TD
-    A["WarpX::InitData"] --> B{"restart_chkfile empty?"}
-    B -->|"no: restart"| C["InitFromCheckpoint"]
-    C --> C1["restore AMR levels, fields, particles, time"]
-    C1 --> C2["PostRestart"]
-    C2 --> Z["initial state ready for Evolve"]
-    B -->|"yes: fresh run"| D["ComputeDt"]
-    D --> E["InitFromScratch"]
-    E --> E1["AmrCore::InitFromScratch"]
-    E1 --> E2["AllocLevelData / solver state"]
-    E2 --> E3["mypc->AllocData / InitData"]
-    E3 --> E4["external fields and PML"]
-    E4 --> F["initial diagnostics"]
-    F --> Z
-```
+| 输入状态 | 主要调用顺序 | 进入 `Evolve()` 前必须具备的状态 |
+|---|---|---|
+| checkpoint restart | `InitFromCheckpoint() -> PostRestart()` | 从 checkpoint 恢复 AMR level、fields、particles 和时间层，再完成 restart 后处理 |
+| fresh run | `ComputeDt() -> InitFromScratch() -> AllocLevelData() -> mypc->AllocData()/InitData() -> external fields/PML -> InitDiagnostics()` | 根据输入重新建立 AMR、solver、粒子、外部场和初始 diagnostics |
 
 这张图的重点不是列出每一个初始化 helper，而是固定数据来源的不可互换性：restart 路径恢复已经离散化的状态，fresh run 路径才负责从参数重新物化 AMR、solver、粒子、外部场和初始 diagnostics。后面的 `PlasmaInjector`、Gaussian beam、openPMD 文件注入和 projection cleaning 都必须放在 fresh-run 分支内理解，不能被误写成 restart 的重复初始化。
 
@@ -1797,5 +1775,5 @@ inputs
 ## 3A.16 练习与最小复现
 
 1. **fresh/restart 定位题**：沿 `WarpXInitData.cpp` 追踪 `InitData()`，说明 `ComputeDt()` 为什么只出现在 fresh-run 分支，以及 restart 为什么必须进入 `PostRestart()`。
-2. **初始化顺序题**：解释 `AmrCore::InitFromScratch()`、`AllocLevelData()`、`mypc->AllocData()`、`mypc->InitData()` 和 `InitPML()` 的先后关系；指出把粒子初始化提前到 AMR level 创建之前会破坏哪类对象合同。
-3. **复现实验题**：选取 `Examples/Tests/initial_distribution/` 中一个当前 binary 能运行的输入，记录 `warpx_used_inputs`、首个 diagnostics 和粒子 species 数量；若遇到 binary/input checkout 不匹配，保留 abort 位置并说明它为什么不能被当作通过证据。
+2. **初始化顺序题**：解释 `AmrCore::InitFromScratch()`、`AllocLevelData()`、`mypc->AllocData()`、`mypc->InitData()` 和 `InitPML()` 的先后关系；指出把粒子初始化提前到 AMR level 创建之前会破坏哪类对象一致性。
+3. **复现实验题**：选取 `Examples/Tests/initial_distribution/` 中一个与所用 WarpX build 匹配的输入，检查实际生效的输入副本、首个 diagnostics 和粒子 species 数量；若输入与 build 不匹配而 abort，应定位该限制并说明它为什么不能作为初始化正确性的反证或通过证据。

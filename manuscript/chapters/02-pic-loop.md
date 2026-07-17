@@ -574,27 +574,14 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 
 本书后续章节的阅读规则因此固定为：先识别外层物理时间步，再识别内部的 source subinterval 或 nonlinear iteration，最后才判断某次 `PushParticlesandDeposit()` 是物理推进、试探性 RHS 构造，还是历史源项重建。
 
-读者可以用下面这张决策图快速定位一个输入卡采用的时间组织：
+读者可以用下表快速定位一个输入卡采用的时间组织：
 
-```mermaid
-flowchart TD
-    A["WarpX::OneStep(t, dt)"] --> B{"m_implicit_solver?"}
-    B -->|"yes"| C["ImplicitSolver::OneStep"]
-    C --> C1["nonlinear iteration / RHS source rebuild"]
-    C1 --> C2["one physical step committed"]
-    B -->|"no"| D{"psatd.JRhom?"}
-    D -->|"yes"| E["OneStep_JRhom"]
-    E --> E1["multiple relative-time rho/J deposits"]
-    E1 --> E2["PSATD spectral advances"]
-    D -->|"no"| F{"AMR subcycling?"}
-    F -->|"yes"| G["OneStep_sub1"]
-    G --> G1["fine: two dt/2 advances"]
-    G1 --> G2["restrict/add fine source to coarse"]
-    G2 --> G3["coarse: one dt advance"]
-    F -->|"no"| H["OneStep_nosub"]
-    H --> H1["push/deposit -> SyncCurrentAndRho"]
-    H1 --> H2["FDTD or PSATD field advance"]
-```
+| 优先判断 | 进入路径 | 这一外层步内部发生什么 |
+|---|---|---|
+| `m_implicit_solver` 已创建 | `ImplicitSolver::OneStep()` | 多次 nonlinear iteration/RHS source rebuild，最后才提交一个物理时间步 |
+| `psatd.JRhom` 开启 | `OneStep_JRhom()` | 多个相对时间的 `rho/J` 沉积区间和对应的 PSATD 谱推进 |
+| AMR subcycling 开启 | `OneStep_sub1()` | 细层做两次 `dt/2` 推进并限制/合并源项，粗层做一次 `dt` 推进 |
+| 以上均否 | `OneStep_nosub()` | push/deposit、`SyncCurrentAndRho()`，再进行 FDTD 或 PSATD 场推进 |
 
 图中三种“内部多次执行”含义不同：implicit 的重复是求解器试探，JRhom 的重复是同一物理时间步内的源项时间积分，subcycling 的重复则是真实的细层物理推进。只有最后完成的外层调用才代表一次可提交的物理时间步。
 
@@ -604,12 +591,12 @@ flowchart TD
 
 | 目标 | 入口 |
 |---|---|
-| 看外层时间步如何组织 | `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` |
-| 看显式电磁无 subcycling 的标准 step | `../warpx/Source/Evolve/WarpXEvolve.cpp:507-646` |
-| 看主循环如何进入粒子容器 | `../warpx/Source/Evolve/WarpXEvolve.cpp:1311-1415` |
-| 看两级 AMR subcycling 的细/粗层时间组织 | `../warpx/Source/Evolve/WarpXEvolve.cpp:1040-1265` |
-| 看 JRhom 的多次相对时间沉积与谱推进 | `../warpx/Source/Evolve/WarpXEvolve.cpp:843-1042` |
-| 看 implicit RHS 中的粒子推进与 source synchronization | `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:784-853` |
+| 看外层时间步如何组织 | `WarpXEvolve.cpp`: `Evolve()` |
+| 看显式电磁无 subcycling 的标准 step | `WarpXEvolve.cpp`: `OneStep_nosub()` |
+| 看主循环如何进入粒子容器 | `WarpXEvolve.cpp`: `PushParticlesandDeposit()` |
+| 看两级 AMR subcycling 的细/粗层时间组织 | `WarpXEvolve.cpp`: `OneStep_sub1()` |
+| 看 JRhom 的多次相对时间沉积与谱推进 | `WarpXEvolve.cpp`: `OneStep_JRhom()` |
+| 看 implicit RHS 中的粒子推进与 source synchronization | `ImplicitSolver.cpp`: `PreRHSOp()` |
 
 ## 2.8 参数示例与最小运行案例
 

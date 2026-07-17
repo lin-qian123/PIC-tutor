@@ -217,64 +217,13 @@ InitPML();
 
 因此 `PML` 是初始化末段附加上的 patch 级边界对象，而不是和 `Efield_fp/Bfield_fp` 同时由 `AllocLevelMFs()` 常规分配的主网格字段。
 
-把这四条线压成同一张状态图，会更不容易误读：
+把对象落点按路径分开读，会比把构造、分配和初始化末段塞进同一张宽表更清楚：
 
-```mermaid
-flowchart TD
-    A["MakeWarpX()"] --> B["WarpX::WarpX()"]
-    B --> B1["ReadParameters()"]
-    B --> B2["创建跨-level 外壳:
-    mypc
-    electrostatic solver object
-    hybrid model object
-    solver pointer arrays"]
-    B --> B3["只 resize per-level containers:
-    istep/nsubsteps
-    t_old/t_new
-    dt"]
-
-    B --> C["AmrCore::InitFromScratch()"]
-    C --> D["MakeNewLevelFromScratch()"]
-    D --> E["AllocLevelData()"]
-    E --> E1["guard_cells.Init()"]
-    E --> F["AllocLevelMFs()"]
-
-    F --> F1["standard fields:
-    Efield_fp/Bfield_fp/current_fp/rho_fp/phi_fp"]
-    F --> F2["implicit first-layer fields:
-    current_fp_non_suborbit
-    E_old"]
-    F --> F3["hybrid first-layer fields:
-    electron pressure
-    temp rho/current
-    plasma/external current"]
-    F --> F4["effective potential:
-    no extra level-only field family;
-    reuse rho_fp/phi_fp"]
-
-    C --> G["m_implicit_solver->Define()
-    CreateParticleAttributes()"]
-    C --> H["mypc->AllocData()
-    mypc->InitData()"]
-    C --> I["InitPML()"]
-    I --> I1["附加 PML patch objects;
-    not born inside AllocLevelMFs()"]
-
-    G --> J["later implicit linear-stage prep"]
-    J --> J1["InitializeMassMatrices():
-    MassMatrices_X/Y/Z
-    MassMatrices_PC"]
-```
-
-同样也可以压成一张对象落点表：
-
-| 路线 | 构造期 `WarpX::WarpX()` | level 分配期 `AllocLevelMFs()` | 初始化末段 / 后续 |
-|---|---|---|---|
-| 标准场 | 只准备容器外壳 | `Efield_fp/Bfield_fp/current_fp/rho_fp/phi_fp` | 后续 `InitLevelData()` 填物理值 |
-| `effective potential` | 创建 `EffectivePotentialES` 对象 | 不额外分专用字段，复用 `rho_fp/phi_fp` | 由静电求解器后续消费 |
-| `hybrid PIC` | 创建 `HybridPICModel` 对象 | `hybrid_*` 字段写入共享 `m_fields` | `HybridPICModel::InitData()` 编译 parser、准备外加电流/矢势 |
-| `implicit` | solver 对象已存在 | 只分 `current_fp_non_suborbit`、`E_old` | `Define()`、`CreateParticleAttributes()`，再到 `InitializeMassMatrices()` |
-| `PML` | 仅参数/开关已知 | 不在此时创建 PML patch | `InitPML()` 用真实 `boxArray/dm/dt/m_fields` 延后创建 |
+- **标准场**：构造期只准备容器外壳；`AllocLevelMFs()` 分配 `Efield_fp`、`Bfield_fp`、`current_fp`、`rho_fp` 和 `phi_fp`；`InitLevelData()` 再填入物理初值。
+- **effective potential**：构造期创建 `EffectivePotentialES`；level 分配期不另建专用字段，而是复用 `rho_fp/phi_fp`；静电求解器随后按 effective-potential 语义消费这些字段。
+- **hybrid PIC**：构造期创建 `HybridPICModel`；level 分配期把 `hybrid_*` 字段放入共享 `m_fields`；`HybridPICModel::InitData()` 再编译 parser 并准备外加电流和矢势。
+- **implicit**：solver 对象在构造期已存在；level 分配期先分配 `current_fp_non_suborbit` 与 `E_old`；随后 `Define()`、`CreateParticleAttributes()` 和 `InitializeMassMatrices()` 逐步补齐隐式响应数据。
+- **PML**：构造期只知道参数和开关，`AllocLevelMFs()` 也不创建 PML patch；`InitPML()` 在获得真实 `boxArray`、`DistributionMapping`、`dt` 和 `m_fields` 后再创建边界对象。
 
 ## 3.4 `InitData()`：把状态准备到可推进
 
@@ -504,13 +453,13 @@ else:
 | electrostatic / HybridPIC | `:405-445` | 粒子推进但跳过标准电磁沉积路径，场解在外层后处理。 |
 | 标准电磁无 MR | `:448-467` | 进入 `OneStep_nosub()` 或 PSATD-JRhom。 |
 | 有 MR 无 subcycling | `:469-474` | 仍进入 `OneStep_nosub()`，所有 level 使用同一步长推进。 |
-| 有 MR 且 subcycling | `:475-492` | 进入 `OneStep_sub1()`，当前限制最多两个 level。 |
+| 有 MR 且 subcycling | `:475-492` | 进入 `OneStep_sub1()`；本书采用的源码快照限制最多两个 level。 |
 
 几个断言值得后续单独讲：
 
-- JRhom 与 split momentum collision 当前不能组合，见 `Source/Evolve/WarpXEvolve.cpp:456-459`。
-- subcycling 当前要求 `finest_level == 1`，见 `:477-480`。
-- subcycling 与 split momentum collision 当前也不能组合，见 `:481-484`。
+- JRhom 与 split momentum collision 不能组合，见 `Source/Evolve/WarpXEvolve.cpp:456-459`。
+- subcycling 要求 `finest_level == 1`，见 `:477-480`。
+- subcycling 与 split momentum collision 也不能组合，见 `:481-484`。
 
 这些不是文档层面的“建议”，而是源码级功能边界。
 
@@ -764,8 +713,8 @@ for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
 
 这条线路还有两条必须写清的功能限制：
 
-1. `JRhom` 当前不支持 FDTD，只能走 PSATD。
-2. `JRhom` 当前和 `current_correction`、`Vay deposition` 都不兼容；源码层会把 `current_correction` 关掉，并显式禁止 `Vay deposition` 和 JRhom 组合。
+1. `JRhom` 不支持 FDTD，只能走 PSATD。
+2. `JRhom` 和 `current_correction`、`Vay deposition` 都不兼容；源码层会把 `current_correction` 关掉，并显式禁止 `Vay deposition` 和 JRhom 组合。
 
 所以这一支的真实定位是：它不是“PSATD 上再附加一个任意可叠加的小修正”，而是 PSATD 自身的一种替代性时间积分组织方式。
 
@@ -838,7 +787,7 @@ $$
 
 ## 3.12 参数示例与最小运行闭环
 
-如果把本章压成一个最小、可执行、可回查的 runtime entry，当前最合适的样章输入仍然是：
+如果把本章压成一个最小、可执行、可回查的演化入口，可从下面的官方样章输入开始：
 
 - `../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
 
@@ -870,7 +819,6 @@ main.cpp
 
 - 有源码路径
 - 有参数入口
-- 有可执行命令
 - 有输出目录 `diags/diag1000080`
 - 有物理检查量
 
@@ -892,32 +840,14 @@ main.cpp
 
 ## 3.14 本章小结
 
-本章建立了 WarpX 主演化路径的第一张精确地图：
+本章建立的主演化路线可压缩为下表。它按读者追踪一个输入从启动到一次时间步所需要的顺序排列，而不是按源码文件的出现顺序排列：
 
-```mermaid
-flowchart TD
-    A["main.cpp"] --> B["WarpX::GetInstance"]
-    B --> C["WarpX::WarpX"]
-    C --> D["ReadParameters"]
-    C --> E["MultiParticleContainer"]
-    B --> F["InitData"]
-    F --> G["ComputeDt"]
-    F --> H["InitFromScratch / InitFromCheckpoint"]
-    H --> I["mypc->AllocData / InitData"]
-    F --> J["PML / diagnostics / initial fields"]
-    F --> K["Evolve"]
-    K --> L["per-step callbacks, load balance, ionization, injection"]
-    L --> M["OneStep"]
-    M --> N["implicit solver"]
-    M --> O["electrostatic / HybridPIC particle path"]
-    M --> P["OneStep_nosub"]
-    M --> Q["OneStep_sub1"]
-    M --> R["OneStep_JRhom"]
-    P --> S["PushParticlesandDeposit"]
-    S --> T["mypc->Evolve"]
-    P --> U["SyncCurrentAndRho"]
-    P --> V["PushPSATD or EvolveB/EvolveE/EvolveB"]
-    K --> W["moving window, boundaries, diagnostics, stop"]
-```
+| 阶段 | 关键入口 | 读者应确认的问题 |
+|---|---|---|
+| 启动与构造 | `main.cpp -> GetInstance() -> WarpX::WarpX() -> ReadParameters()` | 哪些参数和 solver 分支在建立网格前已确定？ |
+| 初始化 | `InitData() -> ComputeDt() -> InitFromScratch/InitFromCheckpoint` | 初始 level、粒子、场、PML 和 diagnostics 是否在第一步前就绪？ |
+| 外层推进 | `Evolve()` | 每一步前后有哪些 callback、负载均衡、注入、边界和诊断动作？ |
+| 单步分派 | `OneStep()` | 此输入走 implicit、electrostatic/HybridPIC、`OneStep_nosub()`、subcycling 还是 JRhom？ |
+| 显式主链 | `PushParticlesandDeposit() -> SyncCurrentAndRho() -> PushPSATD` 或 `EvolveB/EvolveE/EvolveB` | 粒子输运、源项同步和场推进是否使用相容的时间层？ |
 
 后续章节将从 `mypc->Evolve()` 进入粒子推进、field gather 和沉积内核，再从 `EvolveE/B` 进入 FDTD/PSATD 场求解器。

@@ -1,8 +1,8 @@
 # v0.110 PDF layout risk audit
 
 - classification: `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED`
-- PDF pages: `266`
-- minimum extracted page characters: `659` (page `255`)
+- PDF pages: `265`
+- minimum extracted page characters: `659` (page `254`)
 
 | check | status |
 |---|:---:|

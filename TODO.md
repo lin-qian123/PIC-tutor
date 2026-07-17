@@ -3,6 +3,7 @@
 ## 2026-07-18
 
 - [ ] 公开再分发阻断：GitHub remote 已确认是 public，但 Git 跟踪 `references/` 下 `2,425` 个第三方文件（`52` 个 PDF、`2,259` 个图片，约 `190.7 MB`），且根目录没有项目许可证。`v0.110` manifest 排除 `references/` 不能移除 public branch 或历史中的材料。维护者需明确选择逐项授权保留、从 public branch 移除并决定历史策略，或临时转 private；详见 `docs/public-distribution-risk-register-v0.110.md`。
+- [x] 完成第 4.13.11--4.13.12 节边界、PML 与 AMR 的读者化：将目录式测试清单改为撞击事件/内建边界/Python 前端、接触 writer/残余场/组合 checksum/解析 Langmuir 基准四条阅读路线；明确输入内自检、独立 analysis 与 checksum 的证据强度不能互换。读者审计覆盖扩展至两节；重建候选为 263 页，PDF 第 106--109 页已人工复核。
 - [x] 完成第 4.13.10 节边界缓冲区与 Python 粒子操作的读者化：将 `particle_boundary_scrape`、`particle_data_python` 与 single-precision particle fields 按主容器/边界缓冲区、属性/注入/沉积、以及 active regression 覆盖边界重组；明确 `--unique` 参数未被实际消费、restart sibling 的 analysis/checksum 为 OFF、single precision 的分析脚本尚未接入活跃回归。读者审计覆盖扩展至该节；重建候选保持 264 页，PDF 第 105--107 页已人工复核。
 - [x] 完成第 4.13.9 节粒子诊断与外场的读者化：将 particle-field 归约、repeated/hard-edged plasma lens、accelerator lattice 与 drift 的作用改按读者问题和源码数据流组织，删除不属于粒子算法的 MPI 接口状态；同步消除下一节 Python 接口段的超长行。读者审计覆盖扩展至该节；重建候选保持 264 页，PDF 第 103--105 页已人工复核。
 - [x] 完成第 4.13.8 节单粒子验证的读者化：按 force-free 带电推进、沉积/过滤、diagnostics 时间层、光子传播与组合 Larmor 基线重组正文，移除目录、报告和产物名口吻，保留数值、源码入口与不能外推的边界。读者审计覆盖扩展至该节；重建候选保持 264 页，PDF 第 101--103 页已人工复核。

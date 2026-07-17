@@ -5999,16 +5999,18 @@ PICMI 变体在 `sim.step(...)` 后构造 `ParticleBoundaryBufferWrapper()`，�
 
 把这三组放在一起，读者就能避免三种常见误读：粒子从主容器消失不等于它可被 Python 取回；Python 能写入属性不等于 restart 语义已经完整验证；源码提供单精度分析程序不等于该变体正在被自动回归覆盖。
 
-### 4.13.11 `particle_boundary_interaction`、`particle_boundary_process`、`particle_thermal_boundary` 与 `plasma_lens_python`
+### 4.13.11 边界上的粒子：内建条件、Python 回调与可验证的物理后果
 
-在 `particle_boundary_scrape` 和 `particle_data_python` 之外，还有四组更靠近“边界行为 + Python front-end”的 regression：
+边界不是一个统一的“反射开关”。在 `particle_boundary_scrape` 和 `particle_data_python` 之外，读者至少要区分三件事：内建边界怎样更新粒子，scraped buffer 能交给用户多少撞击信息，以及 Python 参数前端是否仍把同一物理模型送进 C++ 主链。下面四组测试分别覆盖这些问题：
 
 - `particle_boundary_interaction`
 - `particle_boundary_process`
 - `particle_thermal_boundary`
 - `plasma_lens_python`
 
-它们共同的特点是：都不只是看粒子最终轨道，而是在测“粒子边界语义如何经由 Python callback、buffer、parser 或 reduced diagnostics 暴露出来”。
+它们不只看最终轨道，而是分别通过 Python callback、buffer、parser 或 reduced diagnostics，检查边界语义怎样暴露给用户。
+
+#### 自己写边界物理：scraped buffer 记录撞击事件，不提供反射后的粒子
 
 `particle_boundary_interaction` 的关键点首先不是 analysis，而是输入脚本本身的结构。它不是直接依赖 WarpX 内建的 EB 反射，而是：
 
@@ -6022,11 +6024,9 @@ PICMI 变体在 `sim.step(...)` 后构造 `ParticleBoundaryBufferWrapper()`，�
 4. 在 Python 里手工做镜面反射
 5. 再按 `dt - delta_t` 把粒子推进到这一步的末尾并重新 `add_particles(...)`
 
-因此它真正验证的是：WarpX 的 scraped buffer 是否给出了足够的几何和时间信息，让用户能自己实现一个 boundary-interaction model。后面的 `analysis.py` 再用解析几何反射轨道比较最终位置，要求 `x/z` 相对误差都足够小。
+因此它验证的是：scraped buffer 是否给出了足够的几何和时间信息，让用户实现此例的边界相互作用模型。它记录的是接触时刻、接触位置和局部法向，而不是可以直接继续推进的“反射后粒子”；用户回调仍须决定反射、二次发射或吸收后的动量，并补完 `dt-deltaTimeScraped`。后面的 `analysis.py` 用解析几何反射轨道比较最终 `x/z`，所以能检验该再注入模型的几何正确性，不能证明任意用户回调或任意材料模型正确。
 
-这意味着 `particle_boundary_interaction` 的定位不是普通 boundary condition test，而是：
-
-- `scraped buffer + Python callback + custom reinjection model`
+#### 内建 domain boundary：分别检查粒子数、动量和位置
 
 在这些更复杂的边界 regression 之外，源码中还有一个更“教科书式”的最小强基准：`Examples/Tests/boundaries/`。它不碰 embedded boundary、不碰 callback，也不依赖 reduced diagnostics，而是把三类 domain particle boundary 直接拆开测试：
 
@@ -6043,7 +6043,7 @@ PICMI 变体在 `sim.step(...)` 后构造 `ParticleBoundaryBufferWrapper()`，�
 
 因此 `particle_boundaries` 验证的不是应用级“边界大致工作”，而是 `ParticleBoundaries_K.H` 最核心的三种 domain particle boundary 语义本体。
 
-`particle_boundary_process` 又不同。它当前其实分成两条合同。
+`particle_boundary_process` 又不同，它分成两条不同强度的检查。
 
 第一条是 `test_2d_particle_reflection_picmi`。虽然 `analysis = OFF`，但输入脚本本身做了直接自检：
 
@@ -6055,7 +6055,7 @@ PICMI 变体在 `sim.step(...)` 后构造 `ParticleBoundaryBufferWrapper()`，�
   - `z_hi` 的 `stepScraped` 全都等于 4
   - `z_lo` 的 `stepScraped` 全都等于 8
 
-这组 test 真正测的是：
+这组输入内自检测的是：
 
 - absorbing boundary 上的随机反射模型 parser
 - 上下边界 scraped buffer 的分流
@@ -6084,9 +6084,9 @@ PICMI 变体在 `sim.step(...)` 后构造 `ParticleBoundaryBufferWrapper()`，�
 - 场能不能无界增长
 - 粒子总能量相对初值偏离不超过 2%
 
-所以这组 regression 更准确的意义是：
+所以它检验的是 thermal particle boundary 在长时间粒子出入边界时的总量稳定性；它并不是单粒子散射角分布的充分验证。
 
-- thermal particle boundary 在长时间粒子出入边界时的总量稳定性
+#### Python 参数前端：同一物理断言，增加的是参数传递覆盖
 
 最后，`plasma_lens_python` 复用和 native/PICMI plasma-lens 相同的 `analysis.py`，所以物理断言没有变化，仍然是两颗测试电子穿过 lens 序列后的：
 
@@ -6102,18 +6102,7 @@ PICMI 变体在 `sim.step(...)` 后构造 `ParticleBoundaryBufferWrapper()`，�
 - `particles.repeated_plasma_lens_* = ...`
 - 最后 `warpx.init(); warpx.step(...)`
 
-因此它补上的验证边界是：
-
-- 纯 Python 参数前端
-- 到 `MultiParticleContainer` / `GetExternalEBField` repeated-plasma-lens 主链
-
-这四组合起来之后，`Particles` 的边界与 Python 验证层就更清楚了：
-
-- 一类是在测 scraped buffer 是否足够强，能支撑用户自己写 boundary physics
-- 一类是在测 boundary kernel 自带的 absorbing / probabilistic reflection / thermalization 合同
-- 一类是在测 pure Python front-end 是否能把参数正确接到既有粒子物理主链
-
-所以它们都不该继续留在 `general / to classify`，也不该混成一个模糊的“边界条件测试”桶。
+它新增覆盖的是纯 Python 参数前端到 `MultiParticleContainer` / `GetExternalEBField` repeated-plasma-lens 主链，而不是新的 lens 物理。阅读这些例子时，应按问题选择观察量：写 Python 表面物理就检查撞击几何、法向和剩余时间；确认内建边界就分别检查粒子数、动量和解析位置；确认 Python front-end 就使用与 native 例相同的物理观察量。三种证据不能互相替代。
 
 同一条 Python scraped-buffer 物理链还有一个更直接的边界物理 regression：`secondary_ion_emission`。它不是只拿 buffer 做统计，而是在 `afterstep` callback 里直接用
 
@@ -6127,18 +6116,20 @@ PICMI 变体在 `sim.step(...)` 后构造 `ParticleBoundaryBufferWrapper()`，�
 1. 固定随机种子下最终恰好产生 2 个电子；
 2. 电子反向传播到撞击时刻后，应落在解析球面撞击点附近
 
-所以这组 test 更准确地证明了：`ParticleBoundaryBufferWrapper` 提供的几何和时间元数据已经足够支撑真正的 callback 驱动边界二次发射物理，而不只是后处理统计。
+所以这组例子说明：`ParticleBoundaryBufferWrapper` 的几何和时间元数据足以支撑该 callback 驱动的二次发射模型，而不只是后处理统计；它不自动给出通用的表面材料模型。
 
-### 4.13.12 `point_of_contact_eb`、`particles_in_pml`、`subcycling_mr` 与 `Langmuir multi_mr`
+### 4.13.12 接触记录、PML 粒子与 AMR：观察对象决定验证强度
 
-再往外一层，当前粒子相关 regression 里还有四类容易被混成 “PML/EB/MR 杂项” 的条目：
+embedded boundary、PML 和 mesh refinement 都会改变粒子所在的数值环境，但它们的正确性不能用同一个观察量判断。下面四类例子分别检查接触几何、残余场、组合稳定性和解析场一致性：
 
 - `point_of_contact_eb`
 - `particles_in_pml`
 - `subcycling_mr`
 - `Langmuir multi_mr`
 
-但把 inputs、analysis 和 writer 路径对起来之后，它们其实在测四种完全不同的合同。
+输入、analysis 和 writer 路径表明，它们回答的是四个不同的问题。
+
+#### 接触记录：确认写出的事件几何，而不是只确认粒子消失
 
 `point_of_contact_eb` 的关键是它打开了两套 diagnostics：
 
@@ -6158,12 +6149,14 @@ diags/diag2/particles_at_eb/
 - `x/y/z`
 - `nx/ny/nz`
 
-与解析接触点、接触时刻和表面法向是否一致。因此这组 regression 真正验证的是：
+与解析接触点、接触时刻和表面法向是否一致。因此它验证的是：
 
 - EB 接触事件是否被正确记录到 `particles_at_eb`
 - `BoundaryScraping` 输出里的几何量和时间量是否正确
 
-这和前面的 `particle_boundary_scrape` 有本质区别。后者更侧重“粒子被删掉并进了 buffer”，而 `point_of_contact_eb` 更侧重“记录下来的接触几何是否对”。
+这和前面的 `particle_boundary_scrape` 有本质区别：后者更侧重“粒子被删掉并进了 buffer”，而 `point_of_contact_eb` 检查记录下来的接触几何和时间是否正确。
+
+#### 粒子进入 PML：用残余场检验清理是否有效
 
 `particles_in_pml` 则不是看粒子轨道，而是看粒子离域后留下的场。analysis 的核心只有一句：
 
@@ -6181,11 +6174,9 @@ assert max_Efield < tolerance_abs
 - 维度
 - `max_level`
 
-分开设置。因此 `particles_in_pml` 真正验证的是：
+分开设置。因此它检验的是 particle-aware PML 的 residual-field cleanup，而不是单纯的 PML 场反射率；比较不同维度或不同 AMR level 时，不能忽略容差本身的差异。
 
-- particle-aware PML 的 residual-field cleanup
-
-而不是单纯的 PML 场反射率。
+#### AMR 与 subcycling：checksum 基线和解析基准的证据强度不同
 
 `subcycling_mr` 又更弱一层。它当前没有独立 analysis，只有 checksum。输入里同时打开了：
 
@@ -6197,11 +6188,7 @@ assert max_Efield < tolerance_abs
 - `n_current_deposition_buffer = 0`
 - `n_field_gather_buffer = 0`
 
-所以它当前最准确的定位只能是：
-
-- `AMR + subcycling + moving window + continuous injection + deposit_on_main_grid`
-
-这组粒子/网格组合的稳定性 checksum 基线。不能把它夸大成“已经有独立 refined-injection analysis”。
+所以它只能建立 `AMR + subcycling + moving window + continuous injection + deposit_on_main_grid` 这一组合的 checksum 基线。由于没有独立观察量，它不能分辨 injection、gather、deposit 或 coarse/fine 同步的任何一个步骤，也不能写成独立的 refined-injection analysis。
 
 最后，`Langmuir multi_mr` 与 `subcycling_mr` 正好相反。它虽然也在测 MR，但并不只是 checksum，而是继续复用 `analysis_2d.py` 的强验证：
 
@@ -6223,18 +6210,18 @@ assert max_Efield < tolerance_abs
 - `mr_psatd`
   - solver 改成 PSATD
 
-因此这组条目的真正价值是：
+因此它可支持“这些已覆盖的 MR 组合没有破坏该解析 Langmuir 粒子-场基准”；不能外推为任意 AMR 配置、任意注入模型或所有 solver 的证明。
 
-- 在 mesh refinement 打开后，继续用解析场解和 charge conservation 验证粒子-场链没有被粗细网格破坏
+把四类例子放在同一张心理地图中最有用：接触 writer 看几何与时间，particle-aware PML 看残余场，subcycling 例提供组合 checksum，而 Langmuir multi-MR 保留解析场和电荷关系的强基准。观察对象不同，能得出的结论也必须不同。
 
-把这四类并到一起后，粒子验证层里一个此前容易混乱的区域就清楚了：
+实际阅读或设计自己的测试时，可以按下列顺序选择观察量：
 
-- `point_of_contact_eb` 测的是 scraped-contact geometry writer
-- `particles_in_pml` 测的是 particle-aware PML 的残余场清理
-- `subcycling_mr` 当前仍是组合稳定性的 checksum 基线
-- `Langmuir multi_mr` 则是 MR 下仍保留强解析验证的真正基准
+1. 若问题是“粒子何时、何处触及表面”，优先读取 `stepScraped`、`deltaTimeScraped`、位置和法向；只数剩余粒子无法判断接触几何。
+2. 若问题是“离开物理域的带电粒子是否留下数值污染”，比较 PML 后时刻的残余 `Ex/Ey/Ez`，不要把它与入射波的反射率混为一谈。
+3. 若问题是“一个复杂 AMR 输入能否保持可重复输出”，checksum 是必要的基线；若要判断场和电荷关系是否仍正确，则必须再选择有解析解或守恒量的基准，如 Langmuir multi-MR。
+4. 若某个例子只提供 checksum，读者应把它当作该配置组合的漂移报警器，而不是将其当成每一条粒子、网格和同步路径都已经独立证明。
 
-所以它们不该再笼统地记成 `general / to classify`、纯 `PML`，或者过粗的 `plasma oscillation` 占位项。
+这套区分也解释了为什么一个通过的测试集合仍可能留下开放边界：它们的输入可以相似，但被比较的对象、容差和可外推的范围并不相同。
 
 ### 4.13.13 余下 `embedded_boundary`、`electrostatic_sphere_eb` 与辅助绘图脚本的真实边界
 

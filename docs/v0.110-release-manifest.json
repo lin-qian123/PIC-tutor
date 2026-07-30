@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39390429,
+  "total_bytes": 39393395,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1558782,
-      "sha256": "baafe6a06d921e7422e2053d99225d8091e4219adfc671c4c12cc5e4b74109a0"
+      "bytes": 1559285,
+      "sha256": "460cb4c9f105cc789b37c29324d424a24f988b0b7f2b9400c858e1432c7f6c19"
     },
     {
       "path": "TODO.md",
-      "bytes": 1442598,
-      "sha256": "eb0cf045e2b39478bfcb97d6477f96008233822b1f83424040f457a496358ee7"
+      "bytes": 1443122,
+      "sha256": "406113621717dbfaa17aa8896592c91c431c45a03b5855dc750c524e8d29b91b"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5263516,
-      "sha256": "762d7a72d23de259171332a393ffbc5330fa5442f2a538ce477c4b38de664e82"
+      "bytes": 5263517,
+      "sha256": "80e277472b331f3d47b36db01c90103da3e3bd2079acb43ee431cf4d2bac50df"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 870912,
-      "sha256": "f1952b15e55701f6190ae6811d17bf40c502df2e6371aef0655a703e525ea0bd"
+      "bytes": 870925,
+      "sha256": "363a30c02589389b81e493015baddb304088533976bbde18e0e2210f9fe094db"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 3017433,
-      "sha256": "79fd8ea54dcf4ad42460ac9de46f19c358052453a431361cc592ded08ae59abb"
+      "bytes": 3017603,
+      "sha256": "42f02b4d7b500615a612738d78835c1ecbe15879846b15e5de44197b1f4dafc8"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -208,7 +208,7 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.json",
       "bytes": 1164,
-      "sha256": "c4b3d2064fd90c9cf3aee8aee256ad26d674d80c6f19c066fcfc15275121a784"
+      "sha256": "006d80fa2b2470ada94b4de475b921b17ea1565cdadf6ed8bb46b11248609e84"
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
@@ -532,8 +532,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 47656,
-      "sha256": "f5540b88530456c203268fa1a04f2dc48b2c4898e9625900c8acf8fba7798999"
+      "bytes": 48877,
+      "sha256": "598669837f807486bd10db503fd1d19700645686f4b1437934de778c784b8231"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -2202,8 +2202,8 @@
     },
     {
       "path": "manuscript/appendices/A-symbols.md",
-      "bytes": 9869,
-      "sha256": "2e6f820bb4825855aea83c0e085813249ee7659d9bd015c2a05ba9c48aede81d"
+      "bytes": 9870,
+      "sha256": "f81d164c5128d95d3517aa9016ed3db9ad2b1e48eed2e2c1fbd4ff834334827f"
     },
     {
       "path": "manuscript/assets/figures/beam-relevant-contract.png",
@@ -2347,8 +2347,8 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 109320,
-      "sha256": "01e2e24c9b0bf6e24df0616b6fdfa1c4ff0795c8079a9e316bae3873d1f12a39"
+      "bytes": 109332,
+      "sha256": "b7187cae35bd764ac51b49e487db6d47c61b0bcbde98553c2b55c55dfe36194f"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -5987,8 +5987,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 53406,
-      "sha256": "6cd3131b2ffa98b854204f9dcafcfd55bd85c6e129466292ff47136b923e8e4e"
+      "bytes": 53927,
+      "sha256": "e9f22f8394c20f07c0f9e0242121e1e5acfafde0312f04935c4166d3aac1df24"
     },
     {
       "path": "scripts/verify_v40_build.py",

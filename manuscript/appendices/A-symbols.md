@@ -82,7 +82,7 @@ $$
 | `rho_fp` / `rho_buf` | fine-patch / coarse-buffer charge buffer | 是 source route 的观测面，不等于最终 plotfile 字段 |
 | `Efield_fp` / `Bfield_fp` | fine-patch 电场/磁场 | 不能直接假定就是粒子 gather 的数组 |
 | `Efield_cp` / `Bfield_cp` | coarse-patch 电场/磁场 | 在 mesh refinement 近边界的 gather/sync 语义要结合 level 与 patch type 判断 |
-| `Efield_aux` / `Bfield_aux` | 供粒子 gather 的辅助场 | 由 `UpdateAuxilaryData` 等路径从 patch 场构造；只定义 E/B，不把它误认为 current 或 charge 容器 |
+| `Efield_aux` / `Bfield_aux` | 供粒子 gather 的辅助场 | 由 `UpdateAuxiliaryData` 等路径从 patch 场构造；只定义 E/B，不把它误认为 current 或 charge 容器 |
 | `Direct` | 直接速度加权电流沉积 | 简单但不自动满足离散连续性方程 |
 | `Esirkepov` | 基于轨迹与形函数差分的 charge-conserving current deposition | 重点看 density decomposition 和 prefix accumulation |
 | `Villasenor` | 基于 cell crossing segment 的 charge-conserving current deposition | 重点看 crossing、segment 和局部 face flux |

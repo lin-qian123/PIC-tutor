@@ -59,6 +59,12 @@ def main() -> None:
     html = HTML.read_text(encoding="utf-8", errors="ignore")
     reader = PdfReader(str(PDF))
     pdf_text = "\n".join(page.extract_text() or "" for page in reader.pages)
+    chapter_8_conclusion_pages = [
+        page.extract_text() or ""
+        for page in reader.pages
+        if "8.17 本章结论" in (page.extract_text() or "")
+        and "诊断的价值不在于输出文件越多" in (page.extract_text() or "")
+    ]
     manual_spotcheck = MANUAL_SPOTCHECK.read_text(encoding="utf-8") if MANUAL_SPOTCHECK.exists() else ""
     distribution_risk = (ROOT / "docs/public-distribution-risk-register-v0.110.md").read_text(encoding="utf-8")
     version = (ROOT / "manuscript" / "VERSION.md").read_text(encoding="utf-8")
@@ -193,7 +199,12 @@ def main() -> None:
         "html_embedded_images": html.count("data:image/png;base64,") >= 15,
         "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
-        "primary_sections_start_on_new_pdf_pages": merged.count("\\clearpage") == len(PAGE_BREAK_PARTS),
+        "primary_sections_start_on_new_pdf_pages": merged.count("\\clearpage") == len(PAGE_BREAK_PARTS) + 1,
+        "chapter_8_conclusion_is_not_orphaned": (
+            "\\clearpage\n\n## 8.17 本章结论" in merged
+            and len(chapter_8_conclusion_pages) == 1
+            and "保留失败与不可外推范围" in chapter_8_conclusion_pages[0]
+        ),
         "reader_facing_front_matter": all(
             marker in version + "\n" + preface
             for marker in ("# PIC-tutor", "建议的阅读方式", "如何使用本书", "遇到一个新的输入或源码分支时")

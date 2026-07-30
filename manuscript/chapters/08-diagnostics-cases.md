@@ -1676,6 +1676,8 @@ $$
 - 用更长的 uniform-plasma 时间窗，并结合 `energy_conserving_thermal_plasma` 的 analysis，区分短时统计漂移与可解释的总能量结论。
 - 改变 Langmuir 的模式数和拟合时间窗，检验频率测量对 sampling window 的敏感性，避免把单一窗口拟合误读为完整色散验证。
 
+\clearpage
+
 ## 8.17 本章结论
 
 诊断的价值不在于输出文件越多，而在于每一个输出都与明确的物理问题、时间层和判据相连。读者可以用下面四步设计或审读一个诊断：

@@ -2,6 +2,8 @@
 
 ## 2026-07-31
 
+- [x] 完成第 8 章结尾、第 9 章与附录 A 的连续读者审阅：将 `8.17 本章结论` 在 PDF 中独立起页，避免第四条结论与两段跨章收束落入低信息续页；构建验收要求该页同时包含“保留失败与不可外推范围”，防止回归。附录 A 同步更正实际方法名为 `UpdateAuxiliaryData`。第 9 章证据层、判读卡、深读路线和附录术语表页面均继续完成视觉复核；全书逐页通读、第三方材料许可和公开再分发仍未完成。
+
 - [x] 衔接第 7--8 章的 boundary 到 diagnostics 证据链：在第 8 章开头补入 back-transformed、普通 full/reduced 与 BoundaryScraping diagnostics 的不同采样/写出时机，明确 moving window、粒子边界、步末场解、诊断速度同步和 scraping buffer 清空的顺序。避免把同一 step 编号、plotfile/reduced scalar 与 scraping 输出误当成同一快照；重建保持 267 页，PDF 第 224 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。
 
 - [x] 衔接第 6--7 章的 field 到边界状态链：在第 7 章开头补入 FDTD/PSATD 的 physical boundary、PML damping/交换、fine/coarse guard-cell 填充、下一次 explicit gather 的 auxiliary-field 准备，以及独立粒子边界处理。明确一次 field push 或 `FillBoundary` 不能代替完整边界闭合；重建保持 267 页，PDF 第 210--211 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。

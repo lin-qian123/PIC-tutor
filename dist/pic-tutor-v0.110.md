@@ -2196,6 +2196,40 @@ $$
 
 这条路线把 `WarpX` 主类生命周期和 `Evolve()` 主链从静态调用图连接到输入、输出和可检查的物理量。它只覆盖这个 Langmuir 配置，不能据此推出所有 solver、几何或 AMR 分支都已验证。
 
+### 3.12.1 生命周期追踪卡：一项输入何时成为可解释的证据
+
+仅仅在输入文件里看到 `max_step = 80`，还不能说明它已经控制了实际运行，更不能说明末态分析已经成立。对本节的 Langmuir 案例，可以把这一项参数沿源码分成四个不可互换的观察点：
+
+1. **参数被读取。** `Source/main.cpp` 先取得 `WarpX` 单例；`WarpX::WarpX()` 随即调用 `ReadParameters()`。在 `Source/WarpX.cpp` 中，`ReadParameters()` 用无前缀的 `ParmParse` 查询 `max_step` 并写入 `WarpX::max_step`。这说明输入键已经进入主演化对象，但此时网格、粒子、diagnostics 和任何输出都还没有建立。
+2. **初始化已经越过记录点。** fresh run 的 `WarpX::InitData()` 依次调用 `ComputeDt()`、`InitFromScratch()` 和 `InitDiagnostics()`；在完成 guard-cell 检查和参数打印后，才调用 `WriteUsedInputsFile()` 写出 `warpx_used_inputs`。因此，`warpx_used_inputs` 出现能证明这次进程已经走到 `InitData()` 的这一后段并记录了生效输入；它不能证明 `Evolve()` 已执行一步，也不能证明任何解析误差或守恒 gate 已通过。
+3. **参数实际限制外层循环。** `Source/Evolve/WarpXEvolve.cpp` 中，默认 `Evolve()` 把 `max_step` 作为 `numsteps_max`。同一文件在 `istep[0] == max_step` 时识别最终时间步并请求 diagnostics flush。可是“达到第 80 步”仍不等于“产生 `diag1000080`”：本输入还必须有 `diag1.intervals = 40`、`diag1.diag_type = Full`，而具体目录名和分析器仍由测试编排决定。
+4. **consumer 给出可支持的结论。** `Examples/Tests/langmuir/CMakeLists.txt` 把这个 input 注册为 1D、2-rank 的 `test_1d_langmuir_multi`，并指定 `analysis_1d.py diags/diag1000080`。脚本再从文件时间重建理论场、使用 `0.05` 场误差阈值并调用离散 Gauss-law 检查。只有到这一层，才有指定输入、指定并行布局和指定末态下的物理比较；它仍不覆盖其他 solver、几何或修改后的输入。
+
+读者可用下面四条检索把这条链从自己的 WarpX 源树中重新定位。它们是源码导航，不会启动模拟：
+
+```bash
+rg -n 'queryWithParser\(pp, "max_step"' "$WARPX_ROOT/Source/WarpX.cpp"
+rg -n 'WriteUsedInputsFile' "$WARPX_ROOT/Source/Initialization/WarpXInitData.cpp"
+rg -n 'numsteps_max|final_time_step' "$WARPX_ROOT/Source/Evolve/WarpXEvolve.cpp"
+rg -n -A 8 'test_1d_langmuir_multi' \
+  "$WARPX_ROOT/Examples/Tests/langmuir/CMakeLists.txt"
+```
+
+这也给出一个更可靠的故障分类。若没有 `warpx_used_inputs`，应优先检查启动、参数读取或初始化前/中的错误；若它存在但缺少预期 `diags/diag1000080`，应核对实际停止步、diagnostic 周期、诊断类型和运行是否在写出前终止；若 plotfile 已存在但 `analysis_1d.py` 失败，应回到 consumer 读取的字段、文件时间、reference 和阈值。三种情形分别对应生命周期的不同层，不能统一归因成“参数无效”或“Langmuir 物理失败”。
+
+因此，参数到结论的最小追踪链是：
+
+```text
+inputs 中的 max_step
+-> ReadParameters() 读取到 WarpX 状态
+-> InitData() 写出 warpx_used_inputs
+-> Evolve() 用 max_step 限制外层步
+-> Full diagnostics 按 intervals 写出末态
+-> CTest 注册的 analysis consumer 比较 reference
+```
+
+第 2 章的命令行受控修改路线正是这张卡的后续：覆盖 `max_step` 可以改变前四段，却不会替第五、六段重新定义诊断周期、consumer 或物理阈值。修改后必须重新核对完整链，而不是只凭一份 `warpx_used_inputs` 或一个退出码下结论。
+
 ## 3.13 进一步阅读与练习
 
 进一步阅读：

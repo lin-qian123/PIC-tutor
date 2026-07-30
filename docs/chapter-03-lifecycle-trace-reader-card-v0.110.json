@@ -1,0 +1,25 @@
+{
+  "classification": "SOURCE_GROUNDED_LIFECYCLE_TRACE_READER_CONTRACT",
+  "passed": true,
+  "checks": {
+    "reader_card_present": [],
+    "main_and_parameter_contract": [],
+    "initialization_evidence_contract": [],
+    "evolve_and_diagnostic_contract": [],
+    "consumer_contract": []
+  },
+  "source_routes": [
+    "Source/main.cpp",
+    "Source/WarpX.cpp",
+    "Source/Initialization/WarpXInitData.cpp",
+    "Source/Evolve/WarpXEvolve.cpp",
+    "Examples/Tests/langmuir/inputs_test_1d_langmuir_multi",
+    "Examples/Tests/langmuir/CMakeLists.txt",
+    "Examples/Tests/langmuir/analysis_1d.py"
+  ],
+  "scope": [
+    "No WarpX build or runtime execution is performed by this audit.",
+    "The lifecycle trace distinguishes parameter ingestion, initialization evidence, diagnostic production, and the registered consumer.",
+    "It does not establish physics validity outside the registered Langmuir input, two-rank layout, and analysis contract."
+  ]
+}

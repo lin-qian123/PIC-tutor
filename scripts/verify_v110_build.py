@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 2 first-run reader card yields 264 pages.
-EXPECTED_PDF_PAGES = 264
+# The Chapter 3 lifecycle trace reader card yields 265 pages.
+EXPECTED_PDF_PAGES = 265
 
 
 def image_links(text: str) -> list[str]:
@@ -56,6 +56,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-06-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-02-first-run-reader-card-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-03-lifecycle-trace-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-validation-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-restart-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-09-evidence-routes-reader-card-v0.110.md").read_text(encoding="utf-8")
@@ -373,6 +374,17 @@ def main() -> None:
                 "该函数拒绝超过两个 level，且要求 2:1 refinement ratio",
             )
         ) and not chapter_3_project_narration_markers,
+        "chapter_3_lifecycle_trace_reader_card": all(
+            marker in source
+            for marker in (
+                "### 3.12.1 生命周期追踪卡：一项输入何时成为可解释的证据",
+                "`warpx_used_inputs` 出现能证明",
+                "不能证明 `Evolve()` 已执行一步",
+                "`max_step` 作为 `numsteps_max`",
+                "不能统一归因成“参数无效”或“Langmuir 物理失败”",
+                "SOURCE_GROUNDED_LIFECYCLE_TRACE_READER_CONTRACT",
+            )
+        ),
         "chapter_3_reader_code_examples_are_wrapped": all(
             marker in chapter_3
             for marker in (
@@ -1280,20 +1292,21 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（264 页候选）",
+                "当前增量复核（265 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
                 "| 28 |",
                 "| 29 |",
                 "| 30--31 |",
-                "| 259--261 |",
+                "| 45--47 |",
+                "| 260--262 |",
                 "| 219--254 |",
-                "| 225 |",
-                "| 230 |",
-                "| 256 |",
-                "| 262 |",
-                "262 页基线完整连续阅读 + 第 2、8、9 章变更范围与受影响版式的增量复核已记录",
+                "| 226 |",
+                "| 231 |",
+                "| 257 |",
+                "| 263 |",
+                "262 页基线完整连续阅读 + 第 2、3、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

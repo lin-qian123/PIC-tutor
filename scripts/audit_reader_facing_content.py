@@ -705,6 +705,17 @@ def main() -> int:
                 "该函数拒绝超过两个 level，且要求 2:1 refinement ratio",
             )
         ) and not chapter_3_project_narration_markers,
+        "chapter_3_lifecycle_trace_reader_card": all(
+            marker in chapter_3
+            for marker in (
+                "### 3.12.1 生命周期追踪卡：一项输入何时成为可解释的证据",
+                "参数被读取。",
+                "初始化已经越过记录点。",
+                "参数实际限制外层循环。",
+                "consumer 给出可支持的结论。",
+                "不能统一归因成“参数无效”或“Langmuir 物理失败”",
+            )
+        ) and not chapter_3_project_narration_markers,
         "chapter_3_cross_chapter_handoff": all(
             marker in chapter_3
             for marker in (
@@ -801,18 +812,19 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（264 页候选）",
+                "当前增量复核（265 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
                 "| 28 |",
                 "| 29 |",
                 "| 30--31 |",
-                "| 259--261 |",
-                "| 225 |",
-                "| 230 |",
-                "| 256 |",
-                "| 262 |",
+                "| 45--47 |",
+                "| 260--262 |",
+                "| 226 |",
+                "| 231 |",
+                "| 257 |",
+                "| 263 |",
             )
         ),
     }
@@ -829,7 +841,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 264-page candidate has recorded Chapter 2, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 265-page candidate has recorded Chapter 2, Chapter 3, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -901,7 +913,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 264-page candidate has recorded Chapter 2, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 265-page candidate has recorded Chapter 2, Chapter 3, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

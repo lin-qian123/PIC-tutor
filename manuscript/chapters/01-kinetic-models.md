@@ -335,7 +335,7 @@ $$
 
 1. sampled density 会生成 alias branches；
 2. shape factor 会修改 fluctuation spectrum；
-3. finite `\Delta x` 和 finite `\Delta t` 会把 continuum 改写成带离散谱结构和 effective transport 的系统；
+3. finite \(\Delta x\) 和 finite \(\Delta t\) 会把 continuum 改写成带离散谱结构和 effective transport 的系统；
 4. 若离散耦合处理不好，噪声会演化成 numerical heating、drag、diffusion，甚至弱不稳定增长率的误判。
 
 因此，本书后面凡是说“噪声更小”“结果更平滑”，都不应只停在图像层，而应继续问：
@@ -470,7 +470,7 @@ $$
 ## 1.14 练习与源码定位
 
 1. **变量桥接题**：根据 1.11 的映射表，说明为什么 `rho_fp/rho_buf` 不能直接当作两个不同物理量，并指出它们分别在哪个 AMR/source-synchronization 场景出现。
-2. **尺度判断题**：给定 `lambda_D/delta_x = 0.5` 和 `v_t Delta t/delta_x = 1.2`，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率、粒子跨单元输运还是时间推进约束。
+2. **尺度判断题**：给定 \(\lambda_D/\Delta x=0.5\) 和 \(v_t\Delta t/\Delta x=1.2\)，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率、粒子跨单元输运还是时间推进约束。
 3. **源码定位题**：从 `Source/Evolve/WarpXEvolve.cpp` 的 `OneStep_nosub()` 开始，而不是从全局搜索结果中猜入口。完成下列三步，并交付一个三行表格（函数、连续对象、调用后可认为“已准备好”的数据）：
    - 记录 `PushParticlesandDeposit()` 与 `SyncCurrentAndRho()` 的相对次序；前者对应粒子输运和源项沉积，后者应使场求解前的 `J/rho` 经滤波、guard-cell/MR 同步和边界处理而可被消费。
    - 打开 `WarpX::SyncCurrentAndRho()` 的定义，列出其中至少两项 source 数据准备动作，并说明它们为什么不能由连续方程本身自动保证。

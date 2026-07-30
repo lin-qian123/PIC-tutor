@@ -676,6 +676,16 @@ def main() -> None:
             chapter_5_opening,
         ),
         "chapter_1_section_order": chapter_1_numbers == list(range(1, 15)),
+        "chapter_1_inline_math_is_not_code": (
+            "finite `\\Delta x`" not in chapter_1
+            and "finite `\\Delta t`" not in chapter_1
+            and "finite \\(\\Delta x\\)" in chapter_1
+            and "finite \\(\\Delta t\\)" in chapter_1
+            and "`lambda_D/delta_x = 0.5`" not in chapter_1
+            and "`v_t Delta t/delta_x = 1.2`" not in chapter_1
+            and "\\(\\lambda_D/\\Delta x=0.5\\)" in chapter_1
+            and "\\(v_t\\Delta t/\\Delta x=1.2\\)" in chapter_1
+        ),
         "chapter_1_pdf_toc_entries": all(
             marker in toc_text
             for marker in (

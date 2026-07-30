@@ -1318,8 +1318,8 @@ bug，而是模型代价</h2>
 <ol type="1">
 <li>sampled density 会生成 alias branches；</li>
 <li>shape factor 会修改 fluctuation spectrum；</li>
-<li>finite <code>\Delta x</code> 和 finite <code>\Delta t</code> 会把
-continuum 改写成带离散谱结构和 effective transport 的系统；</li>
+<li>finite <span class="math inline">\(\Delta x\)</span> 和 finite <span class="math inline">\(\Delta t\)</span> 会把 continuum
+改写成带离散谱结构和 effective transport 的系统；</li>
 <li>若离散耦合处理不好，噪声会演化成 numerical
 heating、drag、diffusion，甚至弱不稳定增长率的误判。</li>
 </ol>
@@ -1556,9 +1556,8 @@ optimum path 的经典表述。</li>
 <code>rho_fp/rho_buf</code>
 不能直接当作两个不同物理量，并指出它们分别在哪个
 AMR/source-synchronization 场景出现。</li>
-<li><strong>尺度判断题</strong>：给定
-<code>lambda_D/delta_x = 0.5</code> 和
-<code>v_t Delta t/delta_x = 1.2</code>，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率、粒子跨单元输运还是时间推进约束。</li>
+<li><strong>尺度判断题</strong>：给定 <span class="math inline">\(\lambda_D/\Delta x=0.5\)</span> 和 <span class="math inline">\(v_t\Delta t/\Delta
+x=1.2\)</span>，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率、粒子跨单元输运还是时间推进约束。</li>
 <li><strong>源码定位题</strong>：从
 <code>Source/Evolve/WarpXEvolve.cpp</code> 的
 <code>OneStep_nosub()</code>

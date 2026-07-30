@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The current Chapter 9 reader-path revision compacts the built layout to 261 pages.
-EXPECTED_PDF_PAGES = 261
+# The Chapter 3A verification-map consolidation compacts the built layout to 260 pages.
+EXPECTED_PDF_PAGES = 260
 
 
 def image_links(text: str) -> list[str]:
@@ -85,6 +85,11 @@ def main() -> None:
     )
     chapter_3a_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3a
+    )
+    chapter_3a_project_markers = re.findall(
+        r"scripts/|notes/code-reading|runs/stage-c-validation|docs/|references/|contract\.\{json,md\}|"
+        r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录",
+        chapter_3a,
     )
     chapter_4 = (ROOT / "manuscript" / "chapters" / "04-particle-pushers.md").read_text(
         encoding="utf-8"
@@ -271,8 +276,9 @@ def main() -> None:
                 "WarpX::LoadExternalFields(int lev)",
                 "External fields from file are not compatible with the moving window.",
                 "ProjectionDivCleaner::setSourceFromField()",
+                "输入创建了什么初态？比较的 observable 是什么？",
             )
-        ) and not chapter_3a_stale_location_markers,
+        ) and not chapter_3a_stale_location_markers and not chapter_3a_project_markers,
         "chapter_4_current_pusher_route": all(
             marker in chapter_4
             for marker in (

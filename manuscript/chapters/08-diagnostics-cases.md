@@ -1686,7 +1686,7 @@ $$
 | Initial distribution / Gaussian beam | 分布 analysis 与束斑理论包络通过 | 随机 checksum 与缺失上游 analysis 保持边界 |
 | RZ sphere / RZ multimode | 场、rho-volume charge 与 mode writeback 的有界检查 | 不替代完整 RZ 诊断矩阵 |
 
-这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。公开仓库中的 `docs/public-evidence-index.{json,md}` 进一步提供当前 178 条去路径化合同摘要，但不替代下表所指向的 case-local 原始报告。
+这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。任何摘要都不替代下表所指向的输入、analysis 和原始诊断输出。
 
 本章的证据等级应按诊断问题分开理解：Langmuir 提供解析频率、场误差和最终守恒；uniform plasma 提供粒子数、能量统计和 checkpoint/restart 逐字段一致性，但短时总能量变化不等于热平衡守恒；FieldProbe 的 `lambda/32` matched-time 对照通过解析 gate，而官方 `lambda/16` coarse case 仍是失败证据；`reduced_diags` 将 compact observable 与 full-state reference 逐项对照，`LoadBalanceCosts` 则只验证效率改善；`ColliderRelevant`、`DifferentialLuminosity`、`ParticleHistogram2D` 和 `BeamRelevant` 分别验证其统计、谱或 writer 定义。RZ 多模 Langmuir 和 native Gaussian sibling 是有界案例证据，不能替代各自缺失的官方 analysis。每一项都必须沿验证矩阵中的 producer、consumer、observable 和限制阅读，不能用“已经运行”替代物理结论。
 

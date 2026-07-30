@@ -131,7 +131,7 @@ amrex::Initialize(
 
 同一个文件还会在 AMReX 初始化后立即把 `geometry.prob_lo/prob_hi`、`amr.n_cell`、`max_grid_size*`、`blocking_factor*` 这类可能带表达式的输入预解析并写回 parser，保证后面的 `Geometry`、`warpx_job_info` 和 `yt` 读到的是数值结果，而不是未展开的表达式字符串。
 
-### 3A.2.2 文档 alias、AMReX-owned 参数与 WarpX 本地 parser 不是一回事
+### 3A.2.2 文档 alias、AMReX-owned 参数与 WarpX 自有 parser 不是一回事
 
 参数索引继续往下清理后，会发现还有一类参数不能简单用“有没有 grep 到同名字符串”来理解。典型例子是：
 
@@ -164,7 +164,7 @@ ParmParse("amrex").query("async_out", ...)
 
 但后续代码会直接消费已经构造好的 `ref_ratios`，或者在 plotfile I/O 邻近层继续设置 WarpX 自己的 `field_io_nfiles` / `particle_io_nfiles`。因此，参数索引如果要稳定，至少要区分三类：
 
-1. WarpX 本地直接 parse；
+1. WarpX 自身直接 parse；
 2. WarpX 子对象 parse；
 3. AMReX-owned 输入，WarpX 只消费 materialized 结果。
 
@@ -1242,7 +1242,7 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 
 把 laser 模块整体放回 regression 版图后，还能看到另一个重要事实：不同 laser tests 的证据强度差别很大。`Examples/Tests/laser_injection/` 的 1D/2D analysis 会直接比较 Gaussian 注入场的包络和主频；implicit 1D/2D 变体也继续复用同一组 analysis，因此并不只是“implicit 能跑通”的 checksum test。`Examples/Tests/laser_injection_from_file/` 则继续给 `lasy`、legacy binary、boosted-frame 和 RZ `thetaMode` 文件提供 envelope/frequency 双断言。
 
-但这一组还必须再分出一层 helper / prepare 边界。两个目录里的 `analysis_default_regression.py` 都只是本地 checksum helper 副本：职责是自动识别 plotfile/openPMD 并按测试目录名调用 `evaluate_checksum(...)`，给 active tests 提供历史输出基线，而不是新增 laser 物理断言。更重要的是，`laser_injection_from_file/` 里那批 `inputs_test_*_prepare.py` 并不是“待分析输入”，而是被 `CMakeLists.txt` 先行注册成 dependency 的外部文件生成阶段：
+但这一组还必须再分出一层 helper / prepare 边界。两个目录里的 `analysis_default_regression.py` 都只是 checksum helper：职责是自动识别 plotfile/openPMD 并按测试目录名调用 `evaluate_checksum(...)`，提供历史输出基线，而不是新增 laser 物理断言。更重要的是，`laser_injection_from_file/` 里那批 `inputs_test_*_prepare.py` 并不是“待分析输入”，而是被 `CMakeLists.txt` 先行注册成 dependency 的外部文件生成阶段：
 
 - 普通 1D/2D/3D/RZ lasy 变体统一先写 `gaussian_laser_3d`
 - legacy binary 变体先手工写 `gauss_2d`
@@ -1329,7 +1329,7 @@ srcfab(i,j,k,n) = field_parser(x,y,z);
 
 因此 constant/parser 外场可以跟着 moving window 继续生成，而 `read_from_file` 缺少“窗口每推进一次就按新的 physical coordinates 增量重读”的实现，所以被源码显式禁止。这也解释了为什么当前 `load_external_field*` regressions 都天然是静态窗口场景，而 `laser_acceleration_boosted`、`refined_injection`、`subcycling_mr` 这些例子才更贴近 laser 与 moving-window 交界的真实运行态合同。
 
-再往应用层走，laser 在本地 WarpX 里已经分叉成三种不同角色。`laser_ion` 是最典型的“laser 作为驱动器”的场景：输入里同时绑了 Gaussian laser、solid-density target、full diagnostics、time-averaged diagnostics、`ParticleHistogram`、`FieldProbe` 和 `ParticleHistogram2D`。但它最硬的 regression 断言并不是离子能量标度，而是 `analysis_test_laser_ion.py` 对 `diagInst` 最后 5 个 snapshot 的瞬时 `Ez` 平均值与 `diagTimeAvg` 原位 time-averaged `Ez` 的逐点比较。因此它在书稿里最适合承担“laser 主链怎样进入复杂 diagnostics 组合场景”的角色。
+再往应用层走，laser 已分叉成三种不同角色。`laser_ion` 是最典型的“laser 作为驱动器”的场景：输入里同时绑了 Gaussian laser、solid-density target、full diagnostics、time-averaged diagnostics、`ParticleHistogram`、`FieldProbe` 和 `ParticleHistogram2D`。但它最硬的 regression 断言并不是离子能量标度，而是 `analysis_test_laser_ion.py` 对 `diagInst` 最后 5 个 snapshot 的瞬时 `Ez` 平均值与 `diagTimeAvg` 原位 time-averaged `Ez` 的逐点比较。因此它最适合承担“laser 主链怎样进入复杂 diagnostics 组合场景”的角色。
 
 `free_electron_laser` 则正好是反例：它没有 `lasers.names = ...`，而是通过刚性注入电子/正电子束、boosted frame、moving window 和外加 undulator `B_y(z)` 让辐射在束流中自发增长。`analysis_fel.py` 在 lab-frame 与 boosted-frame diagnostics 上分别拟合 gain length，并通过 FFT 反推出 radiation wavelength。这说明这里的“laser/辐射”不是天线输入，而是束流和 external particle field 共同产生的结果量，所以它更像 laser 相关应用，而不是 Laser 模块本身的 injection regression。
 
@@ -1366,6 +1366,8 @@ srcfab(i,j,k,n) = field_parser(x,y,z);
 ## 3A.13 初始化验证入口：哪些 regressions 真正在兜底
 
 前面的 3A.1-3A.12 讲的是“源码如何初始化”；若没有可执行 regression 对照，这些讲解很容易停留在静态阅读层。WarpX 对 `Initialization` 的验证并没有集中在一个目录里，而是分散在几组物理 test 中。
+
+读这张验证地图时，始终先问四个问题：**输入创建了什么初态？比较的 observable 是什么？analysis 真正断言了什么？它没有覆盖哪条分支？** 目录名、能否运行和 checksum 都不能替代这四个问题的答案。下面按读者最常遇到的初始化任务组织入口；同一条路径若只有 checksum，便只能作为回归基线，不能推出解析正确性。
 
 第一组是 `Langmuir`。它通常被当成 evolve 基准，但对初始化同样关键，因为它直接覆盖：
 
@@ -1416,19 +1418,7 @@ beam.momentum_distribution_type = "at_rest"
 - `inputs_test_3d_focusing_gaussian_beam_photons` 不是新物理 benchmark，而是把同一聚焦束斑统计合同重复到 `species_type = photon` 路径；
 - `inputs_test_3d_gaussian_beam_picmi.py` 则主要覆盖 PICMI `GaussianBunchDistribution` 前端到 runtime attributes 的接线，当前主要依赖 checksum，而不是独立理论断言。
 
-这里还要诚实记录一个源码边界：`gaussian_beam/CMakeLists.txt` 给 `test_3d_focusing_gaussian_beam_from_openpmd` 指定了 `analysis.py`，但 `Examples/Tests/gaussian_beam/` 目录下没有这个文件。因此本书不把缺失的官方文件伪装成已恢复，而是对同一个 native producer 输出执行独立分析。1 rank 运行结果位于 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/`：openPMD iteration 0 读出 `1,999,966` 个宏粒子，总权重为 `1.999966e10`，81 个有效 z slice 上的最大相对束斑误差为：
-
-$$
-\epsilon_{\sigma_x}=3.0515\times10^{-2}<0.051,
-\qquad
-\epsilon_{\sigma_y}=3.6214\times10^{-2}<0.038.
-$$
-
-官方 `analysis_focusing_beam.py` 与项目脚本 `scripts/analyze_gaussian_beam_focus_contract.py` 均对该 producer 输出通过。因而这条线现在可以写成：
-
-- openPMD `prepare -> native external_file inject -> plotfile/openPMD` producer 链已真实运行；
-- native 变体已有独立束斑物理分析，但该脚本不是 WarpX 官方 CMake analysis，证据等级是项目级补强而非 upstream CI 已修复；
-- PICMI sibling 仍复用官方 `analysis_focusing_beam.py`，两条输入路径的物理合同已经可以直接对照。
+这里还要诚实记录一个源码边界：`gaussian_beam/CMakeLists.txt` 为 native `test_3d_focusing_gaussian_beam_from_openpmd` 指定了 `analysis.py`，但该目录没有这个文件。因而这条 native 路径只能说明 `prepare -> external_file inject -> diagnostics` 的输入与输出接口被覆盖，不能被称为官方的束斑物理强验证。相邻的 PICMI 入口复用 `analysis_focusing_beam.py`，可以用来学习应比较的束斑统计量；它也不能自动补上 native 入口缺失的 analysis。读者若修改 native 输入，应自行对照粒子数、总权重、横向均方根束斑和纵向切片统计，并预先说明容差来自何处。
 
 第五组是 electrostatic / EB 初始化：
 
@@ -1449,7 +1439,7 @@ $$
 - `test_rz_projection_div_cleaner` 的强断言在独立 `analysis.py` 里；
 - `test_3d_projection_div_cleaner_picmi`、`test_3d_projection_div_cleaner_callback_picmi` 和 `test_2d_projection_div_cleaner_initial_analytical_field_picmi` 则都把 `divB` 断言直接写在输入脚本尾部，所以 `CMakeLists.txt` 里虽然 `analysis=OFF`，但并不等于这些条目只是 checksum-only。
 
-再往 species 入口侧补一组，本地还有一个直接锚定 `setupNFluxPerCell()` 的 regression 家族：`Examples/Tests/flux_injection/`。这组 tests 分三条：
+再往 species 入口侧补一组，`Examples/Tests/flux_injection/` 是直接锚定 `setupNFluxPerCell()` 的 regression 家族。这组 tests 分三条：
 
 1. `analysis_flux_injection_3d.py`
    - 对 3D `NFluxPerCell` 场景同时检查总发射量、法向 Gaussian-flux 分布和切向 Gaussian 分布；
@@ -1459,25 +1449,6 @@ $$
    - 对 `inject_from_embedded_boundary = 1` 的 2D/3D/RZ 变体检查发射总数、法向/切向速度统计，以及粒子不会落入 EB 内部。
 
 因此 `flux_injection` 的意义不是普通 emitter 示例，而是 `NFluxPerCell`、Gaussian-flux rejection sampling 和 embedded-boundary surface emission 这三条运行态合同的直接验证入口。
-
-因此，把本章和 regression 对上之后，`Initialization` 目前可以压成这样一张验证图：
-
-- parser 初始化与常规粒子装填：`Langmuir`
-- `gaussian_beam` 与束流几何：`focusing_gaussian_beam`、`rotated_gaussian_beam`
-- openPMD 粒子文件注入：`focusing_gaussian_beam_from_openpmd*`
-- 初始 self-field：`space_charge_initialization`
-- electrostatic / effective potential / EB：`effective_potential_electrostatic`、`electrostatic_sphere_eb*`
-- projection cleaner：`projection_div_cleaner*`
-- `NFluxPerCell` / flux injection：`flux_injection*`
-- 演化态 `div(E)` cleaning：`dive_cleaning`
-
-这张图的意义不在于宣称“初始化层已经被完全证明”，而在于把三类情况分清：
-
-1. 已有显式物理量 hard assert 的路径；
-2. 当前主要靠 checksum regression 的路径；
-3. native `gaussian_beam` openPMD variant 仍保留官方 CMake analysis 缺失这一证据边界。
-
-这张验证图不再只覆盖“场和束流自场”，也覆盖了初始化分布 API 本身。
 
 第一组是 `initial_distribution`。它不是普通 smoke test，而是一组多 species、多分布的综合强基准：同一输入里同时覆盖
 
@@ -1492,7 +1463,7 @@ $$
 
 analysis 脚本把 reduced histogram、束斑统计和解析分布逐条对照。这意味着它真正验证的是 `PlasmaInjector`、`SpeciesUtils` 和 momentum-dispatch 层的 built-in / parser 初始化合同，而不只是“粒子能被建出来”。
 
-对完整输入的已记录运行，官方 `analysis.py` 的最大相对差为 `1.8931e-2 < 0.02`；命令和逐项输出见 `runs/stage-c-validation/initial_distribution_full_current/contract.md`。由于初始化使用随机采样，仓库 checksum 的默认 `1e-9` 不应被当作确定性合同；该运行的最大相对差为 `3.18e-3`，在明确声明的 `5e-3` sampling tolerance 下通过。读者在不同 MPI 布局、随机数实现或编译选项下复现时，应比较统计量与容差，而不是期待逐位 checksum 相同。
+由于初始化使用随机采样，checksum 的默认容差不应被理解为跨机器、跨 MPI 布局都逐位相同的物理合同。复现实验应优先比较 analysis 脚本定义的直方图、均值、方差、束斑等统计量，并在报告中写清样本量、随机数种子（若可控）、并行布局和容差；只有这些条件一致时，checksum 才能作为补充证据。
 
 第二组是 `initial_plasma_profile`。这组当前没有独立 `analysis.py`，只有 checksum helper，但输入本身非常明确：
 
@@ -1505,7 +1476,7 @@ analysis 脚本把 reduced histogram、束斑统计和解析分布逐条对照�
 
 而不是应继续留在 `general / to classify` 的未知条目。
 
-再往 `initialize_self_fields` 这一支补一组，本地还有一个更小但更干净的两体基准：`repelling_particles`。它只放两个同号 `SingleParticle` species，却同时打开：
+再往 `initialize_self_fields` 这一支补一组，`repelling_particles` 是一个更小但更干净的两体基准。它只放两个同号 `SingleParticle` species，却同时打开：
 
 - `electron1.initialize_self_fields = 1`
 - `electron2.initialize_self_fields = 1`
@@ -1585,22 +1556,7 @@ electron.initialize_self_fields = 1
 
 共同定义的初始 Poisson 解是否正确。
 
-把这些补进去以后，初始化章节的本地回归证据就可以更完整地压成：
-
-1. parser 初始化与常规宏粒子装填：`Langmuir`
-2. `gaussian_beam` 注入几何：`focusing_gaussian_beam`、`rotated_gaussian_beam`
-3. openPMD 粒子文件注入：`focusing_gaussian_beam_from_openpmd*`
-4. lab-frame 初始 self-field：`space_charge_initialization`
-5. relativistic 初始 self-field：`relativistic_space_charge_initialization`
-6. electrostatic / effective potential / EB：`effective_potential_electrostatic`、`electrostatic_sphere_eb*`
-7. 外部 grid / particle fields：`load_external_field*`
-8. projection cleaner：`projection_div_cleaner*`
-9. 开放边界 relativistic Poisson 初始化：`open_bc_poisson_solver*`
-10. 演化态 `div(E)` cleaning：`dive_cleaning`
-
-这样第 3A 章就不再只是“源码怎么走”，而是已经能回答“这些初始化合同在本地 WarpX 里分别由哪组 regression 兜底”。
-
-继续补入 `load_density`、`magnetostatic_eb` 和 `nodal_electrostatic` 之后，这张验证地图还要再加三层。
+接下来三组补足了文件驱动分布、带嵌入边界的自场，以及 collocated 采样的分支；它们与前面的束流注入和 Poisson 例子不共享同一个可观测量，因而应分别阅读。
 
 第一层是 `load_density`。这组 regression 的输入明确使用：
 
@@ -1634,23 +1590,6 @@ beam_p.do_qed_quantum_sync = 1
 ```
 
 放在同一条链上。它的 analysis 不直接比较 `E/B`，而是用 reduced diagnostics 断言 `ParticleExtrema_beam_p` 给出的最大 `chi` 极小，且 `ParticleNumber` 中 photon 数始终为零。也就是说，这组 regression 验证的是 collocated relativistic electrostatic 初始 self-field 没有制造出会假触发 QED 的非物理场，它更准确地是一个“零触发基准”。
-
-把这三组再并进来以后，初始化章节的本地回归证据可以进一步压成：
-
-1. parser 初始化与常规宏粒子装填：`Langmuir`
-2. `gaussian_beam` 注入几何：`focusing_gaussian_beam`、`rotated_gaussian_beam`
-3. openPMD 粒子文件注入：`focusing_gaussian_beam_from_openpmd*`
-4. file-driven density profile 与连续注入：`load_density*`
-5. lab-frame 初始 self-field：`space_charge_initialization`
-6. relativistic 初始 self-field：`relativistic_space_charge_initialization`
-7. effective-potential electrostatic：`effective_potential_electrostatic`
-8. electrostatic / magnetostatic / EB 联合初始化：`magnetostatic_eb*`
-9. electrostatic / EB Poisson：`electrostatic_sphere_eb*`
-10. 外部 grid / particle fields：`load_external_field*`
-11. projection cleaner：`projection_div_cleaner*`
-12. collocated relativistic electrostatic 零触发基准：`nodal_electrostatic`
-13. 开放边界 relativistic FFT Poisson 初始化：`open_bc_poisson_solver*`
-14. 演化态 `div(E)` cleaning：`dive_cleaning`
 
 这样 `nodal_electrostatic`、`open_bc_poisson_solver` 和 `relativistic_space_charge_initialization` 就不再需要继续共用一个过粗的 `electrostatic / Poisson` 桶。它们分别对应的是：
 
@@ -1761,7 +1700,7 @@ Birdsall and Langdon 的 `3A ES1` 是一份很好的历史参照，因为它把�
 INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY
 ```
 
-这条链可以帮助读者理解“初始化结束后第一步推进究竟从哪里开始”，但不能把旧程序的子程序名直接当成 WarpX 的函数名。书中对应的本地精读资产是 `references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/`；现代实现的主源码入口是 `../warpx/Source/Initialization/WarpXInitData.cpp`、`../warpx/Source/Particles/` 和 `../warpx/Source/FieldSolver/`。
+这条链可以帮助读者理解“初始化结束后第一步推进究竟从哪里开始”，但不能把旧程序的子程序名直接当成 WarpX 的函数名。历史参照见 Birdsall 与 Langdon 的 *Plasma Physics via Computer Simulation*；现代实现应从 `Source/Initialization/WarpXInitData.cpp`、`Source/Particles/` 和 `Source/FieldSolver/` 的对应职责回查。
 
 | `3A ES1` 阶段 | 历史程序的物理职责 | WarpX 中最接近的阶段 | 不能直接等同的部分 |
 |---|---|---|---|

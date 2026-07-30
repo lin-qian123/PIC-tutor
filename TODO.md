@@ -2,6 +2,7 @@
 
 ## 2026-07-30
 
+- [x] 完成第 3A 章初始化验证入口的第二轮读者化收束：删除三次增量式回归汇总和不可迁移的运行记录，统一用“输入创建的初态、比较的 observable、analysis 断言、未覆盖分支”组织 `Langmuir`、Gaussian/openPMD beam、self-field、external field、density、EB 和 electrostatic 案例；native openPMD beam 缺失官方 analysis 明确降级为接口覆盖，不冒充物理强验证。第 8 章同步删除公开仓库索引提示。读者审计和构建验收新增第 3A 无项目路径/叙事检查；重建为 260 页，PDF 第 63、64、69 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。
 - [x] 完成第 9 章文献路线与跨章过渡的连续读者化改写：保留 A/B/C/D 证据层、关键文献边界和沉积/PML 两条深读路线，并新增“一张文献判读卡”，要求读者同时记录论文假设/证据、本书章节与源码职责、输出观察量以及不可外推范围。将文献、实现、数值和收敛限制重组为四类证据边界；教程正文移除内部目录、索引、缺口代码和公开分发工作流。读者化与构建验收新增第 9 章稳定路线和无项目记录检查；重建为 261 页，PDF 第 254、257、258、261 页视觉复核通过。
 - [x] 完成第 8 章诊断、验证与案例主线的连续源码复核和读者化改写：开篇改为“问题 -> 运行态 -> 比较对象 -> 结论边界”的阅读路线；以 `WarpX::Evolve`、`MultiDiagnostics` 与 `ReducedDiags` 说明诊断调度、完整输出和 reduced 输出的职责差异。全章移除内部脚本、运行归档、绝对路径和固定位置，Langmuir、uniform plasma、FieldProbe 与束流案例保留各自的 physics gate、writer/schema、checksum 或性能证据边界；读者化与构建验收新增第 8 章稳定导航和无项目记录检查。数学排版修复后重建为 261 页，PDF 第 219、221、234、253 页视觉复核通过。
 - [x] 完成第 7 章边界、PML 与 AMR 主线的连续源码复核与读者化改写：开篇改为输入拓扑 -> 场/粒子边界动作 -> PML/guard-cell/AMR 数据迁移 -> 观察量的闭合链；全章移除固定源码/文档行号、内部笔记和维护路径。以 `WarpX::MakeWarpX()`、`ApplyEfieldBoundary()`/`ApplyBfieldBoundary()`、`DampPML_Cartesian()`、`PML::Exchange()`、`RemakeLevel()` 和 `BoundaryScrapingDiagnostics` 说明职责边界，并明确 transition zone 尚缺逐 route 账本。读者化与构建验收新增第 7 章稳定导航、无项目路径和无固定行号检查；重建保持 263 页，PDF 第 206、208、214、216、218 页视觉复核通过。

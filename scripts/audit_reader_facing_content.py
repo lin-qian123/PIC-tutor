@@ -49,6 +49,14 @@ def main() -> int:
     chapter_3a_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3a
     )
+    chapter_3a_project_path_markers = re.findall(
+        r"scripts/|notes/code-reading|runs/stage-c-validation|docs/|references/|contract\.\{json,md\}",
+        chapter_3a,
+    )
+    chapter_3a_project_narration_markers = re.findall(
+        r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录",
+        chapter_3a,
+    )
     chapter_4_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_4
     )
@@ -323,8 +331,12 @@ def main() -> int:
                 "WarpX::LoadExternalFields(int lev)",
                 "External fields from file are not compatible with the moving window.",
                 "ProjectionDivCleaner::setSourceFromField()",
+                "输入创建了什么初态？比较的 observable 是什么？",
             )
-        ) and not chapter_3a_stale_location_markers,
+        )
+        and not chapter_3a_stale_location_markers
+        and not chapter_3a_project_path_markers
+        and not chapter_3a_project_narration_markers,
         "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text
@@ -358,6 +370,8 @@ def main() -> int:
         "chapter_9_project_narration_markers": chapter_9_project_narration_markers,
         "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
         "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,
+        "chapter_3a_project_path_markers": chapter_3a_project_path_markers,
+        "chapter_3a_project_narration_markers": chapter_3a_project_narration_markers,
         "chapter_4_stale_location_markers": chapter_4_stale_location_markers,
         "chapter_5_opening_project_markers": chapter_5_opening_project_markers,
         "chapter_5_stale_location_markers": chapter_5_stale_location_markers,

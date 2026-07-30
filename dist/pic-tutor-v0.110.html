@@ -10571,6 +10571,54 @@ gather 和隐式 suborbit 的长分支，但保留 push
 非零时会临时修改粒子位置以匹配沉积时间，见
 <code>Source/Particles/WarpXParticleContainer.cpp</code>。</p>
 <p>这也是读源码时必须区分“粒子当前数组中的位置”和“沉积物理时间层”的原因。</p>
+<p><strong>从第 4 章状态到第 5 章 source 的交接卡。</strong>
+多物理过程只要改变了粒子，并不自动等于它已经改变了网格
+source；还必须问该粒子是否属于带电容器、<code>OneStep()</code> 中哪次
+<code>Evolve()</code>
+消费它、以及那次调用是否跳过沉积。对通常的显式带电路径，<code>PhysicalParticleContainer::Evolve()</code>
+依次读取 <span class="math inline">\(\mathbf{x}\)</span>、<span class="math inline">\(\mathbf u\)</span>、宏粒子权重 <span class="math inline">\(w\)</span> 和可选的
+<code>ionizationLevel</code>：<code>rho</code> component 0 取 push
+前状态，<code>J</code> 用推进后状态和 <code>relative_time</code> 为
+<span class="math inline">\(-\Delta t/2\)</span> 构造半步
+source，<code>rho</code> component 1 再取 push
+后位置。静电分支会跳过后一个 <code>rho</code>
+component，因而不能把这张显式电磁时间表机械套到每个 solver。</p>
+<ol type="1">
+<li><strong>field ionization。</strong> 外层
+<code>doFieldIonization()</code> 在 <code>OneStep()</code>
+前同时增加源离子的 <code>ionizationLevel</code> 并写入 electron product
+容器。随后带电容器把 <code>ionizationLevel</code> 指针送进
+charge/current kernel；两类 kernel 都从 <span class="math inline">\(wq=q\,w\)</span> 出发再乘该离化态。因此要验证
+ionization 对网格的影响，至少应同时比较源离子离化态、electron product 和
+<span class="math inline">\(\rho,\mathbf
+J\)</span>，而不是只报告电子数。</li>
+<li><strong>QED 与 photon。</strong> QED event pass 同样在
+<code>OneStep()</code> 前完成，所以新建的 electron/positron product
+由各自的带电容器走这条沉积链；photon container 本身的
+<code>DepositCharge()</code> / <code>DepositCurrent()</code>
+是空实现。因而 photon 数减少或 photon optical depth 过零并不是带电
+source 已闭合的证明，必须再检查 pair 的 <span class="math inline">\(\rho,\mathbf J\)</span> 与 source/product
+守恒量。</li>
+<li><strong>collisions。</strong> 在 standard explicit
+<code>OneStep_nosub()</code> 的 split-momentum 路径中，第一半动量 push
+显式设置 <code>skip_deposition=true</code>；collision
+改写中间粒子状态后，第二半动量加完整位置推进才以
+<code>skip_deposition=false</code> 进入本节的 <span class="math inline">\(\rho^n,\mathbf J^{n+1/2},\rho^{n+1}\)</span>
+链。关闭 split 时则先 collision、后完整 push
+与沉积。这个顺序解释了为什么 collision 的动量变化必须与最终 source
+一起检查，而不能只拿第一次半推后的数组作结论。</li>
+<li><strong>implicit。</strong> implicit trial 和 suborbit fallback
+的中间数组不是额外的物理 source 时间层；只有收敛路径及其专门的
+<code>current_fp_non_suborbit</code> / suborbit
+沉积拼装才进入场方程。把某次 Picard trial 的粒子坐标直接当作 <span class="math inline">\(\rho^{n+1}\)</span>，会把非线性求解过程误读成一次提交的
+PIC 步。</li>
+</ol>
+<p>这张卡也限定了可验证量的强度：轨道、离化态、optical depth 或 particle
+count 只能说明各自的粒子侧变化；要证明 source
+路径，至少再比较与该求解器时间层一致的 <span class="math inline">\(\rho\)</span>、<span class="math inline">\(\mathbf
+J\)</span> 或离散连续性/Gauss-law residual。反过来，一次 charge
+deposition 也不能替代守恒的 current deposition 或 source
+synchronization，后者在 5.8–5.13 才完成。</p>
 <h2 id="多物种层如何清零和汇总源项">5.5 多物种层如何清零和汇总源项</h2>
 <p><code>Source/Particles/MultiParticleContainer.cpp</code> 中的
 <code>MultiParticleContainer::Evolve()</code> 是多物种粒子推进入口。</p>

@@ -14,6 +14,8 @@
 
 本轮再补充第 4 章多物理状态交接卡：检查 outer-loop 事件顺序、QED optical-depth 与 event pass 的分工、collision split 的 explicit-only 边界、photon 非带电沉积语义以及 implicit trial 的时间语义是否能在同一页组连续阅读。
 
+本轮补充第 4--5 章 source 交接卡：检查旧/新 `rho` 与半步 `J` 表之后的多物理状态消费顺序、`relative_time` 数学排版、QED photon/pair 的带电边界、collision split 的延迟沉积和 implicit source 提交语义。
+
 | 页码 | 检查内容 | 结果 |
 |---:|---|:---:|
 | 6 | 目录末页 | PASS；`A.6` 位于完整目录页，未产生低信息孤页或越界 |
@@ -28,6 +30,7 @@
 | 44 | 第 3 章小结与跨章交接卡 | PASS；五个检查点、四列表、核查链和章节收束完整，未见截断、重叠或右侧越界 |
 | 85--86 | 第 4 章 `PushPX()` 状态检查卡与 gather 交接 | PASS；源码、阶段表、轨道/source 四项分工、公式和 `doGatherShapeN()` 入口连续，未见截断、重叠或右侧越界 |
 | 92--93 | 第 4 章多物理状态交接卡 | PASS；outer-loop 顺序、QED/collision/implicit/photon 的状态边界与后续 RR 代码块连续，未见截断、重叠或右侧越界 |
+| 129 | 第 4--5 章多物理 source 交接卡 | PASS；旧/新 `rho`、半步 `J`、`relative_time` 数学记号、四类多物理分支和 5.5 交界完整，未见裸 LaTeX、截断、重叠或右侧越界 |
 | 65 | 第 3A 章激光案例选择路线 | PASS；四类案例、几何假设、独立 reference、代码标识与段落完整，未见截断或重叠 |
 | 66 | 第 3A 章激光应用角色与验证入口交界 | PASS；外场限制、四种应用角色、FEL 证据链与后续验证入口完整，未见截断、重叠或右侧越界 |
 

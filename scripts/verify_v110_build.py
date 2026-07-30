@@ -593,6 +593,19 @@ def main() -> None:
                 "## 5.16 练习与源码定位",
             )
         ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
+        "chapter_4_5_multiphysics_source_handoff": all(
+            marker in chapter_5
+            for marker in (
+                "从第 4 章状态到第 5 章 source 的交接卡",
+                "多物理过程只要改变了粒子，并不自动等于它已经改变了网格 source",
+                "外层 `doFieldIonization()` 在 `OneStep()` 前同时增加源离子的 `ionizationLevel`",
+                r"两类 kernel 都从 \(wq=q\,w\) 出发再乘该离化态",
+                "photon container 本身的 `DepositCharge()` / `DepositCurrent()` 是空实现",
+                "第一半动量 push 显式设置 `skip_deposition=true`",
+                "只有收敛路径及其专门的 `current_fp_non_suborbit` / suborbit 沉积拼装才进入场方程",
+                "一次 charge deposition 也不能替代守恒的 current deposition 或 source synchronization",
+            )
+        ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
         "chapter_5_opening_is_reader_facing": not re.search(
             r"notes/code-reading|pkuHEDPbranch|8c488b1a9|本机|本轮|当前源码",
             chapter_5_opening,

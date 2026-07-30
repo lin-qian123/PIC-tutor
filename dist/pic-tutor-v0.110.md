@@ -7213,6 +7213,15 @@ if (deposit_charge) {
 
 这也是读源码时必须区分“粒子当前数组中的位置”和“沉积物理时间层”的原因。
 
+**从第 4 章状态到第 5 章 source 的交接卡。** 多物理过程只要改变了粒子，并不自动等于它已经改变了网格 source；还必须问该粒子是否属于带电容器、`OneStep()` 中哪次 `Evolve()` 消费它、以及那次调用是否跳过沉积。对通常的显式带电路径，`PhysicalParticleContainer::Evolve()` 依次读取 \(\mathbf{x}\)、\(\mathbf u\)、宏粒子权重 \(w\) 和可选的 `ionizationLevel`：`rho` component 0 取 push 前状态，`J` 用推进后状态和 `relative_time` 为 \(-\Delta t/2\) 构造半步 source，`rho` component 1 再取 push 后位置。静电分支会跳过后一个 `rho` component，因而不能把这张显式电磁时间表机械套到每个 solver。
+
+1. **field ionization。** 外层 `doFieldIonization()` 在 `OneStep()` 前同时增加源离子的 `ionizationLevel` 并写入 electron product 容器。随后带电容器把 `ionizationLevel` 指针送进 charge/current kernel；两类 kernel 都从 \(wq=q\,w\) 出发再乘该离化态。因此要验证 ionization 对网格的影响，至少应同时比较源离子离化态、electron product 和 \(\rho,\mathbf J\)，而不是只报告电子数。
+2. **QED 与 photon。** QED event pass 同样在 `OneStep()` 前完成，所以新建的 electron/positron product 由各自的带电容器走这条沉积链；photon container 本身的 `DepositCharge()` / `DepositCurrent()` 是空实现。因而 photon 数减少或 photon optical depth 过零并不是带电 source 已闭合的证明，必须再检查 pair 的 \(\rho,\mathbf J\) 与 source/product 守恒量。
+3. **collisions。** 在 standard explicit `OneStep_nosub()` 的 split-momentum 路径中，第一半动量 push 显式设置 `skip_deposition=true`；collision 改写中间粒子状态后，第二半动量加完整位置推进才以 `skip_deposition=false` 进入本节的 \(\rho^n,\mathbf J^{n+1/2},\rho^{n+1}\) 链。关闭 split 时则先 collision、后完整 push 与沉积。这个顺序解释了为什么 collision 的动量变化必须与最终 source 一起检查，而不能只拿第一次半推后的数组作结论。
+4. **implicit。** implicit trial 和 suborbit fallback 的中间数组不是额外的物理 source 时间层；只有收敛路径及其专门的 `current_fp_non_suborbit` / suborbit 沉积拼装才进入场方程。把某次 Picard trial 的粒子坐标直接当作 \(\rho^{n+1}\)，会把非线性求解过程误读成一次提交的 PIC 步。
+
+这张卡也限定了可验证量的强度：轨道、离化态、optical depth 或 particle count 只能说明各自的粒子侧变化；要证明 source 路径，至少再比较与该求解器时间层一致的 \(\rho\)、\(\mathbf J\) 或离散连续性/Gauss-law residual。反过来，一次 charge deposition 也不能替代守恒的 current deposition 或 source synchronization，后者在 5.8--5.13 才完成。
+
 ## 5.5 多物种层如何清零和汇总源项
 
 `Source/Particles/MultiParticleContainer.cpp` 中的 `MultiParticleContainer::Evolve()` 是多物种粒子推进入口。

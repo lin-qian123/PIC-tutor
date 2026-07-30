@@ -30,6 +30,8 @@
 
 第 5 章已完成沉积主线的当前源码与读者路径复核：从形函数、旧/新 `rho` 与半步 `J` 的时间层，连到 `DepositCurrent()` / `DepositCharge()` 的算法分派和 `SyncCurrentAndRho()` 的同步职责。章节不再把脚本、运行归档或项目证据台账作为阅读入口；Direct、Esirkepov、Villasenor 与 Vay 的选择条件、AMR/guard-cell 边界及 RZ axis residual 的证据范围均改为读者可判断的因果链。当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
 
+第 4--5 章现以一张跨章 source 交接卡闭合多物理语义：field ionization 的离化态与 electron product、QED pair 与 photon 的非沉积边界、explicit collision split 的延迟沉积，以及 implicit 收敛后 source 的提交时刻，都统一接到旧/新 `rho` 与半步 `J`。读者不会再把 particle count、optical depth 或一次 trial 当作网格 source 已正确进入场方程的证明。
+
 第 4 章已完成当前源码与读者路径复核：开篇从 Lorentz 方程、Boris/Vay/Higuera--Cary 到 `PushParticlesandDeposit()` 的 tile loop 建立因果链，源码导航统一为文件路径和函数符号。该章校正了 QED 同步下 RR 的 \(\chi\) 门限分支，明确了 gather 后外场插入、位置更新与 momentum push 的顺序，并将输出时间层解释收束为可复用的验证问题；当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
 
 第 3A 章现以稳定的“文件路径 + 函数符号”追踪初始化，而不使用会随源码演化的固定行号。fresh-run 路径明确区分 `AmrCore::InitFromScratch()` 对 `MakeNewLevelFromScratch()` 的回调、implicit solver 属性创建、粒子容器、PML 与 `allocdata` callback；外加场部分区分写入主网格场的 grid field 与只供 gather 的 particle field，并明确 file-driven external field 与 moving window 不能组合。初始化验证部分改为“初态、observable、analysis 断言、未覆盖分支”四问，删除重复的回归清单和不可迁移的运行记录。完整重建后的页数、哈希和人工版式复核以当前 manifest 与 `docs/manual-editorial-spotcheck-v0.110.md` 为准。

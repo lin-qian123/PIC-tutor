@@ -98,6 +98,12 @@ def main() -> int:
     html_text = html_path.read_text(encoding="utf-8", errors="ignore")
     parser_html = HeadingParser()
     parser_html.feed(html_text)
+    expected_title = f"PIC-tutor {args.version}"
+    html_body_headings = parser_html.headings
+    # Pandoc emits the metadata title before the manuscript's own H1 title.
+    # It belongs to the document wrapper, not the source heading sequence.
+    if html_body_headings[:1] == [("h1", expected_title)]:
+        html_body_headings = html_body_headings[1:]
     pdf_reader = PdfReader(str(pdf_path))
     pdf_text = "\n".join(page.extract_text() or "" for page in pdf_reader.pages)
     headings = markdown_headings(merged_text)
@@ -117,7 +123,9 @@ def main() -> int:
         "merged_heading_duplicates": not any(count > 1 for count in heading_counts.values()),
         "markdown_tables_consistent": not table_shape_issues(merged_text),
         "chapter_heading_order": all(chapter_checks.values()),
-        "html_title_and_heading_count": any(text == f"PIC-tutor {args.version}" for tag, text in parser_html.headings if tag == "h1") and len(parser_html.headings) == len(headings),
+        "html_title_and_heading_count": bool(parser_html.headings)
+        and parser_html.headings[0] == ("h1", expected_title)
+        and len(html_body_headings) == len(headings),
         "html_key_sections": all(marker in html_text for marker in ("成书的已知证据边界", "收敛研究：描述性趋势不是正式阶数", "6.6.1 先按更新对象", "7.5.1 用正确的")),
         "pdf_page_count_positive": len(pdf_reader.pages) > 0,
         "pdf_key_sections": all(marker in pdf_text for marker in ("成书的已知证据边界", "收敛研究：描述性趋势不是正式阶数", "先按更新对象理解 PSATD 系数", "用正确的 observable 判断 PML")),
@@ -131,7 +139,7 @@ def main() -> int:
         "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
         "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
         "heading_count": len(headings),
-        "html_heading_count": len(parser_html.headings),
+        "html_heading_count": len(html_body_headings),
         "pdf_pages": len(pdf_reader.pages),
         "table_issues": table_shape_issues(merged_text),
         "artifacts": {path.name: digest(path) for path in (merged, html_path, pdf_path)},

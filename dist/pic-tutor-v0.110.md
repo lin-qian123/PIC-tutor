@@ -470,6 +470,7 @@ $$
 - `SyncCurrentAndRho()` 负责把不同 level、边界和 source buffer 中的结果整理成 solver 可消费的源项。
 
 这三层不能合并成“粒子把电荷写到网格”一句话。后续第 5 章会从 kernel 角度展开，第 6 章则会继续说明不同 field solver 如何消费这些 source。附录 A 给出 `rho_fp`、`rho_buf`、`current_fp`、`current_buf` 和 `lev` 等 WarpX 实现变量的速查定义。
+
 ## 1.12 这一章对后面源码章节的真正约束
 
 到这里，后续读 WarpX 代码时至少要带着下面这些硬问题，而不是只盯函数名：

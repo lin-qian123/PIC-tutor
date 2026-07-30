@@ -6,6 +6,13 @@
     "preface_has_learning_outcomes": true,
     "history_is_separated": true,
     "chapter_openings_are_reader_facing": true,
+    "core_chapters_have_no_project_record_markers": true,
+    "chapter_9_uses_reader_facing_evidence_language": true,
+    "chapter_4_uses_reader_facing_evidence_language": true,
+    "chapter_6_has_reader_facing_closure": true,
+    "chapter_7_has_reader_facing_boundary_closure": true,
+    "chapter_8_has_reader_facing_diagnostics_closure": true,
+    "chapter_2_3_have_reader_facing_routes": true,
     "core_chapters_have_no_versioned_prose": true,
     "core_chapters_have_exercises": true
   },
@@ -17,6 +24,11 @@
   "versioned_prose_marker_count": 0,
   "project_record_word_count_in_entry_points": 4,
   "project_record_opening_markers": [],
+  "project_record_body_markers": [],
+  "chapter_4_project_record_markers": [],
+  "chapter_6_project_record_markers": [],
+  "chapter_7_project_record_markers": [],
+  "chapter_8_project_record_markers": [],
   "open_items": [
     "需要人工通读术语、公式、代码上下文、章节过渡和练习"
   ]

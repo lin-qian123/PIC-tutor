@@ -31,6 +31,11 @@ def chapter_subheading_numbers(path: Path, chapter: str) -> list[tuple[int, ...]
     return [tuple(int(part) for part in match.split(".")) for match in pattern.findall(path.read_text(encoding="utf-8"))]
 
 
+def chapter_heading_numbers(path: Path, chapter: str) -> list[int]:
+    pattern = re.compile(rf"^## {re.escape(chapter)}\.(\d+)\b", re.MULTILINE)
+    return [int(number) for number in pattern.findall(path.read_text(encoding="utf-8"))]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--build-log", type=Path)
@@ -56,6 +61,9 @@ def main() -> None:
     chapter_5_numbers = chapter_subheading_numbers(
         ROOT / "manuscript" / "chapters" / "05-deposition-shapes.md", "5"
     )
+    chapter_1 = ROOT / "manuscript" / "chapters" / "01-kinetic-models.md"
+    chapter_1_numbers = chapter_heading_numbers(chapter_1, "1")
+    toc_text = reader.pages[0].extract_text() or ""
     chapter_6_numbers = chapter_subheading_numbers(
         ROOT / "manuscript" / "chapters" / "06-field-solvers.md", "6"
     )
@@ -118,6 +126,16 @@ def main() -> None:
             )
         ),
         "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),
+        "chapter_1_section_order": chapter_1_numbers == list(range(1, 15)),
+        "chapter_1_pdf_toc_entries": all(
+            marker in toc_text
+            for marker in (
+                "1.11 从连续模型到 PIC 离散变量",
+                "1.12 这一章对后面源码章节的真正约束",
+                "1.13 证据范围与继续阅读",
+                "1.14 练习与源码定位",
+            )
+        ),
         "chapter_1_source_exercise": all(
             marker in source
             for marker in (

@@ -8,6 +8,7 @@
 ## 2026-07-18
 
 - [ ] 公开再分发阻断：GitHub remote 已确认是 public，但 Git 跟踪 `references/` 下 `2,425` 个第三方文件（`52` 个 PDF、`2,259` 个图片，约 `190.7 MB`），且根目录没有项目许可证。`v0.110` manifest 排除 `references/` 不能移除 public branch 或历史中的材料。维护者需明确选择逐项授权保留、从 public branch 移除并决定历史策略，或临时转 private；详见 `docs/public-distribution-risk-register-v0.110.md`。
+- [x] 修复第 1 章 PDF 导航缺陷：`1.12` 标题此前因缺少 Markdown 块分隔而粘入 `1.11` 尾段并从首页目录漏出；现已独立排版于 PDF 第 14 页，目录中的 `1.11`--`1.14` 连续。`scripts/verify_v110_build.py` 新增第 1 章连续标题和 PDF 目录锚点验收；首页与第 14 页人工复核通过。
 - [x] 完成第 4 章结论与练习的读者化收束：以时间层、tile 主链、边界/AMR 观察量和 strong-field/collision QED 模型选择构成本章排错路线；新增基于官方 QED analysis 的路线题，并把读者审计覆盖扩展至章末结论。重建候选保持 263 页，PDF 第 117--119 页及第 5 章交界已人工复核。
 - [x] 完成第 5 章结论与练习的读者化收束：将发布和后续补足口吻改为连续性观察量、算法约束、charge/current/sync 链和证据范围的判断路线；练习新增 current-correction/Vay 观察量设计与公式/源码/运行边界辨析。重建候选为 264 页，PDF 第 169--171 页及第 6 章交界已人工复核。
 - [x] 完成第 6 章结尾的读者化收束：将源码同步合同改为“分派、source 时间层、observable”三问回查路线，补齐以几何、source 时间模型、边界/耦合和验证量组织的本章结论；练习改用官方 Picard case 与跨章节诊断设计。读者审计新增第 6 章结尾专属检查，重建候选保持 264 页，PDF 第 206--208 页及第 7 章交界已人工复核。

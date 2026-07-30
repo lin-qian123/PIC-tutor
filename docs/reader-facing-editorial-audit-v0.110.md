@@ -11,6 +11,13 @@
 | `preface_has_learning_outcomes` | `PASS` |
 | `history_is_separated` | `PASS` |
 | `chapter_openings_are_reader_facing` | `PASS` |
+| `core_chapters_have_no_project_record_markers` | `PASS` |
+| `chapter_9_uses_reader_facing_evidence_language` | `PASS` |
+| `chapter_4_uses_reader_facing_evidence_language` | `PASS` |
+| `chapter_6_has_reader_facing_closure` | `PASS` |
+| `chapter_7_has_reader_facing_boundary_closure` | `PASS` |
+| `chapter_8_has_reader_facing_diagnostics_closure` | `PASS` |
+| `chapter_2_3_have_reader_facing_routes` | `PASS` |
 | `core_chapters_have_no_versioned_prose` | `PASS` |
 | `core_chapters_have_exercises` | `PASS` |
 

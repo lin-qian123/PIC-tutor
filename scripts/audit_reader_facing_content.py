@@ -665,6 +665,9 @@ def main() -> int:
                 "ctest --test-dir",
                 "warpx_used_inputs",
                 "程序退出为零",
+                "### 2.8.2 受控修改路线：一个命令行覆盖会改变哪一份证据",
+                "原来注册的 `diags/diag1000080` 不会由此产生",
+                "建立新合同",
             )
         ),
         "chapter_2_3_source_navigation_is_portable": all(
@@ -804,6 +807,7 @@ def main() -> int:
                 "| 219--254 |",
                 "| 28 |",
                 "| 29 |",
+                "| 30--31 |",
                 "| 259--261 |",
                 "| 225 |",
                 "| 230 |",

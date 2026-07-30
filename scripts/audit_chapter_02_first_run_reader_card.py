@@ -43,6 +43,10 @@ def main() -> int:
                 '"$WARPX_BUILD/bin/warpx.1d"',
                 "warpx_used_inputs",
                 "程序退出为零",
+                "### 2.8.2 受控修改路线：一个命令行覆盖会改变哪一份证据",
+                "max_step=10",
+                "原来注册的 `diags/diag1000080` 不会由此产生",
+                "建立新合同",
             ],
         ),
         "build_contract": missing_markers(
@@ -82,6 +86,24 @@ def main() -> int:
                 '"analysis_1d.py diags/diag1000080"',
             ],
         ),
+        "override_and_consumer_contract": missing_markers(
+            run_doc,
+            [
+                "You can also overwrite parameters from the command line",
+                "max_step=10",
+                "warpx_used_inputs",
+            ],
+        )
+        + missing_markers(
+            (warpx / "Examples/Tests/langmuir/inputs_test_1d_langmuir_multi").read_text(
+                encoding="utf-8"
+            ),
+            ["max_step = 80", "diag1.intervals = 40"],
+        )
+        + missing_markers(
+            (warpx / "Examples/Tests/langmuir/analysis_1d.py").read_text(encoding="utf-8"),
+            ["fn = sys.argv[1]", "t0 = ds.current_time.to_value()", "tolerance_rel = 0.05"],
+        ),
     }
     passed = all(not missing for missing in checks.values())
     payload = {
@@ -94,6 +116,8 @@ def main() -> int:
             "CMakeLists.txt",
             "cmake/WarpXFunctions.cmake",
             "Examples/Tests/langmuir/CMakeLists.txt",
+            "Examples/Tests/langmuir/inputs_test_1d_langmuir_multi",
+            "Examples/Tests/langmuir/analysis_1d.py",
         ],
         "scope": [
             "No WarpX build or runtime execution is performed by this audit.",

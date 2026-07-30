@@ -11,6 +11,8 @@ Result: PASS.
 - `CMakeLists.txt`
 - `cmake/WarpXFunctions.cmake`
 - `Examples/Tests/langmuir/CMakeLists.txt`
+- `Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
+- `Examples/Tests/langmuir/analysis_1d.py`
 
 ## Checks
 
@@ -18,6 +20,7 @@ Result: PASS.
 - `build_contract`: PASS
 - `run_contract`: PASS
 - `langmuir_ctest_contract`: PASS
+- `override_and_consumer_contract`: PASS
 
 ## Scope
 

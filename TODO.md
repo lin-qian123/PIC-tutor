@@ -2,6 +2,7 @@
 
 ## 2026-07-31
 
+- [x] 为第 2 章补齐命令行受控修改路线：以官方运行文档的参数覆盖/`warpx_used_inputs` 语义，以及 Langmuir 输入的 `max_step = 80`、`diag1.intervals = 40`、CTest 的 `analysis_1d.py diags/diag1000080` consumer 和分析器的时间/容差/连续性检查为依据，明确 `max_step=10` 只能证明覆盖进入 producer，不能复用原末态 consumer；要求独立目录、实际 diagnostics 核对，并分开“保持官方合同”与“建立新合同”。第 29 页新增路线、第 30--31 页收束与第 3 章起页视觉复核通过；重建保持 264 页。全书逐页重读、第三方材料许可和公开再分发仍未完成。
 - [x] 为第 2 章补齐首次运行的读者路线：以官方 CMake、运行文档、当前 binary 命名逻辑和 `test_1d_langmuir_multi` CTest 注册为依据，分开 1D 编译能力、2-rank CTest producer/consumer 合同与独立目录的手动运行/analysis；明确 `warpx_used_inputs`、`diags/` 与退出码各自能说明什么。新增 `scripts/audit_chapter_02_first_run_reader_card.py`；重建为 264 页，PDF 第 28--29、225、230、256、262 页视觉复核通过。全书逐页重读、第三方材料许可和公开再分发仍未完成。
 - [x] 将第 8 章 `uniform_plasma` 的 restart 段改为读者可执行的续跑合同：区分同一 3D、2-rank CTest 布局下的基线/restart 逐字段比较、独立设计的跨布局比较和 checksum 输出回归；以 CMake、checkpoint/restart 输入与 `analysis_default_restart.py` 的 level-0 `field_list` consumer 为依据，明确 `epsilon_f < 1e-12` 不可推出热平衡或任意 MPI 布局等价。新增 `scripts/audit_chapter_08_restart_reader_card.py` 与读者/构建验收挂钩；重建为 263 页，PDF 第 224、229、255、261 页视觉复核通过。全书逐页重读、第三方材料许可和公开再分发仍未完成。
 - [x] 推进第 9 章为可执行的证据阅读路线：新增 Esirkepov、Galilean NCI 与 PSATD-PML 三条“论文 -> 实现 -> 输入 -> consumer”路线，分别限定为 3D Langmuir 的解析场与 Gauss-law residual、受控不稳定参考下的场能量 gate、以及指定 2D Cartesian PML 的总场能量反射率 gate。初版五列表在 PDF 第 259 页发生列间重叠，已改为三条纵向路线并重新视觉复核第 259--261 页；同步修正第 6 章 `PsatdAlgorithmGalilean.cpp` 的实际 `SpectralAlgorithms/` 源码路径。`scripts/audit_chapter_09_evidence_routes.py` 对当前 WarpX `c311e49` 的三条源码合同全部通过；当前候选重建为 264 页，审读分类为“262 页基线完整连续阅读 + 第 8、9 章增量复核”。

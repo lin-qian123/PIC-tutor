@@ -5,14 +5,17 @@
     "reader_route": [],
     "build_contract": [],
     "run_contract": [],
-    "langmuir_ctest_contract": []
+    "langmuir_ctest_contract": [],
+    "override_and_consumer_contract": []
   },
   "source_routes": [
     "Docs/source/install/cmake.rst",
     "Docs/source/usage/how_to_run.rst",
     "CMakeLists.txt",
     "cmake/WarpXFunctions.cmake",
-    "Examples/Tests/langmuir/CMakeLists.txt"
+    "Examples/Tests/langmuir/CMakeLists.txt",
+    "Examples/Tests/langmuir/inputs_test_1d_langmuir_multi",
+    "Examples/Tests/langmuir/analysis_1d.py"
   ],
   "scope": [
     "No WarpX build or runtime execution is performed by this audit.",

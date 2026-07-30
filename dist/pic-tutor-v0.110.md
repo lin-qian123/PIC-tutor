@@ -1261,6 +1261,38 @@ python analysis_1d.py diags/diag1000080
 
 这三层形成一条首运行合同：**先让编译维度匹配输入，再用 CTest 确认官方注册的 producer/consumer 路径，最后才在独立目录修改输入并重新定义 analysis。** 任何一层成功都不能替代另外两层；尤其是“程序退出为零”既不自动产生解析误差 gate，也不自动证明手动修改后的输入仍满足原测试的结论范围。
 
+### 2.8.2 受控修改路线：一个命令行覆盖会改变哪一份证据
+
+第一次改输入时，最常见的错误不是参数语法，而是继续把原案例的 analysis 当成新运行的结论。WarpX 允许在命令行覆盖输入项，并把显式和隐式生效的参数写进 `warpx_used_inputs`；这使覆盖操作可追溯，却不让原来的 consumer 自动适配。
+
+以本节 Langmuir 输入为例，`max_step = 80` 与 `diag1.intervals = 40` 共同产生第 40 与第 80 步的 Full diagnostics；CTest 登记的 `analysis_1d.py diags/diag1000080` 明确消费后者。下面的短运行只适合检查“命令行覆盖是否真正进入本次 producer”：
+
+```bash
+export PROBE_DIR=$HOME/warpx-work/langmuir-max-step-10
+mkdir -p "$PROBE_DIR"
+cp "$WARPX_ROOT/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi" "$PROBE_DIR/inputs"
+
+cd "$PROBE_DIR"
+mpirun -np 2 "$WARPX_BUILD/bin/warpx.1d" inputs max_step=10 \
+  > stdout.log 2>&1
+rg '^max_step' warpx_used_inputs
+```
+
+这里 `warpx_used_inputs` 中的 `max_step = 10` 才是“覆盖已被消费”的证据；`stdout.log` 只能帮助定位启动、MPI 或参数错误。因为步数 10 没有达到这个输入的 40-step 输出间隔，原来注册的 `diags/diag1000080` 不会由此产生。故而下面这条命令在该 probe 上没有意义：
+
+```bash
+python analysis_1d.py diags/diag1000080
+```
+
+它失败或找不到文件不能说明 Langmuir 物理失败，只说明 consumer 仍指向原 producer 的末态。反过来，若手工预先留下同名旧目录，脚本甚至可能读取旧数据，造成更危险的假阳性。因此每个参数试验应有独立目录，且开始前确认 `diags/` 的时间步与本次 `warpx_used_inputs` 相符。
+
+要重新获得一个有物理含义的比较，读者有两条不同的路线：
+
+1. **保持官方合同。** 不改 `max_step`、`diag1.intervals`、场字段或解析模型参数，运行到 80 步，再把新生成的 `diags/diag1000080` 交给原 `analysis_1d.py`。这能重新检查指定 1D、2-rank 输入的解析场与离散 Gauss-law gate。
+2. **建立新合同。** 若改动步数、diagnostic 周期、网格、沉积、边界或理论参数，先写明新的 producer 文件、consumer 读取字段、reference、容差与不可外推范围。`analysis_1d.py` 通过命令行参数取得文件名，并以文件内时间重建理论场；但这不自动证明原来的 `0.05` 阈值和 `check_charge_conservation` 的适用条件在修改后仍合理。
+
+因此，一个最小的修改记录至少回答四个问题：**哪一项输入被覆盖、`warpx_used_inputs` 如何证实它、这次实际写出了什么 diagnostics、哪个 consumer 因何仍然或不再适用。** 这比保存一串终端输出更接近可重复的数值实验，也把“配置变了”与“物理结论变了”分开。
+
 ## 2.9 基础文献与证据范围
 
 本章直接依托的基础来源是：

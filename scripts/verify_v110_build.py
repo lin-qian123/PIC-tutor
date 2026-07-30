@@ -331,6 +331,9 @@ def main() -> None:
                 "ctest --test-dir",
                 "warpx_used_inputs",
                 "程序退出为零",
+                "### 2.8.2 受控修改路线：一个命令行覆盖会改变哪一份证据",
+                "原来注册的 `diags/diag1000080` 不会由此产生",
+                "建立新合同",
             )
         )
         and (ROOT / "scripts/audit_chapter_02_first_run_reader_card.py").is_file()
@@ -1283,6 +1286,7 @@ def main() -> None:
                 "| 169--203 |",
                 "| 28 |",
                 "| 29 |",
+                "| 30--31 |",
                 "| 259--261 |",
                 "| 219--254 |",
                 "| 225 |",

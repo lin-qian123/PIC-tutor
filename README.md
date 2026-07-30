@@ -24,6 +24,8 @@
 
 第 8 章已完成诊断、验证与案例主线的读者化复核：从待测物理量和时间层出发，追踪 `WarpX::Evolve`、`MultiDiagnostics` 与 `ReducedDiags` 如何形成输出，再按解析 physics gate、writer/schema、checksum 和性能 gate 区分证据强度。章节已移除内部脚本、运行归档和固定位置；Langmuir、uniform plasma、FieldProbe 与束流诊断的通过/失败边界都保留为读者可判断的案例。PDF 第 219、221、234、253 页人工版式复核通过，详见 `docs/manual-editorial-spotcheck-v0.110.md`。
 
+第 7--8 章现进一步把边界状态接到诊断证据：back-transformed diagnostics 在 moving window 与粒子边界前单独采样，普通 full/reduced diagnostics 则在边界处理和相应步末场解之后读取状态；BoundaryScraping 只冲刷已收集的边界粒子 buffer。读者因此可按 producer 区分场、归约量与 scraped particles 的时间语义，不会把同一 step 编号误读为完全相同的快照。
+
 第 7 章已完成边界、PML 与 AMR 主线的当前源码和读者路径复核：从 `WarpX::MakeWarpX()` 解析 field/particle 拓扑开始，经过场/粒子边界、PML/guard-cell 交换与 `RemakeLevel()` 的状态重建，最终回到反射率、残余场、scraped-particle buffer 和 AMR route ledger 等可观察量。章节已移除固定行号、内部笔记和维护路径；所有结论明确区分源码职责、案例证据和未闭合的 transition-zone 逐 route 账本。PDF 第 206、208、214、216、218 页的人工版式复核通过，详见 `docs/manual-editorial-spotcheck-v0.110.md`。
 
 第 6--7 章现明确场更新的边界交接：FDTD 与 PSATD 都在各自的场更新路径内施加 physical field boundary，但 PML damping、PML/主域交换和 fine/coarse guard-cell 填充是后续的不同操作；下一次 explicit particle gather 还会重建 auxiliary fields。读者因此可将 PEC/PMC/PML 的场验证、粒子 scraping 和 AMR transition-zone route 分开判断，不再以一次 field push、场快照或 `FillBoundary` 成功替代完整边界闭合。

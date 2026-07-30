@@ -18184,6 +18184,56 @@ producer、consumer、observable
 与限制；这一步回答“通过或失败能支持什么结论”。</li>
 </ol>
 <p>因此，诊断设计的终点不是拥有更多文件，而是每个输出都有明确的问题、时间层、比较对象和证据等级。</p>
+<p><strong>从第 7 章边界状态到第 8 章证据的交接卡。</strong> 同一 time
+step 的输出并不天然代表同一采样时刻或同一组运行态。必须区分
+back-transformed snapshot、普通 full/reduced diagnostics 与 boundary
+scraping 的 producer；否则会把 moving window
+前的场、边界处理后的粒子和已清空的 scraping buffer
+错接成一份“完整末态”。</p>
+<ol type="1">
+<li><strong>每步先建立 diagnostics 的迭代上下文。</strong>
+<code>WarpX::Evolve()</code> 开始处调用
+<code>multi_diags-&gt;NewIteration()</code>，随后执行
+<code>OneStep()</code> 的粒子/field 推进。back-transformed diagnostics
+是例外：主循环先以
+<code>multi_diags-&gt;FilterComputePackFlush(step, false, true)</code>
+只分派 back-transformed 类型，再执行 <code>MoveWindow()</code> 与
+<code>HandleParticlesAtBoundaries()</code>。因此 BTD 的 snapshot
+不能自动被解释成完成 moving-window 位移或 particle boundary
+后的普通末态。</li>
+<li><strong>边界状态先形成，普通诊断随后读取。</strong>
+<code>MoveWindow()</code> 后，<code>HandleParticlesAtBoundaries()</code>
+才执行粒子
+<code>ApplyBoundaryConditions()</code>、domain/embedded-boundary buffer
+收集与重分配。electrostatic 或 Hybrid PIC 路径还会在这里之后计算步末
+space-charge/Hybrid field；普通电磁路径的场已由前面的
+<code>OneStep()</code> 完成。于是正常 full/reduced diagnostics
+读取的是各自 solver 路径已经提交、并经过这段边界处理后的状态，而不是一次
+field push 刚返回时的中间数组。</li>
+<li><strong>速度时间层也要按诊断需求临时对齐。</strong> 只要
+<code>multi_diags-&gt;DoComputeAndPack(step)</code> 或
+<code>reduced_diags-&gt;DoDiags(step)</code> 需要输出，且设置
+<code>synchronize_velocity_for_diagnostics</code>，主循环会调用
+<code>SynchronizeVelocityWithPosition()</code>；下一步开始的半步
+velocity push
+会撤销这次对齐。因此同步后的粒子动量可以服务这一次指定诊断，不应被误当作永久改变的推进时间层。</li>
+<li><strong>三类写出者的职责不同。</strong>
+<code>reduced_diags-&gt;ComputeDiags(step)</code> /
+<code>WriteToFile(step)</code> 先形成归约量；随后普通
+<code>multi_diags-&gt;FilterComputePackFlush(step)</code> 对 full
+diagnostics 判断是否 <code>ComputeAndPack()</code> 和
+<code>Flush()</code>。<code>BoundaryScrapingDiagnostics::DoComputeAndPack()</code>
+则固定返回 false：它只在 dump interval 把第 7 章已经收集的 boundary
+buffer 写入按边界命名的目录，然后清空 buffer。一个普通 plotfile、一个
+reduced energy 文件和一份 scraped-particle
+输出因而不是可互换的同一证据。</li>
+</ol>
+<p>验证时先将 observable 对齐到 producer：PML/PEC 场量使用时间层一致的
+full 或 reduced field consumer，restart
+比较恢复后的同类型输出，边界粒子问题必须读取 scraping 输出本身，BTD
+还要明确其 snapshot/moving-window 约定。任何一份末态 plotfile、reduced
+scalar 或空的 scraping
+目录都不能单独证明边界、场和粒子三条路径同时正确。</p>
 <p>在进入具体案例前，可以先记住 Dawson 1983 对 diagnostics
 的一个老判断：simulation 的目标是 physics essence，而不是
 detail。也就是说，diagnostics

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39373381,
+  "total_bytes": 39390429,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1558339,
-      "sha256": "e8d4edd9326f81d4086863d9fcadf7c3c35d65073a468a8b35935001f166fbcc"
+      "bytes": 1558782,
+      "sha256": "baafe6a06d921e7422e2053d99225d8091e4219adfc671c4c12cc5e4b74109a0"
     },
     {
       "path": "TODO.md",
-      "bytes": 1442063,
-      "sha256": "3d916e3082d2ca577c40c2b175d1f8c3ef10b1964ebca5a5c7642cea5984edf0"
+      "bytes": 1442598,
+      "sha256": "eb0cf045e2b39478bfcb97d6477f96008233822b1f83424040f457a496358ee7"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5260283,
-      "sha256": "7ef96a50013232bc3bd34f8b9ddebab7c41c6ad2b81e06d8e299cf506ea58982"
+      "bytes": 5263516,
+      "sha256": "762d7a72d23de259171332a393ffbc5330fa5442f2a538ce477c4b38de664e82"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 868037,
-      "sha256": "57d31f469e586b555949dfa2f8eaabae40a37dc5b52af42b6a72215b06b48478"
+      "bytes": 870912,
+      "sha256": "f1952b15e55701f6190ae6811d17bf40c502df2e6371aef0655a703e525ea0bd"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 3013238,
-      "sha256": "2dbab39e3c19fc9210e262b0443aa0b49ee90aea96fed0632d48a56884f3b368"
+      "bytes": 3017433,
+      "sha256": "79fd8ea54dcf4ad42460ac9de46f19c358052453a431361cc592ded08ae59abb"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -208,7 +208,7 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.json",
       "bytes": 1164,
-      "sha256": "e1108345fa08263053a04c8e77ac0b1a9f92eb565dabf16f437aba713ebd0203"
+      "sha256": "c4b3d2064fd90c9cf3aee8aee256ad26d674d80c6f19c066fcfc15275121a784"
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
@@ -532,8 +532,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 47021,
-      "sha256": "2ce3910b1866111a024a8f55d6e842d104bfae52fcffded48344c1fb2b1ac717"
+      "bytes": 47656,
+      "sha256": "f5540b88530456c203268fa1a04f2dc48b2c4898e9625900c8acf8fba7798999"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -922,13 +922,13 @@
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
-      "bytes": 4310,
-      "sha256": "edee1520efc8e82ebd4622554866d7ffc285d2843d920d32a0b9e6f24e5049e9"
+      "bytes": 4367,
+      "sha256": "ad62bb4112d0bd356cd4eca655b69f2356e1556a7d47b42c9275c33f37413120"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.md",
-      "bytes": 2704,
-      "sha256": "15c8b2bdc83f52a3c0aaab53ddc4c79688e8b1b849deb9c6423f2da6cbf0d235"
+      "bytes": 2763,
+      "sha256": "a8766db7e649e3407b56dd581fb91db089696dd1566e5838ecd7876e985bab11"
     },
     {
       "path": "docs/rz-axis-charge-repeat-stability-v0.93.json",
@@ -2347,8 +2347,8 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 106445,
-      "sha256": "7f88c3aa1969d88f1f07356f9ffd1a5d6a1ccecf4275b8c790409eda2c0a4d69"
+      "bytes": 109320,
+      "sha256": "01e2e24c9b0bf6e24df0616b6fdfa1c4ff0795c8079a9e316bae3873d1f12a39"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -4587,8 +4587,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 39037,
-      "sha256": "fb85b94190bb17f85f63f1dab74d8bc6c7565d3222bab01c1ecd52fc746d99b7"
+      "bytes": 40018,
+      "sha256": "8562ff89861d67c1d5e65221c46b811748536cea05238e1fd5001369cccab492"
     },
     {
       "path": "scripts/audit_release_consistency.py",
@@ -5987,8 +5987,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 52246,
-      "sha256": "3cf2f2036636b002ca31d2bfec7f11d4c4791161b20fbf45de30ccc804e145bb"
+      "bytes": 53406,
+      "sha256": "6cd3131b2ffa98b854204f9dcafcfd55bd85c6e129466292ff47136b923e8e4e"
     },
     {
       "path": "scripts/verify_v40_build.py",

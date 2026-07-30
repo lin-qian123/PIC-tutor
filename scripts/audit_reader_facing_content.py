@@ -498,6 +498,21 @@ def main() -> int:
         and not chapter_8_project_path_markers
         and not chapter_8_project_narration_markers
         and not chapter_8_stale_location_markers,
+        "chapter_7_8_boundary_to_diagnostics_handoff": all(
+            marker in chapter_8
+            for marker in (
+                "从第 7 章边界状态到第 8 章证据的交接卡",
+                "并不天然代表同一采样时刻或同一组运行态",
+                "`multi_diags->FilterComputePackFlush(step, false, true)`",
+                "再执行 `MoveWindow()` 与 `HandleParticlesAtBoundaries()`",
+                "边界状态先形成，普通诊断随后读取",
+                "`SynchronizeVelocityWithPosition()`",
+                "`BoundaryScrapingDiagnostics::DoComputeAndPack()` 则固定返回 false",
+                "写入按边界命名的目录，然后清空 buffer",
+                "任何一份末态 plotfile、reduced scalar 或空的 scraping 目录都不能单独证明",
+            )
+        ) and not chapter_8_project_path_markers and not chapter_8_project_narration_markers
+        and not chapter_8_stale_location_markers,
         "chapter_8_application_cases_are_reader_facing": all(
             marker in chapter_8_applications
             for marker in (

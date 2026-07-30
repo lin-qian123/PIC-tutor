@@ -30,6 +30,7 @@
     "chapter_7_long_chapter_reader_navigation": true,
     "chapter_8_has_reader_facing_diagnostics_closure": true,
     "chapter_8_current_diagnostics_route": true,
+    "chapter_7_8_boundary_to_diagnostics_handoff": true,
     "chapter_8_application_cases_are_reader_facing": true,
     "chapter_2_3_have_reader_facing_routes": true,
     "chapter_2_time_contract_reader_route": true,

@@ -20,6 +20,8 @@
 
 本轮补充第 6--7 章 field-to-boundary 交接卡：检查 FDTD/PSATD physical field boundary、PML damping/交换、fine/coarse guard-cell 准备、下一次 explicit gather 的 auxiliary fields 以及独立粒子边界路径。第 210 页保留章节路线和交接卡题目；第 211 页完整承载四条路径、验证边界和后续源码入口表，未见裸 LaTeX、截断、重叠或右侧越界。
 
+本轮补充第 7--8 章 boundary-to-diagnostics 交接卡：检查 back-transformed、普通 full/reduced 和 BoundaryScraping diagnostics 的不同采样/写出时机，以及 moving window、粒子边界、步末场解、速度同步和 boundary buffer 的顺序。第 224 页完整承载章节入口、四条交接路径和验证边界，长函数标识正常换行，未见裸 LaTeX、截断、重叠或右侧越界。
+
 | 页码 | 检查内容 | 结果 |
 |---:|---|:---:|
 | 6 | 目录末页 | PASS；`A.6` 位于完整目录页，未产生低信息孤页或越界 |
@@ -37,6 +39,7 @@
 | 129 | 第 4--5 章多物理 source 交接卡 | PASS；旧/新 `rho`、半步 `J`、`relative_time` 数学记号、四类多物理分支和 5.5 交界完整，未见裸 LaTeX、截断、重叠或右侧越界 |
 | 173--174 | 第 5--6 章 source-to-field 交接卡 | PASS；FDTD/PML、standard PSATD、JRhom、implicit 的 source consumer 路径、长代码标识和验证边界完整，未见裸 LaTeX、截断、重叠或右侧越界 |
 | 210--211 | 第 6--7 章 field-to-boundary 交接卡 | PASS；physical boundary、PML/主域交换、guard-cell、auxiliary-field 和粒子边界路径完整，未见裸 LaTeX、截断、重叠或右侧越界 |
+| 224 | 第 7--8 章 boundary-to-diagnostics 交接卡 | PASS；BTD、full/reduced、BoundaryScraping 的时间语义、长函数标识和验证边界完整，未见裸 LaTeX、截断、重叠或右侧越界 |
 | 65 | 第 3A 章激光案例选择路线 | PASS；四类案例、几何假设、独立 reference、代码标识与段落完整，未见截断或重叠 |
 | 66 | 第 3A 章激光应用角色与验证入口交界 | PASS；外场限制、四种应用角色、FEL 证据链与后续验证入口完整，未见截断、重叠或右侧越界 |
 

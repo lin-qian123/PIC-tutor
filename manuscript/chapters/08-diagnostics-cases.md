@@ -21,6 +21,15 @@ PIC 程序的可信度来自验证，而不是来自输入文件能跑完。一�
 
 因此，诊断设计的终点不是拥有更多文件，而是每个输出都有明确的问题、时间层、比较对象和证据等级。
 
+**从第 7 章边界状态到第 8 章证据的交接卡。** 同一 time step 的输出并不天然代表同一采样时刻或同一组运行态。必须区分 back-transformed snapshot、普通 full/reduced diagnostics 与 boundary scraping 的 producer；否则会把 moving window 前的场、边界处理后的粒子和已清空的 scraping buffer 错接成一份“完整末态”。
+
+1. **每步先建立 diagnostics 的迭代上下文。** `WarpX::Evolve()` 开始处调用 `multi_diags->NewIteration()`，随后执行 `OneStep()` 的粒子/field 推进。back-transformed diagnostics 是例外：主循环先以 `multi_diags->FilterComputePackFlush(step, false, true)` 只分派 back-transformed 类型，再执行 `MoveWindow()` 与 `HandleParticlesAtBoundaries()`。因此 BTD 的 snapshot 不能自动被解释成完成 moving-window 位移或 particle boundary 后的普通末态。
+2. **边界状态先形成，普通诊断随后读取。** `MoveWindow()` 后，`HandleParticlesAtBoundaries()` 才执行粒子 `ApplyBoundaryConditions()`、domain/embedded-boundary buffer 收集与重分配。electrostatic 或 Hybrid PIC 路径还会在这里之后计算步末 space-charge/Hybrid field；普通电磁路径的场已由前面的 `OneStep()` 完成。于是正常 full/reduced diagnostics 读取的是各自 solver 路径已经提交、并经过这段边界处理后的状态，而不是一次 field push 刚返回时的中间数组。
+3. **速度时间层也要按诊断需求临时对齐。** 只要 `multi_diags->DoComputeAndPack(step)` 或 `reduced_diags->DoDiags(step)` 需要输出，且设置 `synchronize_velocity_for_diagnostics`，主循环会调用 `SynchronizeVelocityWithPosition()`；下一步开始的半步 velocity push 会撤销这次对齐。因此同步后的粒子动量可以服务这一次指定诊断，不应被误当作永久改变的推进时间层。
+4. **三类写出者的职责不同。** `reduced_diags->ComputeDiags(step)` / `WriteToFile(step)` 先形成归约量；随后普通 `multi_diags->FilterComputePackFlush(step)` 对 full diagnostics 判断是否 `ComputeAndPack()` 和 `Flush()`。`BoundaryScrapingDiagnostics::DoComputeAndPack()` 则固定返回 false：它只在 dump interval 把第 7 章已经收集的 boundary buffer 写入按边界命名的目录，然后清空 buffer。一个普通 plotfile、一个 reduced energy 文件和一份 scraped-particle 输出因而不是可互换的同一证据。
+
+验证时先将 observable 对齐到 producer：PML/PEC 场量使用时间层一致的 full 或 reduced field consumer，restart 比较恢复后的同类型输出，边界粒子问题必须读取 scraping 输出本身，BTD 还要明确其 snapshot/moving-window 约定。任何一份末态 plotfile、reduced scalar 或空的 scraping 目录都不能单独证明边界、场和粒子三条路径同时正确。
+
 在进入具体案例前，可以先记住 Dawson 1983 对 diagnostics 的一个老判断：simulation 的目标是 physics essence，而不是 detail。也就是说，diagnostics 的价值不在于“把所有字段和粒子都写出来”，而在于能否把大规模数值状态压成可解释的 observables、谱、守恒量和 reader-side 证据。对二维和三维模型，这种 diagnostics / visualization / postprocessing 的难度甚至可能不低于模型本身。WarpX 的 full diagnostics、reduced diagnostics、back-transformed diagnostics、checkpoint 以及 openPMD/plotfile reader-side analysis，都不该只按 writer 类型分类，而应按“是否真正提炼出目标 physics”来理解。
 
 同一篇综述还给了 diagnostics 的另一条很有价值的组织方式：先分 `measurements related to particle motion`，再分 `measurements related to waves`。前者典型的是 distribution function、phase space、drag、velocity diffusion；后者典型的是 field fluctuation level、time correlations、power spectrum 与 nonuniform-plasma normal modes。这种分法比“plotfile/reduced/openPMD/BTD”更接近物理问题本身，因为它直接对应读者真正要问的量：是想测输运系数、相关时间、噪声底、谱线，还是想重建某个本征模的空间结构。后面各案例如果只停在“输出了哪类文件”，而不说明它到底在测哪一类物理量，diagnostics 章节就会失焦。

@@ -35,6 +35,7 @@
 | `chapter_7_long_chapter_reader_navigation` | `PASS` |
 | `chapter_8_has_reader_facing_diagnostics_closure` | `PASS` |
 | `chapter_8_current_diagnostics_route` | `PASS` |
+| `chapter_7_8_boundary_to_diagnostics_handoff` | `PASS` |
 | `chapter_8_application_cases_are_reader_facing` | `PASS` |
 | `chapter_2_3_have_reader_facing_routes` | `PASS` |
 | `chapter_2_time_contract_reader_route` | `PASS` |

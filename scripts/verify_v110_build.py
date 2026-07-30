@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 8 restart reader card and Chapter 9 evidence routes yield 263 pages.
-EXPECTED_PDF_PAGES = 263
+# The Chapter 2 first-run reader card yields 264 pages.
+EXPECTED_PDF_PAGES = 264
 
 
 def image_links(text: str) -> list[str]:
@@ -55,6 +55,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-05-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-06-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-02-first-run-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-validation-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-restart-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-09-evidence-routes-reader-card-v0.110.md").read_text(encoding="utf-8")
@@ -322,6 +323,18 @@ def main() -> None:
             )
         ) and "| 路径 | 外层入口 | 源项/粒子时间组织 | 场推进特点 | 组合边界 |" not in chapter_2
         and not chapter_2_project_narration_markers,
+        "chapter_2_first_run_reader_card": all(
+            marker in source
+            for marker in (
+                "### 2.8.1 第一次运行的读者路线：构建、CTest 与手动分析各自回答什么",
+                "-DWarpX_DIMS=1",
+                "ctest --test-dir",
+                "warpx_used_inputs",
+                "程序退出为零",
+            )
+        )
+        and (ROOT / "scripts/audit_chapter_02_first_run_reader_card.py").is_file()
+        and "SOURCE_GROUNDED_FIRST_RUN_READER_CONTRACT" in source,
         "chapter_2_3_portable_source_navigation": all(
             marker in chapter_2
             for marker in (
@@ -1264,17 +1277,19 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（263 页候选）",
+                "当前增量复核（264 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
-                "| 258--260 |",
+                "| 28 |",
+                "| 29 |",
+                "| 259--261 |",
                 "| 219--254 |",
-                "| 224 |",
-                "| 229 |",
-                "| 255 |",
-                "| 261 |",
-                "262 页基线完整连续阅读 + 第 8、9 章变更范围与受影响版式的增量复核已记录",
+                "| 225 |",
+                "| 230 |",
+                "| 256 |",
+                "| 262 |",
+                "262 页基线完整连续阅读 + 第 2、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

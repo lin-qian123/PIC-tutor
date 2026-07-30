@@ -1217,6 +1217,50 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 
 因此，完成这个案例的最低交付应包括：输入参数、所消费的末态诊断、解析场误差和离散 Gauss-law 误差分别说明什么，以及它们不能外推到哪些算法组合。这样才真正把连续模型、离散方程和可运行的验证量连起来。
 
+### 2.8.1 第一次运行的读者路线：构建、CTest 与手动分析各自回答什么
+
+上一节给出了一个可回查的案例，但“有输入文件”不等于“已按正确维度编译、以预期 rank 数运行并消费输出”。首次操作时，把下面三层分开，能避免绝大多数把构建错误、调度错误和物理误读混为一谈的问题。
+
+**第一层是构建能力。** 官方 CMake 文档说明维度是编译期选项，而当前源码允许 `1`、`2`、`3`、`RZ`、`RCYLINDER` 和 `RSPHERE`。本节的输入是 1D，因此建立一个明确的 1D build directory：
+
+```bash
+export WARPX_ROOT=/path/to/warpx
+export WARPX_BUILD="$WARPX_ROOT/build-1d"
+
+cmake -S "$WARPX_ROOT" -B "$WARPX_BUILD" -DWarpX_DIMS=1
+cmake --build "$WARPX_BUILD" -j 4
+```
+
+不要把这个命令理解为“任意输入都能运行”。WarpX 的可执行文件名会编码编译选项；当前构建逻辑同时为 1D application 建立 `warpx.1d` 链接。因此，在继续前应确认实际二进制与输入的 `geometry.dims` 相容，而不是拿一个 3D、RZ 或旧 build directory 的可执行文件碰运气。
+
+**第二层是 CTest 参考执行。** 在默认 `WarpX_APP` 与 `BUILD_TESTING` 路径中，`Examples/` 会登记测试；`test_1d_langmuir_multi` 的 CMake 条目固定了 1D、2-rank、输入、分析脚本和 checksum。对已经配置好的上述 build，最短的参考调用是：
+
+```bash
+ctest --test-dir "$WARPX_BUILD" \
+  -R '^test_1d_langmuir_multi$' \
+  --output-on-failure
+```
+
+这条命令的价值是让 CTest 负责测试工作目录、两个 MPI rank 和 `analysis_1d.py diags/diag1000080` 的绑定。它通过时，支持的是这一条被登记的输入/consumer 合同；它不等于已经对任意参数覆盖、任意硬件后端或完整 Langmuir 理论完成验证。
+
+**第三层是手动运行与复核。** 只有需要改变输入、保留自己的输出或观察中间 diagnostics 时，才绕开 CTest。应在新的运行目录中复制输入和分析器，而不是把 `diags/` 写进源码案例目录：
+
+```bash
+export RUN_DIR=$HOME/warpx-work/langmuir-1d
+mkdir -p "$RUN_DIR"
+cp "$WARPX_ROOT/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi" "$RUN_DIR/inputs"
+cp "$WARPX_ROOT/Examples/Tests/langmuir/analysis_1d.py" "$RUN_DIR/"
+cp "$WARPX_ROOT/Examples/Tests/langmuir/analysis_utils.py" "$RUN_DIR/"
+
+cd "$RUN_DIR"
+mpirun -np 2 "$WARPX_BUILD/bin/warpx.1d" inputs
+python analysis_1d.py diags/diag1000080
+```
+
+最后一行需要可用的 `yt`、`numpy`、`scipy` 和 `matplotlib` 分析环境；这与 C++ 可执行文件能否启动是两项不同前提。直接运行会生成 `warpx_used_inputs`，其中包含显式和隐式使用的参数；诊断默认写到 `diags/`。两者应与终端输出一起保存，才能说明此次运行实际使用了什么输入。若改动过 `max_step`、diagnostics 名称或输出周期，`diags/diag1000080` 未必仍存在，分析脚本和 consumer 路径也必须随之重新核对。
+
+这三层形成一条首运行合同：**先让编译维度匹配输入，再用 CTest 确认官方注册的 producer/consumer 路径，最后才在独立目录修改输入并重新定义 analysis。** 任何一层成功都不能替代另外两层；尤其是“程序退出为零”既不自动产生解析误差 gate，也不自动证明手动修改后的输入仍满足原测试的结论范围。
+
 ## 2.9 基础文献与证据范围
 
 本章直接依托的基础来源是：

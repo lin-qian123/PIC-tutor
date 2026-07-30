@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 8 validation card and Chapter 9 evidence routes yield 264 pages.
-EXPECTED_PDF_PAGES = 264
+# The Chapter 8 restart reader card and Chapter 9 evidence routes yield 263 pages.
+EXPECTED_PDF_PAGES = 263
 
 
 def image_links(text: str) -> list[str]:
@@ -56,6 +56,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-06-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-validation-reader-card-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-08-restart-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-09-evidence-routes-reader-card-v0.110.md").read_text(encoding="utf-8")
     appendix_symbols = APPENDIX_SYMBOLS.read_text(encoding="utf-8")
     merged = MERGED_MARKDOWN.read_text(encoding="utf-8")
@@ -194,13 +195,15 @@ def main() -> None:
 
     checks = {
         "pdf_pages": len(reader.pages) == EXPECTED_PDF_PAGES,
-        "source_image_links": len(image_links(source)) == 16,
-        "merged_image_links": len(image_links(merged)) == 15,
+        "source_image_links": len(image_links(source)) == 15,
+        "merged_image_links": len(image_links(merged)) == 14,
         "image_links_relative": all(
             not link.startswith("/") for link in image_links(source) + image_links(merged)
         ),
-        "html_embedded_images": html.count("data:image/png;base64,") >= 15,
-        "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
+        "html_embedded_images": html.count("data:image/png;base64,") >= 14,
+        "figure_markers": all(
+            f"图 8-{index}" in pdf_text for index in (*range(1, 11), 12)
+        ),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
         "appendix_distinguishes_plotfile_from_checkpoint": all(
             marker in appendix_symbols
@@ -589,6 +592,17 @@ def main() -> None:
             )
         ) and (ROOT / "scripts/audit_chapter_08_validation_reader_card.py").is_file()
         and "SOURCE_GROUNDED_READER_VALIDATION_CONTRACT" in source,
+        "chapter_8_restart_reader_card": all(
+            marker in source
+            for marker in (
+                "### Checkpoint/restart 的读者合同：续跑一致性与跨布局比较不是同一问题",
+                "同一 CTest 布局下",
+                "不能从 `epsilon_f < 1e-12` 自动推出",
+                "输出回归",
+            )
+        )
+        and (ROOT / "scripts/audit_chapter_08_restart_reader_card.py").is_file()
+        and "SOURCE_GROUNDED_RESTART_READER_CONTRACT" in source,
         "chapter_9_current_literature_route": all(
             marker in chapter_9
             for marker in (
@@ -1250,16 +1264,16 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（264 页候选）",
+                "当前增量复核（263 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
-                "| 259--261 |",
+                "| 258--260 |",
                 "| 219--254 |",
+                "| 224 |",
                 "| 229 |",
-                "| 230 |",
-                "| 256 |",
-                "| 262 |",
+                "| 255 |",
+                "| 261 |",
                 "262 页基线完整连续阅读 + 第 8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )

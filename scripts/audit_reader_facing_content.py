@@ -219,6 +219,10 @@ def main() -> int:
         r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录|源码笔记",
         chapter_8,
     )
+    chapter_8_restart_record_markers = re.findall(
+        r"归档的 2D 运行|MPICH|2\.8631e-16|rank-invariant field gate 不通过",
+        chapter_8,
+    )
     chapter_9_project_path_markers = re.findall(
         r"docs/|references/|notes/|runs/|scripts/|public-evidence-index|literature-map",
         chapter_9,
@@ -608,6 +612,18 @@ def main() -> int:
                 "不能把一次 PASS 推广成“该应用已经验证”",
             )
         ) and not chapter_8_project_path_markers and not chapter_8_project_narration_markers,
+        "chapter_8_restart_reader_card": all(
+            marker in chapter_8
+            for marker in (
+                "### Checkpoint/restart 的读者合同：续跑一致性与跨布局比较不是同一问题",
+                "同一 CTest 布局下",
+                "不能从 `epsilon_f < 1e-12` 自动推出",
+                "输出回归",
+            )
+        )
+        and not chapter_8_project_path_markers
+        and not chapter_8_project_narration_markers
+        and not chapter_8_restart_record_markers,
         "chapter_2_3_have_reader_facing_routes": all(
             marker in chapter_2
             for marker in (
@@ -772,14 +788,14 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（264 页候选）",
+                "当前增量复核（263 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
-                "| 259--261 |",
+                "| 258--260 |",
+                "| 224 |",
                 "| 229 |",
-                "| 230 |",
-                "| 256 |",
+                "| 255 |",
                 "| 261 |",
             )
         ),
@@ -797,7 +813,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 264-page candidate has recorded Chapter 8 and Chapter 9 incremental reviews"
+            "the current 263-page candidate has recorded Chapter 8 and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -820,6 +836,7 @@ def main() -> int:
         "chapter_8_project_record_markers": chapter_8_project_record_markers,
         "chapter_8_project_path_markers": chapter_8_project_path_markers,
         "chapter_8_project_narration_markers": chapter_8_project_narration_markers,
+        "chapter_8_restart_record_markers": chapter_8_restart_record_markers,
         "chapter_8_stale_location_markers": chapter_8_stale_location_markers,
         "chapter_9_project_path_markers": chapter_9_project_path_markers,
         "chapter_9_project_narration_markers": chapter_9_project_narration_markers,
@@ -868,7 +885,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 264-page candidate has recorded Chapter 8 and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 263-page candidate has recorded Chapter 8 and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

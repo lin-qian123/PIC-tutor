@@ -208,33 +208,27 @@ Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族�
 
 压成了本书第二条适合系统学习的应用主线。
 
-归档的 2D 运行从 `Examples/Physics_applications/uniform_plasma/inputs_test_2d_uniform_plasma` 生成 `diags/diag1000010`。它说明最小 workflow 可以落盘，但这里必须保持验证分级：
+`test_2d_uniform_plasma` 的 CTest 注册为 2-rank，但不带独立 analysis，只附加 `analysis_default_regression.py` 的 checksum。它因此是一个很有价值的最小 workflow 基线：可以检查输入、并行分解和 Full diagnostics 能否共同产出预期输出；却不能把 checksum 通过写成热等离子体能量守恒，也不能因为输入生成了 Full diagnostic 就宣称已经完成了 openPMD reader 验证。需要后者时，应选择实际把 openPMD 作为 consumer 的案例。
 
-- 主程序运行成功，只能证明 workflow、writer、最小噪声背景和输出路径正常；
-- 官方 regression 本来就只有 `analysis_default_regression.py --path diags/diag1000010` 这一层 checksum；
-- 这条 2D case 的现有证据不包含独立的 openPMD 读取验证；需要该格式时，应按后文的 openPMD reader 案例另行执行 consumer。
+### Checkpoint/restart 的读者合同：续跑一致性与跨布局比较不是同一问题
 
-因此 `uniform_plasma` 的证据等级应表述为：
+`test_3d_uniform_plasma_restart` 才把这个应用从“能生成输出”推进到一条明确的续跑比较。它依赖 `test_3d_uniform_plasma`，两者都注册为 3D、2-rank CTest：基线输入在第 6 步写出 `chk000006`，restart 输入只在同一输入上增加 `amr.restart = "../test_3d_uniform_plasma/diags/chk000006"`。两条路径都推进到第 10 步，并把同一类 Full diagnostic 写到 `diags/diag1000010`。
 
-- 已有运行级 baseline；
-- 尚不是独立物理解强断言；
-- 它的强 physics closure 仍需借相邻 `restart`、`energy_conserving_thermal_plasma` 和 `nci_psatd_stability` 三棵树来补齐。
+consumer 的定义比“比较两个文件”更严格。`analysis_default_restart.py` 从 restart 测试目录名去掉 `_restart` 来定位基线目录；随后在两个 level-0 covering grid 上遍历基线的完整 `field_list`。因此它同时消费网格场、粒子属性和诊断实际写出的字段，而不是只比较 `E` 的一张切片。对每个字段，它计算
 
-### Checkpoint/restart 的运行证据
+$$
+\epsilon_f = \frac{\max |f_{\rm restart}-f_{\rm base}|}{\max |f_{\rm base}|},
+$$
 
-对同一组 3D 输入，基线从第 0 步推进到第 10 步，并在第 6 步写出 `diags/chk000006`；restart sibling 从该 checkpoint 继续推进到第 10 步。两条路径最终都写出 `diags/diag1000010`，可据此直接比较末态。
+当基线分母为零时保留绝对最大差；默认要求每一个字段满足 `epsilon_f < 1e-12`。这给读者一条可执行的续跑合同：先固定 build、输入、checkpoint、输出时间和并行布局，再比较基线与 restart 的同一末态。
 
-官方 `Examples/analysis_default_restart.py` 与独立 reader-side 比较都会对两个末态 plotfile 的 level-0 covering grid 逐字段比较。共比较 37 个 field，包含 `Bx/By/Bz`、`Ex/Ey/Ez`、`jx/jy/jz`、`rho`，以及 `electrons` 的粒子位置、动量、权重和粒子 ID；独立对照的最大绝对误差为 `2.4414e-4`，最大相对误差为 `2.8631e-16`，通过官方 `1e-12` 容差。绝对误差来自量纲较大的场/电流数组，不能脱离相对误差单独解释。
+这里必须把三种问题分开：
 
-这一证据有两个必须同时保留的边界。第一，它直接证明的是 checkpoint 状态恢复、粒子/场续跑和末态 diagnostics 的 reproducibility，不是热平衡能量守恒或某个解析波的 physics gate。第二，WarpX 的 CMake 注册把该测试配置为 2-rank MPI；使用 MPICH `mpiexec -n 2` 按官方兄弟目录布局执行后，官方 `analysis_default_restart.py` 对 37 个 field 全部通过，独立 reader-side 对照的最大相对误差为 `2.8631e-16 < 1e-12`。但仓库 checksum API 的 rank-specific 聚合参考与 2-rank producer 不一致，最大相对差为 `3.20e-2`；因此这里应写成“2-rank restart reproducibility evidence”，同时保留 checksum 非通过边界，不能把逐字段 restart pass 扩大成 checksum pass。
+1. **续跑一致性：** 同一 CTest 布局下，checkpoint 是否保留了使后续场和粒子输出可重合的状态。这正是上述 consumer 检查的对象。
+2. **跨布局比较：** 1-rank 与 2-rank，或不同分块、GPU/MPI 组合是否给出相同的统计量或场，并不是这个 restart consumer 的输入。它需要事先指定独立 observable、随机采样策略和容差，不能从 `epsilon_f < 1e-12` 自动推出。
+3. **输出回归：** CMake 还为 restart sibling 添加了 `analysis_default_regression.py --rtol 1e-12`。checksum 能发现指定输出相对基线是否改变，但它不是基线/restart 同字段比较的替代品；两类失败也必须分别诊断。
 
-为解释这一 checksum 边界，可在相同输入下分别生成 1-rank、2-rank 的非-restart 基线，再比较相同时间的输出。两套 producer 的粒子总权重完全一致；field energy 相对差为 `1.9379e-2`，particle kinetic energy 相对差为 `8.9170e-4`，total energy 相对差为 `6.2269e-4`，physical-field 最大 L2 相对差为 `1.0185`。因此该 thermal/randomized uniform-plasma case 的 rank-invariant field contract 明确不成立，checksum 差异不能被解释成 restart 失败；只有 2-rank restart 的 plotfile-to-plotfile 一致性可写成通过证据。
-
-图 8-11 将这条边界压成两个可读的面板：左图显示 2-rank 相对 1-rank 的全局能量比，右图显示 `B/E/J/rho` 各组 physical field 的最大 L2 相对误差。左图说明粒子动能和总能量仍接近，但右图说明逐场 rank-invariant gate 并未成立；虚线是参考值或 `1e-12` machine-level gate，不是本案例已经通过的物理阈值。
-
-![](../assets/figures/uniform-plasma-mpi-consistency.png)
-
-图 8-11 由同一组输出的 reader-side 比较重建；该图展示的是并行证据边界，不是新的强 physics benchmark。
+因此，这条测试可以支持“指定 3D、2-rank、checkpoint-to-restart 路径的末态输出可按 `1e-12` 合同比较”，不能支持热平衡已经守恒、任意 MPI 布局物理等价，或 checkpoint 覆盖了没有写入 `field_list` 的任意外部状态。`uniform_plasma` 的物理闭环仍需由 `energy_conserving_thermal_plasma` 和 `nci_psatd_stability` 中各自的 observable 提供。
 
 ## 激光与束流驱动的尾场加速
 
@@ -1644,8 +1638,8 @@ $$
 | 案例/诊断 | 观察量与可支持结论 | 仍需保留的边界 |
 |---|---|---|
 | Langmuir | 场误差 `1.70e-3`、最终守恒 `8.35e-12`、频率误差 `3.595e-4`；解析波与守恒链均通过 | 不替代多模式或完整色散研究 |
-| Uniform plasma restart | 37 个 field 的末态相对误差 `2.8631e-16 < 1e-12`；checkpoint/restart 可重复 | 不证明热平衡或跨 rank 场一致性 |
-| Uniform plasma MPI | 粒子总权重一致，但 rank-invariant field gate 不通过 | 不能把 checksum 差异写成 restart 失败 |
+| Uniform plasma restart | 同一 3D、2-rank CTest 布局中，遍历 level-0 `field_list`，要求每个基线/restart 末态字段误差 `< 1e-12` | 不证明热平衡或跨布局物理等价 |
+| Uniform plasma 跨布局 | 需要独立定义全局统计量、随机采样策略与容差 | 不能从 restart field-by-field PASS 推出 1-rank、2-rank 或其他分块的等价性 |
 | Thermal plasma | `EF+EP` 共同漂移 `<0.003` | 仅覆盖指定 family 和时间窗 |
 | FieldProbe | coarse `3.6703%` 失败；matched-time refined `0.3533%` 通过 | refined 结果不能反写为 coarse 输入通过 |
 | Reduced observables | 60 项与 full-state reference 对照；非 field-energy `<1e-12` | field-energy 使用独立的 `<0.3` 容差 |
@@ -1657,7 +1651,7 @@ $$
 
 这张表中的“通过”只表示对应列出的 gate 通过。例如 FieldProbe 的 coarse 输入仍然是失败证据，完整 initial-distribution 的随机 checksum 也不等价于确定性 `1e-9` 回归；这样读者可以从同一张表直接区分强 physics analysis、writer/schema contract、性能 gate 和采样统计边界。任何摘要都不替代下表所指向的输入、analysis 和原始诊断输出。
 
-本章的证据等级应按诊断问题分开理解：Langmuir 提供解析频率、场误差和最终守恒；uniform plasma 提供粒子数、能量统计和 checkpoint/restart 逐字段一致性，但短时总能量变化不等于热平衡守恒；FieldProbe 的 `lambda/32` matched-time 对照通过解析 gate，而官方 `lambda/16` coarse case 仍是失败证据；`reduced_diags` 将 compact observable 与 full-state reference 逐项对照，`LoadBalanceCosts` 则只验证效率改善；`ColliderRelevant`、`DifferentialLuminosity`、`ParticleHistogram2D` 和 `BeamRelevant` 分别验证其统计、谱或 writer 定义。RZ 多模 Langmuir 和 native Gaussian sibling 是有界案例证据，不能替代各自缺失的官方 analysis。每一项都必须沿验证矩阵中的 producer、consumer、observable 和限制阅读，不能用“已经运行”替代物理结论。
+本章的证据等级应按诊断问题分开理解：Langmuir 提供解析频率、场误差和最终守恒；uniform plasma 提供 Full diagnostics workflow 与同一布局下 checkpoint/restart 的逐字段一致性，但短时总能量变化不等于热平衡守恒，restart PASS 也不等于跨布局等价；FieldProbe 的 `lambda/32` matched-time 对照通过解析 gate，而官方 `lambda/16` coarse case 仍是失败证据；`reduced_diags` 将 compact observable 与 full-state reference 逐项对照，`LoadBalanceCosts` 则只验证效率改善；`ColliderRelevant`、`DifferentialLuminosity`、`ParticleHistogram2D` 和 `BeamRelevant` 分别验证其统计、谱或 writer 定义。RZ 多模 Langmuir 和 native Gaussian sibling 是有界案例证据，不能替代各自缺失的官方 analysis。每一项都必须沿验证矩阵中的 producer、consumer、observable 和限制阅读，不能用“已经运行”替代物理结论。
 
 ## 8.14 从诊断入口到可解释证据
 
@@ -1697,7 +1691,7 @@ $$
 
 1. **证据分层题**：从验证矩阵中各选一个 physics gate、writer/schema 检查和 performance gate，说明它们的 producer、analysis 量和“不能支持的结论”。
 2. **reader-side 复现题**：使用官方 `analysis.py` 或独立的 reader-side analysis 读取一个案例输出，按诊断记录卡列出输入字段、采样时间层、输出文件、比较量、阈值和不可外推范围。
-3. **失败边界题**：解释为什么 FieldProbe coarse failure、uniform-plasma reader-side 能量漂移和 initial-distribution binary mismatch 都应保留在书中，而不能简单从验证矩阵中删除。
+3. **失败边界题**：解释为什么 FieldProbe coarse failure、uniform-plasma 的跨布局问题和 initial-distribution binary mismatch 都应保留在书中，而不能简单从验证矩阵中删除。
 
 ## 8.16 延伸验证路线
 

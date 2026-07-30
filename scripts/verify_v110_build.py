@@ -19,8 +19,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# Reader-facing chapter openings, long-chapter navigation, and the Chapter 4--6
-# source extracts rendered as declared reader pseudocode yield 256 pages.
+# Reader-facing chapter openings, long-chapter navigation, and declared source
+# excerpts/reading indexes in Chapters 4--7 yield 256 pages.
 EXPECTED_PDF_PAGES = 256
 
 
@@ -481,6 +481,14 @@ def main() -> None:
             r"docs/chapter-07-v0-evidence-ledger|contract\.\{json,md\}",
             chapter_7,
         ),
+        "chapter_7_reader_indexes_are_declared": all(
+            marker in chapter_7
+            for marker in (
+                "这不是完整函数签名，而是对 `PML` 构造参数",
+                "`Source/EmbeddedBoundary/WarpXInitEB.cpp`",
+                "这段是控制流摘录，不是可编译源码",
+            )
+        ) and "`Source/WarpXInitEB.cpp`" not in chapter_7,
         "chapter_8_current_diagnostics_route": all(
             marker in chapter_8
             for marker in (

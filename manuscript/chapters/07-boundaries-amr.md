@@ -215,19 +215,16 @@ PML 的物理目标是吸收入射电磁波，使开放边界尽量不反射。�
 
 ## 7.4 PML 在 WarpX 里是独立子域，不是单个边界公式
 
-`PML` 类本身管理的是一整套 PML 子域、split fields 和阻尼系数缓存：
+`PML` 类本身管理的是一整套 PML 子域、split fields 和阻尼系数缓存。读构造函数时，先把它的输入按职责归成四组：
 
-```cpp
-class PML
-{
-public:
-    PML (...,
-         int ncell, int delta, ...,
-         int pml_has_particles, int do_pml_in_domain,
-         ...,
-         bool do_pml_dive_cleaning, bool do_pml_divb_cleaning,
-         ...);
+```text
+PML geometry:       ncell, delta
+particle coupling:  pml_has_particles
+in-domain mode:     do_pml_in_domain
+cleaning coupling:  do_pml_dive_cleaning, do_pml_divb_cleaning
 ```
+
+这不是完整函数签名，而是对 `PML` 构造参数中与本章因果链相关部分的阅读索引；其余网格、patch 和通信对象由调用侧提供。
 
 源码入口：`Source/BoundaryConditions/PML.H`。
 
@@ -256,7 +253,9 @@ p_sigma_star[i-sslo] = fac*(offset*offset);
 
 ## 7.5 PML split field 与 PML 电流
 
-在主循环里，PML 阻尼入口是 `WarpX::DampPML()`，Cartesian 实际工作函数是 `DampPML_Cartesian()`。见 `Source/BoundaryConditions/WarpXEvolvePML.cpp`。
+在主循环里，PML 阻尼入口是 `WarpX::DampPML()`，Cartesian 实际工作函数是 `DampPML_Cartesian()`。
+
+源码入口：`Source/BoundaryConditions/WarpXEvolvePML.cpp`。
 
 这个函数先取出 `pml_E`、`pml_B`、`sigba` 和每个分量的 stagger 信息，然后把它们送进 `warpx_damp_pml_ex/ey/ez/bx/by/bz`。例如 `Ex` 的 split 分量阻尼：
 
@@ -372,7 +371,7 @@ if (! impf.empty()) {
 }
 ```
 
-源码入口：`Source/WarpXInitEB.cpp`。
+源码入口：`Source/EmbeddedBoundary/WarpXInitEB.cpp`。
 
 这里的结构很清楚：
 
@@ -391,7 +390,7 @@ for (int lev=0; lev<=maxLevel(); lev++) {
 }
 ```
 
-源码入口：`Source/WarpXInitEB.cpp`。
+源码入口：`Source/EmbeddedBoundary/WarpXInitEB.cpp`。
 
 所以 `distance_to_eb` 不是附加诊断，而是后续 scraping、近壁沉积和 cut-cell 处理可以直接复用的几何辅助场。
 
@@ -454,14 +453,7 @@ if(int(S(i, j, k) > 0 && !flag_ext_face_data(i, j, k))) {
 - `flag_info_face = 1` 表示它是可出借面积的稳定面；
 - 在 extension 过程中，被别人侵入的 lender 会再改成 `2`。
 
-真正的 extension 在 `WarpX::ComputeFaceExtensions()` 里按三步进行：
-
-```cpp
-::init_borrowing(m_borrowing[maxLevel()], Bfield);
-ComputeOneWayExtensions();
-ComputeEightWaysExtensions();
-::shrink_borrowing(m_borrowing[maxLevel()], Bfield);
-```
+真正的 extension 在 `WarpX::ComputeFaceExtensions()` 里按三步进行：先初始化 `m_borrowing`，再依次尝试 `ComputeOneWayExtensions()` 和 `ComputeEightWaysExtensions()`，最后收缩并整理 borrowing 记录。这条顺序很重要：第二阶段只能处理第一阶段尚未稳定的 face，不能把 two-stage extension 误读成两个独立开关。
 
 源码入口：`Source/EmbeddedBoundary/WarpXFaceExtensions.cpp`。
 
@@ -673,23 +665,17 @@ rho 路径在 `SyncRho()` 中基本平行，只是 bilinear filter 与 `SumBound
 
 继续顺着 `WarpXRegrid.cpp` 往下读时，问题就不再是“数据如何同步”，而会转成“`DistributionMapping` 改变后，fields、particles、EB、boundary buffer 和 diagnostics 如何整体重建”。这也是为什么 regrid 不能只用末态场图来判断正确性。
 
-`WarpXRegrid.cpp` 的顶层入口是：
+`WarpXRegrid.cpp` 的顶层入口是 `WarpX::CheckLoadBalance(step)`。它的读者级控制流可写成：
 
-```cpp
-void
-WarpX::CheckLoadBalance (int step)
-{
-    if (step > 0 && load_balance_intervals.contains(step+1))
-    {
-        LoadBalance();
-        ResetCosts();
-    }
-    if (!costs.empty())
-    {
-        RescaleCosts(step);
-    }
-}
+```text
+if step hits load_balance_intervals:
+    LoadBalance()
+    ResetCosts()
+if timing costs are available:
+    RescaleCosts(step)
 ```
+
+这段是控制流摘录，不是可编译源码；它刻意省略类型、花括号和容器细节，只保留“何时触发搬迁”和“何时重标定成本”两件会影响后续解释的事。
 
 源码入口：`Source/Parallelization/WarpXRegrid.cpp`。
 

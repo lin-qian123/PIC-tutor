@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39119670,
+  "total_bytes": 39119074,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1560190,
-      "sha256": "9f2b8cc903ccc3f66c766038d3e772749c7b4c39ac3c5c8a7da009c02644cab9"
+      "bytes": 1560267,
+      "sha256": "7224f5f24465e54cd1fd1f6a6c5d704b53f4f9c2453b78bfb8eec545bf70b722"
     },
     {
       "path": "TODO.md",
-      "bytes": 1447268,
-      "sha256": "ae2105a127d310859ba2b8a29e0350828b8b06546680c915fe3d88d7752321c2"
+      "bytes": 1448058,
+      "sha256": "56d60ac3a8d270c685fd1a30850684d19df0edcdf03184395efeb1e4941865b6"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5082293,
-      "sha256": "930263ef1a4648f2f46aa88ce275bc184ceeb83a267ab91e7fea510a074c222f"
+      "bytes": 5078981,
+      "sha256": "c856dbe9ec79a3b9846441a84146db8a4db28eaae62fe5dab44ca16b0e71e254"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 844229,
-      "sha256": "eb9126583a875f1684fa322bfb7c4347c292121d231f89d2a5578f2fd01b9997"
+      "bytes": 844756,
+      "sha256": "733f8a062ec2a266389a869bbbd3d588f69a2672209febd0caab672f33652b3d"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2965756,
-      "sha256": "b30077933970a30c51170f9de356df2049a92b667386318c0234b15ce18762e6"
+      "bytes": 2965672,
+      "sha256": "12a71ba81c7d59fce9b8c07fbadc0360e780e9dbb303532406ed04319c08ffec"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -208,7 +208,7 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.json",
       "bytes": 1164,
-      "sha256": "670552e63b81784d7f665e499b1dd488da0142eb281540b9977d586a23b551ba"
+      "sha256": "a97d6bf2b4764d6bd95dcc2cdbd4e115bafb15dc7f3b753609935cca1944af0f"
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
@@ -532,8 +532,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 52365,
-      "sha256": "eb24f002e2e46e71d2c76a17c0361f4588e36058b2225ad7939162bf17c85faa"
+      "bytes": 52864,
+      "sha256": "d0c37bdde471b6f1a7d9fc04ad442c3a921b410d8bf30675814ad2a2123a1962"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -2342,8 +2342,8 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 48283,
-      "sha256": "0f6f813eed44b5b1f7bd9e0a81473dbd07c9030fa34eb7d55b18740c04fd3346"
+      "bytes": 48810,
+      "sha256": "66a1dcb48f330b0c05295fd57ca790802f5d73f3ea812f781a532e93ac65cc63"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
@@ -5987,8 +5987,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 58140,
-      "sha256": "9636382f3ea171f0c6d778c54625bf0cbf475ee6453260f8f64f8d8461cfeb2b"
+      "bytes": 58520,
+      "sha256": "6da51e14445e6ffd876ec5b27e05dd4c35fd7773ddbdd6511d1c3e0a1c7828e9"
     },
     {
       "path": "scripts/verify_v40_build.py",

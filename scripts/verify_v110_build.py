@@ -239,6 +239,23 @@ def main() -> None:
             r"contract\.\{json,md\}|全文笔记|逐式记录|证据台账",
             chapter_6,
         ),
+        "chapter_5_6_source_to_field_handoff": all(
+            marker in chapter_6
+            for marker in (
+                "从第 5 章同步 source 到第 6 章场更新的交接卡",
+                "不是所有求解器都在同一函数内取得最终 source 的同义句",
+                "`CopyJPML()`、`DampJPML()`",
+                "非 periodic-single-box 的 current-correction 或 Vay deposition 路径会把最终整理延后到 `PushPSATD()`",
+                "`current_fp_vay` 的 D-field 重构 `current_fp`",
+                "`OneStep_JRhom()` 先完整推进粒子却设置 `skip_deposition=true`",
+                "`J_0`、suborbit current 与 mass-matrix 线性化",
+                "一次 nonlinear trial 不是独立的场更新样本",
+            )
+        ) and not chapter_6_stale_location_markers and not re.search(
+            r"scripts/|notes/code-reading|runs/stage-c-validation|docs/chapter-06-v0-evidence-ledger|"
+            r"contract\.\{json,md\}|全文笔记|逐式记录|证据台账",
+            chapter_6,
+        ),
         "chapter_6_long_chapter_reader_navigation": all(
             marker in chapter_6
             for marker in (

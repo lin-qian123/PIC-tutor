@@ -21,6 +21,7 @@
     "chapter_4_5_multiphysics_source_handoff": true,
     "chapter_6_opening_is_reader_facing": true,
     "chapter_6_current_solver_route": true,
+    "chapter_5_6_source_to_field_handoff": true,
     "chapter_6_long_chapter_reader_navigation": true,
     "chapter_6_has_reader_facing_closure": true,
     "chapter_7_has_reader_facing_boundary_closure": true,

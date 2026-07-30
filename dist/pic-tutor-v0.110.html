@@ -14440,6 +14440,52 @@ t}{2}\nabla_h\times\mathbf{E}^{n+1}.
 cells。若介质模型不是 vacuum，E 的主入口会转为
 <code>MacroscopicEvolveE()</code>；因此“FDTD”并不自动表示一条无介质、无边界辅助场的最小
 Yee 更新。</p>
+<p><strong>从第 5 章同步 source 到第 6 章场更新的交接卡。</strong>
+“已经调用
+<code>SyncCurrentAndRho()</code>”不是所有求解器都在同一函数内取得最终
+source 的同义句。应沿实际 consumer 判断 source
+的最后一次整理，而不是只看到一个同步函数名就假定 <span class="math inline">\(\rho,\mathbf{J}\)</span>
+已可被任何场更新直接使用。</p>
+<ol type="1">
+<li><strong>普通 FDTD。</strong> <code>OneStep_nosub()</code>
+在带电粒子沉积后调用 <code>SyncCurrentAndRho()</code>；若启用带粒子的
+extended PML，再依次执行
+<code>CopyJPML()</code>、<code>DampJPML()</code>。随后是
+<code>EvolveF(..., rho_comp=0)</code>、第一半
+<code>EvolveB()</code>、<code>EvolveE()</code>、<code>EvolveF(..., rho_comp=1)</code>、第二半
+<code>EvolveB()</code>：半步 <span class="math inline">\(\mathbf{J}\)</span> 进入电场更新，旧/新 <span class="math inline">\(\rho\)</span> 分别进入两次 divergence-cleaning
+更新。没有开启 cleaning 时，不能把 <span class="math inline">\(\rho\)</span> 误说成每一步都直接出现在普通 E curl
+kernel 中。</li>
+<li><strong>标准 PSATD。</strong> periodic single-box 路径可在
+<code>SyncCurrentAndRho()</code> 内完成 <code>J/rho</code> 同步；但非
+periodic-single-box 的 current-correction 或 Vay deposition
+路径会把最终整理延后到 <code>PushPSATD()</code>。前者先 FFT、在 k-space
+做 <code>PSATDCurrentCorrection()</code>、反变换后再同步；后者从
+<code>current_fp_vay</code> 的 D-field 重构
+<code>current_fp</code>，再做 <code>SumBoundaryJ()</code> /
+<code>SyncRho()</code>。因此 PSATD 的 field consumer 读取的是经这条完整
+route 进入谱空间的 source，而不是某次 tile deposition 的原始数组。</li>
+<li><strong>JRhom。</strong> <code>OneStep_JRhom()</code>
+先完整推进粒子却设置
+<code>skip_deposition=true</code>，然后在每个子区间以不同
+<code>relative_time</code> 重沉积、同步并 FFT <span class="math inline">\(J\)</span> 与 <span class="math inline">\(\rho\)</span>，再调用
+<code>PSATDPushSpectralFields()</code>。它消费的是由
+<code>psatd.JRhom</code> 指定的 old/mid/new source 时间模型，而不是普通
+PSATD 的单个半步电流加两个 charge endpoint。</li>
+<li><strong>implicit 与 PML。</strong> 在 implicit residual
+路径中，<code>J_0</code>、suborbit current 与 mass-matrix
+线性化共同构成用于场方程的 trial source，并在相应阶段同步；一次
+nonlinear trial 不是独立的场更新样本。PML
+也不是同步后的旁路装饰：带粒子的 extended PML 在场推进前接收
+regular-grid <code>J</code> 的复制和可选 damping，随后由各自的 PML
+场更新消费。</li>
+</ol>
+<p>验证时应把 consumer 对齐到这四条路径：FDTD 比较时间层一致的
+field/cleaning residual，standard PSATD 比较最终 corrected/reconstructed
+source 对应的场能和 Gauss-law，JRhom 必须连同 <code>JRhom</code>
+字符串、子区间数和 source 时间模型检查，implicit 则同时看
+residual、能量和迭代收敛。任何一个 source snapshot、FFT 或 checksum
+都不能单独证明完整 source-to-field 链正确。</p>
 <h3 id="选择路径前的检查表">选择路径前的检查表</h3>
 <ul>
 <li><strong>Yee FDTD。</strong> 选择交错网格上的有限差分 curl，并用

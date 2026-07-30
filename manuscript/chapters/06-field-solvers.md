@@ -36,6 +36,15 @@ $$
 
 `OneStep_nosub()` 中的普通电磁分支还会在两次 B 推进的前后处理清洁场 `F/G`，并在每个必要阶段填充 guard cells。若介质模型不是 vacuum，E 的主入口会转为 `MacroscopicEvolveE()`；因此“FDTD”并不自动表示一条无介质、无边界辅助场的最小 Yee 更新。
 
+**从第 5 章同步 source 到第 6 章场更新的交接卡。** “已经调用 `SyncCurrentAndRho()`”不是所有求解器都在同一函数内取得最终 source 的同义句。应沿实际 consumer 判断 source 的最后一次整理，而不是只看到一个同步函数名就假定 \(\rho,\mathbf{J}\) 已可被任何场更新直接使用。
+
+1. **普通 FDTD。** `OneStep_nosub()` 在带电粒子沉积后调用 `SyncCurrentAndRho()`；若启用带粒子的 extended PML，再依次执行 `CopyJPML()`、`DampJPML()`。随后是 `EvolveF(..., rho_comp=0)`、第一半 `EvolveB()`、`EvolveE()`、`EvolveF(..., rho_comp=1)`、第二半 `EvolveB()`：半步 \(\mathbf{J}\) 进入电场更新，旧/新 \(\rho\) 分别进入两次 divergence-cleaning 更新。没有开启 cleaning 时，不能把 \(\rho\) 误说成每一步都直接出现在普通 E curl kernel 中。
+2. **标准 PSATD。** periodic single-box 路径可在 `SyncCurrentAndRho()` 内完成 `J/rho` 同步；但非 periodic-single-box 的 current-correction 或 Vay deposition 路径会把最终整理延后到 `PushPSATD()`。前者先 FFT、在 k-space 做 `PSATDCurrentCorrection()`、反变换后再同步；后者从 `current_fp_vay` 的 D-field 重构 `current_fp`，再做 `SumBoundaryJ()` / `SyncRho()`。因此 PSATD 的 field consumer 读取的是经这条完整 route 进入谱空间的 source，而不是某次 tile deposition 的原始数组。
+3. **JRhom。** `OneStep_JRhom()` 先完整推进粒子却设置 `skip_deposition=true`，然后在每个子区间以不同 `relative_time` 重沉积、同步并 FFT \(J\) 与 \(\rho\)，再调用 `PSATDPushSpectralFields()`。它消费的是由 `psatd.JRhom` 指定的 old/mid/new source 时间模型，而不是普通 PSATD 的单个半步电流加两个 charge endpoint。
+4. **implicit 与 PML。** 在 implicit residual 路径中，`J_0`、suborbit current 与 mass-matrix 线性化共同构成用于场方程的 trial source，并在相应阶段同步；一次 nonlinear trial 不是独立的场更新样本。PML 也不是同步后的旁路装饰：带粒子的 extended PML 在场推进前接收 regular-grid `J` 的复制和可选 damping，随后由各自的 PML 场更新消费。
+
+验证时应把 consumer 对齐到这四条路径：FDTD 比较时间层一致的 field/cleaning residual，standard PSATD 比较最终 corrected/reconstructed source 对应的场能和 Gauss-law，JRhom 必须连同 `JRhom` 字符串、子区间数和 source 时间模型检查，implicit 则同时看 residual、能量和迭代收敛。任何一个 source snapshot、FFT 或 checksum 都不能单独证明完整 source-to-field 链正确。
+
 ### 选择路径前的检查表
 
 - **Yee FDTD。** 选择交错网格上的有限差分 curl，并用 `warpx.cfl` 与网格尺度共同约束时间步。`CartesianYeeAlgorithm.H` 给出空间差分，`EvolveB.cpp` / `EvolveE.cpp` 消费该差分；应分别检查传播色散、守恒量与边界反射。

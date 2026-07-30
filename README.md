@@ -28,6 +28,8 @@
 
 第 6 章已完成场求解器主线的当前源码与读者路径复核：从 `OneStep_nosub()` 中已同步的 `J/rho` 出发，区分 FDTD、PSATD 与 JRhom 的时间模型，再将 PML、guard-cell、几何/FFT 约束和对应观察量接回同一判断链。章节导航已移除内部笔记、运行归档和固定行号；Yee/CKC/Nodal、Galilean/Comoving PSATD、JRhom、隐式和 Hybrid PIC 的结论均保留各自可支持与不可外推边界。当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
 
+第 5--6 章现进一步补足 source-to-field 的实际交接：普通 FDTD 在同步后才按条件复制、阻尼 PML 电流并按交错时间层消费 source；非周期 PSATD 的 current-correction/Vay 路径会在 `PushPSATD()` 内完成最后的 correction 或重构；JRhom 则按子区间重新沉积、同步并变换 source。implicit residual 中的 trial source 也与一次已提交场更新明确区分，因此读者可按对应 consumer 选择 field/cleaning residual、Gauss-law、场能或迭代收敛，而不会把单个 source snapshot 当作整条链已经正确的证明。
+
 第 5 章已完成沉积主线的当前源码与读者路径复核：从形函数、旧/新 `rho` 与半步 `J` 的时间层，连到 `DepositCurrent()` / `DepositCharge()` 的算法分派和 `SyncCurrentAndRho()` 的同步职责。章节不再把脚本、运行归档或项目证据台账作为阅读入口；Direct、Esirkepov、Villasenor 与 Vay 的选择条件、AMR/guard-cell 边界及 RZ axis residual 的证据范围均改为读者可判断的因果链。当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
 
 第 4--5 章现以一张跨章 source 交接卡闭合多物理语义：field ionization 的离化态与 electron product、QED pair 与 photon 的非沉积边界、explicit collision split 的延迟沉积，以及 implicit 收敛后 source 的提交时刻，都统一接到旧/新 `rho` 与半步 `J`。读者不会再把 particle count、optical depth 或一次 trial 当作网格 source 已正确进入场方程的证明。

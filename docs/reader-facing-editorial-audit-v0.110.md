@@ -26,6 +26,7 @@
 | `chapter_4_5_multiphysics_source_handoff` | `PASS` |
 | `chapter_6_opening_is_reader_facing` | `PASS` |
 | `chapter_6_current_solver_route` | `PASS` |
+| `chapter_5_6_source_to_field_handoff` | `PASS` |
 | `chapter_6_long_chapter_reader_navigation` | `PASS` |
 | `chapter_6_has_reader_facing_closure` | `PASS` |
 | `chapter_7_has_reader_facing_boundary_closure` | `PASS` |

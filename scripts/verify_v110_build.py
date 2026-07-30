@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The current Chapter 5 reader-path revision compacts the built layout to 264 pages.
-EXPECTED_PDF_PAGES = 264
+# The current Chapter 6 reader-path revision compacts the built layout to 263 pages.
+EXPECTED_PDF_PAGES = 263
 
 
 def image_links(text: str) -> list[str]:
@@ -70,6 +70,10 @@ def main() -> None:
     chapter_6 = (ROOT / "manuscript" / "chapters" / "06-field-solvers.md").read_text(
         encoding="utf-8"
     )
+    chapter_6_stale_location_markers = re.findall(
+        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_6
+    )
+    chapter_6_opening = chapter_6[: chapter_6.index("## 6.1")]
     chapter_2 = (ROOT / "manuscript" / "chapters" / "02-pic-loop.md").read_text(encoding="utf-8")
     chapter_2_code_spans = re.findall(r"`([^`]*)`", chapter_2)
     chapter_3 = (ROOT / "manuscript" / "chapters" / "03-warpx-evolve.md").read_text(encoding="utf-8")
@@ -130,6 +134,25 @@ def main() -> None:
                 "## 6.13 本章结论",
                 "先确定几何和物理目标，再确定 source 时间模型",
             )
+        ),
+        "chapter_6_current_solver_route": all(
+            marker in chapter_6
+            for marker in (
+                "场求解器把上一章已经同步的电荷与电流变成下一时刻的电磁场",
+                "WarpX::OneStep_nosub()",
+                "WarpX::PushPSATD()",
+                "WarpX::OneStep_JRhom()",
+                "读者主线：从同步源项到可检验的场",
+                "选择路径前的检查表",
+                "## 6.12 练习与运行验证",
+            )
+        ) and not chapter_6_stale_location_markers and not re.search(
+            r"scripts/|notes/code-reading|runs/stage-c-validation|docs/chapter-06-v0-evidence-ledger|contract\.\{json,md\}",
+            chapter_6,
+        ),
+        "chapter_6_opening_is_reader_facing": not re.search(
+            r"notes/code-reading|pkuHEDPbranch|8c488b1a9|本机|本轮|当前源码|源码快照",
+            chapter_6_opening,
         ),
         "chapter_2_3_reader_routes": all(
             marker in chapter_2

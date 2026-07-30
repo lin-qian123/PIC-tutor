@@ -18,6 +18,8 @@
 | `chapter_4_current_pusher_route` | `PASS` |
 | `chapter_5_opening_is_reader_facing` | `PASS` |
 | `chapter_5_current_deposition_route` | `PASS` |
+| `chapter_6_opening_is_reader_facing` | `PASS` |
+| `chapter_6_current_solver_route` | `PASS` |
 | `chapter_6_has_reader_facing_closure` | `PASS` |
 | `chapter_7_has_reader_facing_boundary_closure` | `PASS` |
 | `chapter_8_has_reader_facing_diagnostics_closure` | `PASS` |

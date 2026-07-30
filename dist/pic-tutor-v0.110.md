@@ -9409,41 +9409,26 @@ RZ Esirkepov 是本章最容易被误读的例子。默认 axis correction 下�
 
 # 6. 电磁场求解器
 
-本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航；其他版本应按函数名和调用关系检索。
+场求解器把上一章已经同步的电荷与电流变成下一时刻的电磁场。本章不按“有哪些 `.cpp` 文件”展开，而按读者在设计输入或排查异常时真正需要回答的因果链组织：**源项在什么时间层可用，选择了哪个场方程离散，边界/PML 怎样参与更新，最后用哪个观察量检验该选择。**
 
-下表是阅读场推进实现时的源码导航：它把主时间步、FDTD、PSATD/JRhom、PML 与可复查的案例入口连成一张图。读者应先用它确定某个算法位于主循环的哪个分支，再进入后文的离散公式与代码片段；源码升级后，这些入口也提供了重新核对正文的最小范围。
+阅读源码时，从 `Source/Evolve/WarpXEvolve.cpp` 的 `WarpX::OneStep_nosub()` 起步。该函数先完成粒子推进与 `SyncCurrentAndRho()`，再以 `electromagnetic_solver_id` 分成 FDTD 和 PSATD。`Source/FieldSolver/WarpXPushFieldsEM.cpp` 提供两条主入口：`WarpX::EvolveB()` / `WarpX::EvolveE()` 负责有限差分更新，`WarpX::PushPSATD()` 负责谱空间路径。`WarpX::OneStep_JRhom()` 则是 PSATD 的特殊时间模型：同一 PIC 步内多次沉积源项，但粒子只推进一次。
 
-| 主题 | 核心函数/文件 | 读者问题 |
-|---|---|---|
-| 主时间步 | `OneStep_nosub()` | 同步后为何分成 PSATD 与 FDTD 两条推进链？ |
-| PSATD | `PushPSATD()` | J/rho 如何进入谱空间并影响 E/B？ |
-| FDTD | `EvolveB()` / `EvolveE()` | 半步 B、整步 E、半步 B 如何保持时间交错？ |
-| 差分 kernel | `FiniteDifferenceSolver` | Yee、Nodal、CKC 改变的是哪一个 curl 算子？ |
-| 谱算法 | `SpectralSolver` | PML、comoving、Galilean、JRhom 怎样选择不同算法类？ |
-| JRhom | `OneStep_JRhom()` | 为什么一个 PIC 步内要多次沉积 J/rho？ |
-| PML | `PMLComponent` / `PML` | split fields 怎样阻尼并与常规场交换？ |
-| 验证 | `Examples/Tests/pml/` | 哪个 regression 对应当前 solver family？ |
+### 读者主线：从同步源项到可检验的场
 
-这些符号分别位于源码快照的 `Source/Evolve/`、`Source/FieldSolver/` 和 `Source/BoundaryConditions/`；后文在首次展开每条链时给出具体文件和行号。先用函数名定位，再读离散公式，能避免把同名的 `Evolve*` 或 `PsatdAlgorithm*` 当作同一个数值路径。
+1. **先固定源项时间层。** 在普通显式路径中，粒子推进后 `J` 位于半步，`rho` 有旧/新两个分量；`SyncCurrentAndRho()` 完成过滤、guard-cell 交换、AMR 层间处理与边界处理。场更新读取的是这条同步后的 source 链，而不是任意 tile 的局部数组。
+2. **再选择场的时间与空间离散。** FDTD 使用 `EvolveF/G -> EvolveB(dt/2) -> EvolveE(dt) -> EvolveF/G -> EvolveB(dt/2)` 的交错推进；PSATD 先把场和 source 变换到谱空间，经 `PSATDPushSpectralFields()` 更新后再反变换。两者不是同一更新式的不同开关。
+3. **把边界视为更新的一部分。** FDTD 的 `EvolveB()` / `EvolveE()` 同时按 fine/coarse patch 分派普通网格和 PML split field；PSATD 的主域谱推进之后会推进 PML 区域并施加场边界。PML、guard cell 与边界条件改变的是求解器实际消费的场状态，不能只在主域 curl kernel 之外事后理解。
+4. **用与所选路径相符的观察量收束。** FDTD 需要同时检查 CFL、色散与边界反射；PSATD 还必须检查 FFT、current correction/Galilean/Comoving 的组合限制；JRhom 的结论还依赖 source 时间模型和 subinterval 数。一个案例通过不等于另一几何、另一边界或另一 source 模型同样通过。
 
-在 `OneStep_nosub()` 已完成粒子推进和 `J/rho` 同步后，场推进按下列路线分派：
+| 选择问题 | 首先阅读的入口 | 可以据此判断 | 不能据此断言 |
+|---|---|---|---|
+| 用交错或差分场更新 | `OneStep_nosub()`、`EvolveB()`、`EvolveE()`、`FiniteDifferenceSolver` | 半步 B / 整步 E 的调度与实际 curl 算子 | 所有 CFL、边界和网格分辨率下的准确度 |
+| 用谱空间推进 | `PushPSATD()`、`SpectralSolver`、`PsatdAlgorithm*` | source/field 的 transform、谱更新与 inverse transform 顺序 | 未测试的 current correction、PML 或 AMR 组合 |
+| 抑制 boosted-frame NCI | `psatd.v_galilean`、Galilean algorithm | 该设置选择 Galilean PSATD 且有 direct-deposition 前提 | 任意 deposition 或边界组合都会抑制 NCI |
+| 使用多时间节点 source | `OneStep_JRhom()`、`psatd.JRhom` | 每个 subinterval 会重新沉积并同步所需的 `J/rho` | 普通 PSATD 和 JRhom 的数值误差必然相同 |
+| 吸收开放边界 | `PML`、`PML_RZ`、`EvolveBPML()`、`EvolveEPML()` | PML split field 参与同一时间推进 | 主域无反射或物理解已被证明 |
 
-1. **Yee、CKC、HybridPIC 或 ECT 的 FDTD 路径**：`EvolveF/G(dt/2) -> EvolveB(dt/2) -> FillBoundaryB -> EvolveE(dt) 或 MacroscopicEvolveE(dt) -> FillBoundaryE -> EvolveF/G(dt/2) -> EvolveB(dt/2)`；随后根据 PML 是否开启，执行 `DampPML` 与 moving-window guard 填充，或执行需要的常规 guard 填充。
-2. **PSATD 路径**：`PushPSATD()` 先对 `J/rho` 做 current correction 或 Vay transform，再对 `E/B` 和可选 `F/G` 作 FFT，由 `SpectralSolver::pushSpectralFields` 推进，随后 inverse FFT 并处理可选时间平均场；PML 开启时再进入 `PML::PushPSATD` 或 `PML_RZ::PushPSATD`，否则应用场边界。
-3. **JRhom 路径**：`OneStep_JRhom()` 跳过普通单次沉积，在多个 subinterval 重新沉积 `J/rho`，每个子区间都进入同一 PSATD 谱推进链。
-
-### 路径选择速查
-
-- **Yee FDTD。** 选择 `algo.maxwell_solver = yee` 与交错网格；实现入口是 `FiniteDifferenceSolver/EvolveB.cpp`、`EvolveE.cpp` 和 `CartesianYeeAlgorithm.H`。它在交错网格上更新 curl，受 CFL 条件限制。读代码时先核对主循环是否保持 `EvolveB(dt/2) -> EvolveE(dt) -> EvolveB(dt/2)` 的时间顺序。
-- **CKC FDTD。** 选择 `algo.maxwell_solver = ckc`；同一 `EvolveB/E` 模板由 `CartesianCKCAlgorithm.H` 实例化。它用扩展 stencil 降低数值色散；检查 B 更新是否调用带横向加权的 CKC `Upward` 算子。
-- **Nodal FDTD。** 在 collocated/nodal grid 上，`CartesianNodalAlgorithm.H` 仍通过同一 `EvolveB/E` 模板工作，但 E/B 不再采用 Yee 交错。检查 `UpwardDx` 和 `DownwardDx` 是否退化为同一中心差分，就能确认此路径的空间离散。
-- **标准 PSATD。** 选择 `algo.maxwell_solver = psatd` 且 `v_galilean = 0`；主入口为 `WarpX::PushPSATD()`、`SpectralSolver.cpp` 与 `PsatdAlgorithmGalilean.cpp`。它在 Fourier 空间解析推进 Maxwell 的线性部分；先确认 `J/rho` 已经过 current correction 或 Vay deposition，再追踪谱推进。
-- **Galilean PSATD。** 当 `psatd.v_galilean` 非零时，`SpectralSolver.cpp:75-82` 选择 `PsatdAlgorithmGalilean.cpp` 中的算法。在 Galilean 坐标中它用于降低 boosted-frame 的 NCI；检查 current correction 是否使用 Galilean 连续性公式。
-- **带 PML 的 FDTD。** 当 field boundary 为 PML 且并非 PSATD 路径时，`EvolveBPML.cpp`、`EvolveEPML.cpp` 和 `WarpXEvolvePML.cpp` 更新带 sigma damping 的 split fields。检查 split components 是否经过 `PML::Exchange()` 回填到常规场。
-- **带 PML 的 PSATD。** PSATD 与 PML 同时开启时，入口是 `PML::PushPSATD()`、`PsatdAlgorithmPml.cpp` 和 `PML_RZ.cpp`。PML 区域单独执行谱推进；确认 PML push 发生在主域 `PSATDPushSpectralFields()` 之后。
-- **JRhom PSATD。** 选择 `psatd.JRhom = CL1/LQ4/...` 后，`WarpX::OneStep_JRhom()` 和 `PsatdAlgorithmJRhom*` 在一个 PIC 步内多次沉积 `J/rho`，并以多项式源项推进。检查该路径是否禁用 Vay、Galilean 与普通 current correction，并在每个子区间重新沉积源项。
-
-电磁 PIC 的场求解器离散 Maxwell 方程。显式 FDTD 的经典代表是 Yee 算法：电场和磁场在空间上交错，在时间上也交错。抽象地写，
+显式 FDTD 的经典时间交错可抽象为
 
 $$
 \mathbf{B}^{n+1/2}=\mathbf{B}^{n}-\frac{\Delta t}{2}\nabla_h\times\mathbf{E}^{n},
@@ -9458,94 +9443,21 @@ $$
 \mathbf{B}^{n+1}=\mathbf{B}^{n+1/2}-\frac{\Delta t}{2}\nabla_h\times\mathbf{E}^{n+1}.
 $$
 
-这正对应 `WarpX::OneStep_nosub` 中的 FDTD 路径：`EvolveB(dt/2)`、`EvolveE(dt)`、`EvolveB(dt/2)`。源码快照中的位置是 `Source/Evolve/WarpXEvolve.cpp:606-643`，其中三次核心推进调用位于 `:612`、`:617` 和 `:628`。
+`OneStep_nosub()` 中的普通电磁分支还会在两次 B 推进的前后处理清洁场 `F/G`，并在每个必要阶段填充 guard cells。若介质模型不是 vacuum，E 的主入口会转为 `MacroscopicEvolveE()`；因此“FDTD”并不自动表示一条无介质、无边界辅助场的最小 Yee 更新。
 
-WarpX 的场推进封装在 `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp`。其中：
+### 选择路径前的检查表
 
-- `WarpX::EvolveB` 在 `:945-996`：按 level 和 patch type 调用 FDTD solver 或 PML solver 的 B 更新。
-- `WarpX::EvolveE` 在 `:999-1045` 起：按 level 和 patch type 调用 E 更新，并处理 PML 和电荷守恒相关字段。
-- `WarpX::PushPSATD` 在 `:771-943`：处理 PSATD current correction、Vay deposition、谱空间 transform、PML push 和边界回填。
+- **Yee FDTD。** 选择交错网格上的有限差分 curl，并用 `warpx.cfl` 与网格尺度共同约束时间步。`CartesianYeeAlgorithm.H` 给出空间差分，`EvolveB.cpp` / `EvolveE.cpp` 消费该差分；应分别检查传播色散、守恒量与边界反射。
+- **CKC 或 Nodal FDTD。** 它们仍通过 `EvolveB/E` 的调度框架，却改变 `Upward/Downward` 差分或场的空间布局。先确认所选网格与 gather/deposition 约束，再讨论“色散更低”是否对当前传播方向与分辨率有意义。
+- **标准、Galilean 或 Comoving PSATD。** PSATD 需要 FFT 支持。非零 `psatd.v_galilean` 选择 Galilean 算法；官方参数说明同时要求 direct current deposition。Comoving 也有自己的 source 与输入限制，不能把二者都简称为“移动坐标 PSATD”。
+- **JRhom PSATD。** `psatd.JRhom` 的字母指定 `J` 和 `rho` 的时间依赖，数字指定 subinterval 数；它只属于 PSATD，且 source 的多次沉积是算法定义的一部分，不是普通输出频率设置。
+- **PML。** PML 不是一个求解器选项的尾部阻尼。FDTD 与 PSATD 分别有自己的 PML 更新入口；验证时应把反射率/场能量与 PML 之外的主域误差分开报告。
 
-真正的 FDTD stencil 在 `Source/FieldSolver/FiniteDifferenceSolver/` 中，例如 `EvolveB.cpp`、`EvolveE.cpp`、`EvolveBPML.cpp`、`EvolveEPML.cpp`。当前已新增第一篇源码精读 `notes/code-reading/fieldsolver/00-fieldsolver-dispatch.md`，开始逐块展开这些文件。
-
-`WarpX::EvolveB()` 的顶层路由在 `WarpXPushFieldsEM.cpp:945-996`。省略函数形参与非关键参数后，核心分派为：
-
-```cpp
-if (patch_type == PatchType::fine) {
-    m_fdtd_solver_fp[lev]->EvolveB(...);
-} else {
-    m_fdtd_solver_cp[lev]->EvolveB(...);
-}
-```
-
-`FiniteDifferenceSolver::EvolveB()` 的 Cartesian 主 kernel 在 `EvolveB.cpp:130-211`：
-
-```cpp
-Bx(i, j, k) += dt * T_Algo::UpwardDz(Ey, coefs_z, n_coefs_z, i, j, k)
-             - dt * T_Algo::UpwardDy(Ez, coefs_y, n_coefs_y, i, j, k);
-
-By(i, j, k) += dt * T_Algo::UpwardDx(Ez, coefs_x, n_coefs_x, i, j, k)
-             - dt * T_Algo::UpwardDz(Ex, coefs_z, n_coefs_z, i, j, k);
-
-Bz(i, j, k) += dt * T_Algo::UpwardDy(Ex, coefs_y, n_coefs_y, i, j, k)
-             - dt * T_Algo::UpwardDx(Ey, coefs_x, n_coefs_x, i, j, k);
-```
-
-这就是
-
-$$
-\partial_t\mathbf{B}=-\nabla_h\times\mathbf{E}.
-$$
-
-`FiniteDifferenceSolver::EvolveE()` 的 Cartesian 主 kernel 在 `EvolveE.cpp:119-235`：
-
-```cpp
-Ex(i, j, k) += c2 * dt * (
-    - T_Algo::DownwardDz(By, coefs_z, n_coefs_z, i, j, k)
-    + T_Algo::DownwardDy(Bz, coefs_y, n_coefs_y, i, j, k)
-    - PhysConst::mu0 * jx(i, j, k) );
-```
-
-它对应
-
-$$
-\partial_t\mathbf{E}=c^2(\nabla_h\times\mathbf{B}-\mu_0\mathbf{J}).
-$$
-
-如果开启 `do_dive_cleaning`，`EvolveE()` 还会加入 `grad(F)`；`EvolveF.cpp` 更新
-
-$$
-\partial_tF=\nabla_h\cdot\mathbf{E}-\rho/\epsilon_0.
-$$
-
-如果开启 `do_divb_cleaning`，`EvolveG.cpp` 更新
-
-$$
-\partial_tG=c^2\nabla_h\cdot\mathbf{B},
-$$
-
-并由 `EvolveB.cpp` 中的 `+grad(G)` 反馈到磁场。
-
-PSATD 的思路不同：在 Fourier 空间中，Maxwell 方程的线性部分可以在一个时间步内解析积分。这样可以显著降低数值色散，尤其适合激光等离子体加速、boosted frame 和长距离传播问题。代价是并行分解、边界、PML、current correction 和多层 AMR 的实现更复杂。WarpX 的 `OneStep_nosub` 对 PSATD 单独分支：`../warpx/Source/Evolve/WarpXEvolve.cpp:578-604` 调用 `PushPSATD`、PML damping 和谱场回填。
-
-电磁求解器的稳定性首先受 CFL 条件约束。对标准 Yee 网格，时间步必须小于电磁波跨越网格的稳定上限。WarpX 输入中可通过 `warpx.cfl` 控制 CFL 系数；Langmuir 示例使用 `warpx.cfl = 0.8`，uniform plasma 示例使用 `warpx.cfl = 1.0`。
-
-一个常见误区是只把 field solver 当作 Maxwell 方程更新器。真实代码还必须处理：
-
-- guard cell 填充；
-- nodal point 同步；
-- PML 阻尼；
-- current filtering；
-- divergence cleaning；
-- embedded boundary；
-- macroscopic medium；
-- PSATD 的谱空间电流校正。
-
-因此，写“场求解器正确”不能只看 `EvolveE.cpp` 和 `EvolveB.cpp`。必须同时检查它们在主循环中的调用时间、输入的 `J` 是否已同步、边界和 guard cells 是否处在正确状态。
+本章随后先解释 FDTD curl 和 PML，再进入 PSATD、JRhom、RZ、静电/静磁、Hybrid PIC 与 regression。每一节都区分：公式解释什么、源码能定位什么、一个具体 regression 又实际检验了什么。
 
 ## 6.1 FDTD 差分算子：Yee、Nodal 与 CKC
 
-`notes/code-reading/fieldsolver/01-fdtd-evolve-e-b.md` 已经把 `T_Algo::Upward/Downward` 展开到算法头文件。Yee 的 `UpwardDx` 和 `DownwardDx` 分别是 staggered forward/backward difference：
+在 `Source/FieldSolver/FiniteDifferenceSolver/CartesianYeeAlgorithm.H` 中，`T_Algo::Upward/Downward` 把 FDTD 模板连接到具体差分。Yee 的 `UpwardDx` 和 `DownwardDx` 分别是 staggered forward/backward difference：
 
 ```cpp
 return inv_dx*( F(i+1,j,k,ncomp) - F(i,j,k,ncomp) );
@@ -9568,13 +9480,13 @@ $$
 
 因此同一个 `EvolveB.cpp` 模板 kernel 在传入 `CartesianYeeAlgorithm`、`CartesianNodalAlgorithm` 或 `CartesianCKCAlgorithm` 时，会得到不同的离散 curl。
 
-本章的文献主线是 `Yee`、`GodfreyJCP2014_PSATD`、`Lehe2016` 和 `VayJCP2013`。Yee 1966 目前只能使用 indexed abstract：它支持 finite-difference Maxwell、field-point placement、PEC boundary 和 conducting-cylinder example，但不足以把 WarpX 的完整 Yee stencil 说成逐式来自 Yee 原文。`CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 和 `EvolveE.cpp` 的源码 crosswalk 由 `scripts/audit_yee_source_crosswalk.py` 固定；它证明现代 FDTD 实现与本章路径的对应，不证明历史论文逐式等价。PSATD 与 Galilean NCI 的推导应分别回到各自论文和后文的离散方程阅读，而不能由这条 FDTD crosswalk 代替。
+本章的文献主线是 `Yee`、`GodfreyJCP2014_PSATD`、`Lehe2016` 和 `VayJCP2013`。Yee 1966 目前只能使用 indexed abstract：它支持 finite-difference Maxwell、field-point placement、PEC boundary 和 conducting-cylinder example，但不足以把 WarpX 的完整 Yee stencil 说成逐式来自 Yee 原文。`CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 和 `EvolveE.cpp` 则说明现代实现怎样把本节的差分职责接入主循环；这种源码对应不证明历史论文逐式等价。PSATD 与 Galilean NCI 的推导应分别回到各自论文和后文的离散方程阅读，而不能由这条 FDTD 对应代替。
 
 ## 6.2 FDTD PML split-field 更新
 
-PML 的目标是在计算区域边缘吸收入射电磁波。Berenger PML 的基本做法不是简单给整个场乘阻尼，而是把场分量拆成不同方向的 split components，并对这些分量施加匹配吸收。WarpX 的 FDTD PML 第一层实现见 `notes/code-reading/fieldsolver/02-fdtd-pml.md`。
+PML 的目标是在计算区域边缘吸收入射电磁波。Berenger PML 的基本做法不是简单给整个场乘阻尼，而是把场分量拆成不同方向的 split components，并对这些分量施加匹配吸收。WarpX 的 FDTD PML 分量与更新入口分别位于 `Source/BoundaryConditions/PMLComponent.H` 和 `Source/FieldSolver/FiniteDifferenceSolver/`。
 
-PML split components 的 component 编号定义在 `../warpx/Source/BoundaryConditions/PMLComponent.H:8-18`：
+PML split components 的 component 编号定义在 `Source/BoundaryConditions/PMLComponent.H`：
 
 ```cpp
 /* In WarpX, the split fields of the PML (e.g. Eyx, Eyz) are stored as
@@ -9656,7 +9568,7 @@ F(i, j, k, PMLComp::x) += dt * (
 
 ## 6.3 PML sigma profile、damping 与电流源项
 
-`notes/code-reading/fieldsolver/03-pml-damping-current.md` 已经继续展开 `BoundaryConditions/PML.cpp` 和 `WarpXEvolvePML.cpp`。PML 的吸收 profile 由 `FillLo()` / `FillHi()` 生成：
+`Source/BoundaryConditions/PML.cpp` 与 `Source/Evolve/WarpXEvolvePML.cpp` 负责把 PML profile 和主循环衔接起来。PML 的吸收 profile 由 `FillLo()` / `FillHi()` 生成：
 
 ```cpp
 Real offset = static_cast<Real>(glo-i);
@@ -9717,7 +9629,7 @@ if (ncp == 3) {
 
 ## 6.4 非 Cartesian FDTD：RZ、RCYLINDER 与 RSPHERE
 
-`notes/code-reading/fieldsolver/04-noncartesian-fdtd.md` 继续把 FDTD 从 Cartesian 推到 WarpX 的编译几何分支。`FiniteDifferenceSolver.cpp` 中，RZ/RCYLINDER 和 RSPHERE 不走 Cartesian CKC/Nodal 分支，而是只接受 Yee/HybridPIC：
+`Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceSolver.cpp` 把 FDTD 分派到编译几何分支。RZ/RCYLINDER 和 RSPHERE 不走 Cartesian CKC/Nodal 分支，而是只接受 Yee/HybridPIC：
 
 ```cpp
 #if defined(WARPX_DIM_RZ) || defined(WARPX_DIM_RCYLINDER)
@@ -9786,7 +9698,7 @@ F(i, j, 0, 0) += dt * (
 
 ## 6.5 PSATD 谱求解主流程
 
-`notes/code-reading/fieldsolver/05-psatd-spectral-flow.md` 开始进入 PSATD。理论上，PSATD 把 Maxwell 方程写到 Fourier 空间：
+PSATD 从 `Source/FieldSolver/WarpXPushFieldsEM.cpp` 的 `PushPSATD()` 进入。理论上，它把 Maxwell 方程写到 Fourier 空间：
 
 $$
 \frac{\partial\widetilde{\mathbf E}}{\partial t}
@@ -9802,7 +9714,7 @@ $$
 C=\cos(k\Delta t),\qquad S=\sin(k\Delta t)
 $$
 
-的更新式。源码入口是 `WarpX::PushPSATD()`，当前位于 `../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:771-943`：
+的更新式。源码入口是 `WarpX::PushPSATD()`，当前位于 `Source/FieldSolver/WarpXPushFieldsEM.cpp`：
 
 ```cpp
 // FFT of E and B
@@ -9831,9 +9743,9 @@ PSATDForwardTransformRho(rho_fp_string, rho_cp_string, 1, rho_new);
 PSATDBackwardTransformJ(current_fp_string, current_cp_string);
 ```
 
-这里需要特别记住两个实现边界。第一，`fft_periodic_single_box` 分支会在 `:791-837` 内完成 current correction 或 Vay deposition 的 k-space 处理；非 periodic single box 分支在 `:839-899` 里还会在 correction/Vay 后调用 `SyncCurrent()`、`SyncRho()` 或 `SumBoundaryJ()`。第二，真正的场推进顺序是 `PSATDForwardTransformEB()` `:901-902`、可选 RZ PML push `:904-907`、`F/G` transform `:909-911`、`PSATDPushSpectralFields()` `:913-914`、再做 `E/B/F/G` 反变换 `:916-926`；最后才进入每层 PML push 和物理边界条件 `:928-940`。
+这里需要特别记住两个实现边界。第一，`fft_periodic_single_box` 分支完成 current correction 或 Vay deposition 的 k-space 处理；非 periodic-single-box 分支则在 correction/Vay 之后按条件调用 `SyncCurrent()`、`SyncRho()` 或 `SumBoundaryJ()`。第二，`PushPSATD()` 的场阶段始终是 `PSATDForwardTransformEB()`、可选 RZ PML push、可选 `F/G` transform、`PSATDPushSpectralFields()`、`E/B/F/G` 反变换，最后才对各层 PML 和物理边界作处理。读者应以这些函数阶段核对源码，而不是依赖某个版本的行号。
 
-`SpectralSolver` 本身只负责建立 k-space、spectral field storage 和选择具体算法。当前分派入口是 `../warpx/Source/FieldSolver/SpectralSolver/SpectralSolver.cpp:26-143`：
+`SpectralSolver` 本身只负责建立 k-space、spectral field storage 和选择具体算法。当前分派入口是 `Source/FieldSolver/SpectralSolver/SpectralSolver.cpp`：
 
 ```cpp
 const SpectralKSpace k_space= SpectralKSpace(realspace_ba, dm, dx);
@@ -9877,7 +9789,7 @@ pshift[i] = amrex::exp( I*sign*pk[i]*0.5_rt*t_dx_idim);
 
 ## 6.6 标准/Galilean PSATD 系数和 current correction
 
-`notes/code-reading/fieldsolver/06-psatd-galilean-current-correction.md` 继续展开 `PsatdAlgorithmGalilean.cpp`。标准 PSATD 是 Galilean 实现的 $v_G=0$ 极限；源码中
+`Source/FieldSolver/SpectralSolver/PsatdAlgorithmGalilean.cpp` 实现 Galilean 分支。标准 PSATD 是 Galilean 实现的 $v_G=0$ 极限；源码中
 
 $$
 w_c=\mathbf k_c\cdot\mathbf v_G,\qquad T_2=e^{iw_c\Delta t}.
@@ -9981,12 +9893,12 @@ filter、current correction 与 Galilean 表示因此必须分开：`warpx.use_f
 | `analysis_psatd_CC1.py` | JRhom CC1 的电场能量 | 该 consumer 的 NCI energy gate | 其他 JRhom 时间模型或 charge closure |
 | checksum-only case | 输出是否与已知基线一致 | workflow、写盘和回归可重复 | 独立的物理正确性断言 |
 
-这张表也是本章的阅读纪律：先把算法类、输入组合和 consumer 对齐，再解释数值结果。详细的论文映射、有限阶 PSATD 限制和实际阈值见 `docs/chapter-06-v0-evidence-ledger.md`；它们是证据索引，不是需要按版本顺序阅读的课程内容。
+这张表也是本章的阅读纪律：先把算法类、输入组合和 consumer 对齐，再解释数值结果。论文、有限阶 PSATD 限制和实际阈值只用于界定各行的证据范围，不改变这条由问题到 observable 的阅读顺序。
 
 
 ## 6.7 PSATD-JRhom：多次源项沉积与一阶/二阶谱更新
 
-`notes/code-reading/fieldsolver/07-psatd-jrhom.md` 把 PSATD-JRhom 从主循环到谱算法做了第一轮完整精读。物理上，JRhom 处理的是一个 PIC 时间步内 `J` 和 `rho` 不一定满足“电流常量、电荷线性”的假设。WarpX 使用 `psatd.JRhom` 字符串指定时间依赖：
+`Source/Evolve/WarpXEvolve.cpp` 的 `OneStep_JRhom()` 将 PSATD-JRhom 从主循环接到谱算法。物理上，JRhom 处理的是一个 PIC 时间步内 `J` 和 `rho` 不一定满足“电流常量、电荷线性”的假设。WarpX 使用 `psatd.JRhom` 字符串指定时间依赖：
 
 ```cpp
 std::string JRhom_input;
@@ -10027,7 +9939,7 @@ const bool skip_deposition = true;
 PushParticlesandDeposit(cur_time, skip_deposition);
 ```
 
-源码快照中的入口是 `Source/Evolve/WarpXEvolve.cpp:843-1008`。初始化阶段先把 `E/B/F/G` 变换到谱空间 `:866-869`，按需清零平均场 `:871-872`，再对 `rho` 做初始沉积和 FFT `:874-889`，并对非 constant `J` 做第一次沉积和 FFT `:892-905`。
+`Source/Evolve/WarpXEvolve.cpp` 的 `OneStep_JRhom()` 先把 `E/B/F/G` 变换到谱空间，按需清零平均场；随后对 `rho` 做初始沉积和 FFT，并在 `J` 非常量时先沉积、同步和变换 `J`。这是为后续子区间提供初始 source 时间层，而不是普通 `PushPSATD()` 的一次性 source 输入。
 
 随后在每个子区间按时间依赖类型重新沉积 `J/rho`：
 
@@ -10128,7 +10040,7 @@ if (current_deposition_algo == CurrentDepositionAlgo::Vay) {
 if (m_JRhom) { current_correction = false; }
 ```
 
-在当前 `OneStep_JRhom()` 中，二次 `J` 的中点沉积位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:941-947`，`rho` 的 old/new/mid 处理位于 `:949-975`，每个子区间的谱推进位于 `:984-985`。若开启 time averaging，平均场在 `:997-1007` 缩放并反变换回实空间。
+在 `OneStep_JRhom()` 中，二次 `J` 会在子区间中点额外沉积，`rho` 也按 `old/new/mid` 时间层移动；每个子区间随后进入谱推进。若开启 time averaging，平均场会在该循环结束后缩放并反变换回实空间。
 
 ```cpp
 if (m_JRhom)
@@ -10152,14 +10064,14 @@ if (m_JRhom)
 
 ### 6.7.2 组合限制与验证边界
 
-JRhom 改变了沉积和谱推进顺序，因此不是所有普通 PSATD 选项都可叠加。源码快照明确禁止 Vay deposition 与 JRhom 组合，也禁止 JRhom 与 Galilean PSATD 组合，并默认关闭 JRhom current correction。遇到某个组合不支持时，应把它理解为算法假设不兼容，而不是将参数强行拼成一个“更稳定”的方案。
+JRhom 改变了沉积和谱推进顺序，因此不是所有普通 PSATD 选项都可叠加。实现明确禁止 Vay deposition 与 JRhom 组合，也禁止 JRhom 与 Galilean PSATD 组合，并默认关闭 JRhom current correction。遇到某个组合不支持时，应把它理解为算法假设不兼容，而不是将参数强行拼成一个“更稳定”的方案。
 
 验证也必须按时间模型分层。`analysis_psatd_CC1.py` 对特定 Cartesian JRhom CC1 case 提供 energy gate；RZ Langmuir `CL4` 可提供解析场 gate；而 checksum-only 的 RZ JRhom case 只能证明 workflow。RZ JRhom 的 `finite + energy` 正负对照是补充证据，不能替代上游 CMake 已注册的 analysis。读者需要先匹配 `JRhom` 字符串、geometry、rank 与 consumer，再决定某条通过结果的外推范围。
 
 
 ## 6.8 RZ PSATD：Hankel transform、azimuthal modes 与 `Ep/Em`
 
-`notes/code-reading/fieldsolver/08-psatd-rz-hankel.md` 进入 RZ spectral solver。RZ PSATD 不能理解成“二维 PSATD”。它使用 azimuthal mode decomposition：
+RZ 谱求解器位于 `Source/FieldSolver/SpectralSolver/`。RZ PSATD 不能理解成“二维 PSATD”。它使用 azimuthal mode decomposition：
 
 $$
 F(r,z,\theta)=\sum_m \Re\left(F_m(r,z)e^{im\theta}\right),
@@ -10338,12 +10250,10 @@ comoving 分支要求 direct current deposition 与 `psatd.update_with_rho=1`，
 | 漂移 NCI 如何压制？ | filter、表示、插值和时间步的组合 | NCI energy gate 与对应输入卡 |
 | RZ 结果能否外推？ | modes、axis symmetry、`Ep/Em` layout | RZ Langmuir、RZ Galilean 或 RZ PML 的同类 consumer |
 
-本章的结论不是“PSATD 比 FDTD 更好”，而是：不同谱基、源项时间模型与沉积/同步约束构成不同算法族，必须由对应 observable 验证。RZ Langmuir、Galilean NCI 和 PML residual-field analysis 能对各自 family 提供强断言；checksum 与文献 benchmark 则分别只承担 workflow 和理论背景的责任。完整公式、论文阅读材料与附加检查入口保存在 `docs/chapter-06-v0-evidence-ledger.md`，避免把维护过程伪装成读者必须学习的结论。
+本章的结论不是“PSATD 比 FDTD 更好”，而是：不同谱基、源项时间模型与沉积/同步约束构成不同算法族，必须由对应 observable 验证。RZ Langmuir、Galilean NCI 和 PML residual-field analysis 能对各自 family 提供强断言；checksum 与文献 benchmark 则分别只承担 workflow 和理论背景的责任。读者应把公式、源码与运行检查分层使用，而不是把任何一层误当成完整证明。
 
 
 ## 6.9 静电与静磁求解器
-
-绑定精读笔记：`notes/code-reading/fieldsolver/09-electrostatic-magnetostatic.md`。
 
 WarpX 的 electrostatic 路径不再用 Maxwell curl 方程推进场，而是在每一步从当前粒子/流体源项重新解椭圆方程。最基本的 lab-frame 静电模式是
 
@@ -10682,7 +10592,7 @@ $$
 
 ## 6.10 Hybrid PIC：广义 Ohm 定律与 B 场 RK 子步
 
-`notes/code-reading/fieldsolver/12-hybrid-pic-model-deep-dive.md` 把 WarpX 的 kinetic-fluid hybrid solver 从模型参数到 kernel 做了第一轮深拆。这个路径不使用 Maxwell-Ampere 方程推进电场，而是把电子视为流体、离子仍作为 kinetic particles，用广义 Ohm 定律求电场：
+`Source/FieldSolver/FiniteDifferenceSolver/HybridPICModel/HybridPICModel.H` 组织 WarpX 的 kinetic-fluid hybrid solver。这个路径不使用 Maxwell-Ampere 方程推进电场，而是把电子视为流体、离子仍作为 kinetic particles，用广义 Ohm 定律求电场：
 
 $$
 \mathbf E =
@@ -11016,7 +10926,7 @@ $$
 
 ### 6.11.1 NCI FDTD：场能增长是否被 corrector 压住
 
-`../warpx/Examples/Tests/nci_fdtd_stability/analysis_ncicorr.py` 的核心检查是读 plotfile 中的 `Ex`、`Ez`、`By`，计算
+`Examples/Tests/nci_fdtd_stability/analysis_ncicorr.py` 的核心检查是读 plotfile 中的 `Ex`、`Ez`、`By`，计算
 
 $$
 \mathcal E_{\rm NCI}=\sum_{\rm grid}\left(E_x^2+E_z^2+c^2B_y^2\right).
@@ -11055,7 +10965,7 @@ assert energy < energy_threshold
 
 `inputs_test_2d_nci_corrector` 只是把它固定为单层 `amr.max_level = 0`，而 `inputs_test_2d_nci_corrector_mr` 则切到 `amr.max_level = 1` 并用 `warpx.fine_tag_lo/hi` 把整个域提升到 refined level。也就是说，这两条并不是“是否开 corrector”的 AB 对照，而是“同一 corrected drifting-plasma 骨架”在 non-MR 与 MR 配置下的稳定性检查。
 
-还要明确一个源码快照边界：`analysis_ncicorr.py` 试图用
+还要明确一个当前注册边界：`analysis_ncicorr.py` 试图用
 
 ```python
 use_MR = re.search("nci_correctorMR", fn) is not None
@@ -11070,7 +10980,7 @@ use_MR = re.search("nci_correctorMR", fn) is not None
 
 ### 6.11.2 NCI PSATD：电场能量比与 Gauss law
 
-PSATD 的 NCI 稳定性测试在 `../warpx/Examples/Tests/nci_psatd_stability/analysis_galilean.py`。脚本先从 `warpx_used_inputs` 判断维度、current correction、time averaging 和 single-box FFT，然后设置不同 reference energy 与容差。
+PSATD 的 NCI 稳定性测试在 `Examples/Tests/nci_psatd_stability/analysis_galilean.py`。脚本先从 `warpx_used_inputs` 判断维度、current correction、time averaging 和 single-box FFT，然后设置不同 reference energy 与容差。
 
 核心源码是：
 
@@ -11106,7 +11016,7 @@ $$
 
 ### 6.11.3 Maxwell hybrid QED：真空修正后的相速度偏移
 
-`../warpx/Examples/Tests/maxwell_hybrid_qed/analysis.py` 不是在检查辐射反作用、光子发射或 Breit-Wheeler 产额，而是在检查 hybrid-QED 修正后的 Maxwell 色散关系。输入文件固定了：
+`Examples/Tests/maxwell_hybrid_qed/analysis.py` 不是在检查辐射反作用、光子发射或 Breit-Wheeler 产额，而是在检查 hybrid-QED 修正后的 Maxwell 色散关系。输入文件固定了：
 
 - `warpx.grid_type = collocated`
 - `algo.maxwell_solver = psatd`
@@ -11184,7 +11094,7 @@ $$
 
 ### 6.11.5 静电球：解析场 L2 误差与能量守恒
 
-`../warpx/Examples/Tests/electrostatic_sphere/analysis_electrostatic_sphere.py` 检查均匀带电电子球的库仑展开。球半径满足
+`Examples/Tests/electrostatic_sphere/analysis_electrostatic_sphere.py` 检查均匀带电电子球的库仑展开。球半径满足
 
 $$
 \ddot r=\frac{a}{r^2},
@@ -11291,7 +11201,7 @@ Chapter 13 则把这条统计图像压成了更直接的工程尺度。第一，
 
 ### 6.11.6 隐式 EM：能量、Gauss law 与求解器迭代数
 
-隐式 solver 的 regression 不是只看场图像，而是直接读 reduced diagnostics。`../warpx/Examples/Tests/implicit/analysis_1d.py` 对 1D Picard case 做总能量漂移检查：
+隐式 solver 的 regression 不是只看场图像，而是直接读 reduced diagnostics。`Examples/Tests/implicit/analysis_1d.py` 对 1D Picard case 做总能量漂移检查：
 
 ```python
 field_energy = np.loadtxt("diags/reducedfiles/field_energy.txt", skiprows=1)
@@ -11309,7 +11219,7 @@ elif re.match("test_1d_theta_implicit_picard", test_name):
 assert max_delta_E < tolerance_rel
 ```
 
-`inputs_test_1d_theta_implicit_picard` 的单进程复现归档于 `runs/stage-c-validation/implicit_theta_picard/`，共 101 个 reduced-diagnostic 样本；`scripts/analyze_implicit_theta_picard_contract.py` 与官方 `analysis_1d.py` 均通过：
+`inputs_test_1d_theta_implicit_picard` 写出 101 个 reduced-diagnostic 样本；官方 `analysis_1d.py` 对这条输入检查总能量漂移：
 
 $$
 \max\left|\frac{W(t)-W(0)}{W(0)}\right|
@@ -11332,7 +11242,7 @@ $$
 \end{array}
 $$
 
-两条结果均由官方 `analysis_1d.py` 和独立脚本 `scripts/analyze_implicit_picard_energy_contract.py` 复核。这里不能把两档容差读成分析脚本不一致：它们对应的是两个不同的时间离散/场推进合同。theta-implicit 分支在该基准上把粒子与场总账本压到机器精度量级；semi-implicit 分支则以 `2.5e-5` 作为官方允许的能量漂移上界。运行产物分别归档于 `runs/stage-c-validation/implicit_theta_picard/` 和 `runs/stage-c-validation/implicit_semi_picard/`。
+官方 `analysis_1d.py` 对两条输入分别应用相应阈值。这里不能把两档容差读成分析脚本不一致：它们对应的是两个不同的时间离散/场推进合同。theta-implicit 分支在该基准上把粒子与场总账本压到机器精度量级；semi-implicit 分支则以 `2.5e-5` 作为官方允许的能量漂移上界。
 
 ```python
 drho = (rho - epsilon_0 * divE) / e / ne0
@@ -11355,7 +11265,7 @@ $$
 \right]^{1/2}.
 $$
 
-如果只看这些 diagnostics，很容易把 implicit case 误解成“普通场推进外加一个 nonlinear solver 黑箱”。实际上源码里，Gauss law 和能量误差背后还隐含着一条更具体的线性化装配链。`../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:771-788` 的 `PreLinearSolve()` 在线性求解前会：
+如果只看这些 diagnostics，很容易把 implicit case 误解成“普通场推进外加一个 nonlinear solver 黑箱”。实际上源码里，Gauss law 和能量误差背后还隐含着一条更具体的线性化装配链。`Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 的 `PreLinearSolve()` 在线性求解前会：
 
 ```cpp
 m_WarpX->DepositMassMatrices();
@@ -11378,13 +11288,13 @@ if (m_use_mass_matrices_pc) {
 - `MassMatrices_X/Y/Z = dJ/dE` 的完整局域响应；
 - `MassMatrices_PC` 是从主质量矩阵裁剪、通信、施边界、再乘上 $c^2\mu_0\theta\Delta t$ 后供 preconditioner 使用的近似系数场。
 
-随后 `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:105-125` 和 `:144-356` 把 linear stage 的电流明确写成
+随后 `Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 通过 `ComputeJfromMassMatrices()` 将 linear stage 的电流明确写成
 
 $$
 J(E)=J_{\rm suborbit}+J_0+MM\,(E-E_0),
 $$
 
-其中 `E_0` 由 `Efield_fp_save` 保存。`ComputeJfromMassMatrices()` 不是抽象矩阵乘法，而是在每个 `Jx/Jy/Jz` 分量的真实 staggered grid 上，对 `Ex/Ey/Ez-E0` 做局域 stencil 卷积。再往下，`../warpx/Source/NonlinearSolvers/MatrixPC.H:300-318`、`JacobiPC.H:286-317` 和 `CurlCurlMLMGPC.H:275-308` 分别把 `MassMatrices_PC` 当成稀疏矩阵条目、局域 Jacobi 权重或 MLMG 的 `beta` 系数来消费。
+其中 `E_0` 由 `Efield_fp_save` 保存。`ComputeJfromMassMatrices()` 不是抽象矩阵乘法，而是在每个 `Jx/Jy/Jz` 分量的真实 staggered grid 上，对 `Ex/Ey/Ez-E0` 做局域 stencil 卷积。再往下，`Source/NonlinearSolvers/MatrixPC.H`、`JacobiPC.H` 和 `CurlCurlMLMGPC.H` 分别把 `MassMatrices_PC` 当成稀疏矩阵条目、局域 Jacobi 权重或 MLMG 的 `beta` 系数来消费。
 
 因此这些 implicit regression 实际同时在检查三层东西：
 
@@ -11398,7 +11308,7 @@ $$
 F(U)=U-b-R(U).
 $$
 
-`../warpx/Source/NonlinearSolvers/NewtonSolver.H:454-468` 的 `EvalResidual()` 明确写成：
+`Source/NonlinearSolvers/NewtonSolver.H` 的 `EvalResidual()` 明确写成：
 
 ```cpp
 m_ops->ComputeRHS( m_R, a_U, a_time, a_iter, false );
@@ -11409,7 +11319,7 @@ a_F -= m_R;
 a_F -= a_b;
 ```
 
-而 matrix-free Jacobian `../warpx/Source/NonlinearSolvers/JacobianFunctionMF.H:198-234` 再用有限差分构造方向作用：
+而 matrix-free Jacobian `Source/NonlinearSolvers/JacobianFunctionMF.H` 再用有限差分构造方向作用：
 
 ```cpp
 m_Z.linComb( 1.0, m_Y0, eps, a_dU ); // Z = Y0 + eps*dU
@@ -11435,7 +11345,7 @@ $$
 
 也就是说，PETSc 在这里不是重新定义物理，而只是消费 WarpX 已经定义好的 residual、Jacobian 方向作用和 preconditioner apply。
 
-若再切到 `pc_petsc` 这条支线，结构还要再分一次：`../warpx/Source/FieldSolver/ImplicitSolvers/StrangImplicitSpectralEM.cpp:106-123` 里，Strang split implicit spectral EM 的 nonlinear 右端不是 curl-curl 场更新，而是直接
+若再切到 `pc_petsc` 这条支线，结构还要再分一次：`Source/FieldSolver/ImplicitSolvers/StrangImplicitSpectralEM.cpp` 里，Strang split implicit spectral EM 的 nonlinear 右端不是 curl-curl 场更新，而是直接
 
 $$
 R(U)=-\frac{\Delta t}{2}\mu_0 c^2 J^{n+1/2},
@@ -11468,7 +11378,7 @@ $$
 
 其中单位阵、curl-curl stencil 和 `MassMatrices_PC` 都通过 `insertOrAdd()` 累加到同一行的列条目里。也就是说，`pc_petsc` 路径不是“把整个 implicit 求解显式矩阵化”，而只是把 preconditioner 近似显式矩阵化，再交给 PETSc 处理。
 
-若再往下追一层，`../warpx/Source/FieldSolver/ImplicitSolvers/WarpXSolverDOF.cpp:19-207` 说明 `MatrixPC` 的每一行并不是抽象的 “`Ex/Ey/Ez` 某个分量块”，而是先由 `WarpXSolverDOF` 给 staggered `Efield_fp` 的每个有效点分配一对 `{local,global}` 自由度编号。这个编号还不是对整个 `MultiFab` 无差别铺开，而是先经过 `getFieldDotMaskPointer(...)` 取回的 dot-mask 裁剪：只有 mask 为真的位置才进入线性系统，其他位置的 local/global 槽都保留为 invalid。于是 `MatrixPC::Assemble()` 里的
+若再往下追一层，`Source/FieldSolver/ImplicitSolvers/WarpXSolverDOF.cpp` 说明 `MatrixPC` 的每一行并不是抽象的 “`Ex/Ey/Ez` 某个分量块”，而是先由 `WarpXSolverDOF` 给 staggered `Efield_fp` 的每个有效点分配一对 `{local,global}` 自由度编号。这个编号还不是对整个 `MultiFab` 无差别铺开，而是先经过 `getFieldDotMaskPointer(...)` 取回的 dot-mask 裁剪：只有 mask 为真的位置才进入线性系统，其他位置的 local/global 槽都保留为 invalid。于是 `MatrixPC::Assemble()` 里的
 
 ```cpp
 const int ridx_l = dof_arr(i,j,k,0);
@@ -11478,7 +11388,7 @@ if (ridx_l < 0) { return; }
 
 实际意思就是：这一条矩阵行只对应一个被 dot-mask 接受的 staggered 电场自由度，而 `ridx_l` 决定它在本 rank 的行号，`ridx_g` 决定它在全局稀疏矩阵里的真实列号。
 
-在此基础上，`../warpx/Source/NonlinearSolvers/MatrixPC.H:319-809` 再按几何把这一行写成局域 stencil。共有三层叠加：
+在此基础上，`Source/NonlinearSolvers/MatrixPC.H` 再按几何把这一行写成局域 stencil。共有三层叠加：
 
 1. 先无条件写单位对角 `I`；
 2. 若 `thetaDt>0`，再写 `curl(alpha curl .)` 的离散条目；
@@ -11486,11 +11396,11 @@ if (ridx_l < 0) { return; }
 
 不同几何的差异主要体现在第二层。1D `Z` 几何下只有横向 `Ex/Ey` 行带三点二阶差分，`Ez` 不带 curl-curl；XZ / RZ 下 `dir=0,2` 不只是本分量三点模板，还会额外跨到横向分量写四个 mixed-derivative 角点条目，对应二维的 $\partial_x\partial_z$ 交叉导数；3D 下每个分量行都会同时耦合到另外两个分量，在两个横向方向上写二阶项和 mixed-derivative 项；RCYLINDER 则没有这类跨分量 mixed derivative，但径向二阶项都显式带有 `1 \pm 0.5/i` 这类圆柱几何因子。所有这些条目都通过 `insertOrAdd()` 合并到同一行里，并逐项乘上 `BC_mask_Edir_arr(...)`，所以边界条件不是事后再修，而是在矩阵条目生成时就已经嵌入 stencil。
 
-而 `BC_mask_Edir_arr(...)` 本身也不是临时判断得到的布尔开关，而是 `../warpx/Source/FieldSolver/ImplicitSolvers/ThetaImplicitEM.cpp:190-417` 在 `pc_petsc` 模式下预先分配并写好的系数场。`InitializeCurlCurlBCMasks()` 会根据几何维度先决定每个 `E` 分量需要多少类 mask，然后再把 PEC、PMC、Silver-Mueller、PECInsulator 甚至轴线 `None` 的边界重构系数直接写进这些分量里。所以 `MatrixPC::Assemble()` 在边界上不是“先写标准 stencil，再删条目”，而是直接把已经改写好的离散系数乘进对角项、邻点项和 mixed-derivative 项。
+而 `BC_mask_Edir_arr(...)` 本身也不是临时判断得到的布尔开关，而是 `Source/FieldSolver/ImplicitSolvers/ThetaImplicitEM.cpp` 在 `pc_petsc` 模式下预先分配并写好的系数场。`InitializeCurlCurlBCMasks()` 会根据几何维度先决定每个 `E` 分量需要多少类 mask，然后再把 PEC、PMC、Silver-Mueller、PECInsulator 甚至轴线 `None` 的边界重构系数直接写进这些分量里。所以 `MatrixPC::Assemble()` 在边界上不是“先写标准 stencil，再删条目”，而是直接把已经改写好的离散系数乘进对角项、邻点项和 mixed-derivative 项。
 
-`MassMatrices_PC` 这边也有类似的“前处理后消费”结构。`../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:470-765` 先按 deposition 算法、shape 和 `mass_matrices_pc_width` 得到完整的 Jacobian mass-matrix 窗口 `m_ncomp_xx/yy/zz`，再裁出只供 preconditioner 使用的 `m_ncomp_pc_xx/yy/zz`。该源码快照只保留 `xx/yy/zz` 三个同分量块，不显式保留 `xy/xz/...` 交叉块；随后 `PreLinearSolve()` 再对 `MassMatrices_PC` 做同步、`J` 边界处理和 `c^2\mu_0\theta\Delta t` 缩放。因此 `MatrixPC::Assemble()` 读到的 `sigma_ii_arr` 已经不是原始粒子沉积结果，而是一个经过窗口裁剪、通信和边界条件处理的 diagonal-block 近似。
+`MassMatrices_PC` 这边也有类似的“前处理后消费”结构。`Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 先按 deposition 算法、shape 和 `mass_matrices_pc_width` 得到完整的 Jacobian mass-matrix 窗口 `m_ncomp_xx/yy/zz`，再裁出只供 preconditioner 使用的 `m_ncomp_pc_xx/yy/zz`。该实现只保留 `xx/yy/zz` 三个同分量块，不显式保留 `xy/xz/...` 交叉块；随后 `PreLinearSolve()` 再对 `MassMatrices_PC` 做同步、`J` 边界处理和 `c^2\mu_0\theta\Delta t` 缩放。因此 `MatrixPC::Assemble()` 读到的 `sigma_ii_arr` 已经不是原始粒子沉积结果，而是一个经过窗口裁剪、通信和边界条件处理的 diagonal-block 近似。
 
-最后一步 `../warpx/Source/NonlinearSolvers/WarpX_PETSc.cpp:342-389,468-490` 说明 `pc_petsc` 的矩阵提交流程是：WarpX 先按每个 rank 的 `m_ndofs_l` 创建 `Mat P` 的行块，再由 `assemblePCMatrix()` 从 `MatrixPC` 取回 device 端的行存数组，拷回 host，逐行调用 `MatSetValues()`，最后统一 `MatAssemblyBegin/End`。所以这条链的并行 ownership 仍然跟着 `WarpXSolverDOF` 的 local/global 编号走，PETSc 只负责把各 rank 的行提交拼成全局 sparse matrix，而不重新定义行列的物理含义。
+最后一步 `Source/NonlinearSolvers/WarpX_PETSc.cpp` 说明 `pc_petsc` 的矩阵提交流程是：WarpX 先按每个 rank 的 `m_ndofs_l` 创建 `Mat P` 的行块，再由 `assemblePCMatrix()` 从 `MatrixPC` 取回 device 端的行存数组，拷回 host，逐行调用 `MatSetValues()`，最后统一 `MatAssemblyBegin/End`。所以这条链的并行 ownership 仍然跟着 `WarpXSolverDOF` 的 local/global 编号走，PETSc 只负责把各 rank 的行提交拼成全局 sparse matrix，而不重新定义行列的物理含义。
 
 这些实现细节之所以值得追到测试层，是因为 `Examples/Tests/implicit/analysis_petsc_matrix.py` 给了它们一个非常强的硬断言：`inputs_test_2d_curl_curl_petsc_pc`、`inputs_test_rz_curl_curl_petsc_pc` 和 `inputs_test_rcylinder_curl_curl_petsc_pc` 都把 `jacobian.pc_type = pc_petsc` 和 `pc_petsc.type = lu` 放在一起，然后直接要求
 
@@ -11634,7 +11544,7 @@ $$
 
 ### 6.11.8 具体 regression 入口索引
 
-上面的验证讨论按物理检查量组织。实际维护时，还需要知道哪些 regression 入口正在覆盖这些检查。下表按当前 `../warpx/Examples/Tests` 的 CMake 与 analysis 脚本整理，目的是让读者能从正文回到可运行测试，而不是只停留在抽象“有验证”的说法上。
+上面的验证讨论按物理检查量组织。实际维护时，还需要知道哪些 regression 入口正在覆盖这些检查。下表按当前 `Examples/Tests` 的 CMake 与 analysis 脚本整理，目的是让读者能从正文回到可运行测试，而不是只停留在抽象“有验证”的说法上。
 
 | family | 代表输入 / 测试名 | analysis 入口 | 主要判据 | 本章对应的源码风险 |
 |---|---|---|---|---|

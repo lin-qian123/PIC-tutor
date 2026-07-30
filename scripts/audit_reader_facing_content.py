@@ -55,6 +55,9 @@ def main() -> int:
     chapter_5_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_5
     )
+    chapter_6_stale_location_markers = re.findall(
+        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_6
+    )
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -98,12 +101,21 @@ def main() -> int:
         r"notes/code-reading|pkuHEDPbranch|8c488b1a9|本机|本轮|当前源码",
         chapter_5_opening,
     )
+    chapter_6_opening = section_between(chapter_6, "# 6. 电磁场求解器", "## 6.1")
+    chapter_6_opening_project_markers = re.findall(
+        r"notes/code-reading|pkuHEDPbranch|8c488b1a9|本机|本轮|当前源码|源码快照",
+        chapter_6_opening,
+    )
     chapter_6_closure = section_between(chapter_6, "### 6.11.9", "## 6.13") + chapter_6[
         chapter_6.index("## 6.13") :
     ]
     chapter_6_project_record_markers = re.findall(
         r"runs/stage-c-validation|scripts/audit_|contract\.json|维护边界|后续修改",
         chapter_6_closure,
+    )
+    chapter_6_project_path_markers = re.findall(
+        r"scripts/|notes/code-reading|runs/stage-c-validation|docs/chapter-06-v0-evidence-ledger|contract\.\{json,md\}",
+        chapter_6,
     )
     chapter_7_opening = section_between(chapter_7, "# 7. 边界条件、PML 与 AMR", "## 7.1")
     chapter_7_closure = chapter_7[chapter_7.index("## 7.10") :]
@@ -162,6 +174,19 @@ def main() -> int:
                 "## 5.16 练习与源码定位",
             )
         ) and not chapter_5_stale_location_markers,
+        "chapter_6_opening_is_reader_facing": not chapter_6_opening_project_markers,
+        "chapter_6_current_solver_route": all(
+            marker in chapter_6
+            for marker in (
+                "场求解器把上一章已经同步的电荷与电流变成下一时刻的电磁场",
+                "WarpX::OneStep_nosub()",
+                "WarpX::PushPSATD()",
+                "WarpX::OneStep_JRhom()",
+                "读者主线：从同步源项到可检验的场",
+                "选择路径前的检查表",
+                "## 6.12 练习与运行验证",
+            )
+        ) and not chapter_6_stale_location_markers and not chapter_6_project_path_markers,
         "chapter_6_has_reader_facing_closure": all(
             marker in chapter_6_closure
             for marker in (
@@ -254,6 +279,7 @@ def main() -> int:
         "chapter_4_project_record_markers": chapter_4_project_record_markers,
         "chapter_4_project_path_markers": chapter_4_project_path_markers,
         "chapter_6_project_record_markers": chapter_6_project_record_markers,
+        "chapter_6_project_path_markers": chapter_6_project_path_markers,
         "chapter_7_project_record_markers": chapter_7_project_record_markers,
         "chapter_8_project_record_markers": chapter_8_project_record_markers,
         "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
@@ -261,6 +287,8 @@ def main() -> int:
         "chapter_4_stale_location_markers": chapter_4_stale_location_markers,
         "chapter_5_opening_project_markers": chapter_5_opening_project_markers,
         "chapter_5_stale_location_markers": chapter_5_stale_location_markers,
+        "chapter_6_opening_project_markers": chapter_6_opening_project_markers,
+        "chapter_6_stale_location_markers": chapter_6_stale_location_markers,
         "open_items": [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ],

@@ -2,8 +2,8 @@
 
 - classification: `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_READ_RECORDED`
 - scope: automated structure and artifact consistency; current rendered PDF manual reading is recorded; redistribution approval remains open
-- headings: `333` Markdown / `333` HTML
-- PDF pages: `256`
+- headings: `334` Markdown / `334` HTML
+- PDF pages: `257`
 
 | check | status |
 |---|:---:|

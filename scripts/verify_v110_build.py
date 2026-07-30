@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# excerpts/reading indexes in Chapters 4--7 yield 256 pages.
-EXPECTED_PDF_PAGES = 256
+# The Chapter 5 convergence reading card yields 257 pages.
+EXPECTED_PDF_PAGES = 257
 
 
 def image_links(text: str) -> list[str]:
@@ -719,7 +719,7 @@ def main() -> None:
                 "阅读 5.1--5.3",
                 "阅读 5.4--5.8",
                 "阅读 5.9--5.13",
-                "阅读 5.14--5.16",
+                "阅读 5.14--5.15",
             )
         ),
         "chapter_4_has_no_project_path_narration": not chapter_4_workspace_markers and not re.search(
@@ -737,6 +737,17 @@ def main() -> None:
                 "WarpX::SyncCurrentAndRho()",
                 "tile-loop 阶段",
                 "核查练习。",
+            )
+        ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
+        "chapter_5_convergence_reader_card": all(
+            marker in chapter_5
+            for marker in (
+                "### 5.14.7 收敛判读卡：先检验斜率，再讨论阶数",
+                "相邻两档网格上的局部斜率",
+                "不同 geometry 也不能合并拟合成一个共同的",
+                "逐区间报告",
+                "把重复性和正确性分开",
+                "正式阶数与 axis-charge closure 仍未建立",
             )
         ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
         "chapter_5_reader_extracts_are_declared": all(
@@ -1156,14 +1167,13 @@ def main() -> None:
             marker in manual_spotcheck
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
-                "本轮连续阅读已覆盖当前 PDF 第 1--256 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--257 页",
                 "| 1--6 |",
-                "| 174 |",
-                "| 183 |",
-                "| 189 |",
-                "| 249--253 |",
-                "| 254--256 |",
-                "短页为附录结尾的预期留白",
+                "| 120--164 |",
+                "| 165--200 |",
+                "| 214--249 |",
+                "| 250--254 |",
+                "| 255--257 |",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

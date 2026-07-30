@@ -336,7 +336,7 @@ def main() -> int:
                 "阅读 5.1--5.3",
                 "阅读 5.4--5.8",
                 "阅读 5.9--5.13",
-                "阅读 5.14--5.16",
+                "阅读 5.14--5.15",
             )
         ),
         "chapter_5_opening_is_reader_facing": not chapter_5_opening_project_markers,
@@ -356,6 +356,17 @@ def main() -> int:
         and not chapter_5_project_path_markers
         and not chapter_5_project_narration_markers
         and not chapter_5_workspace_markers,
+        "chapter_5_convergence_reader_card": all(
+            marker in chapter_5
+            for marker in (
+                "### 5.14.7 收敛判读卡：先检验斜率，再讨论阶数",
+                "相邻两档网格上的局部斜率",
+                "不同 geometry 也不能合并拟合成一个共同的",
+                "逐区间报告",
+                "把重复性和正确性分开",
+                "正式阶数与 axis-charge closure 仍未建立",
+            )
+        ) and not chapter_5_project_narration_markers,
         "chapter_4_5_multiphysics_source_handoff": all(
             marker in chapter_5
             for marker in (
@@ -689,12 +700,12 @@ def main() -> int:
         "full_current_pdf_read_is_recorded": all(
             marker in manual_spotcheck
             for marker in (
-                "本轮连续阅读已覆盖当前 PDF 第 1--256 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--257 页",
                 "| 1--6 |",
                 "| 7--8 |",
-                "| 213--248 |",
-                "| 249--253 |",
-                "| 254--256 |",
+                "| 214--249 |",
+                "| 250--254 |",
+                "| 255--257 |",
             )
         ),
     }

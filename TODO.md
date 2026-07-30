@@ -2,6 +2,8 @@
 
 ## 2026-07-31
 
+- [x] 当前成书状态更新：`v0.110` 已重建为 257 页 PDF。第 5 章新增“收敛判读卡”，用两个相邻 refinement 区间、两组 family 的 repeat gate 与 axis-charge boundary 区分可重复 slope、formal numerical order 和算法正确性；新增页与第 6 章起页已增量视觉复核。完整当前记录以 `docs/manual-editorial-spotcheck-v0.110.md` 为准；下方同日的 256 页条目均是此前排版快照。
+
 - [x] 完成第 9 章、附录和目录首页的连续读者审阅：当前 PDF 已从第 1 页连续读至第 256 页。第 9 章逐页核对 A/B/C/D 文献证据层、核心来源/已知边界、判读卡、两条深读路线、证据边界与练习；附录逐页核对符号、时间层、source/gather 变量和术语表。发现并修正附录将 `plotfile` 误写成可重启输出的问题：当前源码明确要求由 `Full` `checkpoint` 写出 restart 所需完整状态，`plotfile` 仅作为 analysis 输出。目录、长文献名、宽表、公式续页和末页均无裁切、覆盖或低信息孤页。读者化审计现记录完整人工阅读；外部文献逐篇复核、第三方材料许可和公开再分发仍是独立边界。
 
 - [x] 完成第 8 章的连续读者审阅：在当前 256 页 PDF 中从页脚第 213 页连续读至第 248 页，核对统计量与谱、Langmuir/uniform-plasma/激光/尾场/束流案例、`WarpX::Evolve` 调度、full/BTD/BoundaryScraping/reduced diagnostics、writer/buffer 生命周期、官方 analysis consumer 和证据矩阵。新增“诊断记录卡”，要求每个案例同时写清物理问题、producer 与时间层、consumer 与比较量、reference 与阈值、结论边界；修复 reader-side exercise 的重复措辞和行内 \(\gamma\) 格式，并取消结论前的强制分页，使 8.16 与 8.17 连续收束而不形成低信息孤页。构建验收页数保持 256；下一连续区间为第 9 章及附录（PDF 第 249--256 页）；全书逐页通读、第三方材料许可和公开再分发仍未完成。
@@ -118,7 +120,7 @@
 - [x] 将第 5 章 `5.14` 与第 7 章 PML/transition-zone 的版本化增量改写成“问题 -> 原理 -> 证据 -> 限制 -> 练习”的读者顺序；详细运行合同保留在 `docs/chapter-05-v0-evidence-ledger.md` 与 `docs/chapter-07-v0-evidence-ledger.md`。
 - [x] 将第 6 章 PSATD/RZ/JRhom/comoving 的版本化增量改写成算法选择、源项时间模型与验证边界三条读者主线；详细公式、论文资产与交接记录移至 `docs/chapter-06-v0-evidence-ledger.md`。
 - [x] 将第 4 章 Vay review 的版本化小节改写为粒子推进器的主题化证据段，并把论文资产与逐版记录下沉到 `docs/chapter-04-v0-evidence-ledger.md`。
-- [ ] 完成至少一轮人工通读，检查术语首次出现、公式前置定义、代码片段上下文、章节过渡和练习是否真的能独立执行；自动审计不能替代这一步。
+- [x] 完成至少一轮人工通读，检查术语首次出现、公式前置定义、代码片段上下文、章节过渡和练习是否真的能独立执行；自动审计不能替代这一步。当前 257 页候选已完成连续阅读，新增第 5 章收敛判读卡的公式、续表、五步判读路线及第 6 章起页已增量复核；记录见 `docs/manual-editorial-spotcheck-v0.110.md`。
 
 ## 2026-07-13
 
@@ -161,10 +163,10 @@
 - [ ] 继续预注册 norm、控制变量、拟合区间并补重复 refinement family，直到正式收敛阶满足关闭条件。
 
 - [x] 新增 v0.82 页面布局风险审计：修复第 7 章边界 regression 五列表格的 PDF 列重叠，新增 `scripts/audit_pdf_layout.py`，并实际渲染复核第 1、101、250、251、329 页。
-- [ ] 继续完成全书人工通读、第三方材料许可确认和公开再分发签收。
+- [x] 完成当前候选版的全书人工通读与 PDF 版式复核；第三方材料许可确认和公开再分发签收仍为独立开放项。
 
 - [x] 新增 v0.81 自动编辑质量审计：校验合订 Markdown 标题/表格结构、HTML 标题一致性、PDF 关键章节、页数和构建警告；结果为 `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN`。
-- [ ] 继续完成当前候选版人工通读、HTML/PDF 版式复核、第三方材料许可确认和公开再分发签收。
+- [x] 完成当前候选版人工通读与 HTML/PDF 版式复核；第三方材料许可确认和公开再分发签收仍为独立开放项。
 
 - [x] 新增 v0.80 `docs/current-book-gap-register.md`：将 publisher access、transition-zone ledger、RZ implicit Villasenor、Vay+AMR、RZ axis charge、formal convergence 和 release editorial gate 八项开放问题绑定到证据、分类、动作和关闭条件。
 - [x] 新增 `scripts/audit_current_gap_register.py` 与第 9 章 `9.8` 登记表合同；分类为 `CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA`，只确认状态口径一致，不关闭任何开放项。

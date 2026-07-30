@@ -121,9 +121,9 @@ def main() -> int:
             chapter_checks[chapter] = numbers == sorted(numbers) and len(numbers) == len(set(numbers))
 
     manual_read_markers = (
-        "本轮连续阅读已覆盖当前 PDF 第 1--256 页",
+        "本轮连续阅读已覆盖当前 PDF 第 1--257 页",
         "| 1--6 |",
-        "| 254--256 |",
+        "| 255--257 |",
     )
     manual_read_recorded = all(marker in manual_spotcheck for marker in manual_read_markers)
     checks = {

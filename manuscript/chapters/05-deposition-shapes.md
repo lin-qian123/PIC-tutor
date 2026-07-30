@@ -15,7 +15,7 @@
 1. **为什么沉积不是普通插值？** 阅读 5.1--5.3，先从单时间层的 \(\rho\) 写到 old/new shape difference 与离散连续性方程。这一步回答粒子走过一个时间步后，网格源项必须如何变化。
 2. **源项在哪个时间层进入主循环？** 阅读 5.4--5.8，区分旧 `rho`、半步 `J` 和新 `rho`，再定位 `DepositCurrent()`、`DepositCharge()` 与物种汇总。这一步回答局部 kernel 写入的对象何时能被场求解器消费。
 3. **守恒算法实际怎样构造？** 阅读 5.9--5.13，按需要比较 Direct、Esirkepov、Villasenor--Buneman 与 Vay，并把 tile、guard cell、AMR 和边界同步视为同一条 source 链的不同阶段。
-4. **怎样把证据变成输入决策？** 阅读 5.14--5.16，先检查 geometry、AMR 和时间层是否允许该路径，再选择与 observable 匹配的 analysis，并明确案例不能外推到的组合。
+4. **怎样把证据变成输入决策？** 阅读 5.14--5.15，先检查 geometry、AMR 和时间层是否允许该路径，再选择与 observable 匹配的 analysis，并明确案例不能外推到的组合。
 
 因此，本章的阅读终点不是记住某个 kernel 名称，而是能回答四个问题：源项改变了什么、由哪条轨迹或时间层构造、经过哪些同步后被消费、以及哪一个 observable 真正检验了它。
 
@@ -2251,6 +2251,40 @@ RZ Esirkepov 是本章最容易被误读的例子。默认 axis correction 下�
 ### 5.14.6 收敛研究：描述性趋势不是正式阶数
 
 本章的 RZ 与 RSPHERE family 可比较相邻网格的误差趋势；两组独立 2-rank producer 的 correction-on repeat-slope 共 14 项都在预注册容差内，最大绝对差为 `2.0135e-11`。这证明同一 reader-side norm 下的重复性，不自动给出唯一的 formal numerical order。正式收敛还必须固定 geometry、误差范数、时间步、粒子数、边界、拟合区间与 primary observable；尤其不能以 all-cell residual 代替 axis residual。correction-on 的 axis-charge boundary 仍开放，correction-off 接近 numerical floor，只可作负对照。
+
+### 5.14.7 收敛判读卡：先检验斜率，再讨论阶数
+
+若网格尺度每次减半，并且某个误差确实已经进入同一个渐近区间，才可以写
+
+$$
+E(h) \approx C h^p,
+\qquad
+p_{h\to h/2}=\frac{\log\left[E(h)/E(h/2)\right]}{\log 2}.
+$$
+
+这里的 \(p_{h\to h/2}\) 是**相邻两档网格上的局部斜率**，不是自动成立的算法阶数。它要能被解释为 formal order，至少还需要：同一 geometry 内的各相邻区间给出相容结果；误差范数、最终物理时刻、时间步策略、粒子采样、shape、边界和 source 路径都事先固定；所选 observable 没有落到数值地板；并且需要独立重复 family 验证这种判断不会随一次 producer 改变。不同 geometry 也不能合并拟合成一个共同的 \(p\)。
+
+当前的两组 RZ/RSPHERE family 恰好说明了为什么这一区分必要。下表列出 correction-on 情形第一组 family 的两个相邻区间斜率；第二组在对应项上以不超过 \(2.0135\times10^{-11}\) 的绝对差复现，因此表中数值可以用来判读“形状是否稳定”，但不能由复现本身升级为 formal order。
+
+| geometry | observable | \(64\to128\) | \(128\to256\) | 读者应得出的结论 |
+|---|---|---:|---:|---|
+| RZ | relative \(E_r\) error | -1.380 | 1.178 | 两区间连误差下降方向都不一致，不能拟合单一阶数 |
+| RZ | relative \(E_z\) error | -1.887 | 1.234 | 同样未进入可由两个区间支持的单一幂律区间 |
+| RZ | axis charge residual | 1.241 | 1.008 | 有下降趋势，但 axis charge boundary 仍未关闭 |
+| RZ | off-axis charge residual | -0.128 | 1.448 | 对 observable 的选择和区间都敏感，不能替代 axis 量 |
+| RSPHERE | relative \(E_r\) error | -2.649 | 1.847 | 场误差在两个区间不单调，不能宣称统一的场阶数 |
+| RSPHERE | axis charge residual | 1.583 | 1.747 | 两段较接近，但仍不能替代独立 charge-correctness gate |
+| RSPHERE | off-axis charge residual | 1.413 | 1.778 | 只能说明此 observable 的局部趋势，不能与 axis 或 RZ 混合 |
+
+因此，面对一张 refinement 图，应按下列顺序写结论：
+
+1. **先写误差定义。** 说明 \(E\) 是解析场误差、all-cell \(\nabla_h\!\cdot\!E-\rho/\epsilon_0\) 残差、axis residual，还是 off-axis residual；这些量不能互相代替。
+2. **再写哪些控制量固定。** 分辨率加密不能同时悄悄改变物理时刻、边界、shape、粒子采样或 source 时间层；若时间步随网格变化，也必须把它写为 convergence design 的一部分。
+3. **逐区间报告 \(p\)，不挑选好看的区间。** 当前 RZ/RSPHERE 均保留 \(64\to128\) 与 \(128\to256\) 两个区间，正因为有些斜率不一致，才不能只引用后一个区间。
+4. **把重复性和正确性分开。** 两组 family 的 14 个 correction-on slope comparison 都通过预注册的 repeat gate，支持“相同定义下可重复”；默认 axis correction 下的 charge residual 仍为 `BOUNDARY`，所以不能写成“算法已由收敛研究证明正确”。
+5. **最后才决定措辞。** 当前最强的表述是“相邻斜率及其独立重复已记录，正式阶数与 axis-charge closure 仍未建立”。只有所有预注册的 geometry 内、observable 内和 charge gate 同时满足，才可改写为 formal numerical order。
+
+这张判读卡的用途是防止把一条下降曲线、一个平均 slope 或一次成功运行误作阶数证明。它也给第 8 章的 diagnostics 留下明确要求：每次报告收敛，producer 必须保留可辨认的 \(h\)、时间层和算法设置，consumer 必须能分别输出场、axis 与 off-axis observable。
 
 
 

@@ -56,6 +56,9 @@ def main() -> int:
     chapter_3a = (root / "manuscript/chapters/03a-warpx-initialization.md").read_text(
         encoding="utf-8"
     )
+    chapter_3a_opening = section_between(
+        chapter_3a, "# 3A. WarpX 初始化链", "## 3A.1"
+    )
     chapter_3a_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3a
     )
@@ -86,6 +89,7 @@ def main() -> int:
         r"(?:Source/[A-Za-z0-9_./-]+\.(?:cpp|H)|Docs/[A-Za-z0-9_./-]+\.rst):\d+",
         chapter_8,
     )
+    chapter_8_opening = section_between(chapter_8, "# 8. 诊断、验证与案例", "## Langmuir wave")
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -415,6 +419,25 @@ def main() -> int:
         and not chapter_3a_stale_location_markers
         and not chapter_3a_project_path_markers
         and not chapter_3a_project_narration_markers,
+        "chapter_3a_8_long_chapter_reader_navigation": all(
+            marker in chapter_3a_opening
+            for marker in (
+                "阅读路线：先构造初态，再追踪分支",
+                "先读 3A.1--3A.3",
+                "再读 3A.4--3A.5",
+                "按输入类型读 3A.6--3A.12",
+                "最后读 3A.13--3A.16",
+            )
+        ) and all(
+            marker in chapter_8_opening
+            for marker in (
+                "阅读路线：从物理问题走到证据等级",
+                "先读开头、Langmuir wave 与 Uniform plasma",
+                "再按物理问题选案例族",
+                "随后读“诊断在源码中的位置”到案例模板",
+                "最后读 8.14--8.17",
+            )
+        ),
         "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text

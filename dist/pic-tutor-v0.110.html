@@ -265,6 +265,7 @@ nonlinear solver、JFNK 与 mass-matrix：<code>J</code>
 <li><a href="#a.-warpx-初始化链从-initdata-到初始粒子和外部场" id="toc-a.-warpx-初始化链从-initdata-到初始粒子和外部场">3A. WarpX
 初始化链：从 <code>InitData()</code> 到初始粒子和外部场</a>
 <ul>
+<li><a href="#阅读路线先构造初态再追踪分支" id="toc-阅读路线先构造初态再追踪分支">阅读路线：先构造初态，再追踪分支</a></li>
 <li><a href="#a.1-初始化链为什么值得单独成章" id="toc-a.1-初始化链为什么值得单独成章">3A.1
 初始化链为什么值得单独成章</a></li>
 <li><a href="#a.2-启动层先于-initdatampiamrexfftpetsc-与启动前提" id="toc-a.2-启动层先于-initdatampiamrexfftpetsc-与启动前提">3A.2
@@ -648,6 +649,7 @@ AMR transition zone：为什么最终 plotfile 不足以证明路由正确</a></
 <li><a href="#诊断验证与案例" id="toc-诊断验证与案例">8.
 诊断、验证与案例</a>
 <ul>
+<li><a href="#阅读路线从物理问题走到证据等级" id="toc-阅读路线从物理问题走到证据等级">阅读路线：从物理问题走到证据等级</a></li>
 <li><a href="#dawson-统计诊断链从-modal-energy-到-normal-mode-reconstruction" id="toc-dawson-统计诊断链从-modal-energy-到-normal-mode-reconstruction">Dawson
 统计诊断链：从 modal energy 到 normal-mode reconstruction</a></li>
 <li><a href="#langmuir-wave" id="toc-langmuir-wave">Langmuir
@@ -3749,6 +3751,28 @@ projection cleaner</td>
 </tr>
 </tbody>
 </table>
+<h3 id="阅读路线先构造初态再追踪分支">阅读路线：先构造初态，再追踪分支</h3>
+<p>初始化代码同时涉及参数、AMR、粒子、外部场和
+diagnostics。第一次阅读应先建立“第一步推进之前哪些状态必须已经存在”的主线，再进入特定
+injector 或 I/O 分支：</p>
+<ol type="1">
+<li><strong>先读 3A.1–3A.3。</strong> 区分构造期、bootstrap、fresh run
+与 restart，写清哪些参数会在对象构造或 <code>InitData()</code>
+分叉前锁定；这一步回答初态从哪一个全局配置开始。</li>
+<li><strong>再读 3A.4–3A.5。</strong> 沿 level allocation、field
+data、PML、diagnostics 与外部场建立网格侧初态，特别区分叠加到网格的
+external field 和在 gather 时供粒子消费的 external
+field；这一步回答第一步能读到哪些场对象。</li>
+<li><strong>按输入类型读 3A.6–3A.12。</strong>
+<code>PlasmaInjector</code>、体注入、Gaussian beam、openPMD 和
+projection cleaner
+是不同的初态构造路径。选择其中一条时，先记录它创建的粒子/场对象、时间位置和限制，而不是把它们统称为“加载初始条件”。</li>
+<li><strong>最后读 3A.13–3A.16。</strong> 用匹配的
+regression、历史最小骨架和练习检验初态是否真的进入
+<code>Evolve()</code>；结论必须区分输入/接口覆盖、writer 输出和物理
+observable。</li>
+</ol>
+<p>这条路线的停止条件是：读者能够从一个输入参数追踪到它创建的初态对象，并说明第一个时间步的哪个阶段会消费该对象。</p>
 <h2 id="a.1-初始化链为什么值得单独成章">3A.1
 初始化链为什么值得单独成章</h2>
 <p>理解初始化时，先把以下三层边界分开：</p>
@@ -17699,6 +17723,26 @@ wave、uniform plasma 和 LWFA/PWFA
 分别提供解析波、热背景与应用工作流三条主线；后半章再把同一方法落实到
 full/reduced diagnostics、plotfile/openPMD/checkpoint
 和边界粒子缓冲区。</p>
+<h3 id="阅读路线从物理问题走到证据等级">阅读路线：从物理问题走到证据等级</h3>
+<p>本章的案例、writer 和 analysis
+很多；第一次阅读不应按目录逐个收集输出类型，而应按以下顺序完成一个可解释的验证闭环：</p>
+<ol type="1">
+<li><strong>先读开头、Langmuir wave 与 Uniform plasma。</strong>
+从解析波、守恒量、热涨落或 restart 一致性中选定一个要测的 observable 和
+reference；这一步回答“输出究竟要证明什么”。</li>
+<li><strong>再按物理问题选案例族。</strong>
+LWFA/PWFA、laser-target、capacitive discharge、reconnection
+与束流应用分别给出不同的 producer
+和模型边界。选择一个案例时，先写出它的初态、目标物理量和不可外推范围。</li>
+<li><strong>随后读“诊断在源码中的位置”到案例模板。</strong> 追踪
+full/reduced diagnostics、plotfile/openPMD/checkpoint 和 boundary buffer
+如何从运行态生成输出；这一步回答“这个量何时由哪个 consumer 写出”。</li>
+<li><strong>最后读 8.14–8.17。</strong> 把 physics gate、writer/schema
+contract、checksum 和 performance gate 分开，并用练习回查
+producer、consumer、observable
+与限制；这一步回答“通过或失败能支持什么结论”。</li>
+</ol>
+<p>因此，诊断设计的终点不是拥有更多文件，而是每个输出都有明确的问题、时间层、比较对象和证据等级。</p>
 <p>在进入具体案例前，可以先记住 Dawson 1983 对 diagnostics
 的一个老判断：simulation 的目标是 physics essence，而不是
 detail。也就是说，diagnostics

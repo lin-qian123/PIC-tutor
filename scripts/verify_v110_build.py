@@ -19,8 +19,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# Reader-facing chapter openings and long-chapter navigation yield 263 pages.
-EXPECTED_PDF_PAGES = 263
+# Reader-facing chapter openings and long-chapter navigation yield 265 pages.
+EXPECTED_PDF_PAGES = 265
 
 
 def image_links(text: str) -> list[str]:
@@ -103,6 +103,7 @@ def main() -> None:
     chapter_3a = (ROOT / "manuscript" / "chapters" / "03a-warpx-initialization.md").read_text(
         encoding="utf-8"
     )
+    chapter_3a_opening = chapter_3a[: chapter_3a.index("## 3A.1")]
     chapter_3a_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3a
     )
@@ -141,6 +142,7 @@ def main() -> None:
     chapter_8 = (ROOT / "manuscript" / "chapters" / "08-diagnostics-cases.md").read_text(
         encoding="utf-8"
     )
+    chapter_8_opening = chapter_8[: chapter_8.index("## Langmuir wave")]
     chapter_8_stale_location_markers = re.findall(
         r"(?:Source/[A-Za-z0-9_./-]+\.(?:cpp|H)|Docs/[A-Za-z0-9_./-]+\.rst):\d+",
         chapter_8,
@@ -325,6 +327,25 @@ def main() -> None:
                 "输入创建了什么初态？比较的 observable 是什么？",
             )
         ) and not chapter_3a_stale_location_markers and not chapter_3a_project_markers,
+        "chapter_3a_8_long_chapter_reader_navigation": all(
+            marker in chapter_3a_opening
+            for marker in (
+                "阅读路线：先构造初态，再追踪分支",
+                "先读 3A.1--3A.3",
+                "再读 3A.4--3A.5",
+                "按输入类型读 3A.6--3A.12",
+                "最后读 3A.13--3A.16",
+            )
+        ) and all(
+            marker in chapter_8_opening
+            for marker in (
+                "阅读路线：从物理问题走到证据等级",
+                "先读开头、Langmuir wave 与 Uniform plasma",
+                "再按物理问题选案例族",
+                "随后读“诊断在源码中的位置”到案例模板",
+                "最后读 8.14--8.17",
+            )
+        ),
         "chapter_4_current_pusher_route": all(
             marker in chapter_4
             for marker in (

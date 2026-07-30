@@ -2090,6 +2090,17 @@ $$
 | 外场、species、粒子创建与散度修正分别如何进入初态？ | `AddExternalFields()`、`PlasmaInjector`、粒子创建与 projection cleaner |
 | 哪些案例能区分不同初始化路径？ | initial distribution、space charge、external field 与 restart 的观察量 |
 
+### 阅读路线：先构造初态，再追踪分支
+
+初始化代码同时涉及参数、AMR、粒子、外部场和 diagnostics。第一次阅读应先建立“第一步推进之前哪些状态必须已经存在”的主线，再进入特定 injector 或 I/O 分支：
+
+1. **先读 3A.1--3A.3。** 区分构造期、bootstrap、fresh run 与 restart，写清哪些参数会在对象构造或 `InitData()` 分叉前锁定；这一步回答初态从哪一个全局配置开始。
+2. **再读 3A.4--3A.5。** 沿 level allocation、field data、PML、diagnostics 与外部场建立网格侧初态，特别区分叠加到网格的 external field 和在 gather 时供粒子消费的 external field；这一步回答第一步能读到哪些场对象。
+3. **按输入类型读 3A.6--3A.12。** `PlasmaInjector`、体注入、Gaussian beam、openPMD 和 projection cleaner 是不同的初态构造路径。选择其中一条时，先记录它创建的粒子/场对象、时间位置和限制，而不是把它们统称为“加载初始条件”。
+4. **最后读 3A.13--3A.16。** 用匹配的 regression、历史最小骨架和练习检验初态是否真的进入 `Evolve()`；结论必须区分输入/接口覆盖、writer 输出和物理 observable。
+
+这条路线的停止条件是：读者能够从一个输入参数追踪到它创建的初态对象，并说明第一个时间步的哪个阶段会消费该对象。
+
 ## 3A.1 初始化链为什么值得单独成章
 
 理解初始化时，先把以下三层边界分开：
@@ -12339,6 +12350,17 @@ PIC 程序的可信度来自验证，而不是来自输入文件能跑完。一�
 - 源码和分析脚本是否确实覆盖了所声称的运行路径。
 
 本章不按文件格式罗列功能，而按一条读者可追踪的证据链展开：**先定义想测的物理量，再确认它从哪些运行态生成，接着选择 reader-side 的比较对象，最后标出该比较能支持和不能支持的结论。**Langmuir wave、uniform plasma 和 LWFA/PWFA 分别提供解析波、热背景与应用工作流三条主线；后半章再把同一方法落实到 full/reduced diagnostics、plotfile/openPMD/checkpoint 和边界粒子缓冲区。
+
+### 阅读路线：从物理问题走到证据等级
+
+本章的案例、writer 和 analysis 很多；第一次阅读不应按目录逐个收集输出类型，而应按以下顺序完成一个可解释的验证闭环：
+
+1. **先读开头、Langmuir wave 与 Uniform plasma。** 从解析波、守恒量、热涨落或 restart 一致性中选定一个要测的 observable 和 reference；这一步回答“输出究竟要证明什么”。
+2. **再按物理问题选案例族。** LWFA/PWFA、laser-target、capacitive discharge、reconnection 与束流应用分别给出不同的 producer 和模型边界。选择一个案例时，先写出它的初态、目标物理量和不可外推范围。
+3. **随后读“诊断在源码中的位置”到案例模板。** 追踪 full/reduced diagnostics、plotfile/openPMD/checkpoint 和 boundary buffer 如何从运行态生成输出；这一步回答“这个量何时由哪个 consumer 写出”。
+4. **最后读 8.14--8.17。** 把 physics gate、writer/schema contract、checksum 和 performance gate 分开，并用练习回查 producer、consumer、observable 与限制；这一步回答“通过或失败能支持什么结论”。
+
+因此，诊断设计的终点不是拥有更多文件，而是每个输出都有明确的问题、时间层、比较对象和证据等级。
 
 在进入具体案例前，可以先记住 Dawson 1983 对 diagnostics 的一个老判断：simulation 的目标是 physics essence，而不是 detail。也就是说，diagnostics 的价值不在于“把所有字段和粒子都写出来”，而在于能否把大规模数值状态压成可解释的 observables、谱、守恒量和 reader-side 证据。对二维和三维模型，这种 diagnostics / visualization / postprocessing 的难度甚至可能不低于模型本身。WarpX 的 full diagnostics、reduced diagnostics、back-transformed diagnostics、checkpoint 以及 openPMD/plotfile reader-side analysis，都不该只按 writer 类型分类，而应按“是否真正提炼出目标 physics”来理解。
 

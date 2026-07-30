@@ -10,6 +10,17 @@ PIC 程序的可信度来自验证，而不是来自输入文件能跑完。一�
 
 本章不按文件格式罗列功能，而按一条读者可追踪的证据链展开：**先定义想测的物理量，再确认它从哪些运行态生成，接着选择 reader-side 的比较对象，最后标出该比较能支持和不能支持的结论。**Langmuir wave、uniform plasma 和 LWFA/PWFA 分别提供解析波、热背景与应用工作流三条主线；后半章再把同一方法落实到 full/reduced diagnostics、plotfile/openPMD/checkpoint 和边界粒子缓冲区。
 
+### 阅读路线：从物理问题走到证据等级
+
+本章的案例、writer 和 analysis 很多；第一次阅读不应按目录逐个收集输出类型，而应按以下顺序完成一个可解释的验证闭环：
+
+1. **先读开头、Langmuir wave 与 Uniform plasma。** 从解析波、守恒量、热涨落或 restart 一致性中选定一个要测的 observable 和 reference；这一步回答“输出究竟要证明什么”。
+2. **再按物理问题选案例族。** LWFA/PWFA、laser-target、capacitive discharge、reconnection 与束流应用分别给出不同的 producer 和模型边界。选择一个案例时，先写出它的初态、目标物理量和不可外推范围。
+3. **随后读“诊断在源码中的位置”到案例模板。** 追踪 full/reduced diagnostics、plotfile/openPMD/checkpoint 和 boundary buffer 如何从运行态生成输出；这一步回答“这个量何时由哪个 consumer 写出”。
+4. **最后读 8.14--8.17。** 把 physics gate、writer/schema contract、checksum 和 performance gate 分开，并用练习回查 producer、consumer、observable 与限制；这一步回答“通过或失败能支持什么结论”。
+
+因此，诊断设计的终点不是拥有更多文件，而是每个输出都有明确的问题、时间层、比较对象和证据等级。
+
 在进入具体案例前，可以先记住 Dawson 1983 对 diagnostics 的一个老判断：simulation 的目标是 physics essence，而不是 detail。也就是说，diagnostics 的价值不在于“把所有字段和粒子都写出来”，而在于能否把大规模数值状态压成可解释的 observables、谱、守恒量和 reader-side 证据。对二维和三维模型，这种 diagnostics / visualization / postprocessing 的难度甚至可能不低于模型本身。WarpX 的 full diagnostics、reduced diagnostics、back-transformed diagnostics、checkpoint 以及 openPMD/plotfile reader-side analysis，都不该只按 writer 类型分类，而应按“是否真正提炼出目标 physics”来理解。
 
 同一篇综述还给了 diagnostics 的另一条很有价值的组织方式：先分 `measurements related to particle motion`，再分 `measurements related to waves`。前者典型的是 distribution function、phase space、drag、velocity diffusion；后者典型的是 field fluctuation level、time correlations、power spectrum 与 nonuniform-plasma normal modes。这种分法比“plotfile/reduced/openPMD/BTD”更接近物理问题本身，因为它直接对应读者真正要问的量：是想测输运系数、相关时间、噪声底、谱线，还是想重建某个本征模的空间结构。后面各案例如果只停在“输出了哪类文件”，而不说明它到底在测哪一类物理量，diagnostics 章节就会失焦。

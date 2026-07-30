@@ -11,6 +11,17 @@
 | 外场、species、粒子创建与散度修正分别如何进入初态？ | `AddExternalFields()`、`PlasmaInjector`、粒子创建与 projection cleaner |
 | 哪些案例能区分不同初始化路径？ | initial distribution、space charge、external field 与 restart 的观察量 |
 
+### 阅读路线：先构造初态，再追踪分支
+
+初始化代码同时涉及参数、AMR、粒子、外部场和 diagnostics。第一次阅读应先建立“第一步推进之前哪些状态必须已经存在”的主线，再进入特定 injector 或 I/O 分支：
+
+1. **先读 3A.1--3A.3。** 区分构造期、bootstrap、fresh run 与 restart，写清哪些参数会在对象构造或 `InitData()` 分叉前锁定；这一步回答初态从哪一个全局配置开始。
+2. **再读 3A.4--3A.5。** 沿 level allocation、field data、PML、diagnostics 与外部场建立网格侧初态，特别区分叠加到网格的 external field 和在 gather 时供粒子消费的 external field；这一步回答第一步能读到哪些场对象。
+3. **按输入类型读 3A.6--3A.12。** `PlasmaInjector`、体注入、Gaussian beam、openPMD 和 projection cleaner 是不同的初态构造路径。选择其中一条时，先记录它创建的粒子/场对象、时间位置和限制，而不是把它们统称为“加载初始条件”。
+4. **最后读 3A.13--3A.16。** 用匹配的 regression、历史最小骨架和练习检验初态是否真的进入 `Evolve()`；结论必须区分输入/接口覆盖、writer 输出和物理 observable。
+
+这条路线的停止条件是：读者能够从一个输入参数追踪到它创建的初态对象，并说明第一个时间步的哪个阶段会消费该对象。
+
 ## 3A.1 初始化链为什么值得单独成章
 
 理解初始化时，先把以下三层边界分开：

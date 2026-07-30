@@ -9427,6 +9427,18 @@ $$
 
 本章随后先解释 FDTD curl 和 PML，再进入 PSATD、JRhom、RZ、静电/静磁、Hybrid PIC 与 regression。每一节都区分：公式解释什么、源码能定位什么、一个具体 regression 又实际检验了什么。
 
+### 阅读路线：先锁定离散表示，再把选择接到证据
+
+第 6 章包含多种场模型和验证家族。第一次阅读不需要按每个 solver 名称逐段比较；先沿下面五步建立一条能回查的选择链，再进入与当前问题有关的细节：
+
+1. **先读 6.1--6.4。** 固定 FDTD 的交错时间层、Yee/Nodal/CKC curl、PML split field 和非 Cartesian 几何限制。这一步回答“更新的场变量在哪里、以什么差分和边界状态推进”。
+2. **再读 6.5--6.8。** 在确认 FFT、几何和 source 时间模型后，区分标准 PSATD、Galilean/Comoving、current correction、JRhom 与 RZ Fourier--Bessel 表示。这一步回答“谱表示是否适合当前 source、坐标与 NCI 问题”。
+3. **按物理模型选择 6.9 或 6.10。** 若问题本身省略辐射分支、要求 Poisson/self-field，先读静电与静磁；若采用离子动理学加电子流体闭合，才进入 Hybrid PIC。它们不是 FDTD/PSATD 的小参数变体。
+4. **最后读 6.11。** 先按问题选择 observable：PML 看反射率或残余场，NCI 看场能与 Gauss-law residual，静电看解析场和能量，隐式看能量、Gauss law 与迭代数。先找到 producer、consumer 和比较对象，再回看相应 analysis 脚本。
+5. **用 6.12--6.13 收束。** 能把“几何与表示 -> source 时间模型 -> 边界/同步 -> observable”写成一张检查表，才说明已把本章与第 5、7、8 章接起来；任何单一 checksum 或一次成功运行都不能替代这条链。
+
+这条路线的停止条件不是记住某个 solver 的名称，而是能指出该选择消费的 source 时间层、它允许的几何和边界，以及一个能支持和一个不能支持的结论。
+
 ## 6.1 FDTD 差分算子：Yee、Nodal 与 CKC
 
 在 `Source/FieldSolver/FiniteDifferenceSolver/CartesianYeeAlgorithm.H` 中，`T_Algo::Upward/Downward` 把 FDTD 模板连接到具体差分。Yee 的 `UpwardDx` 和 `DownwardDx` 分别是 staggered forward/backward difference：

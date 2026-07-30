@@ -19,9 +19,10 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# Reader-facing chapter openings, long-chapter navigation, and the Chapter 3
-# cross-chapter state handoff yield 266 pages.
-EXPECTED_PDF_PAGES = 266
+# Reader-facing chapter openings, long-chapter navigation, the Chapter 3
+# cross-chapter state handoff, and the Chapter 6 solver reading route yield
+# 267 pages.
+EXPECTED_PDF_PAGES = 267
 
 
 def image_links(text: str) -> list[str]:
@@ -201,6 +202,22 @@ def main() -> None:
                 "## 6.12 练习与运行验证",
             )
         ) and not chapter_6_stale_location_markers and not re.search(
+            r"scripts/|notes/code-reading|runs/stage-c-validation|docs/chapter-06-v0-evidence-ledger|"
+            r"contract\.\{json,md\}|全文笔记|逐式记录|证据台账",
+            chapter_6,
+        ),
+        "chapter_6_long_chapter_reader_navigation": all(
+            marker in chapter_6
+            for marker in (
+                "阅读路线：先锁定离散表示，再把选择接到证据",
+                "先读 6.1--6.4。",
+                "再读 6.5--6.8。",
+                "按物理模型选择 6.9 或 6.10。",
+                "最后读 6.11。",
+                "用 6.12--6.13 收束。",
+                "几何与表示 -> source 时间模型 -> 边界/同步 -> observable",
+            )
+        ) and not re.search(
             r"scripts/|notes/code-reading|runs/stage-c-validation|docs/chapter-06-v0-evidence-ledger|"
             r"contract\.\{json,md\}|全文笔记|逐式记录|证据台账",
             chapter_6,

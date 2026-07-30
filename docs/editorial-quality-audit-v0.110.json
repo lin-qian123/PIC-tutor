@@ -15,22 +15,22 @@
   "passed": true,
   "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
   "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
-  "heading_count": 327,
-  "html_heading_count": 327,
-  "pdf_pages": 266,
+  "heading_count": 328,
+  "html_heading_count": 328,
+  "pdf_pages": 267,
   "table_issues": [],
   "artifacts": {
     "pic-tutor-v0.110.md": {
-      "bytes": 846934,
-      "sha256": "d3714f504cb46f44b7d9dfcfb783610e0d7a74d285f11caf65d4a1034146169c"
+      "bytes": 848687,
+      "sha256": "9bba5cab09d45bc99547c73754af67ec37e162170bda960d7486004f39a4d42b"
     },
     "pic-tutor-v0.110.html": {
-      "bytes": 5234432,
-      "sha256": "da90211eb18a00d1067a0dfb9eb15e2561dc892b3e71855b127308112044d85c"
+      "bytes": 5236604,
+      "sha256": "b8e74dd203bc371d98c684da9fbd74ca0690024bd438e0378cfad080b2567429"
     },
     "pic-tutor-v0.110.pdf": {
-      "bytes": 2984799,
-      "sha256": "3559b2d0b2edb227869eb116be4e7cb96d9652a78e0dceb2f0bcea3b41f8da6e"
+      "bytes": 2987168,
+      "sha256": "bf04f78c5d6b686f7637d654b8a8c8b56cf0c6484d160a139861094258feee0b"
     }
   }
 }

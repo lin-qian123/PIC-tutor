@@ -295,6 +295,18 @@ def main() -> int:
             )
         ) and not chapter_6_stale_location_markers and not chapter_6_project_path_markers
         and not chapter_6_project_narration_markers,
+        "chapter_6_long_chapter_reader_navigation": all(
+            marker in chapter_6
+            for marker in (
+                "阅读路线：先锁定离散表示，再把选择接到证据",
+                "先读 6.1--6.4。",
+                "再读 6.5--6.8。",
+                "按物理模型选择 6.9 或 6.10。",
+                "最后读 6.11。",
+                "用 6.12--6.13 收束。",
+                "几何与表示 -> source 时间模型 -> 边界/同步 -> observable",
+            )
+        ) and not chapter_6_project_path_markers and not chapter_6_project_narration_markers,
         "chapter_6_has_reader_facing_closure": all(
             marker in chapter_6_closure
             for marker in (

@@ -14,6 +14,8 @@
 | `core_chapters_have_no_project_record_markers` | `PASS` |
 | `chapter_9_uses_reader_facing_evidence_language` | `PASS` |
 | `chapter_4_uses_reader_facing_evidence_language` | `PASS` |
+| `chapter_4_has_no_project_path_narration` | `PASS` |
+| `chapter_4_current_pusher_route` | `PASS` |
 | `chapter_6_has_reader_facing_closure` | `PASS` |
 | `chapter_7_has_reader_facing_boundary_closure` | `PASS` |
 | `chapter_8_has_reader_facing_diagnostics_closure` | `PASS` |

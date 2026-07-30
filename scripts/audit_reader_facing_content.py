@@ -46,6 +46,9 @@ def main() -> int:
     chapter_3a_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3a
     )
+    chapter_4_stale_location_markers = re.findall(
+        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_4
+    )
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -79,6 +82,10 @@ def main() -> int:
     chapter_4_project_record_markers = re.findall(
         r"runs/stage-c-validation|chapter-04-v0-evidence-ledger|资产合同|文献资产|FULLTEXT_PAPER_BACKED|access boundary",
         chapter_4_evidence_sections,
+    )
+    chapter_4_project_path_markers = re.findall(
+        r"scripts/|notes/code-reading|runs/stage-c-validation|contract\.\{json,md\}",
+        chapter_4,
     )
     chapter_6_closure = section_between(chapter_6, "### 6.11.9", "## 6.13") + chapter_6[
         chapter_6.index("## 6.13") :
@@ -118,6 +125,19 @@ def main() -> int:
             )
         ),
         "chapter_4_uses_reader_facing_evidence_language": not chapter_4_project_record_markers,
+        "chapter_4_has_no_project_path_narration": not chapter_4_project_path_markers,
+        "chapter_4_current_pusher_route": all(
+            marker in chapter_4
+            for marker in (
+                "本章按一条读者可追踪的因果链展开",
+                "GetExplicitPusherDisplacement()",
+                "doParticleMomentumPush()",
+                "getExternalEB(ip, Exp, Eyp, Ezp, Bxp, Byp, Bzp);",
+                "FirstHalf/SecondHalf",
+                "UpdateMomentumHigueraCary()",
+                "## 4.16 练习与复现实验",
+            )
+        ) and not chapter_4_stale_location_markers,
         "chapter_6_has_reader_facing_closure": all(
             marker in chapter_6_closure
             for marker in (
@@ -208,11 +228,13 @@ def main() -> int:
         "project_record_opening_markers": project_record_opening_markers,
         "project_record_body_markers": project_record_body_markers,
         "chapter_4_project_record_markers": chapter_4_project_record_markers,
+        "chapter_4_project_path_markers": chapter_4_project_path_markers,
         "chapter_6_project_record_markers": chapter_6_project_record_markers,
         "chapter_7_project_record_markers": chapter_7_project_record_markers,
         "chapter_8_project_record_markers": chapter_8_project_record_markers,
         "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
         "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,
+        "chapter_4_stale_location_markers": chapter_4_stale_location_markers,
         "open_items": [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ],

@@ -82,6 +82,12 @@ def main() -> None:
     chapter_3a_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3a
     )
+    chapter_4 = (ROOT / "manuscript" / "chapters" / "04-particle-pushers.md").read_text(
+        encoding="utf-8"
+    )
+    chapter_4_stale_location_markers = re.findall(
+        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_4
+    )
     chapter_7 = (ROOT / "manuscript" / "chapters" / "07-boundaries-amr.md").read_text(
         encoding="utf-8"
     )
@@ -172,6 +178,22 @@ def main() -> None:
                 "ProjectionDivCleaner::setSourceFromField()",
             )
         ) and not chapter_3a_stale_location_markers,
+        "chapter_4_current_pusher_route": all(
+            marker in chapter_4
+            for marker in (
+                "本章按一条读者可追踪的因果链展开",
+                "GetExplicitPusherDisplacement()",
+                "doParticleMomentumPush()",
+                "getExternalEB(ip, Exp, Eyp, Ezp, Bxp, Byp, Bzp);",
+                "FirstHalf/SecondHalf",
+                "UpdateMomentumHigueraCary()",
+                "## 4.16 练习与复现实验",
+            )
+        ) and not chapter_4_stale_location_markers,
+        "chapter_4_has_no_project_path_narration": not re.search(
+            r"scripts/|notes/code-reading|runs/stage-c-validation|contract\.\{json,md\}",
+            chapter_4,
+        ),
         "chapter_1_section_order": chapter_1_numbers == list(range(1, 15)),
         "chapter_1_pdf_toc_entries": all(
             marker in toc_text

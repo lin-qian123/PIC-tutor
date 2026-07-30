@@ -3899,14 +3899,9 @@ inputs
 
 粒子推进器负责把单个宏粒子从一个时间层推进到下一个时间层。它表面上是局部单粒子算法，实际上依赖上一章建立的主循环条件：场必须已经填好 gather guard cells，粒子位置和动量必须处在正确 leapfrog 时间层，外场、电离电荷态、辐射反作用和 QED 选项也必须在进入 pusher 前准备好。
 
-需要回查实现时，先从 `notes/code-reading/particles/` 目录按下列编号进入：
+本章按一条读者可追踪的因果链展开：先用 Lorentz 方程固定时间层和动量记号；再比较 Boris、Vay 与 Higuera--Cary 如何更新动量；最后从 `WarpX::PushParticlesandDeposit()` 经 `MultiParticleContainer::Evolve()` 进入 `PhysicalParticleContainer::Evolve()` 与 `PushPX()`，检查 gather、外场、push、位置更新和沉积如何接在同一 tile loop 中。需要核对实现时，优先搜索 `PushSelector.H` 的 `doParticleMomentumPush()`、三个 `UpdateMomentum*.H` 函数，以及 `PhysicalParticleContainer::PushPX()`；不要把行号或一次源码快照当作算法语义。
 
-- `00`：主调用链；
-- `01`--`03`：pusher、gather 与沉积接口；
-- `66`、`68`：时间层与输出位置；
-- `24`--`30`：collision、diagnostics、边界和 Python 接口的验证地图。
-
-本章以 WarpX `pkuHEDPbranch` 的 `8c488b1a9` 源码快照为导航；其他版本应按函数名和调用关系检索。`PushSelector.H` 选择算法，`UpdateMomentumBoris.H`、`UpdateMomentumVay.H` 和 `UpdateMomentumHigueraCary.H` 分别实现三类动量更新，`WarpXEvolve.cpp`、`MultiParticleContainer.cpp` 与 `PhysicalParticleContainer.cpp` 把它们放入主循环。阅读 Boris 推进时要特别区分半步磁旋转的 Birdsall--Langdon 半角关系，不能把旋转系数机械地除以二；`Examples/Tests/particle_pusher` 提供 Higuera--Cary force-free 路径的直接验证入口。
+阅读 Boris 推进时要特别区分半步磁旋转的 Birdsall--Langdon 半角关系，不能把旋转系数机械地除以二；`Examples/Tests/particle_pusher` 提供 Higuera--Cary force-free 路径的直接验证入口。
 
 ## 4.1 连续 Lorentz 方程
 
@@ -3953,7 +3948,7 @@ $$
 +\frac{\mathbf{u}^{n+1/2}}{\gamma^{n+1/2}}\Delta t.
 $$
 
-WarpX 的显式位置更新正是这个公式，见 `../warpx/Source/Particles/Pusher/UpdatePosition.H:19-70`。
+WarpX 的显式位置更新位于 `Source/Particles/Pusher/UpdatePosition.H` 的 `UpdatePosition()`；它先通过 `GetExplicitPusherDisplacement()` 用完整三速度分量构造位移，再按编译几何写回实际存储的坐标分量。
 
 这里可以补一个 Dawson 1983 的历史边界。那篇综述在 `electromagnetic particle models and fractional dimensional models` 一节明确指出：只要问题涉及自洽磁场或 electromagnetic radiation，particle model 就不能再被理解成“electrostatic 外面多加几个场分量”，而必须回到 full Maxwell equations 与 self-consistent current/charge representation。与此同时，低空间维度并不意味着低速度维度；为了在一维或二维空间里承载 electromagnetic wave，仍必须保留 transverse `E/B/j` 与 transverse velocity，于是才会自然出现 `1 1/2-D`、`1 2/2-D` 和 `2 1/2-D` 这些 fully electromagnetic reduced-dimension models。这个边界正好解释了为什么本章后面很多看似“低维”的 laser、beam 和 FEL benchmark，仍然必须认真讨论 magnetic rotation、relativistic momentum 与 transverse field coupling，而不能把它们误降成纯 electrostatic pusher。
 
@@ -4007,7 +4002,8 @@ $$
 +\frac{q\Delta t}{2m}\mathbf{E}^{n}.
 $$
 
-WarpX 的实现见 `../warpx/Source/Particles/Pusher/UpdateMomentumBoris.H:20-75`：
+源码文件：`Source/Particles/Pusher/UpdateMomentumBoris.H`
+函数：`UpdateMomentumBoris()`
 
 源码原文如下：
 
@@ -4053,18 +4049,18 @@ if (momentum_push_type == MomentumPushType::SecondHalf || momentum_push_type == 
 }
 ```
 
-| 行号 | 代码动作 | 公式对应 |
+| 更新阶段 | 代码动作 | 公式对应 |
 |---|---|---|
-| `:28` | `econst = 0.5*q*dt/m` | \(\frac{q\Delta t}{2m}\) |
-| `:30-35` | FirstHalf 或 Full 时做电半步 | \(\mathbf{u}^{n-1/2}\to\mathbf{u}^{-}\) |
-| `:37-43` | 计算 `inv_gamma` 和 full-step `t` | \(\gamma^{-},\mathbf{t}\) |
-| `:44-57` | FirstHalf/SecondHalf 时按半角关系重标定 `t` | 使两次 half push 合成一次 Full 的磁旋转 |
-| `:58-68` | 磁旋转 | \(\mathbf{u}^{-}\to\mathbf{u}^{+}\) |
-| `:69-74` | SecondHalf 或 Full 时做第二个电半步 | \(\mathbf{u}^{+}\to\mathbf{u}^{n+1/2}\) |
+| 电场系数 | `econst = 0.5*q*dt/m` | \(\frac{q\Delta t}{2m}\) |
+| 第一半步 | FirstHalf 或 Full 时做电半步 | \(\mathbf{u}^{n-1/2}\to\mathbf{u}^{-}\) |
+| 旋转参数 | 计算 `inv_gamma` 和 full-step `t` | \(\gamma^{-},\mathbf{t}\) |
+| 分裂修正 | FirstHalf/SecondHalf 时按半角关系重标定 `t` | 使两次 half push 合成一次 Full 的磁旋转 |
+| 磁旋转 | 交叉乘更新动量 | \(\mathbf{u}^{-}\to\mathbf{u}^{+}\) |
+| 第二半步 | SecondHalf 或 Full 时做第二个电半步 | \(\mathbf{u}^{+}\to\mathbf{u}^{n+1/2}\) |
 
-文件注释 `:13-18` 说明 `FirstHalf` 和 `SecondHalf` 可以分裂执行，并且连续执行应与一次 `Full` 更新数学等价。这正好服务于 `WarpXEvolve.cpp` 中把碰撞放在 momentum push 中间的路径。
+函数注释说明 `FirstHalf` 和 `SecondHalf` 可以分裂执行，并且连续执行应与一次 `Full` 更新数学等价。这正好服务于 `WarpXEvolve.cpp` 中把碰撞放在 momentum push 中间的路径。
 
-这里有一个必须区分的实现细节：WarpX 的 half momentum push 不是简单把 `q dt B/(2m\gamma)` 再乘 `1/2`。代码在 `UpdateMomentumBoris.H:44-57` 使用
+这里有一个必须区分的实现细节：WarpX 的 half momentum push 不是简单把 `q dt B/(2m\gamma)` 再乘 `1/2`。`UpdateMomentumBoris()` 的 half-push 分支使用
 
 $$
 \frac{|t_{\mathrm{half}}|}{|t_{\mathrm{full}}|}
@@ -4076,21 +4072,22 @@ $$
 
 ## 4.3 WarpX 如何选择 pusher
 
-WarpX 的单粒子动量推进分派在 `../warpx/Source/Particles/Pusher/PushSelector.H:39-104`。函数名是 `doParticleMomentumPush()`。
+源码文件：`Source/Particles/Pusher/PushSelector.H`
+函数：`doParticleMomentumPush()`
 
-| 行号 | 选择 |
+| 条件 | 选择 |
 |---|---|
-| `:61-62` | species 电荷乘 `ion_lev`，得到当前粒子的有效电荷。 |
-| `:64-88` | 若启用 classical radiation reaction，进入 `UpdateMomentumBorisWithRadiationReaction()`。 |
-| `:89-92` | `ParticlePusherAlgo::Boris` 进入 `UpdateMomentumBoris()`。 |
-| `:93-96` | `ParticlePusherAlgo::Vay` 进入 `UpdateMomentumVay()`。 |
-| `:97-100` | `ParticlePusherAlgo::HigueraCary` 进入 `UpdateMomentumHigueraCary()`。 |
+| 进入函数后 | species 电荷乘 `ion_lev`，得到当前粒子的有效电荷。 |
+| 启用 classical radiation reaction | 进入 Boris 家族分支：通常调用 `UpdateMomentumBorisWithRadiationReaction()`；若编译 QED 且同步分支中的 \(\chi\) 不低于门限，则调用普通 `UpdateMomentumBoris()`。 |
+| `ParticlePusherAlgo::Boris` | 进入 `UpdateMomentumBoris()`。 |
+| `ParticlePusherAlgo::Vay` | 进入 `UpdateMomentumVay()`。 |
+| `ParticlePusherAlgo::HigueraCary` | 进入 `UpdateMomentumHigueraCary()`。 |
 
 这说明输入参数选择的不是一个高层“粒子模块”，而是每个粒子在 `PushPX()` device loop 内调用的单粒子 momentum update。下面继续展开 Vay 与 Higuera-Cary 的源码。
 
 这一节背后的经典来源可以直接回到 Birdsall-Langdon 1985 第一分卷 `4-3` 到 `4-5`。那里把磁推进的核心先写成几何分裂：电场部分是半步 impulse，磁场部分是速度空间旋转；随后再把旋转压成 `t=\tan(\theta/2)`、`s=2t/(1+t^2)`、`c=(1-t^2)/(1+t^2)` 这组半角变量，并进一步给出向量 Boris 形式。对本章来说，这个来源有两个价值。第一，WarpX 的 Boris 更新不是孤立经验公式，而是这条 “half-accel + rotation + half-accel” 离散合同的现代实现。第二，Birdsall 在 `4-5` 里明确区分了 `1d2v/1d3v` 和真正的一维动力学，这正好解释了为什么即使空间维数较低，本章后面讨论的 mover 仍必须保留多速度分量与磁旋转结构。
 
-Boris 1970 的原始历史位置需要单独标注边界：本书保留 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但没有可逐页核对的会议论文 PDF、MinerU 或图集。因此本章的算法推导来自 Birdsall-Langdon 1985 的二手全文讲解，现代实现则回到 `Source/Particles/Pusher/UpdateMomentumBoris.H`；这三层证据不应合并成“已完成 Boris 1970 原文精读”。读者可用 `scripts/audit_boris_1970_metadata_contract.py` 核对书目边界，并用 `scripts/audit_boris_source_crosswalk.py` 核对该源码快照中的 kernel、half-push、半角重标定和 selector 分派。
+Boris 1970 的原始历史位置需要单独标注边界：本书给出 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但目前没有可逐页核对的会议论文全文。因此，本章的算法推导采用 Birdsall--Langdon 1985 的完整讲解，WarpX 的实现说明则回到 `Source/Particles/Pusher/UpdateMomentumBoris.H`；不能把这三层材料写成“已经完成 Boris 1970 原文精读”。
 
 物理上可以先记住：
 
@@ -4102,7 +4099,10 @@ Boris 1970 的原始历史位置需要单独标注边界：本书保留 J. P. Bo
 
 ## 4.4 Vay pusher：相对论速度变换一致性的更新
 
-Vay pusher 的 WarpX 实现在 `../warpx/Source/Particles/Pusher/UpdateMomentumVay.H:17-77`。源码注释明确引用 Vay 2008 的公式 (9)-(13)，并说明 `FirstHalf` 与 `SecondHalf` 连续执行应等价于 `Full`：
+源码文件：`Source/Particles/Pusher/UpdateMomentumVay.H`
+函数：`UpdateMomentumVay()`
+
+源码注释明确引用 Vay 2008 的公式 (9)-(13)，并说明 `FirstHalf` 与 `SecondHalf` 连续执行应等价于 `Full`：
 
 ```cpp
 /** \brief Push the particle's positions over one timestep,
@@ -4168,7 +4168,7 @@ void UpdateMomentumVay(
 }
 ```
 
-Vay pusher 和 Boris 的主要差别在 `:51-70`。Boris 使用旧的 \(\gamma^-\) 构造磁旋转；Vay 先构造 \(\mathbf{u}'\)，再通过
+Vay pusher 和 Boris 的主要差别在求解更新后的相对论因子这一步。Boris 使用旧的 \(\gamma^-\) 构造磁旋转；Vay 先构造 \(\mathbf{u}'\)，再通过
 
 $$
 \sigma=\gamma'^2-\tau^2,
@@ -4265,7 +4265,8 @@ Vay--Godfrey 2014 review 的读者价值，不是替 WarpX 的 `UpdateMomentumVa
 
 ## 4.5 Higuera-Cary pusher：Boris-like 结构的相对论修正
 
-Higuera-Cary pusher 的 WarpX 实现在 `../warpx/Source/Particles/Pusher/UpdateMomentumHigueraCary.H:16-65`：
+源码文件：`Source/Particles/Pusher/UpdateMomentumHigueraCary.H`
+函数：`UpdateMomentumHigueraCary()`
 
 ```cpp
 template <typename T>
@@ -4316,7 +4317,7 @@ void UpdateMomentumHigueraCary(
 }
 ```
 
-前半段 `:31-35` 仍是电场半步：
+前半段仍是电场半步：
 
 $$
 \mathbf{u}^-=\mathbf{u}^{n-1/2}+\frac{q\Delta t}{2m}\mathbf{E}.
@@ -4330,14 +4331,14 @@ $$
 u_* = \frac{\mathbf{u}^-\cdot\boldsymbol{\beta}}{c},
 $$
 
-并通过 `:48` 得到新的 `gamma`，这里变量名 `gamma` 在这一行之后实际保存的是 \(\gamma^{-1}\)。`tx,ty,tz` 是 \(\boldsymbol{\beta}/\gamma\)，`s=1/(1+t^2)`。`u_plus` 的形式像 Boris 的磁旋转，但最后 `:62-64` 不是单纯加第二个电半步，而是
+并通过平方根表达式得到新的 `gamma`，这里变量名 `gamma` 在这一行之后实际保存的是 \(\gamma^{-1}\)。`tx,ty,tz` 是 \(\boldsymbol{\beta}/\gamma\)，`s=1/(1+t^2)`。`u_plus` 的形式像 Boris 的磁旋转，但最后不是单纯加第二个电半步，而是
 
 $$
 \mathbf{u}^{n+1/2}
 =
 \mathbf{u}^+
-\frac{q\Delta t}{2m}\mathbf{E}
-\mathbf{u}^+\times\mathbf{t}.
++\frac{q\Delta t}{2m}\mathbf{E}
++\mathbf{u}^+\times\mathbf{t}.
 $$
 
 这个额外叉乘项是 Higuera-Cary 结构和 Boris 结构最容易混淆的地方。源码中 `upy*tz-upz*ty`、`upz*tx-upx*tz`、`upx*ty-upy*tx` 正是 \(\mathbf{u}^+\times\mathbf{t}\) 的三个分量。
@@ -4396,34 +4397,39 @@ $$
 
 这组 regression 和文献的配对仍需保守表述。`Examples/Tests/particle_pusher` 提供 force-free Higuera-Cary 强断言；Poincare 合同则验证 `x=0,p_x>0` 截面、`I_y` 顺序和解析 quartic reference。topology classifier 同时保留时间顺序和相空间中心角顺序；在 32³、2201-frame 长轨道上，后三种 pusher 的角排序候选均无自交或轨道间交叉，说明原先时间折线的交叉计数是连接顺序伪影，而不是物理 resonance-island 证据。14-species dense family 与 64³ `p_y=1.6/1.8` control 进一步显示 Vay 窗口漂移约 `6.5e-2`，控制组约 `1e-3`，但该 resonance-sensitive screen 仍不是 two-fold island 或 trajectory-crossing topology proof。
 
-`scripts/summarize_higuera_poincare_evidence.py` 将短轨道、长轨道、密集 `p_y` family、resonance screen 和 resolution screen 的证据等级统一为一份边界记录：短轨道是 `INSUFFICIENT_SAMPLING`；长轨道的 invariant/reference 与 angular-order candidate 通过但 topology 仍为 `REVIEW_REQUIRED`；密集族的 resonance screen 通过而解析 reference curve 和 cross-pusher candidate signature 保留边界。因此最强可写结论是“invariant 与局部 resonance-sensitive screen 已建立，论文等价 topology gate 尚未启用”。
+这些短轨道、长轨道、密集 `p_y` family、resonance screen 和 resolution screen 给出的证据等级应当分开理解：短轨道采样不足；长轨道的 invariant/reference 与 angular-order candidate 可以通过，但 topology 仍需要人工复核；密集族的 resonance-sensitive screen 可以通过，但解析 reference curve 和跨 pusher 的特征尚未形成完整拓扑证明。因此，最强可写结论是“invariant 与局部 resonance-sensitive screen 已建立，论文等价的 topology gate 尚未启用”。
 
 ## 4.6 从 `MultiParticleContainer` 到 `PhysicalParticleContainer`
 
-主循环的入口是 `../warpx/Source/Evolve/WarpXEvolve.cpp:1324-1428` 的 `WarpX::PushParticlesandDeposit()`。它选择 current 字段名后调用 `mypc->Evolve(...)`。
+源码文件：`Source/Evolve/WarpXEvolve.cpp`
+函数：`WarpX::PushParticlesandDeposit()`
 
-`mypc` 是 `MultiParticleContainer`。其 `Evolve()` 位于 `../warpx/Source/Particles/MultiParticleContainer.cpp:478-522`：
+它选择 current 字段名后调用 `mypc->Evolve(...)`。
 
-| 行号 | 操作 |
+`mypc` 是 `MultiParticleContainer`。
+源码文件：`Source/Particles/MultiParticleContainer.cpp`
+函数：`MultiParticleContainer::Evolve()`
+
+| 调度阶段 | 操作 |
 |---|---|
-| `:486-496` | 不跳过沉积时清零 `current_fp/current_buf/rho_fp/rho_buf`。 |
-| `:497-518` | 隐式 solver 相关源项和 mass matrix 的额外清零逻辑。 |
-| `:520-522` | 遍历所有 species，调用每个 `pc->Evolve(...)`。 |
+| 开始 | 不跳过沉积时清零 `current_fp/current_buf/rho_fp/rho_buf`。 |
+| implicit 分支 | 处理隐式 solver 相关源项和 mass matrix 的额外清零逻辑。 |
+| 容器遍历 | 调用每个 `pc->Evolve(...)`。 |
 
 这层只负责多物种调度。真正的单 species 粒子推进在 `PhysicalParticleContainer::Evolve()`。
 
 但在继续进入 `PushPX()` 之前，还要先看清容器层次和属性系统，否则后面很多变量名会被误读。
 
-`../warpx/Source/Particles/WarpXParticleContainer.H:55-88` 先定义了编译期属性表 `PIdx`。它规定每个粒子天生就有：
+`Source/Particles/WarpXParticleContainer.H` 中的 `PIdx` 定义编译期属性表。它规定每个粒子天生就有：
 
 - 位置分量 `x/y/z` 或非笛卡尔等价量；
 - 权重 `w`；
 - proper velocity `ux/uy/uz`；
 - 在 RZ/球坐标几何下额外的 `theta/phi`。
 
-而 `IntIdx::nattribs` 在 `../warpx/Source/Particles/WarpXParticleContainer.H:92-99` 里默认是 0，这意味着 WarpX 的整数粒子属性默认都不是编译期内建，而是后续按需动态添加。
+而 `IntIdx::nattribs` 默认是 0，这意味着 WarpX 的整数粒子属性默认都不是编译期内建，而是后续按需动态添加。
 
-顶层类层次则由 `../warpx/Source/Particles/MultiParticleContainer.cpp:96-125` 与各头文件共同决定：
+顶层类层次由 `Source/Particles/MultiParticleContainer.cpp` 与各容器头文件共同决定：
 
 ```text
 MultiParticleContainer
@@ -4438,31 +4444,31 @@ MultiParticleContainer
 
 - `WarpXParticleContainer` 是统一基类，提供粒子 SoA 骨架、gather/deposition/push 的共用接口；
 - `PhysicalParticleContainer` 承担普通带质量 species 的主要物理路径；
-- `PhotonParticleContainer` 继承 `PhysicalParticleContainer`，但 `DepositCharge()` 和 `DepositCurrent()` 直接空实现，因此它保留很多粒子基础设施，却不承担带电沉积；见 `../warpx/Source/Particles/PhotonParticleContainer.H:25-115`；
-- `LaserParticleContainer` 则直接从 `WarpXParticleContainer` 继承，因为激光天线粒子只需要 prescribed motion 和 current deposition，不需要普通 `FieldGather`；见 `../warpx/Source/Particles/LaserParticleContainer.H:30-61`。
+- `PhotonParticleContainer` 继承 `PhysicalParticleContainer`，但其 `DepositCharge()` 和 `DepositCurrent()` 直接空实现，因此它保留很多粒子基础设施，却不承担带电沉积；定义见 `Source/Particles/PhotonParticleContainer.H`；
+- `LaserParticleContainer` 则直接从 `WarpXParticleContainer` 继承，因为激光天线粒子只需要 prescribed motion 和 current deposition，不需要普通 `FieldGather`；定义见 `Source/Particles/LaserParticleContainer.H`。
 
-这层类分工直接决定了粒子属性的来源。`PhysicalParticleContainer` 构造函数在 `../warpx/Source/Particles/PhysicalParticleContainer.cpp:255-331` 会按模块开关注册第一批 runtime attributes：
+这层类分工直接决定了粒子属性的来源。`Source/Particles/PhysicalParticleContainer.cpp` 中的 `PhysicalParticleContainer` 构造函数会按模块开关注册第一批 runtime attributes：
 
 - QED quantum synchrotron 时加 `opticalDepthQSR`；
 - Breit-Wheeler 时加 `opticalDepthBW`；
 - `addRealAttributes` / `addIntegerAttributes` 时加入用户 parser 驱动属性；
 - `save_previous_position` 时加 `prev_x/prev_y/prev_z`。
 
-电离模块稍后又会在 `../warpx/Source/Particles/PhysicalParticleContainer.cpp:1592-1595` 动态补上 `ionizationLevel`。因此 WarpX 的粒子属性系统不是一个静态结构体，而是：
+电离模块的 `InitIonizationModule()` 稍后又会动态补上 `ionizationLevel`。因此 WarpX 的粒子属性系统不是一个静态结构体，而是：
 
 1. 编译期 builtin real：`x/y/z/w/ux/uy/uz/...`；
 2. 构造期或模块初始化期动态加入的持久物理状态：如 `opticalDepthQSR`、`opticalDepthBW`、`prev_*`、`ionizationLevel`；
 3. 更晚才按算法路径加入的临时缓存属性。
 
-最典型的临时属性来自 implicit solver。`../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:10-34` 会统一给粒子容器补加：
+最典型的临时属性来自 implicit solver。`Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 中的 `ImplicitSolver::CreateParticleAttributes()` 会统一给粒子容器补加：
 
 - `x_n/y_n/z_n`
 - `ux_n/uy_n/uz_n`
 - 如果启用 particle suborbits，再加 `nsuborbits`
 
-而且都用 `comm = 0` 注册，所以这些量既不参与通信，也不写入 checkpoint。随后 `../warpx/Source/FieldSolver/ImplicitSolvers/WarpXImplicitOps.cpp:133-207` 会在每个 implicit step 开始时，把当前位置和动量快照写入 `x_n` 和 `ux_n` 这组缓存，并把 `nsuborbits` 先置成 1。它们的角色不是长期物理属性，而是 implicit 时间推进器本步用的局部状态。
+而且都用 `comm = 0` 注册，所以这些量既不参与通信，也不写入 checkpoint。随后 `Source/FieldSolver/ImplicitSolvers/WarpXImplicitOps.cpp` 的 step-start 初始化会把当前位置和动量快照写入 `x_n` 和 `ux_n` 这组缓存，并把 `nsuborbits` 先置成 1。它们的角色不是长期物理属性，而是 implicit 时间推进器本步用的局部状态。
 
-`WarpXParticleContainer::AddNParticles()` 进一步说明了这套系统怎样落地。`../warpx/Source/Particles/WarpXParticleContainer.cpp:262-330` 先写 builtin `x/y/z/w/ux/uy/uz`，再写调用者显式提供的 runtime real/int，最后调用 `DefaultInitializeRuntimeAttributes()` 给剩余 runtime attrs 自动补默认值。于是：
+`WarpXParticleContainer::AddNParticles()` 进一步说明了这套系统怎样落地。`Source/Particles/WarpXParticleContainer.cpp` 先写 builtin `x/y/z/w/ux/uy/uz`，再写调用者显式提供的 runtime real/int，最后调用 `DefaultInitializeRuntimeAttributes()` 给剩余 runtime attrs 自动补默认值。于是：
 
 - `opticalDepthQSR/BW` 可以由 QED engine 随机初始化；
 - `ionizationLevel` 可以统一设成 `ionization_initial_level`；
@@ -4472,27 +4478,30 @@ MultiParticleContainer
 
 ## 4.7 `PhysicalParticleContainer::Evolve()` 的 tile loop
 
-`../warpx/Source/Particles/PhysicalParticleContainer.cpp:457-831` 是本章最重要的函数。它把一个 species 的粒子按 tile 遍历，并把沉积、gather、push、buffer、隐式路径和 load-balance cost 放在一个局部循环里。
+本章最重要的入口是 `Source/Particles/PhysicalParticleContainer.cpp` 中的 `PhysicalParticleContainer::Evolve()`。它把一个 species 的粒子按 tile 遍历，并把沉积、gather、push、buffer、隐式路径和 load-balance cost 放在一个局部循环里。
 
 核心顺序是：
 
-| 行号 | 操作 | 含义 |
+| tile-loop 阶段 | 操作 | 含义 |
 |---|---|---|
-| `:486-491` | 取得 `Efield_aux` 和 `Bfield_aux` | 粒子 gather 使用 auxiliary fields。 |
-| `:493-508` | 判断是否沉积 charge/current、是否 split particles | `skip_deposition` 和 `do_not_deposit` 会关掉沉积。 |
-| `:523-580` | 遍历 tile，必要时按 AMR buffer 分区粒子 | fine/coarse gather 和 deposit 的粒子集合可能不同。 |
-| `:585-598` | push 前沉积 `rho` component 0 | 旧时间层电荷，通常对应 \(\rho^n\)。 |
-| `:619-623` | fine patch 粒子调用 `PushPX()` | gather fine fields 并推进粒子。 |
-| `:675-682` | buffer/coarse 粒子调用 `PushPX()` | AMR 边界附近可从 coarse auxiliary fields gather。 |
-| `:703-738` | 沉积 current | 显式路径 `relative_time=-0.5*dt`，对应 \(\mathbf{J}^{n+1/2}\)。 |
-| `:791-808` | push 后沉积 `rho` component 1 | 新时间层电荷，通常对应 \(\rho^{n+1}\)。 |
-| `:822-830` | 可选 particle splitting | subcycling 时避免 coarse level 重复沉积。 |
+| 准备 | 取得 `Efield_aux` 和 `Bfield_aux` | 粒子 gather 使用 auxiliary fields。 |
+| 条件判断 | 判断是否沉积 charge/current、是否 split particles | `skip_deposition` 和 `do_not_deposit` 会关掉沉积。 |
+| AMR 分区 | 遍历 tile，必要时按 AMR buffer 分区粒子 | fine/coarse gather 和 deposit 的粒子集合可能不同。 |
+| push 前 | 沉积 `rho` component 0 | 旧时间层电荷，通常对应 \(\rho^n\)。 |
+| fine patch | 粒子调用 `PushPX()` | gather fine fields 并推进粒子。 |
+| buffer/coarse | 粒子调用 `PushPX()` | AMR 边界附近可从 coarse auxiliary fields gather。 |
+| push 后 | 沉积 current | 显式路径 `relative_time=-0.5*dt`，对应 \(\mathbf{J}^{n+1/2}\)。 |
+| 新时间层 | 沉积 `rho` component 1 | 新时间层电荷，通常对应 \(\rho^{n+1}\)。 |
+| 可选后处理 | particle splitting | subcycling 时避免 coarse level 重复沉积。 |
 
 这段源码说明，真实粒子推进不是“先推所有粒子，再单独沉积”。WarpX 为了 AMR、缓存局部性、GPU/CPU 并行和时间层一致性，在 tile 内完成 gather/push/deposit 的组合。
 
 ## 4.8 `PushPX()`：gather 和 push 的融合 kernel
 
-`PhysicalParticleContainer::PushPX()` 位于 `../warpx/Source/Particles/PhysicalParticleContainer.cpp:1330-1575`。它是真正进入单粒子并行循环的地方。
+源码文件：`Source/Particles/PhysicalParticleContainer.cpp`
+函数：`PhysicalParticleContainer::PushPX()`
+
+它是真正进入单粒子并行循环的地方。
 
 核心源码原文如下，省略了 QED 宏分支和部分属性准备：
 
@@ -4522,6 +4531,10 @@ amrex::ParallelFor(
                        nox, galerkin_interpolation);
     }
 
+    if constexpr (exteb_control == has_exteb) {
+        getExternalEB(ip, Exp, Eyp, Ezp, Bxp, Byp, Bzp);
+    }
+
     scaleFields(xp, yp, zp, Exp, Eyp, Ezp, Bxp, Byp, Bzp);
 
     doParticleMomentumPush<0>(ux[ip], uy[ip], uz[ip],
@@ -4539,17 +4552,14 @@ amrex::ParallelFor(
 
 关键步骤：
 
-| 行号 | 操作 |
+| kernel 阶段 | 操作 |
 |---|---|
-| `:1346-1350` | 检查 gather level，并对空粒子直接返回。 |
-| `:1352-1367` | 构造 gather box，并按 `ngEB` 扩展 guard cells。 |
-| `:1379-1444` | 准备粒子位置访问器、外场、动量数组、ionization level、旧位置缓存等。 |
-| `:1446-1477` | 取 species 电荷/质量、pusher 算法、radiation/QED flags。 |
-| `:1478-1486` | 启动带 compile-time option 的 `amrex::ParallelFor`。 |
-| `:1488-1517` | 读取粒子位置，调用 `doGatherShapeN()` 把网格场 gather 到粒子。 |
-| `:1519-1524` | 叠加外部粒子场和缩放。 |
-| `:1531-1555` | 调用 `doParticleMomentumPush()` 更新动量。 |
-| `:1557-1560` | 若 `PositionPushType::Full`，调用 `UpdatePosition()` 更新位置。 |
+| 入口准备 | 检查 gather level、构造 gather box，并按 `ngEB` 扩展 guard cells。 |
+| 属性准备 | 准备粒子位置访问器、外场、动量数组、ionization level、旧位置缓存，以及 pusher/RR/QED 选项。 |
+| 并行分派 | 启动带 compile-time option 的 `amrex::ParallelFor`。 |
+| 场构造 | 读取粒子位置，调用 `doGatherShapeN()`；随后叠加每粒子外场 callback，再应用 `scaleFields()`。 |
+| 动量更新 | 调用 `doParticleMomentumPush()` 更新动量。 |
+| 位置更新 | 若 `PositionPushType::Full`，调用 `UpdatePosition()` 更新位置。 |
 
 这给出了 WarpX 显式粒子推进的真实顺序：
 
@@ -4557,12 +4567,12 @@ amrex::ParallelFor(
 for particle in tile:
     read x^n and u^(n-1/2)
     gather E/B at x^n
-    add external particle fields
+    add external particle fields and apply field scaling
     push momentum to u^(n+1/2)
     push position to x^(n+1)
 ```
 
-随后 `PhysicalParticleContainer::Evolve()` 在 `:697-733` 沉积半步电流，在 `:785-803` 沉积新电荷。
+随后 `PhysicalParticleContainer::Evolve()` 沉积半步电流与新时间层电荷。
 
 ## 4.9 `doGatherShapeN()`：从网格场到粒子场
 
@@ -4578,7 +4588,7 @@ $$
 \sum_{\mathbf{i}} \mathbf{B}_{\mathbf{i}} S_{\mathbf{i}}(\mathbf{x}_p).
 $$
 
-但 WarpX 不能只用一个标量形函数，因为 \(E_x,E_y,E_z,B_x,B_y,B_z\) 在交错网格上的中心位置不同；同时 Galerkin 插值会让某些分量使用低一阶形函数。运行时入口在 `../warpx/Source/Particles/Gather/FieldGather.H:2119-2192`：
+但 WarpX 不能只用一个标量形函数，因为 \(E_x,E_y,E_z,B_x,B_y,B_z\) 在交错网格上的中心位置不同；同时 Galerkin 插值会让某些分量使用低一阶形函数。运行时入口在 `../warpx/Source/Particles/Gather/FieldGather.H`：
 
 ```cpp
 void doGatherShapeN (const amrex::ParticleReal xp,
@@ -4659,7 +4669,7 @@ void doGatherShapeN (const amrex::ParticleReal xp,
 
 这里的 `nox` 不是运行时循环里的 shape 阶数变量，而是被转成模板参数 `depos_order`。这样 GPU kernel 内部可以用 `if constexpr` 展开阶数，避免每个粒子再做阶数分支。`galerkin_interpolation` 同理变成第二个模板参数，后面直接影响数组长度 `depos_order + 1 - galerkin_interpolation`。
 
-模板主体开头在 `../warpx/Source/Particles/Gather/FieldGather.H:348-439`。下面只列 x 方向；y/z 方向同构，但按各自场分量的 staggering 选择 node 或 cell：
+模板主体开头在 `../warpx/Source/Particles/Gather/FieldGather.H`。下面只列 x 方向；y/z 方向同构，但按各自场分量的 staggering 选择 node 或 cell：
 
 ```cpp
 template <int depos_order, int galerkin_interpolation>
@@ -4743,7 +4753,7 @@ void doGatherShapeN ([[maybe_unused]] const amrex::ParticleReal xp,
 2. `x` 和 `x - 0.5_rt` 分别对应 node-centered 和 cell-centered 自由度。也就是说，场分量的 staggered center 不是后处理标签，而是直接改变粒子看到的插值权重。
 3. Galerkin 路径给 `ex/by/bz` 使用 `compute_shape_factor_galerkin`，阶数是 `depos_order - 1`；非 Galerkin 时第二个模板参数为 0，因此阶数不变。
 
-以 2D XZ 编译为例，真正累加网格场的源码在 `../warpx/Source/Particles/Gather/FieldGather.H:547-581`：
+以 2D XZ 编译为例，真正累加网格场的源码在 `../warpx/Source/Particles/Gather/FieldGather.H`：
 
 ```cpp
 #elif defined(WARPX_DIM_XZ)
@@ -4795,7 +4805,7 @@ $$
 
 `Exp/Bzp`、`Ezp/Bxp`、`Byp` 的循环上限不同，是因为 Galerkin 插值会沿某些方向把 shape order 从 \(p\) 降到 \(p-1\)。这不是任意优化，而是和离散 Maxwell operator、field staggering 与能量/电荷性质匹配的插值选择。
 
-RZ 编译下，gather 先得到柱坐标分量，再转回笛卡尔粒子 pusher 需要的 \(E_x,E_y,B_x,B_y\)。关键转换在 `../warpx/Source/Particles/Gather/FieldGather.H:625-686`：
+RZ 编译下，gather 先得到柱坐标分量，再转回笛卡尔粒子 pusher 需要的 \(E_x,E_y,B_x,B_y\)。关键转换在 `../warpx/Source/Particles/Gather/FieldGather.H`：
 
 ```cpp
     amrex::Real costheta;
@@ -4898,7 +4908,7 @@ $$
 2. sampled field 怎样被回插到粒子；
 3. 这套回插究竟服务于哪一种离散守恒合同。
 
-还有一层容易漏掉：implicit path 并不复用显式 gather。`FieldGather.H:2195-2328` 的 `doGatherShapeNImplicit(...)` 会先按沉积算法分派：
+还有一层容易漏掉：implicit path 并不复用显式 gather。`FieldGather.H` 的 `doGatherShapeNImplicit(...)` 会先按沉积算法分派：
 
 - `Esirkepov`：`doGatherShapeNEsirkepovStencilImplicit`
 - `Villasenor`：`doGatherPicnicShapeN`
@@ -4925,7 +4935,7 @@ $$
 
 ## 4.10 位置推进与无质量粒子
 
-显式位置推进在 `../warpx/Source/Particles/Pusher/UpdatePosition.H:19-70`。`PhysicalParticleContainer::Evolve()` 的顺序是先调用 `doParticleMomentumPush(...)`，再在 `PositionPushType::Full` 分支调用 `UpdatePosition(...)`；因此这里消费的是推进后的时间中心动量，而不是另一个独立导出的速度数组。对有质量粒子，源码先计算
+显式位置推进的实现位于 `Source/Particles/Pusher/UpdatePosition.H` 的 `GetExplicitPusherDisplacement()` 与 `UpdatePosition()`。`PhysicalParticleContainer::Evolve()` 的顺序是先调用 `doParticleMomentumPush(...)`，再在 `PositionPushType::Full` 分支调用 `UpdatePosition(...)`；因此这里消费的是推进后的时间中心动量，而不是另一个独立导出的速度数组。对有质量粒子，源码先计算
 
 $$
 \gamma^{-1}=\frac{1}{\sqrt{1+|\mathbf{u}|^2/c^2}},
@@ -4947,11 +4957,11 @@ $$
 \mathbf{v}=c\frac{\mathbf{u}}{|\mathbf{u}|}
 $$
 
-更新位置，见 `UpdatePosition.H:52-69`。因此 photon container 可以复用位置推进形式，但动量和沉积行为不同；光子容器的专门逻辑后续多物理章节再展开。
+更新位置。因此 photon container 可以复用位置推进形式，但动量和沉积行为不同；光子容器的专门逻辑后续多物理章节再展开。
 
-这个调用顺序也限定了“半步速度”的证据边界：`UpdatePosition.H` 的注释明确把显式位置更新写成 `x(t+dt)=x(t)+v(t+dt/2)dt`，而公共 Full plotfile 只稳定提供位置和机械动量。相邻 plotfile 的位置差可以构造 position-update velocity proxy，但不能冒充直接读取的 half-step attribute。另一个容易忽略的分叉是 `PushSelector.H`：Boris 接受 `FirstHalf/SecondHalf/Full` 的 `momentum_push_type`，当前 Higuera-Cary 接口没有这一参数，因此不能把两者写成完全相同的 split-half 输出合同。该源码 crosswalk 由 `scripts/audit_position_leapfrog_source_crosswalk.py` 固化，Appendix-B 的 bounded runtime contract 由 `scripts/analyze_vay_appendix_b_runtime_contract.py` 固化；当前结论是“时间中心位置更新和 proxy-level Appendix-B evidence 已建立，直接半步速度属性和论文图形逐点复现仍未完成”。
+这个调用顺序也限定了如何验证“半步速度”。`UpdatePosition.H` 的注释把显式位置更新写成 \(x(t+\Delta t)=x(t)+v(t+\Delta t/2)\Delta t\)，但常规 Full 输出通常稳定提供的是位置和机械动量，而不是独立的 half-step velocity attribute。因此，相邻输出位置差可以构造与时间中心速度比较的 proxy，却不能被说成直接测得半步速度。对读者而言，正确的验证问题是：你比较的动量究竟处在哪个时间层，还是仅用相邻位置构造了平均量？
 
-新增的 `scripts/audit_position_update_runtime_contract.py` 又把这条边界推进到运行输出层：它对三组 81 帧 uniform-`B` Full plotfile 逐步比较 `UpdatePosition.H` 公式与实际位移。源码公式和 `Full` dispatch 均通过，但上一帧/下一帧机械动量的直接配对误差约为 `6.242e-2`；相邻帧中点 proxy 的最大误差约为 `1.609e-3`。因此当前更准确的结论是“源码公式已确认、输出时间层存在可测 stagger、独立 half-step attribute 仍未提供”，而不是把单帧 plotfile 动量升级为 half-step 证据。完整报告见 `notes/code-reading/particles/68-position-update-output-staggering-contract.md` 和 `runs/stage-c-validation/position-update-runtime-contract/contract.{json,md}`。
+另一个容易忽略的分叉在 `PushSelector.H`：Boris 接受 `FirstHalf/SecondHalf/Full` 的 `momentum_push_type`，而当前 `UpdateMomentumHigueraCary()` 接口没有这一参数。因此不能把两个 pusher 写成完全相同的 split-half 输出合同。做轨道或时间层诊断时，先在输入中确认 pusher 和 push type，再比较位置、动量与场的时间层；只有这三者对齐，误差才可被归因于算法，而不是采样时刻不同。
 
 ## 4.11 RR、implicit 与 photon path
 
@@ -4961,12 +4971,15 @@ $$
 2. implicit particle push；
 3. photon container 的无质量推进。
 
-先看 RR。`../warpx/Source/Particles/Pusher/PushSelector.H:61-104` 说明，RR 不是第四种独立 pusher，而是优先级高于 `ParticlePusherAlgo` 的一个分支：
+先看 RR。`Source/Particles/Pusher/PushSelector.H` 的 `doParticleMomentumPush()` 说明，RR 不是第四种独立 pusher，而是优先级高于 `ParticlePusherAlgo` 的一个分支。省略编译宏后的控制流可概括为：
 
 ```cpp
 if (do_crr) {
-    ...
-    UpdateMomentumBorisWithRadiationReaction(...);
+    if (qed_sync && chi >= t_chi_max) {
+        UpdateMomentumBoris(...);
+    } else {
+        UpdateMomentumBorisWithRadiationReaction(...);
+    }
 } else if (pusher_algo == ParticlePusherAlgo::Boris) {
     UpdateMomentumBoris(...);
 } else if (pusher_algo == ParticlePusherAlgo::Vay) {
@@ -4976,9 +4989,9 @@ if (do_crr) {
 }
 ```
 
-因此，一旦打开 `do_crr`，当前粒子不会再走 Vay 或 Higuera-Cary，而是强制退回“Boris 加修正力”结构。`UpdateMomentumBorisWithRadiationReaction()` 在 `../warpx/Source/Particles/Pusher/UpdateMomentumBorisWithRadiationReaction.H:21-90` 的实现也证实了这一点：它先调用普通 `UpdateMomentumBoris()`，再用新旧动量平均构造中间时刻的 \(\gamma_n\)、\(\mathbf{v}_n\) 和 Lorentz force，最后再把辐射反作用力乘 `dt` 加回动量。代码结构上，这是一种 Boris 后附加阻尼项，而不是完全重写一套 relativistic mover。
+因此，打开 `do_crr` 后，当前粒子不会再走 Vay 或 Higuera--Cary，而是进入 Boris 家族分支。通常它调用“Boris 加辐射反作用”；但在编译 QED 且同步开关生效时，代码会先计算 \(\chi\)：\(\chi<t_{\chi,\max}\) 才调用该 RR 例程，较高 \(\chi\) 则调用普通 Boris。这一门限的含义是：源码保证了 pusher 家族的选择，却不保证每一个 \(\chi\) 都附加 classical RR。`Source/Particles/Pusher/UpdateMomentumBorisWithRadiationReaction.H` 中的 `UpdateMomentumBorisWithRadiationReaction()` 则表明低 \(\chi\) 分支如何实现：它先调用普通 `UpdateMomentumBoris()`，再用新旧动量平均构造中间时刻的 \(\gamma_n\)、\(\mathbf{v}_n\) 和 Lorentz force，最后再把辐射反作用力乘 `dt` 加回动量。代码结构上，这是一种 Boris 后附加阻尼项，而不是完全重写一套 relativistic mover。
 
-再看 implicit path。它和显式 `PushPX()` 的根本区别，不在于换了另一个 `UpdateMomentum*()`，而在于时间层和收敛逻辑都改了。`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp:369-378` 的注释直接说明了顺序：
+再看 implicit path。它和显式 `PushPX()` 的根本区别，不在于换了另一个 `UpdateMomentum*()`，而在于时间层和收敛逻辑都改了。`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 的注释直接说明了顺序：
 
 1. 先 position push 半步；
 2. 再 gather 场；
@@ -4986,14 +4999,14 @@ if (do_crr) {
 4. 再把 old/new velocity 平均成 time-centered 值；
 5. 位置和速度彼此依赖，因此做 Picard 固定点迭代，直到 step norm 收敛。
 
-而这里真正把上一篇属性图接进来的，是 `x_n/y_n/z_n`、`ux_n/uy_n/uz_n` 和 `nsuborbits`。在 `../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp:495-507`，这些量被明确当成“the positions and velocities saved at the start of the step”取出；随后粒子初值直接从 `x_n` 和 `ux_n` 开始，而不是从当前位置盲目继续推进。也就是说，`x_n/ux_n` 在 implicit 路径里不是诊断缓存，而是 nonlinear solve 的参考态。
+而这里真正把上一篇属性图接进来的，是 `x_n/y_n/z_n`、`ux_n/uy_n/uz_n` 和 `nsuborbits`。在 `../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp`，这些量被明确当成“the positions and velocities saved at the start of the step”取出；随后粒子初值直接从 `x_n` 和 `ux_n` 开始，而不是从当前位置盲目继续推进。也就是说，`x_n/ux_n` 在 implicit 路径里不是诊断缓存，而是 nonlinear solve 的参考态。
 
-`nsuborbits` 则是 implicit 不收敛时的 fallback 状态。`ImplicitPushXP()` 在 `../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp:627-667` 中，如果粒子没收敛，就把 `nsuborbits[ip] = 2`，再通过 `SetupSuborbitParticles()` 把这些粒子的权重临时置零、单独收集索引。后续 `ImplicitPushXPSubOrbits()` 又会强制把沉积算法切到 Villasenor，见 `ImplicitPushPX.cpp:734-738`。所以 suborbit 不只是“多分几步时间步”，还会连带改变当前粒子的沉积路径。
+`nsuborbits` 则是 implicit 不收敛时的 fallback 状态。`ImplicitPushXP()` 在 `../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 中，如果粒子没收敛，就把 `nsuborbits[ip] = 2`，再通过 `SetupSuborbitParticles()` 把这些粒子的权重临时置零、单独收集索引。后续 `ImplicitPushXPSubOrbits()` 又会强制把沉积算法切到 Villasenor，见 `ImplicitPushPX.cpp`。所以 suborbit 不只是“多分几步时间步”，还会连带改变当前粒子的沉积路径。
 
-最后看 photon container。`../warpx/Source/Particles/PhotonParticleContainer.cpp:242-255` 的 `PhotonParticleContainer::Evolve()` 并没有重写 species 外层循环，而是继续调用 `PhysicalParticleContainer::Evolve(...)`。也就是说，tile loop、AMR buffer 分区、gather 外壳这些基础设施仍然复用。但 photon 通过两层专门改写改变了物理语义：
+最后看 photon container。`../warpx/Source/Particles/PhotonParticleContainer.cpp` 的 `PhotonParticleContainer::Evolve()` 并没有重写 species 外层循环，而是继续调用 `PhysicalParticleContainer::Evolve(...)`。也就是说，tile loop、AMR buffer 分区、gather 外壳这些基础设施仍然复用。但 photon 通过两层专门改写改变了物理语义：
 
-- `PhotonParticleContainer.H:86-115` 中 `DepositCharge()` 和 `DepositCurrent()` 都是空实现；
-- `PhotonParticleContainer::PushPX()` 在 `../warpx/Source/Particles/PhotonParticleContainer.cpp:83-239` 里只做 gather、可选 Breit-Wheeler optical depth 演化、以及无质量 `UpdatePosition(...)`，并不调用 Boris/Vay/Higuera-Cary 的带电动量更新。
+- `PhotonParticleContainer.H` 中 `DepositCharge()` 和 `DepositCurrent()` 都是空实现；
+- `PhotonParticleContainer::PushPX()` 在 `../warpx/Source/Particles/PhotonParticleContainer.cpp` 里只做 gather、可选 Breit-Wheeler optical depth 演化、以及无质量 `UpdatePosition(...)`，并不调用 Boris/Vay/Higuera-Cary 的带电动量更新。
 
 因此 photon path 和普通 charged species 的差异不只是“不沉积电流”，而是连 momentum update 的物理模型都变了。它消费的 runtime attributes 主要是：
 
@@ -5011,7 +5024,7 @@ if (do_crr) {
 
 它们共享的是 `PhysicalParticleContainer::Evolve()`、gather 外壳和粒子属性系统；真正分叉的是时间层、收敛控制、沉积算法约束和具体消费的 runtime attributes。
 
-如果再往 implicit solver 深处走一步，还要继续把“suborbit 轨道本身”和“JFNK 线性化源项拼装”分开看。`../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:108-125` 明确把 linear stage 的电流写成
+如果再往 implicit solver 深处走一步，还要继续把“suborbit 轨道本身”和“JFNK 线性化源项拼装”分开看。`../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 明确把 linear stage 的电流写成
 
 $$
 J(E)=J_{\mathrm{suborbit}}+J_0+\mathrm{MM}(E-E_0).
@@ -5023,7 +5036,7 @@ $$
 - `MM` 对应 `MassMatrices_X/Y/Z`；
 - `J_suborbit` 才是那些真正需要 suborbit fallback 的粒子继续显式推进后沉到 `current_fp` 的部分。
 
-这正好解释了为什么 `MultiParticleContainer::Evolve()` 在 implicit 模式下还要额外处理 `current_fp_non_suborbit` 和 `MassMatrices_PC` 的清零时机，见 `../warpx/Source/Particles/MultiParticleContainer.cpp:491-505`。它不是普通 bookkeeping，而是在维护 JFNK 的三项分拆。
+这正好解释了为什么 `MultiParticleContainer::Evolve()` 在 implicit 模式下还要额外处理 `current_fp_non_suborbit` 和 `MassMatrices_PC` 的清零时机，见 `../warpx/Source/Particles/MultiParticleContainer.cpp`。它不是普通 bookkeeping，而是在维护 JFNK 的三项分拆。
 
 这一节在本地 checkout 里也有一条非常直接的 regression 入口：`Examples/Tests/radiation_reaction/`。它不是应用级 checksum，而是强 analysis：
 
@@ -5033,13 +5046,13 @@ $$
 
 因此它正好锚定了上面这条“先 Boris，再加 RR 修正”的源码路径，而不是泛化地证明“高能粒子大概会辐射”。
 
-`ImplicitPushXPSubOrbits()` 里还有两条实现约束非常重要。第一，`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp:734-738` 强制把 suborbit 路径的 current deposition 切到 Villasenor：
+`ImplicitPushXPSubOrbits()` 里还有两条实现约束非常重要。第一，`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 强制把 suborbit 路径的 current deposition 切到 Villasenor：
 
 ```cpp
 const auto depos_type = CurrentDepositionAlgo::Villasenor;
 ```
 
-所以一旦粒子进入 suborbit fallback，用户原来选择的沉积算法并不会继续沿用。第二，`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp:816-839` 把 `deposit_mass_matrices` 限定成
+所以一旦粒子进入 suborbit fallback，用户原来选择的沉积算法并不会继续沿用。第二，`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 把 `deposit_mass_matrices` 限定成
 
 ```cpp
 use_mass_matrices_pc && !linear_stage_of_jfnk

@@ -11,6 +11,8 @@
     "chapter_4_uses_reader_facing_evidence_language": true,
     "chapter_4_has_no_project_path_narration": true,
     "chapter_4_current_pusher_route": true,
+    "chapter_5_opening_is_reader_facing": true,
+    "chapter_5_current_deposition_route": true,
     "chapter_6_has_reader_facing_closure": true,
     "chapter_7_has_reader_facing_boundary_closure": true,
     "chapter_8_has_reader_facing_diagnostics_closure": true,
@@ -37,6 +39,8 @@
   "chapter_3_stale_location_markers": [],
   "chapter_3a_stale_location_markers": [],
   "chapter_4_stale_location_markers": [],
+  "chapter_5_opening_project_markers": [],
+  "chapter_5_stale_location_markers": [],
   "open_items": [
     "需要人工通读术语、公式、代码上下文、章节过渡和练习"
   ]

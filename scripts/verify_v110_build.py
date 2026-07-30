@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The Chapter 3A initialization-route revision adds one page; the current layout has 265 pages.
-EXPECTED_PDF_PAGES = 265
+# The current Chapter 5 reader-path revision compacts the built layout to 264 pages.
+EXPECTED_PDF_PAGES = 264
 
 
 def image_links(text: str) -> list[str]:
@@ -88,6 +88,13 @@ def main() -> None:
     chapter_4_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_4
     )
+    chapter_5 = (ROOT / "manuscript" / "chapters" / "05-deposition-shapes.md").read_text(
+        encoding="utf-8"
+    )
+    chapter_5_stale_location_markers = re.findall(
+        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_5
+    )
+    chapter_5_opening = chapter_5[: chapter_5.index("## 5.1")]
     chapter_7 = (ROOT / "manuscript" / "chapters" / "07-boundaries-amr.md").read_text(
         encoding="utf-8"
     )
@@ -194,6 +201,22 @@ def main() -> None:
             r"scripts/|notes/code-reading|runs/stage-c-validation|contract\.\{json,md\}",
             chapter_4,
         ),
+        "chapter_5_current_deposition_route": all(
+            marker in chapter_5
+            for marker in (
+                "本章按一条从粒子状态到求解器源项的因果链展开",
+                "Compute_shape_factor",
+                "Compute_shifted_shape_factor",
+                "WarpXParticleContainer::DepositCurrent()",
+                "WarpX::SyncCurrentAndRho()",
+                "tile-loop 阶段",
+                "## 5.16 练习与源码定位",
+            )
+        ) and not chapter_5_stale_location_markers,
+        "chapter_5_opening_is_reader_facing": not re.search(
+            r"notes/code-reading|pkuHEDPbranch|8c488b1a9|本机|本轮|当前源码",
+            chapter_5_opening,
+        ),
         "chapter_1_section_order": chapter_1_numbers == list(range(1, 15)),
         "chapter_1_pdf_toc_entries": all(
             marker in toc_text
@@ -280,13 +303,13 @@ def main() -> None:
                 "negative-space contract",
                 "RZ 默认 axis correction 下的 charge residual",
                 "跨 geometry/shape 的正式收敛阶",
-                "Vay 官方 wiring",
-                "SOURCE_REGRESSION_WIRING_PARTIAL_RUNTIME_FAMILY",
-                "RUNTIME_SINGLE_RANK_OFFICIAL_ANALYSIS_PASS_2D_3D",
-                "RUNTIME_SINGLE_RANK_VAY_SHAPE_FAMILY_PASS_2D_3D",
-                "RUNTIME_OFFICIAL_CMAKE_SCALE_2RANK_ANALYSIS_PASS_2D_3D",
-                "RUNTIME_2RANK_VAY_SHAPE_FAMILY_PASS_2D_3D_CASE_LOCAL",
-                "SOURCE_GUARD_AMR_RUNTIME_INTENTIONALLY_REJECTED",
+                "Vay geometry/order family",
+                "Cartesian 2D/3D 路径",
+                "RZ/1D/implicit 的 guard",
+                "单进程和两进程的 Cartesian Langmuir 分析",
+                "shape 扩展到 `1..4` 的 sibling",
+                "Vay + mesh refinement",
+                "初始化阶段显式拒绝",
             )
         ),
         "esirkepov_publication_boundary_contract": all(

@@ -31,6 +31,9 @@ def main() -> int:
     chapter_text = "\n".join(path.read_text(encoding="utf-8") for path in chapters)
     chapter_9 = (root / "manuscript/chapters/09-literature-roadmap.md").read_text(encoding="utf-8")
     chapter_4 = (root / "manuscript/chapters/04-particle-pushers.md").read_text(encoding="utf-8")
+    chapter_5 = (root / "manuscript/chapters/05-deposition-shapes.md").read_text(
+        encoding="utf-8"
+    )
     chapter_6 = (root / "manuscript/chapters/06-field-solvers.md").read_text(encoding="utf-8")
     chapter_7 = (root / "manuscript/chapters/07-boundaries-amr.md").read_text(encoding="utf-8")
     chapter_8 = (root / "manuscript/chapters/08-diagnostics-cases.md").read_text(encoding="utf-8")
@@ -48,6 +51,9 @@ def main() -> int:
     )
     chapter_4_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_4
+    )
+    chapter_5_stale_location_markers = re.findall(
+        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_5
     )
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
@@ -86,6 +92,11 @@ def main() -> int:
     chapter_4_project_path_markers = re.findall(
         r"scripts/|notes/code-reading|runs/stage-c-validation|contract\.\{json,md\}",
         chapter_4,
+    )
+    chapter_5_opening = section_between(chapter_5, "# 5. 电荷、电流沉积与形函数", "## 5.1")
+    chapter_5_opening_project_markers = re.findall(
+        r"notes/code-reading|pkuHEDPbranch|8c488b1a9|本机|本轮|当前源码",
+        chapter_5_opening,
     )
     chapter_6_closure = section_between(chapter_6, "### 6.11.9", "## 6.13") + chapter_6[
         chapter_6.index("## 6.13") :
@@ -138,6 +149,19 @@ def main() -> int:
                 "## 4.16 练习与复现实验",
             )
         ) and not chapter_4_stale_location_markers,
+        "chapter_5_opening_is_reader_facing": not chapter_5_opening_project_markers,
+        "chapter_5_current_deposition_route": all(
+            marker in chapter_5
+            for marker in (
+                "本章按一条从粒子状态到求解器源项的因果链展开",
+                "Compute_shape_factor",
+                "Compute_shifted_shape_factor",
+                "WarpXParticleContainer::DepositCurrent()",
+                "WarpX::SyncCurrentAndRho()",
+                "tile-loop 阶段",
+                "## 5.16 练习与源码定位",
+            )
+        ) and not chapter_5_stale_location_markers,
         "chapter_6_has_reader_facing_closure": all(
             marker in chapter_6_closure
             for marker in (
@@ -235,6 +259,8 @@ def main() -> int:
         "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
         "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,
         "chapter_4_stale_location_markers": chapter_4_stale_location_markers,
+        "chapter_5_opening_project_markers": chapter_5_opening_project_markers,
+        "chapter_5_stale_location_markers": chapter_5_stale_location_markers,
         "open_items": [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ],

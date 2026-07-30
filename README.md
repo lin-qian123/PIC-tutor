@@ -1,6 +1,8 @@
 # PIC-tutor
 
-当前成书版本为 `v0.110`：2026-07-30 可复现构建生成 `265` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页与末页已补充视觉抽查；该抽查不替代全书逐页通读、第三方材料许可或公开再分发签收。
+当前成书版本为 `v0.110`：2026-07-30 可复现构建生成 `264` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页与末页已补充视觉抽查；该抽查不替代全书逐页通读、第三方材料许可或公开再分发签收。
+
+第 5 章已完成沉积主线的当前源码与读者路径复核：从形函数、旧/新 `rho` 与半步 `J` 的时间层，连到 `DepositCurrent()` / `DepositCharge()` 的算法分派和 `SyncCurrentAndRho()` 的同步职责。章节导航已移除笔记目录和固定行号，Direct、Esirkepov、Villasenor 与 Vay 的选择条件、AMR/guard-cell 边界及 RZ axis residual 的证据范围均改为读者可判断的因果链；当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
 
 第 4 章已完成当前源码与读者路径复核：开篇从 Lorentz 方程、Boris/Vay/Higuera--Cary 到 `PushParticlesandDeposit()` 的 tile loop 建立因果链，源码导航统一为文件路径和函数符号。该章校正了 QED 同步下 RR 的 \(\chi\) 门限分支，明确了 gather 后外场插入、位置更新与 momentum push 的顺序，并将输出时间层解释收束为可复用的验证问题；当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
 

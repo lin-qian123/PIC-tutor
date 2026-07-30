@@ -664,7 +664,11 @@ face</a></li>
 Embedded boundary 的粒子侧：signed-distance 判定、默认吸收与 scraped
 buffer</a></li>
 <li><a href="#amr-transition-zone为什么最终-plotfile-不足以证明路由正确" id="toc-amr-transition-zone为什么最终-plotfile-不足以证明路由正确">7.9
-AMR transition zone：为什么最终 plotfile 不足以证明路由正确</a></li>
+AMR transition zone：为什么最终 plotfile 不足以证明路由正确</a>
+<ul>
+<li><a href="#transition-zone-判读卡分支被进入不等于每条-route-已验证" id="toc-transition-zone-判读卡分支被进入不等于每条-route-已验证">7.9.1
+Transition-zone 判读卡：分支被进入，不等于每条 route 已验证</a></li>
+</ul></li>
 <li><a href="#本章练习与源码定位" id="toc-本章练习与源码定位">7.10
 本章练习与源码定位</a></li>
 <li><a href="#本章结论-4" id="toc-本章结论-4">7.11 本章结论</a></li>
@@ -17849,6 +17853,55 @@ post-sync closure</td>
 workflow 有运行证据、专用 route ledger 仍未实现。不要把末态
 checksum、解析场误差或 profiling marker 写成 branch-level route
 proof。</p>
+<h3 id="transition-zone-判读卡分支被进入不等于每条-route-已验证">7.9.1
+Transition-zone 判读卡：分支被进入，不等于每条 route 已验证</h3>
+<p>transition zone
+的难点不在于给粒子贴上“fine”或“coarse”一个标签，而在于 <strong>gather 与
+deposition 分别有自己的 buffer mask</strong>。因此读者应把一次 AMR
+粒子步骤写成两个独立判断：粒子从哪一组场数组 gather，以及它向哪一组
+source 数组 deposition。没有在同步之前留下记录时，最终的场或
+<code>rho/J</code> 不能倒推出这两个判断曾如何发生。</p>
+<ol type="1">
+<li><p><strong>先在分区点定义账本，而不是在 plotfile
+末态猜路由。</strong> 对每个 step、level 和 species，先记录
+<code>np_before_partition</code>、总权重、<code>nfine_gather</code> 与
+<code>nfine_deposit</code>，并显式给出两个补数
+<code>nbuffer_gather = np_before_partition - nfine_gather</code>、<code>nbuffer_deposit = np_before_partition - nfine_deposit</code>。这四个数首先只检验分区记账是否完整；它们不是电荷守恒或场正确性的替代品。</p></li>
+<li><p><strong>再把两个计数接回不同的 producer。</strong> fine gather
+消费 <code>E/Bfield_aux</code>，buffer gather 消费 coarse
+<code>E/Bfield_cax</code>；fine deposition 写入
+<code>rho_fp/current_fp</code>，buffer deposition 写入
+<code>rho_buf/current_buf</code>。同一个粒子在这两条判断上可能有不同标签，因此
+ledger 不应只报告一个“buffer particle
+count”。读者需要能看出每个步骤是否出现
+fine-gather/fine-deposit、fine-gather/buffer-deposit、buffer-gather/fine-deposit
+或 buffer-gather/buffer-deposit
+这四类标签；未命中的标签必须如实报告为未覆盖。</p></li>
+<li><p><strong>把同步前后的 source 分开保存。</strong> 在
+<code>SyncCurrent()</code> / <code>SyncRho()</code> 前，分别记录
+<code>rho_fp</code>、<code>rho_buf</code>、<code>current_fp</code>、<code>current_buf</code>
+的相应积分或逐分量范数；随后记录 coarsened fine contribution、buffer
+merge、<code>OwnerMask()</code> 去重和 post-sync
+source。这里不能只做一次总和比较，因为多个 box 的 nodal overlap 正是
+<code>OwnerMask()</code> 存在的原因。</p></li>
+<li><p><strong>正确解释已有 runtime marker。</strong>
+一个二层、2-rank、subcycling 的 AMR producer 已记录
+<code>PartitionParticlesInBuffers</code> 与 <code>OwnerMask()</code>
+的运行标记，因而可以说分区和同步分支被实际经过。它没有给出粒子 route
+ID、四类 route 的 count/weight、pre-sync buffer 数值或逐项 post-sync
+ledger，所以不能写成“transition zone 已验证”或“所有 route
+都通过”。</p></li>
+<li><p><strong>用受控情形关闭 route 级结论。</strong>
+专用测试应让粒子初态和 buffer 宽度有意覆盖需要的标签，逐 step
+输出上述记录，并用独立的 source 或场 observable
+检查同步后的结果。只有“预期 route 被命中 + 分区计数/权重自洽 +
+pre/post-sync source 可追踪 + 独立 observable
+通过”同时成立，才可把一条具体 route 标为已验证。</p></li>
+</ol>
+<p>这张卡给出的是正确的证据顺序：<strong>源码分派说明哪些 route
+可以存在，runtime marker 说明相关分支曾被进入，route ledger 才说明每条
+route 在受控条件下怎样贡献到同步后的 source。</strong>
+三者不能互相代替。</p>
 <h2 id="本章练习与源码定位">7.10 本章练习与源码定位</h2>
 <ol type="1">
 <li><strong>边界分派题</strong>：给定一个 field boundary 和一个 particle

@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 5 Vay, RZ axis, and convergence cards plus the Chapter 7 PML card yield 260 pages.
-EXPECTED_PDF_PAGES = 260
+# The Chapter 5 reader cards plus the Chapter 7 PML and transition-zone cards yield 261 pages.
+EXPECTED_PDF_PAGES = 261
 
 
 def image_links(text: str) -> list[str]:
@@ -498,6 +498,19 @@ def main() -> None:
                 "`do_pml_dive_cleaning` 与 `do_pml_divb_cleaning` 必须取相同值",
                 "RZ PML 只可与 PSATD 使用，且 `z` 方向没有 PML",
                 "配置后的最小验收顺序",
+            )
+        ) and not chapter_7_stale_location_markers and not re.search(
+            r"scripts/|notes/code-reading|runs/stage-c-validation|"
+            r"docs/chapter-07-v0-evidence-ledger|contract\.\{json,md\}",
+            chapter_7,
+        ),
+        "chapter_7_transition_zone_reader_card": all(
+            marker in chapter_7
+            for marker in (
+                "### 7.9.1 Transition-zone 判读卡：分支被进入，不等于每条 route 已验证",
+                "gather 与 deposition 分别有自己的 buffer mask",
+                "ledger 不应只报告一个“buffer particle count”",
+                "route ledger 才说明每条 route",
             )
         ) and not chapter_7_stale_location_markers and not re.search(
             r"scripts/|notes/code-reading|runs/stage-c-validation|"
@@ -1202,13 +1215,13 @@ def main() -> None:
             marker in manual_spotcheck
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
-                "本轮连续阅读已覆盖当前 PDF 第 1--260 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--261 页",
                 "| 1--6 |",
                 "| 120--167 |",
                 "| 168--202 |",
-                "| 217--252 |",
-                "| 253--257 |",
-                "| 258--260 |",
+                "| 218--253 |",
+                "| 254--258 |",
+                "| 259--261 |",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39230127,
+  "total_bytes": 39247941,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1561267,
-      "sha256": "8ed349d5f3128e22874c16f3c9b9998c2aa7814d3dd4289e4dfe377476d8bd79"
+      "bytes": 1561345,
+      "sha256": "7dd4ba81e8d7d1a7336806531d1e979b5098cf6aa23c2c81b6f39224e808895a"
     },
     {
       "path": "TODO.md",
-      "bytes": 1452383,
-      "sha256": "04f1558f87e7973e10c6f3e5b288e4857cfa7e5e0301c3a558740df07f1c446a"
+      "bytes": 1453039,
+      "sha256": "66e7481707324b4776b75429b0eb2a014421210a65550a36c95d1a8b5eee389c"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5099841,
-      "sha256": "d1dde8313ea3d6d1354dd53a31be74a1aea15089657bce2fef95d50cc71c7b84"
+      "bytes": 5103651,
+      "sha256": "297dfa63db48ee97aeb15e46b0bc2dd2c5b22fcaf53b03620d0a6568ffa73cf4"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 860934,
-      "sha256": "decdfc1d1b782e5864a824c354242244f55de41983cf7a2dfdfe4924087d8375"
+      "bytes": 863988,
+      "sha256": "33b1fad50eb2aca69c01bdfa776bbc1d7bbb1eb2b4e9ef5b4e34fd6c4597b7ed"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2990226,
-      "sha256": "b9c799d52c45f8d7739a4cff2c26744fcc8bf1ee86fb1b9ccf5670ee20a26c19"
+      "bytes": 2995084,
+      "sha256": "c67bb2587a5bef28e1871086b55919838f506eacceb040b8a03c62acd60c9778"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -532,8 +532,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 55736,
-      "sha256": "4dce6cfbbe04043591566883466f7413f02df837073b501fb07b0c47332b92f8"
+      "bytes": 56125,
+      "sha256": "f6472daa95b14dfb28f884370ef2d9b0b5eca439bdf91975d1a809f01342051b"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -917,13 +917,13 @@
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
-      "bytes": 4591,
-      "sha256": "83536f0305bf87522d7414b2bd587d0d7187a6c02033b56dbb25c876adaf6bc1"
+      "bytes": 4642,
+      "sha256": "8eb870c69bf93db5ed31b9543a21e3a31a8edb19200eed495a50400fa27b7546"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.md",
-      "bytes": 3147,
-      "sha256": "2c943c42305666eb41635780a5fe90682f5979fb0c894f668d8e1b6abe95b2d6"
+      "bytes": 3200,
+      "sha256": "bdb2c9caaa1992128190a8bd0f2d9dda67c7ee71c5ac345b1f172c3dbda0fd64"
     },
     {
       "path": "docs/rz-axis-charge-repeat-stability-v0.93.json",
@@ -2337,8 +2337,8 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 52806,
-      "sha256": "f973bd65f7c4f4a4d4ceb274586ca11d8e1e7206586112dd3981306914e41d77"
+      "bytes": 55860,
+      "sha256": "07d7933bda6767547162852f5fb1d5e92171e39989be7e54b45f863cb27f08ad"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
@@ -4387,8 +4387,8 @@
     },
     {
       "path": "scripts/audit_editorial_quality.py",
-      "bytes": 8970,
-      "sha256": "4248afa92ed28984ab63c41a84e255290f7d9ae3b557eb21e75c9d164374f25b"
+      "bytes": 9034,
+      "sha256": "76beeebe0f1a3ebab58b34744f70558a4351274145cf31e40e6d8c21b0198b57"
     },
     {
       "path": "scripts/audit_esirkepov_bounded_compare.py",
@@ -4587,8 +4587,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 43614,
-      "sha256": "020370279ed518b11a9a7e0066448588aa190d891c22e6c507587aa3dc3fdd3c"
+      "bytes": 44141,
+      "sha256": "f0f73e7599ee570e1fb1a9aa834616dc25e6dda568e66e25f4bbe334fc9f0969"
     },
     {
       "path": "scripts/audit_release_consistency.py",
@@ -4677,8 +4677,8 @@
     },
     {
       "path": "scripts/audit_transition_zone_runtime_activation.py",
-      "bytes": 4343,
-      "sha256": "43fb03c38e7d97b27e551429ffe7fd9fb16d7303908aacbce21ffa7ae49d5bf3"
+      "bytes": 4884,
+      "sha256": "cbda34ec9163481f0bddd5a324b4e2efd7a1c80ec8cb6a57588bdab693b42ae0"
     },
     {
       "path": "scripts/audit_transition_zone_source_contract.py",
@@ -5987,8 +5987,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 61795,
-      "sha256": "600a5a228930e648f3417eaca61b6196f05b6960ab998eb725ee424144323524"
+      "bytes": 62474,
+      "sha256": "a77d097832da2baf8317b33f43c4034604a0f041c78969de89f933ab05277ca5"
     },
     {
       "path": "scripts/verify_v40_build.py",

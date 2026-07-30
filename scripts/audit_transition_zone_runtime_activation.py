@@ -32,6 +32,9 @@ def main() -> int:
     output_contract = run_dir / "contract.json"
     source_contract = json.loads(source_contract_path.read_text(encoding="utf-8"))
     workflow_contract = json.loads(output_contract.read_text(encoding="utf-8"))
+    chapter = (root / "manuscript/chapters/07-boundaries-amr.md").read_text(
+        encoding="utf-8"
+    )
 
     checks = {
         "source_contract_passed": source_contract.get("passed") is True,
@@ -47,6 +50,15 @@ def main() -> int:
         ),
         "owner_mask_runtime_marker": contains(runtime_log, "OwnerMask()"),
         "workflow_contract_passed": workflow_contract.get("passed") is True,
+        "chapter_transition_zone_reader_card": all(
+            marker in chapter
+            for marker in (
+                "### 7.9.1 Transition-zone 判读卡：分支被进入，不等于每条 route 已验证",
+                "gather 与 deposition 分别有自己的 buffer mask",
+                "runtime marker 说明相关分支曾被进入",
+                "route ledger 才说明每条 route",
+            )
+        ),
         "route_count_not_claimed": True,
     }
     result = {

@@ -2,6 +2,7 @@
 
 ## 2026-07-31
 
+- [x] 将第 7 章 transition zone 的 runtime-activation 边界写成读者判读卡：明确 gather 与 deposition 分别由 buffer mask 决定，要求在 `PartitionParticlesInBuffers()` 后、`SyncCurrent()` / `SyncRho()` 前记录分区计数/权重与 `rho/J` source，再把 `OwnerMask()`、pre/post-sync source 和独立 observable 接成 route-level ledger。现有二层、2-rank、subcycling producer 仅支持 partition/sync 分支被经过，不能声称四类 route 或逐粒子贡献已验证。重建 `v0.110` 为 261 页，新增卡跨第 216--217 页并完成视觉复核；源码边界、读者化与构建验收均增加回归检查。
 - [x] 将 Vay deposition 的输入边界写成第 5 章读者判读卡：明确 `algo.particle_pusher=vay` 与 `algo.current_deposition=vay` 是不同对象；后者要求 PSATD、无 current centering、无 AMR、非 periodic-single-box，且不能与 current correction、JRhom、Galilean、RZ/1D 路径混写。初始化拒绝被明确区分于 runtime/physics failure。重建 `v0.110` 为 260 页，新增卡跨第 163--164 页并完成视觉复核；源码 guard、读者化与构建验收均增加回归检查。
 - [x] 将第 5 章 RZ axis-charge boundary 写成读者判读卡：以 residual 的离散定义、axis/off-axis 分区、inverse-volume scaling 的 `0.75` 纯因子预测、species 配对的 `0.85` 读数、axis field operator 与多分辨率重复性依次排除误读；明确它定位稳定边界，却不归因 deposition kernel、不开启 charge closure。重建 `v0.110` 为 259 页，新增卡跨第 164--165 页并完成视觉复核；读者化审计与构建验收增加回归标记。
 - [x] 新增当前 WarpX 源码范围审计：以 `c311e49` 为基准，重跑第 3A--8 章六组代表性 source crosswalk，全部通过；显式记录 41 个受审计源码/analysis 锚点与 12 个相邻工作树未提交路径的零交集。报告为 `docs/live-warpX-source-audit-v0.110.{json,md}`，它不把局部源码核查扩大成干净工作树、语义等价或 runtime physics proof。同步把交叉审计的旧维护词匹配更新为读者正文中的生命周期、PML、transition-zone 和证据链措辞。

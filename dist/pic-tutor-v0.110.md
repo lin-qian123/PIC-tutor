@@ -12018,6 +12018,22 @@ AMR 的 transition zone 同时影响 gather 和 deposition。粒子在细网格 
 
 因此，本章对 transition zone 的准确结论是：源码路径已核、整体 MR workflow 有运行证据、专用 route ledger 仍未实现。不要把末态 checksum、解析场误差或 profiling marker 写成 branch-level route proof。
 
+### 7.9.1 Transition-zone 判读卡：分支被进入，不等于每条 route 已验证
+
+transition zone 的难点不在于给粒子贴上“fine”或“coarse”一个标签，而在于 **gather 与 deposition 分别有自己的 buffer mask**。因此读者应把一次 AMR 粒子步骤写成两个独立判断：粒子从哪一组场数组 gather，以及它向哪一组 source 数组 deposition。没有在同步之前留下记录时，最终的场或 `rho/J` 不能倒推出这两个判断曾如何发生。
+
+1. **先在分区点定义账本，而不是在 plotfile 末态猜路由。** 对每个 step、level 和 species，先记录 `np_before_partition`、总权重、`nfine_gather` 与 `nfine_deposit`，并显式给出两个补数 `nbuffer_gather = np_before_partition - nfine_gather`、`nbuffer_deposit = np_before_partition - nfine_deposit`。这四个数首先只检验分区记账是否完整；它们不是电荷守恒或场正确性的替代品。
+
+2. **再把两个计数接回不同的 producer。** fine gather 消费 `E/Bfield_aux`，buffer gather 消费 coarse `E/Bfield_cax`；fine deposition 写入 `rho_fp/current_fp`，buffer deposition 写入 `rho_buf/current_buf`。同一个粒子在这两条判断上可能有不同标签，因此 ledger 不应只报告一个“buffer particle count”。读者需要能看出每个步骤是否出现 fine-gather/fine-deposit、fine-gather/buffer-deposit、buffer-gather/fine-deposit 或 buffer-gather/buffer-deposit 这四类标签；未命中的标签必须如实报告为未覆盖。
+
+3. **把同步前后的 source 分开保存。** 在 `SyncCurrent()` / `SyncRho()` 前，分别记录 `rho_fp`、`rho_buf`、`current_fp`、`current_buf` 的相应积分或逐分量范数；随后记录 coarsened fine contribution、buffer merge、`OwnerMask()` 去重和 post-sync source。这里不能只做一次总和比较，因为多个 box 的 nodal overlap 正是 `OwnerMask()` 存在的原因。
+
+4. **正确解释已有 runtime marker。** 一个二层、2-rank、subcycling 的 AMR producer 已记录 `PartitionParticlesInBuffers` 与 `OwnerMask()` 的运行标记，因而可以说分区和同步分支被实际经过。它没有给出粒子 route ID、四类 route 的 count/weight、pre-sync buffer 数值或逐项 post-sync ledger，所以不能写成“transition zone 已验证”或“所有 route 都通过”。
+
+5. **用受控情形关闭 route 级结论。** 专用测试应让粒子初态和 buffer 宽度有意覆盖需要的标签，逐 step 输出上述记录，并用独立的 source 或场 observable 检查同步后的结果。只有“预期 route 被命中 + 分区计数/权重自洽 + pre/post-sync source 可追踪 + 独立 observable 通过”同时成立，才可把一条具体 route 标为已验证。
+
+这张卡给出的是正确的证据顺序：**源码分派说明哪些 route 可以存在，runtime marker 说明相关分支曾被进入，route ledger 才说明每条 route 在受控条件下怎样贡献到同步后的 source。** 三者不能互相代替。
+
 ## 7.10 本章练习与源码定位
 
 1. **边界分派题**：给定一个 field boundary 和一个 particle boundary，分别沿 `parse_field_boundaries()`、`parse_particle_boundaries()` 定位它们如何进入 solver/particle container；说明 periodic 继承为什么不能只看输入字符串。

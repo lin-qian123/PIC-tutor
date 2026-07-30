@@ -516,6 +516,15 @@ def main() -> int:
                 "配置后的最小验收顺序",
             )
         ) and not chapter_7_project_path_markers and not chapter_7_stale_location_markers,
+        "chapter_7_transition_zone_reader_card": all(
+            marker in chapter_7
+            for marker in (
+                "### 7.9.1 Transition-zone 判读卡：分支被进入，不等于每条 route 已验证",
+                "gather 与 deposition 分别有自己的 buffer mask",
+                "ledger 不应只报告一个“buffer particle count”",
+                "route ledger 才说明每条 route",
+            )
+        ) and not chapter_7_project_path_markers and not chapter_7_stale_location_markers,
         "chapter_8_has_reader_facing_diagnostics_closure": all(
             marker in chapter_8_closure
             for marker in (
@@ -732,12 +741,12 @@ def main() -> int:
         "full_current_pdf_read_is_recorded": all(
             marker in manual_spotcheck
             for marker in (
-                "本轮连续阅读已覆盖当前 PDF 第 1--260 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--261 页",
                 "| 1--6 |",
                 "| 7--8 |",
-                "| 217--252 |",
-                "| 253--257 |",
-                "| 258--260 |",
+                "| 218--253 |",
+                "| 254--258 |",
+                "| 259--261 |",
             )
         ),
     }

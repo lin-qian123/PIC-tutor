@@ -32,6 +32,7 @@
     "chapter_6_7_field_to_boundary_handoff": true,
     "chapter_7_long_chapter_reader_navigation": true,
     "chapter_7_pml_configuration_reader_card": true,
+    "chapter_7_transition_zone_reader_card": true,
     "chapter_8_has_reader_facing_diagnostics_closure": true,
     "chapter_8_current_diagnostics_route": true,
     "chapter_7_8_boundary_to_diagnostics_handoff": true,

@@ -37,6 +37,7 @@
 | `chapter_6_7_field_to_boundary_handoff` | `PASS` |
 | `chapter_7_long_chapter_reader_navigation` | `PASS` |
 | `chapter_7_pml_configuration_reader_card` | `PASS` |
+| `chapter_7_transition_zone_reader_card` | `PASS` |
 | `chapter_8_has_reader_facing_diagnostics_closure` | `PASS` |
 | `chapter_8_current_diagnostics_route` | `PASS` |
 | `chapter_7_8_boundary_to_diagnostics_handoff` | `PASS` |

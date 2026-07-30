@@ -544,6 +544,19 @@ def main() -> None:
                 "不能单独证明宏粒子 source、连续性或自洽场演化正确",
             )
         ) and not re.search(r"本地 checkout|原文精读|本书采用的实现", chapter_4),
+        "chapter_4_multiphysics_state_reader_route": all(
+            marker in chapter_4
+            for marker in (
+                "读者的多物理状态交接卡",
+                "先区分“事件何时提交”与“新状态何时被 solver 消费”",
+                "`doFieldIonization()` -> QED event pass -> `particleinjection` -> `OneStep()`",
+                "`doQEDEvents()` 只消费已经由 pusher 演化到触发条件的 optical depth",
+                "`collisions.split_momentum_push` 只在 explicit 路径中组织半步动量",
+                "`OneStep_JRhom()` 与 `OneStep_sub1()` 都要求关闭 split momentum push",
+                "photon container 能演化位置和 Breit-Wheeler optical depth，却自身不沉积 charge/current",
+                "一次 nonlinear trial 不是新的物理外层步",
+            )
+        ) and not re.search(r"本地 checkout|原文精读|本书采用的实现", chapter_4),
         "chapter_4_5_long_chapter_reader_navigation": all(
             marker in chapter_4_opening
             for marker in (

@@ -5014,6 +5014,16 @@ $$
 2. implicit particle push；
 3. photon container 的无质量推进。
 
+**读者的多物理状态交接卡。** 进入这一节以及后续的 ionization、collisions 和 QED 前，先区分“事件何时提交”与“新状态何时被 solver 消费”。外层时间步的固定入口顺序是：`doFieldIonization()` -> QED event pass -> `particleinjection` -> `OneStep()`。因此，已经在 field ionization 或 QED event pass 中创建的带电 product 会进入随后的 `OneStep()`；但这条顺序不能被误读为所有多物理过程都在 outer loop 的同一个位置发生。
+
+1. **ionization。** ADK event 同时提高 source ion 的 `ionizationLevel` 并创建 electron product；随后由具体 solver 分支推进，并在 charged-particle deposition 中把离化态转成有效 source charge。应同时查看离子离化态、电子 product 以及 \(\rho,\mathbf J\)，不能只数新电子。
+2. **QED。** `doQEDEvents()` 只消费已经由 pusher 演化到触发条件的 optical depth；它不是在 event pass 内从零开始抽样。Quantum Synchrotron 会保留并改写 lepton，Breit-Wheeler 会使 photon source 失效并创建 charged pairs；两者的 product 虽都在随后 `OneStep()` 前出现，却有不同的 source 命运。
+3. **collisions。** `collisions.split_momentum_push` 只在 explicit 路径中组织半步动量：第一半步不沉积，collision 改写中间状态，第二半步和完整位置推进才交给正常沉积。关闭该选项时，collision 在完整 particle push 前执行；`OneStep_JRhom()` 与 `OneStep_sub1()` 都要求关闭 split momentum push。它是求解器内的时间调度，不是 outer-loop event pass。
+4. **implicit。** 一次 nonlinear trial 不是新的物理外层步。`x_n/ux_n` 是 step-start reference state，收敛后的轨道及其 source 才属于该步的可解释结果；suborbit fallback 还会改变部分粒子的沉积路线。
+5. **photon。** photon container 能演化位置和 Breit-Wheeler optical depth，却自身不沉积 charge/current。只有 photon 被转换后出现的 charged product 才可通过随后的 charged-particle 路径进入 \(\rho/\mathbf J\)。
+
+这张卡给出本节的验证尺度：RR 看解析动量/能量损失；ionization 看离化态、product 和有效 source；collision 看动量、product 与守恒或平衡量；QED 还要把 source 命运、optical depth 和 product 守恒一起比较。任何单一粒子数或单条轨道都不足以替代这些成组观察量。
+
 先看 RR。`Source/Particles/Pusher/PushSelector.H` 的 `doParticleMomentumPush()` 说明，RR 不是第四种独立 pusher，而是优先级高于 `ParticlePusherAlgo` 的一个分支。省略编译宏后的控制流可概括为：
 
 ```cpp

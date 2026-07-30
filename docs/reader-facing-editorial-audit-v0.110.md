@@ -18,6 +18,8 @@
 | `chapter_4_uses_reader_facing_evidence_language` | `PASS` |
 | `chapter_4_has_no_project_path_narration` | `PASS` |
 | `chapter_4_current_pusher_route` | `PASS` |
+| `chapter_4_particle_state_reader_route` | `PASS` |
+| `chapter_4_multiphysics_state_reader_route` | `PASS` |
 | `chapter_4_5_long_chapter_reader_navigation` | `PASS` |
 | `chapter_5_opening_is_reader_facing` | `PASS` |
 | `chapter_5_current_deposition_route` | `PASS` |
@@ -30,12 +32,18 @@
 | `chapter_7_long_chapter_reader_navigation` | `PASS` |
 | `chapter_8_has_reader_facing_diagnostics_closure` | `PASS` |
 | `chapter_8_current_diagnostics_route` | `PASS` |
+| `chapter_8_application_cases_are_reader_facing` | `PASS` |
 | `chapter_2_3_have_reader_facing_routes` | `PASS` |
+| `chapter_2_time_contract_reader_route` | `PASS` |
 | `chapter_2_3_source_navigation_is_portable` | `PASS` |
 | `chapter_3_current_source_route` | `PASS` |
+| `chapter_3_lifecycle_reader_route` | `PASS` |
 | `chapter_3_cross_chapter_handoff` | `PASS` |
+| `chapter_1_2_model_to_loop_handoff` | `PASS` |
+| `chapter_1_continuous_model_reader_route` | `PASS` |
 | `chapter_1_has_no_project_path_narration` | `PASS` |
 | `chapter_3a_current_initialization_route` | `PASS` |
+| `chapter_3a_laser_cases_are_reader_facing` | `PASS` |
 | `chapter_3a_8_long_chapter_reader_navigation` | `PASS` |
 | `core_chapters_have_no_versioned_prose` | `PASS` |
 | `core_chapters_have_exercises` | `PASS` |

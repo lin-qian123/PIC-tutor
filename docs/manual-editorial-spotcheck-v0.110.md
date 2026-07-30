@@ -12,6 +12,8 @@
 
 本轮补充第 4 章 `PushPX()` 的状态检查卡：有效电荷、合成 pusher 场、完整位置推进与沉积权重分别可见，单粒子验证不会与 source/self-consistent 验证混同。
 
+本轮再补充第 4 章多物理状态交接卡：检查 outer-loop 事件顺序、QED optical-depth 与 event pass 的分工、collision split 的 explicit-only 边界、photon 非带电沉积语义以及 implicit trial 的时间语义是否能在同一页组连续阅读。
+
 | 页码 | 检查内容 | 结果 |
 |---:|---|:---:|
 | 6 | 目录末页 | PASS；`A.6` 位于完整目录页，未产生低信息孤页或越界 |
@@ -25,6 +27,7 @@
 | 42 | 第 3 章 implicit 参数与 mass-matrix 边界 | PASS；Picard/Newton/PETSc 表、公式、列表和 3D/RSPHERE 限制段落完整，未见列间覆盖或右侧越界 |
 | 44 | 第 3 章小结与跨章交接卡 | PASS；五个检查点、四列表、核查链和章节收束完整，未见截断、重叠或右侧越界 |
 | 85--86 | 第 4 章 `PushPX()` 状态检查卡与 gather 交接 | PASS；源码、阶段表、轨道/source 四项分工、公式和 `doGatherShapeN()` 入口连续，未见截断、重叠或右侧越界 |
+| 92--93 | 第 4 章多物理状态交接卡 | PASS；outer-loop 顺序、QED/collision/implicit/photon 的状态边界与后续 RR 代码块连续，未见截断、重叠或右侧越界 |
 | 65 | 第 3A 章激光案例选择路线 | PASS；四类案例、几何假设、独立 reference、代码标识与段落完整，未见截断或重叠 |
 | 66 | 第 3A 章激光应用角色与验证入口交界 | PASS；外场限制、四种应用角色、FEL 证据链与后续验证入口完整，未见截断、重叠或右侧越界 |
 

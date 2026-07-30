@@ -12,6 +12,8 @@
 
 第 4 章的显式粒子路径现增加单粒子状态检查卡：明确 `PushPX()` 的 pusher 只消费有效电荷/质量与合成后的 particle field，宏粒子权重只在后续 charge/current deposition 中进入 source。它也将 momentum half push、完整位置推进和一次 `PushPX()` 调用严格区分，因此单粒子轨道案例不再被误用为对 self-consistent source 或场演化的证明。当前 PDF 第 85--86 页已视觉复核。
 
+第 4 章多物理分支现补足状态交接卡：区分外层 `doFieldIonization()`、QED event pass、注入与 `OneStep()` 的次序，说明 optical depth 的演化和 QED product materialization 不是同一动作；也明确 collision 的 split-momentum 仅适用于 explicit 路径，JRhom/subcycling 必须关闭它。RR、implicit、photon、ionization 与 collision 的验证均回到各自的状态变化、source 和可观察量，不以开发过程或测试清单组织。
+
 第 4、5 章的源码定位现统一采用相对 WarpX 根目录的路径，避免依赖相邻工作区布局。第 8 章的尾场、激光打靶、电容放电和磁重联案例改按“物理驱动 -> 可观测量 -> 比较对象 -> 实现入口 -> 不可外推范围”阅读；其中尾场加速明确区分激光与束流驱动，案例目录只说明搭建与输出，不能代替场幅、相位或能谱的独立验证。新构建的 PDF 第 231、233、234 页已视觉复核。
 
 第 1 章现以状态账本把连续分布、source、场和物理尺度交给第 2 章；第 2 章随即把它们排成粒子、ρ/J、场和离散尺度的四问，避免将 CFL、守恒和分辨率压缩成单一“稳定”结论。第 2、3 章统一以相对于 WarpX 根目录的 `Source/...`、`Examples/...` 路径加函数符号导航源码，不再依赖 `../warpx` 工作区位置或固定行号。前言现先定义 source、producer、consumer、observable 和证据层级，避免把数组、函数、输出文件和物理验证混为一谈；第 3 章末再将输入量纲、离散初态、粒子到源项的时间层和独立 reference 串成进入后续章节前必须保留的核查链。第 3A、4、5、6、7、8、9 章将长篇实现细节前置为“初态分支/时间链/守恒问题/离散表示到证据/边界拓扑到 AMR/证据等级/文献判读”的阅读路线；其中第 6 章明确区分 FDTD/PML、PSATD/RZ、替代物理模型和 observable，第 7 章明确区分拓扑、PML、EB 与 transition zone，第 9 章要求将一项主张接回材料层级、源码职责和观察量。PDF 还为第 1--9 章、3A 章和附录增加强制新页起排，使每个一级单元从完整标题和上下文开始；HTML 保持连续阅读。第 6--8、15、17、29、44--45、65--66、75、123、174--175、211--212、225、231、233--234、262、267 页人工版式复核通过；当前构建为 267 页。

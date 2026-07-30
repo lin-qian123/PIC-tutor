@@ -2,6 +2,8 @@
 
 ## 2026-07-31
 
+- [x] 完成第 4 章多物理分支的读者化收束：增加“事件提交/solver 消费”交接卡，固定 field ionization、QED event pass、injection 与 `OneStep()` 的外层顺序；明确 QED optical-depth 演化与 event materialization 的区别、explicit collision split 的适用边界、JRhom/subcycling 的关闭要求，以及 photon/implicit 的 source 语义。待继续完成全书人工通读与第三方材料公开分发治理。
+
 - [x] 完成第 4 章显式 pusher 核心路径的读者审校：在 `PushPX()` 后加入“轨道状态/合成 pusher 场/完整位置更新/source 权重”的检查卡，明确 momentum kernel 消费 \(q\,\texttt{ionizationLevel}/m\) 而不消费宏粒子权重，`PositionPushType::Full` 才提交位置；随后沉积才以 \(q\,w\,\texttt{ionizationLevel}\) 构造 source。单粒子轨道验证因此与 source、连续性和自洽场验证明确分层。读者审计与构建验收新增该路线检查；重建保持 267 页，PDF 第 85--86 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。
 - [x] 完成第 3 章生命周期的读者审校：在 `OneStep()` 前加入“输入分支 -> 初始化离散状态 -> 外层提交边界 -> 单步时间合同 -> reference/observable”的检查卡；将 `OneStep_sub1()` 的两级/2:1、Picard 的最小 particle iteration 及 mass-matrix 的 3D/RSPHERE 限制改为函数或参数检查的明确边界，不再作为“当前源码”项目状态叙述。读者审计与构建验收新增第 3 章生命周期路线检查；重建保持 267 页，PDF 第 36、42、44 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。
 - [x] 完成第 2 章时间合同的读者审校与宽表修复：删除“本书采用的源码快照”叙事，新增外层物理时间步、细层真实推进、JRhom source 时间积分和 implicit RHS 试探的判断卡；将 `OneStep_sub1()` 的两级/2:1 约束与 electrostatic/subcycling 拒绝条件回到函数职责。把 2.6.2 的五列表改为标准显式、PSATD-JRhom 与 implicit 三条路径，消除隐式行的列间挤压。读者审计与构建验收新增第 2 章时间合同检查；重建保持 267 页，PDF 第 24--26 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。

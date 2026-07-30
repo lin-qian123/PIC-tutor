@@ -658,23 +658,21 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 - `Yee 1966`
 - `Hockney-Eastwood`
 
-更完整的基础章节文献范围，以及哪些来源可直接支持正文、哪些仅提供书目信息，见：
-
-- [基础章节文献清单](../../docs/foundations-literature-list.md)
+继续扩展基础文献时，优先选择能够给出完整推导、适用假设和数值实验条件的原始教材或论文。书目线索本身只能帮助定位来源，不能代替公式、算法或案例结论的核查。
 
 ## 2.10 进一步阅读与练习
 
 进一步阅读：
 
 1. [第 3 章：WarpX 演化](03-warpx-evolve.md)：把本章的 PIC loop 抽象结构接到 `main.cpp -> WarpX::Evolve()` 的真实调用链。
-2. [Birdsall 1985 中文讲解](../../references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation-中文讲解.md)：继续看 $\omega_p\Delta t$、$\lambda_D/\Delta x$、finite-grid aliasing 和 numerical heating。
-3. [Dawson 1983 中文讲解](../../references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/1983_Dawson_Particle_simulation_of_plasmas-中文讲解.md)：继续看 full EM、Darwin、quiet start 和 statistical measurements 如何改变“PIC 总循环”的解释方式。
+2. `Birdsall 1985`：继续核对 $\omega_p\Delta t$、$\lambda_D/\Delta x$、finite-grid aliasing 和 numerical heating 的条件与量纲。
+3. `Dawson 1983`：继续比较 full EM、Darwin、quiet start 和 statistical measurements 如何改变“PIC 总循环”的解释方式。
 
 练习题：
 
 1. 解释为什么 `ComputeDt()` 给出的可运行时间步，不自动保证 $\omega_p\Delta t \ll 1$。
 2. 用本章的 $\lambda_D$ 讨论说明：为什么 $\Delta x \gg \lambda_D$ 时，即使主循环稳定，也可能已经不是同一个物理 plasma。
-3. 对照 [Langmuir 阅读笔记](../../notes/code-reading/applications/00-langmuir-wave.md)，指出 `analysis_1d.py` 的两条核心断言分别对应本章哪两类理论边界。
+3. 结合本章的 Langmuir 案例，指出 `analysis_1d.py` 的两条核心断言分别对应本章哪两类理论边界。
 4. **案例闭环题**：依次读取 `inputs_test_1d_langmuir_multi`、`langmuir/CMakeLists.txt` 和 `analysis_1d.py`，交付一张四行表（输入设置、诊断 surface、分析断言、不可外推范围）。表中必须写清 `test_1d_langmuir_multi` 的两个 rank、`analysis_1d.py diags/diag1000080` 的绑定，以及为什么不能只从 `max_step = 80` 猜测分析器实际消费的输出路径和检查量。
 
 ## 2.11 本章结论

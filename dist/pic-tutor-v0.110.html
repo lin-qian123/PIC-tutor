@@ -1420,12 +1420,9 @@ optimum path 的经典表述。</li>
 <li><code>Yee 1966</code>：staggered FDTD
 与离散约束传播的原始出处。</li>
 </ul>
-<p>基础章节中哪些来源可直接支撑正文、哪些只能提供书目信息，见：</p>
-<ul>
-<li><a href="../../docs/foundations-literature-list.md">基础章节文献清单</a></li>
-</ul>
-<p>第 2 章会把这里的 leapfrog、CFL、Debye
-长度和数值色散接到同一条离散主循环上。阅读其余文献时，应特别区分“连续模型的结论”“离散算法的结论”和“特定代码实现的行为”，不要用其中任一层代替另外两层。</p>
+<p>继续阅读时，应优先回到原始论文、教材或官方文档，并为每一条主张标明它属于连续模型、离散算法还是特定代码实现；不要用其中任一层代替另外两层。第
+2 章会把这里的 leapfrog、CFL、Debye
+长度和数值色散接到同一条离散主循环上。</p>
 <h2 id="练习与源码定位">1.14 练习与源码定位</h2>
 <ol type="1">
 <li><strong>变量桥接题</strong>：根据 1.11 的映射表，说明为什么
@@ -2315,23 +2312,17 @@ Gauss-law
 <li><code>Yee 1966</code></li>
 <li><code>Hockney-Eastwood</code></li>
 </ul>
-<p>更完整的基础章节文献范围，以及哪些来源可直接支持正文、哪些仅提供书目信息，见：</p>
-<ul>
-<li><a href="../../docs/foundations-literature-list.md">基础章节文献清单</a></li>
-</ul>
+<p>继续扩展基础文献时，优先选择能够给出完整推导、适用假设和数值实验条件的原始教材或论文。书目线索本身只能帮助定位来源，不能代替公式、算法或案例结论的核查。</p>
 <h2 id="进一步阅读与练习">2.10 进一步阅读与练习</h2>
 <p>进一步阅读：</p>
 <ol type="1">
 <li><a href="03-warpx-evolve.md">第 3 章：WarpX 演化</a>：把本章的 PIC
 loop 抽象结构接到 <code>main.cpp -&gt; WarpX::Evolve()</code>
 的真实调用链。</li>
-<li><a href="../../references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation-中文讲解.md">Birdsall
-1985 中文讲解</a>：继续看 <span class="math inline">\(\omega_p\Delta
-t\)</span>、<span class="math inline">\(\lambda_D/\Delta
-x\)</span>、finite-grid aliasing 和 numerical heating。</li>
-<li><a href="../../references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/1983_Dawson_Particle_simulation_of_plasmas-中文讲解.md">Dawson
-1983 中文讲解</a>：继续看 full EM、Darwin、quiet start 和 statistical
-measurements 如何改变“PIC 总循环”的解释方式。</li>
+<li><code>Birdsall 1985</code>：继续核对 <span class="math inline">\(\omega_p\Delta t\)</span>、<span class="math inline">\(\lambda_D/\Delta x\)</span>、finite-grid aliasing
+和 numerical heating 的条件与量纲。</li>
+<li><code>Dawson 1983</code>：继续比较 full EM、Darwin、quiet start 和
+statistical measurements 如何改变“PIC 总循环”的解释方式。</li>
 </ol>
 <p>练习题：</p>
 <ol type="1">
@@ -2341,8 +2332,7 @@ measurements 如何改变“PIC 总循环”的解释方式。</li>
 讨论说明：为什么 <span class="math inline">\(\Delta x \gg
 \lambda_D\)</span> 时，即使主循环稳定，也可能已经不是同一个物理
 plasma。</li>
-<li>对照 <a href="../../notes/code-reading/applications/00-langmuir-wave.md">Langmuir
-阅读笔记</a>，指出 <code>analysis_1d.py</code>
+<li>结合本章的 Langmuir 案例，指出 <code>analysis_1d.py</code>
 的两条核心断言分别对应本章哪两类理论边界。</li>
 <li><strong>案例闭环题</strong>：依次读取
 <code>inputs_test_1d_langmuir_multi</code>、<code>langmuir/CMakeLists.txt</code>
@@ -2988,11 +2978,10 @@ window、粒子边界和某些 electrostatic/hybrid 场解在
 <code>OneStep()</code> 之后。</p>
 <h3 id="步末-moving-window连续坐标与整数网格平移">3.6.1 步末 moving
 window：连续坐标与整数网格平移</h3>
-<p>moving window 的完整精读见
-<code>notes/code-reading/evolve/05-moving-window.md</code>。这里先把它放回
-<code>Evolve()</code> 主循环中：<code>MoveWindow(step+1, move_j)</code>
-发生在 <code>OneStep()</code> 完成、<code>cur_time</code> 和
-<code>t_new</code> 更新之后，粒子边界处理之前。对应逻辑位于
+<p>要理解 moving window，先把它放回 <code>Evolve()</code>
+主循环中：<code>MoveWindow(step+1, move_j)</code> 发生在
+<code>OneStep()</code> 完成、<code>cur_time</code> 和 <code>t_new</code>
+更新之后，粒子边界处理之前。对应逻辑位于
 <code>WarpX::Evolve()</code>：</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cur_time <span class="op">+=</span> dt<span class="op">[</span><span class="dv">0</span><span class="op">];</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3314,8 +3303,7 @@ half、是否跳过沉积、位置/动量 push 类型传入粒子容器。</li>
 是主循环到粒子模块的接口，不是粒子 pusher 本身。</p>
 <h2 id="onestep_sub1-与-jrhom-的位置">3.11 <code>OneStep_sub1()</code>
 与 JRhom 的位置</h2>
-<p>完整精读见
-<code>notes/code-reading/evolve/03-subcycling-and-jrhom.md</code>。这里先把两个特殊分支放回主循环时间层。</p>
+<p>理解这两个特殊分支时，先把它们放回主循环时间层。</p>
 <p><code>OneStep_sub1()</code> 定义在
 <code>../warpx/Source/Evolve/WarpXEvolve.cpp</code>。当前 subcycling
 只支持两个 level 和 refinement ratio 2：fine patch
@@ -3668,9 +3656,9 @@ Esirkepov、非 PSATD、非 RZ 的案例，辅助分析会检查离散 Gauss-law
 章：沉积与形函数</a>：继续展开
 <code>SyncCurrentAndRho()</code>、沉积、guard/source
 synchronization。</li>
-<li><a href="../../notes/code-reading/evolve/00-lifecycle-and-callgraph.md">演化生命周期笔记</a>、<a href="../../notes/code-reading/evolve/03-subcycling-and-jrhom.md">subcycling
-与 JRhom</a>、<a href="../../notes/code-reading/evolve/05-moving-window.md">moving
-window</a>：继续下钻本章只做第一轮压缩的分支。</li>
+<li>对 lifecycle、subcycling/JRhom 与 moving window
+三条分支，继续分别追问：状态在哪个时间层更新、哪些网格层参与、以及结果应通过哪个
+observable 判断。</li>
 </ol>
 <p>练习题：</p>
 <ol type="1">
@@ -3678,9 +3666,8 @@ window</a>：继续下钻本章只做第一轮压缩的分支。</li>
 外壳，而不能直接分配完整 <code>MultiFab</code> 主字段。</li>
 <li>用本章的 <code>StoreCurrent()/RestoreCurrent()</code> 解释：为什么
 subcycling 不能简单拿 fine current 覆盖 coarse current。</li>
-<li>结合 <a href="../../notes/code-reading/applications/00-langmuir-wave.md">Langmuir
-阅读笔记</a>，指出 <code>inputs_test_1d_langmuir_multi</code>
-中哪些参数分别进入
+<li>结合本章的 Langmuir 案例，指出
+<code>inputs_test_1d_langmuir_multi</code> 中哪些参数分别进入
 <code>ReadParameters()</code>、<code>ComputeDt()</code> 和
 <code>OneStep_nosub()</code> 的不同层次。</li>
 <li><strong>案例闭环题。</strong>

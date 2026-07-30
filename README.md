@@ -2,6 +2,8 @@
 
 当前成书版本为 `v0.110`：2026-07-30 可复现构建生成 `258` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、末页、第 3A 章验证入口和第 5 章沉积证据页已补充视觉抽查；该抽查不替代全书逐页通读、第三方材料许可或公开再分发签收。
 
+第 1 至 3 章现完成与后续实现章节的读者入口收束：基础文献、Langmuir 案例以及 lifecycle/subcycling/moving-window 的延伸阅读都改为可独立执行的核查问题，不再把项目内部资料目录作为阅读入口。读者化审计和构建验收新增第 1 至 3 章全章无内部项目路径检查；当前 PDF 第 14、25、40 页人工版式复核通过。全书术语、公式、代码上下文和章节过渡的逐页人工通读仍未完成。
+
 第 8 章已完成诊断、验证与案例主线的读者化复核：从待测物理量和时间层出发，追踪 `WarpX::Evolve`、`MultiDiagnostics` 与 `ReducedDiags` 如何形成输出，再按解析 physics gate、writer/schema、checksum 和性能 gate 区分证据强度。章节已移除内部脚本、运行归档和固定位置；Langmuir、uniform plasma、FieldProbe 与束流诊断的通过/失败边界都保留为读者可判断的案例。PDF 第 219、221、234、253 页人工版式复核通过，详见 `docs/manual-editorial-spotcheck-v0.110.md`。
 
 第 7 章已完成边界、PML 与 AMR 主线的当前源码和读者路径复核：从 `WarpX::MakeWarpX()` 解析 field/particle 拓扑开始，经过场/粒子边界、PML/guard-cell 交换与 `RemakeLevel()` 的状态重建，最终回到反射率、残余场、scraped-particle buffer 和 AMR route ledger 等可观察量。章节已移除固定行号、内部笔记和维护路径；所有结论明确区分源码职责、案例证据和未闭合的 transition-zone 逐 route 账本。PDF 第 206、208、214、216、218 页的人工版式复核通过，详见 `docs/manual-editorial-spotcheck-v0.110.md`。

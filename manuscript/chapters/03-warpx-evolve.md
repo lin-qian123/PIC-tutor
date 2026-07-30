@@ -329,7 +329,7 @@ for step in range while cur_time < stop_time:
 
 ### 3.6.1 步末 moving window：连续坐标与整数网格平移
 
-moving window 的完整精读见 `notes/code-reading/evolve/05-moving-window.md`。这里先把它放回 `Evolve()` 主循环中：`MoveWindow(step+1, move_j)` 发生在 `OneStep()` 完成、`cur_time` 和 `t_new` 更新之后，粒子边界处理之前。对应逻辑位于 `WarpX::Evolve()`：
+要理解 moving window，先把它放回 `Evolve()` 主循环中：`MoveWindow(step+1, move_j)` 发生在 `OneStep()` 完成、`cur_time` 和 `t_new` 更新之后，粒子边界处理之前。对应逻辑位于 `WarpX::Evolve()`：
 
 ```cpp
 cur_time += dt[0];
@@ -613,7 +613,7 @@ FDTD 分支的核心源码如下：
 
 ## 3.11 `OneStep_sub1()` 与 JRhom 的位置
 
-完整精读见 `notes/code-reading/evolve/03-subcycling-and-jrhom.md`。这里先把两个特殊分支放回主循环时间层。
+理解这两个特殊分支时，先把它们放回主循环时间层。
 
 `OneStep_sub1()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。当前 subcycling 只支持两个 level 和 refinement ratio 2：fine patch 用小步长推两次，coarse patch 和 mother grid 推一次，coarse 场使用两次 fine current 的平均效果。函数注释直接说明这一点：
 
@@ -837,13 +837,13 @@ $$
 
 1. [第 4 章：粒子推进器](04-particle-pushers.md)：继续从 `PushParticlesandDeposit()` 进入 `mypc->Evolve()` 和粒子推进器。
 2. [第 5 章：沉积与形函数](05-deposition-shapes.md)：继续展开 `SyncCurrentAndRho()`、沉积、guard/source synchronization。
-3. [演化生命周期笔记](../../notes/code-reading/evolve/00-lifecycle-and-callgraph.md)、[subcycling 与 JRhom](../../notes/code-reading/evolve/03-subcycling-and-jrhom.md)、[moving window](../../notes/code-reading/evolve/05-moving-window.md)：继续下钻本章只做第一轮压缩的分支。
+3. 对 lifecycle、subcycling/JRhom 与 moving window 三条分支，继续分别追问：状态在哪个时间层更新、哪些网格层参与、以及结果应通过哪个 observable 判断。
 
 练习题：
 
 1. 说明为什么 `WarpX::WarpX()` 里只能创建跨-level 外壳，而不能直接分配完整 `MultiFab` 主字段。
 2. 用本章的 `StoreCurrent()/RestoreCurrent()` 解释：为什么 subcycling 不能简单拿 fine current 覆盖 coarse current。
-3. 结合 [Langmuir 阅读笔记](../../notes/code-reading/applications/00-langmuir-wave.md)，指出 `inputs_test_1d_langmuir_multi` 中哪些参数分别进入 `ReadParameters()`、`ComputeDt()` 和 `OneStep_nosub()` 的不同层次。
+3. 结合本章的 Langmuir 案例，指出 `inputs_test_1d_langmuir_multi` 中哪些参数分别进入 `ReadParameters()`、`ComputeDt()` 和 `OneStep_nosub()` 的不同层次。
 4. **案例闭环题。** 阅读该输入、`Examples/Tests/langmuir/CMakeLists.txt` 和 `analysis_1d.py`，写出四行表格：输入参数、测试规模、分析命令、通过条件。解释为什么 `max_step = 80` 不能单独推出输出目录或通过阈值，并说明两类检查各自能与不能支持什么结论。
 
 ## 3.14 本章小结

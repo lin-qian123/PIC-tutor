@@ -1,13 +1,15 @@
 {
-  "contract": "public release path hygiene",
-  "reports": [
-    {
-      "path": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/dist/pic-tutor-v0.110.pdf",
-      "forbidden_path_counts": {},
-      "absolute_local_link_count": 0,
-      "passed": true
-    }
-  ],
-  "passed": true,
-  "scope": "release Markdown/HTML only; source manuscript paths remain local-source concerns"
+  "contract": "public distribution boundary",
+  "classification": "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED",
+  "tracked_references": {
+    "file_count": 2425,
+    "bytes": 190730587,
+    "pdf_count": 52,
+    "image_count": 2259
+  },
+  "release_manifest_excludes_references": true,
+  "root_license_files": [],
+  "remediation_open": true,
+  "scope": "Local Git inventory only. A release manifest does not remove files already tracked by Git or control distribution through public repository history.",
+  "required_maintainer_decision": "Confirm redistribution rights per tracked third-party item, or remove the items from the public branch and decide whether public history must be rewritten."
 }

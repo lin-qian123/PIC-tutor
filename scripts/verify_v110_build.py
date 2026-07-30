@@ -61,8 +61,9 @@ def main() -> None:
     chapter_5_numbers = chapter_subheading_numbers(
         ROOT / "manuscript" / "chapters" / "05-deposition-shapes.md", "5"
     )
-    chapter_1 = ROOT / "manuscript" / "chapters" / "01-kinetic-models.md"
-    chapter_1_numbers = chapter_heading_numbers(chapter_1, "1")
+    chapter_1_path = ROOT / "manuscript" / "chapters" / "01-kinetic-models.md"
+    chapter_1 = chapter_1_path.read_text(encoding="utf-8")
+    chapter_1_numbers = chapter_heading_numbers(chapter_1_path, "1")
     toc_text = reader.pages[0].extract_text() or ""
     chapter_6_numbers = chapter_subheading_numbers(
         ROOT / "manuscript" / "chapters" / "06-field-solvers.md", "6"
@@ -77,6 +78,12 @@ def main() -> None:
     chapter_2 = (ROOT / "manuscript" / "chapters" / "02-pic-loop.md").read_text(encoding="utf-8")
     chapter_2_code_spans = re.findall(r"`([^`]*)`", chapter_2)
     chapter_3 = (ROOT / "manuscript" / "chapters" / "03-warpx-evolve.md").read_text(encoding="utf-8")
+    reader_entry_project_path_pattern = (
+        r"scripts/|notes/|runs/|docs/|references/|contract\\.\\{json,md\\}"
+    )
+    chapter_1_project_markers = re.findall(reader_entry_project_path_pattern, chapter_1)
+    chapter_2_project_markers = re.findall(reader_entry_project_path_pattern, chapter_2)
+    chapter_3_project_markers = re.findall(reader_entry_project_path_pattern, chapter_3)
     chapter_3_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
     )
@@ -184,7 +191,7 @@ def main() -> None:
         ) and all(
             marker in chapter_3
             for marker in ("追踪它何时变成网格、场、粒子和诊断", "InitData()", "OneStep()")
-        ),
+        ) and not chapter_2_project_markers and not chapter_3_project_markers,
         "chapter_3_current_source_route": all(
             marker in chapter_3
             for marker in (
@@ -197,7 +204,8 @@ def main() -> None:
             )
         ) and "UpdateDtFromParticleSpeeds" not in chapter_3
         and "`algo.maxwell_solver = yee`" not in chapter_3
-        and not chapter_3_stale_location_markers,
+        and not chapter_3_stale_location_markers
+        and not chapter_3_project_markers,
         "chapter_2_math_and_case_closure": all(
             marker in chapter_2
             for marker in (
@@ -327,7 +335,7 @@ def main() -> None:
             )
         ),
         "chapter_1_source_exercise": all(
-            marker in source
+            marker in chapter_1
             for marker in (
                 "## 1.14 练习与源码定位",
                 "`Source/Evolve/WarpXEvolve.cpp`",
@@ -335,7 +343,7 @@ def main() -> None:
                 "`SyncCurrentAndRho()`",
                 "`PushPSATD()`",
             )
-        ),
+        ) and not chapter_1_project_markers,
         "chapter_9_exercises": all(
             marker in source
             for marker in (

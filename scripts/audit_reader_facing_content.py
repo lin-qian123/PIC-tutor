@@ -37,9 +37,14 @@ def main() -> int:
     chapter_6 = (root / "manuscript/chapters/06-field-solvers.md").read_text(encoding="utf-8")
     chapter_7 = (root / "manuscript/chapters/07-boundaries-amr.md").read_text(encoding="utf-8")
     chapter_8 = (root / "manuscript/chapters/08-diagnostics-cases.md").read_text(encoding="utf-8")
+    chapter_1 = (root / "manuscript/chapters/01-kinetic-models.md").read_text(encoding="utf-8")
     chapter_2 = (root / "manuscript/chapters/02-pic-loop.md").read_text(encoding="utf-8")
     chapter_2_code_spans = re.findall(r"`([^`]*)`", chapter_2)
     chapter_3 = (root / "manuscript/chapters/03-warpx-evolve.md").read_text(encoding="utf-8")
+    reader_entry_project_path_pattern = r"scripts/|notes/|runs/|docs/|references/|contract\\.\\{json,md\\}"
+    chapter_1_project_path_markers = re.findall(reader_entry_project_path_pattern, chapter_1)
+    chapter_2_project_path_markers = re.findall(reader_entry_project_path_pattern, chapter_2)
+    chapter_3_project_path_markers = re.findall(reader_entry_project_path_pattern, chapter_3)
     chapter_3_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
     )
@@ -317,6 +322,8 @@ def main() -> int:
             )
         ) and "pkuHEDPbranch" not in chapter_2[:2500]
         and "pkuHEDPbranch" not in chapter_3[:2500]
+        and not chapter_2_project_path_markers
+        and not chapter_3_project_path_markers
         and not any(
             re.search(r"\\(?:omega|lambda|Delta)", span) for span in chapter_2_code_spans
         ),
@@ -332,7 +339,9 @@ def main() -> int:
             )
         ) and "UpdateDtFromParticleSpeeds" not in chapter_3
         and "`algo.maxwell_solver = yee`" not in chapter_3
-        and not chapter_3_stale_location_markers,
+        and not chapter_3_stale_location_markers
+        and not chapter_3_project_path_markers,
+        "chapter_1_has_no_project_path_narration": not chapter_1_project_path_markers,
         "chapter_3a_current_initialization_route": all(
             marker in chapter_3a
             for marker in (
@@ -380,6 +389,9 @@ def main() -> int:
         "chapter_9_project_path_markers": chapter_9_project_path_markers,
         "chapter_9_project_narration_markers": chapter_9_project_narration_markers,
         "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
+        "chapter_1_project_path_markers": chapter_1_project_path_markers,
+        "chapter_2_project_path_markers": chapter_2_project_path_markers,
+        "chapter_3_project_path_markers": chapter_3_project_path_markers,
         "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,
         "chapter_3a_project_path_markers": chapter_3a_project_path_markers,
         "chapter_3a_project_narration_markers": chapter_3a_project_narration_markers,

@@ -388,6 +388,15 @@ def main() -> int:
                 "一个 Cartesian PASS 证明的是那个输入和 observable",
             )
         ) and not chapter_5_project_narration_markers,
+        "chapter_5_rz_implicit_villasenor_reader_card": all(
+            marker in chapter_5
+            for marker in (
+                "### 5.14.2.2 RZ implicit Villasenor 判读卡：初始化停止不等于沉积失败",
+                "当前分类是 **pre-physics boundary**",
+                "不应把没有产生的 `divE-rho/epsilon_0` 当作一次失败的测量",
+                "隐式 PIC 的配置、solver definition、nonlinear residual、粒子推进、source synchronization 和物理 observable 是连续但不同的阶段",
+            )
+        ) and not chapter_5_project_narration_markers,
         "chapter_4_5_multiphysics_source_handoff": all(
             marker in chapter_5
             for marker in (
@@ -741,12 +750,12 @@ def main() -> int:
         "full_current_pdf_read_is_recorded": all(
             marker in manual_spotcheck
             for marker in (
-                "本轮连续阅读已覆盖当前 PDF 第 1--261 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--262 页",
                 "| 1--6 |",
                 "| 7--8 |",
-                "| 218--253 |",
-                "| 254--258 |",
-                "| 259--261 |",
+                "| 219--254 |",
+                "| 255--259 |",
+                "| 260--262 |",
             )
         ),
     }

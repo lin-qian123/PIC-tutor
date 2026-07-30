@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 5 reader cards plus the Chapter 7 PML and transition-zone cards yield 261 pages.
-EXPECTED_PDF_PAGES = 261
+# The Chapter 5 reader cards plus the Chapter 7 PML and transition-zone cards yield 262 pages.
+EXPECTED_PDF_PAGES = 262
 
 
 def image_links(text: str) -> list[str]:
@@ -798,6 +798,15 @@ def main() -> None:
                 "一个 Cartesian PASS 证明的是那个输入和 observable",
             )
         ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
+        "chapter_5_rz_implicit_villasenor_reader_card": all(
+            marker in chapter_5
+            for marker in (
+                "### 5.14.2.2 RZ implicit Villasenor 判读卡：初始化停止不等于沉积失败",
+                "当前分类是 **pre-physics boundary**",
+                "不应把没有产生的 `divE-rho/epsilon_0` 当作一次失败的测量",
+                "隐式 PIC 的配置、solver definition、nonlinear residual、粒子推进、source synchronization 和物理 observable 是连续但不同的阶段",
+            )
+        ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
         "chapter_5_reader_extracts_are_declared": all(
             marker in chapter_5
             for marker in (
@@ -1215,13 +1224,13 @@ def main() -> None:
             marker in manual_spotcheck
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
-                "本轮连续阅读已覆盖当前 PDF 第 1--261 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--262 页",
                 "| 1--6 |",
-                "| 120--167 |",
-                "| 168--202 |",
-                "| 218--253 |",
-                "| 254--258 |",
-                "| 259--261 |",
+                "| 120--168 |",
+                "| 169--203 |",
+                "| 219--254 |",
+                "| 255--259 |",
+                "| 260--262 |",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

@@ -24,23 +24,31 @@ def main() -> None:
     theta_path = args.warpx_root / "Source/FieldSolver/ImplicitSolvers/ThetaImplicitEM.cpp"
     implicit_path = args.warpx_root / "Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp"
     particle_path = args.warpx_root / "Source/Particles/WarpXParticleContainer.cpp"
+    chapter_path = Path(__file__).resolve().parents[1] / "manuscript/chapters/05-deposition-shapes.md"
     input_text = input_path.read_text(encoding="utf-8")
     theta_text = theta_path.read_text(encoding="utf-8")
     implicit_text = implicit_path.read_text(encoding="utf-8")
     particle_text = particle_path.read_text(encoding="utf-8")
+    chapter_text = chapter_path.read_text(encoding="utf-8")
     runtime_text = args.runtime_log.read_text(encoding="utf-8")
     checks = {
         "input_rz": marker(input_text, "geometry.dims = RZ"),
         "input_theta_implicit": marker(input_text, 'algo.evolve_scheme = "theta_implicit_em"'),
         "input_villasenor": marker(input_text, 'algo.current_deposition = "villasenor"'),
         "input_petsc_ksp": marker(input_text, "newton.linear_solver = petsc_ksp"),
+        "input_petsc_preconditioner": marker(input_text, "jacobian.pc_type = pc_petsc"),
         "theta_defines_solver": marker(theta_text, "m_nlsolver->Define(m_E, this);"),
         "theta_masks_are_petsc_only": marker(theta_text, "if (pc_type == PreconditionerType::pc_petsc) { InitializeCurlCurlBCMasks(); }"),
         "petsc_compile_guard": marker(implicit_text, "AMREX_USE_PETSC must be defined"),
+        "implicit_rhs_precedes_particle_source": marker(theta_text, "PreRHSOp( theta_time, a_nl_iter, a_from_jacobian );"),
+        "pre_rhs_pushes_and_deposits": marker(implicit_text, "m_WarpX->PushParticlesandDeposit(a_cur_time, skip_deposition, PositionPushType::Full, MomentumPushType::Full, &options);"),
         "implicit_villasenor_dispatch": marker(particle_text, "doVillasenorDepositionShapeNImplicit"),
         "runtime_reaches_dof": marker(runtime_text, "Defined DOF object for linear solves"),
         "runtime_sigill": marker(runtime_text, "SIGILL Invalid, privileged, or ill-formed instruction"),
         "runtime_mpi_abort": marker(runtime_text, "MPI_Abort"),
+        "chapter_reader_card": marker(chapter_text, "### 5.14.2.2 RZ implicit Villasenor 判读卡：初始化停止不等于沉积失败"),
+        "chapter_does_not_overclaim_physics": marker(chapter_text, "当前分类是 **pre-physics boundary**"),
+        "chapter_requires_source_and_consumer": marker(chapter_text, "source/field 有限且时间层明确 + Gauss-law 或能量等独立 observable 通过"),
     }
     result = {
         "contract": "RZ implicit Villasenor pre-physics build boundary",

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39247941,
+  "total_bytes": 39270334,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1561345,
-      "sha256": "7dd4ba81e8d7d1a7336806531d1e979b5098cf6aa23c2c81b6f39224e808895a"
+      "bytes": 1561459,
+      "sha256": "225c1552be13daaaf858e644a288041a9c3cb75d83079e91fe298ba5e8921761"
     },
     {
       "path": "TODO.md",
-      "bytes": 1453039,
-      "sha256": "66e7481707324b4776b75429b0eb2a014421210a65550a36c95d1a8b5eee389c"
+      "bytes": 1453606,
+      "sha256": "48a57526e18031dc8bdbe3e5f0ad4954dea60a39888d5174957c91f10547865c"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5103651,
-      "sha256": "297dfa63db48ee97aeb15e46b0bc2dd2c5b22fcaf53b03620d0a6568ffa73cf4"
+      "bytes": 5108341,
+      "sha256": "e7d7fc550cf48b279b2f933ad2e7af6a8199e12a72e4ab435c123fa32ef395a9"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 863988,
-      "sha256": "33b1fad50eb2aca69c01bdfa776bbc1d7bbb1eb2b4e9ef5b4e34fd6c4597b7ed"
+      "bytes": 867863,
+      "sha256": "e651ffd1272320af93b676b27894d257d6bb9adfc5539a69e5ab5ae179abaaa7"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2995084,
-      "sha256": "c67bb2587a5bef28e1871086b55919838f506eacceb040b8a03c62acd60c9778"
+      "bytes": 3001486,
+      "sha256": "96905fe6ee257eed907271d604c9b73f7d61c85600661d21a82d199f1f175b86"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -532,8 +532,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 56125,
-      "sha256": "f6472daa95b14dfb28f884370ef2d9b0b5eca439bdf91975d1a809f01342051b"
+      "bytes": 56520,
+      "sha256": "40c53dc9a983ba2c5ffd756759e423b97d4eb879950a4667b87bdef60c1bd18a"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -917,13 +917,13 @@
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
-      "bytes": 4642,
-      "sha256": "8eb870c69bf93db5ed31b9543a21e3a31a8edb19200eed495a50400fa27b7546"
+      "bytes": 4700,
+      "sha256": "1a5980d4f9df907ea8aa142b8321f90085f846b4ffcf9f5d34beb5e9a98b2bc7"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.md",
-      "bytes": 3200,
-      "sha256": "bdb2c9caaa1992128190a8bd0f2d9dda67c7ee71c5ac345b1f172c3dbda0fd64"
+      "bytes": 3260,
+      "sha256": "f2f97f4954e2389b9131532a06d657ec2f5ea29e886bead642d92d8f891b6c03"
     },
     {
       "path": "docs/rz-axis-charge-repeat-stability-v0.93.json",
@@ -2327,8 +2327,8 @@
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
-      "bytes": 180286,
-      "sha256": "bb6c19609fee41e35f96cd55dda498d02711049b0c70eac9d651954d09beac9f"
+      "bytes": 184161,
+      "sha256": "d3d14a2d5a8fa7d4b18a86c09e6ed37426d79b49e321a1eb1a2642310b030df6"
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
@@ -4387,8 +4387,8 @@
     },
     {
       "path": "scripts/audit_editorial_quality.py",
-      "bytes": 9034,
-      "sha256": "76beeebe0f1a3ebab58b34744f70558a4351274145cf31e40e6d8c21b0198b57"
+      "bytes": 9115,
+      "sha256": "ef970a21690c8c38da390d33da5c15923cd6f727b251a2b525ee7c949166357f"
     },
     {
       "path": "scripts/audit_esirkepov_bounded_compare.py",
@@ -4587,8 +4587,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 44141,
-      "sha256": "f0f73e7599ee570e1fb1a9aa834616dc25e6dda568e66e25f4bbe334fc9f0969"
+      "bytes": 44758,
+      "sha256": "f13b163cb63de1a3c423471d475b0fa1cc1f9cfd0af3ce15b04f151f9c1cabed"
     },
     {
       "path": "scripts/audit_release_consistency.py",
@@ -4637,8 +4637,8 @@
     },
     {
       "path": "scripts/audit_rz_implicit_villasenor_build_boundary.py",
-      "bytes": 3925,
-      "sha256": "cdf3f4dc282ca0cec181d34b976416cfa1edce792e4b26ff1ba1c663efb3060b"
+      "bytes": 4900,
+      "sha256": "280a9e654d56b547aec81e687bf45c352ef08d4907f50c4dfc97075fbe75adc4"
     },
     {
       "path": "scripts/audit_rz_jrhom_first_stage_patch.py",
@@ -5987,8 +5987,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 62474,
-      "sha256": "a77d097832da2baf8317b33f43c4034604a0f041c78969de89f933ab05277ca5"
+      "bytes": 63158,
+      "sha256": "6eb17a644da65c673a9686265fc87a2871db315efe53370224866d9bab69c84a"
     },
     {
       "path": "scripts/verify_v40_build.py",

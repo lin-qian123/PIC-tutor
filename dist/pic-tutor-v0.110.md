@@ -8995,6 +8995,22 @@ Vay 的可用范围尤其需要按“能运行的条件”而不是算法名称�
 
 如果研究问题确实需要 mesh refinement，正确动作不是删掉 `amr.max_level` 的报错检查后继续解释输出，而是回到 5.14.3：按 geometry、时间层和 AMR source/synchronization 路径选择有相应证据的 deposition algorithm，再为该组合定义独立 observable。**配置接受、算法分派和物理验证是三道不同的门。**
 
+### 5.14.2.2 RZ implicit Villasenor 判读卡：初始化停止不等于沉积失败
+
+`geometry.dims = RZ`、`algo.evolve_scheme = "theta_implicit_em"` 和 `algo.current_deposition = "villasenor"` 同时出现时，读者面对的不是“三个开关各自通过即可”的简单组合。它同时要求一个 RZ 网格、theta-implicit 的 nonlinear solve、隐式粒子端点状态、Villasenor 的 segment deposition，以及所选线性求解器和预条件器能够先完成各自的初始化。任何一步在粒子推进前停止，都不能被解释成 Villasenor 的沉积结果。
+
+1. **先把输入分成算法请求和求解器基础设施。** RZ theta-implicit dynamic-pinch 例子请求 `newton`、`newton.linear_solver = petsc_ksp`、`jacobian.pc_type = pc_petsc`、mass matrices 和 Villasenor。这些设置共同定义一个待求解的隐式问题，但 `petsc_ksp` 仍要求构建时有 `AMREX_USE_PETSC`；它不是“输入里写了 PETSc 就已经拥有可用 PETSc runtime”的保证。`jacobian.pc_type = pc_petsc` 也只是选择 Jacobian 的预条件器类型，不能由名称推出具体矩阵已被正确组装或求解器已经收敛。
+
+2. **按源码顺序判断还没有到达什么。** `ThetaImplicitEM::Define()` 先解析 implicit 参数并调用 `m_nlsolver->Define(m_E, this)`；之后才按 preconditioner type 决定是否初始化 curl-curl boundary-condition masks。真正的时间步在 `ThetaImplicitEM::OneStep()` 内先调用 `m_nlsolver->Solve(...)`；进入 nonlinear RHS 后，`ThetaImplicitEM::ComputeRHS()` 才通过 `PreRHSOp()` 请求用当前 (E_g^{n+\theta},B_g^{n+\theta}) 推进粒子并沉积 (J_g^{n+1/2})。`ImplicitSolver::PreRHSOp()` 随后调用 `PushParticlesandDeposit()`；只有这一阶段进入 `WarpXParticleContainer::DepositCurrent()`，输入的 Villasenor 分派才会选择 `doVillasenorDepositionShapeNImplicit<1..4>()`。
+
+3. **正确阅读当前运行记录。** 现有两 MPI rank 控制运行已打印 “Defined DOF object for linear solves (total DOFs = 5392)” ，随后报出 `SIGILL` 和 `MPI_Abort`。这证明它至少进入了 nonlinear-solver DOF 建立；记录没有粒子推进完成、Villasenor kernel 调用、`rho/J`、field output、Gauss-law 或能量 consumer。因此当前分类是 **pre-physics boundary**：它既不是“RZ implicit Villasenor 已通过”，也不是“Villasenor 导致 SIGILL”。仅凭这段日志也不能把信号归因给 curl-curl masks、PETSc 本身、某个 CPU 指令或任何一个 source 函数。
+
+4. **把可以说与不能说的结论分开。** 当前源码能够支持“隐式 Villasenor dispatch 存在，并带有 RZ azimuthal-mode 参数”；该控制运行能够支持“在 particle push 之前停止”。它不能支持 charge conservation、Newton convergence、mass-matrix correctness、RZ axis behavior 或与显式 Villasenor 的数值等价。特别是，不应把没有产生的 `divE-rho/epsilon_0` 当作一次失败的测量。
+
+5. **为下一次运行定义最小验收链。** 先用与 PETSc/AMReX/平台兼容的 binary 重现输入；随后分别留下 nonlinear RHS 进入、`PreRHSOp()` 的 `PushParticlesandDeposit()`、隐式 Villasenor dispatch、同步后的 `rho/J` 和至少一个独立 consumer 的记录。只有“求解器实际进入 particle/source 阶段 + source/field 有限且时间层明确 + Gauss-law 或能量等独立 observable 通过”同时成立，才可把一个指定的 RZ implicit Villasenor case 标为 runtime 通过。
+
+这张卡的停止条件故意比“进程没有退出”更严格：隐式 PIC 的配置、solver definition、nonlinear residual、粒子推进、source synchronization 和物理 observable 是连续但不同的阶段。读者必须先定位失败位于哪一阶段，才能决定应修复构建、输入、求解器还是沉积/物理模型。
+
 ### 5.14.3 选择沉积算法：先问约束，再问精度
 
 选择电流沉积算法时，名称不是第一判断条件。应依次检查几何和网格布局、显式或隐式时间层、轨迹信息是否足够、以及可用的诊断量。下表给出读者可以直接用于输入设计的稳定结论。

@@ -484,6 +484,17 @@ def main() -> int:
                 "拓扑 -> 更新/迁移 -> observable -> 不可外推范围",
             )
         ) and not chapter_7_project_path_markers and not chapter_7_project_record_markers,
+        "chapter_7_pml_configuration_reader_card": all(
+            marker in chapter_7
+            for marker in (
+                "### 7.5.3 PML 配置与验证卡：先选问题，再满足依赖",
+                "`warpx.pml_ncell` 是 PML 的 cell 厚度",
+                "`pml_has_particles = 1` 只能在此条件下使用",
+                "`do_pml_dive_cleaning` 与 `do_pml_divb_cleaning` 必须取相同值",
+                "RZ PML 只可与 PSATD 使用，且 `z` 方向没有 PML",
+                "配置后的最小验收顺序",
+            )
+        ) and not chapter_7_project_path_markers and not chapter_7_stale_location_markers,
         "chapter_8_has_reader_facing_diagnostics_closure": all(
             marker in chapter_8_closure
             for marker in (
@@ -700,12 +711,12 @@ def main() -> int:
         "full_current_pdf_read_is_recorded": all(
             marker in manual_spotcheck
             for marker in (
-                "本轮连续阅读已覆盖当前 PDF 第 1--257 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--258 页",
                 "| 1--6 |",
                 "| 7--8 |",
-                "| 214--249 |",
-                "| 250--254 |",
-                "| 255--257 |",
+                "| 215--250 |",
+                "| 251--255 |",
+                "| 256--258 |",
             )
         ),
     }

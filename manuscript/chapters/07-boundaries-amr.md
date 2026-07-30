@@ -331,6 +331,24 @@ PML 的问题不是“是否开了吸收边界”，而是出射波、不同 sol
 
 读者应把 PML 证据固定为三层：理论或文献解释吸收的目标，源码路径解释系数和分派，regression/analysis 限定一个 measurable outcome。LeeCPC2015 的 accepted manuscript 与 PSATD-PML 源码可以支持机制和公式映射的讨论，但 publisher-formatted PDF 的逐式差异仍未完成；同样，Cartesian、RZ、cleaning 和粒子入 PML 也必须保持各自的 observable 边界。
 
+### 7.5.3 PML 配置与验证卡：先选问题，再满足依赖
+
+下面这张卡不是可不加判断地复制的万能输入，而是把官方参数约束、源码中的运行时检查和已有最小测试连成一次配置审查。开始前先写清楚：要吸收的是无源出射波，还是带电粒子离域后留下的场；采用 Cartesian 还是 RZ；以及最终要比较反射率、残余场还是 restart 输出。不同问题不应靠累加开关来解决。
+
+1. **无源电磁脉冲离开 Cartesian 主域。** 对相应方向设 `boundary.field_lo/hi = pml`；`warpx.pml_ncell` 是 PML 的 cell 厚度，`warpx.pml_delta` 是吸收系数增长的特征深度。默认 `do_pml_in_domain = 0` 时，不应无理由同时打开粒子相关开关。可从 `test_2d_pml_x_yee`/`..._ckc` 的末态能量反射率，或 `test_2d_pml_x_psatd` 的初始能量重建和末态 `R < 10^{-6}` 开始。这种波动测试不能证明粒子离域、AMR 或另一种几何下的电荷残余也正确。
+
+2. **宏粒子必须穿过吸收层，并检验离域后的残余场。** `warpx.do_pml_in_domain = 1` 使 PML 与主域边缘最后 `pml_ncell` 个 cells 重叠；据官方参数约束，`pml_has_particles = 1` 只能在此条件下使用。若问题是 PML 中电流的阻尼，则还要显式设 `do_pml_j_damping = 1`，它同样要求 in-domain PML。`particles_in_pml/inputs_test_2d_particles_in_pml` 同时打开这三个开关，并以粒子离域后全域 `max(E)` 的绝对阈值为 consumer；它不能证明任意粒子轨迹、守恒量或任意 AMR 配置均已验证。
+
+3. **Cartesian PSATD 的开放 3D 边界伴随 divergence cleaning。** `do_pml_dive_cleaning` 与 `do_pml_divb_cleaning` 必须取相同值；这对 PML cleaning 只在 Cartesian PSATD 实现，FDTD 不能开启 divB cleaning。上一节列出的 3D PSATD PML-cleaning 组合输入是这里的起点；因当前没有独立 analysis，它只能提供 workflow/output 基线，不能替代强吸收 gate。两个参数在某次运行不报错，也不能推出该组合的 Nyquist 稳定性已经被定量证明。
+
+4. **RZ 的径向开放边界。** RZ PML 只可与 PSATD 使用，且 `z` 方向没有 PML；PML cleaning 开关必须保持关闭。`test_rz_pml_psatd` 在脉冲离域后检查 `max(|Er|,|Ez|) < 2`。这个 RZ 残余场阈值不是 Cartesian 能量反射率，也不覆盖轴向 PML。
+
+这里有两个常见的误读需要立即排除。第一，`pml_ncell` 和 `pml_delta` 都以 cells 为单位，但前者决定吸收层的几何厚度，后者决定阻尼 profile 增长的特征深度；把二者设成相同数值只是某个输入的选择，并非定义上的等价。第二，`do_pml_in_domain = 1` 会让 PML 覆盖物理主域或 fine patch 边缘最后的 `ncell` 个 cells，源码还要求边缘 box 的长度严格大于这段宽度。因此它改变的不只是“吸收是否更强”，还改变了哪一段主域可供粒子和场更新使用。
+
+带 AMR 的粒子入 PML 还应额外检查 warning，而不是把 warning 当作成功信息。当前源码在 `max_level > 0`、`particle_shape > 1` 且 `do_pml_j_damping = 1` 时明确记录 coarse/fine interface 上可能出现数值伪影，并建议用一阶 shape 避开该问题。这是一个有条件的数值风险提示，不是该组合被禁止，也不是 AMR-PML 完整正确性的证明；应以相应的 particles-in-PML consumer、网格收敛和界面诊断另行判断。
+
+**配置后的最小验收顺序。** 先让输入解析的 geometry/solver guard 自己拒绝非法组合；再确认输出中实际存在所选 consumer 所需的 Full diagnostics；最后只报告该 consumer 的量，例如 `R = E_{end}/E_{start}`、离域后的 `max(E)`、RZ 的 `max(|Er|,|Ez|)` 或 restart 的逐字段差异。若改变了 solver、几何、PML 是否在主域内、是否允许粒子进入或是否加入 AMR，就回到本卡重新选择 observable，不能沿用上一种 case 的 PASS 句子。
+
 
 ## 7.6 Embedded boundary 先是几何初始化和辅助标记系统
 

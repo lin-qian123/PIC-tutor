@@ -4,7 +4,7 @@
 
 ## 当前 v0.110 发布状态
 
-当前候选为 `dist/pic-tutor-v0.110.{md,html,pdf}`，PDF 为 257 页。目录、首页、前言、第 1--9 章和附录已完成当前产物的连续人工阅读；读者化审计分类为 `READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_RECORDED`，构建、结构和 PDF 版式审计均通过。第 5 章现新增收敛判读卡，明确可重复的相邻网格斜率不等于 formal numerical order；附录仍明确 `plotfile` 仅用于 analysis，重启必须配置 `Full` `checkpoint`，避免把输出文件角色混同。
+当前候选为 `dist/pic-tutor-v0.110.{md,html,pdf}`，PDF 为 258 页。目录、首页、前言、第 1--9 章和附录已完成当前产物的连续人工阅读；读者化审计分类为 `READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_RECORDED`，构建、结构和 PDF 版式审计均通过。第 5 章新增收敛判读卡，明确可重复的相邻网格斜率不等于 formal numerical order；第 7 章新增 PML 配置与验证卡，区分几何、solver、粒子进入 PML、cleaning 与 observable 的依赖边界；附录仍明确 `plotfile` 仅用于 analysis，重启必须配置 `Full` `checkpoint`，避免把输出文件角色混同。
 
 这不等同于公开发行已获授权。远端仓库为 public，Git 仍跟踪 `references/` 下 2,425 个第三方文件（52 个 PDF、2,259 个图像，190,730,587 bytes），根目录没有项目许可证。当前公开分发分类仍为 `PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED`：维护者必须逐项确认再分发权利，或从 public branch 移除相关材料并决定是否重写历史，然后完成项目许可证和 release checklist 的签收。release manifest 排除 `references/` 不能改变现有 public branch 或 Git 历史中的材料。
 

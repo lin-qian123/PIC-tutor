@@ -2,7 +2,9 @@
 
 ## 2026-07-31
 
-- [x] 当前成书状态更新：`v0.110` 已重建为 257 页 PDF。第 5 章新增“收敛判读卡”，用两个相邻 refinement 区间、两组 family 的 repeat gate 与 axis-charge boundary 区分可重复 slope、formal numerical order 和算法正确性；新增页与第 6 章起页已增量视觉复核。完整当前记录以 `docs/manual-editorial-spotcheck-v0.110.md` 为准；下方同日的 256 页条目均是此前排版快照。
+- [x] 完成第 7 章 PML 配置与验证卡：按无源 Cartesian 波、粒子入 PML、Cartesian PSATD cleaning 和 RZ 径向 PML 分开参数依赖、最小案例、consumer 与不可外推范围；明确 `pml_ncell`/`pml_delta` 的职责差异，以及 AMR + 高阶 shape + J damping 的源码 warning。重建后的当前候选为 258 页；第 207 页配置路径和第 208 页 EB 交界视觉复核通过。
+
+- [x] 当前成书状态更新：`v0.110` 已重建为 258 页 PDF。第 5 章新增“收敛判读卡”，用两个相邻 refinement 区间、两组 family 的 repeat gate 与 axis-charge boundary 区分可重复 slope、formal numerical order 和算法正确性；第 7 章新增 PML 配置与验证卡。新增页与相邻章节起页已增量视觉复核。完整当前记录以 `docs/manual-editorial-spotcheck-v0.110.md` 为准；下方同日的 256 页条目均是此前排版快照。
 
 - [x] 完成第 9 章、附录和目录首页的连续读者审阅：当前 PDF 已从第 1 页连续读至第 256 页。第 9 章逐页核对 A/B/C/D 文献证据层、核心来源/已知边界、判读卡、两条深读路线、证据边界与练习；附录逐页核对符号、时间层、source/gather 变量和术语表。发现并修正附录将 `plotfile` 误写成可重启输出的问题：当前源码明确要求由 `Full` `checkpoint` 写出 restart 所需完整状态，`plotfile` 仅作为 analysis 输出。目录、长文献名、宽表、公式续页和末页均无裁切、覆盖或低信息孤页。读者化审计现记录完整人工阅读；外部文献逐篇复核、第三方材料许可和公开再分发仍是独立边界。
 

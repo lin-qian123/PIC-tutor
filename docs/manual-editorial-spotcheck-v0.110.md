@@ -4,11 +4,11 @@
 
 本记录是当前候选 PDF 的完整人工阅读记录：它覆盖目录、首页、前言、第 1--9 章和附录的全部页面。它不等同于第三方材料许可确认、公开再分发签收，或对每篇外部文献重新完成全文逐段校对。
 
-下方首轮抽查记录的是编辑前的 270 页排版快照，仅作为已检查内容的历史线索。后续读者化编辑、Mermaid 清理、附录术语校核、第 4--8 章主线收束、第 2、3、3A 章数学和源码导航复核、第 9 章文献判读卡改写、第 1--3 章延伸阅读入口收束、首页/前言重写和一级章节新页起排后的候选版曾为 256--269 页。本轮在已完成 256 页连续阅读的基础上，加入第 5 章收敛判读卡；逐字差异仅涉及第 5 章的新增内容，新增的第 163--164 页与顺延后的第 165 页章节交界已重新视觉复核。当前候选为 257 页。凡引用旧页码的条目，均属于对应编辑快照，不代表当前合订版。
+下方首轮抽查记录的是编辑前的 270 页排版快照，仅作为已检查内容的历史线索。后续读者化编辑、Mermaid 清理、附录术语校核、第 4--8 章主线收束、第 2、3、3A 章数学和源码导航复核、第 9 章文献判读卡改写、第 1--3 章延伸阅读入口收束、首页/前言重写和一级章节新页起排后的候选版曾为 256--269 页。本轮先在已完成 256 页连续阅读的基础上加入第 5 章收敛判读卡；随后仅在第 7 章加入 PML 配置与验证卡。第 207 页的四条配置路径和第 208 页的 EB 章节交界已重新视觉复核。当前候选为 258 页。凡引用旧页码的条目，均属于对应编辑快照，不代表当前合订版。
 
-## 本轮完整连续阅读（257 页快照）
+## 本轮完整连续阅读（258 页快照）
 
-本轮连续阅读已覆盖当前 PDF 第 1--257 页，并回读与改动对应的 Markdown 和源码入口。每一段同时检查：读者是否能从物理问题进入离散对象而非项目记录；公式和时间层是否与相邻解释一致；源码路径是否是相对 WarpX 根目录的可迁移入口；代码、表格、公式和跨页段落是否保持可读。第 1 章曾发现两处尺度符号被 Markdown 代码 span 错误渲染，已改为行内数学；本轮还根据 `FullDiagnostics` 的 checkpoint 约束，将附录的 `plotfile` 定义改为 analysis 输出并明确 restart 必须使用 `Full` `checkpoint`。本次新增 5.14.7 的公式、续表、五步判读路线和第 5 章结论已在第 163--164 页视觉复核；第 6 章从第 165 页完整起排。下表只声明已实际连续读过的当前候选页码。
+本轮连续阅读已覆盖当前 PDF 第 1--258 页，并回读与改动对应的 Markdown 和源码入口。每一段同时检查：读者是否能从物理问题进入离散对象而非项目记录；公式和时间层是否与相邻解释一致；源码路径是否是相对 WarpX 根目录的可迁移入口；代码、表格、公式和跨页段落是否保持可读。第 1 章曾发现两处尺度符号被 Markdown 代码 span 错误渲染，已改为行内数学；本轮还根据 `FullDiagnostics` 的 checkpoint 约束，将附录的 `plotfile` 定义改为 analysis 输出并明确 restart 必须使用 `Full` `checkpoint`。新增 5.14.7 的公式、续表、五步判读路线和第 5 章结论已在第 163--164 页视觉复核；新增 7.5.3 的 PML 配置路径、参数依赖、AMR warning 和最小验收顺序已在第 207 页视觉复核，第 208 页从完整的 EB 上下文继续。下表只声明已实际连续读过的当前候选页码。
 
 | 页码 | 连续内容 | 结果 |
 |---:|---|:---:|
@@ -21,10 +21,10 @@
 | 74--119 | 第 4 章时间层、Boris/Vay/Higuera--Cary、容器/tile loop、gather、RR/implicit/photon、ionization/collision/QED 与章末练习 | PASS（超宽 Boris/Vay 节选、gather 函数签名/模板和长源码定位重排后复核）；节选/阅读伪代码均明确标注，行内数学、公式、表格、源码路径和第 5 章交界完整，无右侧裁切、重叠或低信息孤页 |
 | 120--164 | 第 5 章 shape、旧/新 source 时间层、AMR buffer、current/charge dispatch、Direct/Esirkepov/Villasenor/Vay、同步、geometry/order evidence、收敛判读卡与章末核查练习 | PASS（0--4 阶 shape、charge/direct current 与 Esirkepov 的长 C++ 实现重排为明确声明的阅读伪代码后复核）；新增 5.14.7 的公式、续表和五步判读路线在第 163--164 页完整可读，公式、数学记号、表格、源码路径和第 6 章交界无右侧裁切、重叠或低信息孤页 |
 | 165--200 | 第 6 章 FDTD/PML、PSATD/JRhom/RZ、静电/静磁、Hybrid Ohm、隐式与 regression 入口 | PASS（JRhom/RZ 长源码改为阅读伪代码、遗留行内数学清理、regression 五列表改为分组项目列表后复核）；本次顺延后第 165 页从完整章节标题起排，公式、代码、长路径、列表、练习、结论和第 7 章交界完整，无右侧裁切、列间覆盖或低信息孤页 |
-| 201--213 | 第 7 章 field/particle 拓扑、PEC/PMC/Silver-Mueller、PML、embedded boundary、guard-cell/AMR、练习与结论 | PASS（逐页核对 PML 构造参数索引、split-field/electric-current 片段、EB 几何/face-extension/particle scraping、load-balance/regrid 与 transition-zone 证据表；更正 `Source/EmbeddedBoundary/WarpXInitEB.cpp` 路径并将纯控制流改为明确标注的阅读表达后复核）；无右侧裁切、表格覆盖、孤立结论页或低信息孤页 |
-| 214--249 | 第 8 章统计与谱、物理案例、诊断调度、full/BTD/scraping/reduced 输出、writer/buffer、reader-side analysis、证据矩阵、练习与结论 | PASS（逐页核对 producer/consumer 时间语义、源码职责、图像/公式/长标识和表格；新增诊断记录卡，修复 reader-side exercise 重复措辞与行内 \(\gamma\)，并让 8.16 与 8.17 连续收束）；无右侧裁切、表格覆盖、孤立结论页或低信息孤页 |
-| 250--254 | 第 9 章文献证据层、核心来源、已知边界、覆盖范围、判读卡、深读路线、结论与练习 | PASS；A/B/C/D 分层、长文献名、两张宽表、跨页段落、练习与结论连续可读；未将书目信息、accepted manuscript、预印本或单一运行结果误写成更强证据 |
-| 255--257 | 附录 A 的连续/离散符号、`ux` 两层约定、source/gather 变量、诊断术语、缩写与使用规则 | PASS；公式、表格、跨页 `ux` 说明与末页规则完整；将 `plotfile` 更正为 analysis 输出，明确 restart 使用 `Full` `checkpoint`，无裁切、覆盖或低信息孤页 |
+| 201--214 | 第 7 章 field/particle 拓扑、PEC/PMC/Silver-Mueller、PML、embedded boundary、guard-cell/AMR、练习与结论 | PASS（逐页核对 PML 构造参数索引、split-field/electric-current 片段、PML 配置与验证卡、EB 几何/face-extension/particle scraping、load-balance/regrid 与 transition-zone 证据表；第 207 页将发生列间覆盖的四列表改为四条配置路径后复核）；无右侧裁切、表格覆盖、孤立结论页或低信息孤页 |
+| 215--250 | 第 8 章统计与谱、物理案例、诊断调度、full/BTD/scraping/reduced 输出、writer/buffer、reader-side analysis、证据矩阵、练习与结论 | PASS（逐页核对 producer/consumer 时间语义、源码职责、图像/公式/长标识和表格；新增诊断记录卡，修复 reader-side exercise 重复措辞与行内 \(\gamma\)，并让 8.16 与 8.17 连续收束）；无右侧裁切、表格覆盖、孤立结论页或低信息孤页 |
+| 251--255 | 第 9 章文献证据层、核心来源、已知边界、覆盖范围、判读卡、深读路线、结论与练习 | PASS；A/B/C/D 分层、长文献名、两张宽表、跨页段落、练习与结论连续可读；未将书目信息、accepted manuscript、预印本或单一运行结果误写成更强证据 |
+| 256--258 | 附录 A 的连续/离散符号、`ux` 两层约定、source/gather 变量、诊断术语、缩写与使用规则 | PASS；公式、表格、跨页 `ux` 说明与末页规则完整；将 `plotfile` 更正为 analysis 输出，明确 restart 使用 `Full` `checkpoint`，无裁切、覆盖或低信息孤页 |
 
 当前候选 PDF 的全部页面均已完成连续阅读。下方较后页码的独立复核属于旧排版快照，仅保留为历史修订线索，不替代或扩展上表中的当前候选证据。
 

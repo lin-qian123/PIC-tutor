@@ -6,13 +6,14 @@
     "all_pages_have_extractable_text": true,
     "chapter_7_5_1_has_no_overwide_rendered_table": true,
     "chapter_7_5_1_has_no_historical_comment": true,
+    "chapter_7_5_3_uses_narrow_reader_paths": true,
     "pdf_has_expected_boundary_sections": true
   },
   "passed": true,
   "classification": "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
-  "pdf_pages": 257,
-  "min_page_chars": 222,
-  "min_page_number": 245,
+  "pdf_pages": 258,
+  "min_page_chars": 120,
+  "min_page_number": 7,
   "chapter_7_5_1_tables": [
     [
       6,

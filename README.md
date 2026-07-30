@@ -1,10 +1,10 @@
 # PIC-tutor
 
-本轮已完成当前 257 页 PDF 的连续读者审阅：目录、首页、前言、第 1--9 章和附录均逐页检查 Markdown、公式语义、源码入口、跨章交接和 PDF 版式。第 4、5 章将长源码改为明确声明的阅读伪代码，第 5 章新增收敛判读卡，区分相邻网格斜率的可重复性、formal numerical order 与 axis-charge correctness；第 6 章压缩 JRhom/RZ 的实现循环并重排 regression 索引，第 7 章校正 EB 初始化源码路径，第 8 章补入诊断记录卡，第 9 章以证据层级和判读卡组织文献路线；附录 A 还明确 `plotfile` 用于分析、`Full` `checkpoint` 才用于 restart，防止把输出文件角色混同。覆盖记录见 `docs/manual-editorial-spotcheck-v0.110.md`。
+本轮已完成当前 258 页 PDF 的连续读者审阅：目录、首页、前言、第 1--9 章和附录均逐页检查 Markdown、公式语义、源码入口、跨章交接和 PDF 版式。第 4、5 章将长源码改为明确声明的阅读伪代码，第 5 章新增收敛判读卡，区分相邻网格斜率的可重复性、formal numerical order 与 axis-charge correctness；第 6 章压缩 JRhom/RZ 的实现循环并重排 regression 索引，第 7 章校正 EB 初始化源码路径，并新增 PML 配置与验证卡，区分波动、粒子入 PML、Cartesian PSATD cleaning 与 RZ 的输入依赖和 observable；第 8 章补入诊断记录卡，第 9 章以证据层级和判读卡组织文献路线；附录 A 还明确 `plotfile` 用于分析、`Full` `checkpoint` 才用于 restart，防止把输出文件角色混同。覆盖记录见 `docs/manual-editorial-spotcheck-v0.110.md`。
 
 第 8 章结尾让 `8.16 延伸验证路线` 与 `8.17 本章结论` 连续收束，避免任一节成为低信息孤页；构建验收要求结论页同时保留“延伸验证路线”和“保留失败与不可外推范围”。当前 PDF 的完整人工阅读记录证明读者路径与版式已逐页复核，但不替代每篇外部文献的再次全文校对、第三方材料许可确认或公开再分发签收。附录中的 auxiliary-field 构造方法名也已更正为源码实际符号 `UpdateAuxiliaryData`。
 
-当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `257` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航表、第 3 章跨章交接卡、第 3A、4--9 章阅读路线、收敛判读卡和末页均已纳入当前 PDF 的完整人工阅读记录；该记录不替代第三方材料许可或公开再分发签收。
+当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `258` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航表、第 3 章跨章交接卡、第 3A、4--9 章阅读路线、收敛判读卡、PML 配置与验证卡和末页均已纳入当前 PDF 的完整人工阅读记录；该记录不替代第三方材料许可或公开再分发签收。
 
 第 3A 章的激光初始化与应用入口现按“问题 -> 几何假设 -> 案例 -> producer/output/reference -> observable”阅读：天线注入、文件 profile、LWFA、BTD、固体靶、FEL、AMR 与表面等离子体各自对应不同的比较对象和证据边界。`laser_ion` 的 time-averaged `Ez` 对照、FEL 的 gain-length/wavelength、`laser_on_fine` 的 AMR placement 与 `plasma_mirror` 的搭建范围不再混写；文件外场与 moving window 的不兼容也回到选例条件。当前 PDF 第 6--8、65--66 页已视觉复核。
 

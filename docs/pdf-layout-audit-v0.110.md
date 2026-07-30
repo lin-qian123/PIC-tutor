@@ -1,8 +1,8 @@
 # v0.110 PDF layout risk audit
 
 - classification: `PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED`
-- PDF pages: `257`
-- minimum extracted page characters: `222` (page `245`)
+- PDF pages: `258`
+- minimum extracted page characters: `120` (page `7`)
 
 | check | status |
 |---|:---:|
@@ -10,6 +10,7 @@
 | `all_pages_have_extractable_text` | `PASS` |
 | `chapter_7_5_1_has_no_overwide_rendered_table` | `PASS` |
 | `chapter_7_5_1_has_no_historical_comment` | `PASS` |
+| `chapter_7_5_3_uses_narrow_reader_paths` | `PASS` |
 | `pdf_has_expected_boundary_sections` | `PASS` |
 
 Automated layout signals pass; representative pages still require human visual review before redistribution approval.

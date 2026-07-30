@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The Chapter 3A verification-map consolidation compacts the built layout to 260 pages.
-EXPECTED_PDF_PAGES = 260
+# The Chapter 5 reader-path consolidation compacts the built layout to 258 pages.
+EXPECTED_PDF_PAGES = 258
 
 
 def image_links(text: str) -> list[str]:
@@ -104,6 +104,11 @@ def main() -> None:
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_5
     )
     chapter_5_opening = chapter_5[: chapter_5.index("## 5.1")]
+    chapter_5_project_markers = re.findall(
+        r"scripts/|notes/|runs/|docs/|references/|contract\.\{json,md\}|"
+        r"本机|本地 regression|项目用|项目在|项目独立|本地论文|对应的本地|报告位于|汇总报告",
+        chapter_5,
+    )
     chapter_7 = (ROOT / "manuscript" / "chapters" / "07-boundaries-amr.md").read_text(
         encoding="utf-8"
     )
@@ -306,7 +311,7 @@ def main() -> None:
                 "tile-loop 阶段",
                 "## 5.16 练习与源码定位",
             )
-        ) and not chapter_5_stale_location_markers,
+        ) and not chapter_5_stale_location_markers and not chapter_5_project_markers,
         "chapter_5_opening_is_reader_facing": not re.search(
             r"notes/code-reading|pkuHEDPbranch|8c488b1a9|本机|本轮|当前源码",
             chapter_5_opening,
@@ -408,9 +413,9 @@ def main() -> None:
         "esirkepov_publication_boundary_contract": all(
             marker in source
             for marker in (
-                "发表版缺口审计契约",
-                "PREPRINT_FORMULA_SOURCE_RUNTIME_PUBLISHER_BOUNDARY_EXPLICIT",
-                "publisher-PDF line-by-line compare 仍未完成",
+                "发表版证据边界",
+                "预印本公式、该源码快照和代表性运行案例",
+                "publisher-PDF 的逐行比较仍未完成",
             )
         ),
         "andriyash_fourier_bessel_literature_closure": all(
@@ -424,9 +429,9 @@ def main() -> None:
         "esirkepov_publisher_abstract_compare": all(
             marker in source
             for marker in (
-                "63-esirkepov-publisher-abstract-compare.md",
-                "publication-metadata + indexed-abstract verified",
-                "PUBLISHER_METADATA_ABSTRACT_VERIFIED_PREPRINT_SOURCE_RUNTIME_PDF_MISSING",
+                "发表版公开索引摘要与 arXiv 预印本摘要",
+                "这个层级只支持摘要级结论",
+                "仍保留 PDF 缺口",
             )
         ),
         "pml_evidence_gradient": all(

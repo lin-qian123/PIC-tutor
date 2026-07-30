@@ -117,6 +117,14 @@ def main() -> int:
         r"notes/code-reading|pkuHEDPbranch|8c488b1a9|本机|本轮|当前源码",
         chapter_5_opening,
     )
+    chapter_5_project_path_markers = re.findall(
+        r"scripts/|notes/|runs/|docs/|references/|contract\.\{json,md\}", chapter_5
+    )
+    chapter_5_project_narration_markers = re.findall(
+        r"本机|本地 regression|项目用|项目在|项目独立|本地论文|对应的本地|"
+        r"报告位于|汇总报告",
+        chapter_5,
+    )
     chapter_6_opening = section_between(chapter_6, "# 6. 电磁场求解器", "## 6.1")
     chapter_6_opening_project_markers = re.findall(
         r"notes/code-reading|pkuHEDPbranch|8c488b1a9|本机|本轮|当前源码|源码快照",
@@ -217,7 +225,10 @@ def main() -> int:
                 "tile-loop 阶段",
                 "## 5.16 练习与源码定位",
             )
-        ) and not chapter_5_stale_location_markers,
+        )
+        and not chapter_5_stale_location_markers
+        and not chapter_5_project_path_markers
+        and not chapter_5_project_narration_markers,
         "chapter_6_opening_is_reader_facing": not chapter_6_opening_project_markers,
         "chapter_6_current_solver_route": all(
             marker in chapter_6
@@ -374,6 +385,8 @@ def main() -> int:
         "chapter_3a_project_narration_markers": chapter_3a_project_narration_markers,
         "chapter_4_stale_location_markers": chapter_4_stale_location_markers,
         "chapter_5_opening_project_markers": chapter_5_opening_project_markers,
+        "chapter_5_project_path_markers": chapter_5_project_path_markers,
+        "chapter_5_project_narration_markers": chapter_5_project_narration_markers,
         "chapter_5_stale_location_markers": chapter_5_stale_location_markers,
         "chapter_6_opening_project_markers": chapter_6_opening_project_markers,
         "chapter_6_stale_location_markers": chapter_6_stale_location_markers,

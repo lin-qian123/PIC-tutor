@@ -823,7 +823,7 @@ RZ 还要再多看一层：`m=0` 的 `Jr/Jz` 确实沿 `XZ` 主干继续用 `sx_
 
 ## 5.8 `WarpXParticleContainer::DepositCharge()` 入口
 
-上面讲的是 Vay deposition 的实现拓扑；本地 regression 里还有一条更直接的验证入口：`Examples/Tests/vay_deposition/`。这组测试不是拿解析单粒子轨道去对照，而是只看经过一小段推进后，最终 full diagnostics 里是否仍满足
+上面讲的是 Vay deposition 的实现拓扑；更直接的验证入口是 `Examples/Tests/vay_deposition/`。这组测试不是拿解析单粒子轨道去对照，而是只看经过一小段推进后，最终 full diagnostics 里是否仍满足
 
 $$
 \frac{\max | \nabla\cdot E - \rho/\epsilon_0 |}{\max |\rho/\epsilon_0|} < 10^{-3}.
@@ -1177,21 +1177,21 @@ WarpX::GetInstance().ApplyInverseVolumeScalingToChargeDensity(rho[lev], lev);
 
 也就是说，`ChargeDeposition.H` 写进去的首先仍是“尚未乘柱/球体积因子倒数”的局部源项；真正带上 `2*pi*r`、`4*pi*r^2` 这类几何体积语义的最终 `rho`，要到 species 汇总完以后才在容器层统一完成。这一点和前面 current deposition 的 inverse-volume scaling 是平行的：kernel 负责局部 shape 与守恒支持，几何体积修正则留到更外层统一做。
 
-这条外层体积合同现在有运行级证据。项目用官方 `test_rz_electrostatic_sphere` 输入和正确的 `warpx.rz` executable 完成了 1 rank 运行；官方 `analysis_electrostatic_sphere.py` 给出三个轴向/径向采样的 L2 误差 `0.02425`、`0.02425`、`0.01865`，均低于 `0.05`，总能量变化也低于该 test 的 `0.32%` 门限。项目独立脚本 `scripts/analyze_rz_charge_volume_contract.py` 再把末态 plotfile 的 mode-0 `rho` 乘以柱坐标 cell volume
+对 RZ 问题，验证这一层时应同时比较解析场、总电荷和粒子权重。官方 `test_rz_electrostatic_sphere` 以场的解析误差和总能量变化检验静电球；在同一个诊断面上，读者还可以把 mode-0 `rho` 乘以柱坐标 cell volume
 
 $$
 \Delta V_{ij}=2\pi r_i\,\Delta r\,\Delta z
 $$
 
-并与粒子权重乘电子电荷比较：`rho` 积分得到 `-1.0285648e-15 C`，粒子账本为 `-1.0263572e-15 C`，相对不一致为 `2.1509e-3 < 1e-2`。这不是对 `ApplyInverseVolumeScalingToChargeDensity()` 每个 cell 的逐行证明，但它把“最终 rho 已带上柱坐标体积语义”从源码推断提升成了可复现的全域 charge closure；报告位于 `runs/stage-c-validation/rz_electrostatic_sphere/`。运行时还暴露了一个可操作的编译边界：RZ 输入必须使用 `warpx.rz`，不能使用同为二维编译但几何合同为 Cartesian XZ 的 `warpx.2d`。
+并与粒子权重乘电荷比较。这个积分只能检验最终输出是否采用了相容的体积语义，不能逐 cell 证明 `ApplyInverseVolumeScalingToChargeDensity()`；若积分不一致，也必须继续区分沉积、边界、诊断和积分区域。RZ 输入必须使用 `warpx.rz`，不能使用同为二维编译但几何合同为 Cartesian XZ 的 `warpx.2d`。
 
-RZ 的非零模态也做了独立写回验证。由于官方 native `test_rz_langmuir_multi` 默认 `warpx.n_rz_azimuthal_modes = 1`，项目在 `runs/stage-c-validation/rz_langmuir_multimode/` 建立了不修改 WarpX 的 case-local sibling：设为 3 个模态、打开 `diag1.dump_rz_modes = 1`，并把环向每单元粒子数提高到 6，以满足三模态装填约束。末态 plotfile 中 `Er/Ez` 的 `m=1`、`m=2` 实部和虚部均非零；把 theta=0 视为
+RZ 的非零模态也必须单独理解。官方 `test_rz_langmuir_multi` 默认 `warpx.n_rz_azimuthal_modes = 1`；若设置多个模态并输出 `dump_rz_modes = 1`，应检查 `m>0` 的实部/虚部是否写出，并在给定方位角重建场。把 theta=0 视为
 
 $$
 F(r,z,0)=F_0(r,z)+F_{1,\mathrm{real}}(r,z)+F_{2,\mathrm{real}}(r,z)
 $$
 
-后，独立脚本 `scripts/analyze_rz_langmuir_multimode_contract.py` 得到 native `Er` 的重建相对误差 `3.05e-16`、`Ez` 的重建相对误差 `2.53e-16`。这验证的是 diagnostics/writeback 与模态重建合同；官方 `analysis_rz.py` 的单模解析场断言在该三模 sibling 上不适用，不能用它作为多模态结果的判据。报告保留三模 sibling 的解析场残差作为诊断信息，但不把它升级成独立的多模态精确解 gate。
+后，重建误差检验的是 diagnostics/writeback 与模态组合是否一致。官方 `analysis_rz.py` 的单模解析场断言不适用于多模态输入，不能把它升级成多模态精确解 gate；多模态结果需要与相应的解析解或独立收敛设计比较。
 
 因此普通 charge deposition 的更准确调用链还应再细一层：
 
@@ -1285,7 +1285,7 @@ DepositCharge(pti, wp, ion_lev, crho, 0, np_to_deposit,
 4. shared-memory 分支只改变 binning、tile-local buffer 和回写拓扑，不引入新的物理算法；
 5. PEC、guard exchange、inverse-volume scaling 和 AMR average-down 都在容器/通信层完成，不在 `ChargeDeposition.H` kernel 内完成。
 
-读者在升级 WarpX 后，应重新核对 `icomp/time_shift_delta`、ABLASTR 的越界保护与 CPU/GPU 暂存、形状函数分派、RZ 模式和 atomic writeback；这些入口共同决定本节的旧/新时间层与局部写回解释是否仍适用。`scripts/audit_charge_deposition_bridge_contract.py` 将这 13 个源码锚点做成可重复检查，但它只验证阅读入口没有漂移，不能替代这里的物理推导或数值验证。
+读者在升级 WarpX 后，应重新核对 `icomp/time_shift_delta`、ABLASTR 的越界保护与 CPU/GPU 暂存、形状函数分派、RZ 模式和 atomic writeback；这些入口共同决定本节的旧/新时间层与局部写回解释是否仍适用。源码定位只能说明入口没有漂移，不能替代这里的物理推导或数值验证。
 
 这组负面边界是本节的收口点：charge deposition 的局部 kernel 是“单时间层 shape 加权的源项采样器”，而不是 charge-conserving current mover。离散连续性方程仍由后面的 current deposition 与 `SyncCurrentAndRho()` 共同承担；`DepositCharge()` 在这条链里提供的是与旧/新时间层、AMR buffer 和几何体积因子一致的 \(\rho^n/\rho^{n+1}\) 输入。
 
@@ -1435,7 +1435,7 @@ const amrex::Real relative_time = 0._rt;
 | transverse tensor-product factor | `one_third/one_sixth` 组成 old-old、old-new、new-old、new-new 混合平均 | 该对应由预印本与源码核对得到，不表示 CPC 定稿已逐页比较 |
 | current normalization | `invdtd.x/y/z = transverse inverse cell area / dt` | 不能把三个分量都简化成单独的 `1/dt` |
 
-这张表对应的 14 个源码锚点由 `scripts/audit_esirkepov_notation_contract.py` 检查，报告见 `runs/stage-c-validation/esirkepov-notation-source-contract/contract.{json,md}`。它消除的是论文记号到该源码快照变量的映射歧义，不替代 `SyncCurrent()`、AMR coarse-fine、边界同步或全 geometry/order runtime regression。
+表中的对应关系应逐项回查源码；它消除的是论文记号到该源码快照变量的映射歧义，不替代 `SyncCurrent()`、AMR coarse-fine、边界同步或全 geometry/order runtime regression。
 
 Esirkepov 入口在 `Source/Particles/Deposition/CurrentDeposition.H`：
 
@@ -1668,12 +1668,12 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 |---|---|---|---|
 | 论文/索引摘要 | 作者 arXiv 预印本、CPC 书目信息与 indexed abstract | `W^1/W^2/W^3`、`Eq.(23)`、arbitrary form-factor、直线轨迹、无需 Poisson solve 的 paper-level 叙述 | CPC 定稿的逐页排版、section 编号和逐式编辑差异 |
 | 源码快照 | `ShapeFactors.H`、`CurrentDeposition.H`、`WarpXParticleContainer.cpp` | old/new shape 对齐、`sdxi/sdyj/sdzk` 前缀循环、`1/3/1/6` 混合平均、几何/执行分支 | 所有 geometry/order 组合都已端到端等价 |
-| 代数/源码合同 | `audit_esirkepov_notation_contract.py`、`verify_esirkepov_density_decomposition.py` 与 bounded compare | 记号映射、密度分解和有限样本公式恒等式在当前定义下成立 | 公式恒等式自动等价于 GPU kernel 或 AMR source synchronization |
+| 代数/源码核查 | 记号映射、密度分解和有限样本公式恒等式 | 记号映射、密度分解和有限样本公式恒等式在当前定义下成立 | 公式恒等式自动等价于 GPU kernel 或 AMR source synchronization |
 | runtime consumer | 1D/2D/3D Langmuir、RZ、RCYLINDER/RSPHERE 与 MR contracts | 指定案例和边界下的 field/charge/observable 结果及其 `PASS/BOUNDARY` 分类 | 从局部案例外推完整 Cartesian product、默认参数修复或正式收敛阶 |
 
-因此，本节后文的 “paper-backed + source-grounded + runtime-backed” 是证据层叠加，不是把最弱层自动升级成最强层。尤其是 `runtime consumer` 只能回答某个输入、几何和诊断合同是否成立；它不能反向证明 CPC 发表版逐式一致，也不能替代 `SyncCurrentAndRho()` 的独立同步合同。该分层与 `notes/code-reading/particles/44-esirkepov-cpc-bounded-comparison.md` 及 `docs/public-evidence-index.md` 的 boundary 分类保持一致。
+因此，本节后文的“论文、源码、运行”是证据层叠加，不是把最弱层自动升级成最强层。尤其是 `runtime consumer` 只能回答某个输入、几何和诊断量是否成立；它不能反向证明 CPC 发表版逐式一致，也不能替代 `SyncCurrentAndRho()` 的独立同步合同。
 
-这次 bounded compare 记录在 `notes/code-reading/particles/44-esirkepov-cpc-bounded-comparison.md`。因此，本章可以更准确地写成：发表版书目信息已核实，ScienceDirect 索引摘要还可以支持“任意 form-factor、直线轨迹假设、无需 Poisson solve、2D/3D demonstration”这组摘要级事实，但下载得到的仍是 HTML 访问响应而不是 PDF；预印本已完成 MinerU 和源码映射，`Eq.(23)` 到 `sdxi/sdyj/sdzk` 的主论证可以使用；但 abstract 的正式排版、section numbering、公式排版和 second-order spline 段落仍不能声称已经按 publisher PDF 逐页核过。
+发表版的书目信息和索引摘要可支持“任意 form-factor、直线轨迹假设、无需 Poisson solve、2D/3D demonstration”等摘要级事实；可读的预印本支撑 `Eq.(23)` 到 `sdxi/sdyj/sdzk` 的主论证。由于 publisher PDF 尚未取得，abstract 的正式排版、section numbering、公式排版和二阶 spline 段落不能声称已经逐页核对。
 
 同样，当前预印本也已经足够把论文内部的 section 结构稳定绑定到第 5 章的主叙述，而不必等发表版 PDF 才能继续写。更准确地说：
 
@@ -1701,19 +1701,13 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 这张表给出本章的证据边界：前三行可以直接进入正文，第四行用于出版身份和引用信息，第五行可以支持摘要级算法主张，但不能写成发表版全文逐页核对。
 
-`notes/code-reading/particles/63-esirkepov-publisher-abstract-compare.md` 与 `scripts/audit_esirkepov_publisher_abstract_compare.py` 将发表版公开索引摘要中的 Cartesian geometry、arbitrary quasi-particle form-factor、straight-line trajectory、无需 Poisson solve、唯一线性组合和 2D/3D demonstration，与 arXiv 预印本摘要中的 density decomposition、product-form n-dimensional form-factor 和 parabolic spline demonstration 逐项对齐。其证据等级为 `publication-metadata + indexed-abstract verified`，分类为 `PUBLISHER_METADATA_ABSTRACT_VERIFIED_PREPRINT_SOURCE_RUNTIME_PDF_MISSING`：摘要级证据已处于可审计状态，但 `Eq.(23)` 排版、section numbering、发表版图表和二阶 spline 正文仍保持 PDF 缺口。
+发表版公开索引摘要与 arXiv 预印本摘要在 Cartesian geometry、arbitrary quasi-particle form-factor、straight-line trajectory、无需 Poisson solve、唯一线性组合和 2D/3D demonstration 等主张上可以逐项对照。这个层级只支持摘要级结论；`Eq.(23)` 排版、section numbering、发表版图表和二阶 spline 正文仍保留 PDF 缺口。
 
 #### 发表版证据边界
 
-`scripts/audit_esirkepov_publication_boundary_contract.py` 固定四项边界：13 页预印本及其 MinerU 图片、`Eq.(23)` 到 `one_third/one_sixth` 与 `sdxi/sdyj/sdzk` 的公式-源码映射、CPC 题名/DOI/卷页信息及 publisher-PDF 的访问边界，以及 **不能把它写成 CPC 定稿逐式已核对** 的正文限制。
+因此，本章可使用的最强但不过度的结论是：**Esirkepov 的守恒分解已有预印本公式、该源码快照和代表性运行案例的三层交叉复核；CPC 发表版身份和摘要级事实已核实，但 publisher-PDF 的逐行比较仍未完成。** 这条边界避免把可读预印本、索引摘要和出版定稿混为同一来源。
 
-因此，本章可使用的最强但不过度的结论是：**Esirkepov 的守恒分解已有预印本公式、该源码快照和代表性 runtime consumer 的三层交叉复核；CPC 发表版身份和摘要级事实已核实，但 publisher-PDF line-by-line compare 仍未完成。** 这个契约的分类是 `PREPRINT_FORMULA_SOURCE_RUNTIME_PUBLISHER_BOUNDARY_EXPLICIT`，通过只表示证据边界没有被误写，不表示出版社全文已经取得。
-
-为避免这条边界只停留在叙述层，`scripts/audit_esirkepov_bounded_compare.py` 对预印本、`access-audit.md` 和五项 bounded compare 目标做可重复检查。报告 `runs/stage-c-validation/esirkepov-bounded-compare/contract.{json,md}` 的 8 项检查全部通过：预印本资产、发表版题名、DOI、Section 1--5、Eq.(23)、二阶 spline 线索和 publisher PDF 缺失状态均与归档材料一致。这个 contract 的分类仍是 `PREPRINT_SOURCE_PUBLICATION_METADATA_VERIFIED_PUBLISHER_PDF_MISSING`，因此它完成的是“证据边界可审计化”，不是 CPC 定稿的逐行核对。
-
-书中引用的 Esirkepov 预印本、图像与中文讲解的可用性记录在 `runs/stage-c-validation/esirkepov-2001-paper-asset/contract.{json,md}`。它保证读者可以复查本节采用的预印本材料，但不改变 publisher-formatted CPC PDF 仍缺失的判断。
-
-公式层还增加了一项可复现的负责任验证：`scripts/verify_esirkepov_density_decomposition.py` 用 10000 组确定性随机 old/new shape 分量检查
+公式层还应做独立的代数核查：对任意 old/new shape 分量检查
 
 $$
 W^1+W^2+W^3
@@ -1722,11 +1716,11 @@ W^1+W^2+W^3
 -S_x^{old}S_y^{old}S_z^{old}.
 $$
 
-该脚本只验证论文 Eq.(23) 的代数分解，不替代 WarpX kernel、网格散度或端到端 regression；但它把 `1/2` 横向平均和 `1/3` 三重差分项的局部恒等式从“文字解释”提升为可重复执行的 formula-level check。用固定 seed `2001` 的 `10000` 组样本运行时，最大残差为 `8.8818e-16 <= 2e-15`；JSON/Markdown 证据归档于 `runs/stage-c-validation/esirkepov-density-decomposition/contract.{json,md}`。
+这只验证论文 Eq.(23) 的代数分解，不替代 WarpX kernel、网格散度或端到端 regression；它说明 `1/2` 横向平均和 `1/3` 三重差分项是可直接检验的局部恒等式，而不是仅凭文字接受的解释。
 
-公式层之外，`scripts/audit_esirkepov_source_contract.py` 对该源码快照做只读检查，确认 `CurrentDeposition.H` 中的 14 个锚点存在：`doEsirkepovDepositionShapeN`、`Compute_shifted_shape_factor`、`invdtd`、`one_third/one_sixth`、`sdxi/sdyj/sdzk`、三方向 old/new shape difference 和 `Jx/Jy/Jz` writeback。报告位于 `runs/stage-c-validation/esirkepov-source-contract/contract.{json,md}`；这证明正文所描述的 skeleton 仍有源码对应，但不是数值 kernel regression。三方汇总见 `runs/stage-c-validation/esirkepov-paper-source-runtime-crosswalk/contract.{json,md}` 与 `notes/code-reading/particles/62-esirkepov-paper-source-runtime-crosswalk.md`。
+源码层可从 `CurrentDeposition.H` 依次核对 `doEsirkepovDepositionShapeN`、`Compute_shifted_shape_factor`、`invdtd`、`one_third/one_sixth`、`sdxi/sdyj/sdzk`、三方向 old/new shape difference 和 `Jx/Jy/Jz` writeback。这证明正文所描述的 skeleton 有源码对应，但不是数值 kernel regression。
 
-在这个 Esirkepov skeleton 之上，geometry/order 的源码审计从“函数名出现”推进到分支约束层。`scripts/audit_deposition_geometry_order_contract.py` 对 `CurrentDeposition.H` 的 `1D_Z/XZ/RZ/RCYLINDER/RSPHERE/3D` 宏、Vay 在 RZ/1D 的显式 abort、Vay 与 implicit 的互斥 guard，以及径向 geometry 不进入 shared-memory current kernel 的条件逐项检查；连同 charge ordinary/shared、算法分派和 shape=1/2/3/4 入口共 `69/69` 锚点通过。它证明的是源码中的编译分支和入口合同，不是所有 geometry × order 组合已经运行通过；对应报告为 `runs/stage-c-validation/deposition-geometry-order-source/contract.{json,md}`。
+在这个 Esirkepov skeleton 之上，还要读清 geometry/order 的分支约束：`CurrentDeposition.H` 分别编译 `1D_Z/XZ/RZ/RCYLINDER/RSPHERE/3D`，Vay 对 RZ/1D 有显式拒绝，Vay 与 implicit 互斥，径向 geometry 不进入 shared-memory current kernel。这些事实说明可用入口和拒绝条件，不能替代所有 geometry × order 组合的运行验证。
 
 Villasenor 的组织方式则完全不同。`VillasenorDepositionShapeNKernel(...)` 在完成轨迹恢复和 boundary crop 之后，第一件事不是构造 shape difference，而是先统计整条轨迹的 `cell_crossings_x/y/z`，得到 `num_segments`，再按 crossing 逐段推进。3D 情况下，它甚至不会平均切段，而是每一轮都比较哪个方向先撞到下一条 crossing，并用最早发生的那个 crossing 定义当前段终点。也就是说，Villasenor 的第一性对象不是“一对 old/new shape 数组”，而是一条被真实 cell crossing 切开的粒子轨迹。
 
@@ -1966,9 +1960,7 @@ $$
 
 其余三个 `x`-face 按横向因子和交叉项符号变化，`y/z` 分量由循环置换得到。论文明确指出 `\Delta x\Delta y\Delta z/12` 是三维新增项。WarpX 当前 3D Villasenor kernel 不把它保留为一个独立的单项式，而是通过 `one_third/one_sixth` 组成的四个 old/new 横向权重乘积表达同一类 mixed-direction coupling。因而“源码没有显式的 `/12`”不能被解释成“三维交叉耦合不存在”。
 
-这次审计的完整公式与证据边界记录于 `notes/code-reading/particles/45-villasenor-formula-level-audit.md`。当前可以把 Villasenor 线标记为 **paper-backed + source-grounded + formula-audited**；尚未完成的只是论文图示逐图回填、记号统一和所有现代 geometry/order 分支的逐项等价性审查。
-
-本地论文资产合同 `runs/stage-c-validation/villasenor-1992-paper-asset/contract.{json,md}` 进一步确认了 11 页 PDF、27 张图片、MinerU 结构和第一轮中文讲解均完整；该合同不把本地 PDF 自动升级为 publisher provenance 已核实的公开版本。
+因此，Villasenor 线可概括为 **论文支撑、源码定位和公式核查**；尚未完成的是论文图示逐图回填、记号统一和所有现代 geometry/order 分支的逐项等价性审查。阅读论文副本时也必须区分可核查的正文与出版版本身份，不能由文件可读性推断 publisher provenance。
 
 这里还应补一条维度差异，否则读者容易误以为 Villasenor 在所有几何里都完全按同一平均式沉积。实际并不是这样。WarpX 的 `3D` kernel 中，`Jx/Jy/Jz` 三个分量都要面对真正的双横向耦合，因此都会写成 `cell-based weight * (old/new node weights 的 1/3,1/6 组合) * seg_factor`。但在 `XZ/RZ` kernel 里，in-plane 的 `Jx/Jz` 只需要处理单个横向方向，所以退化成 `(old+new)/2` 的简单平均；只有 out-of-plane 的 `Jy` 仍保留 `1/3,1/6` 组合。换句话说：
 
@@ -2000,31 +1992,31 @@ $$
 | 源码循环 | `sx_old-sx_new`、`sy_old-sy_new`、`sz_old-sz_new` 加 `sdxi/sdyj/sdzk` prefix accumulation | `cell_crossings_* -> num_segments -> earliest-crossing -> this_J*` segment loop | 一个是 whole-orbit directional decomposition，一个是 segment-local closure |
 | `1/3,1/6` 的职责 | 论文唯一性分解中的横向 old/new mixed average | 单个 segment 的局部横向 face-flux average | 数值常数相同不代表算法组织相同 |
 | 几何支持 | old/new shape 先在同一索引框架中对齐；需要 shifted shape | 轨迹按真实 crossing 裁剪和分段；支持域随 segment 局部化 | near-boundary 语义不能把 Direct 当作任一路径的替身 |
-| 当前验证 | `verify_esirkepov_density_decomposition.py` 的代数恒等式，加 Langmuir/current-correction 的端到端 Gauss-law gate | `45-villasenor-formula-level-audit.md` 的公式审计，加 RZ/3D kernel 源码映射 | 公式级检查不等于 kernel bitwise equivalence 或所有 geometry/order 的端到端证明 |
+| 当前验证 | 代数恒等式，加 Langmuir/current-correction 的端到端 Gauss-law gate | 公式审计，加 RZ/3D kernel 源码映射 | 公式级检查不等于 kernel bitwise equivalence 或所有 geometry/order 的端到端证明 |
 
 表中最后一列是本章的出版边界：它允许读者在一页内看清“论文中的守恒对象如何进入源码”，同时阻止两个常见的过度推断。第一，`one_third/one_sixth` 只是共享的 tensor-product 平均结构，不意味着 Villasenor 就是 Esirkepov 的另一种循环写法；第二，公式恒等式和源码行级映射只能证明局部结构，不能自动升级成所有维度、边界、shape order 和 implicit/suborbit 分支都已逐项等价。
 
-这条局部公式边界现在也有独立的可执行检查：`scripts/verify_villasenor_formula_contract.py` 用固定 seed 的 10000 组二维 crossing 轨迹和三维中点/位移样本，先验证四边界公式满足
+这条局部公式边界可用独立的代数检查验证：二维 crossing 轨迹和三维中点/位移样本应先满足
 
 $$
 J_{x1}+J_{x2}=\Delta x,\qquad J_{y1}+J_{y2}=\Delta y,
 $$
 
-再把任意轨迹按所有 cell crossing 切成 segment，验证各段位移之和仍恢复整条轨迹；同时验证 Eq.(36) 四个 face contribution 的三维交叉项和体积分数差分闭合。二维残差最大为 `4.440892098500626e-16`，三维 face-sum 与 volume-closure 残差最大为 `1.7763568394002505e-15`，最大 crossing 数为 `6`。报告位于 `runs/stage-c-validation/villasenor_formula_contract/contract.{json,md}`。它把 `Eq.(6)-(9)`、Eq.(36) 与 repeated segmentation 的代数/几何层落成了可重复证据，但仍不替代 WarpX kernel 的 bitwise、边界或全量 Gauss-law regression。
+再把任意轨迹按所有 cell crossing 切成 segment，验证各段位移之和仍恢复整条轨迹；同时验证 Eq.(36) 四个 face contribution 的三维交叉项和体积分数差分闭合。它把 `Eq.(6)-(9)`、Eq.(36) 与 repeated segmentation 落为可重复的代数/几何证据，但仍不替代 WarpX kernel 的 bitwise、边界或全量 Gauss-law regression。
 
 ![](../assets/figures/villasenor-formula-contract.png)
 
 图 5-1：Villasenor 公式合同的两层证据。左侧把一条跨越多个 cell 的轨迹按 earliest crossing 切成局部 segment；右侧汇总四边界、segment、3D face 和 3D volume closure 的最大残差。该图只展示论文/几何层闭合，不把它升级为 WarpX kernel 等价或全 geometry/order 回归。
 
-在公式审计之外，`scripts/audit_villasenor_source_contract.py` 对 `../warpx` checkout 做只读源码合同核对，16 个锚点全部通过，覆盖 `VillasenorDepositionShapeNKernel`、explicit/implicit entrypoint、三方向 `cell_crossings_*` 计数、`num_segments` 循环、final-segment/continuation 分支、`seg_factor_*` 和 `this_Jx/this_Jy/this_Jz` 写回。报告位于 `runs/stage-c-validation/villasenor-source-contract/contract.{json,md}`；它说明正文中的 crossing-driven segment skeleton 与源码仍一致，但仍不替代数值 kernel regression。
+在公式核查之外，可在源码中依次定位 `VillasenorDepositionShapeNKernel`、explicit/implicit entrypoint、三方向 `cell_crossings_*` 计数、`num_segments` 循环、final-segment/continuation 分支、`seg_factor_*` 和 `this_Jx/this_Jy/this_Jz` 写回。它说明正文中的 crossing-driven segment skeleton 与源码一致，但仍不替代数值 kernel regression。
 
-官方 `test_2d_theta_implicit_jfnk_vandb` 将 implicit Villasenor 的证据从源码和公式层推进到 2-rank 运行级：它使用 `shape=2`、周期边界和 theta-implicit Newton/JFNK；上游 `analysis_vandb_jfnk_2d.py` 与独立 `scripts/analyze_implicit_villasenor_contract.py` 均通过，最大总能量相对变化为 `4.0980e-15 < 2e-14`，Gauss-law RMS 为 `9.2951e-16 < 2e-15`，末态网格为 `40x40`，所有输出字段有限。报告归档于 `runs/stage-c-validation/implicit_villasenor_2d_jfnk_mpi2/contract.{json,md}`。
+官方 `test_2d_theta_implicit_jfnk_vandb` 将 implicit Villasenor 的证据从源码和公式层推进到 2-rank 运行级：它使用 `shape=2`、周期边界和 theta-implicit Newton/JFNK；`analysis_vandb_jfnk_2d.py` 比较总能量和 Gauss-law。这个案例支持二维周期主路径，不能外推到所有 geometry/order。
 
 同一条独立 contract 又读取官方 `test_2d_theta_implicit_jfnk_vandb_cropping`：该 sibling 把 shape 提升到 `4`、网格缩小到 `16x16`，并打开 near-boundary cropping；官方 analysis 与独立读取均通过，末态 Gauss-law 最大绝对误差为 `8.2275e-14 < 1e-13`，RMS 为 `3.0023e-14`。这两条结果可以支持“2D implicit Villasenor 的普通 shape=2 路径和 shape=4 boundary-cropping 路径均有运行级守恒证据”，但不能外推到所有 geometry/order。
 
 同一 family 的 `test_2d_theta_implicit_jfnk_vandb_filtered` 只把 `warpx.use_filter` 打开为 `1`，保留 `shape=2`、周期边界和 JFNK 配置不变。官方 analysis 与要求显式确认 filter 输入的独立 contract 均通过：最大总能量相对变化 `3.8931e-15 < 2e-14`，Gauss-law RMS `5.1401e-16 < 2e-15`，且末态字段全部 finite。于是当前 2D 证据不只覆盖“Villasenor 能守恒”，还覆盖了 implicit current 同步之后再经过 field filter 的组合路径。
 
-官方 `test_2d_theta_implicit_jfnk_vandb_picmi` 又提供了同一物理合同的 Python 前端路径。项目使用 Python-enabled `build_py` 的 `pywarpx.picmi` 运行 2-rank 输入脚本；PICMI 生成的 `inputs2d_from_PICMI` 和最终 `warpx_used_inputs` 均明确包含 `algo.current_deposition = "villasenor"`、`algo.evolve_scheme = "theta_implicit_em"` 与 `algo.particle_shape = 2`。官方输入脚本 producer 与独立 contract 均完成，最大总能量相对变化 `4.0980e-15 < 2e-14`，Gauss-law RMS `9.5730e-16 < 2e-15`，末态字段全部 finite。该运行日志还出现 `newton.liner_solver` unused-input 提示；它来自 PICMI 生成配置的拼写边界，不影响本次由 `GMRESLinearSolver` materialize 的实际运行，但不能把该 warning 误写成前端完全无 unused-input。
+官方 `test_2d_theta_implicit_jfnk_vandb_picmi` 又提供同一物理合同的 Python 前端路径。生成输入应显式包含 `algo.current_deposition = "villasenor"`、`algo.evolve_scheme = "theta_implicit_em"` 与 `algo.particle_shape = 2`；读者需要检查实际生效输入，而不是只信任前端对象。该路径还出现过 `newton.liner_solver` unused-input 提示，说明“能运行”不等于每个前端参数都已被消费。
 
 维度边界也必须如实记录：官方 RZ theta-implicit Villasenor 输入要求 `newton.linear_solver=petsc_ksp`，当前 `build_full` binary 未启用 `AMREX_USE_PETSC`，因此在 `NewtonSolver::Define()` 初始化阶段直接拒绝，未进入物理计算。随后只用命令行把同一输入的线性求解器覆盖为 `amrex_gmres` 做 control；它仍未进入物理时间推进，而是在 `WarpX::InitData() -> ThetaImplicitEM::Define() -> InitializeCurlCurlBCMasks()` 触发 `SIGILL`。因此当前 RZ blocker 不只是 PETSc 缺失，还包含 arm64 `build_full` 的 RZ theta-implicit boundary-mask 初始化失败。官方 1D planar-pinch sibling 则在 Newton 后的粒子边界处理路径出现 `SIGILL`，只落出初始诊断帧。三者均记录为构建/运行边界，而不是伪造为 Villasenor physics failure 或 pass。
 
@@ -2041,7 +2033,7 @@ $$
 
 前面的公式恒等式和源码合同只能证明局部结构；为了避免把它们误写成端到端证据，运行产物直接采用 WarpX 官方 Langmuir 输入。官方 1D 和 3D 输入本身显式设置 `algo.current_deposition = esirkepov`；官方 2D 测试卡默认是 `direct`，case-local 副本只将这一项覆盖为 `esirkepov`，并补上官方 analysis 所需的 `rho/divE` 输出字段，因此它是可复查的验证 sibling，而不是 WarpX 上游已注册的 2D Esirkepov regression。
 
-两条运行均使用本章源码快照对应的 native binary、2 个 MPI rank 和 `OMP_NUM_THREADS=1`。官方 analysis 负责理论 Langmuir 场误差与其内置 charge-conservation gate；`scripts/analyze_esirkepov_langmuir_contract.py` 则重新读取最终 plotfile，检查 `Ex/Ey/Ez/Bx/By/Bz/jx/jy/jz/rho/divE` 的有限性，并独立计算
+运行验证应使用官方 analysis 的理论 Langmuir 场误差与内置 charge-conservation gate，并检查最终 plotfile 的 `Ex/Ey/Ez/Bx/By/Bz/jx/jy/jz/rho/divE` 是否有限；其中一个清晰的 charge observable 是
 
 $$
 \epsilon_{\mathrm{charge}}
@@ -2065,7 +2057,7 @@ $$
 
 MR overlay 的理论场 gate 通过，但逐层 reader contract 在 L0/L1 分别得到 `0.8828/1.2005`，因此只能标记为 `BOUNDARY`，不能升级为 AMR 守恒通过。15-anchor AMR source contract 证明路由/同步源码骨架存在，7-anchor Python observability audit 证明 generic register API 存在；两者都不能替代中间场与 route-count 的专门验证。现有 1--4 阶运行证据也不能推出 AMR buffer、边界裁剪、RZ/RCYLINDER/RSPHERE 或 implicit 分支都已逐项等价，更不能替代尚未取得的 CPC publisher-PDF bounded compare。
 
-2D case 的 `direct -> esirkepov` 覆盖和 `rho/divE` 诊断字段仅存在于 case-local 输入副本中，不能写成上游官方注册回归；3D shape=2/3/4 及 refined siblings 也是 case-local override，不改变上游测试注册。独立 contract 的 JSON/Markdown 结果分别归档在各 case-local 目录中，汇总见 `runs/stage-c-validation/esirkepov_langmuir_3d_shape-matrix/contract.{json,md}`。
+2D case 的 `direct -> esirkepov` 覆盖和 `rho/divE` 诊断字段来自仅修改沉积选项的验证 sibling，不能写成上游官方注册回归；3D shape=2/3/4 及 refined sibling 也不改变上游测试注册。
 
 shape=2 的 `128^3` refined sibling 的 field error 为 `1.2523e-2`，charge residual 为 `5.4174e-12`，同样通过双 gate。三种 shape 的 refined controls 均通过，但这仍是 case-local 分辨率证据，不足以包装成正式 convergence order。
 
@@ -2383,7 +2375,7 @@ particle trajectory
 
 ### 5.13.5 本章对应的两条关键 regression，分别在验证哪一层 source-synchronization 合同
 
-到这里，source synchronization 的源码主链已经闭合；对应的本地 regression 也可以更明确地挂回这条链，而不只当成零散 smoke test。
+到这里，source synchronization 的源码主链已经闭合；对应的 regression 也可以更明确地挂回这条链，而不只当成零散 smoke test。
 
 第一条是 `Examples/Tests/langmuir/` 里的 `PSATD + current_correction` 变体。它不是只看 `divE-\rho/\epsilon_0`，而是两层断言同时成立：
 
@@ -2443,33 +2435,29 @@ $$
 
 因此，本节可以说明实现提供哪些分派入口，但不能把它缩写成“所有入口都已验证”。尤其是 RCYLINDER/RSPHERE 只确认了编译期 geometry branch；它们与 RZ 的坐标压缩、逆体积和模式写回语义不能互相替代。
 
-RZ + Esirkepov 还需要单独保留一个诊断边界：当前 2-rank case 的 `Er/Ez` field contract 通过，但同面 `divE-rho/epsilon0` residual 为 `3.593e-3`，而官方 `analysis_utils.py` 本来也明确跳过 RZ Esirkepov 的强 charge gate。原因不能简单归结为“kernel 已经错误”：`DivEFunctor` 与 `RhoFunctor` 分别从场求解器和重新沉积的 charge density 构造诊断量，再经过各自的 node/cell、mode 与插值路径。完整源码语义与可复现命令见 `notes/code-reading/particles/46-rz-esirkepov-charge-boundary.md`；本书将其标为 `BOUNDARY`，不把 field PASS 升级为守恒 PASS。
+RZ + Esirkepov 还需要单独保留一个诊断边界：代表性 2-rank case 的 `Er/Ez` field contract 通过，但同面 `divE-rho/epsilon0` residual 仍约为 `3.6e-3`，而官方 `analysis_utils.py` 也明确跳过 RZ Esirkepov 的强 charge gate。原因不能简单归结为“kernel 已经错误”：`DivEFunctor` 与 `RhoFunctor` 分别从场求解器和重新沉积的 charge density 构造诊断量，再经过各自的 node/cell、mode 与插值路径。本书将其标为 `BOUNDARY`，不把 field PASS 升级为守恒 PASS。
 
 同一条证据又做了 `warpx.do_dive_cleaning=1/0` 的 paired control：全局 charge residual 从 `3.593e-3` 增至 `9.693e-2`，约为 `26.98` 倍；第一径向 cell 之外的 residual 则为 `4.293e-4/6.540e-12`。两个 case 的全局最大值都由 axis cell 主导，`Er/Ez` field error 也改变为 `2.427e-2/4.941e-3`。这说明边界同时对 axis treatment 和 cleaning 路径敏感，但不能据此把 cleaning 认定为唯一根因；比较结果归档为 `AXIS_DOMINATED_CLEANING_SENSITIVE_DIAGNOSTIC_BOUNDARY`。
 
-进一步只切换 `boundary.verboncoeur_axis_correction`：在 `64x128`、`particle_shape=1` case 中，开启时 charge residual 为 `3.593e-3`，关闭时降为 `5.513e-12`，且 off-axis residual 为 `1.720e-12`；两者 `Er/Ez` field error 都低于 `0.12`。因此这个 shape=1 case-local control 可以恢复双 gate，但不足以要求修改 WarpX 默认值；完整低分辨率对照和参数语义见 `notes/code-reading/particles/46-rz-esirkepov-charge-boundary.md`。
+进一步只切换 `boundary.verboncoeur_axis_correction`：在一个 `64x128`、`particle_shape=1` 对照中，开启时 charge residual 约为 `3.6e-3`，关闭时降到约 `5.5e-12`，且 off-axis residual 处于同一量级；两者 `Er/Ez` field error 都低于该案例的场门限。因此这个对照能恢复双 gate，但不足以要求修改 WarpX 默认值。
 
-在默认轴修正保持开启的条件下，RZ Esirkepov Langmuir 的 shape=1/2/3/4 field runtime coverage 也已补齐：`Er` 最大相对误差分别为 `1.075e-2/5.703e-2/8.694e-2/1.167e-1`，全部低于 `0.12`；对应 charge residual 为 `3.593e-3/4.306e-3/4.341e-3/4.433e-3`，且最大值均由 axis cell 主导。汇总报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_shape-matrix/contract.{json,md}`；因此这里关闭的是 field shape coverage 缺口，不是 RZ charge boundary。
+在默认轴修正保持开启的条件下，RZ Esirkepov Langmuir 的 shape=1/2/3/4 都有 field-level 覆盖，`Er` 最大相对误差均低于 `0.12`；相应的 charge residual 约为 `10^{-3}`，且最大值均由 axis cell 主导。因此这里补足的是 field shape coverage，不是 RZ charge boundary。
 
-将同样的 shape=2/3/4 case 切换到 `verboncoeur_axis_correction=false` 后，charge residual 降到 `2.202e-12/2.103e-12/2.063e-12`，但 `Er` field error 升到 `0.132/0.173/0.213`，超过 `0.12`。因此轴修正对照不是一个可以全局套用的“修复开关”，而是随 shape 改变的 charge/field tradeoff；矩阵归档于 `runs/stage-c-validation/esirkepov_langmuir_rz_shape-axis-matrix/contract.{json,md}`。
+将同样的 shape=2/3/4 case 切换到 `verboncoeur_axis_correction=false` 后，charge residual 降到约 `10^{-12}`，但 `Er` field error 会超过 `0.12`。因此轴修正对照不是一个可以全局套用的“修复开关”，而是随 shape 改变的 charge/field tradeoff。
 
-随后把 shape=1 的同一 paired case 加密到 `128x256`：correction-on 的 `Er/Ez` field error 为 `2.797e-2/3.049e-2`，axis charge residual 降至 `1.520e-3`；correction-off 的 `Er/Ez` 为 `2.809e-2/3.662e-2`，charge residual 为 `9.353e-12`，field/charge 双 gate 均通过。进一步加密到 `256x512` 后，correction-on 的 `Er/Ez` 为 `1.236e-2/1.296e-2`、axis charge residual 为 `7.554e-4`；correction-off 的 `Er/Ez` 为 `1.227e-2/1.501e-2`，charge residual 升至 `1.639e-11` 并越过强 gate。三档汇总见 `runs/stage-c-validation/esirkepov_langmuir_rz_resolution-trend/contract.{json,md}`，脚本为 `scripts/summarize_rz_esirkepov_resolution_trend.py`。这组结果支持 correction-on 的 resolution trend，却明确否定了“correction-off 是通用修复”的表述。
+对 shape=1 做三档加密后，correction-on 的场误差下降、axis charge residual 也下降；correction-off 在中等分辨率可同时通过 field/charge gate，但在更高分辨率又可能越过强 charge gate。这组趋势支持“分辨率和轴修正存在耦合”，却明确否定了“correction-off 是通用修复”的表述。
 
-同一汇总脚本随后参数化到 shape=2。`64x128` correction-off 的 `Er/Ez` field error 为 `0.1323/1.445e-2`，charge residual 为 `2.202e-12`；加密到 `128x256` 后，correction-off 的 `Er/Ez` 降至 `9.318e-3/7.775e-3`，charge residual 为 `9.644e-12`，field/charge 双 gate 均通过。correction-on 的高分辨率 field error 为 `9.321e-3/5.154e-3`，但 axis charge residual 仍为 `2.177e-3`。因此 shape=2 的 coarse field failure 可以归为分辨率边界，但 correction-on charge boundary 仍未闭合；报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_shape2_axis-resolution-comparison/contract.{json,md}`，详细说明见 `notes/code-reading/particles/53-rz-esirkepov-shape2-resolution-contract.md`。
+同样的比较用于 shape=2 时，coarse correction-off case 出现 field boundary，而加密后可通过 field/charge 双 gate；correction-on 的高分辨率场误差通过，但 axis charge residual 仍约为 `10^{-3}`。因此 shape=2 的 coarse field failure 可归为分辨率边界，但 correction-on charge boundary 仍未闭合。
 
-最后把 correction-off 的相同 resolution 对照扩展到 shape=3/4。三档 coarse `Er` field error 为 `0.1323/0.1734/0.2134`，而 `128x256` refined sibling 降至 `9.318e-3/1.113e-2/1.365e-2`；对应 refined charge residual 为 `9.644e-12/6.086e-12/6.724e-12`，三档 field/charge 双 gate 全部通过。`scripts/summarize_rz_esirkepov_shape_resolution_family.py` 将这三条 case 收成 family contract，报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_shape-resolution-family/contract.{json,md}`。这关闭的是 higher-shape coarse field boundary 的分辨率诊断，不关闭 correction-on axis charge residual，也不外推到其他 geometry、AMR 或 implicit 路径。
+把 correction-off 对照扩展到 shape=3/4 后，coarse场误差仍可能超过门限，而加密后可通过双 gate。这说明高阶 shape 的粗网格失败是分辨率诊断，不关闭 correction-on axis charge residual，也不外推到其他 geometry、AMR 或 implicit 路径。
 
-最后将 shape=2/3/4 的 correction-on refined siblings 也纳入同一完整矩阵：`Er/Ez` field errors 分别为 `9.321e-3/5.154e-3`、`9.342e-3/6.392e-3` 和 `1.079e-2/7.454e-3`，均通过 `0.12` field gate；但 axis charge residual 仍为 `2.177e-3/2.353e-3/2.552e-3`。相比之下，correction-off refined charge residual 为 `9.644e-12/6.086e-12/6.724e-12`。完整矩阵由 `scripts/summarize_rz_esirkepov_axis_correction_family.py` 生成，报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_axis-correction-family/contract.{json,md}`。因此当前第 5 章可以明确区分：高阶 shape refined field 已闭合，correction-off charge 在 case-local sibling 上闭合，而 correction-on axis charge 仍是独立诊断边界。
-最后将 correction-on shape=1/2/3/4 一起推进到 `256x512`：`Er/Ez` field gate 全通过，charge residual 分别为 `7.554e-4/8.990e-4/9.289e-4/9.729e-4`，均由 axis cell 主导。`scripts/summarize_rz_esirkepov_highres_shape_family.py` 将四条 case 收成 `runs/stage-c-validation/esirkepov_langmuir_rz_highres_shape-family/contract.{json,md}`。因此当前第 5 章可以明确区分：RZ 高分辨率 field shape family 已闭合，correction-on axis charge 仍未闭合，且不能从 shape=1 的 resolution trend 外推成完整守恒或默认参数修复。
-同一 `256x512` 分辨率下的 correction-off 对照显示：shape=1/2/3/4 的 `Er/Ez` field gate 也全部通过，charge residual 为 `1.639e-11/1.020e-11/8.399e-12/6.669e-12`，只有 shape=3/4 通过 `1e-11`。完整双侧矩阵由 `scripts/summarize_rz_esirkepov_highres_correction_family.py` 生成，报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_highres_correction-family/contract.{json,md}`。因此 correction-off 不是单向修复开关：它在高阶 shape=3/4 上局部闭合 charge，却在 shape=1/2 上保留边界；correction-on 则四阶均保留 axis charge boundary。
-
-统一的 `scripts/summarize_rz_esirkepov_charge_field_tradeoff.py` 汇总合同，对上述 7 组 RZ 证据做 12 项交叉检查：默认轴修正开启时 field gate 通过而 axis charge 仍为 `BOUNDARY`；关闭轴修正只在局部 sibling 上恢复 charge，不能替代默认配置；cleaning 对照显示 residual 由 axis cell 主导且对诊断路径敏感；更高 shape 与更高分辨率可以改善部分 correction-off case，但不能把它写成全局修复或正式收敛阶。该合同的准确分类是 `RZ_ESIRKEPOV_CHARGE_FIELD_TRADEOFF_SUMMARY_BOUNDARY_DEFAULT_AXIS_CHARGE_UNRESOLVED`，因此本章唯一稳健的结论是“field 已有覆盖，charge 仍需保留诊断边界”，而不是修改 WarpX 默认参数。
+把高阶 shape 与更高分辨率一并比较后，结论保持一致：correction-on 的 field gate 可以通过，但 axis charge residual 仍处于 `10^{-3}` 量级；correction-off 只在部分 shape/resolution 组合上同时通过 field/charge gate。默认轴修正开启时 field PASS 而 axis charge 仍是 `BOUNDARY`；关闭轴修正只提供局部诊断对照，不能替代默认配置。更高 shape 与更高分辨率可以改善部分 case，不能被写成全局修复或正式收敛阶。
 
 ![](../assets/figures/rz-esirkepov-correction-tradeoff.png)
 
 图 5-3：RZ Esirkepov axis-correction/shape tradeoff。左侧是 shape=1 的三档分辨率趋势，右侧是 `256x512` 下 shape=1/2/3/4 的 correction-on/off 对照；红色虚线是 `1e-11` charge gate。所有 field gate 均通过，但 correction-on 的 axis residual 仍约为 `O(1e-3)`，correction-off 的 charge 结果随 shape 变化，不能据此修改全局默认值或宣称正式收敛阶。
 
-为避免把不同诊断量混成一个结论，对上述 shape=2/3/4 correction-on refined sibling 直接读取 `rho`、`rho_electrons` 和 `rho_ions`。末态 `rho-(rho_electrons+rho_ions)` 的相对差分别为 `1.303e-14/1.228e-14/1.343e-14`，说明 species decomposition 在 rho-side 已达到机器精度；三个 case 的 integrated-rho 时间序列漂移分别为 `2.371e-6/2.729e-6/3.354e-6`，只作为可复核观测记录。这个结果不能替代 `divE-rho`、current closure 或完整 Gauss-law contract：同一批 case 的 axis `divE-rho` residual 仍为 `2.177e-3/2.353e-3/2.552e-3`。脚本为 `scripts/analyze_rz_esirkepov_rho_observable.py`。
+为避免把不同诊断量混成一个结论，应单独比较 `rho`、`rho_electrons` 和 `rho_ions`。在代表性 refined case 中，`rho-(rho_electrons+rho_ions)` 可达到机器精度；这只说明 rho-side species decomposition 一致，不能替代 `divE-rho`、current closure 或完整 Gauss-law contract，因为同一批 case 的 axis residual 仍为 `10^{-3}` 量级。
 
 将同一 reader-side observable 扩展到 shape=1/2/3/4 的统一 family 后，四个 shape 的末态 `rho-(rho_electrons+rho_ions)` 相对差为 `9.124e-15/1.303e-14/1.228e-14/1.343e-14`，integrated-rho 漂移相对 `abs(rho)` scale 为 `6.495e-6/2.371e-6/2.729e-6/3.354e-6`。这补齐的是 rho-side species decomposition 的 shape coverage，不是 `divE-rho` 守恒闭合；同面 axis residual 仍保持 `BOUNDARY`。
 
@@ -2481,13 +2469,13 @@ RZ + Esirkepov 还需要单独保留一个诊断边界：当前 2-rank case 的 
 
 对两组 RZ/RSPHERE family 做 correction-on axis charge repeat stability 检查后，6 个 correction-on level 的 axis residual 在两组 family 之间全部通过 `1e-10` 相对重复容差，且每个 level 的 axis residual 都高于对应 off-axis residual。correction-off 的 RZ 低残差已接近 reader/numerical floor，因此只报告绝对值与相对差，不把放大的相对末位差作为失败。这强化的是稳定的 reader-side boundary，不关闭 deposition kernel root cause、current closure 或正式 order。
 
-同一诊断也已扩展到 RCYLINDER/RSPHERE shape=1：默认 correction 下 charge residual 为 `4.711e-3/4.166e-2`，关闭后为 `3.505e-12/2.420e-11`。这表明 RCYLINDER 的 axis correction off 可以恢复当前强 gate，而 RSPHERE 虽明显改善仍略超 `1e-11`；两者均不支持直接修改全局默认值，完整对照见 `runs/stage-c-validation/esirkepov_radial_charge_axis-comparison/contract.{json,md}`。
+同一诊断扩展到 RCYLINDER/RSPHERE shape=1 后，关闭轴修正可以显著降低 residual，但 RSPHERE 仍可能略高于强 gate。两者都不支持直接修改全局默认值。
 
 RSPHERE 的 64/128/256 resolution paired control 进一步显示：correction on 的 residual 为 `4.166e-2/1.390e-2/4.142e-3`，correction off 为 `2.420e-11/9.843e-11/7.461e-11`；六个 field gate 都通过，但六个 charge gate 都未闭合。因此这条证据只能说明 axis/resolution 组合敏感，不能替代正式收敛研究或作为全局默认参数修改依据。该组 `256` case 必须使用专用 `warpx.rsphere` executable；若误用 `warpx.3d`，会在 boundary-array parser 阶段失败，不能作为物理结论。
 
-RCYLINDER/RSPHERE 的 shape=1/2/3/4 case-local siblings 统一纳入 `rho/divE` charge 矩阵。八条径向 `Er` field gate 全通过；RCYLINDER 的 charge residual 为 `4.711e-3/7.442e-3/7.883e-3/8.337e-3`，RSPHERE 为 `4.166e-2/6.269e-2/6.928e-2/8.003e-2`，均高于 `1e-11` 强 gate，且最大值由轴向 cell 主导。该矩阵由 `scripts/summarize_radial_charge_shape_contract.py` 汇总到 `runs/stage-c-validation/esirkepov_radial_charge_shape-matrix/contract.{json,md}`；它关闭的是“径向 shape charge 证据分散”的索引缺口，不把 BOUNDARY 写成 Gauss-law PASS。
+RCYLINDER/RSPHERE 的 shape=1/2/3/4 都可得到径向 `Er` field gate，但 `rho/divE` charge residual 仍高于 `1e-11` 强 gate，且最大值由轴向 cell 主导。径向 field 通过不能写成完整 Gauss-law PASS。
 
-这组径向结果的源码合同现在也已单独验收：`scripts/audit_radial_axis_volume_contract.py` 固定了 `boundary.verboncoeur_axis_correction` 的默认值和解析入口，确认 RZ/RCYLINDER 使用 `1/3` 对 `1/4`、RSPHERE 使用 `1/4` 对 `1/8` 的轴体积因子，并确认 `ApplyInverseVolumeScalingToChargeDensity()` 在 `rho_fp` 与 `rho_buf` 路径中的调用时机。因而本节的准确边界是：径向 field shape coverage 已有运行证据，charge residual 的轴体积/诊断耦合也有源码映射，但尚未形成跨 geometry、shape、resolution 的统一强守恒合同。
+源码中 `boundary.verboncoeur_axis_correction` 的解析与 `ApplyInverseVolumeScalingToChargeDensity()` 的调用时机解释了这条敏感性：RZ/RCYLINDER 的轴体积因子是 `1/3` 对 `1/4`，RSPHERE 是 `1/4` 对 `1/8`。因此径向 field shape coverage 有运行证据，charge residual 的轴体积/诊断耦合也有源码映射，但尚未形成跨 geometry、shape、resolution 的统一强守恒合同。
 
 在已有源码分派表之外，还需要一张“证据覆盖表”，因为 geometry、shape/order、AMR、axis correction 和 implicit solver 是相互独立的维度。当前最强的运行级覆盖可压缩为：
 
@@ -2503,7 +2491,7 @@ RCYLINDER/RSPHERE 的 shape=1/2/3/4 case-local siblings 统一纳入 `rho/divE` 
 | Villasenor implicit | `XZ` | 4 | cropping Gauss-law PASS | near-boundary cropping |
 | Villasenor implicit | `RZ` | 2 | build/runtime BOUNDARY | 未进入物理计算 |
 
-这张矩阵由 `scripts/summarize_deposition_geometry_order_coverage.py` 从现有 contract/reference 生成，报告见 `runs/stage-c-validation/deposition-geometry-order-coverage-matrix/coverage-matrix.{json,md}`。它明确关闭的是“证据在哪里、证据能支持什么”的索引缺口，不是所有 Cartesian product 的回归缺口。当前仍不能声明：RZ correction-on charge 已闭合、RCYLINDER/RSPHERE 已有完整 charge contract、2D MR 已完成 route-count/intermediate-field 证明、RZ implicit Villasenor 已进入物理计算，或 3D shape=3/4 已形成正式 convergence-order 证明。
+这张矩阵回答“证据在哪里、证据能支持什么”，不是所有 Cartesian product 的回归缺口。当前仍不能声明：RZ correction-on charge 已闭合、RCYLINDER/RSPHERE 已有完整 charge contract、2D MR 已完成 route-count/intermediate-field 证明、RZ implicit Villasenor 已进入物理计算，或 3D shape=3/4 已形成正式 convergence-order 证明。
 
 ![](../assets/figures/deposition-geometry-order-coverage.png)
 

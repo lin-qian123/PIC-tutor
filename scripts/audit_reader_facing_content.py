@@ -58,6 +58,10 @@ def main() -> int:
     chapter_6_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_6
     )
+    chapter_7_stale_location_markers = re.findall(
+        r"(?:Source/[A-Za-z0-9_./-]+\.(?:cpp|H)|Docs/[A-Za-z0-9_./-]+\.rst):\d+",
+        chapter_7,
+    )
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -122,6 +126,11 @@ def main() -> int:
     chapter_7_project_record_markers = re.findall(
         r"pkuHEDPbranch|8c488b1a9|accepted manuscript|scripts/audit_|正文-源码对应",
         chapter_7_opening + chapter_7_closure,
+    )
+    chapter_7_project_path_markers = re.findall(
+        r"scripts/|notes/code-reading|runs/stage-c-validation|"
+        r"docs/chapter-07-v0-evidence-ledger|contract\.\{json,md\}",
+        chapter_7,
     )
     chapter_8_closure = chapter_8[chapter_8.index("## 8.14") :]
     chapter_8_project_record_markers = re.findall(
@@ -209,7 +218,21 @@ def main() -> int:
                 "PartitionParticlesInBuffers()",
             )
         )
-        and not chapter_7_project_record_markers,
+        and not chapter_7_project_record_markers
+        and not chapter_7_project_path_markers
+        and not chapter_7_stale_location_markers,
+        "chapter_7_current_boundary_route": all(
+            marker in chapter_7
+            for marker in (
+                "本章按一条读者可追踪的链展开",
+                "WarpX::MakeWarpX()",
+                "本章的阅读路线：边界是一个闭合系统",
+                "每一节都应能回到一个可观察量",
+                "## 7.10 本章练习与源码定位",
+            )
+        )
+        and not chapter_7_stale_location_markers
+        and not chapter_7_project_path_markers,
         "chapter_8_has_reader_facing_diagnostics_closure": all(
             marker in chapter_8_closure
             for marker in (
@@ -281,6 +304,8 @@ def main() -> int:
         "chapter_6_project_record_markers": chapter_6_project_record_markers,
         "chapter_6_project_path_markers": chapter_6_project_path_markers,
         "chapter_7_project_record_markers": chapter_7_project_record_markers,
+        "chapter_7_project_path_markers": chapter_7_project_path_markers,
+        "chapter_7_stale_location_markers": chapter_7_stale_location_markers,
         "chapter_8_project_record_markers": chapter_8_project_record_markers,
         "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
         "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,

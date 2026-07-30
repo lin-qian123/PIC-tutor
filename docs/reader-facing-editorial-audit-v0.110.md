@@ -22,6 +22,7 @@
 | `chapter_6_current_solver_route` | `PASS` |
 | `chapter_6_has_reader_facing_closure` | `PASS` |
 | `chapter_7_has_reader_facing_boundary_closure` | `PASS` |
+| `chapter_7_current_boundary_route` | `PASS` |
 | `chapter_8_has_reader_facing_diagnostics_closure` | `PASS` |
 | `chapter_2_3_have_reader_facing_routes` | `PASS` |
 | `chapter_3_current_source_route` | `PASS` |

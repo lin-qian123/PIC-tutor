@@ -2,6 +2,8 @@
 
 当前成书版本为 `v0.110`：2026-07-30 可复现构建生成 `263` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页与末页已补充视觉抽查；该抽查不替代全书逐页通读、第三方材料许可或公开再分发签收。
 
+第 7 章已完成边界、PML 与 AMR 主线的当前源码和读者路径复核：从 `WarpX::MakeWarpX()` 解析 field/particle 拓扑开始，经过场/粒子边界、PML/guard-cell 交换与 `RemakeLevel()` 的状态重建，最终回到反射率、残余场、scraped-particle buffer 和 AMR route ledger 等可观察量。章节已移除固定行号、内部笔记和维护路径；所有结论明确区分源码职责、案例证据和未闭合的 transition-zone 逐 route 账本。PDF 第 206、208、214、216、218 页的人工版式复核通过，详见 `docs/manual-editorial-spotcheck-v0.110.md`。
+
 第 6 章已完成场求解器主线的当前源码与读者路径复核：从 `OneStep_nosub()` 中已同步的 `J/rho` 出发，区分 FDTD、PSATD 与 JRhom 的时间模型，再将 PML、guard-cell、几何/FFT 约束和对应观察量接回同一判断链。章节导航已移除内部笔记、运行归档和固定行号；Yee/CKC/Nodal、Galilean/Comoving PSATD、JRhom、隐式和 Hybrid PIC 的结论均保留各自可支持与不可外推边界。当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
 
 第 5 章已完成沉积主线的当前源码与读者路径复核：从形函数、旧/新 `rho` 与半步 `J` 的时间层，连到 `DepositCurrent()` / `DepositCharge()` 的算法分派和 `SyncCurrentAndRho()` 的同步职责。章节导航已移除笔记目录和固定行号，Direct、Esirkepov、Villasenor 与 Vay 的选择条件、AMR/guard-cell 边界及 RZ axis residual 的证据范围均改为读者可判断的因果链；当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
@@ -26,7 +28,7 @@
 
 第 6 章的结尾现以“几何与表示、source 时间模型、边界/耦合、验证量”收束场求解器选择，并将练习改为官方 Picard 案例的运行设计和跨章节诊断题，而不是本地运行记录。读者审计会检查该结尾是否仍给出源码入口、观察量、不可外推范围和完整结论；PDF 第 206--208 页已人工复核。
 
-第 7 章的入口与结尾现从边界闭合问题出发：先区分 field/particle 拓扑、PML/guard-cell 离散更新、AMR 状态迁移和匹配的观察量，再说明 transition zone 为何仍缺逐 route 账本。读者审计会拒绝把分支快照、论文访问状态和维护脚本写回这条主线；PDF 第 207、219 页已人工复核。
+第 7 章的入口与结尾现从边界闭合问题出发：先区分 field/particle 拓扑、PML/guard-cell 离散更新、AMR 状态迁移和匹配的观察量，再说明 transition zone 为何仍缺逐 route 账本。读者审计会拒绝把分支快照、论文访问状态、维护脚本和固定源码行号写回这条主线；PDF 第 206、208、214、216、218 页已人工复核。
 
 第 8 章的结尾现从诊断设计出发：先定义物理问题和时间层，再追踪输出 consumer，并区分 physics gate、writer/schema、checksum 与性能证据；失败案例和不可外推范围保留在结论中。PDF 第 255--256 页已人工复核。
 

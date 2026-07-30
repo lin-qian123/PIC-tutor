@@ -2,6 +2,7 @@
 
 ## 2026-07-30
 
+- [x] 完成第 7 章边界、PML 与 AMR 主线的连续源码复核与读者化改写：开篇改为输入拓扑 -> 场/粒子边界动作 -> PML/guard-cell/AMR 数据迁移 -> 观察量的闭合链；全章移除固定源码/文档行号、内部笔记和维护路径。以 `WarpX::MakeWarpX()`、`ApplyEfieldBoundary()`/`ApplyBfieldBoundary()`、`DampPML_Cartesian()`、`PML::Exchange()`、`RemakeLevel()` 和 `BoundaryScrapingDiagnostics` 说明职责边界，并明确 transition zone 尚缺逐 route 账本。读者化与构建验收新增第 7 章稳定导航、无项目路径和无固定行号检查；重建保持 263 页，PDF 第 206、208、214、216、218 页视觉复核通过。
 - [x] 完成第 6 章场求解器主线的连续源码复核与读者化改写：开篇改为同步 `J/rho` -> FDTD/PSATD/JRhom 分派 -> PML/guard-cell/边界 -> 观察量的因果链；移除一次性源码快照、内部精读笔记、运行归档、绝对工作区路径和全章固定源码行号。将 FDTD、谱推进与 JRhom 的定位改为函数阶段，补入标准/Galilean/Comoving PSATD 的输入前提、PML 的更新角色和具体 regression 的不可外推边界；读者化与构建验收新增第 6 章开篇、路径和全章无项目路径检查。重建为 263 页，PDF 第 169--170、177、198、205 页视觉复核通过。
 - [x] 完成第 5 章沉积主线的连续源码复核与读者化改写：开篇改为形函数 -> 旧/新 `rho` 与半步 `J` -> `DepositCurrent()` / `DepositCharge()` -> `SyncCurrentAndRho()` 的因果链；移除笔记目录、一次性分支快照和全章固定源码行号。将 `PhysicalParticleContainer::Evolve()`、多物种汇总、current/charge 分派的行号表改为时间层与调度阶段表，补充 Direct、Esirkepov、Villasenor、Vay 的职责边界，并将 guard-cell、Vay guard 与 RZ axis residual 收束为读者判断问题。读者化和构建验收新增第 5 章源码路线、开篇无项目记录和无固定行号检查；重建为 264 页，PDF 第 118、128、162、169 页视觉复核通过。
 - [x] 完成第 4 章核心 pusher 路径的连续源码复核与读者化改写：开篇改为 Lorentz 方程 -> Boris/Vay/Higuera--Cary -> `PushParticlesandDeposit()`/`MultiParticleContainer::Evolve()`/`PhysicalParticleContainer::Evolve()`/`PushPX()` 的因果链；固定行号和笔记路径改为文件路径/函数符号。修正 `do_crr` 在 QED 同步分支受 \(\chi\) 门限控制的事实，补入 gather 后 `getExternalEB(...)`、field scaling、momentum push、位置更新与沉积的准确顺序；位置推进段改为时间层诊断问题，不再叙述项目运行合同。读者化和构建验收新增第 4 章源码路线、无项目路径叙述与无固定行号检查；重建保持 265 页，PDF 第 71、89、118 页视觉复核通过。

@@ -102,6 +102,10 @@ def main() -> None:
     chapter_7 = (ROOT / "manuscript" / "chapters" / "07-boundaries-amr.md").read_text(
         encoding="utf-8"
     )
+    chapter_7_stale_location_markers = re.findall(
+        r"(?:Source/[A-Za-z0-9_./-]+\.(?:cpp|H)|Docs/[A-Za-z0-9_./-]+\.rst):\d+",
+        chapter_7,
+    )
     chapter_3a_numbers = [
         int(number)
         for number in re.findall(
@@ -195,6 +199,21 @@ def main() -> None:
                 "**观察量是否匹配问题。**",
                 "rho_buf/current_buf",
             )
+        ) and not chapter_7_stale_location_markers,
+        "chapter_7_current_boundary_route": all(
+            marker in chapter_7
+            for marker in (
+                "本章按一条读者可追踪的链展开",
+                "WarpX::MakeWarpX()",
+                "每一节都应能回到一个可观察量",
+                "## 7.10 本章练习与源码定位",
+            )
+        )
+        and not chapter_7_stale_location_markers
+        and not re.search(
+            r"scripts/|notes/code-reading|runs/stage-c-validation|"
+            r"docs/chapter-07-v0-evidence-ledger|contract\.\{json,md\}",
+            chapter_7,
         ),
         "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),
         "chapter_3a_current_initialization_route": all(

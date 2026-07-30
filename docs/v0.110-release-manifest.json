@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1249,
-  "total_bytes": 39233468,
+  "total_bytes": 39238831,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1549077,
-      "sha256": "62b0b1704e7ddc31366d49805890c03436946572114627f4349b8000089a61fa"
+      "bytes": 1549731,
+      "sha256": "d00a2dc07da4617e90935120de8f77f2326d98c05417198097b512678e85c874"
     },
     {
       "path": "TODO.md",
-      "bytes": 1426794,
-      "sha256": "f5ed9343400286cd5978a7d3dee545c8bbe213b5a11c34a637b6ab8ecbb091ab"
+      "bytes": 1427490,
+      "sha256": "049a82ac97b98b809a8f28c17caeb4a8a9f6f3d8aadbea222f7b03916bcd32ce"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5247448,
-      "sha256": "a2b1e96b8696953682a2eba7bd519adbb826c5cd35ba14e7a539d4646db35f79"
+      "bytes": 5247390,
+      "sha256": "ae3778832866351f6af034973978a5bdd606df5a83c2e9fc0e8ecf15cfb918b7"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 859624,
-      "sha256": "c82e7a52ee66735e48d8d24e7877caebac4333b86b6738534df4734767a30e6a"
+      "bytes": 859630,
+      "sha256": "4af2c98d258523d080ff33b23b0b6b6cd4599e58577e0c335701331035e96fee"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2997132,
-      "sha256": "94da5738fc7c8b6578abf097e4f40d5afde670d05e4b4a5b42a7aa9bb39eb070"
+      "bytes": 2997139,
+      "sha256": "64e22300c8b2f34a293299c0e1c5cf381e1c412f18bd35b035608c08dc45a022"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -198,7 +198,7 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.json",
       "bytes": 1164,
-      "sha256": "7e5bbc658847139d2539db9f554f6ba871ec37a935de14535454edc35999b3bf"
+      "sha256": "9a20750f03d928c65083b9d586fe78075144c24d42263e64dd88dfb0cd4082ee"
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 30125,
-      "sha256": "b833dbafdb7fcf3ca1cece3431ff3207f0a94a409288c992998f8b1bf2324d25"
+      "bytes": 31328,
+      "sha256": "f1b37c81096f37a281f124929b5fd5332a4db648d0701168978e7e084d2ada8e"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -902,18 +902,18 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 12072,
-      "sha256": "2b432ad79f9224c82b0e8675f9ba6b30e49c361022ebb8c478d6760f6e30c63b"
+      "bytes": 12814,
+      "sha256": "9049e8db4549a151bbf8b0928ab38a4e5a13e0f88c0f48fe616f84df883fde5f"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
-      "bytes": 2261,
-      "sha256": "14907b3dacd4b62dd9318c4b4d3af6c08a3373350bc7354e0050e3a8bb52189f"
+      "bytes": 2389,
+      "sha256": "8f9c585d48bd78f51758f82e324980edd310ea530cc2fc2f9c3afe2f99be1b01"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.md",
-      "bytes": 1533,
-      "sha256": "f5550c9d96526e94cc0aabf3969b0f5eaab14085d54f747145085a245bcd9b20"
+      "bytes": 1581,
+      "sha256": "eaae69736e5e4757142073470bea911c6346c267cb6a869bb89fe22be84c55f4"
     },
     {
       "path": "docs/rz-axis-charge-repeat-stability-v0.93.json",
@@ -2322,8 +2322,8 @@
     },
     {
       "path": "manuscript/chapters/07-boundaries-amr.md",
-      "bytes": 43980,
-      "sha256": "8d8e4f27d50389d35fb9a38ae99279c8517678d476f89577cff11e22de2c95ab"
+      "bytes": 43986,
+      "sha256": "cdd20ce25604ae6b18fe3da1296ab4f1490843feb388ffb7ead5266247263a9e"
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
@@ -4567,8 +4567,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 15963,
-      "sha256": "4ad374a8142ec3252c96553544037d808f3649e04ada63bf6226720353c278af"
+      "bytes": 17094,
+      "sha256": "b4d57ab8688b72c9b7d453d594f9b007c416983630215aee42ce21497ed94d09"
     },
     {
       "path": "scripts/audit_release_consistency.py",
@@ -5967,8 +5967,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 30424,
-      "sha256": "88c1fba9acfb54d47e27f14a14faf62b071160f0ff25c558f26a2757a7ac8d09"
+      "bytes": 31224,
+      "sha256": "2604cb052296ff9eadda6a124a154f9376a77f58179bdfb101c91d3ec4e26084"
     },
     {
       "path": "scripts/verify_v40_build.py",

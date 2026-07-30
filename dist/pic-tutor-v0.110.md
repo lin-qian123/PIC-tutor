@@ -11608,9 +11608,9 @@ $$
 
 # 7. 边界条件、PML 与 AMR
 
-边界、PML、guard cell 与 AMR 不是若干彼此独立的开关：它们共同决定 Maxwell 更新和粒子推进如何在有限计算域、多个 patch 与多个网格层级中闭合。本章的目标是让读者能够区分三类对象：场边界条件、吸收层的离散更新，以及粒子在 coarse/fine 区域的 gather/deposition 路线。
+边界、PML、guard cell 与 AMR 不是若干彼此独立的开关：它们共同决定 Maxwell 更新和粒子推进如何在有限计算域、多个 patch 与多个网格层级中闭合。本章按一条读者可追踪的链展开：**输入怎样定义拓扑，场与粒子怎样在边界采取动作，数据怎样经过 guard cells/PML/AMR 迁移，最后用什么诊断判断这一闭合。**
 
-关于 PML 的资料、WarpX 源码和 Cartesian/RZ 案例可以共同说明指定设置下的实现与可测结果；它们不能自动证明所有 PML 系数、所有 Galilean/cleaning 组合，或 transition zone 中每一条粒子路线都已被验证。阅读本章时，始终把“源码存在”“案例通过”和“可外推的物理结论”分开。
+关于 PML 的资料、WarpX 源码和 Cartesian/RZ 案例可以共同说明指定设置下的实现与可测结果；它们不能自动证明所有 PML 系数、所有 Galilean/cleaning 组合，或 transition zone 中每一条粒子路线都已被验证。阅读本章时，始终把“源码能定位的职责”“案例实际比较的量”和“可外推的物理结论”分开。
 
 边界条件在 PIC 中同时作用于场和粒子。场边界控制 Maxwell 方程如何在计算域边缘闭合；粒子边界控制宏粒子离开、反射、吸收、周期穿越或被记录的方式。二者不能混为一谈。
 
@@ -11621,7 +11621,7 @@ WarpX 官方理论文档将 PML、PEC、PMC、Silver-Mueller、周期边界和�
 - `Source/Particles/ParticleBoundaries_K.H`
 - `Source/Evolve/WarpXEvolve.cpp::HandleParticlesAtBoundaries`
 
-需要核对实现细节时，再回到参数、PML、导体边界、embedded boundary 和粒子 scraping 的代码阅读笔记。第一次阅读应先沿本章的因果链理解边界为何同时跨参数解析、主循环分派、场数组镜像和粒子沉积。
+第一次阅读应先沿本章的因果链理解边界为何同时跨参数解析、主循环分派、场数组镜像和粒子沉积；需要实现细节时，再从本节列出的文件与函数向下追踪。
 
 ## 本章的阅读路线：边界是一个闭合系统
 
@@ -11658,7 +11658,7 @@ WarpX 官方理论文档将 PML、PEC、PMC、Silver-Mueller、周期边界和�
 | AMR 重建 | `RemakeLevel()` | 重映射后哪些场、粒子和 buffer 必须一起重建？ |
 | scraping | `BoundaryScrapingDiagnostics` | 粒子何时被记录，而不只是被删除？ |
 
-这些入口位于 WarpX 的 `Source/BoundaryConditions/`、`Source/Parallelization/`、`Source/Particles/` 与 `Source/Diagnostics/`；后文在首次使用时给出具体文件和行号。
+这些入口位于 WarpX 的 `Source/BoundaryConditions/`、`Source/Parallelization/`、`Source/Particles/` 与 `Source/Diagnostics/`；后文以文件路径和函数职责说明它们的关系，而不依赖随版本漂移的固定行号。
 
 边界章节的主线可按以下闭合链阅读：
 
@@ -11667,7 +11667,7 @@ WarpX 官方理论文档将 PML、PEC、PMC、Silver-Mueller、周期边界和�
 3. `WarpXComm` 的 `FillBoundary` 与 PML exchange 让边界数据进入相邻 patch；`GuardCellManager` 据此决定 guard 宽度，AMR regrid、`RemakeLevel()` 与 EB factory 再重建相应状态。
 4. 粒子路径由 `HandleParticlesAtBoundaries` 处理边界和 buffer；需要记录而非只删除的粒子进入 `BoundaryScrapingDiagnostics`。
 
-因此，后续解释边界时要同时回答三类问题：输入参数如何被约束，场和粒子的运行时边界动作在哪里发生，以及这些动作怎样与 PML、guard cell、AMR 和 diagnostics 互相交叉。
+因此，后续解释边界时要同时回答三类问题：输入参数如何被约束，场和粒子的运行时边界动作在哪里发生，以及这些动作怎样与 PML、guard cell、AMR 和 diagnostics 互相交叉。每一节都应能回到一个可观察量，例如反射率、残余场、scraped-particle buffer、能量账本或 AMR 的中间 route 账本；没有对应观察量时，只能把结论写成源码路径或未闭合边界。
 
 ## 7.1 field / particle 边界不是两套彼此独立的输入
 
@@ -11684,7 +11684,7 @@ std::tie(particle_boundary_lo, particle_boundary_hi) =
     warpx::particles::parse_particle_boundaries(is_field_boundary_periodic);
 ```
 
-源码位置：`../warpx/Source/WarpX.cpp:284-291`。
+源码入口：`Source/WarpX.cpp`。
 
 这意味着 particle 边界不是“读完自己就结束”，而是依赖 field 边界的第二阶段配置。其后果有两条：
 
@@ -11699,7 +11699,7 @@ WARPX_ALWAYS_ASSERT_WITH_MESSAGE(
     "field boundary must be consistenly periodic in both lo and hi");
 ```
 
-源码位置：`../warpx/Source/BoundaryConditions/FieldBoundaries.cpp:27-33`。
+源码入口：`Source/BoundaryConditions/FieldBoundaries.cpp`。
 
 而 field/particle 联合一致性检查在 `ParticleBoundaries.cpp`：
 
@@ -11710,11 +11710,11 @@ WARPX_ALWAYS_ASSERT_WITH_MESSAGE(
     "field and particle boundary must be periodic in both lo and hi");
 ```
 
-源码位置：`../warpx/Source/Particles/ParticleBoundaries.cpp:43-46`。
+源码入口：`Source/Particles/ParticleBoundaries.cpp`。
 
 因此，periodic 在 WarpX 中的真实语义不是“某一侧做周期延拓”，而是“整根坐标轴拓扑闭合”。
 
-若只想先找参数入口而不立刻读实现，当前最适合查的是 `notes/code-reading/boundary/03-boundary-parameter-table.md`，它已经把 `boundary.field_*`、`boundary.particle_*`、`boundary.potential_*`、PECInsulator parser、`particles.crop_on_PEC_boundary` 和 PML 参数的依赖关系汇总成总表。
+读参数时应把 `boundary.field_*`、`boundary.particle_*`、`boundary.potential_*`、PECInsulator parser、`particles.crop_on_PEC_boundary` 和 PML 参数作为同一组依赖来检查：先由 field periodicity 建立拓扑，再确认粒子侧继承和 PML/导体边界是否与所选 geometry 相容。
 
 ## 7.2 电磁 field boundary 的顶层分派
 
@@ -11734,7 +11734,7 @@ if (::isAnyBoundary<FieldBoundaryType::PECInsulator>(field_boundary_lo, field_bo
 }
 ```
 
-源码位置：`../warpx/Source/BoundaryConditions/WarpXFieldBoundaries.cpp:55-161`。
+源码入口：`Source/BoundaryConditions/WarpXFieldBoundaries.cpp`。
 
 `ApplyBfieldBoundary()` 除了 PEC/PMC/PECInsulator 外，还处理 Silver-Mueller：
 
@@ -11748,15 +11748,15 @@ if (lev == 0) {
 }
 ```
 
-源码位置：`../warpx/Source/BoundaryConditions/WarpXFieldBoundaries.cpp:231-239`。
+源码入口：`Source/BoundaryConditions/WarpXFieldBoundaries.cpp`。
 
 这说明 Silver-Mueller 不是通用 field boundary post-process，而是挂在 Yee/FDTD 的 `B` first half-push 上的专用边界。
 
-继续往下看其内部实现时，还要再补一层认识：它更新的不是域内最后一层 `B`，而是物理域外第一层 guard cell，并且按 Yee 交错把切向 `E` 递推到切向 `B`。这一点已经单独整理在 `notes/code-reading/boundary/04-silver-mueller-internal-stencil.md`。
+继续往下看其内部实现时，还要再补一层认识：它更新的不是域内最后一层 `B`，而是物理域外第一层 guard cell，并且按 Yee 交错把切向 `E` 递推到切向 `B`。因此检查 Silver-Mueller 时应同时查看 first-half B 更新、对应 guard cell 和离域后的残余场，而非只看边界参数名称。
 
 ## 7.3 PEC / PMC 不只是场边界，也是沉积对称性
 
-官方理论文档对 PEC 的定义是：边界上切向 `E` 与法向 `B` 为零；guard 区对场做奇偶镜像；rho 和平行电流的边界处理还取决于粒子边界是 reflecting 还是 absorbing。见 `../warpx/Docs/source/theory/boundary_conditions.rst:275-323`。
+官方理论文档对 PEC 的定义是：边界上切向 `E` 与法向 `B` 为零；guard 区对场做奇偶镜像；rho 和平行电流的边界处理还取决于粒子边界是 reflecting 还是 absorbing。见 `Docs/source/theory/boundary_conditions.rst`。
 
 这意味着 PEC/PMC 的章节写法不能只停留在“某些分量置零”：
 
@@ -11764,7 +11764,7 @@ if (lev == 0) {
 - 对 rho/J，要讲镜像沉积与 image charge / reflective deposition；
 - 对粒子，要讲 `ApplyBoundaryConditions()` 和沉积语义如何配套。
 
-这些细节现在已经在 `notes/code-reading/boundary/02-pec-insulator-silver-mueller.md` 里拆开，后续可直接据此继续回填本章的 PEC/PMC/PECInsulator 小节。
+因此 PEC、PMC 与 PECInsulator 的阅读顺序应固定为：先看 E/B 的镜像或约束，再看 `rho/J` 的边界处理，最后检查粒子反射、吸收或 cropping 的配套语义。三层缺任一层，都不能把边界写成简单的“分量置零”。
 
 PMC 还有一条很直接的场级 regression：`Examples/Tests/pec/inputs_test_3d_pmc_field`。它在 `z` 方向设 PMC、在局部区域初始化正弦 `Ey/Bx` 波包，然后用 `analysis_pec.py` 检查反射后的 standing wave 是否达到理论上的 constructive interference 振幅 `±2E_in`。因此这条测试验证的不是抽象“PMC 边界存在”，而是 PMC 通过交换 PEC 的 E/B 角色后，反射相位与站波振幅仍满足理论合同。
 
@@ -11816,7 +11816,7 @@ public:
          ...);
 ```
 
-源码位置：`../warpx/Source/BoundaryConditions/PML.H:137-156`。
+源码入口：`Source/BoundaryConditions/PML.H`。
 
 真正承载阻尼 profile 的核心数据结构是 `SigmaBox`，其中缓存了：
 
@@ -11825,7 +11825,7 @@ public:
 - `sigma_fac` / `sigma_star_fac`
 - `sigma_cumsum_fac` / `sigma_star_cumsum_fac`
 
-源码位置：`../warpx/Source/BoundaryConditions/PML.H:46-76`。
+源码入口：`Source/BoundaryConditions/PML.H`。
 
 `SigmaBox` 的 profile 在 `PML.cpp` 中按离边界距离平方增长：
 
@@ -11837,13 +11837,13 @@ offset = static_cast<Real>(glo-i) - 0.5_rt;
 p_sigma_star[i-sslo] = fac*(offset*offset);
 ```
 
-源码位置：`../warpx/Source/BoundaryConditions/PML.cpp:83-92`。
+源码入口：`Source/BoundaryConditions/PML.cpp`。
 
 所以 `warpx.pml_delta` 控制的是阻尼增长深度，而不是简单的总厚度。
 
 ## 7.5 PML split field 与 PML 电流
 
-在主循环里，PML 阻尼入口是 `WarpX::DampPML()`，Cartesian 实际工作函数是 `DampPML_Cartesian()`。见 `../warpx/Source/BoundaryConditions/WarpXEvolvePML.cpp:45-84`。
+在主循环里，PML 阻尼入口是 `WarpX::DampPML()`，Cartesian 实际工作函数是 `DampPML_Cartesian()`。见 `Source/BoundaryConditions/WarpXEvolvePML.cpp`。
 
 这个函数先取出 `pml_E`、`pml_B`、`sigba` 和每个分量的 stagger 信息，然后把它们送进 `warpx_damp_pml_ex/ey/ez/bx/by/bz`。例如 `Ex` 的 split 分量阻尼：
 
@@ -11855,7 +11855,7 @@ if (sy == 0) {
 }
 ```
 
-源码位置：`../warpx/Source/BoundaryConditions/WarpX_PML_kernels.H:77-82`。
+源码入口：`Source/BoundaryConditions/WarpX_PML_kernels.H`。
 
 这说明 PML 不是给整个 `E_x` 统一乘一个阻尼系数，而是对 `Exy`、`Exz` 这类 split components 按其离散位置和方向分别阻尼。
 
@@ -11868,7 +11868,7 @@ Ex(j,k,l,PMLComp::xy) = Ex(j,k,l,PMLComp::xy) - mu_c2_dt  * alpha_xy * jx(j,k,l)
 Ex(j,k,l,PMLComp::xz) = Ex(j,k,l,PMLComp::xz) - mu_c2_dt  * alpha_xz * jx(j,k,l);
 ```
 
-源码位置：`../warpx/Source/BoundaryConditions/PML_current.H:27-36`。
+源码入口：`Source/BoundaryConditions/PML_current.H`。
 
 也就是说，PML 中的 `J_x` 不是直接加到“整体 `E_x`”上，而是要分摊到与阻尼方向一致的 split components 上。
 
@@ -11917,7 +11917,7 @@ PML 的问题不是“是否开了吸收边界”，而是出射波、不同 sol
 
 前文的 `PML`、`SigmaBox`、`DampPML()` 与 `push_ex_pml_current()` 解释了吸收层如何在源码中被构造和推进：每个 split component 按自身 staggering 和阻尼方向更新，粒子电流也要分摊到对应的 split field。源码入口说明“程序有这条机制”，运行 consumer 才回答“这条机制在某个 case 中的可观测结果”。
 
-读者应把 PML 证据固定为三层：理论或文献解释吸收的目标，源码快照解释系数和分派，regression/analysis 限定一个 measurable outcome。LeeCPC2015 的 accepted manuscript 与 PSATD-PML 源码可以支持机制和公式映射的讨论，但 publisher-formatted PDF 的逐式差异仍未完成；同样，Cartesian、RZ、cleaning 和粒子入 PML 也必须保持各自的 observable 边界。
+读者应把 PML 证据固定为三层：理论或文献解释吸收的目标，源码路径解释系数和分派，regression/analysis 限定一个 measurable outcome。LeeCPC2015 的 accepted manuscript 与 PSATD-PML 源码可以支持机制和公式映射的讨论，但 publisher-formatted PDF 的逐式差异仍未完成；同样，Cartesian、RZ、cleaning 和粒子入 PML 也必须保持各自的 observable 边界。
 
 
 ## 7.6 Embedded boundary 先是几何初始化和辅助标记系统
@@ -11934,7 +11934,7 @@ std::string eb_stl;
 eb_enabled |= pp_eb2.query("geom_type", eb_stl);
 ```
 
-源码位置：`../warpx/Source/EmbeddedBoundary/Enabled.cpp:25-30`。
+源码入口：`Source/EmbeddedBoundary/Enabled.cpp`。
 
 这说明 EB 的启用条件不是单一布尔量，而是：
 
@@ -11959,7 +11959,7 @@ if (! impf.empty()) {
 }
 ```
 
-源码位置：`../warpx/Source/WarpXInitEB.cpp:78-95`。
+源码入口：`Source/WarpXInitEB.cpp`。
 
 这里的结构很清楚：
 
@@ -11978,7 +11978,7 @@ for (int lev=0; lev<=maxLevel(); lev++) {
 }
 ```
 
-源码位置：`../warpx/Source/WarpXInitEB.cpp:106-112`。
+源码入口：`Source/WarpXInitEB.cpp`。
 
 所以 `distance_to_eb` 不是附加诊断，而是后续 scraping、近壁沉积和 cut-cell 处理可以直接复用的几何辅助场。
 
@@ -11996,7 +11996,7 @@ if ( !flag(i_cell, j_cell, k_cell).isRegular() ) {
 }
 ```
 
-源码位置：`../warpx/Source/EmbeddedBoundary/EmbeddedBoundaryInit.cpp:98-103`。
+源码入口：`Source/EmbeddedBoundary/EmbeddedBoundaryInit.cpp`。
 
 而 `MarkUpdateCellsStairCase()` 的核心是：
 
@@ -12006,7 +12006,7 @@ if ( !flag(i_cell, j_cell, k_cell).isRegular() ) {
 }
 ```
 
-源码位置：`../warpx/Source/EmbeddedBoundary/EmbeddedBoundaryInit.cpp:206-210`。
+源码入口：`Source/EmbeddedBoundary/EmbeddedBoundaryInit.cpp`。
 
 这说明 EB 在 WarpX 里的第一层实现不是“直接改 Maxwell 更新式”，而是先把 cut-cell 几何转换成：
 
@@ -12014,7 +12014,7 @@ if ( !flag(i_cell, j_cell, k_cell).isRegular() ) {
 2. 场自由度是否允许更新；
 3. edge/face 几何量是否还存在。
 
-当前这一层已经单独整理在 `notes/code-reading/embedded-boundary/00-eb-initialization.md`，而 `WarpXFaceExtensions.cpp` 的 face extension 稳定性标志、intrusion 判据和 cut-face 修正则继续整理在 `notes/code-reading/embedded-boundary/01-face-extensions.md`。
+因此 embedded boundary 必须先作为几何与辅助标记系统阅读，再进入 `WarpXFaceExtensions.cpp` 的 face-extension 稳定性标志、intrusion 判据和 cut-face 修正。把 EB 简化成某一个 field boundary 会遗漏它对数组布局和粒子距离判定的前置影响。
 
 ## 7.7 Embedded boundary 的 face extension：把不稳定 cut face 变成 enlarged face
 
@@ -12032,7 +12032,7 @@ if(int(S(i, j, k) > 0 && !flag_ext_face_data(i, j, k))) {
 }
 ```
 
-源码位置：`../warpx/Source/EmbeddedBoundary/EmbeddedBoundaryInit.cpp:426-433`。
+源码入口：`Source/EmbeddedBoundary/EmbeddedBoundaryInit.cpp`。
 
 其中：
 
@@ -12050,9 +12050,9 @@ ComputeEightWaysExtensions();
 ::shrink_borrowing(m_borrowing[maxLevel()], Bfield);
 ```
 
-源码位置：`../warpx/Source/EmbeddedBoundary/WarpXFaceExtensions.cpp:514-529`。
+源码入口：`Source/EmbeddedBoundary/WarpXFaceExtensions.cpp`。
 
-第一步是 one-way extension，只允许从一个正交邻居一次性借满所需面积 `S_ext`。如果存在这样的 lender，就直接把 lender 的 `S_mod` 扣掉 `S_ext`，把 borrower 的 `S_mod` 增加 `S_ext`，并把 lender 标成 `2`。见 `../warpx/Source/EmbeddedBoundary/WarpXFaceExtensions.cpp:653-697`。
+第一步是 one-way extension，只允许从一个正交邻居一次性借满所需面积 `S_ext`。如果存在这样的 lender，就直接把 lender 的 `S_mod` 扣掉 `S_ext`，把 borrower 的 `S_mod` 增加 `S_ext`，并把 lender 标成 `2`。见 `Source/EmbeddedBoundary/WarpXFaceExtensions.cpp`。
 
 第二步是 eight-ways extension。若单邻居借不满，就在 `3x3` 邻域内筛选所有可用 lender，按原始 face 面积比例分摊：
 
@@ -12060,9 +12060,9 @@ ComputeEightWaysExtensions();
 const amrex::Real patch = S_ext * ::GetNeigh(S, i, j, k, i_n, j_n, idim) / denom;
 ```
 
-源码位置：`../warpx/Source/EmbeddedBoundary/WarpXFaceExtensions.cpp:830-831`。
+源码入口：`Source/EmbeddedBoundary/WarpXFaceExtensions.cpp`。
 
-但 WarpX 还会反复剔除那些按该比例借出后会把自己 `S_mod` 减成非正的邻居，因此 eight-ways 不是机械加权，而是“保正性的面积分摊”。见 `../warpx/Source/EmbeddedBoundary/WarpXFaceExtensions.cpp:820-846`。
+但 WarpX 还会反复剔除那些按该比例借出后会把自己 `S_mod` 减成非正的邻居，因此 eight-ways 不是机械加权，而是“保正性的面积分摊”。见 `Source/EmbeddedBoundary/WarpXFaceExtensions.cpp`。
 
 如果 one-way 和 eight-ways 都失败，就进入 BCK fallback：
 
@@ -12073,7 +12073,7 @@ if (flag_ext_face_max_lev_idim(i, j, k)) {
 }
 ```
 
-源码位置：`../warpx/Source/EmbeddedBoundary/WarpXFaceExtensions.cpp:196-200`。
+源码入口：`Source/EmbeddedBoundary/WarpXFaceExtensions.cpp`。
 
 源码注释说明这是 Benkler-Chavannes-Kuster correction，精度低于常规 ECT extension，但仍优于纯 staircasing。
 
@@ -12088,7 +12088,7 @@ struct FaceInfoBox {
     amrex::BaseFab<int*> inds_pointer;
 ```
 
-源码位置：`../warpx/Source/EmbeddedBoundary/WarpXFaceInfoBox.H:15-28`。
+源码入口：`Source/EmbeddedBoundary/WarpXFaceInfoBox.H`。
 
 它记录的是“这个 enlarged face 向哪些邻居借了多少面积”。后续 ECT `B` 更新时，`WarpX::EvolveB()` 把 `m_flag_info_face` 和 `m_borrowing` 直接送进 solver：
 
@@ -12099,7 +12099,7 @@ m_fdtd_solver_fp[lev]->EvolveB( m_fields,
                                 m_flag_info_face[lev], m_borrowing[lev], a_dt );
 ```
 
-源码位置：`../warpx/Source/FieldSolver/WarpXPushFieldsEM.cpp:971-975`。
+源码入口：`Source/FieldSolver/WarpXPushFieldsEM.cpp`。
 
 在 `FiniteDifferenceSolver::EvolveBCartesianECT()` 中，不稳定 face 会先聚合 enlarged face 的有效电荷：
 
@@ -12111,7 +12111,7 @@ Venl_dim(i, j, k) += Rho(ip, jp, kp) * borrowing_dim_area[ind];
 rho_enl = Venl_dim(i, j, k) / S_mod(i, j, k);
 ```
 
-源码位置：`../warpx/Source/FieldSolver/FiniteDifferenceSolver/EvolveB.cpp:307-339`。
+源码入口：`Source/FieldSolver/FiniteDifferenceSolver/EvolveB.cpp`。
 
 因此，WarpX 的 face extension 不是“把几何修漂亮一点”，而是直接决定 ECT solver 如何构造 enlarged face 的有效 `rho` 并推进 `B`。
 
@@ -12136,7 +12136,7 @@ if (phi_value < 0.0)
 }
 ```
 
-源码位置：`../warpx/Source/EmbeddedBoundary/ParticleScraper.H:181-208`。
+源码入口：`Source/EmbeddedBoundary/ParticleScraper.H`。
 
 这说明 WarpX 的粒子撞墙检测并不是拿粒子坐标去直接查解析几何，而是：
 
@@ -12157,7 +12157,7 @@ struct Absorb {
 }
 ```
 
-源码位置：`../warpx/Source/EmbeddedBoundary/ParticleBoundaryProcess.H:12-33`。
+源码入口：`Source/EmbeddedBoundary/ParticleBoundaryProcess.H`。
 
 因此，当前主源码链上的默认 EB 粒子边界语义其实很朴素：不是复杂反射模型，而是“把撞进 EB 的粒子标成 invalid”。真正删除发生在后续 `deleteInvalidParticles()` 或 `Redistribute()`，而不是 `Absorb()` 本身立即擦除数据。
 
@@ -12173,7 +12173,7 @@ struct Absorb {
 
 - `<species_name>.save_particles_at_eb = 1`
 
-官方文档说明这会把撞到 EB 的粒子复制到 scraped particle buffer，可供 `BoundaryScrapingDiagnostic` 或 Python 接口使用。见 `../warpx/Docs/source/usage/parameters.rst:1890-1924`。
+官方文档说明这会把撞到 EB 的粒子复制到 scraped particle buffer，可供 `BoundaryScrapingDiagnostic` 或 Python 接口使用。见 `Docs/source/usage/parameters.rst`。
 
 更重要的是，`ParticleBoundaryBuffer.cpp` 在把粒子放进 EB buffer 时，不是简单复制当前状态，而是用二分法沿粒子轨迹回溯到 `phi = 0` 的真实交点：
 
@@ -12188,7 +12188,7 @@ amrex::Real const dt_fraction = amrex::bisect( 0.0, 1.0,
     } );
 ```
 
-源码位置：`../warpx/Source/Particles/ParticleBoundaryBuffer.cpp:92-104`。
+源码入口：`Source/Particles/ParticleBoundaryBuffer.cpp`。
 
 随后它还会记录 scraping 发生的 step、时间偏移、真实时间和表面法向。也就是说，scraped particle buffer 保存的不是“死前最后一帧粒子”，而是“与 EB 表面交点处的粒子诊断样本”。
 
@@ -12241,7 +12241,7 @@ AMR 的目标是把计算资源集中在物理上需要高分辨率的区域。�
 
 例如 `SyncCurrent()` 的源码注释就明确说明，多层 AMR 下不能简单把 finer coarse-patch current 直接 `ParallelAdd` 到当前 level 的 fine patch，因为 nodal overlap 会双计数；WarpX 为此引入临时 `fine_lev_cp` 和 `OwnerMask` 去重。也就是说，coarse-fine current 同步本身就已经是 AMR 物理一致性的一部分，而不是纯粹 MPI 细节。
 
-当前这一层已经单独整理在 `notes/code-reading/parallelization/00-guard-cell-model.md`。
+guard-cell 宽度由场求解、PML、滤波、particle gather/deposition 和 AMR 同时约束；因此一项输入变更可能改变通信宽度，即使主域更新公式不变。
 
 继续往下看 `Parallelization/WarpXComm.cpp`，会发现 WarpX 对 current / rho 的 coarse-fine 同步并不是简单的“restrict 一下再加回去”。`SyncCurrent()` 的大段注释明确说明：
 
@@ -12258,7 +12258,7 @@ AMR 的目标是把计算资源集中在物理上需要高分辨率的区域。�
 
 rho 路径在 `SyncRho()` 中基本平行，只是 bilinear filter 与 `SumBoundary` 被折叠成 `ApplyFilterandSumBoundaryRho()`。这意味着 J 和 rho 虽然共享 AMR 同步框架，但在 filter 实现上仍有细微差异。
 
-这一层已经单独整理在 `notes/code-reading/parallelization/01-current-rho-sync-paths.md`。继续顺着 `WarpXRegrid.cpp` 往下读时，问题就不再是“数据如何同步”，而会转成“`DistributionMapping` 改变后，fields、particles、EB、boundary buffer 和 diagnostics 如何整体重建”。
+继续顺着 `WarpXRegrid.cpp` 往下读时，问题就不再是“数据如何同步”，而会转成“`DistributionMapping` 改变后，fields、particles、EB、boundary buffer 和 diagnostics 如何整体重建”。这也是为什么 regrid 不能只用末态场图来判断正确性。
 
 `WarpXRegrid.cpp` 的顶层入口是：
 
@@ -12278,7 +12278,7 @@ WarpX::CheckLoadBalance (int step)
 }
 ```
 
-源码位置：`../warpx/Source/Parallelization/WarpXRegrid.cpp:49-63`。
+源码入口：`Source/Parallelization/WarpXRegrid.cpp`。
 
 这说明 WarpX 的 load balance 不是“到点直接重分布”，而是：
 
@@ -12298,7 +12298,7 @@ WarpX::CheckLoadBalance (int step)
 proposedEfficiency > load_balance_efficiency_ratio_threshold*currentEfficiency
 ```
 
-时才真正采纳新映射。源码位置：`../warpx/Source/Parallelization/WarpXRegrid.cpp:82-143`。
+时才真正采纳新映射。源码入口：`Source/Parallelization/WarpXRegrid.cpp`。
 
 因此，WarpX 当前策略更接近“收益足够大才搬”，而不是粗暴地按固定周期强制改 rank 图。
 
@@ -12318,7 +12318,7 @@ if (ba == boxArray(lev)) {
 }
 ```
 
-源码位置：`../warpx/Source/Parallelization/WarpXRegrid.cpp:174-176,283-286`。
+源码入口：`Source/Parallelization/WarpXRegrid.cpp`。
 
 这意味着当前这里讨论的还不是“任意 AMR regrid”，而是“同一 patch 拓扑下的 rank 重映射”。
 
@@ -12332,7 +12332,7 @@ if (ba == boxArray(lev)) {
 - `current_buffer_masks` / `gather_buffer_masks` 与 `BuildBufferMasks()`；
 - `multi_diags->InitializeFieldFunctors(lev)`。
 
-源码范围：`../warpx/Source/Parallelization/WarpXRegrid.cpp:178-290`。
+源码入口：`Source/Parallelization/WarpXRegrid.cpp`。
 
 随后若至少有一个 level 完成了 load balance，WarpX 才统一做：
 
@@ -12343,13 +12343,13 @@ m_particle_boundary_buffer->redistribute();
 reduced_diags->LoadBalance();
 ```
 
-源码位置：`../warpx/Source/Parallelization/WarpXRegrid.cpp:149-159`。
+源码入口：`Source/Parallelization/WarpXRegrid.cpp`。
 
 因此，WarpX 的 load balance 不是“先搬粒子再说”，而是一次多子系统一致提交：
 
 `candidate DM -> efficiency check -> remake field/EB/solver/masks -> redistribute particles -> redistribute boundary buffer -> refresh diagnostics`
 
-这一层现在已经单独整理在 `notes/code-reading/parallelization/02-regrid-and-load-balance.md`。
+这一阶段的正确性依赖多子系统共同完成迁移；只确认某个 particle count 或 field checksum 保持不变，不能证明 boundary buffer、EB factory 和 diagnostics 的 ownership 也已同步。
 
 ## 7.9 AMR transition zone：为什么最终 plotfile 不足以证明路由正确
 
@@ -12359,7 +12359,7 @@ AMR 的 transition zone 同时影响 gather 和 deposition。粒子在细网格 
 
 | 证据层 | 能说明什么 | 仍不能说明什么 |
 |---|---|---|
-| 源码快照 | buffer mask、`nfine_gather/nfine_deposit`、`aux/cax/fp/buf` 和同步入口存在且相互对应 | 每个 route 在真实 case 中都被独立命中 |
+| 源码路径 | buffer mask、`nfine_gather/nfine_deposit`、`aux/cax/fp/buf` 和同步入口存在且相互对应 | 每个 route 在真实 case 中都被独立命中 |
 | 现有 MR case | subcycling、moving window、PML 或解析场 consumer 可验证整体运行完整性 | `fine/coarse gather/deposit` 的逐粒子分区 |
 | route-count schema | 专用 diagnostic 应检查 count、weight、`rho/J` 与 post-sync closure | WarpX 已经输出这些数据 |
 | runtime activation | 已有 AMR workflow 确实调用了 partition/sync 分支 | 没有 route id、pre-sync buffer 或 owner-mask 数值账本 |

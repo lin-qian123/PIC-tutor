@@ -2,6 +2,8 @@
 
 ## 2026-07-31
 
+- [x] 完成第 8 章的连续读者审阅：在当前 256 页 PDF 中从页脚第 213 页连续读至第 248 页，核对统计量与谱、Langmuir/uniform-plasma/激光/尾场/束流案例、`WarpX::Evolve` 调度、full/BTD/BoundaryScraping/reduced diagnostics、writer/buffer 生命周期、官方 analysis consumer 和证据矩阵。新增“诊断记录卡”，要求每个案例同时写清物理问题、producer 与时间层、consumer 与比较量、reference 与阈值、结论边界；修复 reader-side exercise 的重复措辞和行内 \(\gamma\) 格式，并取消结论前的强制分页，使 8.16 与 8.17 连续收束而不形成低信息孤页。构建验收页数保持 256；下一连续区间为第 9 章及附录（PDF 第 249--256 页）；全书逐页通读、第三方材料许可和公开再分发仍未完成。
+
 - [x] 完成第 7 章的连续读者审阅：在当前 256 页 PDF 中从页脚第 200 页连续读至第 212 页，核对 field/particle 拓扑、PEC/PMC/Silver-Mueller、PML split field 与电流、embedded boundary 的几何/face extension/粒子 scraping、guard-cell/current-rho 同步、load balance/regrid 和 AMR transition-zone 证据边界。校正 `WarpXInitEB.cpp` 的实际 `Source/EmbeddedBoundary/` 入口，将 PML 构造参数、face-extension 调度和 load-balance 花括号样板改为明确声明的阅读索引或控制流，同时保持源码职责与 transition-zone route ledger 未完成的边界。构建验收页数保持 256；下一连续区间为第 8 章（PDF 第 213 页起）；全书逐页通读、第三方材料许可和公开再分发仍未完成。
 
 - [x] 完成第 6 章的连续读者审阅：在当前 256 页 PDF 中从第 164 页连续读至第 199 页，核对 FDTD/PML、标准/Galilean/Comoving PSATD、JRhom、RZ Hankel/mode 表示、静电/静磁、Hybrid Ohm、隐式能量/Gauss-law/迭代数与 regression 入口。将 JRhom 子区间循环和 RZ mode/Hankel/current-correction 的长 C++ 实现改为明确标注的阅读伪代码或公式说明，清理遗留行内数学，并把发生列间覆盖的 regression 索引从五列表改为分组项目列表。构建验收页数更新为 256；下一连续区间为第 7 章（PDF 第 200 页起）；全书逐页通读、第三方材料许可和公开再分发仍未完成。

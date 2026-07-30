@@ -198,11 +198,11 @@ def main() -> None:
         "html_embedded_images": html.count("data:image/png;base64,") >= 15,
         "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
-        "primary_sections_start_on_new_pdf_pages": merged.count("\\clearpage") == len(PAGE_BREAK_PARTS) + 1,
+        "primary_sections_start_on_new_pdf_pages": merged.count("\\clearpage") == len(PAGE_BREAK_PARTS),
         "chapter_8_conclusion_is_not_orphaned": (
-            "\\clearpage\n\n## 8.17 本章结论" in merged
-            and len(chapter_8_conclusion_pages) == 1
+            len(chapter_8_conclusion_pages) == 1
             and "保留失败与不可外推范围" in chapter_8_conclusion_pages[0]
+            and "8.16 延伸验证路线" in chapter_8_conclusion_pages[0]
         ),
         "reader_facing_front_matter": all(
             marker in version + "\n" + preface
@@ -497,6 +497,9 @@ def main() -> None:
                 "WarpX::Evolve",
                 "MultiDiagnostics",
                 "ReducedDiags",
+                "### 8.14.2 一张诊断记录卡",
+                "producer 与时间层",
+                "consumer 与比较量",
                 "## 8.15 练习与复现实验",
             )
         )

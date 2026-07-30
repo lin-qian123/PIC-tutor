@@ -769,6 +769,8 @@ external-file Gaussian beam：束斑理论包络检查</a></li>
 <ul>
 <li><a href="#三类-reduced-diagnostics-的最小起点" id="toc-三类-reduced-diagnostics-的最小起点">8.14.1 三类 reduced
 diagnostics 的最小起点</a></li>
+<li><a href="#一张诊断记录卡" id="toc-一张诊断记录卡">8.14.2
+一张诊断记录卡</a></li>
 </ul></li>
 <li><a href="#练习与复现实验-1" id="toc-练习与复现实验-1">8.15
 练习与复现实验</a></li>
@@ -20016,14 +20018,63 @@ point/line/plane 骨架；</li>
 <code>ParticleHistogram2D</code> 的 writer/schema
 变成物理收敛证明，也不把 <code>LoadBalanceCosts</code>
 的效率比较与场精度混为同一类 physics gate。</p>
+<h3 id="一张诊断记录卡">8.14.2 一张诊断记录卡</h3>
+<p>对任何一个新案例，都可以先写完下面五项，再决定是否值得扩大输出或运行时间：</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>项目</th>
+<th>必须写清的内容</th>
+<th>常见误读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>物理问题</td>
+<td>例如波频率、能量漂移、边界粒子通量或束流 rms</td>
+<td>把“已有一个输出文件”当成问题本身</td>
+</tr>
+<tr>
+<td>producer 与时间层</td>
+<td>哪条推进/同步路径生成状态，Full、BTD、reduced 或 scraping
+在何时采样</td>
+<td>把同一 step 编号当作同一瞬时状态</td>
+</tr>
+<tr>
+<td>consumer 与比较量</td>
+<td>哪个 analysis 或独立重建读取什么量，误差/守恒量/谱量怎样定义</td>
+<td>只报告 writer 成功而不定义 observable</td>
+</tr>
+<tr>
+<td>reference 与阈值</td>
+<td>解析解、benchmark、restart sibling、full-state reference
+或明确的性能目标</td>
+<td>用 checksum 替代物理 reference</td>
+</tr>
+<tr>
+<td>结论边界</td>
+<td>已覆盖的几何、solver、分辨率、粒子数和未覆盖的分支</td>
+<td>将局部 PASS 外推为所有设置都正确</td>
+</tr>
+</tbody>
+</table>
+<p>这张卡的作用不是增加一层文档，而是防止“输入、输出、比较和结论”在阅读中脱节。只有五项能逐一对应时，某个
+PASS
+才能被解释为可复查的证据；任何一项缺失，都应将结果降级为工作流、writer
+或源码接线线索。</p>
 <h2 id="练习与复现实验-1">8.15 练习与复现实验</h2>
 <ol type="1">
 <li><strong>证据分层题</strong>：从验证矩阵中各选一个 physics
 gate、writer/schema 检查和 performance gate，说明它们的
 producer、analysis 量和“不能支持的结论”。</li>
-<li><strong>reader-side 复现题</strong>：使用 reader-side analysis 或
-reader-side analysis
-读取一个案例输出，列出输入字段、输出文件和独立检查项。</li>
+<li><strong>reader-side 复现题</strong>：使用官方
+<code>analysis.py</code> 或独立的 reader-side analysis
+读取一个案例输出，按诊断记录卡列出输入字段、采样时间层、输出文件、比较量、阈值和不可外推范围。</li>
 <li><strong>失败边界题</strong>：解释为什么 FieldProbe coarse
 failure、uniform-plasma reader-side 能量漂移和 initial-distribution
 binary mismatch 都应保留在书中，而不能简单从验证矩阵中删除。</li>

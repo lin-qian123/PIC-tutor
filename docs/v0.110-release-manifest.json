@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39119074,
+  "total_bytes": 39126764,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1560267,
-      "sha256": "7224f5f24465e54cd1fd1f6a6c5d704b53f4f9c2453b78bfb8eec545bf70b722"
+      "bytes": 1560420,
+      "sha256": "b7e9ed60f6ff5de78bd4105197fd3ce9a229b60e6c137af3ef296e2583e3a837"
     },
     {
       "path": "TODO.md",
-      "bytes": 1448058,
-      "sha256": "56d60ac3a8d270c685fd1a30850684d19df0edcdf03184395efeb1e4941865b6"
+      "bytes": 1448901,
+      "sha256": "333d8fe3b0dc9b0b00024472a32c84c31e77b309e3dd37d294d2252e32413c7a"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5078981,
-      "sha256": "c856dbe9ec79a3b9846441a84146db8a4db28eaae62fe5dab44ca16b0e71e254"
+      "bytes": 5080790,
+      "sha256": "948f68c2c70f4d8d329cf9f465fc905bd184484b3d9dbc34161de839ba2e6792"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 844756,
-      "sha256": "733f8a062ec2a266389a869bbbd3d588f69a2672209febd0caab672f33652b3d"
+      "bytes": 846075,
+      "sha256": "b8c7bb1d4032d76a22c4a839d224ff6c3062bd4e19a172062a93a03d5b6f1324"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2965672,
-      "sha256": "12a71ba81c7d59fce9b8c07fbadc0360e780e9dbb303532406ed04319c08ffec"
+      "bytes": 2967303,
+      "sha256": "fec94b67ddb1b2a3e67f167e899c33c971d0f053130ded3bc4c791ada0d7fe33"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -208,12 +208,12 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.json",
       "bytes": 1164,
-      "sha256": "a97d6bf2b4764d6bd95dcc2cdbd4e115bafb15dc7f3b753609935cca1944af0f"
+      "sha256": "ace964344d7f2901adf868947b9bf9f65f6c5f9fb143459f36f7610f3d489b21"
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
       "bytes": 768,
-      "sha256": "12619f12c39b8c475c6ca647d8465b72e6a7c0665eeb71b4c3f0ebc731813168"
+      "sha256": "2c5521c042c38a7cc58b9dd5f1ff84271d8a9add0f0f1a8b32ef5e950018a166"
     },
     {
       "path": "docs/editorial-quality-audit-v0.81.json",
@@ -532,8 +532,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 52864,
-      "sha256": "d0c37bdde471b6f1a7d9fc04ad442c3a921b410d8bf30675814ad2a2123a1962"
+      "bytes": 53339,
+      "sha256": "8e3320068c4e95aa69aa1ed75afaf667b5b1729b553cad09e24394fcff2ec53f"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -2347,8 +2347,8 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 109332,
-      "sha256": "b7187cae35bd764ac51b49e487db6d47c61b0bcbde98553c2b55c55dfe36194f"
+      "bytes": 110651,
+      "sha256": "4c301af7d8b8e1d01fc8af62fe7fa1883a4b495a2c424049b6d1f1ef141510a8"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -5987,8 +5987,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 58520,
-      "sha256": "6da51e14445e6ffd876ec5b27e05dd4c35fd7773ddbdd6511d1c3e0a1c7828e9"
+      "bytes": 58661,
+      "sha256": "acb6c9f375e841b85869a1e50817c39662d3a03d7f3a594556a7dcf0828fba26"
     },
     {
       "path": "scripts/verify_v40_build.py",

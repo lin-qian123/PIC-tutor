@@ -743,7 +743,7 @@ $$
     $$
     \eta = \frac{\gamma_0-\gamma_{\mathrm{ph}}}{\gamma_0-1}
     $$
-    及其大-$\gamma$ 近似
+    及其大-\(\gamma\) 近似
     $$
     \eta \simeq \omega_{po}(2k_0 c \gamma^{3/2})^{-1}
     $$
@@ -1663,10 +1663,24 @@ $$
 
 这些最小输入只回答“怎样产生该类输出”。它们不替代 `FieldProbe` 的解析 diffraction gate，不把 `ParticleHistogram2D` 的 writer/schema 变成物理收敛证明，也不把 `LoadBalanceCosts` 的效率比较与场精度混为同一类 physics gate。
 
+### 8.14.2 一张诊断记录卡
+
+对任何一个新案例，都可以先写完下面五项，再决定是否值得扩大输出或运行时间：
+
+| 项目 | 必须写清的内容 | 常见误读 |
+|---|---|---|
+| 物理问题 | 例如波频率、能量漂移、边界粒子通量或束流 rms | 把“已有一个输出文件”当成问题本身 |
+| producer 与时间层 | 哪条推进/同步路径生成状态，Full、BTD、reduced 或 scraping 在何时采样 | 把同一 step 编号当作同一瞬时状态 |
+| consumer 与比较量 | 哪个 analysis 或独立重建读取什么量，误差/守恒量/谱量怎样定义 | 只报告 writer 成功而不定义 observable |
+| reference 与阈值 | 解析解、benchmark、restart sibling、full-state reference 或明确的性能目标 | 用 checksum 替代物理 reference |
+| 结论边界 | 已覆盖的几何、solver、分辨率、粒子数和未覆盖的分支 | 将局部 PASS 外推为所有设置都正确 |
+
+这张卡的作用不是增加一层文档，而是防止“输入、输出、比较和结论”在阅读中脱节。只有五项能逐一对应时，某个 PASS 才能被解释为可复查的证据；任何一项缺失，都应将结果降级为工作流、writer 或源码接线线索。
+
 ## 8.15 练习与复现实验
 
 1. **证据分层题**：从验证矩阵中各选一个 physics gate、writer/schema 检查和 performance gate，说明它们的 producer、analysis 量和“不能支持的结论”。
-2. **reader-side 复现题**：使用 reader-side analysis 或 reader-side analysis 读取一个案例输出，列出输入字段、输出文件和独立检查项。
+2. **reader-side 复现题**：使用官方 `analysis.py` 或独立的 reader-side analysis 读取一个案例输出，按诊断记录卡列出输入字段、采样时间层、输出文件、比较量、阈值和不可外推范围。
 3. **失败边界题**：解释为什么 FieldProbe coarse failure、uniform-plasma reader-side 能量漂移和 initial-distribution binary mismatch 都应保留在书中，而不能简单从验证矩阵中删除。
 
 ## 8.16 延伸验证路线
@@ -1675,8 +1689,6 @@ $$
 - 以 `FieldProbe`、`ParticleHistogram2D` 和 `LoadBalanceCosts` 的最小输入为例，分别复现解析 gate、writer/schema contract 和 performance gate。
 - 用更长的 uniform-plasma 时间窗，并结合 `energy_conserving_thermal_plasma` 的 analysis，区分短时统计漂移与可解释的总能量结论。
 - 改变 Langmuir 的模式数和拟合时间窗，检验频率测量对 sampling window 的敏感性，避免把单一窗口拟合误读为完整色散验证。
-
-\clearpage
 
 ## 8.17 本章结论
 

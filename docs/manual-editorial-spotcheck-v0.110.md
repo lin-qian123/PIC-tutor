@@ -4,7 +4,7 @@
 
 本记录是有限的人工视觉抽查，不等同于全书通读、许可确认或公开再分发签收。
 
-下方首轮抽查记录的是编辑前的 270 页排版快照，仅作为已检查内容的历史线索。后续读者化编辑、Mermaid 清理、附录术语校核、第 4--7 章主线收束、第 2、3、3A 章数学和源码导航复核、第 8 章诊断主线重写、第 9 章文献判读卡改写、第 1--3 章延伸阅读入口收束、首页/前言重写、一级章节新页起排，以及第 3--7 章源码改写后的候选版曾为 256--269 页。本轮第 7 章的 PML/EB/AMR 阅读索引重排和源码路径校正后，当前候选仍为 256 页。凡引用旧页码的条目，均属于对应编辑快照，不代表当前合订版。
+下方首轮抽查记录的是编辑前的 270 页排版快照，仅作为已检查内容的历史线索。后续读者化编辑、Mermaid 清理、附录术语校核、第 4--7 章主线收束、第 2、3、3A 章数学和源码导航复核、第 8 章诊断主线重写、第 9 章文献判读卡改写、第 1--3 章延伸阅读入口收束、首页/前言重写、一级章节新页起排，以及第 3--8 章源码改写后的候选版曾为 256--269 页。本轮第 8 章诊断记录卡、练习措辞和结论分页收束后，当前候选仍为 256 页。凡引用旧页码的条目，均属于对应编辑快照，不代表当前合订版。
 
 ## 本轮完整连续阅读（256 页快照）
 
@@ -21,8 +21,9 @@
 | 120--163 | 第 5 章 shape、旧/新 source 时间层、AMR buffer、current/charge dispatch、Direct/Esirkepov/Villasenor/Vay、同步、geometry/order evidence 与章末核查练习 | PASS（0--4 阶 shape、charge/direct current 与 Esirkepov 的长 C++ 实现重排为明确声明的阅读伪代码后复核）；公式、数学记号、表格、源码路径和第 6 章交界完整，无右侧裁切、重叠或低信息孤页 |
 | 164--199 | 第 6 章 FDTD/PML、PSATD/JRhom/RZ、静电/静磁、Hybrid Ohm、隐式与 regression 入口 | PASS（JRhom/RZ 长源码改为阅读伪代码、遗留行内数学清理、regression 五列表改为分组项目列表后复核）；公式、代码、长路径、列表、练习、结论和第 7 章交界完整，无右侧裁切、列间覆盖或低信息孤页 |
 | 200--212 | 第 7 章 field/particle 拓扑、PEC/PMC/Silver-Mueller、PML、embedded boundary、guard-cell/AMR、练习与结论 | PASS（逐页核对 PML 构造参数索引、split-field/electric-current 片段、EB 几何/face-extension/particle scraping、load-balance/regrid 与 transition-zone 证据表；更正 `Source/EmbeddedBoundary/WarpXInitEB.cpp` 路径并将纯控制流改为明确标注的阅读表达后复核）；无右侧裁切、表格覆盖、孤立结论页或低信息孤页 |
+| 213--248 | 第 8 章统计与谱、物理案例、诊断调度、full/BTD/scraping/reduced 输出、writer/buffer、reader-side analysis、证据矩阵、练习与结论 | PASS（逐页核对 producer/consumer 时间语义、源码职责、图像/公式/长标识和表格；新增诊断记录卡，修复 reader-side exercise 重复措辞与行内 \(\gamma\)，并让 8.16 与 8.17 连续收束）；无右侧裁切、表格覆盖、孤立结论页或低信息孤页 |
 
-后续连续阅读尚未覆盖当前 PDF 第 213--256 页。下方较后页码的独立复核属于旧排版快照，不能补充为当前候选版中间章节已通读的证据。
+后续连续阅读尚未覆盖当前 PDF 第 249--256 页。下方较后页码的独立复核属于旧排版快照，不能补充为当前候选版第 9 章及附录已通读的证据。
 
 ## 历史独立复核（267 页快照）
 

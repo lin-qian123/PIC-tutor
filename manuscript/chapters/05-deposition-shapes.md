@@ -2214,6 +2214,31 @@ Vay 的可用范围尤其需要按“能运行的条件”而不是算法名称�
 
 对 AMR，准确结论更强也更窄：WarpX 在初始化阶段显式拒绝 `Vay + mesh refinement`，并非一次进入物理推进后的数值失败。读者应把它当作输入组合限制，并在尝试运行前检查，而不是用某个 Cartesian 通过案例替代这条 guard。
 
+### 5.14.2.1 Vay 配置判读卡：先分开 pusher 和 deposition
+
+输入文件中出现 `vay` 不代表只选择了一件事。`algo.particle_pusher = vay` 选择的是第 4 章的 `UpdateMomentumVay()`，它决定单粒子动量怎样更新；`algo.current_deposition = vay` 选择的是本章的 Vay 电流沉积和后续 `current_fp_vay` source 路径。官方 Cartesian 例子同时设置这两个选项，是一个已选定的组合，不应把它读成两个选项必然共享同一组支持范围。
+
+当问题是“能否用 Vay deposition”时，先只对 `algo.current_deposition = vay` 做下列输入前检查：
+
+1. **先辨别自己要检查的对象。**若只改动 `algo.particle_pusher`，应回到第 4 章检查轨道、时间层和 frame-consistency；不要把本卡的 deposition guard 错加到 pusher 上。若设置了 `algo.current_deposition = vay`，才继续检查 source 路径。
+2. **再检查初始化就会拒绝的组合。**当前源码要求 PSATD、关闭 current centering、`amr.max_level = 0`、`psatd.periodic_single_box_fft = 0`，并且不能与 `psatd.current_correction = 1`、JRhom 或 Galilean PSATD 组合。RZ 和 1D geometry 也没有 Vay deposition kernel。这里的 `amr.max_level = 0` 是对 Vay **电流沉积**的限制，不是对 AMR 一般能力或 Vay pusher 的结论。
+3. **把可运行配置写成可检查的最小集合。**一个 Cartesian、非 AMR、非 current-centering 的 PSATD 起点至少应能清楚看出
+
+   ```text
+   algo.current_deposition = vay
+   algo.maxwell_solver = psatd
+   amr.max_level = 0
+   warpx.do_current_centering = 0
+   psatd.periodic_single_box_fft = 0
+   psatd.current_correction = 0
+   ```
+
+   这不是可直接复制到任意物理问题的配方，而是一张让每个约束都有归属的 preflight 清单。若还启用 comoving/时间平均等 PSATD 选项，必须继续检查它们是否要求“常量 J、线性 rho”的时间模型；不能因基础六项通过就默认整个组合被支持。
+4. **正确解释 AMR guard。**当 `amr.max_level > 0` 且 current deposition 为 Vay 时，初始化会给出“not implemented with mesh refinement”并停止。因此没有合格的 Vay+AMR producer、没有 `divE-rho` 输出，不能把这次拒绝记为 AMR 数值不稳定、charge failure，或 Vay pusher 的失败。
+5. **再选择和配置相称的验证。**对于已经通过 preflight 的 Cartesian 单层 PSATD case，才比较指定时间层的 `divE-rho/epsilon_0`、场误差或独立解析量。一个 Cartesian PASS 证明的是那个输入和 observable；它不解除 RZ/1D guard，也不为 AMR、边界裁剪、JRhom、Galilean 或正式收敛提供证据。
+
+如果研究问题确实需要 mesh refinement，正确动作不是删掉 `amr.max_level` 的报错检查后继续解释输出，而是回到 5.14.3：按 geometry、时间层和 AMR source/synchronization 路径选择有相应证据的 deposition algorithm，再为该组合定义独立 observable。**配置接受、算法分派和物理验证是三道不同的门。**
+
 ### 5.14.3 选择沉积算法：先问约束，再问精度
 
 选择电流沉积算法时，名称不是第一判断条件。应依次检查几何和网格布局、显式或隐式时间层、轨迹信息是否足够、以及可用的诊断量。下表给出读者可以直接用于输入设计的稳定结论。

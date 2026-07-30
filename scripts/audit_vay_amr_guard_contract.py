@@ -34,6 +34,15 @@ def main() -> int:
         "source_vay_rz_guard": "Vay deposition not implemented in RZ geometry" in kernel,
         "source_vay_1d_guard": "Vay deposition not implemented in 1D geometry" in kernel,
         "chapter_amr_boundary": "AMR、边界裁剪" in chapter and "正式收敛阶" in chapter,
+        "chapter_vay_configuration_reader_card": all(
+            marker in chapter
+            for marker in (
+                "### 5.14.2.1 Vay 配置判读卡：先分开 pusher 和 deposition",
+                "algo.particle_pusher = vay",
+                "algo.current_deposition = vay",
+                "配置接受、算法分派和物理验证是三道不同的门",
+            )
+        ),
         "gap_register_amr_boundary": "AMR 当前由 source guard" in note,
         "no_amr_runtime_pass_claim": "Vay AMR runtime PASS" not in chapter and "Vay AMR runtime PASS" not in note,
     }

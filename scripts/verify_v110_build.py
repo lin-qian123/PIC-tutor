@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 5 RZ axis and convergence cards plus the Chapter 7 PML card yield 259 pages.
-EXPECTED_PDF_PAGES = 259
+# The Chapter 5 Vay, RZ axis, and convergence cards plus the Chapter 7 PML card yield 260 pages.
+EXPECTED_PDF_PAGES = 260
 
 
 def image_links(text: str) -> list[str]:
@@ -777,6 +777,14 @@ def main() -> None:
                 "没有关闭 charge correctness",
             )
         ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
+        "chapter_5_vay_configuration_reader_card": all(
+            marker in chapter_5
+            for marker in (
+                "### 5.14.2.1 Vay 配置判读卡：先分开 pusher 和 deposition",
+                "配置接受、算法分派和物理验证是三道不同的门",
+                "一个 Cartesian PASS 证明的是那个输入和 observable",
+            )
+        ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
         "chapter_5_reader_extracts_are_declared": all(
             marker in chapter_5
             for marker in (
@@ -1194,13 +1202,13 @@ def main() -> None:
             marker in manual_spotcheck
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
-                "本轮连续阅读已覆盖当前 PDF 第 1--259 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--260 页",
                 "| 1--6 |",
-                "| 120--166 |",
-                "| 167--201 |",
-                "| 216--251 |",
-                "| 252--256 |",
-                "| 257--259 |",
+                "| 120--167 |",
+                "| 168--202 |",
+                "| 217--252 |",
+                "| 253--257 |",
+                "| 258--260 |",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

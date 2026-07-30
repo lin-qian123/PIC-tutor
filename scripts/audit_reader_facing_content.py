@@ -379,6 +379,15 @@ def main() -> int:
                 "没有关闭 charge correctness",
             )
         ) and not chapter_5_project_narration_markers,
+        "chapter_5_vay_configuration_reader_card": all(
+            marker in chapter_5
+            for marker in (
+                "### 5.14.2.1 Vay 配置判读卡：先分开 pusher 和 deposition",
+                "配置接受、算法分派和物理验证是三道不同的门",
+                "初始化阶段显式拒绝",
+                "一个 Cartesian PASS 证明的是那个输入和 observable",
+            )
+        ) and not chapter_5_project_narration_markers,
         "chapter_4_5_multiphysics_source_handoff": all(
             marker in chapter_5
             for marker in (
@@ -723,12 +732,12 @@ def main() -> int:
         "full_current_pdf_read_is_recorded": all(
             marker in manual_spotcheck
             for marker in (
-                "本轮连续阅读已覆盖当前 PDF 第 1--259 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--260 页",
                 "| 1--6 |",
                 "| 7--8 |",
-                "| 216--251 |",
-                "| 252--256 |",
-                "| 257--259 |",
+                "| 217--252 |",
+                "| 253--257 |",
+                "| 258--260 |",
             )
         ),
     }

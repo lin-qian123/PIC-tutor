@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39212963,
+  "total_bytes": 39230127,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1561170,
-      "sha256": "4db4f24103b3480064ea2b17bf3d509087c193036cba27d98fbe6bef44fb6adb"
+      "bytes": 1561267,
+      "sha256": "8ed349d5f3128e22874c16f3c9b9998c2aa7814d3dd4289e4dfe377476d8bd79"
     },
     {
       "path": "TODO.md",
-      "bytes": 1451863,
-      "sha256": "2cee0b9327b13864bcc9df986c967393664fef379abb3285964d49d8f3b693f0"
+      "bytes": 1452383,
+      "sha256": "04f1558f87e7973e10c6f3e5b288e4857cfa7e5e0301c3a558740df07f1c446a"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5096138,
-      "sha256": "2d83d87bce86330480ac87d42a01409578a422d6277abb1cc042ddbb8d22df2a"
+      "bytes": 5099841,
+      "sha256": "d1dde8313ea3d6d1354dd53a31be74a1aea15089657bce2fef95d50cc71c7b84"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 857864,
-      "sha256": "37bcf1d0c18f227373acb658d9db985f00a830cf1b849833c5820982474eef3b"
+      "bytes": 860934,
+      "sha256": "decdfc1d1b782e5864a824c354242244f55de41983cf7a2dfdfe4924087d8375"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2985449,
-      "sha256": "761b54e0b3b1e6c1ae53a14ec4f62e6955fb05633cb6e1c9321be99df629bebe"
+      "bytes": 2990226,
+      "sha256": "b9c799d52c45f8d7739a4cff2c26744fcc8bf1ee86fb1b9ccf5670ee20a26c19"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -532,8 +532,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 55361,
-      "sha256": "51b6531aff25f2f81afb155acc44f794a2ef25c0825a849f340dc55056753b85"
+      "bytes": 55736,
+      "sha256": "4dce6cfbbe04043591566883466f7413f02df837073b501fb07b0c47332b92f8"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -917,13 +917,13 @@
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
-      "bytes": 4538,
-      "sha256": "78cbcae769283b6af8635f0bf08c817bd813fe51f991474a8e875ebd27b27ada"
+      "bytes": 4591,
+      "sha256": "83536f0305bf87522d7414b2bd587d0d7187a6c02033b56dbb25c876adaf6bc1"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.md",
-      "bytes": 3092,
-      "sha256": "a02dbbebb8dcc805c0d7638d3821cfbafadae3bdbbe008dea7eb21c551bf7b50"
+      "bytes": 3147,
+      "sha256": "2c943c42305666eb41635780a5fe90682f5979fb0c894f668d8e1b6abe95b2d6"
     },
     {
       "path": "docs/rz-axis-charge-repeat-stability-v0.93.json",
@@ -2327,8 +2327,8 @@
     },
     {
       "path": "manuscript/chapters/05-deposition-shapes.md",
-      "bytes": 177216,
-      "sha256": "4abac6d6cb5b3e66cc8810470857687c5b70a3d49497c10556daeb0afb792709"
+      "bytes": 180286,
+      "sha256": "bb6c19609fee41e35f96cd55dda498d02711049b0c70eac9d651954d09beac9f"
     },
     {
       "path": "manuscript/chapters/06-field-solvers.md",
@@ -4387,8 +4387,8 @@
     },
     {
       "path": "scripts/audit_editorial_quality.py",
-      "bytes": 8915,
-      "sha256": "1b99d0fe7693b9031cdfff91b66fc89e53f351cfb6290101b71c95685c3c7007"
+      "bytes": 8970,
+      "sha256": "4248afa92ed28984ab63c41a84e255290f7d9ae3b557eb21e75c9d164374f25b"
     },
     {
       "path": "scripts/audit_esirkepov_bounded_compare.py",
@@ -4587,8 +4587,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 43133,
-      "sha256": "a4911148f9a2567b89d02d6d09e0ce9126cede54bb3b1c7241ad159c5ed05ca9"
+      "bytes": 43614,
+      "sha256": "020370279ed518b11a9a7e0066448588aa190d891c22e6c507587aa3dc3fdd3c"
     },
     {
       "path": "scripts/audit_release_consistency.py",
@@ -4692,8 +4692,8 @@
     },
     {
       "path": "scripts/audit_vay_amr_guard_contract.py",
-      "bytes": 3379,
-      "sha256": "c1b565606bc467a2cf71217bbfe3a8a981d10747ef07c8ae39abb4b168507278"
+      "bytes": 3780,
+      "sha256": "2a0a366a8d0615359b4bf7abe04706b65dde6cf6a076706b7991d499ee595a39"
     },
     {
       "path": "scripts/audit_vay_geometry_order_wiring.py",
@@ -5987,8 +5987,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 61288,
-      "sha256": "d2fd795732bb5e2e5abcba1f71e60c2cea076651cbd94301b9c349c3650110c8"
+      "bytes": 61795,
+      "sha256": "600a5a228930e648f3417eaca61b6196f05b6960ab998eb725ee424144323524"
     },
     {
       "path": "scripts/verify_v40_build.py",

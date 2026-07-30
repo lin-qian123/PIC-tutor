@@ -25,6 +25,7 @@
 | `chapter_5_current_deposition_route` | `PASS` |
 | `chapter_5_convergence_reader_card` | `PASS` |
 | `chapter_5_rz_axis_reader_card` | `PASS` |
+| `chapter_5_vay_configuration_reader_card` | `PASS` |
 | `chapter_4_5_multiphysics_source_handoff` | `PASS` |
 | `chapter_6_opening_is_reader_facing` | `PASS` |
 | `chapter_6_current_solver_route` | `PASS` |

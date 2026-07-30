@@ -129,5 +129,3 @@ $$
 1. 看到 `ux, uy, uz` 时，先确认它来自输入、内部粒子容器还是 diagnostics；分别按 $\gamma\beta$、$\gamma\mathbf{v}$ 或该输出的 metadata 解释，不能把数值直接混用。
 2. 看到 `rho`、`current_fp` 或 `current_buf` 时，先判断它属于 local kernel、level buffer、同步后场，还是最终 diagnostics 输出；同名物理量可能处于不同生命周期阶段。
 3. 看到上标 $n$、$n+1/2$ 或 `relative_time` 时，先确认粒子位置、场、current 和 charge 是否处在同一个时间层；不能只根据变量名推断守恒性。
-4. 看到 `analysis.py`、`analysis_default_regression.py` 或 checksum 时，先区分 physics、writer 和 checksum 三类 gate；本书第 8 章明确保留这三种证据等级的边界。
-5. 看到 `lev`、`fine`、`coarse`、`aux` 或 `buf` 时，先回到 AMR route、gather/deposit 位置和同步顺序，再解释某个字段的数值意义。

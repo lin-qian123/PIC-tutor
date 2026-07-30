@@ -58,12 +58,13 @@ def main() -> int:
         "register_heading": register.startswith("# PIC-tutor 当前成书缺口登记"),
         "all_ids_present": all(identifier in register for identifier in REGISTER_IDS),
         "evidence_paths_present": all((root / path).is_file() for path in evidence_paths),
-        "chapter_section": "## 9.8 成书的已知证据边界" in chapter,
+        "chapter_section": "## 9.8 如何阅读证据边界" in chapter,
         "chapter_boundary_summary": all(marker in chapter for marker in (
-            "文献尚无全文",
-            "代码路径尚无运行数据",
-            "第三方材料能否公开再分发",
-            "缺口登记只是帮助读者回查限制的索引",
+            "文献边界",
+            "实现边界",
+            "数值边界",
+            "收敛边界",
+            "第 8 章的验证矩阵",
         )),
         "rz_axis_stencil_evidence": all(marker in register for marker in (
             "rz-axis-divergence-stencil-v0.98/contract.json",

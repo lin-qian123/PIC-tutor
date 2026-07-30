@@ -18,7 +18,7 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The current Chapter 8 reader-path revision compacts the built layout to 261 pages.
+# The current Chapter 9 reader-path revision compacts the built layout to 261 pages.
 EXPECTED_PDF_PAGES = 261
 
 
@@ -112,6 +112,9 @@ def main() -> None:
     chapter_8_stale_location_markers = re.findall(
         r"(?:Source/[A-Za-z0-9_./-]+\.(?:cpp|H)|Docs/[A-Za-z0-9_./-]+\.rst):\d+",
         chapter_8,
+    )
+    chapter_9 = (ROOT / "manuscript" / "chapters" / "09-literature-roadmap.md").read_text(
+        encoding="utf-8"
     )
     chapter_3a_numbers = [
         int(number)
@@ -240,6 +243,24 @@ def main() -> None:
             r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录",
             chapter_8,
         ),
+        "chapter_9_current_literature_route": all(
+            marker in chapter_9
+            for marker in (
+                "文献是论证工具，不是书目清单",
+                "一张文献判读卡",
+                "## 9.7 两条深读路线",
+                "## 9.8 如何阅读证据边界",
+                "第 8 章的验证矩阵",
+                "## 9.10 练习与复核",
+            )
+        )
+        and not re.search(
+            r"docs/|references/|notes/|runs/|scripts/|public-evidence-index|literature-map|"
+            r"仓库|核心目录|文献地图|缺口登记|公开再分发|OPEN_EXTERNAL_ACCESS|"
+            r"PRE_PHYSICS_BOUNDARY|RUNTIME_LEDGER_UNPROVEN|"
+            r"CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN",
+            chapter_9,
+        ),
         "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),
         "chapter_3a_current_initialization_route": all(
             marker in chapter_3a
@@ -327,8 +348,7 @@ def main() -> None:
             "这六条中，`LeeCPC2015` 的边界最容易被误读" in source
         ),
         "public_distribution_boundary_registered": (
-            "第三方材料能否公开再分发" in source
-            and "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED" in distribution_risk
+            "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED" in distribution_risk
             and (ROOT / "scripts/audit_public_distribution_boundary.py").is_file()
         ),
         "vay_2014_review_closure": all(
@@ -676,9 +696,9 @@ def main() -> None:
         "current_gap_register": all(
             marker in source
             for marker in (
-                "## 9.8 成书的已知证据边界",
+                "## 9.8 如何阅读证据边界",
                 "formal numerical order",
-                "缺口登记只是帮助读者回查限制的索引",
+                "第 8 章的验证矩阵",
             )
         ),
         "transition_zone_runtime_activation": all(

@@ -150,6 +150,16 @@ def main() -> int:
         r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录",
         chapter_8,
     )
+    chapter_9_project_path_markers = re.findall(
+        r"docs/|references/|notes/|runs/|scripts/|public-evidence-index|literature-map",
+        chapter_9,
+    )
+    chapter_9_project_narration_markers = re.findall(
+        r"仓库|核心目录|文献地图|缺口登记|公开再分发|OPEN_EXTERNAL_ACCESS|"
+        r"PRE_PHYSICS_BOUNDARY|RUNTIME_LEDGER_UNPROVEN|"
+        r"CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN",
+        chapter_9,
+    )
     checks = {
         "version_is_reader_facing": "不是开发日志" in version and "读者在本版可以学到什么" in version,
         "manuscript_readme_is_reader_facing": "PIC 教程" in readme and "阅读路径" in readme and "不是面向维护者的提交记录" in readme,
@@ -161,12 +171,16 @@ def main() -> int:
             r"本机|本地资产|materialize|asset contract|access audit|metadata contract|source crosswalk|本地路径",
             chapter_9,
         )
+        and not chapter_9_project_path_markers
+        and not chapter_9_project_narration_markers
         and all(
             marker in chapter_9
             for marker in (
                 "文献是论证工具，不是书目清单",
+                "一张文献判读卡",
                 "## 9.7 两条深读路线",
-                "缺口登记只是帮助读者回查限制的索引",
+                "## 9.8 如何阅读证据边界",
+                "第 8 章的验证矩阵",
             )
         ),
         "chapter_4_uses_reader_facing_evidence_language": not chapter_4_project_record_markers,
@@ -340,6 +354,8 @@ def main() -> int:
         "chapter_8_project_path_markers": chapter_8_project_path_markers,
         "chapter_8_project_narration_markers": chapter_8_project_narration_markers,
         "chapter_8_stale_location_markers": chapter_8_stale_location_markers,
+        "chapter_9_project_path_markers": chapter_9_project_path_markers,
+        "chapter_9_project_narration_markers": chapter_9_project_narration_markers,
         "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
         "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,
         "chapter_4_stale_location_markers": chapter_4_stale_location_markers,

@@ -126,9 +126,9 @@ def main() -> int:
         "html_title_and_heading_count": bool(parser_html.headings)
         and parser_html.headings[0] == ("h1", expected_title)
         and len(html_body_headings) == len(headings),
-        "html_key_sections": all(marker in html_text for marker in ("成书的已知证据边界", "收敛研究：描述性趋势不是正式阶数", "6.6.1 先按更新对象", "7.5.1 用正确的")),
+        "html_key_sections": all(marker in html_text for marker in ("如何阅读证据边界", "收敛研究：描述性趋势不是正式阶数", "6.6.1 先按更新对象", "7.5.1 用正确的")),
         "pdf_page_count_positive": len(pdf_reader.pages) > 0,
-        "pdf_key_sections": all(marker in pdf_text for marker in ("成书的已知证据边界", "收敛研究：描述性趋势不是正式阶数", "先按更新对象理解 PSATD 系数", "用正确的 observable 判断 PML")),
+        "pdf_key_sections": all(marker in pdf_text for marker in ("如何阅读证据边界", "收敛研究：描述性趋势不是正式阶数", "先按更新对象理解 PSATD 系数", "用正确的 observable 判断 PML")),
         "no_build_warning_markers": not any(marker in pdf_text for marker in ("Could not fetch resource", "Missing character")),
     }
     result = {

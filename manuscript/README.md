@@ -16,13 +16,8 @@ PIC-tutor 是一本从物理模型走到 WarpX 源码的 PIC 教程。它面向�
 
 书中明确区分四种说法：公式推导、当前源码行为、实际运行结果和尚未证明的推断。一个 case 通过 regression 只说明该 case 的指定 observable 在指定输入下满足 gate，不能自动推广到其他 geometry、shape、AMR、时间步或粒子数。所有重要的源码和运行结论都应能回到 `../warpx`、官方文档、输入文件、analysis 脚本或论文资产。
 
-当前 v0.110 的正式收敛重复斜率 gate 已重跑并通过，但 formal numerical order、RZ axis-charge closure、若干 AMR route ledger 和部分论文发表版逐式核对仍在 [当前成书缺口登记](../docs/current-book-gap-register.md) 中。这里保留这些边界是为了帮助读者正确解释结果，而不是把项目状态冒充成教程结论。
+本书有意保留 formal numerical order、RZ axis-charge closure、部分 AMR 数据迁移路径和少数论文版本差异等未闭合边界。它们会在相关章节中明确写成“已经支持什么、仍不能推出什么”，帮助读者正确解释结果，而不是把局部验证或维护状态冒充成教程结论。
 
-## 构建
+## 读者的核查顺序
 
-```bash
-python scripts/build_v110.py
-python scripts/verify_v110_build.py --build-log /tmp/pic-tutor-build-v110.log
-```
-
-当前合订产物位于 `dist/pic-tutor-v0.110.{md,html,pdf}`。版本历史、运行合同和发布审计属于仓库证据层，分别位于 `docs/`、`runs/` 和 `notes/`，不替代正文的教学叙事。
+当一个案例声称验证某条物理或数值结论时，依次检查：输入设置了什么物理问题，源码在哪个阶段消费这些参数，诊断输出测量的量是否处在正确时间层，analysis 比较的阈值是什么，以及该比较不能覆盖哪些几何、算法或并行分支。这个顺序贯穿全书，也比单独记住某个函数名或通过状态更可靠。

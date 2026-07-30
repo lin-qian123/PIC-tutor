@@ -469,7 +469,7 @@ $$
 
 把均匀漂移等离子体在数值网格中改写为近似静止的背景。旧电荷因而要携带相位，离散连续性方程也从普通端点差分变成带 $\theta^2=\exp(i\mathbf{k}\cdot\mathbf{v}_{gal}\Delta t)$ 的形式。这正是上面 `rho_old_mod` 出现的原因。
 
-对 boosted-frame 问题，读者应把选择过程分成三步：先由物理问题确定背景等离子体在计算坐标中的漂移方向；再让 `v_galilean` 接近该背景漂移，而不是任意取一个移动速度；最后用稳定性和物理量两类证据分别检查。Lehe et al. 的理论说明这种表示能消除主要的漂移 alias resonance；Kirchen et al. 的应用说明抑制 NCI 后仍须检查回变换的加速器物理量。两篇论文的全文笔记和逐式记录保留在本章证据台账中。
+对 boosted-frame 问题，读者应把选择过程分成三步：先由物理问题确定背景等离子体在计算坐标中的漂移方向；再让 `v_galilean` 接近该背景漂移，而不是任意取一个移动速度；最后用稳定性和物理量两类证据分别检查。Lehe et al. 的理论说明这种表示能消除主要的漂移 alias resonance；Kirchen et al. 的应用说明抑制 NCI 后仍须检查回变换的加速器物理量。需要进一步判断公式或适用范围时，应直接回到两篇论文的正文，并将其假设与当前输入、源码分派和输出观察量逐项对应。
 
 filter、current correction 与 Galilean 表示因此必须分开：`warpx.use_filter` 主要压制短波 alias；`psatd.current_correction` 投影连续性残差并支撑 Gauss-law；Galilean 坐标改变源项在网格上的表示。它们可在同一输入卡出现，但不能互相替代。Godfrey--Vay 的 fixed-grid NCI 分析、WarpX 的 `NCIGodfreyFilter` 名称和普通 PSATD filter 也不是同一个开关或同一个证明。
 

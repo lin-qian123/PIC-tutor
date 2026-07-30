@@ -3,7 +3,7 @@
 - classification: `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN`
 - scope: automated structure and artifact consistency; not a substitute for human reading or redistribution approval
 - headings: `323` Markdown / `323` HTML
-- PDF pages: `258`
+- PDF pages: `259`
 
 | check | status |
 |---|:---:|

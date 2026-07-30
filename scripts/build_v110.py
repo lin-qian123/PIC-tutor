@@ -14,6 +14,7 @@ OUTPUT_MD = DIST / "pic-tutor-v0.110.md"
 OUTPUT_HTML = DIST / "pic-tutor-v0.110.html"
 OUTPUT_PDF = DIST / "pic-tutor-v0.110.pdf"
 HTML_STYLE = ROOT / "manuscript" / "assets" / "pic-tutor-html-style.html"
+PDF_FRONT_MATTER = ROOT / "manuscript" / "assets" / "pic-tutor-pdf-frontmatter.tex"
 PROJECT_ROOT_TEXT = ROOT.as_posix()
 WARPX_ROOT_TEXT = (ROOT.parent / "warpx").as_posix()
 
@@ -104,6 +105,8 @@ def build_pdf() -> None:
         "--metadata",
             "title=PIC-tutor v0.110",
         "--pdf-engine=xelatex",
+        "--include-in-header",
+        str(PDF_FRONT_MATTER),
         "-V",
         "geometry:margin=2cm",
     ]

@@ -592,7 +592,7 @@ laser-target applications
 - electron-fluid Ohm closure
 - Faraday + RK 子步推进 `B`
 
-而不是 `WarpXFluidContainer` 那条额外 cold-fluid species runtime layer。这个边界必须写死，因为已有源码笔记已经明确：
+而不是 `WarpXFluidContainer` 那条额外 cold-fluid species runtime layer。这个边界必须写死，因为两条实现承担的职责不同：
 
 - `Fluids/`
   - 自己维护 nodal `N/NU`

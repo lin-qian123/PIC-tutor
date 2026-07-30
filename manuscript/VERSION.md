@@ -1,6 +1,6 @@
-# PIC-tutor v0.110
+# PIC-tutor
 
-这是面向读者的 PIC 教程版本说明，不是开发日志。书稿从连续的 Vlasov-Maxwell 模型出发，逐步建立宏粒子、网格、时间推进、粒子推进器、沉积、场求解器、边界、AMR 与诊断之间的关系，最后用 WarpX 的源码和可运行案例把这些概念落到程序行为上。
+这是面向读者的 PIC 教程开篇，不是开发日志。书稿从连续的 Vlasov-Maxwell 模型出发，逐步建立宏粒子、网格、时间推进、粒子推进器、沉积、场求解器、边界、AMR 与诊断之间的关系，最后用 WarpX 的源码和可运行案例把这些概念落到程序行为上。
 
 ## 读者在本版可以学到什么
 
@@ -11,18 +11,17 @@
 - 根据 CFL、Debye 长度、plasma frequency、边界和诊断量选择一个可解释的输入案例。
 - 用源码路径、输入参数、输出量和回归分析共同判断“程序运行了”是否等于“物理结果可信”。
 
-## 证据范围
+## 如何判断一个结论
 
-本版绑定同级只读 WarpX checkout 的源码、官方文档、示例、regression 和已取得的论文资产。正文把结论分成三层：数学/文献解释、当前源码映射、实际运行或分析结果。局部 runtime 通过不自动代表完整几何、阶数、AMR 或收敛阶覆盖；`BOUNDARY`、`OPEN`、`UNPROVEN` 等词表示证据边界，不是措辞上的保留。
+每一项重要结论都应先问它属于哪一层证据：
 
-v0.110 重新执行了 RZ/RSPHERE 正式收敛 study 的第二组 12 个 2-rank producer。correction-on 的 14 项 repeat-slope comparison 全部通过，最大绝对 slope 差为 `2.0135e-11`；这只证明重复 family 的 slope 一致性，仍不等于 formal numerical order 或 axis-charge closure 已完成。完整证据见 [当前缺口登记](../docs/current-book-gap-register.md) 和 v0.110 的发布审计文件。
+1. **数学和文献**说明连续模型、离散近似和适用假设；
+2. **源码映射**说明程序实际在哪个对象或函数中实现这一近似；
+3. **输入和诊断**说明某个案例究竟比较了什么 observable；
+4. **运行结果**只能支持该输入、几何、算法与容差下的结论，不能自动推广到其他分支。
 
-## 源码快照与复现
+因此，case 通过 regression 并不等于任意配置都正确；公式成立也不等于每条实现路径都已覆盖。书中出现“边界”“未覆盖”或“不能外推”时，指的是证据强度的范围，而不是回避结论。
 
-- WarpX 分支：`pkuHEDPbranch`
-- WarpX commit：`063f8b586f04321e13150ae3e730e0794ca75cb1`
-- 源码入口：`$WARPX_ROOT/Source/`
-- 官方文档：`$WARPX_ROOT/Docs/source/`
-- 示例和回归：`$WARPX_ROOT/Examples/`、`$WARPX_ROOT/Regression/`
+## 建议的阅读方式
 
-在仓库根目录执行 `python scripts/build_v110.py` 可重建合订 Markdown、HTML 和 PDF；执行 `python scripts/verify_v110_build.py --build-log <log>` 可检查产物的章节、链接、图表、页数和证据合同。历史版本记录保存在 `docs/version-history-v0.110.md`，不再作为正文前言拼入读者版。
+第一次阅读时，沿着每章的“问题 -> 方程或离散规则 -> 源码职责 -> 最小案例 -> 练习”完成主线。遇到函数名或测试名时，不必先记住它们；先回答它消费什么数据、产出什么数据、处在哪个时间层，以及应由哪个 observable 检验。第二次阅读再沿源码文件和输入案例回查细节。

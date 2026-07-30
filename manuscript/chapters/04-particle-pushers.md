@@ -190,7 +190,7 @@ $$
 
 这一节背后的经典来源可以直接回到 Birdsall-Langdon 1985 第一分卷 `4-3` 到 `4-5`。那里把磁推进的核心先写成几何分裂：电场部分是半步 impulse，磁场部分是速度空间旋转；随后再把旋转压成 `t=\tan(\theta/2)`、`s=2t/(1+t^2)`、`c=(1-t^2)/(1+t^2)` 这组半角变量，并进一步给出向量 Boris 形式。对本章来说，这个来源有两个价值。第一，WarpX 的 Boris 更新不是孤立经验公式，而是这条 “half-accel + rotation + half-accel” 离散合同的现代实现。第二，Birdsall 在 `4-5` 里明确区分了 `1d2v/1d3v` 和真正的一维动力学，这正好解释了为什么即使空间维数较低，本章后面讨论的 mover 仍必须保留多速度分量与磁旋转结构。
 
-Boris 1970 的原始历史位置需要单独标注边界：本书给出 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但目前没有可逐页核对的会议论文全文。因此，本章的算法推导采用 Birdsall--Langdon 1985 的完整讲解，WarpX 的实现说明则回到 `Source/Particles/Pusher/UpdateMomentumBoris.H`；不能把这三层材料写成“已经完成 Boris 1970 原文精读”。
+Boris 1970 的原始历史位置需要单独标注边界：本书给出 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但目前没有可逐页核对的会议论文全文。因此，本章的算法推导采用 Birdsall--Langdon 1985 的完整讲解，WarpX 的实现说明则回到 `Source/Particles/Pusher/UpdateMomentumBoris.H`；Boris 1970 不能作为已经逐页核查的直接公式依据。
 
 物理上可以先记住：
 
@@ -1141,7 +1141,7 @@ $$
 
 这正好解释了为什么 `MultiParticleContainer::Evolve()` 在 implicit 模式下还要额外处理 `current_fp_non_suborbit` 和 `MassMatrices_PC` 的清零时机，见 `../warpx/Source/Particles/MultiParticleContainer.cpp`。它不是普通 bookkeeping，而是在维护 JFNK 的三项分拆。
 
-这一节在本地 checkout 里也有一条非常直接的 regression 入口：`Examples/Tests/radiation_reaction/`。它不是应用级 checksum，而是强 analysis：
+WarpX 为这一节提供了一条直接的 regression 入口：`Examples/Tests/radiation_reaction/`。它不是应用级 checksum，而是强 analysis：
 
 - 平行动量 case 要求 `gamma` 保持不变；
 - 垂直动量 case 要求 `gamma(t)` 满足解析 Landau-Lifshitz 衰减公式；

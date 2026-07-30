@@ -22,9 +22,9 @@ def build_report(root: Path) -> dict[str, object]:
     checks = [
         check(root, "README.md", f"当前成书版本为 `{CURRENT_VERSION}`"),
         check(root, "README.md", "拒绝 README 中已知的旧当前版本口径"),
-        check(root, "manuscript/README.md", f"当前合订产物位于 `dist/pic-tutor-{CURRENT_VERSION}.{{md,html,pdf}}`"),
-        check(root, "manuscript/VERSION.md", f"# PIC-tutor {CURRENT_VERSION}"),
-        check(root, "manuscript/VERSION.md", "scripts/verify_v110_build.py"),
+        check(root, "manuscript/README.md", "读者的核查顺序"),
+        check(root, "manuscript/VERSION.md", "# PIC-tutor"),
+        check(root, "manuscript/VERSION.md", "建议的阅读方式"),
         check(root, "docs/public-repo-release-audit.md", f"dist/pic-tutor-{CURRENT_VERSION}.pdf"),
         check(root, "docs/v0.110-release-manifest.json", f'"release": "PIC-tutor {CURRENT_VERSION}"'),
         check(root, "scripts/build_v110.py", f"pic-tutor-{CURRENT_VERSION}"),

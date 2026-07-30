@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The Chapter 5 reader-path consolidation compacts the built layout to 258 pages.
-EXPECTED_PDF_PAGES = 258
+# The reader-facing front matter revision yields a 259-page layout.
+EXPECTED_PDF_PAGES = 259
 
 
 def image_links(text: str) -> list[str]:
@@ -58,6 +58,13 @@ def main() -> None:
     pdf_text = "\n".join(page.extract_text() or "" for page in reader.pages)
     manual_spotcheck = MANUAL_SPOTCHECK.read_text(encoding="utf-8") if MANUAL_SPOTCHECK.exists() else ""
     distribution_risk = (ROOT / "docs/public-distribution-risk-register-v0.110.md").read_text(encoding="utf-8")
+    version = (ROOT / "manuscript" / "VERSION.md").read_text(encoding="utf-8")
+    preface = (ROOT / "manuscript" / "chapters" / "00-preface.md").read_text(encoding="utf-8")
+    front_matter_project_markers = re.findall(
+        r"RZ/RSPHERE|repeat-slope|pkuHEDPbranch|scripts/|docs/|runs/|notes/|"
+        r"Markdown-first|Quarto|LaTeX book",
+        version + "\n" + preface,
+    )
     chapter_5_numbers = chapter_subheading_numbers(
         ROOT / "manuscript" / "chapters" / "05-deposition-shapes.md", "5"
     )
@@ -95,7 +102,8 @@ def main() -> None:
     )
     chapter_3a_project_markers = re.findall(
         r"scripts/|notes/code-reading|runs/stage-c-validation|docs/|references/|contract\.\{json,md\}|"
-        r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录",
+        r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录|"
+        r"源码笔记|初始化笔记|笔记编号",
         chapter_3a,
     )
     chapter_4 = (ROOT / "manuscript" / "chapters" / "04-particle-pushers.md").read_text(
@@ -152,6 +160,10 @@ def main() -> None:
         "html_embedded_images": html.count("data:image/png;base64,") >= 15,
         "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
+        "reader_facing_front_matter": all(
+            marker in version + "\n" + preface
+            for marker in ("# PIC-tutor", "建议的阅读方式", "如何使用本书", "遇到一个新的输入或源码分支时")
+        ) and not front_matter_project_markers,
         "chapter_5_subheading_order": chapter_5_numbers == sorted(chapter_5_numbers)
         and len(chapter_5_numbers) == len(set(chapter_5_numbers)),
         "chapter_6_subheading_order": chapter_6_numbers == sorted(chapter_6_numbers)
@@ -178,7 +190,8 @@ def main() -> None:
                 "## 6.12 练习与运行验证",
             )
         ) and not chapter_6_stale_location_markers and not re.search(
-            r"scripts/|notes/code-reading|runs/stage-c-validation|docs/chapter-06-v0-evidence-ledger|contract\.\{json,md\}",
+            r"scripts/|notes/code-reading|runs/stage-c-validation|docs/chapter-06-v0-evidence-ledger|"
+            r"contract\.\{json,md\}|全文笔记|逐式记录|证据台账",
             chapter_6,
         ),
         "chapter_6_opening_is_reader_facing": not re.search(
@@ -258,7 +271,7 @@ def main() -> None:
         and not re.search(
             r"scripts/|notes/code-reading|runs/stage-c-validation|"
             r"docs/chapter-08-v0-evidence-ledger|contract\.\{json,md\}|"
-            r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录",
+            r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录|源码笔记",
             chapter_8,
         ),
         "chapter_9_current_literature_route": all(
@@ -303,9 +316,13 @@ def main() -> None:
                 "UpdateMomentumHigueraCary()",
                 "## 4.16 练习与复现实验",
             )
-        ) and not chapter_4_stale_location_markers,
+        ) and not chapter_4_stale_location_markers and not re.search(
+            r"本地 checkout|原文精读",
+            chapter_4,
+        ),
         "chapter_4_has_no_project_path_narration": not re.search(
-            r"scripts/|notes/code-reading|runs/stage-c-validation|contract\.\{json,md\}",
+            r"scripts/|notes/code-reading|runs/stage-c-validation|contract\.\{json,md\}|"
+            r"本地 checkout|原文精读",
             chapter_4,
         ),
         "chapter_5_current_deposition_route": all(

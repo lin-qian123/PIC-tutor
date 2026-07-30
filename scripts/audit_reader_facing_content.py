@@ -59,7 +59,8 @@ def main() -> int:
         chapter_3a,
     )
     chapter_3a_project_narration_markers = re.findall(
-        r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录",
+        r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录|"
+        r"源码笔记|初始化笔记|笔记编号",
         chapter_3a,
     )
     chapter_4_stale_location_markers = re.findall(
@@ -95,6 +96,11 @@ def main() -> int:
         r"current-checkout|维护台账|本机现成 PDF/MinerU|项目级 helper|交接记录",
         chapter_text,
     )
+    front_matter_project_markers = re.findall(
+        r"RZ/RSPHERE|repeat-slope|pkuHEDPbranch|scripts/|docs/|runs/|notes/|"
+        r"Markdown-first|Quarto|LaTeX book",
+        version + "\n" + preface,
+    )
     chapter_4_evidence_sections = "\n".join(
         (
             section_between(chapter_4, "### 4.4.1", "## 4.5"),
@@ -115,6 +121,10 @@ def main() -> int:
     )
     chapter_4_project_path_markers = re.findall(
         r"scripts/|notes/code-reading|runs/stage-c-validation|contract\.\{json,md\}",
+        chapter_4,
+    )
+    chapter_4_project_narration_markers = re.findall(
+        r"本地 checkout|原文精读",
         chapter_4,
     )
     chapter_5_opening = section_between(chapter_5, "# 5. 电荷、电流沉积与形函数", "## 5.1")
@@ -146,6 +156,10 @@ def main() -> int:
         r"scripts/|notes/code-reading|runs/stage-c-validation|docs/chapter-06-v0-evidence-ledger|contract\.\{json,md\}",
         chapter_6,
     )
+    chapter_6_project_narration_markers = re.findall(
+        r"全文笔记|逐式记录|证据台账",
+        chapter_6,
+    )
     chapter_7_opening = section_between(chapter_7, "# 7. 边界条件、PML 与 AMR", "## 7.1")
     chapter_7_closure = chapter_7[chapter_7.index("## 7.10") :]
     chapter_7_project_record_markers = re.findall(
@@ -168,7 +182,7 @@ def main() -> int:
         chapter_8,
     )
     chapter_8_project_narration_markers = re.findall(
-        r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录",
+        r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录|源码笔记",
         chapter_8,
     )
     chapter_9_project_path_markers = re.findall(
@@ -182,9 +196,12 @@ def main() -> int:
         chapter_9,
     )
     checks = {
-        "version_is_reader_facing": "不是开发日志" in version and "读者在本版可以学到什么" in version,
-        "manuscript_readme_is_reader_facing": "PIC 教程" in readme and "阅读路径" in readme and "不是面向维护者的提交记录" in readme,
-        "preface_has_learning_outcomes": "读者应当能够" in preface and "如何使用本书" in preface,
+        "version_is_reader_facing": "不是开发日志" in version and "读者在本版可以学到什么" in version
+        and "建议的阅读方式" in version and not front_matter_project_markers,
+        "manuscript_readme_is_reader_facing": "PIC 教程" in readme and "阅读路径" in readme
+        and "读者的核查顺序" in readme and "不是面向维护者的提交记录" in readme,
+        "preface_has_learning_outcomes": "读者应当能够" in preface and "如何使用本书" in preface
+        and "遇到一个新的输入或源码分支时" in preface and not front_matter_project_markers,
         "history_is_separated": (root / "docs/version-history-v0.110.md").is_file(),
         "chapter_openings_are_reader_facing": not project_record_opening_markers,
         "core_chapters_have_no_project_record_markers": not project_record_body_markers,
@@ -205,7 +222,8 @@ def main() -> int:
             )
         ),
         "chapter_4_uses_reader_facing_evidence_language": not chapter_4_project_record_markers,
-        "chapter_4_has_no_project_path_narration": not chapter_4_project_path_markers,
+        "chapter_4_has_no_project_path_narration": not chapter_4_project_path_markers
+        and not chapter_4_project_narration_markers,
         "chapter_4_current_pusher_route": all(
             marker in chapter_4
             for marker in (
@@ -246,7 +264,8 @@ def main() -> int:
                 "选择路径前的检查表",
                 "## 6.12 练习与运行验证",
             )
-        ) and not chapter_6_stale_location_markers and not chapter_6_project_path_markers,
+        ) and not chapter_6_stale_location_markers and not chapter_6_project_path_markers
+        and not chapter_6_project_narration_markers,
         "chapter_6_has_reader_facing_closure": all(
             marker in chapter_6_closure
             for marker in (
@@ -375,10 +394,13 @@ def main() -> int:
         "project_record_word_count_in_entry_points": len(project_record_words),
         "project_record_opening_markers": project_record_opening_markers,
         "project_record_body_markers": project_record_body_markers,
+        "front_matter_project_markers": front_matter_project_markers,
         "chapter_4_project_record_markers": chapter_4_project_record_markers,
         "chapter_4_project_path_markers": chapter_4_project_path_markers,
+        "chapter_4_project_narration_markers": chapter_4_project_narration_markers,
         "chapter_6_project_record_markers": chapter_6_project_record_markers,
         "chapter_6_project_path_markers": chapter_6_project_path_markers,
+        "chapter_6_project_narration_markers": chapter_6_project_narration_markers,
         "chapter_7_project_record_markers": chapter_7_project_record_markers,
         "chapter_7_project_path_markers": chapter_7_project_path_markers,
         "chapter_7_stale_location_markers": chapter_7_stale_location_markers,

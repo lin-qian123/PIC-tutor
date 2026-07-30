@@ -2,7 +2,7 @@
 
 本章把 `WarpX::InitData()` 展开成一条完整的初始化链。它补足第 3 章中“初始化”只作为主循环前置步骤的不足：这里开始逐块解释 fresh run / restart、AMR level 初始化、外部场、species 注入器、粒子创建 kernel、Gaussian beam、openPMD 文件注入和 projection divergence cleaning。
 
-阅读初始化代码时，应先围绕四个主入口建立因果关系：`InitData()` 决定 fresh/restart 分叉，`InitFromScratch()` 建立初始 level，`InitDiagnostics()` 准备可观察输出，`AddExternalFields()` 把外部场加入初态。使用不同 WarpX 版本时，优先按这些函数的职责和调用关系检索，不要把行号、分支名称或笔记编号当作初始化语义。
+阅读初始化代码时，应先围绕四个主入口建立因果关系：`InitData()` 决定 fresh/restart 分叉，`InitFromScratch()` 建立初始 level，`InitDiagnostics()` 准备可观察输出，`AddExternalFields()` 把外部场加入初态。使用不同 WarpX 版本时，优先按这些函数的职责和调用关系检索，不要把行号或分支名称当作初始化语义。
 
 | 读者问题 | 首先追踪的对象 |
 |---|---|
@@ -37,11 +37,11 @@ $$
 6. 对外部 `A/B` 场做 projection divergence cleaning。
 7. 输出第 0 步 diagnostics，并检查 guard cell、solver 配置和 known issue。
 
-本章先建立从程序启动到第一个时间步的主干；在需要实现级细节时，再回到相应源码笔记和源码位置逐项核对。
+本章先建立从程序启动到第一个时间步的主干；需要实现级细节时，再沿源码文件、函数和调用关系逐项核对。
 
 ## 3A.2 启动层先于 `InitData()`：MPI、AMReX、FFT、PETSc 与启动前提
 
-前面的初始化笔记大多从 `WarpX::InitData()` 往后讲，但 WarpX 真正的初始化链更早就开始了。`main.cpp` 最外层先做的是：
+许多初始化说明从 `WarpX::InitData()` 往后讲，但 WarpX 真正的初始化链更早就开始了。`main.cpp` 最外层先做的是：
 
 ```cpp
 int
@@ -1257,7 +1257,7 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 3. `analysis`
    - 再对最终包络和主频做强断言
 
-这条边界对后面精读 `Laser/` 很关键，因为它说明“外部 laser 文件格式合同”本身已经是 active regression 的一部分，而不只是示例配套脚本。
+这条边界在解释 `Laser/` 模块时很关键，因为它说明“外部 laser 文件格式合同”本身已经是 active regression 的一部分，而不只是示例配套脚本。
 
 但到了 `Examples/Physics_applications/laser_acceleration/`，情况就不一样了。这个目录本质上不是一组 laser-injection 单元测试，而是一套 LWFA runtime matrix。`README.rst` 自己都把 `Analyze` 章节留成了 `TODO`，而当前大多数 active tests 在 `CMakeLists.txt` 中也都配置成 `analysis = OFF`，只保留 checksum；只有少数变体有明确 analysis：
 

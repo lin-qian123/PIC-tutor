@@ -1,8 +1,8 @@
 <!-- source: manuscript/VERSION.md -->
 
-# PIC-tutor v0.110
+# PIC-tutor
 
-这是面向读者的 PIC 教程版本说明，不是开发日志。书稿从连续的 Vlasov-Maxwell 模型出发，逐步建立宏粒子、网格、时间推进、粒子推进器、沉积、场求解器、边界、AMR 与诊断之间的关系，最后用 WarpX 的源码和可运行案例把这些概念落到程序行为上。
+这是面向读者的 PIC 教程开篇，不是开发日志。书稿从连续的 Vlasov-Maxwell 模型出发，逐步建立宏粒子、网格、时间推进、粒子推进器、沉积、场求解器、边界、AMR 与诊断之间的关系，最后用 WarpX 的源码和可运行案例把这些概念落到程序行为上。
 
 ## 读者在本版可以学到什么
 
@@ -13,21 +13,20 @@
 - 根据 CFL、Debye 长度、plasma frequency、边界和诊断量选择一个可解释的输入案例。
 - 用源码路径、输入参数、输出量和回归分析共同判断“程序运行了”是否等于“物理结果可信”。
 
-## 证据范围
+## 如何判断一个结论
 
-本版绑定同级只读 WarpX checkout 的源码、官方文档、示例、regression 和已取得的论文资产。正文把结论分成三层：数学/文献解释、当前源码映射、实际运行或分析结果。局部 runtime 通过不自动代表完整几何、阶数、AMR 或收敛阶覆盖；`BOUNDARY`、`OPEN`、`UNPROVEN` 等词表示证据边界，不是措辞上的保留。
+每一项重要结论都应先问它属于哪一层证据：
 
-v0.110 重新执行了 RZ/RSPHERE 正式收敛 study 的第二组 12 个 2-rank producer。correction-on 的 14 项 repeat-slope comparison 全部通过，最大绝对 slope 差为 `2.0135e-11`；这只证明重复 family 的 slope 一致性，仍不等于 formal numerical order 或 axis-charge closure 已完成。完整证据见 [当前缺口登记](../docs/current-book-gap-register.md) 和 v0.110 的发布审计文件。
+1. **数学和文献**说明连续模型、离散近似和适用假设；
+2. **源码映射**说明程序实际在哪个对象或函数中实现这一近似；
+3. **输入和诊断**说明某个案例究竟比较了什么 observable；
+4. **运行结果**只能支持该输入、几何、算法与容差下的结论，不能自动推广到其他分支。
 
-## 源码快照与复现
+因此，case 通过 regression 并不等于任意配置都正确；公式成立也不等于每条实现路径都已覆盖。书中出现“边界”“未覆盖”或“不能外推”时，指的是证据强度的范围，而不是回避结论。
 
-- WarpX 分支：`pkuHEDPbranch`
-- WarpX commit：`063f8b586f04321e13150ae3e730e0794ca75cb1`
-- 源码入口：`$WARPX_ROOT/Source/`
-- 官方文档：`$WARPX_ROOT/Docs/source/`
-- 示例和回归：`$WARPX_ROOT/Examples/`、`$WARPX_ROOT/Regression/`
+## 建议的阅读方式
 
-在仓库根目录执行 `python scripts/build_v110.py` 可重建合订 Markdown、HTML 和 PDF；执行 `python scripts/verify_v110_build.py --build-log <log>` 可检查产物的章节、链接、图表、页数和证据合同。历史版本记录保存在 `docs/version-history-v0.110.md`，不再作为正文前言拼入读者版。
+第一次阅读时，沿着每章的“问题 -> 方程或离散规则 -> 源码职责 -> 最小案例 -> 练习”完成主线。遇到函数名或测试名时，不必先记住它们；先回答它消费什么数据、产出什么数据、处在哪个时间层，以及应由哪个 observable 检验。第二次阅读再沿源码文件和输入案例回查细节。
 
 
 <!-- source: manuscript/chapters/00-preface.md -->
@@ -49,7 +48,7 @@ v0.110 重新执行了 RZ/RSPHERE 正式收敛 study 的第二组 12 个 2-rank 
 
 正文按“模型 -> 离散算法 -> 源码调用链 -> 案例诊断”的顺序展开。章节末的练习要求读者自己定位源码、检查时间层或复现实验；它们不是附加的项目验收清单，而是把阅读变成判断能力的训练。
 
-版本号、运行合同和缺口台账记录的是书稿如何被维护，不是读者必须按时间顺序阅读的内容。它们集中放在 `docs/` 和 `notes/`，正文只在需要解释证据范围时引用它们。
+版本号、运行合同和缺口登记记录的是书稿如何被维护，不是读者必须按时间顺序阅读的内容。正文只在需要解释证据范围时使用它们，不把它们作为学习前提。
 
 本书不是 WarpX 官方文档的翻译，也不是只讲公式的 PIC 理论笔记。它的主线是：先从 Vlasov-Maxwell / Vlasov-Poisson 这类连续模型出发，说明为什么需要宏粒子；再把宏粒子、网格、形函数、沉积和场求解拼成 PIC 算法；最后回到 WarpX 的 `Source/`、`Docs/`、`Examples/` 和 regression 入口，解释一个现代高性能 PIC 程序如何把这些步骤组织成可运行、可扩展、可验证的模拟软件。
 
@@ -57,7 +56,7 @@ v0.110 重新执行了 RZ/RSPHERE 正式收敛 study 的第二组 12 个 2-rank 
 
 本书的每个技术判断都应尽量落到六类证据：物理方程、离散公式、WarpX 源码路径、输入参数、示例或测试、文献。DeepWiki、Zread 等 AI 解读页面可以用来快速找到模块名，但不能作为最终依据。
 
-本书采用 Markdown-first 写法。正文、源码路径、公式、论文笔记和运行证据因而可以在同一套文本工作流中维护；若未来需要更复杂的排版或出版流程，可再迁移到 Quarto 或 LaTeX book。
+遇到一个新的输入或源码分支时，可按四步阅读：先写出要描述的连续物理量；再标出它在离散网格和时间层上的表示；随后定位 producer 和 consumer；最后选择一个能区分正确与错误的 observable，并写下该观察量不能支持的外推。这样，代码阅读始终服务于物理判断，而不是变成函数名清单。
 
 本书默认使用以下记号：粒子位置为 $$\mathbf{x}_p$$，粒子动量为 $$\mathbf{u}_p=\gamma\mathbf{v}_p$$，电磁场为 $$\mathbf{E},\mathbf{B}$$，电荷和电流密度为 $$\rho,\mathbf{J}$$，粒子权重为 $$w_p$$，形函数为 $$S$$。网格量的上标表示时间层，例如 $$\mathbf{B}^{n+1/2}$$；粒子量一般按 leapfrog 交错在位置和动量时间层上。
 
@@ -2076,7 +2075,7 @@ $$
 
 本章把 `WarpX::InitData()` 展开成一条完整的初始化链。它补足第 3 章中“初始化”只作为主循环前置步骤的不足：这里开始逐块解释 fresh run / restart、AMR level 初始化、外部场、species 注入器、粒子创建 kernel、Gaussian beam、openPMD 文件注入和 projection divergence cleaning。
 
-阅读初始化代码时，应先围绕四个主入口建立因果关系：`InitData()` 决定 fresh/restart 分叉，`InitFromScratch()` 建立初始 level，`InitDiagnostics()` 准备可观察输出，`AddExternalFields()` 把外部场加入初态。使用不同 WarpX 版本时，优先按这些函数的职责和调用关系检索，不要把行号、分支名称或笔记编号当作初始化语义。
+阅读初始化代码时，应先围绕四个主入口建立因果关系：`InitData()` 决定 fresh/restart 分叉，`InitFromScratch()` 建立初始 level，`InitDiagnostics()` 准备可观察输出，`AddExternalFields()` 把外部场加入初态。使用不同 WarpX 版本时，优先按这些函数的职责和调用关系检索，不要把行号或分支名称当作初始化语义。
 
 | 读者问题 | 首先追踪的对象 |
 |---|---|
@@ -2111,11 +2110,11 @@ $$
 6. 对外部 `A/B` 场做 projection divergence cleaning。
 7. 输出第 0 步 diagnostics，并检查 guard cell、solver 配置和 known issue。
 
-本章先建立从程序启动到第一个时间步的主干；在需要实现级细节时，再回到相应源码笔记和源码位置逐项核对。
+本章先建立从程序启动到第一个时间步的主干；需要实现级细节时，再沿源码文件、函数和调用关系逐项核对。
 
 ## 3A.2 启动层先于 `InitData()`：MPI、AMReX、FFT、PETSc 与启动前提
 
-前面的初始化笔记大多从 `WarpX::InitData()` 往后讲，但 WarpX 真正的初始化链更早就开始了。`main.cpp` 最外层先做的是：
+许多初始化说明从 `WarpX::InitData()` 往后讲，但 WarpX 真正的初始化链更早就开始了。`main.cpp` 最外层先做的是：
 
 ```cpp
 int
@@ -3331,7 +3330,7 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 3. `analysis`
    - 再对最终包络和主频做强断言
 
-这条边界对后面精读 `Laser/` 很关键，因为它说明“外部 laser 文件格式合同”本身已经是 active regression 的一部分，而不只是示例配套脚本。
+这条边界在解释 `Laser/` 模块时很关键，因为它说明“外部 laser 文件格式合同”本身已经是 active regression 的一部分，而不只是示例配套脚本。
 
 但到了 `Examples/Physics_applications/laser_acceleration/`，情况就不一样了。这个目录本质上不是一组 laser-injection 单元测试，而是一套 LWFA runtime matrix。`README.rst` 自己都把 `Analyze` 章节留成了 `TODO`，而当前大多数 active tests 在 `CMakeLists.txt` 中也都配置成 `analysis = OFF`，只保留 checksum；只有少数变体有明确 analysis：
 
@@ -4020,7 +4019,7 @@ $$
 
 这一节背后的经典来源可以直接回到 Birdsall-Langdon 1985 第一分卷 `4-3` 到 `4-5`。那里把磁推进的核心先写成几何分裂：电场部分是半步 impulse，磁场部分是速度空间旋转；随后再把旋转压成 `t=\tan(\theta/2)`、`s=2t/(1+t^2)`、`c=(1-t^2)/(1+t^2)` 这组半角变量，并进一步给出向量 Boris 形式。对本章来说，这个来源有两个价值。第一，WarpX 的 Boris 更新不是孤立经验公式，而是这条 “half-accel + rotation + half-accel” 离散合同的现代实现。第二，Birdsall 在 `4-5` 里明确区分了 `1d2v/1d3v` 和真正的一维动力学，这正好解释了为什么即使空间维数较低，本章后面讨论的 mover 仍必须保留多速度分量与磁旋转结构。
 
-Boris 1970 的原始历史位置需要单独标注边界：本书给出 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但目前没有可逐页核对的会议论文全文。因此，本章的算法推导采用 Birdsall--Langdon 1985 的完整讲解，WarpX 的实现说明则回到 `Source/Particles/Pusher/UpdateMomentumBoris.H`；不能把这三层材料写成“已经完成 Boris 1970 原文精读”。
+Boris 1970 的原始历史位置需要单独标注边界：本书给出 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但目前没有可逐页核对的会议论文全文。因此，本章的算法推导采用 Birdsall--Langdon 1985 的完整讲解，WarpX 的实现说明则回到 `Source/Particles/Pusher/UpdateMomentumBoris.H`；Boris 1970 不能作为已经逐页核查的直接公式依据。
 
 物理上可以先记住：
 
@@ -4971,7 +4970,7 @@ $$
 
 这正好解释了为什么 `MultiParticleContainer::Evolve()` 在 implicit 模式下还要额外处理 `current_fp_non_suborbit` 和 `MassMatrices_PC` 的清零时机，见 `../warpx/Source/Particles/MultiParticleContainer.cpp`。它不是普通 bookkeeping，而是在维护 JFNK 的三项分拆。
 
-这一节在本地 checkout 里也有一条非常直接的 regression 入口：`Examples/Tests/radiation_reaction/`。它不是应用级 checksum，而是强 analysis：
+WarpX 为这一节提供了一条直接的 regression 入口：`Examples/Tests/radiation_reaction/`。它不是应用级 checksum，而是强 analysis：
 
 - 平行动量 case 要求 `gamma` 保持不变；
 - 垂直动量 case 要求 `gamma(t)` 满足解析 Landau-Lifshitz 衰减公式；
@@ -9799,7 +9798,7 @@ $$
 
 把均匀漂移等离子体在数值网格中改写为近似静止的背景。旧电荷因而要携带相位，离散连续性方程也从普通端点差分变成带 $\theta^2=\exp(i\mathbf{k}\cdot\mathbf{v}_{gal}\Delta t)$ 的形式。这正是上面 `rho_old_mod` 出现的原因。
 
-对 boosted-frame 问题，读者应把选择过程分成三步：先由物理问题确定背景等离子体在计算坐标中的漂移方向；再让 `v_galilean` 接近该背景漂移，而不是任意取一个移动速度；最后用稳定性和物理量两类证据分别检查。Lehe et al. 的理论说明这种表示能消除主要的漂移 alias resonance；Kirchen et al. 的应用说明抑制 NCI 后仍须检查回变换的加速器物理量。两篇论文的全文笔记和逐式记录保留在本章证据台账中。
+对 boosted-frame 问题，读者应把选择过程分成三步：先由物理问题确定背景等离子体在计算坐标中的漂移方向；再让 `v_galilean` 接近该背景漂移，而不是任意取一个移动速度；最后用稳定性和物理量两类证据分别检查。Lehe et al. 的理论说明这种表示能消除主要的漂移 alias resonance；Kirchen et al. 的应用说明抑制 NCI 后仍须检查回变换的加速器物理量。需要进一步判断公式或适用范围时，应直接回到两篇论文的正文，并将其假设与当前输入、源码分派和输出观察量逐项对应。
 
 filter、current correction 与 Galilean 表示因此必须分开：`warpx.use_filter` 主要压制短波 alias；`psatd.current_correction` 投影连续性残差并支撑 Gauss-law；Galilean 坐标改变源项在网格上的表示。它们可在同一输入卡出现，但不能互相替代。Godfrey--Vay 的 fixed-grid NCI 分析、WarpX 的 `NCIGodfreyFilter` 名称和普通 PSATD filter 也不是同一个开关或同一个证明。
 
@@ -12901,7 +12900,7 @@ laser-target applications
 - electron-fluid Ohm closure
 - Faraday + RK 子步推进 `B`
 
-而不是 `WarpXFluidContainer` 那条额外 cold-fluid species runtime layer。这个边界必须写死，因为已有源码笔记已经明确：
+而不是 `WarpXFluidContainer` 那条额外 cold-fluid species runtime layer。这个边界必须写死，因为两条实现承担的职责不同：
 
 - `Fluids/`
   - 自己维护 nodal `N/NU`

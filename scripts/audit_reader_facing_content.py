@@ -503,6 +503,17 @@ def main() -> int:
                 "状态转换的实现，而不是可以脱离物理和时间层独立记忆的调用顺序",
             )
         ),
+        "chapter_1_continuous_model_reader_route": all(
+            marker in chapter_1
+            for marker in (
+                "本章的读者路线",
+                "什么量在相空间中守恒、哪些矩成为场的 source",
+                "程序实际表示什么、与哪一个连续量比较、该比较还不能保证什么",
+                "dN_s=f_s",
+                "传播的电磁辐射和激光等效应不被捕获",
+                "看起来近静电",
+            )
+        ) and not chapter_1_project_path_markers,
         "chapter_1_has_no_project_path_narration": not chapter_1_project_path_markers,
         "chapter_3a_current_initialization_route": all(
             marker in chapter_3a

@@ -121,12 +121,14 @@ def main() -> int:
         else:
             chapter_checks[chapter] = numbers == sorted(numbers) and len(numbers) == len(set(numbers))
 
-    manual_read_markers = (
-        "本轮连续阅读已覆盖当前 PDF 第 1--262 页",
+    manual_review_markers = (
+        "基线 262 页快照已完成连续阅读",
+        "当前增量复核（263 页候选）",
         "| 1--6 |",
-        "| 260--262 |",
+        "| 229 |",
+        "| 261 |",
     )
-    manual_read_recorded = all(marker in manual_spotcheck for marker in manual_read_markers)
+    manual_review_recorded = all(marker in manual_spotcheck for marker in manual_review_markers)
     checks = {
         "files_present": all(path.is_file() for path in (merged, html_path, pdf_path)),
         "merged_heading_duplicates": not any(count > 1 for count in heading_counts.values()),
@@ -139,16 +141,16 @@ def main() -> int:
         "pdf_page_count_positive": len(pdf_reader.pages) > 0,
         "pdf_key_sections": all(marker in pdf_text for marker in ("如何阅读证据边界", "Vay 配置判读卡", "RZ implicit Villasenor 判读卡", "RZ 轴线判读卡", "收敛研究：描述性趋势不是正式阶数", "先按更新对象理解 PSATD 系数", "用正确的 observable 判断 PML", "PML 配置与验证卡", "Transition-zone 判读卡")),
         "no_build_warning_markers": not any(marker in pdf_text for marker in ("Could not fetch resource", "Missing character")),
-        "full_current_pdf_read_is_recorded": manual_read_recorded,
+        "baseline_read_and_current_incremental_review_are_recorded": manual_review_recorded,
     }
     classification = (
-        "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_READ_RECORDED"
-        if manual_read_recorded
+        "AUTOMATED_EDITORIAL_AUDIT_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED"
+        if manual_review_recorded
         else "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN"
     )
     scope = (
-        "automated structure and artifact consistency; current rendered PDF manual reading is recorded; redistribution approval remains open"
-        if manual_read_recorded
+        "automated structure and artifact consistency; baseline full read and current incremental review are recorded; redistribution approval remains open"
+        if manual_review_recorded
         else "automated structure and artifact consistency; not a substitute for human reading or redistribution approval"
     )
     result = {
@@ -178,8 +180,8 @@ def main() -> int:
         f"- PDF pages: `{result['pdf_pages']}`", "", "| check | status |", "|---|:---:|",
     ]
     lines.extend(f"| `{name}` | `{'PASS' if passed else 'FAIL'}` |" for name, passed in checks.items())
-    if manual_read_recorded:
-        lines.extend(["", "Automated audit and current PDF manual reading are recorded; licensing and redistribution approval remain open."])
+    if manual_review_recorded:
+        lines.extend(["", "Automated audit, baseline full read, and current incremental review are recorded; licensing and redistribution approval remain open."])
     else:
         lines.extend(["", "Automated audit passed does not close manual reading, layout review, licensing, or redistribution approval."])
     for output_dir in output_dirs:

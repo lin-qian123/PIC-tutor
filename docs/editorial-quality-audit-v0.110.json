@@ -11,27 +11,27 @@
     "pdf_page_count_positive": true,
     "pdf_key_sections": true,
     "no_build_warning_markers": true,
-    "full_current_pdf_read_is_recorded": true
+    "baseline_read_and_current_incremental_review_are_recorded": true
   },
   "passed": true,
-  "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_READ_RECORDED",
-  "scope": "automated structure and artifact consistency; current rendered PDF manual reading is recorded; redistribution approval remains open",
-  "heading_count": 335,
-  "html_heading_count": 335,
-  "pdf_pages": 258,
+  "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED",
+  "scope": "automated structure and artifact consistency; baseline full read and current incremental review are recorded; redistribution approval remains open",
+  "heading_count": 340,
+  "html_heading_count": 340,
+  "pdf_pages": 263,
   "table_issues": [],
   "artifacts": {
     "pic-tutor-v0.110.md": {
-      "bytes": 853796,
-      "sha256": "2712b1a9671d293fbf2c013cf5af1d682f6228aa06d18670c1e5dd0a4f7fadbb"
+      "bytes": 871939,
+      "sha256": "0508e298f115323b88b4629737bd1b62edbd61fbfc3aead5c4f519baea31ffad"
     },
     "pic-tutor-v0.110.html": {
-      "bytes": 5091141,
-      "sha256": "a039644e3c9fbcec23ead0f34ad56b7412c8f538191655923a9a60385b0c37f6"
+      "bytes": 5113822,
+      "sha256": "f8b1463eab6156c78d14ee687da7e3f5c5c75ec839538c395ed4ea79b90d62dc"
     },
     "pic-tutor-v0.110.pdf": {
-      "bytes": 2978934,
-      "sha256": "0e6bcec517930c964ea1c733de1660a6c40604724ffb0a3b748d127a90ef6380"
+      "bytes": 3007064,
+      "sha256": "f906c5cd153552b6e33097bed08630efe62255bb4a0fe652cd50b5088061495e"
     }
   }
 }

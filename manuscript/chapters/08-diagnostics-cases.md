@@ -462,24 +462,26 @@ laser-target applications
 5. 可选把 ionization 切成 DSMC
 6. 累积离子密度并写出 `ion_density_case_N.npy`
 
-`--test --pythonsolver` 模式还会显式确认：
+`--test --pythonsolver` 是脚本支持的单独模式；它会显式确认：
 
 - callback solver 已经实际运行；
 - `he_ions` 的 `z` 坐标访问链可用。
 
-因此这条应用树在工程上也不只是低温等离子体 benchmark，同时还是清晰的：
+但当前注册的两个 1D CMake 测试分别传入 `--test` 与 `--test --dsmc`，都**没有**传入 `--pythonsolver`。因此 active regression 能证明的是 MCC 或 DSMC 的离子密度验证和粒子坐标访问链；Python Poisson callback 是可单独运行的接口路径，不能被写成已经由这两条活跃测试覆盖。
+
+因此这条应用树在工程上除低温等离子体 benchmark 外，还提供清晰的：
 
 - PICMI + Python callback Poisson solver
 
-应用入口之一。
+可选应用入口；两种角色需要分别验证。
 
 ### 可直接比较的量：case-1 ion-density profile
 
-`analysis_1d.py` 和 `analysis_dsmc.py` 当前都直接读取：
+两条当前注册的 1D 测试都调用 `analysis_1d.py`。它直接读取：
 
 - `ion_density_case_1.npy`
 
-并与内置 Turner case-1 参考离子密度 profile 做 `allclose`。
+分析器将脚本内 129 个节点的 Turner case-1 reference 插值到模拟网格，跳过两端吸收壁节点后计算 interior relative-error 的 RMS，并要求小于 `6%`。跳过边界不是放松物理比较：源码注释指出 nodal charge deposition 在吸收壁只看到半个 cell，端点约半值是离散边界伪影，不能与 cell-averaged benchmark 直接并列。
 
 因此该案例最强的 physics contract 是：
 
@@ -494,7 +496,7 @@ laser-target applications
 
 1. `test_1d_background_mcc_picmi`
    - `background_mcc`
-   - external Python Poisson solver callback
+   - 默认 WarpX electrostatic solver，不是 CMake 传入的 Python callback
    - Turner case-1 profile 对照
 2. `test_1d_dsmc_picmi`
    - 把 ionization 切到 DSMC 分支
@@ -527,6 +529,20 @@ laser-target applications
 - `test_2d_background_mcc_dp_psp`
 
 整条 `add_warpx_test(...)` 仍被注释掉，所以它只能作为遗留分支记录，不能被当作已注册的比较案例。
+
+### 验证合同判读卡：相同的“通过”并不表示相同的正确性
+
+下面三条 active regression 都能给读者一个强比较量，但它们的 producer、reference 和结论范围完全不同。开始复现前，先选与你的问题同类的合同，而不是看到 `analysis.py` 就把它们视为等价验证。
+
+| 问题 | producer 与 consumer | 明确的通过条件 | 可以支持的结论 | 不能支持的结论 |
+|---|---|---|---|---|
+| 线探针是否保存了单缝衍射的横向包络 | `field_probe` 的 `FP_line` 是 201 点的 `FieldProbe` line detector；`integrate = 1` 使每步累加 \(\lvert\mathbf S\rvert\Delta t\)。`analysis.py` 在 step 500 从 `FP_line.txt` 读取该积分量，以数值最大值归一后和单缝 \(\mathrm{sinc}^2\) 包络比较 | 远离横向边缘的一组 probe 点的平均相对误差 `< 2.5%` | 在启用 EB 的该 2D 单缝设置中，line `FieldProbe` 的**归一化时间积分 Poynting-flux 形状**与解析包络一致 | 绝对光强标定、任意 probe geometry、boosted-frame lab-frame 数据，或 PML/粒子边界整体正确 |
+| 低温放电的平均离子密度是否接近外部 benchmark | 1D PICMI run 在最后诊断窗口逐步沉积并同步 `rho_fp`，累积 `he_ions` 密度后写出 `ion_density_case_1.npy`；`analysis_1d.py` 对插值后的 Turner profile 做 interior RMS 比较 | interior RMS relative error `< 6%` | 给定 case-1、1D electrostatic、MCC 或 DSMC 分支下，最终窗口平均 ion-density profile 与该 Turner 数据表相符 | Python Poisson callback 已由 active test 覆盖、任意 RF phase 的瞬时密度正确，或 2D discharge 已获得同一 benchmark 对照 |
+| 空间电荷限制二极管是否满足指定解析解 | 1D electrostatic Pierce diode 连续以 \(J_{\rm CL}/q\) 注入离子，最终 `diag1` openPMD 写出 \(\phi,E_z,\rho,j_z\)；analysis 重建 Child--Langmuir 理论曲线 | \(\phi\) 在首个非零节点之后、\(j_z\) 在全比较网格上均满足相对误差 `< 20%` | 该平板、稳态、1D Child--Langmuir 配置的 potential 和 current-density 合同成立 | `E_z`、`rho`、粒子相空间的同等强断言，任意发射模型，或 embedded-boundary ion extraction 已验证 |
+
+第一行的 `integrate = 1` 是一个容易误读的时间层细节：输出列的单位是 \(\mathrm{W\,s/m^2}\)，不是瞬时 \(\mathrm{W/m^2}\)。源码先在 probe 位置 gather \(E/B\)，计算 \(\lvert\mathbf E\times\mathbf B\rvert/\mu_0\)，再逐步乘 \(\Delta t\) 累加；这个测试比较的是归一化空间**fluence** 包络。若研究的问题是某一时刻的场幅或频谱，应关闭积分或另设相应的时间序列 consumer，而不能沿用这条 `sinc^2` gate。
+
+第二、三行则展示了两种不同 reference。Turner profile 是离散表格，要求先处理网格插值和端点离散边界；Child--Langmuir 则是解析函数，\(\phi(0)=0\) 会使相对误差没有定义，所以分析器从 `phi[1:]` 开始。二者都比 checksum 更接近物理比较，但它们只约束明确写入断言的 observable。读者复现实验时，应把输入模型、producer、consumer、reference、被排除的点和容差一起写入诊断记录卡；缺少其中任何一项，都不能把一次 PASS 推广成“该应用已经验证”。
 
 ## Magnetic reconnection
 

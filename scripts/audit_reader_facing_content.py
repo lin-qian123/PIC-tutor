@@ -587,6 +587,17 @@ def main() -> int:
             )
         )
         and not chapter_8_application_record_markers,
+        "chapter_8_validation_contract_reader_card": all(
+            marker in chapter_8
+            for marker in (
+                "### 验证合同判读卡：相同的“通过”并不表示相同的正确性",
+                "归一化时间积分 Poynting-flux 形状",
+                "Python Poisson callback 是可单独运行的接口路径",
+                "interior RMS relative error `< 6%`",
+                "`phi[1:]`",
+                "不能把一次 PASS 推广成“该应用已经验证”",
+            )
+        ) and not chapter_8_project_path_markers and not chapter_8_project_narration_markers,
         "chapter_2_3_have_reader_facing_routes": all(
             marker in chapter_2
             for marker in (
@@ -747,32 +758,36 @@ def main() -> int:
             marker in chapter_text
             for marker in ("练习", "源码定位", "复现实验")
         ),
-        "full_current_pdf_read_is_recorded": all(
+        "baseline_read_and_current_incremental_review_are_recorded": all(
             marker in manual_spotcheck
             for marker in (
-                "本轮连续阅读已覆盖当前 PDF 第 1--262 页",
+                "基线 262 页快照已完成连续阅读",
+                "当前增量复核（263 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
-                "| 255--259 |",
-                "| 260--262 |",
+                "| 229 |",
+                "| 230 |",
+                "| 256 |",
+                "| 261 |",
             )
         ),
     }
-    full_pdf_read_recorded = checks["full_current_pdf_read_is_recorded"]
+    incremental_review_recorded = checks["baseline_read_and_current_incremental_review_are_recorded"]
     result = {
         "contract": "reader-facing content audit",
         "checks": checks,
         "passed": all(checks.values()),
         "classification": (
-            "READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_RECORDED"
-            if full_pdf_read_recorded
-            else "READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_OPEN"
+            "READER_FACING_CORE_CHAPTERS_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED"
+            if incremental_review_recorded
+            else "READER_FACING_CORE_CHAPTERS_PASS_BASELINE_READ_INCREMENTAL_REVIEW_OPEN"
         ),
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
-            "from core tutorial chapters; the current rendered PDF has a complete recorded manual read"
-            if full_pdf_read_recorded
+            "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
+            "the current 263-page candidate has a recorded Chapter 8 incremental review"
+            if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
         "versioned_chapter_heading_count": len(version_markers),
@@ -816,7 +831,7 @@ def main() -> int:
         "chapter_5_stale_location_markers": chapter_5_stale_location_markers,
         "chapter_6_opening_project_markers": chapter_6_opening_project_markers,
         "chapter_6_stale_location_markers": chapter_6_stale_location_markers,
-        "open_items": ([] if full_pdf_read_recorded else [
+        "open_items": ([] if incremental_review_recorded else [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ]),
     }
@@ -842,7 +857,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- The current rendered PDF has a complete recorded manual read; external-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 263-page candidate has a recorded Chapter 8 incremental review. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

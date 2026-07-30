@@ -711,6 +711,7 @@ ion-density profile</a></li>
 版不是孤立小 test，而是同一 benchmark scaffold 的分支</a></li>
 <li><a href="#d-native-picmi搭建基线不是-2d-turner-对照" id="toc-d-native-picmi搭建基线不是-2d-turner-对照">2D native /
 PICMI：搭建基线，不是 2D Turner 对照</a></li>
+<li><a href="#验证合同判读卡相同的通过并不表示相同的正确性" id="toc-验证合同判读卡相同的通过并不表示相同的正确性">验证合同判读卡：相同的“通过”并不表示相同的正确性</a></li>
 </ul></li>
 <li><a href="#magnetic-reconnection" id="toc-magnetic-reconnection">Magnetic reconnection</a>
 <ul>
@@ -18733,26 +18734,35 @@ examples。最强、也最保守的结论只能是：</p>
 <li>可选把 ionization 切成 DSMC</li>
 <li>累积离子密度并写出 <code>ion_density_case_N.npy</code></li>
 </ol>
-<p><code>--test --pythonsolver</code> 模式还会显式确认：</p>
+<p><code>--test --pythonsolver</code>
+是脚本支持的单独模式；它会显式确认：</p>
 <ul>
 <li>callback solver 已经实际运行；</li>
 <li><code>he_ions</code> 的 <code>z</code> 坐标访问链可用。</li>
 </ul>
-<p>因此这条应用树在工程上也不只是低温等离子体
-benchmark，同时还是清晰的：</p>
+<p>但当前注册的两个 1D CMake 测试分别传入 <code>--test</code> 与
+<code>--test --dsmc</code>，都<strong>没有</strong>传入
+<code>--pythonsolver</code>。因此 active regression 能证明的是 MCC 或
+DSMC 的离子密度验证和粒子坐标访问链；Python Poisson callback
+是可单独运行的接口路径，不能被写成已经由这两条活跃测试覆盖。</p>
+<p>因此这条应用树在工程上除低温等离子体 benchmark 外，还提供清晰的：</p>
 <ul>
 <li>PICMI + Python callback Poisson solver</li>
 </ul>
-<p>应用入口之一。</p>
+<p>可选应用入口；两种角色需要分别验证。</p>
 <h3 id="可直接比较的量case-1-ion-density-profile">可直接比较的量：case-1
 ion-density profile</h3>
-<p><code>analysis_1d.py</code> 和 <code>analysis_dsmc.py</code>
-当前都直接读取：</p>
+<p>两条当前注册的 1D 测试都调用
+<code>analysis_1d.py</code>。它直接读取：</p>
 <ul>
 <li><code>ion_density_case_1.npy</code></li>
 </ul>
-<p>并与内置 Turner case-1 参考离子密度 profile 做
-<code>allclose</code>。</p>
+<p>分析器将脚本内 129 个节点的 Turner case-1 reference
+插值到模拟网格，跳过两端吸收壁节点后计算 interior relative-error 的
+RMS，并要求小于 <code>6%</code>。跳过边界不是放松物理比较：源码注释指出
+nodal charge deposition 在吸收壁只看到半个
+cell，端点约半值是离散边界伪影，不能与 cell-averaged benchmark
+直接并列。</p>
 <p>因此该案例最强的 physics contract 是：</p>
 <ul>
 <li>final averaged ion density profile</li>
@@ -18767,7 +18777,8 @@ realization：</p>
 <li><code>test_1d_background_mcc_picmi</code>
 <ul>
 <li><code>background_mcc</code></li>
-<li>external Python Poisson solver callback</li>
+<li>默认 WarpX electrostatic solver，不是 CMake 传入的 Python
+callback</li>
 <li>Turner case-1 profile 对照</li>
 </ul></li>
 <li><code>test_1d_dsmc_picmi</code>
@@ -18804,6 +18815,83 @@ PICMI：搭建基线，不是 2D Turner 对照</h3>
 </ul>
 <p>整条 <code>add_warpx_test(...)</code>
 仍被注释掉，所以它只能作为遗留分支记录，不能被当作已注册的比较案例。</p>
+<h3 id="验证合同判读卡相同的通过并不表示相同的正确性">验证合同判读卡：相同的“通过”并不表示相同的正确性</h3>
+<p>下面三条 active regression 都能给读者一个强比较量，但它们的
+producer、reference
+和结论范围完全不同。开始复现前，先选与你的问题同类的合同，而不是看到
+<code>analysis.py</code> 就把它们视为等价验证。</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>问题</th>
+<th>producer 与 consumer</th>
+<th>明确的通过条件</th>
+<th>可以支持的结论</th>
+<th>不能支持的结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>线探针是否保存了单缝衍射的横向包络</td>
+<td><code>field_probe</code> 的 <code>FP_line</code> 是 201 点的
+<code>FieldProbe</code> line detector；<code>integrate = 1</code>
+使每步累加 <span class="math inline">\(\lvert\mathbf S\rvert\Delta
+t\)</span>。<code>analysis.py</code> 在 step 500 从
+<code>FP_line.txt</code> 读取该积分量，以数值最大值归一后和单缝 <span class="math inline">\(\mathrm{sinc}^2\)</span> 包络比较</td>
+<td>远离横向边缘的一组 probe 点的平均相对误差
+<code>&lt; 2.5%</code></td>
+<td>在启用 EB 的该 2D 单缝设置中，line <code>FieldProbe</code>
+的<strong>归一化时间积分 Poynting-flux 形状</strong>与解析包络一致</td>
+<td>绝对光强标定、任意 probe geometry、boosted-frame lab-frame 数据，或
+PML/粒子边界整体正确</td>
+</tr>
+<tr>
+<td>低温放电的平均离子密度是否接近外部 benchmark</td>
+<td>1D PICMI run 在最后诊断窗口逐步沉积并同步 <code>rho_fp</code>，累积
+<code>he_ions</code> 密度后写出
+<code>ion_density_case_1.npy</code>；<code>analysis_1d.py</code>
+对插值后的 Turner profile 做 interior RMS 比较</td>
+<td>interior RMS relative error <code>&lt; 6%</code></td>
+<td>给定 case-1、1D electrostatic、MCC 或 DSMC 分支下，最终窗口平均
+ion-density profile 与该 Turner 数据表相符</td>
+<td>Python Poisson callback 已由 active test 覆盖、任意 RF phase
+的瞬时密度正确，或 2D discharge 已获得同一 benchmark 对照</td>
+</tr>
+<tr>
+<td>空间电荷限制二极管是否满足指定解析解</td>
+<td>1D electrostatic Pierce diode 连续以 <span class="math inline">\(J_{\rm CL}/q\)</span> 注入离子，最终
+<code>diag1</code> openPMD 写出 <span class="math inline">\(\phi,E_z,\rho,j_z\)</span>；analysis 重建
+Child–Langmuir 理论曲线</td>
+<td><span class="math inline">\(\phi\)</span> 在首个非零节点之后、<span class="math inline">\(j_z\)</span> 在全比较网格上均满足相对误差
+<code>&lt; 20%</code></td>
+<td>该平板、稳态、1D Child–Langmuir 配置的 potential 和 current-density
+合同成立</td>
+<td><code>E_z</code>、<code>rho</code>、粒子相空间的同等强断言，任意发射模型，或
+embedded-boundary ion extraction 已验证</td>
+</tr>
+</tbody>
+</table>
+<p>第一行的 <code>integrate = 1</code>
+是一个容易误读的时间层细节：输出列的单位是 <span class="math inline">\(\mathrm{W\,s/m^2}\)</span>，不是瞬时 <span class="math inline">\(\mathrm{W/m^2}\)</span>。源码先在 probe 位置
+gather <span class="math inline">\(E/B\)</span>，计算 <span class="math inline">\(\lvert\mathbf E\times\mathbf
+B\rvert/\mu_0\)</span>，再逐步乘 <span class="math inline">\(\Delta
+t\)</span> 累加；这个测试比较的是归一化空间<strong>fluence</strong>
+包络。若研究的问题是某一时刻的场幅或频谱，应关闭积分或另设相应的时间序列
+consumer，而不能沿用这条 <code>sinc^2</code> gate。</p>
+<p>第二、三行则展示了两种不同 reference。Turner profile
+是离散表格，要求先处理网格插值和端点离散边界；Child–Langmuir
+则是解析函数，<span class="math inline">\(\phi(0)=0\)</span>
+会使相对误差没有定义，所以分析器从 <code>phi[1:]</code> 开始。二者都比
+checksum 更接近物理比较，但它们只约束明确写入断言的
+observable。读者复现实验时，应把输入模型、producer、consumer、reference、被排除的点和容差一起写入诊断记录卡；缺少其中任何一项，都不能把一次
+PASS 推广成“该应用已经验证”。</p>
 <h2 id="magnetic-reconnection">Magnetic reconnection</h2>
 <p>磁重联这条应用线最准确的入口不是一般 <code>Fluids/</code>，而是：</p>
 <ul>

@@ -1,12 +1,14 @@
 # PIC-tutor
 
-本轮已完成当前 262 页 PDF 的连续读者审阅：目录、首页、前言、第 1--9 章和附录均逐页检查 Markdown、公式语义、源码入口、跨章交接和 PDF 版式。第 4、5 章将长源码改为明确声明的阅读伪代码；第 5 章新增 Vay 配置、RZ implicit Villasenor、RZ 轴线与收敛判读卡，分别把 pusher/deposition 输入项、solver initialization 与 particle/source 阶段、离散 axis operator、inverse-volume scaling、species-level 配对读数和多分辨率重复性分开，区分配置接受、pre-physics 停止、可重复趋势、formal numerical order 与 axis-charge correctness；第 6 章压缩 JRhom/RZ 的实现循环并重排 regression 索引，第 7 章校正 EB 初始化源码路径，并新增 PML 配置与验证卡和 transition-zone 判读卡，明确 gather/deposition 的双 buffer mask、runtime branch activation 与逐 route ledger 之间的证据界线；第 8 章补入诊断记录卡，第 9 章以证据层级和判读卡组织文献路线；附录 A 还明确 `plotfile` 用于分析、`Full` `checkpoint` 才用于 restart，防止把输出文件角色混同。覆盖记录见 `docs/manual-editorial-spotcheck-v0.110.md`。
+262 页基线候选已完成目录、首页、前言、第 1--9 章和附录的连续读者审阅。当前 263 页候选在此基础上补入第 8 章三类验证合同判读卡，并完成该变更的源码核对、受影响页和第 9 章/附录起页增量复核；这不是一次独立的 263 页全书重读。第 4、5 章将长源码改为明确声明的阅读伪代码；第 5 章新增 Vay 配置、RZ implicit Villasenor、RZ 轴线与收敛判读卡，分别把 pusher/deposition 输入项、solver initialization 与 particle/source 阶段、离散 axis operator、inverse-volume scaling、species-level 配对读数和多分辨率重复性分开，区分配置接受、pre-physics 停止、可重复趋势、formal numerical order 与 axis-charge correctness；第 6 章压缩 JRhom/RZ 的实现循环并重排 regression 索引，第 7 章校正 EB 初始化源码路径，并新增 PML 配置与验证卡和 transition-zone 判读卡，明确 gather/deposition 的双 buffer mask、runtime branch activation 与逐 route ledger 之间的证据界线；第 8 章补入诊断记录卡，第 9 章以证据层级和判读卡组织文献路线；附录 A 还明确 `plotfile` 用于分析、`Full` `checkpoint` 才用于 restart，防止把输出文件角色混同。覆盖记录见 `docs/manual-editorial-spotcheck-v0.110.md`。
 
-第 8 章结尾让 `8.16 延伸验证路线` 与 `8.17 本章结论` 连续收束，避免任一节成为低信息孤页；构建验收要求结论页同时保留“延伸验证路线”和“保留失败与不可外推范围”。当前 PDF 的完整人工阅读记录证明读者路径与版式已逐页复核，但不替代每篇外部文献的再次全文校对、第三方材料许可确认或公开再分发签收。附录中的 auxiliary-field 构造方法名也已更正为源码实际符号 `UpdateAuxiliaryData`。
+第 8 章结尾让 `8.16 延伸验证路线` 与 `8.17 本章结论` 连续收束，避免任一节成为低信息孤页；构建验收要求结论页同时保留“延伸验证路线”和“保留失败与不可外推范围”。基线全书阅读与当前第 8 章增量复核共同证明已记录的读者路径和版式范围，但不替代每篇外部文献的再次全文校对、第三方材料许可确认或公开再分发签收。附录中的 auxiliary-field 构造方法名也已更正为源码实际符号 `UpdateAuxiliaryData`。
 
-当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `262` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航表、第 3 章跨章交接卡、第 3A、4--9 章阅读路线、Vay 配置判读卡、RZ implicit Villasenor 判读卡、RZ 轴线判读卡、收敛判读卡、PML 配置与验证卡、transition-zone 判读卡和末页均已纳入当前 PDF 的完整人工阅读记录；该记录不替代第三方材料许可或公开再分发签收。
+当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `263` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航表、第 3 章跨章交接卡、第 3A、4--9 章阅读路线、Vay 配置判读卡、RZ implicit Villasenor 判读卡、RZ 轴线判读卡、收敛判读卡、PML 配置与验证卡、transition-zone 判读卡和末页均已纳入 262 页基线完整阅读；当前第 8 章验证合同卡及受影响页已完成增量复核；这些记录不替代第三方材料许可或公开再分发签收。
 
 当前候选可供读者审阅，但**尚未取得公开再分发签收**：public remote 仍跟踪 `references/` 下第三方材料，release manifest 对该目录的排除不会改变已有 public branch 或 Git 历史。当前事实、候选哈希和维护者必须作出的权利/仓库选择见 `docs/public-repo-release-audit.md`、已跟踪的 `docs/public-distribution-risk-register-v0.110.md` 及其生成脚本；在该决定完成前，不将书稿的编辑通过误表述为发布授权。
+
+第 8 章现把 `FieldProbe` 单缝衍射、Turner 低温放电与 Child--Langmuir Pierce diode 收束为三种验证合同：它们分别比较归一化时间积分 Poynting-flux 包络、端点剔除后的表格 density profile RMS，以及解析 potential/current-density。该判读卡同时指出活跃 1D capacitive-discharge 测试并未启用 Python Poisson callback，避免把可选接口路径误写成已覆盖的物理基准。
 
 当前源码范围审计固定在 WarpX `c311e49`：第 3A--8 章的六组代表性 source crosswalk 全部通过，且 41 个受审计源码/analysis 锚点与相邻 WarpX 工作树的 12 个未提交路径零交集。完整的版本、脏路径和适用范围见 `docs/live-warpX-source-audit-v0.110.{json,md}`；这只证明已检查的源码表面，不能替代干净工作树声明、语义等价或运行物理验证。
 

@@ -1,7 +1,7 @@
 # Reader-facing content audit
 
-- classification: `READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_RECORDED`
-- scope: entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters; the current rendered PDF has a complete recorded manual read
+- classification: `READER_FACING_CORE_CHAPTERS_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED`
+- scope: entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters; a 262-page baseline has a complete recorded manual read and the current 263-page candidate has a recorded Chapter 8 incremental review
 - versioned chapter headings remaining: `0`
 
 | check | status |
@@ -43,6 +43,7 @@
 | `chapter_8_current_diagnostics_route` | `PASS` |
 | `chapter_7_8_boundary_to_diagnostics_handoff` | `PASS` |
 | `chapter_8_application_cases_are_reader_facing` | `PASS` |
+| `chapter_8_validation_contract_reader_card` | `PASS` |
 | `chapter_2_3_have_reader_facing_routes` | `PASS` |
 | `chapter_2_time_contract_reader_route` | `PASS` |
 | `chapter_2_3_source_navigation_is_portable` | `PASS` |
@@ -57,8 +58,8 @@
 | `chapter_3a_8_long_chapter_reader_navigation` | `PASS` |
 | `core_chapters_have_no_versioned_prose` | `PASS` |
 | `core_chapters_have_exercises` | `PASS` |
-| `full_current_pdf_read_is_recorded` | `PASS` |
+| `baseline_read_and_current_incremental_review_are_recorded` | `PASS` |
 
 ## Recorded Manual Review
 
-- The current rendered PDF has a complete recorded manual read; external-source and redistribution boundaries remain documented separately.
+- A 262-page baseline has a complete recorded manual read; the current 263-page candidate has a recorded Chapter 8 incremental review. External-source and redistribution boundaries remain documented separately.

@@ -125,8 +125,8 @@ def main() -> int:
             "docs/public-distribution-risk-register-v0.110.md",
         )),
         "release_editorial_read_closure": all(marker in register for marker in (
-            "READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_RECORDED",
-            "编辑/版式的完整人工阅读已记录",
+            "READER_FACING_CORE_CHAPTERS_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED",
+            "262 页基线完整连续阅读与当前增量版式复核已记录",
             "不再以“继续人工通读”替代权利决定",
         )) and all(
             (root / path).is_file()

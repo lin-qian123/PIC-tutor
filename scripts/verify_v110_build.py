@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 5 reader cards plus the Chapter 7 PML and transition-zone cards yield 262 pages.
-EXPECTED_PDF_PAGES = 262
+# The Chapter 8 validation-contract reader card yields 263 pages.
+EXPECTED_PDF_PAGES = 263
 
 
 def image_links(text: str) -> list[str]:
@@ -55,6 +55,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-05-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-06-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-08-validation-reader-card-v0.110.md").read_text(encoding="utf-8")
     appendix_symbols = APPENDIX_SYMBOLS.read_text(encoding="utf-8")
     merged = MERGED_MARKDOWN.read_text(encoding="utf-8")
     html = HTML.read_text(encoding="utf-8", errors="ignore")
@@ -575,6 +576,18 @@ def main() -> None:
             )
         )
         and not chapter_8_application_record_markers,
+        "chapter_8_validation_contract_reader_card": all(
+            marker in chapter_8
+            for marker in (
+                "### 验证合同判读卡：相同的“通过”并不表示相同的正确性",
+                "归一化时间积分 Poynting-flux 形状",
+                "Python Poisson callback 是可单独运行的接口路径",
+                "interior RMS relative error `< 6%`",
+                "`phi[1:]`",
+                "不能把一次 PASS 推广成“该应用已经验证”",
+            )
+        ) and (ROOT / "scripts/audit_chapter_08_validation_reader_card.py").is_file()
+        and "SOURCE_GROUNDED_READER_VALIDATION_CONTRACT" in source,
         "chapter_9_current_literature_route": all(
             marker in chapter_9
             for marker in (
@@ -1224,13 +1237,17 @@ def main() -> None:
             marker in manual_spotcheck
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
-                "本轮连续阅读已覆盖当前 PDF 第 1--262 页",
+                "基线 262 页快照已完成连续阅读",
+                "当前增量复核（263 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
                 "| 219--254 |",
-                "| 255--259 |",
-                "| 260--262 |",
+                "| 229 |",
+                "| 230 |",
+                "| 256 |",
+                "| 261 |",
+                "262 页基线完整连续阅读 + 第 8 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

@@ -43,17 +43,17 @@ $$
 W_E=\frac{V_c}{2}\sum_j \rho_j\phi_j
 $$
 
-当成第一性对象，再从 `-\partial W_E/\partial x_i` 构造粒子受力；后者则保持更常见的 grid force / zero-total-force 结构。因此本章后面讨论 `ShapeFactors.H`、charge/current deposition 和 sampled density 时，必须把它们同时视作“守恒合同”的一部分，而不是孤立的插值技术细节。
+当成第一性对象，再从 \(-\partial W_E/\partial x_i\) 构造粒子受力；后者则保持更常见的 grid force / zero-total-force 结构。因此本章后面讨论 `ShapeFactors.H`、charge/current deposition 和 sampled density 时，必须把它们同时视作“守恒合同”的一部分，而不是孤立的插值技术细节。
 
-Birdsall 在 Chapter 13 又把这条 shape-factor 主线往“长期数值健康度”推进了一步：对 thermal plasma，weighting order 与 short-wavelength smoothing 不只是决定瞬时噪声有多平滑，还会直接改写 self-heating time `\tau_H`。一维结果和 Hockney 的 2d2v 长时间实验都说明：
+Birdsall 在 Chapter 13 又把这条 shape-factor 主线往“长期数值健康度”推进了一步：对 thermal plasma，weighting order 与 short-wavelength smoothing 不只是决定瞬时噪声有多平滑，还会直接改写 self-heating time \(\tau_H\)。一维结果和 Hockney 的 2d2v 长时间实验都说明：
 
 - 更高阶 particle shape 会更强地削弱 alias coupling；
-- 更激进的高波数截断会进一步拉长 `\tau_H`；
-- 但 collisional slowing-down time `\tau_s` 未必同步等比例变化。
+- 更激进的高波数截断会进一步拉长 \(\tau_H\)；
+- 但 collisional slowing-down time \(\tau_s\) 未必同步等比例变化。
 
 所以本章讨论 shape order 时，不能只写“更高阶更光滑、噪声更低”。更准确的说法是：shape order、cloud width 和 smoothing policy 一起决定了热等离子体多久会因为 finite-grid effects 累积出不可忽略的数值自热。
 
-Hockney 1971 的可用证据限于摘要级：它支持 `tau_coll/tau_pe`、电场能量涨落、`(omega_pe Delta t)_opt` 和 `K_2` 的定量路线，但不能支持对正文或图表的逐段解读。Abe et al. 1975 的摘要级 `sigma(K_g)` 与 correlation-time 观测补充短时 fluctuation 的统计量，不能替代 Hockney 的长时 `tau_H` 结论。
+Hockney 1971 的可用证据限于摘要级：它支持 \(\tau_{\mathrm{coll}}/\tau_{pe}\)、电场能量涨落、\((\omega_{pe}\Delta t)_{\mathrm{opt}}\) 和 \(K_2\) 的定量路线，但不能支持对正文或图表的逐段解读。Abe et al. 1975 的摘要级 \(\sigma(K_g)\) 与 correlation-time 观测补充短时 fluctuation 的统计量，不能替代 Hockney 的长时 \(\tau_H\) 结论。
 
 两篇 1974 摘要级来源补足了 particle-mesh 的历史定位：QPM/PPPM 把 Gaussian cloud、potential shaping、mesh noise 和 sub-mesh resolution 放到同一模型谱系；force shaping 则把 NGP/CIC/九点 charge-sharing hierarchy、potential correction 与 force-law angular anisotropy 联系起来。它们没有全文支撑，因而不能把摘要中的数值或设置当作 WarpX kernel 的复现结果。
 
@@ -76,67 +76,30 @@ WarpX 中 shape 阶数通过 `nox/noy/noz` 等内部变量进入 gather 和 depo
 
 ## 5.2 `ShapeFactors.H`：WarpX 实际使用的 0 到 4 阶形函数
 
-形函数不是抽象参数。WarpX 在 `Source/Particles/ShapeFactors.H` 的 `Compute_shape_factor` 中直接给出 0 到 4 阶的权重和最左网格点索引：
+形函数不是抽象参数。`Source/Particles/ShapeFactors.H` 中的 `Compute_shape_factor` 为 0 到 4 阶分别显式列出多项式，并同时返回 stencil 的最左写入点。读者不需要把 0--4 阶的五套 C++ 多项式当作一段程序背诵；下表先固定它们共同的离散几何：
 
-```cpp
-template <int depos_order>
-struct Compute_shape_factor
-{
-    template< typename T >
-    AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE
-    int operator()(
-        T* const sx,
-        T xmid) const
-    {
-        if constexpr (depos_order == 0){
-            const auto j = static_cast<int>(xmid + T(0.5));
-            sx[0] = T(1.0);
-            return j;
-        }
-        else if constexpr (depos_order == 1){
-            const auto j = static_cast<int>(xmid);
-            const T xint = xmid - T(j);
-            sx[0] = T(1.0) - xint;
-            sx[1] = xint;
-            return j;
-        }
-        else if constexpr (depos_order == 2){
-            const auto j = static_cast<int>(xmid + T(0.5));
-            const T xint = xmid - T(j);
-            sx[0] = T(0.5)*(T(0.5) - xint)*(T(0.5) - xint);
-            sx[1] = T(0.75) - xint*xint;
-            sx[2] = T(0.5)*(T(0.5) + xint)*(T(0.5) + xint);
-            // index of the leftmost cell where particle deposits
-            return j-1;
-        }
-        else if constexpr (depos_order == 3){
-            const auto j = static_cast<int>(xmid);
-            const T xint = xmid - T(j);
-            sx[0] = (T(1.0))/(T(6.0))*(T(1.0) - xint)*(T(1.0) - xint)*(T(1.0) - xint);
-            sx[1] = (T(2.0))/(T(3.0)) - xint*xint*(T(1.0) - xint/(T(2.0)));
-            sx[2] = (T(2.0))/(T(3.0)) - (T(1.0) - xint)*(T(1.0) - xint)*(T(1.0) - T(0.5)*(T(1.0) - xint));
-            sx[3] = (T(1.0))/(T(6.0))*xint*xint*xint;
-            // index of the leftmost cell where particle deposits
-            return j-1;
-        }
-        else if constexpr (depos_order == 4){
-            const auto j = static_cast<int>(xmid + T(0.5));
-            const T xint = xmid - T(j);
-            sx[0] = (T(1.0))/(T(24.0))*(T(0.5) - xint)*(T(0.5) - xint)*(T(0.5) - xint)*(T(0.5) - xint);
-            sx[1] = (T(1.0))/(T(24.0))*(T(4.75) - T(11.0)*xint + T(4.0)*xint*xint*(T(1.5) + xint - xint*xint));
-            sx[2] = (T(1.0))/(T(24.0))*(T(14.375) + T(6.0)*xint*xint*(xint*xint - T(2.5)));
-            sx[3] = (T(1.0))/(T(24.0))*(T(4.75) + T(11.0)*xint + T(4.0)*xint*xint*(T(1.5) - xint - xint*xint));
-            sx[4] = (T(1.0))/(T(24.0))*(T(0.5) + xint)*(T(0.5) + xint)*(T(0.5) + xint)*(T(0.5)+xint);
-            // index of the leftmost cell where particle deposits
-            return j-2;
-        }
-        else{
-            WARPX_ABORT_WITH_MESSAGE("Unknown particle shape selected in Compute_shape_factor");
-            amrex::ignore_unused(sx, xmid);
-        }
-        return 0;
-    }
-};
+| 阶数 | 参考点 | support 数 | 返回的最左写入点 |
+|---:|---|---:|---|
+| 0 | 最近网格点 | 1 | 最近点 |
+| 1 | 左侧网格点 | 2 | 左端 `j` |
+| 2 | 最近中心/节点 | 3 | `j-1` |
+| 3 | 左侧网格点 | 4 | `j-1` |
+| 4 | 最近中心/节点 | 5 | `j-2` |
+
+下面是与源码等价的阅读伪代码，只保留一阶和二阶的代表式。三、四阶沿同一规则增加 B-spline 的 support；精确多项式应回查 `Compute_shape_factor`，而不是把这个缩写当作可编译替代品：
+
+```text
+shape_weights(order, xmid):
+    if order is 0:
+        return nearest_index(xmid), [1]
+    if order is 1:
+        j = floor(xmid); xi = xmid - j
+        return j, [1-xi, xi]
+    if order is 2:
+        j = nearest_index(xmid); xi = xmid - j
+        return j-1, [0.5*(0.5-xi)^2, 0.75-xi^2, 0.5*(0.5+xi)^2]
+    if order is 3 or 4:
+        return left_index_and_bspline_weights_for_that_order(xmid)
 ```
 
 对一阶，若 \(x_\mathrm{mid}=j+\xi\)，\(0\le\xi<1\)，源码就是
@@ -155,76 +118,17 @@ $$
 
 并返回 `j-1` 作为 stencil 左端。三阶和四阶同样是 B-spline 形函数的展开式。源码里 0/2/4 阶用 `xmid+0.5` 找中心，1/3 阶用 `xmid` 找左端，这是因为偶数阶和奇数阶 shape 的自然支撑中心不同。
 
-Esirkepov 沉积还需要把旧位置的 shape 写进与新位置对齐的数组。对应实现是同一文件中的 `Compute_shifted_shape_factor`：
+Esirkepov 沉积还需要把旧位置的 shape 写进与新位置对齐的数组。对应实现是同一文件中的 `Compute_shifted_shape_factor`。它不是第二套形函数，而是在已经知道 new stencil 的前提下，把 old weights 写入带前后 padding 的共同索引框架。其等价阅读伪代码为：
 
-```cpp
-template <int depos_order>
-struct Compute_shifted_shape_factor
-{
-    template< typename T >
-    AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE
-    int operator()(
-        T* const sx,
-        const T x_old,
-        const int i_new) const
-    {
-        if constexpr (depos_order == 0){
-            const auto i = static_cast<int>(std::floor(x_old + T(0.5)));
-            const int i_shift = i - i_new;
-            sx[1+i_shift] = T(1.0);
-            return i;
-        }
-        else if constexpr (depos_order == 1){
-            const auto i = static_cast<int>(std::floor(x_old));
-            const int i_shift = i - i_new;
-            const T xint = x_old - T(i);
-            sx[1+i_shift] = T(1.0) - xint;
-            sx[2+i_shift] = xint;
-            return i;
-        }
-        else if constexpr (depos_order == 2){
-            const auto i = static_cast<int>(x_old + T(0.5));
-            const int i_shift = i - (i_new + 1);
-            const T xint = x_old - T(i);
-            sx[1+i_shift] = T(0.5)*(T(0.5) - xint)*(T(0.5) - xint);
-            sx[2+i_shift] = T(0.75) - xint*xint;
-            sx[3+i_shift] = T(0.5)*(T(0.5) + xint)*(T(0.5) + xint);
-            // index of the leftmost cell where particle deposits
-            return i - 1;
-        }
-        else if constexpr (depos_order == 3){
-            const auto i = static_cast<int>(x_old);
-            const int i_shift = i - (i_new + 1);
-            const T xint = x_old - T(i);
-            sx[1+i_shift] = (T(1.0))/(T(6.0))*(T(1.0) - xint)*(T(1.0) - xint)*(T(1.0) - xint);
-            sx[2+i_shift] = (T(2.0))/(T(3.0)) - xint*xint*(T(1.0) - xint/(T(2.0)));
-            sx[3+i_shift] = (T(2.0))/(T(3.0)) - (T(1.0) - xint)*(T(1.0) - xint)*(T(1.0) - T(0.5)*(T(1.0) - xint));
-            sx[4+i_shift] = (T(1.0))/(T(6.0))*xint*xint*xint;
-            // index of the leftmost cell where particle deposits
-            return i - 1;
-        }
-        else if constexpr (depos_order == 4){
-            const auto i = static_cast<int>(x_old + T(0.5));
-            const int i_shift = i - (i_new + 2);
-            const T xint = x_old - T(i);
-            sx[1+i_shift] = (T(1.0))/(T(24.0))*(T(0.5) - xint)*(T(0.5) - xint)*(T(0.5) - xint)*(T(0.5) - xint);
-            sx[2+i_shift] = (T(1.0))/(T(24.0))*(T(4.75) - T(11.0)*xint + T(4.0)*xint*xint*(T(1.5) + xint - xint*xint));
-            sx[3+i_shift] = (T(1.0))/(T(24.0))*(T(14.375) + T(6.0)*xint*xint*(xint*xint - T(2.5)));
-            sx[4+i_shift] = (T(1.0))/(T(24.0))*(T(4.75) + T(11.0)*xint + T(4.0)*xint*xint*(T(1.5) - xint - xint*xint));
-            sx[5+i_shift] = (T(1.0))/(T(24.0))*(T(0.5) + xint)*(T(0.5) + xint)*(T(0.5) + xint)*(T(0.5)+xint);
-            // index of the leftmost cell where particle deposits
-            return i - 2;
-        }
-        else{
-            WARPX_ABORT_WITH_MESSAGE("Unknown particle shape selected in Compute_shifted_shape_factor");
-            amrex::ignore_unused(sx, x_old, i_new);
-        }
-        return 0;
-    }
-};
+```text
+aligned_old_shape(order, x_old, new_left):
+    old_left, old_weights = shape_weights(order, x_old)
+    shift = offset_needed_to_align(old_left, new_left, order)
+    write old_weights into padded_old_shape[1 + shift :]
+    return old_left, padded_old_shape
 ```
 
-这里的 `i_shift` 是 Esirkepov 的关键工程细节：旧位置和新位置可能跨过 cell 边界，不能把两个 shape 数组各自放在自己的左端后直接相减。WarpX 把旧 shape 平移到以 `i_new` 为参考的数组里，后面才能逐项计算 `sx_old[i] - sx_new[i]`。
+`offset_needed_to_align` 在源码中随偶/奇阶支撑而不同：0、1 阶以 `i_new` 为参考，2、3 阶以 `i_new+1` 为参考，4 阶以 `i_new+2` 为参考。这里的 `i_shift` 是 Esirkepov 的关键工程细节：旧位置和新位置可能跨过 cell 边界，不能把两个 shape 数组各自放在自己的左端后直接相减。WarpX 把旧 shape 平移到以 `i_new` 为参考的数组里，后面才能逐项计算 `sx_old[i] - sx_new[i]`。
 
 再往下一层看，`ShapeFactors.H` 里这三个 functor 其实对应三种不同的离散合同，而不只是“都能算一组权重”：
 
@@ -274,7 +178,7 @@ $$
 \frac{q_p w_p}{\Delta V_i}\bigl(S_i(x_p^{n+1})-S_i(x_p^n)\bigr).
 $$
 
-charge-conserving deposition 真正要做的，不是“再估一个差不多的 `\mathbf J`”，而是构造某个离散电流，使得
+charge-conserving deposition 真正要做的，不是“再估一个差不多的 \(\mathbf J\)”，而是构造某个离散电流，使得
 
 $$
 \frac{\rho_i^{n+1}-\rho_i^n}{\Delta t}
@@ -286,7 +190,7 @@ $$
 
 - **Esirkepov**：围绕 old/new shape difference 直接构造守恒电流；
 - **Villasenor**：把轨迹按 cell crossing 切 segment，再让每段局部输运共同满足同一离散守恒；
-- **Direct**：直接写 `q w \mathbf v/\Delta V`，所以不自动满足这个合同；
+- **Direct**：直接写 \(q w\mathbf v/\Delta V\)，所以不自动满足这个合同；
 - **Vay**：属于显式-only 的两阶段 `D`-field 重组算法，离散守恒不是通过 Esirkepov/Villasenor 这种单阶段 charge-conserving kernel 来实现。
 
 ### 5.3.1 五条路径的责任边界总览
@@ -678,7 +582,7 @@ amrex::ParticleReal const xp_np1 = 2._prt*xp_nph - xp_n;
 
 因此在 implicit/suborbit 一侧，WarpX 真正需要的不是“任意一个能沉 `J` 的 kernel”，而是保留 boundary crop、segment decomposition 和 matching gather 兼容性的那条沉积合同。
 
-对 Esirkepov 也应作同样辨析。`doChargeConservingDepositionShapeNImplicit<N>()` 当然仍保留了论文那条 old/new shape-difference 守恒主线，但它前面多出来的 `x_n \to x_{n+1}` 恢复、几何分支坐标改写、`double` 精度 shape functor 以及 implicit gather 配套语义，都属于 WarpX 在原始论文主干之外加上的工程前端。换句话说，读第 5 章时应把
+对 Esirkepov 也应作同样辨析。`doChargeConservingDepositionShapeNImplicit<N>()` 当然仍保留了论文那条 old/new shape-difference 守恒主线，但它前面多出来的 \(x_n\to x_{n+1}\) 恢复、几何分支坐标改写、`double` 精度 shape functor 以及 implicit gather 配套语义，都属于 WarpX 在原始论文主干之外加上的工程前端。换句话说，读第 5 章时应把
 
 1. “守恒电流如何由 old/new shape difference 或 segment flux 构造出来”，和
 2. “隐式推进下怎样先把这条轨迹恢复成可沉积对象”
@@ -759,12 +663,12 @@ Dz_arr(i,j,k) += (1._rt/6._rt)*(2_rt*t_a - 2._rt*t_b       + t_c       + t_d);
   - 从 `(x,y)` 恢复半径 `r`
   - 再用 `costheta/sintheta` 重建分量
 - `RSPHERE`
-  - 再进一步恢复 `r,\theta,\phi`
+  - 再进一步恢复 \(r,\theta,\phi\)
 - `1D_Z`
   - 空间支撑只剩 `z`
   - 但横向速度分量仍可能进入 current 分量的几何解释
 
-源码原文如下，位置为 `Source/Particles/Deposition/CurrentDeposition.H`：
+下列为保留分支名称的短代码摘录，位置为 `Source/Particles/Deposition/CurrentDeposition.H`：
 
 ```cpp
 #if defined(WARPX_DIM_RZ) || defined(WARPX_DIM_RCYLINDER)
@@ -857,10 +761,10 @@ $$
 
 这组 Vay 专用实现边界下，`D`-field 两阶段重组后的离散电荷守恒是否仍成立。它给了一个比 Langmuir 家族更窄、更直接的 Vay deposition 自证入口。
 
-和它互补的另一组 regression 是 `Examples/Tests/langmuir/` 里的 PSATD current-correction 变体。那组测试不是只看 `divE-rho/\epsilon_0`，而是两层断言一起做：
+和它互补的另一组 regression 是 `Examples/Tests/langmuir/` 里的 PSATD current-correction 变体。那组测试不是只看 \(\mathrm{div}E-\rho/\epsilon_0\)，而是两层断言一起做：
 
 1. 先把 `Ex/Ey/Ez` 或 `Ex/Ez` 与解析 Langmuir-wave 场解比较；
-2. 再由 `analysis_utils.py` 在特定组合下追加 `divE-rho/\epsilon_0` 检查。
+2. 再由 `analysis_utils.py` 在特定组合下追加 \(\mathrm{div}E-\rho/\epsilon_0\) 检查。
 
 更关键的是，这个 helper 明确写死了适用边界：
 
@@ -1053,89 +957,23 @@ WARPX_ALWAYS_ASSERT_WITH_MESSAGE(shared_mem_bytes <= max_shared_mem_bytes,
 
 ## 5.9 `ChargeDeposition.H`：电荷沉积 kernel 的逐项结构
 
-普通路径的中间桥接在 `Source/ablastr/particles/DepositCharge.H`：它接收 `WarpXParticleContainer` 的 particle iterator、本地/目标 `rho`、`ng_rho`、`depos_lev`、`ref_ratio` 与 `icomp/nc`，再按 `WarpX::noz` 选择 `doChargeDepositionShapeN<1..4>()`。最终的 WarpX-specific shape kernel 位于 `Source/Particles/Deposition/ChargeDeposition.H`。下面按 3D 主干摘出核心源码，并保留 XZ/RZ 与 3D 的原始写入分支；完整维度条件见原文件同一函数：
+普通路径的中间桥接在 `Source/ablastr/particles/DepositCharge.H`：它接收 `WarpXParticleContainer` 的 particle iterator、本地/目标 `rho`、`ng_rho`、`depos_lev`、`ref_ratio` 与 `icomp/nc`，再按 `WarpX::noz` 选择 `doChargeDepositionShapeN<1..4>()`。最终的 WarpX-specific shape kernel 位于 `Source/Particles/Deposition/ChargeDeposition.H`。下面是覆盖 3D 主干及 XZ/RZ 写回差异的等价阅读伪代码；它省略 C++ 的 GPU capture、数组类型和编译期宏，不是可编译源码：
 
-```cpp
-template <int depos_order>
-void doChargeDepositionShapeN (const GetParticlePosition<PIdx>& GetPosition,
-                               const amrex::ParticleReal * const wp,
-                               const int* ion_lev,
-                               amrex::FArrayBox& rho_fab,
-                               long np_to_deposit,
-                               const amrex::XDim3 & dinv,
-                               const amrex::XDim3 & xyzmin,
-                               amrex::Dim3 lo,
-                               amrex::Real q,
-                               [[maybe_unused]] int n_rz_azimuthal_modes)
-{
-    const bool do_ionization = ion_lev;
-    const amrex::Real invvol = dinv.x*dinv.y*dinv.z;
-    amrex::Array4<amrex::Real> const& rho_arr = rho_fab.array();
-    amrex::IntVect const rho_type = rho_fab.box().type();
+```text
+for each particle p in the tile:
+    wq = q * weight[p] / cell_volume
+    if ionization level exists: wq *= ionization_level[p]
 
-    amrex::ParallelFor(
-            np_to_deposit,
-            [=] AMREX_GPU_DEVICE (long ip) {
-            amrex::Real wq = q*wp[ip]*invvol;
-            if (do_ionization){
-                wq *= ion_lev[ip];
-            }
+    for each active coordinate a:
+        grid_coordinate = (x_p[a] - lower_corner[a]) / delta[a]
+        if rho is cell-centered in a: grid_coordinate -= 0.5
+        left[a], S[a] = shape_weights(order, grid_coordinate)
 
-            amrex::ParticleReal xp, yp, zp;
-            GetPosition(ip, xp, yp, zp);
-
-            Compute_shape_factor< depos_order > const compute_shape_factor;
-            const amrex::Real x = (xp - xyzmin.x)*dinv.x;
-
-            amrex::Real sx[depos_order + 1] = {0._rt};
-            int i = 0;
-            if (rho_type[0] == NODE) {
-                i = compute_shape_factor(sx, x);
-            } else if (rho_type[0] == CELL) {
-                i = compute_shape_factor(sx, x - 0.5_rt);
-            }
-
-            const amrex::Real y = (yp - xyzmin.y)*dinv.y;
-            amrex::Real sy[depos_order + 1] = {0._rt};
-            int j = 0;
-            if (rho_type[1] == NODE) {
-                j = compute_shape_factor(sy, y);
-            } else if (rho_type[1] == CELL) {
-                j = compute_shape_factor(sy, y - 0.5_rt);
-            }
-
-            const amrex::Real z = (zp - xyzmin.z)*dinv.z;
-            amrex::Real sz[depos_order + 1] = {0._rt};
-            int k = 0;
-            if (rho_type[WARPX_ZINDEX] == NODE) {
-                k = compute_shape_factor(sz, z);
-            } else if (rho_type[WARPX_ZINDEX] == CELL) {
-                k = compute_shape_factor(sz, z - 0.5_rt);
-            }
-
-#if defined(WARPX_DIM_XZ) || defined(WARPX_DIM_RZ)
-            for (int iz=0; iz<=depos_order; iz++){
-                for (int ix=0; ix<=depos_order; ix++){
-                    amrex::Gpu::Atomic::AddNoRet(
-                        &rho_arr(lo.x+i+ix, lo.y+k+iz, 0, 0),
-                        sx[ix]*sz[iz]*wq);
-                }
-            }
-#elif defined(WARPX_DIM_3D)
-            for (int iz=0; iz<=depos_order; iz++){
-                for (int iy=0; iy<=depos_order; iy++){
-                    for (int ix=0; ix<=depos_order; ix++){
-                        amrex::Gpu::Atomic::AddNoRet(
-                            &rho_arr(lo.x+i+ix, lo.y+j+iy, lo.z+k+iz),
-                            sx[ix]*sy[iy]*sz[iz]*wq);
-                    }
-                }
-            }
-#endif
-        }
-        );
-}
+    for each tensor-product index alpha, beta, gamma:
+        atomic_add(rho[left + index], wq * Sx[alpha] * Sy[beta] * Sz[gamma])
 ```
+
+在 `XZ/RZ` 中只保留 x/z 两层循环；在 3D 中使用完整的 x/y/z 三层循环。`1D_Z`、`RCYLINDER` 与 `RSPHERE` 则在 kernel 的更早分支把坐标压成唯一的 z 或 r 坐标，再只生成对应的一维权重。`rho_type` 决定每个方向的 `grid_coordinate` 是否要减去半个 cell，因此这里的 shape 并不是一套固定的 cell-centered 权重。
 
 这段代码对应的 3D 公式是
 
@@ -1311,59 +1149,18 @@ DepositCharge(pti, wp, ion_lev, crho, 0, np_to_deposit,
 
 ## 5.10 Direct current deposition：非守恒但直观的速度加权沉积
 
-Direct current deposition 的核心 kernel 是 `Source/Particles/Deposition/CurrentDeposition.H`。下面两段分别取自同一函数的前半段和写入段；中间省略的是与 x 方向同构的 y/z 方向 shape 初始化。先看粒子电流权重和半步位置：
+Direct current deposition 的核心 kernel 是 `Source/Particles/Deposition/CurrentDeposition.H`。它选择一个时间中心位置，按各分量 staggering 生成 shape，再把速度加权的电流写回。下面是其等价阅读伪代码；`RZ/RCYLINDER` 会先把笛卡尔速度旋到径向/方位角分量，普通几何则直接使用 (v_x,v_y,v_z)：
 
-```cpp
-template <int depos_order>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void doDepositionShapeNKernel([[maybe_unused]] const amrex::ParticleReal xp,
-                              [[maybe_unused]] const amrex::ParticleReal yp,
-                              [[maybe_unused]] const amrex::ParticleReal zp,
-                              const amrex::ParticleReal wq,
-                              const amrex::ParticleReal vx,
-                              const amrex::ParticleReal vy,
-                              const amrex::ParticleReal vz,
-                              amrex::Array4<amrex::Real> const& jx_arr,
-                              amrex::Array4<amrex::Real> const& jy_arr,
-                              amrex::Array4<amrex::Real> const& jz_arr,
-                              amrex::IntVect const& jx_type,
-                              amrex::IntVect const& jy_type,
-                              amrex::IntVect const& jz_type,
-                              const amrex::Real relative_time,
-                              const amrex::XDim3 & dinv,
-                              const amrex::XDim3 & xyzmin,
-                              const amrex::Real invvol,
-                              const amrex::Dim3 lo,
-                              [[maybe_unused]] const int n_rz_azimuthal_modes)
-{
-    // wqx, wqy wqz are particle current in each direction
-#if defined(WARPX_DIM_RZ) || defined(WARPX_DIM_RCYLINDER)
-    const amrex::Real xpmid = xp + relative_time*vx;
-    const amrex::Real ypmid = yp + relative_time*vy;
-    const amrex::Real rpmid = std::sqrt(xpmid*xpmid + ypmid*ypmid);
-    const amrex::Real costheta = (rpmid > 0._rt ? xpmid/rpmid : 1._rt);
-    const amrex::Real sintheta = (rpmid > 0._rt ? ypmid/rpmid : 0._rt);
-    const amrex::Real wqx = wq*invvol*(+vx*costheta + vy*sintheta);
-    const amrex::Real wqy = wq*invvol*(-vx*sintheta + vy*costheta);
-    const amrex::Real wqz = wq*invvol*vz;
-#else
-    const amrex::Real wqx = wq*invvol*vx;
-    const amrex::Real wqy = wq*invvol*vy;
-    const amrex::Real wqz = wq*invvol*vz;
-#endif
+```text
+x_mid = x_particle + relative_time * velocity
+current_weight[a] = q * weight * velocity_component[a] / cell_volume
 
-    Compute_shape_factor< depos_order > const compute_shape_factor;
-    const double xmid = ((xp - xyzmin.x) + relative_time*vx)*dinv.x;
-    double sx_node[depos_order + 1] = {0.};
-    double sx_cell[depos_order + 1] = {0.};
-    int j_node = 0;
-    int j_cell = 0;
-    if (jx_type[0] == NODE || jy_type[0] == NODE || jz_type[0] == NODE) {
-        j_node = compute_shape_factor(sx_node, xmid);
-    }
-    if (jx_type[0] == CELL || jy_type[0] == CELL || jz_type[0] == CELL) {
-        j_cell = compute_shape_factor(sx_cell, xmid - 0.5);
-    }
+for component in (Jx, Jy, Jz):
+    for coordinate a:
+        x_grid = (x_mid[a] - lower_corner[a]) / delta[a]
+        if component is cell-centered in a: x_grid -= 0.5
+        left[a], S_component[a] = shape_weights(order, x_grid)
+    atomically add current_weight[component] * tensor_product(S_component)
 ```
 
 `relative_time` 在显式路径通常是 `-0.5*dt`。由于 `DepositCurrent()` 被调用时粒子位置已经是 \(\mathbf{x}^{n+1}\)，这行
@@ -1376,43 +1173,7 @@ $$
 
 把沉积位置移回半步。Direct deposition 的电流权重就是 \(q w_p \mathbf{v}_p/\Delta V\)。
 
-最终写入数组的实现位于 `Source/Particles/Deposition/CurrentDeposition.H` 的 direct current kernel：
-
-```cpp
-    // Deposit current into jx_arr, jy_arr and jz_arr
-#if defined(WARPX_DIM_XZ) || defined(WARPX_DIM_RZ)
-    for (int iz=0; iz<=depos_order; iz++){
-        for (int ix=0; ix<=depos_order; ix++){
-            amrex::Gpu::Atomic::AddNoRet(
-                &jx_arr(lo.x+j_jx+ix, lo.y+l_jx+iz, 0, 0),
-                sx_jx[ix]*sz_jx[iz]*wqx);
-            amrex::Gpu::Atomic::AddNoRet(
-                &jy_arr(lo.x+j_jy+ix, lo.y+l_jy+iz, 0, 0),
-                sx_jy[ix]*sz_jy[iz]*wqy);
-            amrex::Gpu::Atomic::AddNoRet(
-                &jz_arr(lo.x+j_jz+ix, lo.y+l_jz+iz, 0, 0),
-                sx_jz[ix]*sz_jz[iz]*wqz);
-        }
-    }
-#elif defined(WARPX_DIM_3D)
-    for (int iz=0; iz<=depos_order; iz++){
-        for (int iy=0; iy<=depos_order; iy++){
-            for (int ix=0; ix<=depos_order; ix++){
-                amrex::Gpu::Atomic::AddNoRet(
-                    &jx_arr(lo.x+j_jx+ix, lo.y+k_jx+iy, lo.z+l_jx+iz),
-                    sx_jx[ix]*sy_jx[iy]*sz_jx[iz]*wqx);
-                amrex::Gpu::Atomic::AddNoRet(
-                    &jy_arr(lo.x+j_jy+ix, lo.y+k_jy+iy, lo.z+l_jy+iz),
-                    sx_jy[ix]*sy_jy[iy]*sz_jy[iz]*wqy);
-                amrex::Gpu::Atomic::AddNoRet(
-                    &jz_arr(lo.x+j_jz+ix, lo.y+k_jz+iy, lo.z+l_jz+iz),
-                    sx_jz[ix]*sy_jz[iy]*sz_jz[iz]*wqz);
-            }
-        }
-    }
-#endif
-}
-```
+源码会为 `Jx/Jy/Jz` 分别保留各自的 `sx/sy/sz` 与左端索引，因为三个分量的 stagger 可能不同。二维仅累加两个 active-coordinate 权重，三维累加三个；两个分支都通过原子加避免多个粒子同时写同一网格自由度发生竞态。
 
 3D 形式可以写为
 
@@ -1428,7 +1189,7 @@ $$
 
 \(J_y,J_z\) 同理，但使用各自 staggering 对应的 shape 数组 `sx_jy/sy_jy/sz_jy` 与 `sx_jz/sy_jz/sz_jz`。Direct 路径的优点是简单，缺点是这个公式没有强制把 \(\rho^n\) 和 \(\rho^{n+1}\) 的差精确写成离散散度。
 
-这里还要补一条容易被略掉的接口边界：即使到了 implicit 版本，direct deposition 的 contract 也没有升级成“恢复完整轨迹，再按边界裁剪后沉积”。`doDepositionShapeNImplicit(...)` 只是把 `\gamma^{-1}` 改成由 `u_n` 与 `u_{n+1/2}` 共同恢复，然后把
+这里还要补一条容易被略掉的接口边界：即使到了 implicit 版本，direct deposition 的 contract 也没有升级成“恢复完整轨迹，再按边界裁剪后沉积”。`doDepositionShapeNImplicit(...)` 只是把 \(\gamma^{-1}\) 改成由 \(u_n\) 与 \(u_{n+1/2}\) 共同恢复，然后把
 
 ```cpp
 const amrex::Real relative_time = 0._rt;
@@ -1444,7 +1205,7 @@ const amrex::Real relative_time = 0._rt;
 
 ## 5.11 Esirkepov current deposition：用新旧形函数差构造连续性方程
 
-阅读 Esirkepov 论文时，最容易发生的记号错位是把论文的方向分解、WarpX 的前缀累加变量和最终网格电流分量直接画等号。它们可以建立结构对应，但不是同一个层次的对象。本章采用的源码快照以下表作为记号入口：
+阅读 Esirkepov 论文时，最容易发生的记号错位是把论文的方向分解、WarpX 的前缀累加变量和最终网格电流分量直接画等号。它们可以建立结构对应，但不是同一个层次的对象。以下表作为记号入口：
 
 | 论文层对象 | WarpX 当前实现 | 读者应保留的边界 |
 |---|---|---|
@@ -1455,102 +1216,30 @@ const amrex::Real relative_time = 0._rt;
 | transverse tensor-product factor | `one_third/one_sixth` 组成 old-old、old-new、new-old、new-new 混合平均 | 该对应由预印本与源码核对得到，不表示 CPC 定稿已逐页比较 |
 | current normalization | `invdtd.x/y/z = transverse inverse cell area / dt` | 不能把三个分量都简化成单独的 `1/dt` |
 
-表中的对应关系应逐项回查源码；它消除的是论文记号到该源码快照变量的映射歧义，不替代 `SyncCurrent()`、AMR coarse-fine、边界同步或全 geometry/order runtime regression。
+表中的对应关系应逐项回查源码；它消除的是论文记号到当前实现变量的映射歧义，不替代 `SyncCurrent()`、AMR coarse-fine、边界同步或全 geometry/order runtime regression。
 
-Esirkepov 入口在 `Source/Particles/Deposition/CurrentDeposition.H`：
+Esirkepov 入口为 `Source/Particles/Deposition/CurrentDeposition.H` 中的 `doEsirkepovDepositionShapeN`。完整签名还接收粒子坐标访问器、动量/权重/电离态数组、三个 `J` 数组、时间层、网格几何、RZ mode 与 reduced-shape mask。对算法阅读而言，先保留下列三个初始化事实即可：
 
-```cpp
-template <int depos_order>
-void doEsirkepovDepositionShapeN (const GetParticlePosition<PIdx>& GetPosition,
-                                  const amrex::ParticleReal * const wp,
-                                  const amrex::ParticleReal * const uxp,
-                                  const amrex::ParticleReal * const uyp,
-                                  const amrex::ParticleReal * const uzp,
-                                  const int* ion_lev,
-                                  const amrex::Array4<amrex::Real>& Jx_arr,
-                                  const amrex::Array4<amrex::Real>& Jy_arr,
-                                  const amrex::Array4<amrex::Real>& Jz_arr,
-                                  long np_to_deposit,
-                                  amrex::Real dt,
-                                  amrex::Real relative_time,
-                                  const amrex::XDim3 & dinv,
-                                  const amrex::XDim3 & xyzmin,
-                                  amrex::Dim3 lo,
-                                  amrex::Real q,
-                                  [[maybe_unused]] int n_rz_azimuthal_modes,
-                                  const amrex::Array4<const int>& reduced_particle_shape_mask,
-                                  bool enable_reduced_shape
-                                  )
-{
-    bool const do_ionization = ion_lev;
-
-    amrex::XDim3 const invdtd = amrex::XDim3{(1.0_rt/dt)*dinv.y*dinv.z,
-                                             (1.0_rt/dt)*dinv.x*dinv.z,
-                                             (1.0_rt/dt)*dinv.x*dinv.y};
-
-    Real constexpr inv_c2 = PhysConst::inv_c2;
-    Real constexpr one_third = 1.0_rt / 3.0_rt;
-    Real constexpr one_sixth = 1.0_rt / 6.0_rt;
-
-    enum eb_flags : int { has_reduced_shape, no_reduced_shape };
-    const int reduce_shape_runtime_flag = (enable_reduced_shape && (depos_order>1))? has_reduced_shape : no_reduced_shape;
+```text
+current_normalization = [1/(dt*dy*dz), 1/(dt*dx*dz), 1/(dt*dx*dy)]
+charge_weight = q * particle_weight * optional_ionization_level
+reduced_shape is a runtime choice only when the requested order is above one
 ```
 
 `invdtd.x=(1/dt)*dinv.y*dinv.z` 不是普通的 \(1/\Delta t\)。因为 \(J_x\) 位于 x-face，离散连续性中 \(J_x\) 的差分还会除以 \(\Delta x\)，所以 current 的量纲需要配合横截面积 \(1/(\Delta y\Delta z)\)。源码使用 `dinv.y*dinv.z/dt`，后续再由差分 operator 处理 x 向差分。
 
-粒子旧/新位置和 shape 数组由 `CurrentDeposition.H` 的 Esirkepov 入口生成：
+粒子旧/新位置和 shape 数组由同一入口生成。以下为等价的阅读伪代码；源码以 `double` 保存端点和 shape 数组，以避免很短位移时 old/new 差分被单精度抹掉：
 
-```cpp
-amrex::ParallelFor( TypeList<CompileTimeOptions<has_reduced_shape,no_reduced_shape>>{},
-    {reduce_shape_runtime_flag},
-    np_to_deposit, [=] AMREX_GPU_DEVICE (long ip, auto reduce_shape_control) {
-        Real const gaminv = 1.0_rt/std::sqrt(1.0_rt + uxp[ip]*uxp[ip]*inv_c2
-                                             + uyp[ip]*uyp[ip]*inv_c2
-                                             + uzp[ip]*uzp[ip]*inv_c2);
+```text
+for each particle and active coordinate a:
+    gamma_inverse = 1 / sqrt(1 + |u|^2/c^2)
+    x_new[a] = (x_particle[a] - lower_corner[a]
+                + (relative_time + dt/2) * u[a] * gamma_inverse) / delta[a]
+    x_old[a] = x_new[a] - dt * u[a] * gamma_inverse / delta[a]
 
-        Real wq = q*wp[ip];
-        if (do_ionization){
-            wq *= ion_lev[ip];
-        }
-
-        ParticleReal xp, yp, zp;
-        GetPosition(ip, xp, yp, zp);
-
-        double const x_new = (xp - xyzmin.x + (relative_time + 0.5_rt*dt)*uxp[ip]*gaminv)*dinv.x;
-        double const x_old = x_new - dt*dinv.x*uxp[ip]*gaminv;
-        double const y_new = (yp - xyzmin.y + (relative_time + 0.5_rt*dt)*uyp[ip]*gaminv)*dinv.y;
-        double const y_old = y_new - dt*dinv.y*uyp[ip]*gaminv;
-        double const z_new = (zp - xyzmin.z + (relative_time + 0.5_rt*dt)*uzp[ip]*gaminv)*dinv.z;
-        double const z_old = z_new - dt*dinv.z*uzp[ip]*gaminv;
-
-        const Compute_shape_factor< depos_order > compute_shape_factor;
-        const Compute_shifted_shape_factor< depos_order > compute_shifted_shape_factor;
-        const Compute_shifted_shape_factor< 1 > compute_shifted_shape_factor_order1;
-
-        double sx_new[depos_order + 3] = {0.};
-        double sx_old[depos_order + 3] = {0.};
-        const int i_new = compute_shape_factor(sx_new+1, x_new );
-        const int i_old = compute_shifted_shape_factor(sx_old, x_old, i_new);
-
-        double sy_new[depos_order + 3] = {0.};
-        double sy_old[depos_order + 3] = {0.};
-        const int j_new = compute_shape_factor(sy_new+1, y_new);
-        const int j_old = compute_shifted_shape_factor(sy_old, y_old, j_new);
-
-        double sz_new[depos_order + 3] = {0.};
-        double sz_old[depos_order + 3] = {0.};
-        const int k_new = compute_shape_factor(sz_new+1, z_new );
-        const int k_old = compute_shifted_shape_factor(sz_old, z_old, k_new );
-
-        int dil = 1, diu = 1;
-        if (i_old < i_new) { dil = 0; }
-        if (i_old > i_new) { diu = 0; }
-        int djl = 1, dju = 1;
-        if (j_old < j_new) { djl = 0; }
-        if (j_old > j_new) { dju = 0; }
-        int dkl = 1, dku = 1;
-        if (k_old < k_new) { dkl = 0; }
-        if (k_old > k_new) { dku = 0; }
+    new_left, S_new = shape_weights(order, x_new)
+    old_left, S_old = aligned_old_shape(order, x_old, new_left)
+    enlarge loop bounds on the side where old and new supports differ
 ```
 
 这里 `x_new` 与 `x_old` 是同一时间步轨迹的两端。显式路径中 `relative_time=-0.5*dt`，而粒子数组位置是 push 后位置，于是
@@ -1565,43 +1254,19 @@ x^{n+1}
 x_\mathrm{old}=x^{n+1}-v_x\Delta t=x^n.
 $$
 
-最后的 3D 电流公式位于同一 Esirkepov kernel 的写回部分：
+最后的 3D 写回由三个同构的方向 prefix loop 构成。以 (J_x) 为例，等价阅读伪代码为：
 
-```cpp
-for (int k=dkl; k<=depos_order+2-dku; k++) {
-    for (int j=djl; j<=depos_order+2-dju; j++) {
-        amrex::Real sdxi = 0._rt;
-        for (int i=dil; i<=depos_order+1-diu; i++) {
-            sdxi += wq*invdtd.x*(sx_old[i] - sx_new[i])*(
-                one_third*(sy_new[j]*sz_new[k] + sy_old[j]*sz_old[k])
-               +one_sixth*(sy_new[j]*sz_old[k] + sy_old[j]*sz_new[k]));
-            amrex::Gpu::Atomic::AddNoRet( &Jx_arr(lo.x+i_new-1+i, lo.y+j_new-1+j, lo.z+k_new-1+k), sdxi);
-        }
-    }
-}
-for (int k=dkl; k<=depos_order+2-dku; k++) {
-    for (int i=dil; i<=depos_order+2-diu; i++) {
-        amrex::Real sdyj = 0._rt;
-        for (int j=djl; j<=depos_order+1-dju; j++) {
-            sdyj += wq*invdtd.y*(sy_old[j] - sy_new[j])*(
-                one_third*(sx_new[i]*sz_new[k] + sx_old[i]*sz_old[k])
-               +one_sixth*(sx_new[i]*sz_old[k] + sx_old[i]*sz_new[k]));
-            amrex::Gpu::Atomic::AddNoRet( &Jy_arr(lo.x+i_new-1+i, lo.y+j_new-1+j, lo.z+k_new-1+k), sdyj);
-        }
-    }
-}
-for (int j=djl; j<=depos_order+2-dju; j++) {
-    for (int i=dil; i<=depos_order+2-diu; i++) {
-        amrex::Real sdzk = 0._rt;
-        for (int k=dkl; k<=depos_order+1-dku; k++) {
-            sdzk += wq*invdtd.z*(sz_old[k] - sz_new[k])*(
-                one_third*(sx_new[i]*sy_new[j] + sx_old[i]*sy_old[j])
-               +one_sixth*(sx_new[i]*sy_old[j] + sx_old[i]*sy_new[j]));
-            amrex::Gpu::Atomic::AddNoRet( &Jz_arr(lo.x+i_new-1+i, lo.y+j_new-1+j, lo.z+k_new-1+k), sdzk);
-        }
-    }
-}
+```text
+for each transverse index (j, k):
+    accumulated_Jx = 0
+    transverse_average = (old-old + new-new)/3 + (old-new + new-old)/6
+    for i along x support:
+        accumulated_Jx += charge_weight * normalization_x
+                          * (Sx_old[i] - Sx_new[i]) * transverse_average(j, k)
+        atomic_add(Jx[i, j, k], accumulated_Jx)
 ```
+
+`Jy` 与 `Jz` 只把主差分和横向组合循环置换到 y、z 方向；实际 kernel 保留三套循环以及维度特化分支。
 
 这不是 \(q\mathbf{v}S\) 的 direct 形式。它用新旧 shape 的差构造电流。例如 \(J_x\) 内部累计量可概括为
 
@@ -1659,7 +1324,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 这条对应对第 5 章很关键，因为它说明 `Eq.(23)` 在源码里并没有“蒸发成一堆经验循环”，而是被压缩进了三组方向前缀累加的循环骨架本身。
 
-预印本已足够把 `Eq.(23)` 的结构写清：每个方向的 `W^m` 都是八个 old/new corner-like shape 值的线性组合，而且只出现两种系数 `1/3` 与 `1/6`。这说明 WarpX 里显式写出来的 `one_third` / `one_sixth` 不是局部数值调味，而是论文唯一性分解的直接遗留物；源码快照中横向平均项的结构，并不是“为了让公式看起来对称”，而是为了让三方向分解在加总后精确回到总的 shape 差分。
+预印本已足够把 `Eq.(23)` 的结构写清：每个方向的 `W^m` 都是八个 old/new corner-like shape 值的线性组合，而且只出现两种系数 `1/3` 与 `1/6`。这说明 WarpX 里显式写出来的 `one_third` / `one_sixth` 不是局部数值调味，而是论文唯一性分解的直接遗留物；当前实现中横向平均项的结构，并不是“为了让公式看起来对称”，而是为了让三方向分解在加总后精确回到总的 shape 差分。
 
 这里还应把论文的 claim 再说硬一点。`Esirkepov 2001` 并没有把 `density decomposition` 当成众多可选配方之一，而是明确声称：在线性、零位移退化、坐标置换对称和总差分守恒这些自然条件下，这就是定义粒子相关电流的唯一允许过程。这样回头看 WarpX 的 `sdxi/sdyj/sdzk + one_third/one_sixth`，它们就不再只是“实现选用的一组常数”，而更接近一条被论文唯一性条件挑出来、随后在现代 tensor-product kernel 里程序化保存下来的结构。
 
@@ -1687,7 +1352,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 | 证据层 | 当前材料 | 可以支持的结论 | 不能支持的结论 |
 |---|---|---|---|
 | 论文/索引摘要 | 作者 arXiv 预印本、CPC 书目信息与 indexed abstract | `W^1/W^2/W^3`、`Eq.(23)`、arbitrary form-factor、直线轨迹、无需 Poisson solve 的 paper-level 叙述 | CPC 定稿的逐页排版、section 编号和逐式编辑差异 |
-| 源码快照 | `ShapeFactors.H`、`CurrentDeposition.H`、`WarpXParticleContainer.cpp` | old/new shape 对齐、`sdxi/sdyj/sdzk` 前缀循环、`1/3/1/6` 混合平均、几何/执行分支 | 所有 geometry/order 组合都已端到端等价 |
+| 源码实现 | `ShapeFactors.H`、`CurrentDeposition.H`、`WarpXParticleContainer.cpp` | old/new shape 对齐、`sdxi/sdyj/sdzk` 前缀循环、`1/3/1/6` 混合平均、几何/执行分支 | 所有 geometry/order 组合都已端到端等价 |
 | 代数/源码核查 | 记号映射、密度分解和有限样本公式恒等式 | 记号映射、密度分解和有限样本公式恒等式在当前定义下成立 | 公式恒等式自动等价于 GPU kernel 或 AMR source synchronization |
 | runtime consumer | 1D/2D/3D Langmuir、RZ、RCYLINDER/RSPHERE 与 MR contracts | 指定案例和边界下的 field/charge/observable 结果及其 `PASS/BOUNDARY` 分类 | 从局部案例外推完整 Cartesian product、默认参数修复或正式收敛阶 |
 
@@ -1698,7 +1363,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 同样，当前预印本也已经足够把论文内部的 section 结构稳定绑定到第 5 章的主叙述，而不必等发表版 PDF 才能继续写。更准确地说：
 
 1. **Section 2 `Continuity equation in finite differences`**
-   - 先把离散 Maxwell + leapfrog mover 压成 `(\rho^{n+1}-\rho^n)/dt + \nabla_h\cdot J = 0`；
+   - 先把离散 Maxwell + leapfrog mover 压成 \((\rho^{n+1}-\rho^n)/dt + \nabla_h\cdot J = 0\)；
    - 这正对应本章先讲“为什么 direct `qvS` 不自动守恒”，再讲 source-side continuity contract 的必要性。
 2. **Section 3 `Density decomposition`**
    - 先定义 `W^1/W^2/W^3`，再要求它们加总恢复总的 shape 差分；
@@ -1725,7 +1390,7 @@ sdxi += (sx_old[i] - sx_new[i]) * yz_mixed_average(j,k);
 
 #### 发表版证据边界
 
-因此，本章可使用的最强但不过度的结论是：**Esirkepov 的守恒分解已有预印本公式、该源码快照和代表性运行案例的三层交叉复核；CPC 发表版身份和摘要级事实已核实，但 publisher-PDF 的逐行比较仍未完成。** 这条边界避免把可读预印本、索引摘要和出版定稿混为同一来源。
+因此，本章可使用的最强但不过度的结论是：**Esirkepov 的守恒分解已有预印本公式、当前源码实现和代表性运行案例的三层交叉复核；CPC 发表版身份和摘要级事实已核实，但 publisher-PDF 的逐行比较仍未完成。** 这条边界避免把可读预印本、索引摘要和出版定稿混为同一来源。
 
 公式层还应做独立的代数核查：对任意 old/new shape 分量检查
 
@@ -1829,7 +1494,7 @@ J_{x1}=\Delta x\left(\frac12-y-\frac12\Delta y\right),\qquad
 J_{x2}=\Delta x\left(\frac12+y+\frac12\Delta y\right)
 $$
 
-可以直接读成：“同一段 `x` 向总输运 `\Delta x`，按横向旧位置 `y` 和横向位移 `\Delta y` 改写成上下两条 boundary 上的两份局部 flux”。WarpX 今天的 `XZ/RZ` kernel 不再显式把这两份 flux 分别命名成 `J_{x1},J_{x2}`，而是把同一件事改写成
+可以直接读成：“同一段 x 向总输运 \(\Delta x\)，按横向旧位置 \(y\) 和横向位移 \(\Delta y\) 改写成上下两条 boundary 上的两份局部 flux”。WarpX 今天的 `XZ/RZ` kernel 不再显式把这两份 flux 分别命名成 \(J_{x1},J_{x2}\)，而是把同一件事改写成
 
 $$
 \text{cell-based support in }x
@@ -1842,8 +1507,8 @@ $$
 其中：
 
 1. `sx_cell[i]` 承担论文里“当前这段 flux 落在哪个主方向 cell support 上”；
-2. `\frac{1}{2}(sz_{\mathrm{old}}+sz_{\mathrm{new}})` 承担论文里由 `y,\Delta y` 决定的“两条 boundary 怎样分流”；
-3. `seg_factor_x = dt_{\mathrm{seg}}/dt = dx_{\mathrm{seg}}/dx` 则把这一段局部输运从整步 `\Delta x` 缩回当前 crossing-defined 子移动。
+2. \(\frac{1}{2}(sz_{\mathrm{old}}+sz_{\mathrm{new}})\) 承担论文里由 \(y,\Delta y\) 决定的“两条 boundary 怎样分流”；
+3. \(\texttt{seg\_factor\_x}=dt_{\mathrm{seg}}/dt=dx_{\mathrm{seg}}/dx\) 则把这一段局部输运从整步 \(\Delta x\) 缩回当前 crossing-defined 子移动。
 
 而与之完全对称的另外两式
 
@@ -1861,11 +1526,11 @@ $$
 - `J_{y1}`：`y` 向输运落到“左侧”那条局部 boundary 的份额；
 - `J_{y2}`：同一份 `y` 向输运落到“右侧”那条局部 boundary 的份额。
 
-于是 `\frac12 \mp y \mp \frac12\Delta y` 这类因子，本质上不是在给 `\Delta x` 再乘一个神秘修正，而是在回答：当 charge cloud 沿 `x` 方向推进时，它有多少面积扫过了上/下两条相邻 boundary。WarpX 当前 `XZ/RZ` kernel 用 old/new node average 来写这件事，只是把论文里显式的几何宽度改写成了现代 shape-weight 语言；它保留下来的核心物理量，仍然是“哪一条局部边界分到多少横向扫掠面积”。
+于是 \(\frac12 \mp y \mp \frac12\Delta y\) 这类因子，本质上不是在给 \(\Delta x\) 再乘一个神秘修正，而是在回答：当 charge cloud 沿 x 方向推进时，它有多少面积扫过了上/下两条相邻 boundary。WarpX 当前 `XZ/RZ` kernel 用 old/new node average 来写这件事，只是把论文里显式的几何宽度改写成了现代 shape-weight 语言；它保留下来的核心物理量，仍然是“哪一条局部边界分到多少横向扫掠面积”。
 
 所以从 paper-level 读到 code-level，真正保持不变的不是表面符号，而是这条组织关系：**先有主方向输运，再有横向分流，最后才由 crossing segmentation 决定这一份局部 flux 属于哪一段真实轨迹。**
 
-两篇论文还有一条共同的实现边界，值得在这里顺手点明。`Villasenor 1992` 在 2D 讨论里直接把 timestep 约束和 Courant condition 连在一起；`Esirkepov 2001` 第 4 节则要求 `|\Delta x|, |\Delta y|, |\Delta z|` 不超过单个网格步长。它们说法不同，但物理边界一致：这两条严格守恒沉积都默认 one-step orbit 仍是局部对象。WarpX 现代实现对这条前提的处理方式，则是把它拆到 `dt/CFL`、implicit/suborbit endpoint reconstruction，以及 `cell_crossings -> segment loop` 这些程序结构里，而不再在正文里单独保留一个“几何 case table”。
+两篇论文还有一条共同的实现边界，值得在这里顺手点明。`Villasenor 1992` 在 2D 讨论里直接把 timestep 约束和 Courant condition 连在一起；`Esirkepov 2001` 第 4 节则要求 \(|\Delta x|,|\Delta y|,|\Delta z|\) 不超过单个网格步长。它们说法不同，但物理边界一致：这两条严格守恒沉积都默认 one-step orbit 仍是局部对象。WarpX 现代实现对这条前提的处理方式，则是把它拆到 `dt/CFL`、implicit/suborbit endpoint reconstruction，以及 `cell_crossings -> segment loop` 这些程序结构里，而不再在正文里单独保留一个“几何 case table”。
 
 更进一步，每个 segment 内部也不是只拿段长乘平均速度。源码会同时构造两组权重：
 
@@ -1908,7 +1573,7 @@ seg_factor_z = dzp_seg/dzp;
 - 在 **Esirkepov** 里，这组系数属于整条轨迹 `old/new shape difference` 的唯一分解；
 - 在 **Villasenor** 里，这组系数属于单个 segment 内横向 old/new node weights 的局部 face-flux 平均。
 
-对 `Villasenor 1992` 的 3D 推导来说，这条差别还有一层更具体的意义。论文里专门冒出来的 `\Delta x \Delta y \Delta z / 12`，强调的是三维局部通量不再是三个方向彼此独立的简单并列，而会出现真正的 mixed-direction coupling。WarpX 当前 `3D` kernel 虽然不再把这类项显式写成单个 `\Delta x \Delta y \Delta z / 12` 单项式，但它并没有把这层耦合抹掉；相反，这层耦合正是通过每个方向电流里那组
+对 `Villasenor 1992` 的 3D 推导来说，这条差别还有一层更具体的意义。论文里专门冒出来的 \(\Delta x\Delta y\Delta z/12\)，强调的是三维局部通量不再是三个方向彼此独立的简单并列，而会出现真正的 mixed-direction coupling。WarpX 当前 `3D` kernel 虽然不再把这类项显式写成单个 \(\Delta x\Delta y\Delta z/12\) 单项式，但它并没有把这层耦合抹掉；相反，这层耦合正是通过每个方向电流里那组
 
 ```cpp
 old*old * one_third
@@ -1919,13 +1584,13 @@ new*new * one_third
 
 的双横向 old/new 混合平均被程序化保存下来的。现代源码中的 `one_third/one_sixth` 在 Villasenor 3D 路径里不只是“平滑一下横向权重”，而是在离散实现层面承担了论文 3D 交叉耦合项的角色：它保证每个方向的局部 face flux 在做双横向平均时，仍然保留 old/new 端点之间的混合信息，而不是把三维守恒退化成三个互不相干的一维沉积。
 
-如果把论文 `Eq.(36)` 本身也放进来看，这层对应还能再硬一点。那一式给出的 `x` 向四个 face contribution 不是四份彼此独立的 `\Delta x`，而是
+如果把论文 `Eq.(36)` 本身也放进来看，这层对应还能再硬一点。那一式给出的 x 向四个 face contribution 不是四份彼此独立的 \(\Delta x\)，而是
 
-1. 一份 `+\Delta x\,\bar{\eta}\,\bar{\zeta}`；
-2. 两份带负号的 `-\Delta x\Delta y\Delta z/12` 修正；
-3. 以及一份带正号的 `+\Delta x\Delta y\Delta z/12` 修正。
+1. 一份 \(+\Delta x\,\bar{\eta}\,\bar{\zeta}\)；
+2. 两份带负号的 \(-\Delta x\Delta y\Delta z/12\) 修正；
+3. 以及一份带正号的 \(+\Delta x\Delta y\Delta z/12\) 修正。
 
-它真正表达的是：`x` 向 face flux 要同时感受到 `y/z` 两个横向方向的局部体积重叠，因此四个相邻 `x`-face 上的份额既有“横向平均面积”主项，也有“旧端点与新端点不能简单分离”的 mixed-direction coupling 修正。WarpX 当前 `3D` kernel 虽然把这层结构改写成 `old*old / old*new / new*old / new*new` 四项 old/new 混合平均，但这四项的符号与权重组织，承担的正是同一种职责：让每个 `this_Jx/this_Jy/this_Jz` 在分到四个局部横向角点时，不会丢掉论文 `Eq.(36)` 里那条 `+\,-\,-\,+` 型耦合信息。
+它真正表达的是：x 向 face flux 要同时感受到 y/z 两个横向方向的局部体积重叠，因此四个相邻 x-face 上的份额既有“横向平均面积”主项，也有“旧端点与新端点不能简单分离”的 mixed-direction coupling 修正。WarpX 当前 `3D` kernel 虽然把这层结构改写成 `old*old / old*new / new*old / new*new` 四项 old/new 混合平均，但这四项的符号与权重组织，承担的正是同一种职责：让每个 `this_Jx/this_Jy/this_Jz` 在分到四个局部横向角点时，不会丢掉论文 `Eq.(36)` 里那条 \(+\,-\,-\,+\) 型耦合信息。
 
 因此两条算法虽然都继承了同一类 tensor-product 守恒平均结构，但一个把它组织成 whole-orbit decomposition，另一个把它组织成 segment-local flux closure。这解释了为什么两段 kernel 看起来都会出现 `one_third/one_sixth`，但循环骨架、support 范围和几何语义仍然截然不同。
 
@@ -1935,7 +1600,7 @@ new*new * one_third
 2. four-/seven-/ten-boundary move 的局部 boundary-flux 组织；
 3. `cell_crossings -> num_segments -> local this_J* writeback` 与论文几何 case 的现代对应；
 4. `XZ/RZ` 下 `directional transport * (old+new)/2 * dt_seg/dt` 这条 four-boundary 到 segment kernel 的直接映射；
-5. `3D` 路径里 `one_third/one_sixth` 与 `\Delta x \Delta y \Delta z / 12` 类交叉耦合的程序化对应。
+5. `3D` 路径里 `one_third/one_sixth` 与 \(\Delta x\Delta y\Delta z/12\) 类交叉耦合的程序化对应。
 
 这条线当前已经完成四边界、重复分段和三维交叉项的第一轮公式级审计；仍未完成的是论文图示逐图回填、记号统一，以及所有现代 geometry/order 分支的逐项等价性审查。因此本章现在对 Villasenor 最稳妥的证据等级是 **paper-backed + source-grounded + formula-audited**，而不是把尚未完成的出版级图示精修误写成公式缺口。
 
@@ -1952,7 +1617,7 @@ J_{y2} &= \Delta y\left(\frac12+x+\frac12\Delta x\right).
 \end{aligned}
 $$
 
-这四式的核心不是某个固定阶数的 shape kernel，而是“主方向位移 × 横向扫掠宽度的旧/新平均”。因此在本书使用的源码快照的 `XZ/RZ` kernel 中，对应关系应读成：主方向的 displacement 或 cell weight，乘以横向 old/new node weight 的平均，再乘 `seg_factor = dt_seg/dt`。现代源码还要额外承载 arbitrary shape order、几何分支、boundary crop 和 segment-local writeback，所以不能把源码中的表达式当成论文四式的逐字复制。
+这四式的核心不是某个固定阶数的 shape kernel，而是“主方向位移 × 横向扫掠宽度的旧/新平均”。因此在当前 `XZ/RZ` kernel 中，对应关系应读成：主方向的 displacement 或 cell weight，乘以横向 old/new node weight 的平均，再乘 `seg_factor = dt_seg/dt`。现代源码还要额外承载 arbitrary shape order、几何分支、boundary crop 和 segment-local writeback，所以不能把源码中的表达式当成论文四式的逐字复制。
 
 论文对 seven-boundary 和 ten-boundary 也没有另起两套独立电流公式。seven-boundary 先按第一次 complementary-mesh crossing 把轨迹分成两段，例如：
 
@@ -1978,7 +1643,7 @@ $$
        +\frac{\Delta x\,\Delta y\,\Delta z}{12},
 $$
 
-其余三个 `x`-face 按横向因子和交叉项符号变化，`y/z` 分量由循环置换得到。论文明确指出 `\Delta x\Delta y\Delta z/12` 是三维新增项。WarpX 当前 3D Villasenor kernel 不把它保留为一个独立的单项式，而是通过 `one_third/one_sixth` 组成的四个 old/new 横向权重乘积表达同一类 mixed-direction coupling。因而“源码没有显式的 `/12`”不能被解释成“三维交叉耦合不存在”。
+其余三个 x-face 按横向因子和交叉项符号变化，y/z 分量由循环置换得到。论文明确指出 \(\Delta x\Delta y\Delta z/12\) 是三维新增项。WarpX 当前 3D Villasenor kernel 不把它保留为一个独立的单项式，而是通过 `one_third/one_sixth` 组成的四个 old/new 横向权重乘积表达同一类 mixed-direction coupling。因而“源码没有显式的 `/12`”不能被解释成“三维交叉耦合不存在”。
 
 因此，Villasenor 线可概括为 **论文支撑、源码定位和公式核查**；尚未完成的是论文图示逐图回填、记号统一和所有现代 geometry/order 分支的逐项等价性审查。阅读论文副本时也必须区分可核查的正文与出版版本身份，不能由文件可读性推断 publisher provenance。
 
@@ -2168,13 +1833,13 @@ species 打开 `do_temperature_deposition` 后，`PhysicalParticleContainer::All
 - `n`
 - `w`
 - `wv`
-- `w(v-\bar v)^2`
+- \(w(v-\bar v)^2\)
 
 更具体地，当前实现硬编码走 `DOUBLE_PASS`：
 
 1. 第一遍沉 sample count、权重和、加权速度和；
 2. boundary sum；
-3. 第二遍用第一遍得到的 `\bar v` 再沉去均值二次矩；
+3. 第二遍用第一遍得到的 \(\bar v\) 再沉去均值二次矩；
 4. 再按
    $$
    \mathrm{var} = \frac{n}{(n-1)\sum w}\sum w(v-\bar v)^2
@@ -2397,10 +2062,10 @@ particle trajectory
 
 到这里，source synchronization 的源码主链已经闭合；对应的 regression 也可以更明确地挂回这条链，而不只当成零散 smoke test。
 
-第一条是 `Examples/Tests/langmuir/` 里的 `PSATD + current_correction` 变体。它不是只看 `divE-\rho/\epsilon_0`，而是两层断言同时成立：
+第一条是 `Examples/Tests/langmuir/` 里的 `PSATD + current_correction` 变体。它不是只看 \(\mathrm{div}E-\rho/\epsilon_0\)，而是两层断言同时成立：
 
 1. `Ex/Ey/Ez` 或 `Ex/Ez` 仍要和解析 Langmuir-wave 场解匹配；
-2. `analysis_utils.py` 在 `current_correction` 路径下还会追加 `divE-\rho/\epsilon_0` 检查，容差固定放宽到 `1e-9`。
+2. `analysis_utils.py` 在 `current_correction` 路径下还会追加 \(\mathrm{div}E-\rho/\epsilon_0\) 检查，容差固定放宽到 `1e-9`。
 
 因此它验证的不是“某个 deposition kernel 单独正确”，而是：
 
@@ -2557,7 +2222,7 @@ Vay 的可用范围尤其需要按“能运行的条件”而不是算法名称�
 |---|---|---|---|---|
 | 离散目标 | 速度加权源项，不自动满足离散连续性 | 由新旧形函数差构造守恒电流 | 由 cell crossing 分段构造面通量 | 专用两阶段 `D`-field 组织 |
 | 轨迹信息 | 当前时间层速度 | 新旧端点和对齐后的 shape | 端点、crossing 与 segment fraction | 显式 push 和专用 `D` 字段 |
-| 时间层 | 显式/隐式均有，但守恒性需另验 | 有显式/隐式入口 | 显式/隐式共享 segment backend | 该源码快照仅显式 |
+| 时间层 | 显式/隐式均有，但守恒性需另验 | 有显式/隐式入口 | 显式/隐式共享 segment backend | 当前实现仅显式 |
 | 主要约束 | 不能由 current correction 自动升级为守恒算法 | 几何、shared-memory 与 collocation 分支需逐项查 guard | geometry/order 组合需逐项验证 | `Vay + AMR` 在初始化阶段明确拒绝 |
 | 典型诊断 | 非守恒对照 | `divE-rho/epsilon_0`、charge residual | 能量/Gauss-law 与 crossing-sensitive case | Cartesian case 的 `divE-rho/epsilon_0` |
 
@@ -2565,12 +2230,12 @@ Vay 的可用范围尤其需要按“能运行的条件”而不是算法名称�
 
 ### 5.14.4 读懂证据：公式、源码和运行结果各回答什么
 
-同一个“算法正确”的说法至少包含三件不同的事：论文或代数是否说明了离散构造，该源码快照是否含有相应实现入口，以及给定 case 是否通过指定 observable。三层证据必须并列，而不能互相替代。
+同一个“算法正确”的说法至少包含三件不同的事：论文或代数是否说明了离散构造，当前源码是否含有相应实现入口，以及给定 case 是否通过指定 observable。三层证据必须并列，而不能互相替代。
 
 | 证据层 | 它能回答的问题 | 它不能回答的问题 |
 |---|---|---|
 | 论文与公式 | 离散构造为什么应满足某种守恒或一致性 | WarpX 的每个分支是否逐式相同，或某个 case 是否通过 |
-| 源码快照 | 哪个 geometry、时间层和 guard 把算法接入主循环 | 所有输入、并行规模和数值参数下的物理正确性 |
+| 源码实现 | 哪个 geometry、时间层和 guard 把算法接入主循环 | 所有输入、并行规模和数值参数下的物理正确性 |
 | producer + consumer | 指定输入和指定误差范数下，输出是否满足 gate | 未运行的 geometry、shape、AMR 或更强物理结论 |
 
 因此，读者在引用本章的结论时应写明 scope。例如，Esirkepov 有预印本公式、当前 kernel 和代表性 runtime consumer 的三层交叉证据；这不等价于 CPC 定稿已逐式对照，也不等价于完整 geometry × order × AMR 覆盖。Villasenor-Buneman 的二维 implicit case 也不能替代 RZ runtime。Vay 的 Cartesian 2-rank family 通过，只能说明当前支持的 Cartesian 范围；它不改变源码对 AMR、RZ 与 1D 的限制。
@@ -2585,9 +2250,7 @@ RZ Esirkepov 是本章最容易被误读的例子。默认 axis correction 下�
 
 ### 5.14.6 收敛研究：描述性趋势不是正式阶数
 
-本章现有 RZ 与 RSPHERE family 已足以比较相邻网格的误差趋势，也已经有两组独立 2-rank producer 的 correction-on repeat-slope 比较：14 项都在预注册容差内，最大绝对 slope 差为 `2.0135e-11`。这证明相同 reader-side norm 下的重复性，并不自动给出唯一的 formal numerical order。
-
-正式收敛主张还必须同时固定 geometry、误差范数、时间步/粒子数/边界等控制变量、拟合区间和 primary observable；尤其不能用 all-cell residual 代替 axis residual。当前 correction-on 的 axis-charge boundary 仍开放，correction-off 因接近 numerical floor 只保留为负对照。读者可以把这些数据用作设计下一轮 refinement study 的模板，但不应把描述性 slope 写成程序或论文的正式收敛阶。
+本章的 RZ 与 RSPHERE family 可比较相邻网格的误差趋势；两组独立 2-rank producer 的 correction-on repeat-slope 共 14 项都在预注册容差内，最大绝对差为 `2.0135e-11`。这证明同一 reader-side norm 下的重复性，不自动给出唯一的 formal numerical order。正式收敛还必须固定 geometry、误差范数、时间步、粒子数、边界、拟合区间与 primary observable；尤其不能以 all-cell residual 代替 axis residual。correction-on 的 axis-charge boundary 仍开放，correction-off 接近 numerical floor，只可作负对照。
 
 
 
@@ -2595,16 +2258,10 @@ RZ Esirkepov 是本章最容易被误读的例子。默认 axis correction 下�
 
 沉积的物理底线是离散连续性方程，但读者不应把它理解成某一个 `DepositCurrent()` kernel 的孤立性质。它由形函数、粒子轨迹、旧/新电荷时间层、current kernel、AMR 同步和场边界共同决定。面对 `divE-rho` 残差、异常噪声或边界电荷时，可按以下顺序判断：
 
-1. **先定义要守住的量。**比较的是局部 `rho`、电流、离散连续性、Gauss law、场解析解，还是粒子统计矩？这些量的时间层和诊断 consumer 不同，不能把一个通过的场误差直接当作 charge closure。
-2. **再选择与轨迹信息相容的电流算法。**Direct 是直观的速度加权对照；Esirkepov 由新旧形函数差构造守恒电流；Villasenor--Buneman 按 crossing 分段构造面通量；Vay 使用专用的两阶段 `D` 场组织。几何、显式/隐式时间层、grid layout 和 AMR 限制先于“哪一个更精确”的比较。
-3. **把 charge、current 与同步视为一条链。**`PhysicalParticleContainer::Evolve()` 写入旧 `rho` component 0，轨迹进入 `DepositCurrent(relative_time=-0.5 dt)`，推进后状态写入新 `rho` component 1；随后 `SyncCurrentAndRho()` 处理 guard、物种求和、fine/coarse 合并、filter 和边界，再交给 field solver。跳过其中任一层，都不能把 tile 级沉积解释成求解器实际消费的源项。
-4. **用与问题匹配的证据收束结论。**解析 Langmuir 波和 `divE-rho/epsilon_0` 可检验指定输入下的场/源一致性；crossing 或公式恒等式可解释离散构造；源码入口说明可用分派。三者相互补充，不能互相替代。RZ axis、径向几何、AMR transition zone 和隐式路径仍应按各自的观察量保留边界，不从 Cartesian 通过案例外推。
+1. **先定义要守住的量，再选相容的轨迹构造。**局部 `rho`、电流、离散连续性、Gauss law、场解析解和粒子统计矩的时间层不同；Direct、Esirkepov、Villasenor--Buneman 与 Vay 的轨迹信息、几何和 AMR 限制也不同，不能先按“更精确”排名。
+2. **把 charge、current 与同步视为一条链。**`PhysicalParticleContainer::Evolve()` 写入旧 `rho`、构造半步 `J`、再写入新 `rho`；`SyncCurrentAndRho()` 才处理 guard、物种求和、fine/coarse 合并、filter 与边界。跳过其中任一层，都不能把 tile 级写入解释成求解器实际消费的源项。
+3. **让证据与问题匹配。**解析 Langmuir 波和 `divE-rho/epsilon_0` 检验指定输入下的场/源一致性；crossing 或公式恒等式解释离散构造；源码入口说明可用分派。三者互补，不能从 Cartesian case 外推到 RZ axis、径向几何、AMR transition zone 或隐式路径。
 
 第 6 章将从这里接手已经同步的 `rho/J`，讨论不同 Maxwell solver 如何消费它们；第 7 章继续解释边界、PML 和 AMR 如何改变 source 的有效定义；第 8 章则把本章涉及的场、粒子与守恒量组织成 diagnostics。
 
-## 5.16 练习与源码定位
-
-1. **连续性方程题**：从 `rho` 的 old/new 时间层出发，解释为什么 Direct current deposition 不能自动保证 `Delta t div_h J = rho_old - rho_new`，而 Esirkepov/Villasenor 必须引入轨迹或 crossing 信息。
-2. **源码定位题**：分别定位 `DepositCharge()`、`DepositCurrent()` 和 `SyncCurrentAndRho()` 的入口，给每个函数写出一个“它负责什么”和一个“它不负责什么”的边界。
-3. **观察量设计题**：选择 `Examples/Tests/langmuir/` 的一个 current-correction 或 Vay-deposition 变体，列出它比较的场量、source 一致性量和容差；写出一个该 case 不能证明的 geometry、AMR 或时间层结论。
-4. **公式与运行边界题**：从 5.11 的 old/new shape difference 推导一项局部恒等式，再与 Villasenor 的 crossing 分段和一个端到端 Gauss-law 案例比较。说明公式级恒等式、源码分派和端到端回归分别回答什么，为什么三者不能替代。
+**核查练习。** 以一个 Langmuir current-correction 或 Vay-deposition 变体为对象，依次写出：old/new `rho` 与半步 `J` 的时间层；`DepositCharge()`、`DepositCurrent()`、`SyncCurrentAndRho()` 各自负责和不负责的动作；其场量、source 一致性量与容差；以及这个 case 不能证明的 geometry、AMR 或隐式结论。最后用 5.11 的 old/new shape difference 与 Villasenor crossing 分段说明，公式、源码分派和端到端 Gauss-law case 为什么不能互相替代。

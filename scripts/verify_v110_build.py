@@ -19,10 +19,9 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# Reader-facing chapter openings, long-chapter navigation, the Chapter 3
-# cross-chapter state handoff, and the Chapter 6/7/9 reading routes yield
-# 265 pages.
-EXPECTED_PDF_PAGES = 265
+# Reader-facing chapter openings, long-chapter navigation, and the Chapter 4/5
+# source extracts rendered as declared reader pseudocode yield 258 pages.
+EXPECTED_PDF_PAGES = 258
 
 
 def image_links(text: str) -> list[str]:
@@ -718,9 +717,19 @@ def main() -> None:
                 "WarpXParticleContainer::DepositCurrent()",
                 "WarpX::SyncCurrentAndRho()",
                 "tile-loop 阶段",
-                "## 5.16 练习与源码定位",
+                "核查练习。",
             )
         ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
+        "chapter_5_reader_extracts_are_declared": all(
+            marker in chapter_5
+            for marker in (
+                "等价的阅读伪代码",
+                "等价阅读伪代码",
+                "完整签名还接收",
+                "不是可编译源码",
+                "完整的 x/y/z 三层循环",
+            )
+        ) and "源码原文如下：" not in chapter_5,
         "chapter_4_5_multiphysics_source_handoff": all(
             marker in chapter_5
             for marker in (
@@ -846,7 +855,7 @@ def main() -> None:
             marker in source
             for marker in (
                 "发表版证据边界",
-                "预印本公式、该源码快照和代表性运行案例",
+                "预印本公式、当前源码实现和代表性运行案例",
                 "publisher-PDF 的逐行比较仍未完成",
             )
         ),

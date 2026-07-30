@@ -346,7 +346,7 @@ def main() -> int:
                 "WarpXParticleContainer::DepositCurrent()",
                 "WarpX::SyncCurrentAndRho()",
                 "tile-loop 阶段",
-                "## 5.16 练习与源码定位",
+                "核查练习。",
             )
         )
         and not chapter_5_stale_location_markers

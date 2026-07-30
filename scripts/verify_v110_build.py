@@ -176,6 +176,17 @@ def main() -> None:
             marker in version + "\n" + preface
             for marker in ("# PIC-tutor", "建议的阅读方式", "如何使用本书", "遇到一个新的输入或源码分支时")
         ) and not front_matter_project_markers,
+        "preface_defines_cross_chapter_terms": all(
+            marker in preface
+            for marker in (
+                "四个跨章节术语",
+                "被某个场或方程更新实际消费的离散源项或状态",
+                "在确定的生命周期阶段创建、推进、沉积、同步或归约某个状态的代码路径",
+                "读取该状态以更新场、写诊断、作比较或产生后续状态的代码路径",
+                "为回答一个物理问题而定义、可与解析解、守恒关系、reference 或实验量比较的量",
+                "源码可以定位职责，指定案例可以检验给定条件下的 observable，全文文献可以支撑公式或机制",
+            )
+        ) and not front_matter_project_markers,
         "chapter_5_subheading_order": chapter_5_numbers == sorted(chapter_5_numbers)
         and len(chapter_5_numbers) == len(set(chapter_5_numbers)),
         "chapter_6_subheading_order": chapter_6_numbers == sorted(chapter_6_numbers)

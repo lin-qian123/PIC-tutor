@@ -9,6 +9,7 @@
 | `version_is_reader_facing` | `PASS` |
 | `manuscript_readme_is_reader_facing` | `PASS` |
 | `preface_has_learning_outcomes` | `PASS` |
+| `preface_defines_cross_chapter_terms` | `PASS` |
 | `history_is_separated` | `PASS` |
 | `chapter_openings_are_reader_facing` | `PASS` |
 | `core_chapters_have_no_project_record_markers` | `PASS` |

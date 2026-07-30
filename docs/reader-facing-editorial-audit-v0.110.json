@@ -4,6 +4,7 @@
     "version_is_reader_facing": true,
     "manuscript_readme_is_reader_facing": true,
     "preface_has_learning_outcomes": true,
+    "preface_defines_cross_chapter_terms": true,
     "history_is_separated": true,
     "chapter_openings_are_reader_facing": true,
     "core_chapters_have_no_project_record_markers": true,

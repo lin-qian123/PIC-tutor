@@ -212,6 +212,17 @@ def main() -> int:
         and "读者的核查顺序" in readme and "不是面向维护者的提交记录" in readme,
         "preface_has_learning_outcomes": "读者应当能够" in preface and "如何使用本书" in preface
         and "遇到一个新的输入或源码分支时" in preface and not front_matter_project_markers,
+        "preface_defines_cross_chapter_terms": all(
+            marker in preface
+            for marker in (
+                "四个跨章节术语",
+                "被某个场或方程更新实际消费的离散源项或状态",
+                "在确定的生命周期阶段创建、推进、沉积、同步或归约某个状态的代码路径",
+                "读取该状态以更新场、写诊断、作比较或产生后续状态的代码路径",
+                "为回答一个物理问题而定义、可与解析解、守恒关系、reference 或实验量比较的量",
+                "源码可以定位职责，指定案例可以检验给定条件下的 observable，全文文献可以支撑公式或机制",
+            )
+        ) and not front_matter_project_markers,
         "history_is_separated": (root / "docs/version-history-v0.110.md").is_file(),
         "chapter_openings_are_reader_facing": not project_record_opening_markers,
         "core_chapters_have_no_project_record_markers": not project_record_body_markers,

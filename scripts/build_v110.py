@@ -33,12 +33,14 @@ PARTS = [
     ROOT / "manuscript" / "chapters" / "09-literature-roadmap.md",
     ROOT / "manuscript" / "appendices" / "A-symbols.md",
 ]
+PAGE_BREAK_PARTS = frozenset(PARTS[2:])
 
 
 def read_part(path: Path) -> str:
     text = path.read_text(encoding="utf-8").rstrip()
     rel = path.relative_to(ROOT)
-    return f"\n\n<!-- source: {rel} -->\n\n{text}\n"
+    page_break = "\\clearpage\n\n" if path in PAGE_BREAK_PARTS else ""
+    return f"\n\n<!-- source: {rel} -->\n\n{page_break}{text}\n"
 
 
 def build_markdown() -> None:

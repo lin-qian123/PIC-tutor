@@ -1446,11 +1446,12 @@ Vlasov-Maxwell 到离散时间推进</h1>
 方程”这几个名词，而在于这些对象必须在离散时间层、离散空间布局、并行
 guard cells、边界条件和守恒约束之间保持一致。后续逐行读 WarpX
 时，本章给出判断代码是否“物理上在做正确事情”的基准。</p>
-<p>本章给出的函数名和调用关系是读代码的定位方法，而不是某一份源码树的版本标签。使用不同
-WarpX 版本时，应先从
+<p>本章给出的函数名和调用关系是读代码的定位方法，而不是某一份源码树的版本标签。下文的
+<code>Source/...</code> 与 <code>Examples/...</code> 均相对于 WarpX
+源码根目录；使用不同 WarpX 版本时，应先从
 <code>Evolve()</code>、<code>OneStep()</code>、<code>PushParticlesandDeposit()</code>
 和 <code>SyncCurrentAndRho()</code>
-等职责明确的入口重新建立调用关系，而不要把行号或局部文件布局当作稳定
+等职责明确的入口重新建立调用关系，而不要把行号或本机工作区布局当作稳定
 API。</p>
 <p>Yee 1966 在本书中只承担一个窄的历史定位：有限差分 Maxwell
 方程通过合适的场点布置处理导体边界。它不能替代本章的
@@ -1561,8 +1562,8 @@ q\left(\mathbf{E}_p^n+\bar{\mathbf{v}}\times\mathbf{B}_p^n\right).
 的差别留到粒子推进章节逐行讲解。本章只强调主循环必须给 pusher
 提供正确时间层的 <span class="math inline">\(\mathbf{x}\)</span>、<span class="math inline">\(\mathbf{p}\)</span>、<span class="math inline">\(\mathbf{E}\)</span>、<span class="math inline">\(\mathbf{B}\)</span>。</p>
 <p>WarpX 的显式无 subcycling 路径在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp:515-518</code>
-直接把这个时间层写进注释：</p>
+<code>Source/Evolve/WarpXEvolve.cpp</code> 的
+<code>WarpX::OneStep_nosub()</code> 开头直接把这个时间层写进注释：</p>
 <pre class="text"><code>Push particle from x^{n} to x^{n+1}
               from p^{n-1/2} to p^{n+1/2}
 Deposit current j^{n+1/2}
@@ -1659,9 +1660,9 @@ plasma，还是已经换成了另一个更噪、更热、更强 alias 的离散�
 的顺序不能随意交换。电场更新需要本步沉积出来的 <span class="math inline">\(\mathbf{J}^{n+1/2}\)</span>，所以粒子推进与电流沉积必须在
 <code>EvolveE(dt)</code> 之前完成。WarpX 的 FDTD
 路径正是这样组织的：</p>
-<p>对应的核心源码节选来自
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp:559-628</code>，这里保留源项同步和
-FDTD 场推进部分；PSATD 分支和 PML 后处理在第 3 章继续展开：</p>
+<p>对应的核心源码节选来自 <code>Source/Evolve/WarpXEvolve.cpp</code> 的
+<code>WarpX::OneStep_nosub()</code>，这里保留源项同步和 FDTD
+场推进部分；PSATD 分支和 PML 后处理在第 3 章继续展开：</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Synchronize J and rho:</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// filter (if used), exchange guard cells, interpolate across MR levels</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">// and apply boundary conditions</span></span>
@@ -1710,29 +1711,34 @@ FDTD 场推进部分；PSATD 分支和 PML 后处理在第 3 章继续展开：<
 <tr>
 <td>粒子从 <span class="math inline">\(\mathbf{x}^n,\mathbf{p}^{n-1/2}\)</span> 推到
 <span class="math inline">\(\mathbf{x}^{n+1},\mathbf{p}^{n+1/2}\)</span>，并沉积源项</td>
-<td><code>../warpx/Source/Evolve/WarpXEvolve.cpp:520-557</code></td>
+<td><code>Source/Evolve/WarpXEvolve.cpp</code>:
+<code>WarpX::OneStep_nosub()</code> 对
+<code>PushParticlesandDeposit()</code> 的调用</td>
 </tr>
 <tr>
 <td>同步 <span class="math inline">\(\rho,\mathbf{J}\)</span>：滤波、guard
 cells、AMR、边界</td>
-<td><code>../warpx/Source/Evolve/WarpXEvolve.cpp:559-564</code> 与
-<code>SyncCurrentAndRho()</code></td>
+<td>同一函数中的 <code>SyncCurrentAndRho()</code></td>
 </tr>
 <tr>
 <td><span class="math inline">\(F,G\)</span> 半步、<span class="math inline">\(\mathbf{B}\)</span> 半步</td>
-<td><code>../warpx/Source/Evolve/WarpXEvolve.cpp:607-613</code></td>
+<td>同一函数 FDTD 分支中的
+<code>EvolveF()</code>、<code>EvolveG()</code>、<code>EvolveB(...FirstHalf...)</code></td>
 </tr>
 <tr>
 <td><span class="math inline">\(\mathbf{E}\)</span> 整步</td>
-<td><code>../warpx/Source/Evolve/WarpXEvolve.cpp:615-623</code></td>
+<td>同一分支中的 <code>EvolveE()</code> 或
+<code>MacroscopicEvolveE()</code></td>
 </tr>
 <tr>
 <td><span class="math inline">\(F,G\)</span> 半步、<span class="math inline">\(\mathbf{B}\)</span> 半步</td>
-<td><code>../warpx/Source/Evolve/WarpXEvolve.cpp:626-628</code></td>
+<td>同一分支中的第二个
+<code>EvolveF()</code>、<code>EvolveG()</code>、<code>EvolveB(...SecondHalf...)</code></td>
 </tr>
 <tr>
 <td>PML 与 guard cell 处理</td>
-<td><code>../warpx/Source/Evolve/WarpXEvolve.cpp:630-642</code></td>
+<td>同一分支中的 <code>DampPML()</code> 与
+<code>FillBoundary*()</code></td>
 </tr>
 </tbody>
 </table>
@@ -1743,8 +1749,8 @@ cleaning 相关辅助场，不是最小 Maxwell 更新必需项。WarpX
 <h3 id="cfl-不是经验参数而是离散-maxwell-更新的因果上界">2.4.1
 <code>CFL</code> 不是经验参数，而是离散 Maxwell 更新的因果上界</h3>
 <p>WarpX 的 <code>ComputeDt()</code> 不会把 FDTD 时间步写死成 <span class="math inline">\(\min(\Delta
-x_i)/c\)</span>，而是把这件事委托给具体差分算法。<code>../warpx/Source/Evolve/WarpXComputeDt.cpp:68-88</code>
-直接把 solver 分叉写死在主类层：</p>
+x_i)/c\)</span>，而是把这件事委托给具体差分算法。<code>Source/Evolve/WarpXComputeDt.cpp</code>
+的 <code>WarpX::ComputeDt()</code> 直接在主类层完成 solver 分派：</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>electromagnetic_solver_id <span class="op">==</span> ElectromagneticSolverAlgo<span class="op">::</span>PSATD<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    deltat <span class="op">=</span> cfl <span class="op">*</span> minDim<span class="op">(</span>dx<span class="op">)</span> <span class="op">/</span> PhysConst<span class="op">::</span>c<span class="op">;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
@@ -1762,8 +1768,9 @@ x_i)/c\)</span>，而是把这件事委托给具体差分算法。<code>../warpx
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        deltat <span class="op">=</span> cfl <span class="op">*</span> CartesianYeeAlgorithm<span class="op">::</span>ComputeMaxDt<span class="op">(</span>dx<span class="op">);</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>electromagnetic_solver_id <span class="op">==</span> ElectromagneticSolverAlgo<span class="op">::</span>CKC<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        deltat <span class="op">=</span> cfl <span class="op">*</span> CartesianCKCAlgorithm<span class="op">::</span>ComputeMaxDt<span class="op">(</span>dx<span class="op">);</span></span></code></pre></div>
-<p>对标准 Cartesian Yee，真正的 CFL 上界在
-<code>../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianYeeAlgorithm.H:48-55</code>：</p>
+<p>对标准 Cartesian Yee，真正的 CFL 上界由
+<code>Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianYeeAlgorithm.H</code>
+中的 <code>CartesianYeeAlgorithm::ComputeMaxDt()</code> 给出：</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">static</span> amrex<span class="op">::</span>Real ComputeMaxDt <span class="op">(</span> amrex<span class="op">::</span>Real <span class="at">const</span> <span class="op">*</span> <span class="at">const</span> dx <span class="op">)</span> <span class="op">{</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">using</span> <span class="kw">namespace</span> amrex<span class="op">::</span>literals<span class="op">;</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Real <span class="at">const</span> <span class="dt">delta_t</span>  <span class="op">=</span> <span class="fl">1.</span><span class="op">_rt</span> <span class="op">/</span> <span class="op">(</span> <span class="bu">std::</span>sqrt<span class="op">(</span> AMREX_D_TERM<span class="op">(</span></span>
@@ -1804,8 +1811,9 @@ c^2\Delta t^2
 都会偏离连续值，且偏离大小依赖传播方向、波数和网格各向异性。数值色散不是后处理图里才会出现的现象，它在
 <code>UpwardDx()</code> / <code>DownwardDx()</code>
 这种最基本的差分定义处就已经写进去了。</p>
-<p>Yee 的 <code>x</code> 向导数在
-<code>../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianYeeAlgorithm.H:69-96</code>：</p>
+<p>Yee 的 <code>x</code> 向导数由同一文件中的
+<code>CartesianYeeAlgorithm::UpwardDx()</code> 与
+<code>DownwardDx()</code> 实现：</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">static</span> amrex<span class="op">::</span>Real UpwardDx <span class="op">(</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> F<span class="op">,</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Real <span class="at">const</span> <span class="op">*</span> <span class="at">const</span> coefs_x<span class="op">,</span> <span class="dt">int</span> <span class="at">const</span> <span class="co">/*n_coefs_x*/</span><span class="op">,</span></span>
@@ -1837,7 +1845,9 @@ D_x^-F_i=\frac{F_i-F_{i-1}}{\Delta x}.
 <code>Yee / Nodal / CKC</code> 的差别本质上是离散色散关系不同</h3>
 <p>对 collocated/nodal solver，WarpX 的
 <code>CartesianNodalAlgorithm</code> 不再用 staggered
-前后差分，而是直接用中心差分。<code>../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianNodalAlgorithm.H:71-102</code>：</p>
+前后差分，而是直接用中心差分。可从
+<code>Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianNodalAlgorithm.H</code>
+的 <code>UpwardDx()</code> 与 <code>DownwardDx()</code> 回查：</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">static</span> amrex<span class="op">::</span>Real UpwardDx <span class="op">(</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> F<span class="op">,</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Real <span class="at">const</span> <span class="op">*</span> <span class="at">const</span> coefs_x<span class="op">,</span> <span class="dt">int</span> <span class="at">const</span> <span class="co">/*n_coefs_x*/</span><span class="op">,</span></span>
@@ -1861,8 +1871,9 @@ D_x^-F_i=\frac{F_i-F_{i-1}}{\Delta x}.
 \Delta t_{\max}\sim \frac{1}{c\sqrt{\sum_d \Delta d^{-2}}},
 \]</span></p>
 <p>但数值色散与奇偶模耦合特征已经不同。</p>
-<p>CKC
-则更进一步，不再满足“一个方向只看一对最近邻”的局部导数定义。<code>../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianCKCAlgorithm.H:107-123,131-158</code>：</p>
+<p>CKC 则更进一步，不再满足“一个方向只看一对最近邻”的局部导数定义。可从
+<code>Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianCKCAlgorithm.H</code>
+的 <code>ComputeMaxDt()</code> 与 <code>UpwardDx()</code> 回查：</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">static</span> amrex<span class="op">::</span>Real ComputeMaxDt <span class="op">(</span> amrex<span class="op">::</span>Real <span class="at">const</span> <span class="op">*</span> <span class="at">const</span> dx <span class="op">)</span> <span class="op">{</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#if (defined WARPX_DIM_1D_Z)</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        amrex<span class="op">::</span>Real <span class="at">const</span> <span class="dt">delta_t</span> <span class="op">=</span> dx<span class="op">[</span><span class="dv">0</span><span class="op">]/</span>PhysConst<span class="op">::</span>c<span class="op">;</span></span>
@@ -1917,11 +1928,10 @@ domain decomposition、边界、current correction
 \]</span></p>
 <p>WarpX 在 <code>OneStep_nosub()</code> 内部把两者清楚分开：</p>
 <ul>
-<li>PSATD 分支在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp:576-605</code>，核心是
+<li>PSATD 分支在 <code>Source/Evolve/WarpXEvolve.cpp</code> 的
+<code>WarpX::OneStep_nosub()</code> 内，核心是
 <code>PushPSATD(a_cur_time)</code>。</li>
-<li>FDTD 分支在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp:606-642</code>，核心是
+<li>FDTD 分支在同一函数内，核心是
 <code>EvolveB/EvolveE/EvolveB</code>。</li>
 </ul>
 <p>这意味着本书后续讲 field solver 时不能把“Maxwell
@@ -1940,9 +1950,9 @@ solver”写成单一算法。<code>algo.maxwell_solver</code>
 <li>PML、moving window、粒子边界、重分布、排序。</li>
 <li>诊断写出和终止条件检查。</li>
 </ol>
-<p>WarpX 的 <code>../warpx/Source/Evolve/WarpXEvolve.cpp:147-390</code>
-正是围绕这些层次组织外层 <code>Evolve()</code>
-循环。真正的主循环不是教科书五行伪代码，而是把守恒离散化、时间层一致性和大规模并行工程组合起来的控制流。</p>
+<p>WarpX 在 <code>Source/Evolve/WarpXEvolve.cpp</code> 的
+<code>WarpX::Evolve()</code>
+中正是围绕这些层次组织外层循环。真正的主循环不是教科书五行伪代码，而是把守恒离散化、时间层一致性和大规模并行工程组合起来的控制流。</p>
 <h3 id="amr-subcycling两个时间步不是同一个时间步的重复调用">2.6.1 AMR
 subcycling：两个时间步不是同一个时间步的重复调用</h3>
 <p>无 subcycling 时，第 0
@@ -2203,35 +2213,40 @@ rebuild，最后才提交一个物理时间步</td>
 <tbody>
 <tr>
 <td>看外层时间步如何组织</td>
-<td><code>WarpXEvolve.cpp</code>: <code>Evolve()</code></td>
+<td><code>Source/Evolve/WarpXEvolve.cpp</code>:
+<code>WarpX::Evolve()</code></td>
 </tr>
 <tr>
 <td>看显式电磁无 subcycling 的标准 step</td>
-<td><code>WarpXEvolve.cpp</code>: <code>OneStep_nosub()</code></td>
+<td><code>Source/Evolve/WarpXEvolve.cpp</code>:
+<code>WarpX::OneStep_nosub()</code></td>
 </tr>
 <tr>
 <td>看主循环如何进入粒子容器</td>
-<td><code>WarpXEvolve.cpp</code>:
-<code>PushParticlesandDeposit()</code></td>
+<td><code>Source/Evolve/WarpXEvolve.cpp</code>:
+<code>WarpX::PushParticlesandDeposit()</code></td>
 </tr>
 <tr>
 <td>看两级 AMR subcycling 的细/粗层时间组织</td>
-<td><code>WarpXEvolve.cpp</code>: <code>OneStep_sub1()</code></td>
+<td><code>Source/Evolve/WarpXEvolve.cpp</code>:
+<code>WarpX::OneStep_sub1()</code></td>
 </tr>
 <tr>
 <td>看 JRhom 的多次相对时间沉积与谱推进</td>
-<td><code>WarpXEvolve.cpp</code>: <code>OneStep_JRhom()</code></td>
+<td><code>Source/Evolve/WarpXEvolve.cpp</code>:
+<code>WarpX::OneStep_JRhom()</code></td>
 </tr>
 <tr>
 <td>看 implicit RHS 中的粒子推进与 source synchronization</td>
-<td><code>ImplicitSolver.cpp</code>: <code>PreRHSOp()</code></td>
+<td><code>Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp</code>:
+<code>ImplicitSolver::PreRHSOp()</code></td>
 </tr>
 </tbody>
 </table>
 <h2 id="参数示例与最小运行案例">2.8 参数示例与最小运行案例</h2>
 <p>如果把本章压回一个最小、可运行、可验证的输入骨架，可从下面的官方案例开始：</p>
 <ul>
-<li><code>../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi</code></li>
+<li><code>Examples/Tests/langmuir/inputs_test_1d_langmuir_multi</code></li>
 </ul>
 <p>它把本章真正讨论的五类量都放在同一个最小问题上：</p>
 <ul>
@@ -2382,7 +2397,7 @@ solve 参数和 mass-matrix kernel
 WarpX 版本时，应先重新搜索同名符号，再比较实现是否改变。</p>
 <h2 id="顶层入口main.cpp">3.1 顶层入口：<code>main.cpp</code></h2>
 <p>WarpX 的可执行入口在
-<code>../warpx/Source/main.cpp</code>。主函数的控制流非常短：</p>
+<code>Source/main.cpp</code>。主函数的控制流非常短：</p>
 <pre class="text"><code>initialize_external_libraries(argc, argv)
 warpx = WarpX::GetInstance()
 warpx.InitData()
@@ -2462,7 +2477,7 @@ finalize_external_libraries()</code></pre>
 register、diagnostics、solver、PML 等成员中。</p>
 <h2 id="warpx-类与单例构造">3.2 <code>WarpX</code> 类与单例构造</h2>
 <p><code>WarpX</code> 类定义在
-<code>../warpx/Source/WarpX.H</code>。关键声明包括：</p>
+<code>Source/WarpX.H</code>。关键声明包括：</p>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -2509,7 +2524,7 @@ register、diagnostics、solver、PML 等成员中。</p>
 </tr>
 </tbody>
 </table>
-<p>单例实现位于 <code>../warpx/Source/WarpX.cpp</code>：</p>
+<p>单例实现位于 <code>Source/WarpX.cpp</code>：</p>
 <ul>
 <li><code>WarpX::GetInstance()</code> 检查
 <code>m_instance</code>，为空则调用 <code>MakeWarpX()</code>。</li>
@@ -2527,7 +2542,7 @@ solver 类型、边界、步长策略、滤波、静电/电磁模式等会在
 <h2 id="readparameters主循环分支的来源">3.3
 <code>ReadParameters()</code>：主循环分支的来源</h2>
 <p><code>WarpX::ReadParameters()</code> 定义在
-<code>../warpx/Source/WarpX.cpp</code>。完整参数系统很大，本章只列出直接影响主循环的部分。</p>
+<code>Source/WarpX.cpp</code>。完整参数系统很大，本章只列出直接影响主循环的部分。</p>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -2635,7 +2650,7 @@ matrices。</li>
 <code>AllocLevelData()</code> / <code>AllocLevelMFs()</code> 里，四条
 solver 分支的落点不同</h2>
 <p><code>AllocLevelData()</code> 定义在
-<code>../warpx/Source/WarpX.cpp</code>。它先调用
+<code>Source/WarpX.cpp</code>。它先调用
 <code>guard_cells.Init(...)</code>，再进入
 <code>AllocLevelMFs(...)</code>。这一层真正决定的是：哪些
 <code>MultiFab</code> 需要随着 level 一起出生。</p>
@@ -2751,7 +2766,7 @@ parser 并准备外加电流和矢势。</li>
 <h2 id="initdata把状态准备到可推进">3.4
 <code>InitData()</code>：把状态准备到可推进</h2>
 <p><code>WarpX::InitData()</code> 定义在
-<code>../warpx/Source/Initialization/WarpXInitData.cpp</code>。它不是简单分配内存，而是把一个模拟从“参数已读”变成“可以推进第一步”。</p>
+<code>Source/Initialization/WarpXInitData.cpp</code>。它不是简单分配内存，而是把一个模拟从“参数已读”变成“可以推进第一步”。</p>
 <p>核心顺序如下：</p>
 <table>
 <colgroup>
@@ -2817,7 +2832,7 @@ masks</td>
 <h2 id="computedt步长不是一个固定常数">3.5
 <code>ComputeDt()</code>：步长不是一个固定常数</h2>
 <p><code>WarpX::ComputeDt()</code> 定义在
-<code>../warpx/Source/Evolve/WarpXComputeDt.cpp</code>。</p>
+<code>Source/Evolve/WarpXComputeDt.cpp</code>。</p>
 <p>逻辑可以分成四类：</p>
 <ol type="1">
 <li>HybridPIC 必须显式给出 <code>warpx.const_dt</code>。</li>
@@ -2874,7 +2889,7 @@ solver 家族和几何去选真正的稳定上限公式。</p>
 <code>ApplyDtLimiters()</code>。</p>
 <h2 id="evolve-外层时间步">3.6 <code>Evolve()</code> 外层时间步</h2>
 <p><code>WarpX::Evolve()</code> 定义在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp</code>。它不是单纯调用
+<code>Source/Evolve/WarpXEvolve.cpp</code>。它不是单纯调用
 <code>OneStep()</code>，而是在每个 step 前后管理大量状态。</p>
 <p>外层结构是：</p>
 <pre class="text"><code>cur_time = t_new[0]
@@ -2988,7 +3003,7 @@ window：连续坐标与整数网格平移</h3>
 <p><code>MoveWindow()</code> 的第一层逻辑是维护一个连续窗口位置
 <code>moving_window_x</code>，但只有当它相对当前几何左边界跨过整数个
 cell 时才真正平移网格数据。实现位于
-<code>../warpx/Source/Utils/WarpXMovingWindow.cpp</code>：</p>
+<code>Source/Utils/WarpXMovingWindow.cpp</code>：</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>moving_window_active<span class="op">(</span>step<span class="op">))</span> <span class="op">{</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span> <span class="op">}</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Update the continuous position of the moving window,</span></span>
@@ -3067,7 +3082,7 @@ injection：在新露出的体网格区域里补背景体分布；</li>
 <h2 id="onestep求解器分派器">3.7
 <code>OneStep()</code>：求解器分派器</h2>
 <p><code>WarpX::OneStep()</code> 定义在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp</code>。它按 solver 和 AMR
+<code>Source/Evolve/WarpXEvolve.cpp</code>。它按 solver 和 AMR
 情况分派：</p>
 <pre class="text"><code>if m_implicit_solver:
     m_implicit_solver-&gt;OneStep(...)
@@ -3144,7 +3159,7 @@ PIC 算法的全部细节，而是先把路径分开。</p>
 <h2 id="onestep_nosub显式电磁标准路径">3.8
 <code>OneStep_nosub()</code>：显式电磁标准路径</h2>
 <p><code>WarpX::OneStep_nosub()</code> 定义在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp</code>。这是本书第一个需要逐行读懂的核心函数。</p>
+<code>Source/Evolve/WarpXEvolve.cpp</code>。这是本书第一个需要逐行读懂的核心函数。</p>
 <p>它的结构分为四段。</p>
 <p>第一段：粒子推进、碰撞与沉积。</p>
 <p>源码原文：</p>
@@ -3258,7 +3273,7 @@ cells。</li>
 <h2 id="synccurrentandrho源项不是沉积完就可用">3.9
 <code>SyncCurrentAndRho()</code>：源项不是沉积完就可用</h2>
 <p><code>SyncCurrentAndRho()</code> 定义在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp</code>。</p>
+<code>Source/Evolve/WarpXEvolve.cpp</code>。</p>
 <p>它的分支很重要：</p>
 <ul>
 <li>PSATD 且 periodic single box 时，会立即同步 <span class="math inline">\(J\)</span> 和 <span class="math inline">\(\rho\)</span>。</li>
@@ -3274,9 +3289,8 @@ cell、AMR 和边界会改变源项数组的可用状态。</p>
 <h2 id="pushparticlesanddeposit进入粒子容器">3.10
 <code>PushParticlesandDeposit()</code>：进入粒子容器</h2>
 <p><code>PushParticlesandDeposit()</code> 的两个重载定义在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp</code>。</p>
-<p>第一层重载 <code>:1311-1333</code> 遍历所有 AMR level。第二层重载
-<code>:1335-1415</code> 做三件事：</p>
+<code>Source/Evolve/WarpXEvolve.cpp</code>。</p>
+<p>第一层重载遍历所有 AMR level。第二层重载做三件事：</p>
 <ol type="1">
 <li>根据 <code>do_current_centering</code> 和
 <code>current_deposition_algo == Vay</code> 选择当前沉积字段名。</li>
@@ -3292,10 +3306,10 @@ half、是否跳过沉积、位置/动量 push 类型传入粒子容器。</li>
 与 JRhom 的位置</h2>
 <p>理解这两个特殊分支时，先把它们放回主循环时间层。</p>
 <p><code>OneStep_sub1()</code> 定义在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp</code>。当前 subcycling
-只支持两个 level 和 refinement ratio 2：fine patch
-用小步长推两次，coarse patch 和 mother grid 推一次，coarse 场使用两次
-fine current 的平均效果。函数注释直接说明这一点：</p>
+<code>Source/Evolve/WarpXEvolve.cpp</code>。当前 subcycling 只支持两个
+level 和 refinement ratio 2：fine patch 用小步长推两次，coarse patch 和
+mother grid 推一次，coarse 场使用两次 fine current
+的平均效果。函数注释直接说明这一点：</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a> <span class="op">*</span> This version of subcycling only works <span class="cf">for</span> <span class="dv">2</span> levels <span class="kw">and</span> with a refinement</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a> <span class="op">*</span> ratio of <span class="fl">2.</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a> <span class="op">*</span> The particles <span class="kw">and</span> fields of the fine patch are pushed twice</span>
@@ -3335,7 +3349,7 @@ coarse current，而是要先保留 coarse
 coarse 大步上等效的平均源项”，而会把 coarse 自身电流和 fine
 补偿混在一起。</p>
 <p><code>OneStep_JRhom()</code> 定义在
-<code>../warpx/Source/Evolve/WarpXEvolve.cpp</code>。它是 PSATD-JRhom
+<code>Source/Evolve/WarpXEvolve.cpp</code>。它是 PSATD-JRhom
 专用路径，会多次沉积 <span class="math inline">\(J\)</span> 和 <span class="math inline">\(\rho\)</span>，在谱空间推进字段，并支持时间平均场。入口先断言
 solver 必须是 PSATD，并且粒子 push 时跳过标准沉积：</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>WARPX_ALWAYS_ASSERT_WITH_MESSAGE<span class="op">(</span></span>
@@ -3453,7 +3467,7 @@ implicit 分支：一次物理步包含多次试探性 source 重建</h3>
 不是一个普通的函数调用包装，而是这条路径的核心时间组织。<code>SemiImplicitEM::ComputeRHS()</code>
 会先用当前猜测的 <span class="math inline">\(E^{n+1/2}\)</span> 更新
 WarpX 持有的电场，然后调用 <code>PreRHSOp()</code>；后者定义在
-<code>../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp</code>，完成：</p>
+<code>Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp</code>，完成：</p>
 <ol type="1">
 <li>以当前中间场推进粒子位置和速度；</li>
 <li>形成 <span class="math inline">\(J^{n+1/2}\)</span>；</li>
@@ -3484,7 +3498,7 @@ nonlinear iteration、Jacobian evaluation 和 particle Picard iteration
 <h3 id="nonlinear-solverjfnk-与-mass-matrixj-的三种构造层">3.11.2
 nonlinear solver、JFNK 与 mass-matrix：<code>J</code> 的三种构造层</h3>
 <p><code>ImplicitSolver::parseNonlinearSolverParams()</code> 定义在
-<code>../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp</code>。它首先读取
+<code>Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp</code>。它首先读取
 <code>nonlinear_solver</code>，再决定后续 <code>J</code>
 是通过完整粒子响应、Newton/JFNK 近似，还是 PETSc SNES
 的线性阶段构造：</p>
@@ -3577,7 +3591,7 @@ suborbit、mass-matrix 开关和最终 source gate 的原因。</p>
 <h2 id="参数示例与最小运行闭环">3.12 参数示例与最小运行闭环</h2>
 <p>如果把本章压成一个最小、可执行、可回查的演化入口，可从下面的官方回归案例开始：</p>
 <ul>
-<li><code>../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi</code></li>
+<li><code>Examples/Tests/langmuir/inputs_test_1d_langmuir_multi</code></li>
 </ul>
 <p>输入文件直接消费了本章讲到的一组顶层参数：</p>
 <ul>
@@ -3685,9 +3699,6 @@ implicit、electrostatic/HybridPIC、<code>OneStep_nosub()</code>、subcycling
 <code>SyncCurrentAndRho()</code>，再到 <code>PushPSATD()</code> 或
 <code>EvolveB/EvolveE/EvolveB</code>，确认粒子输运、源项同步和场推进的时间层相容。</li>
 </ol>
-<p>后续章节将从 <code>mypc-&gt;Evolve()</code> 进入粒子推进、field
-gather 和沉积内核，再从 <code>EvolveE/B</code> 进入 FDTD/PSATD
-场求解器。</p>
 <!-- source: manuscript/chapters/03a-warpx-initialization.md -->
 <h1 id="a.-warpx-初始化链从-initdata-到初始粒子和外部场">3A. WarpX
 初始化链：从 <code>InitData()</code> 到初始粒子和外部场</h1>
@@ -5973,15 +5984,13 @@ beam optics 文献继续推导；</li>
 <code>WarpXInitData.cpp</code> 追踪 <code>InitData()</code>，说明
 <code>ComputeDt()</code> 为什么只出现在 fresh-run 分支，以及 restart
 为什么必须进入 <code>PostRestart()</code>。</li>
-<li><strong>初始化顺序题</strong>：解释
+<li><strong>初始化与复现题</strong>：解释
 <code>AmrCore::InitFromScratch()</code>、<code>AllocLevelData()</code>、<code>mypc-&gt;AllocData()</code>、<code>mypc-&gt;InitData()</code>
-和 <code>InitPML()</code> 的先后关系；指出把粒子初始化提前到 AMR level
-创建之前会破坏哪类对象一致性。</li>
-<li><strong>复现实验题</strong>：选取
-<code>Examples/Tests/initial_distribution/</code> 中一个与所用 WarpX
-build 匹配的输入，检查实际生效的输入副本、首个 diagnostics 和粒子
-species 数量；若输入与 build 不匹配而
-abort，应定位该限制并说明它为什么不能作为初始化正确性的反证或通过证据。</li>
+和 <code>InitPML()</code> 的先后关系。再在
+<code>Examples/Tests/initial_distribution/</code>
+选择匹配输入，核对生效输入、首个 diagnostics 和 species
+数，并说明输入不匹配导致的 abort
+为什么既不构成初始化通过，也不构成其反证。</li>
 </ol>
 <!-- source: manuscript/chapters/04-particle-pushers.md -->
 <h1 id="粒子推进器从-lorentz-方程到-pushpx">4. 粒子推进器：从 Lorentz

@@ -12,7 +12,7 @@ WarpX 的实现会继续演进，固定行号只能说明某一次快照的位�
 
 ## 3.1 顶层入口：`main.cpp`
 
-WarpX 的可执行入口在 `../warpx/Source/main.cpp`。主函数的控制流非常短：
+WarpX 的可执行入口在 `Source/main.cpp`。主函数的控制流非常短：
 
 ```text
 initialize_external_libraries(argc, argv)
@@ -65,7 +65,7 @@ warpx::initialization::finalize_external_libraries();
 
 ## 3.2 `WarpX` 类与单例构造
 
-`WarpX` 类定义在 `../warpx/Source/WarpX.H`。关键声明包括：
+`WarpX` 类定义在 `Source/WarpX.H`。关键声明包括：
 
 | 源码锚点 | 声明 | 作用 |
 |---|---|---|
@@ -76,7 +76,7 @@ warpx::initialization::finalize_external_libraries();
 | `WarpX::Evolve()` | `void Evolve(int numsteps=-1);` | 外层时间推进。 |
 | `WarpX::OneStep*()` | `OneStep`、`OneStep_nosub`、`OneStep_sub1`、`OneStep_JRhom` | 主循环内部的单步推进路径。 |
 
-单例实现位于 `../warpx/Source/WarpX.cpp`：
+单例实现位于 `Source/WarpX.cpp`：
 
 - `WarpX::GetInstance()` 检查 `m_instance`，为空则调用 `MakeWarpX()`。
 - `WarpX::Finalize()` 调 `ResetInstance()` 删除对象。
@@ -86,7 +86,7 @@ warpx::initialization::finalize_external_libraries();
 
 ## 3.3 `ReadParameters()`：主循环分支的来源
 
-`WarpX::ReadParameters()` 定义在 `../warpx/Source/WarpX.cpp`。完整参数系统很大，本章只列出直接影响主循环的部分。
+`WarpX::ReadParameters()` 定义在 `Source/WarpX.cpp`。完整参数系统很大，本章只列出直接影响主循环的部分。
 
 | 参数或逻辑 | 读取位置 | 对主循环的影响 |
 |---|---|---|
@@ -136,7 +136,7 @@ warpx::initialization::finalize_external_libraries();
 
 ## 3.3.2 `AllocLevelData()` / `AllocLevelMFs()` 里，四条 solver 分支的落点不同
 
-`AllocLevelData()` 定义在 `../warpx/Source/WarpX.cpp`。它先调用 `guard_cells.Init(...)`，再进入 `AllocLevelMFs(...)`。这一层真正决定的是：哪些 `MultiFab` 需要随着 level 一起出生。
+`AllocLevelData()` 定义在 `Source/WarpX.cpp`。它先调用 `guard_cells.Init(...)`，再进入 `AllocLevelMFs(...)`。这一层真正决定的是：哪些 `MultiFab` 需要随着 level 一起出生。
 
 先看隐式分支。`AllocLevelMFs()` 并不会一次性把全部隐式字段都分好，它只先放两类最基础的 level 数据：
 
@@ -230,7 +230,7 @@ InitPML();
 
 ## 3.4 `InitData()`：把状态准备到可推进
 
-`WarpX::InitData()` 定义在 `../warpx/Source/Initialization/WarpXInitData.cpp`。它不是简单分配内存，而是把一个模拟从“参数已读”变成“可以推进第一步”。
+`WarpX::InitData()` 定义在 `Source/Initialization/WarpXInitData.cpp`。它不是简单分配内存，而是把一个模拟从“参数已读”变成“可以推进第一步”。
 
 核心顺序如下：
 
@@ -251,7 +251,7 @@ InitPML();
 
 ## 3.5 `ComputeDt()`：步长不是一个固定常数
 
-`WarpX::ComputeDt()` 定义在 `../warpx/Source/Evolve/WarpXComputeDt.cpp`。
+`WarpX::ComputeDt()` 定义在 `Source/Evolve/WarpXComputeDt.cpp`。
 
 逻辑可以分成四类：
 
@@ -283,7 +283,7 @@ $$
 
 ## 3.6 `Evolve()` 外层时间步
 
-`WarpX::Evolve()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。它不是单纯调用 `OneStep()`，而是在每个 step 前后管理大量状态。
+`WarpX::Evolve()` 定义在 `Source/Evolve/WarpXEvolve.cpp`。它不是单纯调用 `OneStep()`，而是在每个 step 前后管理大量状态。
 
 外层结构是：
 
@@ -349,7 +349,7 @@ const bool move_j = m_is_synchronized;
 const int num_moved = MoveWindow(step+1, move_j);
 ```
 
-`MoveWindow()` 的第一层逻辑是维护一个连续窗口位置 `moving_window_x`，但只有当它相对当前几何左边界跨过整数个 cell 时才真正平移网格数据。实现位于 `../warpx/Source/Utils/WarpXMovingWindow.cpp`：
+`MoveWindow()` 的第一层逻辑是维护一个连续窗口位置 `moving_window_x`，但只有当它相对当前几何左边界跨过整数个 cell 时才真正平移网格数据。实现位于 `Source/Utils/WarpXMovingWindow.cpp`：
 
 ```cpp
 if (!moving_window_active(step)) { return 0; }
@@ -425,7 +425,7 @@ $$
 
 ## 3.7 `OneStep()`：求解器分派器
 
-`WarpX::OneStep()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。它按 solver 和 AMR 情况分派：
+`WarpX::OneStep()` 定义在 `Source/Evolve/WarpXEvolve.cpp`。它按 solver 和 AMR 情况分派：
 
 ```text
 if m_implicit_solver:
@@ -468,7 +468,7 @@ else:
 
 ## 3.8 `OneStep_nosub()`：显式电磁标准路径
 
-`WarpX::OneStep_nosub()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。这是本书第一个需要逐行读懂的核心函数。
+`WarpX::OneStep_nosub()` 定义在 `Source/Evolve/WarpXEvolve.cpp`。这是本书第一个需要逐行读懂的核心函数。
 
 它的结构分为四段。
 
@@ -587,7 +587,7 @@ FDTD 分支的核心源码如下：
 
 ## 3.9 `SyncCurrentAndRho()`：源项不是沉积完就可用
 
-`SyncCurrentAndRho()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。
+`SyncCurrentAndRho()` 定义在 `Source/Evolve/WarpXEvolve.cpp`。
 
 它的分支很重要：
 
@@ -601,9 +601,9 @@ FDTD 分支的核心源码如下：
 
 ## 3.10 `PushParticlesandDeposit()`：进入粒子容器
 
-`PushParticlesandDeposit()` 的两个重载定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。
+`PushParticlesandDeposit()` 的两个重载定义在 `Source/Evolve/WarpXEvolve.cpp`。
 
-第一层重载 `:1311-1333` 遍历所有 AMR level。第二层重载 `:1335-1415` 做三件事：
+第一层重载遍历所有 AMR level。第二层重载做三件事：
 
 1. 根据 `do_current_centering` 和 `current_deposition_algo == Vay` 选择当前沉积字段名。
 2. 调用 `mypc->Evolve(...)`，把 field register、level、字段名、时间、`dt[lev]`、subcycling half、是否跳过沉积、位置/动量 push 类型传入粒子容器。
@@ -615,7 +615,7 @@ FDTD 分支的核心源码如下：
 
 理解这两个特殊分支时，先把它们放回主循环时间层。
 
-`OneStep_sub1()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。当前 subcycling 只支持两个 level 和 refinement ratio 2：fine patch 用小步长推两次，coarse patch 和 mother grid 推一次，coarse 场使用两次 fine current 的平均效果。函数注释直接说明这一点：
+`OneStep_sub1()` 定义在 `Source/Evolve/WarpXEvolve.cpp`。当前 subcycling 只支持两个 level 和 refinement ratio 2：fine patch 用小步长推两次，coarse patch 和 mother grid 推一次，coarse 场使用两次 fine current 的平均效果。函数注释直接说明这一点：
 
 ```cpp
  * This version of subcycling only works for 2 levels and with a refinement
@@ -655,7 +655,7 @@ fine level 在一个 coarse step 内走两个完整 leapfrog 小步。`RestrictC
 
 这里 `StoreCurrent()`/`RestoreCurrent()` 的角色需要说得更硬一点：subcycling 不是简单把 fine current 直接覆写 coarse current，而是要先保留 coarse 粒子本身在大步时间层上的电流，再把两次 fine-step 的 restriction 结果分别叠回 coarse half-step。否则 coarse mother grid 看到的就不是“一个 coarse 大步上等效的平均源项”，而会把 coarse 自身电流和 fine 补偿混在一起。
 
-`OneStep_JRhom()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。它是 PSATD-JRhom 专用路径，会多次沉积 \(J\) 和 \(\rho\)，在谱空间推进字段，并支持时间平均场。入口先断言 solver 必须是 PSATD，并且粒子 push 时跳过标准沉积：
+`OneStep_JRhom()` 定义在 `Source/Evolve/WarpXEvolve.cpp`。它是 PSATD-JRhom 专用路径，会多次沉积 \(J\) 和 \(\rho\)，在谱空间推进字段，并支持时间平均场。入口先断言 solver 必须是 PSATD，并且粒子 push 时跳过标准沉积：
 
 ```cpp
 WARPX_ALWAYS_ASSERT_WITH_MESSAGE(
@@ -728,7 +728,7 @@ for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
 | 5 | `SetElectricFieldAndApplyBCs()`、`FinishImplicitParticleUpdate()` | 将收敛的中间场写回，并把粒子从半步状态完成到 $t^{n+1}$ |
 | 6 | 第二个 `EvolveB(Δt/2)` | 完成磁场后半步，物理时间步才真正结束 |
 
-因此 `m_nlsolver->Solve()` 不是一个普通的函数调用包装，而是这条路径的核心时间组织。`SemiImplicitEM::ComputeRHS()` 会先用当前猜测的 $E^{n+1/2}$ 更新 WarpX 持有的电场，然后调用 `PreRHSOp()`；后者定义在 `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp`，完成：
+因此 `m_nlsolver->Solve()` 不是一个普通的函数调用包装，而是这条路径的核心时间组织。`SemiImplicitEM::ComputeRHS()` 会先用当前猜测的 $E^{n+1/2}$ 更新 WarpX 持有的电场，然后调用 `PreRHSOp()`；后者定义在 `Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp`，完成：
 
 1. 以当前中间场推进粒子位置和速度；
 2. 形成 $J^{n+1/2}$；
@@ -747,7 +747,7 @@ implicit 还有两个容易误读的实现边界：
 
 ### 3.11.2 nonlinear solver、JFNK 与 mass-matrix：`J` 的三种构造层
 
-`ImplicitSolver::parseNonlinearSolverParams()` 定义在 `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp`。它首先读取 `nonlinear_solver`，再决定后续 `J` 是通过完整粒子响应、Newton/JFNK 近似，还是 PETSc SNES 的线性阶段构造：
+`ImplicitSolver::parseNonlinearSolverParams()` 定义在 `Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp`。它首先读取 `nonlinear_solver`，再决定后续 `J` 是通过完整粒子响应、Newton/JFNK 近似，还是 PETSc SNES 的线性阶段构造：
 
 | 配置 | solver 对象 | 粒子/电流路径 | 关键边界 |
 | --- | --- | --- | --- |
@@ -784,7 +784,7 @@ $$
 
 如果把本章压成一个最小、可执行、可回查的演化入口，可从下面的官方回归案例开始：
 
-- `../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
+- `Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
 
 输入文件直接消费了本章讲到的一组顶层参数：
 
@@ -855,5 +855,3 @@ $$
 3. **外层推进：** 在 `Evolve()` 中核对 callback、负载均衡、注入、边界与诊断分别发生在单步前还是单步后。
 4. **单步分派：** 在 `OneStep()` 中判断该输入实际走 implicit、electrostatic/HybridPIC、`OneStep_nosub()`、subcycling 还是 JRhom。
 5. **显式主链：** 从 `PushParticlesandDeposit()` 到 `SyncCurrentAndRho()`，再到 `PushPSATD()` 或 `EvolveB/EvolveE/EvolveB`，确认粒子输运、源项同步和场推进的时间层相容。
-
-后续章节将从 `mypc->Evolve()` 进入粒子推进、field gather 和沉积内核，再从 `EvolveE/B` 进入 FDTD/PSATD 场求解器。

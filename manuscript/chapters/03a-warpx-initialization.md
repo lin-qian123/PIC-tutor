@@ -1748,5 +1748,4 @@ inputs
 ## 3A.16 练习与最小复现
 
 1. **fresh/restart 定位题**：沿 `WarpXInitData.cpp` 追踪 `InitData()`，说明 `ComputeDt()` 为什么只出现在 fresh-run 分支，以及 restart 为什么必须进入 `PostRestart()`。
-2. **初始化顺序题**：解释 `AmrCore::InitFromScratch()`、`AllocLevelData()`、`mypc->AllocData()`、`mypc->InitData()` 和 `InitPML()` 的先后关系；指出把粒子初始化提前到 AMR level 创建之前会破坏哪类对象一致性。
-3. **复现实验题**：选取 `Examples/Tests/initial_distribution/` 中一个与所用 WarpX build 匹配的输入，检查实际生效的输入副本、首个 diagnostics 和粒子 species 数量；若输入与 build 不匹配而 abort，应定位该限制并说明它为什么不能作为初始化正确性的反证或通过证据。
+2. **初始化与复现题**：解释 `AmrCore::InitFromScratch()`、`AllocLevelData()`、`mypc->AllocData()`、`mypc->InitData()` 和 `InitPML()` 的先后关系。再在 `Examples/Tests/initial_distribution/` 选择匹配输入，核对生效输入、首个 diagnostics 和 species 数，并说明输入不匹配导致的 abort 为什么既不构成初始化通过，也不构成其反证。

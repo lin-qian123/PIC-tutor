@@ -2,7 +2,7 @@
 
 本章先不急着进入某一个 WarpX 函数。生产级 PIC 代码的困难不在于“有粒子、有网格、有 Maxwell 方程”这几个名词，而在于这些对象必须在离散时间层、离散空间布局、并行 guard cells、边界条件和守恒约束之间保持一致。后续逐行读 WarpX 时，本章给出判断代码是否“物理上在做正确事情”的基准。
 
-本章给出的函数名和调用关系是读代码的定位方法，而不是某一份源码树的版本标签。使用不同 WarpX 版本时，应先从 `Evolve()`、`OneStep()`、`PushParticlesandDeposit()` 和 `SyncCurrentAndRho()` 等职责明确的入口重新建立调用关系，而不要把行号或局部文件布局当作稳定 API。
+本章给出的函数名和调用关系是读代码的定位方法，而不是某一份源码树的版本标签。下文的 `Source/...` 与 `Examples/...` 均相对于 WarpX 源码根目录；使用不同 WarpX 版本时，应先从 `Evolve()`、`OneStep()`、`PushParticlesandDeposit()` 和 `SyncCurrentAndRho()` 等职责明确的入口重新建立调用关系，而不要把行号或本机工作区布局当作稳定 API。
 
 Yee 1966 在本书中只承担一个窄的历史定位：有限差分 Maxwell 方程通过合适的场点布置处理导体边界。它不能替代本章的 stencil、时间层或色散推导；这些内容由连续方程、离散推导和现代实现三层分别说明。`CartesianYeeAlgorithm.H`、`FiniteDifferenceSolver.cpp`、`EvolveB.cpp` 与 `EvolveE.cpp` 的交叉定位可供读者复查，但现代代码不构成对历史论文逐式等价的证明。
 
@@ -128,7 +128,7 @@ $$
 
 其中 \(\bar{\mathbf{v}}\) 的具体定义取决于 pusher。Boris、Vay、Higuera-Cary 等 pusher 的差别留到粒子推进章节逐行讲解。本章只强调主循环必须给 pusher 提供正确时间层的 \(\mathbf{x}\)、\(\mathbf{p}\)、\(\mathbf{E}\)、\(\mathbf{B}\)。
 
-WarpX 的显式无 subcycling 路径在 `../warpx/Source/Evolve/WarpXEvolve.cpp:515-518` 直接把这个时间层写进注释：
+WarpX 的显式无 subcycling 路径在 `Source/Evolve/WarpXEvolve.cpp` 的 `WarpX::OneStep_nosub()` 开头直接把这个时间层写进注释：
 
 ```text
 Push particle from x^{n} to x^{n+1}
@@ -226,7 +226,7 @@ $$
 
 这说明一个电磁 PIC step 的顺序不能随意交换。电场更新需要本步沉积出来的 \(\mathbf{J}^{n+1/2}\)，所以粒子推进与电流沉积必须在 `EvolveE(dt)` 之前完成。WarpX 的 FDTD 路径正是这样组织的：
 
-对应的核心源码节选来自 `../warpx/Source/Evolve/WarpXEvolve.cpp:559-628`，这里保留源项同步和 FDTD 场推进部分；PSATD 分支和 PML 后处理在第 3 章继续展开：
+对应的核心源码节选来自 `Source/Evolve/WarpXEvolve.cpp` 的 `WarpX::OneStep_nosub()`，这里保留源项同步和 FDTD 场推进部分；PSATD 分支和 PML 后处理在第 3 章继续展开：
 
 ```cpp
 // Synchronize J and rho:
@@ -266,18 +266,18 @@ EvolveB(0.5_rt * dt[0], SubcyclingHalf::SecondHalf, a_cur_time + 0.5_rt * dt[0])
 
 | 数学动作 | WarpX 源码位置 |
 |---|---|
-| 粒子从 \(\mathbf{x}^n,\mathbf{p}^{n-1/2}\) 推到 \(\mathbf{x}^{n+1},\mathbf{p}^{n+1/2}\)，并沉积源项 | `../warpx/Source/Evolve/WarpXEvolve.cpp:520-557` |
-| 同步 \(\rho,\mathbf{J}\)：滤波、guard cells、AMR、边界 | `../warpx/Source/Evolve/WarpXEvolve.cpp:559-564` 与 `SyncCurrentAndRho()` |
-| \(F,G\) 半步、\(\mathbf{B}\) 半步 | `../warpx/Source/Evolve/WarpXEvolve.cpp:607-613` |
-| \(\mathbf{E}\) 整步 | `../warpx/Source/Evolve/WarpXEvolve.cpp:615-623` |
-| \(F,G\) 半步、\(\mathbf{B}\) 半步 | `../warpx/Source/Evolve/WarpXEvolve.cpp:626-628` |
-| PML 与 guard cell 处理 | `../warpx/Source/Evolve/WarpXEvolve.cpp:630-642` |
+| 粒子从 \(\mathbf{x}^n,\mathbf{p}^{n-1/2}\) 推到 \(\mathbf{x}^{n+1},\mathbf{p}^{n+1/2}\)，并沉积源项 | `Source/Evolve/WarpXEvolve.cpp`: `WarpX::OneStep_nosub()` 对 `PushParticlesandDeposit()` 的调用 |
+| 同步 \(\rho,\mathbf{J}\)：滤波、guard cells、AMR、边界 | 同一函数中的 `SyncCurrentAndRho()` |
+| \(F,G\) 半步、\(\mathbf{B}\) 半步 | 同一函数 FDTD 分支中的 `EvolveF()`、`EvolveG()`、`EvolveB(...FirstHalf...)` |
+| \(\mathbf{E}\) 整步 | 同一分支中的 `EvolveE()` 或 `MacroscopicEvolveE()` |
+| \(F,G\) 半步、\(\mathbf{B}\) 半步 | 同一分支中的第二个 `EvolveF()`、`EvolveG()`、`EvolveB(...SecondHalf...)` |
+| PML 与 guard cell 处理 | 同一分支中的 `DampPML()` 与 `FillBoundary*()` |
 
 这里的 \(F,G\) 是 divergence cleaning 相关辅助场，不是最小 Maxwell 更新必需项。WarpX 把它们插在场推进两侧，是为了在实际模拟中控制 \(\nabla\cdot\mathbf{E}\) 或 \(\nabla\cdot\mathbf{B}\) 误差及 PML 相关处理。
 
 ### 2.4.1 `CFL` 不是经验参数，而是离散 Maxwell 更新的因果上界
 
-WarpX 的 `ComputeDt()` 不会把 FDTD 时间步写死成 $\min(\Delta x_i)/c$，而是把这件事委托给具体差分算法。`../warpx/Source/Evolve/WarpXComputeDt.cpp:68-88` 直接把 solver 分叉写死在主类层：
+WarpX 的 `ComputeDt()` 不会把 FDTD 时间步写死成 $\min(\Delta x_i)/c$，而是把这件事委托给具体差分算法。`Source/Evolve/WarpXComputeDt.cpp` 的 `WarpX::ComputeDt()` 直接在主类层完成 solver 分派：
 
 ```cpp
 } else if (electromagnetic_solver_id == ElectromagneticSolverAlgo::PSATD) {
@@ -299,7 +299,7 @@ WarpX 的 `ComputeDt()` 不会把 FDTD 时间步写死成 $\min(\Delta x_i)/c$�
         deltat = cfl * CartesianCKCAlgorithm::ComputeMaxDt(dx);
 ```
 
-对标准 Cartesian Yee，真正的 CFL 上界在 `../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianYeeAlgorithm.H:48-55`：
+对标准 Cartesian Yee，真正的 CFL 上界由 `Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianYeeAlgorithm.H` 中的 `CartesianYeeAlgorithm::ComputeMaxDt()` 给出：
 
 ```cpp
 static amrex::Real ComputeMaxDt ( amrex::Real const * const dx ) {
@@ -349,7 +349,7 @@ $$
 
 这意味着 phase velocity 和 group velocity 都会偏离连续值，且偏离大小依赖传播方向、波数和网格各向异性。数值色散不是后处理图里才会出现的现象，它在 `UpwardDx()` / `DownwardDx()` 这种最基本的差分定义处就已经写进去了。
 
-Yee 的 `x` 向导数在 `../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianYeeAlgorithm.H:69-96`：
+Yee 的 `x` 向导数由同一文件中的 `CartesianYeeAlgorithm::UpwardDx()` 与 `DownwardDx()` 实现：
 
 ```cpp
 static amrex::Real UpwardDx (
@@ -384,7 +384,7 @@ $$
 
 ### 2.4.3 `Yee / Nodal / CKC` 的差别本质上是离散色散关系不同
 
-对 collocated/nodal solver，WarpX 的 `CartesianNodalAlgorithm` 不再用 staggered 前后差分，而是直接用中心差分。`../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianNodalAlgorithm.H:71-102`：
+对 collocated/nodal solver，WarpX 的 `CartesianNodalAlgorithm` 不再用 staggered 前后差分，而是直接用中心差分。可从 `Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianNodalAlgorithm.H` 的 `UpwardDx()` 与 `DownwardDx()` 回查：
 
 ```cpp
 static amrex::Real UpwardDx (
@@ -413,7 +413,7 @@ $$
 
 但数值色散与奇偶模耦合特征已经不同。
 
-CKC 则更进一步，不再满足“一个方向只看一对最近邻”的局部导数定义。`../warpx/Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianCKCAlgorithm.H:107-123,131-158`：
+CKC 则更进一步，不再满足“一个方向只看一对最近邻”的局部导数定义。可从 `Source/FieldSolver/FiniteDifferenceSolver/FiniteDifferenceAlgorithms/CartesianCKCAlgorithm.H` 的 `ComputeMaxDt()` 与 `UpwardDx()` 回查：
 
 ```cpp
 static amrex::Real ComputeMaxDt ( amrex::Real const * const dx ) {
@@ -468,8 +468,8 @@ $$
 
 WarpX 在 `OneStep_nosub()` 内部把两者清楚分开：
 
-- PSATD 分支在 `../warpx/Source/Evolve/WarpXEvolve.cpp:576-605`，核心是 `PushPSATD(a_cur_time)`。
-- FDTD 分支在 `../warpx/Source/Evolve/WarpXEvolve.cpp:606-642`，核心是 `EvolveB/EvolveE/EvolveB`。
+- PSATD 分支在 `Source/Evolve/WarpXEvolve.cpp` 的 `WarpX::OneStep_nosub()` 内，核心是 `PushPSATD(a_cur_time)`。
+- FDTD 分支在同一函数内，核心是 `EvolveB/EvolveE/EvolveB`。
 
 这意味着本书后续讲 field solver 时不能把“Maxwell solver”写成单一算法。`algo.maxwell_solver` 的选择会改变主循环内的场推进、同步、边界和可用功能。
 
@@ -486,7 +486,7 @@ WarpX 在 `OneStep_nosub()` 内部把两者清楚分开：
 7. PML、moving window、粒子边界、重分布、排序。
 8. 诊断写出和终止条件检查。
 
-WarpX 的 `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390` 正是围绕这些层次组织外层 `Evolve()` 循环。真正的主循环不是教科书五行伪代码，而是把守恒离散化、时间层一致性和大规模并行工程组合起来的控制流。
+WarpX 在 `Source/Evolve/WarpXEvolve.cpp` 的 `WarpX::Evolve()` 中正是围绕这些层次组织外层循环。真正的主循环不是教科书五行伪代码，而是把守恒离散化、时间层一致性和大规模并行工程组合起来的控制流。
 
 ### 2.6.1 AMR subcycling：两个时间步不是同一个时间步的重复调用
 
@@ -591,18 +591,18 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 
 | 目标 | 入口 |
 |---|---|
-| 看外层时间步如何组织 | `WarpXEvolve.cpp`: `Evolve()` |
-| 看显式电磁无 subcycling 的标准 step | `WarpXEvolve.cpp`: `OneStep_nosub()` |
-| 看主循环如何进入粒子容器 | `WarpXEvolve.cpp`: `PushParticlesandDeposit()` |
-| 看两级 AMR subcycling 的细/粗层时间组织 | `WarpXEvolve.cpp`: `OneStep_sub1()` |
-| 看 JRhom 的多次相对时间沉积与谱推进 | `WarpXEvolve.cpp`: `OneStep_JRhom()` |
-| 看 implicit RHS 中的粒子推进与 source synchronization | `ImplicitSolver.cpp`: `PreRHSOp()` |
+| 看外层时间步如何组织 | `Source/Evolve/WarpXEvolve.cpp`: `WarpX::Evolve()` |
+| 看显式电磁无 subcycling 的标准 step | `Source/Evolve/WarpXEvolve.cpp`: `WarpX::OneStep_nosub()` |
+| 看主循环如何进入粒子容器 | `Source/Evolve/WarpXEvolve.cpp`: `WarpX::PushParticlesandDeposit()` |
+| 看两级 AMR subcycling 的细/粗层时间组织 | `Source/Evolve/WarpXEvolve.cpp`: `WarpX::OneStep_sub1()` |
+| 看 JRhom 的多次相对时间沉积与谱推进 | `Source/Evolve/WarpXEvolve.cpp`: `WarpX::OneStep_JRhom()` |
+| 看 implicit RHS 中的粒子推进与 source synchronization | `Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp`: `ImplicitSolver::PreRHSOp()` |
 
 ## 2.8 参数示例与最小运行案例
 
 如果把本章压回一个最小、可运行、可验证的输入骨架，可从下面的官方案例开始：
 
-- `../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
+- `Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
 
 它把本章真正讨论的五类量都放在同一个最小问题上：
 

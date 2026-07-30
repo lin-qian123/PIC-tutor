@@ -45,9 +45,14 @@ def main() -> int:
     chapter_1_project_path_markers = re.findall(reader_entry_project_path_pattern, chapter_1)
     chapter_2_project_path_markers = re.findall(reader_entry_project_path_pattern, chapter_2)
     chapter_3_project_path_markers = re.findall(reader_entry_project_path_pattern, chapter_3)
-    chapter_3_stale_location_markers = re.findall(
-        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
+    chapter_2_stale_location_markers = re.findall(
+        r"(?:\.\./warpx/)?Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_2
     )
+    chapter_2_workspace_markers = re.findall(r"\.\./warpx/", chapter_2)
+    chapter_3_stale_location_markers = re.findall(
+        r"(?:\.\./warpx/)?Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
+    )
+    chapter_3_workspace_markers = re.findall(r"\.\./warpx/", chapter_3)
     chapter_3a = (root / "manuscript/chapters/03a-warpx-initialization.md").read_text(
         encoding="utf-8"
     )
@@ -343,9 +348,22 @@ def main() -> int:
         and "pkuHEDPbranch" not in chapter_3[:2500]
         and not chapter_2_project_path_markers
         and not chapter_3_project_path_markers
+        and not chapter_2_stale_location_markers
+        and not chapter_3_stale_location_markers
+        and not chapter_2_workspace_markers
+        and not chapter_3_workspace_markers
         and not any(
             re.search(r"\\(?:omega|lambda|Delta)", span) for span in chapter_2_code_spans
         ),
+        "chapter_2_3_source_navigation_is_portable": all(
+            marker in chapter_2
+            for marker in (
+                "`Source/...` 与 `Examples/...` 均相对于 WarpX 源码根目录",
+                "`Source/Evolve/WarpXEvolve.cpp` 的 `WarpX::OneStep_nosub()`",
+                "`Source/Evolve/WarpXComputeDt.cpp` 的 `WarpX::ComputeDt()`",
+            )
+        ) and not chapter_2_stale_location_markers and not chapter_3_stale_location_markers
+        and not chapter_2_workspace_markers and not chapter_3_workspace_markers,
         "chapter_3_current_source_route": all(
             marker in chapter_3
             for marker in (
@@ -359,6 +377,7 @@ def main() -> int:
         ) and "UpdateDtFromParticleSpeeds" not in chapter_3
         and "`algo.maxwell_solver = yee`" not in chapter_3
         and not chapter_3_stale_location_markers
+        and not chapter_3_workspace_markers
         and not chapter_3_project_path_markers,
         "chapter_1_has_no_project_path_narration": not chapter_1_project_path_markers,
         "chapter_3a_current_initialization_route": all(
@@ -413,7 +432,10 @@ def main() -> int:
         "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
         "chapter_1_project_path_markers": chapter_1_project_path_markers,
         "chapter_2_project_path_markers": chapter_2_project_path_markers,
+        "chapter_2_stale_location_markers": chapter_2_stale_location_markers,
+        "chapter_2_workspace_markers": chapter_2_workspace_markers,
         "chapter_3_project_path_markers": chapter_3_project_path_markers,
+        "chapter_3_workspace_markers": chapter_3_workspace_markers,
         "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,
         "chapter_3a_project_path_markers": chapter_3a_project_path_markers,
         "chapter_3a_project_narration_markers": chapter_3a_project_narration_markers,

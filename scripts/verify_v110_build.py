@@ -10,6 +10,7 @@ from pathlib import Path
 from pypdf import PdfReader
 
 from audit_public_release_paths import inspect
+from build_v110 import PAGE_BREAK_PARTS
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,8 +19,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The reader-facing front matter revision yields a 259-page layout.
-EXPECTED_PDF_PAGES = 259
+# Reader-facing chapter openings and portable source navigation yield 262 pages.
+EXPECTED_PDF_PAGES = 262
 
 
 def image_links(text: str) -> list[str]:
@@ -91,9 +92,14 @@ def main() -> None:
     chapter_1_project_markers = re.findall(reader_entry_project_path_pattern, chapter_1)
     chapter_2_project_markers = re.findall(reader_entry_project_path_pattern, chapter_2)
     chapter_3_project_markers = re.findall(reader_entry_project_path_pattern, chapter_3)
-    chapter_3_stale_location_markers = re.findall(
-        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
+    chapter_2_stale_location_markers = re.findall(
+        r"(?:\.\./warpx/)?Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_2
     )
+    chapter_2_workspace_markers = re.findall(r"\.\./warpx/", chapter_2)
+    chapter_3_stale_location_markers = re.findall(
+        r"(?:\.\./warpx/)?Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
+    )
+    chapter_3_workspace_markers = re.findall(r"\.\./warpx/", chapter_3)
     chapter_3a = (ROOT / "manuscript" / "chapters" / "03a-warpx-initialization.md").read_text(
         encoding="utf-8"
     )
@@ -160,6 +166,7 @@ def main() -> None:
         "html_embedded_images": html.count("data:image/png;base64,") >= 15,
         "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
+        "primary_sections_start_on_new_pdf_pages": merged.count("\\clearpage") == len(PAGE_BREAK_PARTS),
         "reader_facing_front_matter": all(
             marker in version + "\n" + preface
             for marker in ("# PIC-tutor", "建议的阅读方式", "如何使用本书", "遇到一个新的输入或源码分支时")
@@ -204,7 +211,18 @@ def main() -> None:
         ) and all(
             marker in chapter_3
             for marker in ("追踪它何时变成网格、场、粒子和诊断", "InitData()", "OneStep()")
-        ) and not chapter_2_project_markers and not chapter_3_project_markers,
+        ) and not chapter_2_project_markers and not chapter_3_project_markers
+        and not chapter_2_stale_location_markers and not chapter_3_stale_location_markers
+        and not chapter_2_workspace_markers and not chapter_3_workspace_markers,
+        "chapter_2_3_portable_source_navigation": all(
+            marker in chapter_2
+            for marker in (
+                "`Source/...` 与 `Examples/...` 均相对于 WarpX 源码根目录",
+                "`Source/Evolve/WarpXEvolve.cpp` 的 `WarpX::OneStep_nosub()`",
+                "`Source/Evolve/WarpXComputeDt.cpp` 的 `WarpX::ComputeDt()`",
+            )
+        ) and not chapter_2_stale_location_markers and not chapter_3_stale_location_markers
+        and not chapter_2_workspace_markers and not chapter_3_workspace_markers,
         "chapter_3_current_source_route": all(
             marker in chapter_3
             for marker in (
@@ -218,6 +236,7 @@ def main() -> None:
         ) and "UpdateDtFromParticleSpeeds" not in chapter_3
         and "`algo.maxwell_solver = yee`" not in chapter_3
         and not chapter_3_stale_location_markers
+        and not chapter_3_workspace_markers
         and not chapter_3_project_markers,
         "chapter_2_math_and_case_closure": all(
             marker in chapter_2
@@ -230,7 +249,7 @@ def main() -> None:
             )
         ) and not any(
             re.search(r"\\(?:omega|lambda|Delta)", span) for span in chapter_2_code_spans
-        ),
+        ) and not chapter_2_stale_location_markers and not chapter_2_workspace_markers,
         "chapter_7_reader_closure": all(
             marker in chapter_7
             for marker in (

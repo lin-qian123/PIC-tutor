@@ -1064,9 +1064,13 @@ WarpX 在 `OneStep_nosub()` 内部把两者清楚分开：
 
 WarpX 在 `Source/Evolve/WarpXEvolve.cpp` 的 `WarpX::Evolve()` 中正是围绕这些层次组织外层循环。真正的主循环不是教科书五行伪代码，而是把守恒离散化、时间层一致性和大规模并行工程组合起来的控制流。
 
+**读者的时间层判断卡**
+
+遇到一个包含 AMR、JRhom 或 implicit 的输入时，先不要按函数出现次数数“执行了多少步”。先写出外层物理时间区间 \(t^n\rightarrow t^{n+1}\)，再给每次内部重复贴上唯一标签：细层的真实推进、source 的时间积分，或非线性求解的试探。最后才检查该路径在下一次 gather 前交出了哪一个 \(\rho\)、\(\mathbf{J}\)、\(\mathbf{E}\)、\(\mathbf{B}\) 时间层。这个顺序能防止把 subcycling、JRhom 与 implicit 都误读成同一种“多调用几次”的算法。
+
 ### 2.6.1 AMR subcycling：两个时间步不是同一个时间步的重复调用
 
-无 subcycling 时，第 0 层和更细层使用同一个外层时间步，`OneStep_nosub()` 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。本书采用的源码快照中，`OneStep_sub1()` 明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
+无 subcycling 时，第 0 层和更细层使用同一个外层时间步，`OneStep_nosub()` 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。`OneStep_sub1()` 的这一路径明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
 
 令粗层时间步为 $Δt_c$，细层时间步为
 
@@ -1103,7 +1107,7 @@ $$
 
 这里的 `restrict` 和 `add` 不能与普通 guard-cell exchange 混为一谈：前者改变的是 coarse/fine source 的层级表示，后者只是同一层相邻 patch 间的数据可见性。对电荷来说，`rho_buf` 还可能来自 transition-zone 粒子在 coarse 几何上的直接沉积；因此 subcycling 中的 source 合成既不是“把 fine `rho` 全部平均下来”这么简单，也不是由场求解器自动补齐。
 
-本书采用的源码快照显式禁止 electrostatic solver 与 subcycling 组合。这个限制写在 `OneStep_sub1()` 的入口断言中，原因不是 electrostatic 不能使用 AMR，而是这条 subcycling 例程的时间组织只为显式 electromagnetic field advance 编写，不能把 Poisson/electrostatic 路径的源项和场解时序悄悄套进来。
+`OneStep_sub1()` 开头的断言拒绝 electrostatic solver 与 subcycling 的组合。原因不是 electrostatic 不能使用 AMR，而是这条 subcycling 例程的时间组织只为显式 electromagnetic field advance 编写，不能把 Poisson/electrostatic 路径的源项和场解时序悄悄套进来。
 
 所以读 AMR PIC loop 时要同时检查四个不变量：
 
@@ -1116,13 +1120,11 @@ $$
 
 ### 2.6.2 JRhom 与 implicit：同一个外层 step 内部也可能有不同的时间合同
 
-标准 `OneStep_nosub()`、PSATD-JRhom 和 implicit solver 都可能被外层 `WarpX::OneStep()` 视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。本书采用的源码快照中的分派关系是：
+标准 `OneStep_nosub()`、PSATD-JRhom 和 implicit solver 都可能被外层 `WarpX::OneStep()` 视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。从 `WarpX::OneStep()` 的分派和各路径的函数职责看，应按下面三条路径分别阅读：
 
-| 路径 | 外层入口 | 源项/粒子时间组织 | 场推进特点 | 组合边界 |
-| --- | --- | --- | --- | --- |
-| 标准显式 electromagnetic PIC | `OneStep_nosub()` | 一次粒子推进，得到 `J` 与 `rho`，随后统一 `SyncCurrentAndRho()` | FDTD 的 `B-E-B` 或一次 PSATD 推进 | 可与普通显式 collision placement 组合 |
-| PSATD-JRhom | `OneStep_JRhom()` | 先推进粒子但跳过普通沉积，再按 `rho/J` 时间依赖在 `Δt` 内做多次相对时间沉积 | 每个 deposit interval 都执行一次谱空间场推进；可选跨 `2Δt` 时间平均 | 只支持 PSATD；`current_correction` 不支持；split momentum collision push 不支持 |
-| implicit electromagnetic PIC | `ImplicitSolver::OneStep()` | 以 $E^{n+θ}$ 或中间场为猜测，在非线性/线性 RHS 评估中反复推进粒子并构造 `J^{n+1/2}` | 通过 nonlinear solver 求自洽中间电场，再完成粒子和场的后半步 | 不能把一次 RHS 评估误当成一次物理时间步；mass-matrix/JFNK 还会改变 `J` 的构造路径 |
+1. **标准显式 electromagnetic PIC。**入口是 `OneStep_nosub()`；一次粒子推进产生 `J` 与 `rho`，随后统一进入 `SyncCurrentAndRho()`。场端是 FDTD 的 `B-E-B` 或一次 PSATD 推进；普通显式 collision placement 可以按各自时间层与它组合。
+2. **PSATD-JRhom。**入口是 `OneStep_JRhom()`；它先推进粒子但跳过普通沉积，再按 `rho/J` 的时间依赖在 `Δt` 内做多次相对时间沉积。每个 deposit interval 都执行一次谱空间场推进，并可选跨 `2Δt` 时间平均；该路径只支持 PSATD，且不支持 `current_correction` 与 split momentum collision push。
+3. **implicit electromagnetic PIC。**入口是 `ImplicitSolver::OneStep()`；以 \(E^{n+\theta}\) 或中间场为猜测，在非线性/线性 RHS 评估中反复推进粒子并构造 \(J^{n+1/2}\)。nonlinear solver 先求自洽中间电场，再完成粒子和场的后半步；一次 RHS 评估不是一次物理时间步，mass-matrix/JFNK 也会改变 `J` 的构造路径。
 
 JRhom 的关键不是“PSATD 多调用几次”，而是把时间依赖的源项显式建模成一组谱空间可消费的历史量。`OneStep_JRhom()` 的顺序可以压缩为：
 
@@ -1148,7 +1150,7 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 
 如果把第 3 层误写成“程序又推进了一个物理时间步”，就会错误理解粒子数、能量账本和 `SyncCurrentAndRho()` 的调用次数。相反，如果把 JRhom 的多个 deposit interval 当成 nonlinear iteration，也会把时间积分和求解器迭代混为一谈。
 
-本书后续章节的阅读规则因此固定为：先识别外层物理时间步，再识别内部的 source subinterval 或 nonlinear iteration，最后才判断某次 `PushParticlesandDeposit()` 是物理推进、试探性 RHS 构造，还是历史源项重建。
+本章余下章节的阅读规则因此固定为：先识别外层物理时间步，再识别内部的 source subinterval 或 nonlinear iteration，最后才判断某次 `PushParticlesandDeposit()` 是物理推进、试探性 RHS 构造，还是历史源项重建。
 
 读者可以用下表快速定位一个输入卡采用的时间组织：
 

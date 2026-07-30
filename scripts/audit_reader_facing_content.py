@@ -49,6 +49,9 @@ def main() -> int:
         r"(?:\.\./warpx/)?Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_2
     )
     chapter_2_workspace_markers = re.findall(r"\.\./warpx/", chapter_2)
+    chapter_2_project_narration_markers = re.findall(
+        r"本书采用的源码快照|本书后续章节的阅读规则", chapter_2
+    )
     chapter_3_stale_location_markers = re.findall(
         r"(?:\.\./warpx/)?Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
     )
@@ -451,6 +454,20 @@ def main() -> int:
         and not any(
             re.search(r"\\(?:omega|lambda|Delta)", span) for span in chapter_2_code_spans
         ),
+        "chapter_2_time_contract_reader_route": all(
+            marker in chapter_2
+            for marker in (
+                "读者的时间层判断卡",
+                "先不要按函数出现次数数“执行了多少步”",
+                "细层的真实推进、source 的时间积分，或非线性求解的试探",
+                "`OneStep_sub1()` 的这一路径明确限定：只支持两级 mesh refinement",
+                "不能把 Poisson/electrostatic 路径的源项和场解时序悄悄套进来",
+                "从 `WarpX::OneStep()` 的分派和各路径的函数职责看",
+                "应按下面三条路径分别阅读",
+                "一次 RHS 评估不是一次物理时间步",
+            )
+        ) and "| 路径 | 外层入口 | 源项/粒子时间组织 | 场推进特点 | 组合边界 |" not in chapter_2
+        and not chapter_2_project_narration_markers,
         "chapter_2_3_source_navigation_is_portable": all(
             marker in chapter_2
             for marker in (

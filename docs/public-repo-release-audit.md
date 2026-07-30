@@ -1,6 +1,14 @@
 # Public repository release audit
 
-审计日期：2026-07-30
+审计日期：2026-07-31
+
+## 当前 v0.110 发布状态
+
+当前候选为 `dist/pic-tutor-v0.110.{md,html,pdf}`，PDF 为 256 页。目录、首页、前言、第 1--9 章和附录已完成当前产物的连续人工阅读；读者化审计分类为 `READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_RECORDED`，构建、结构和 PDF 版式审计均通过。附录现明确 `plotfile` 仅用于 analysis，重启必须配置 `Full` `checkpoint`，避免把输出文件角色混同。
+
+这不等同于公开发行已获授权。远端仓库为 public，Git 仍跟踪 `references/` 下 2,425 个第三方文件（52 个 PDF、2,259 个图像，190,730,587 bytes），根目录没有项目许可证。当前公开分发分类仍为 `PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED`：维护者必须逐项确认再分发权利，或从 public branch 移除相关材料并决定是否重写历史，然后完成项目许可证和 release checklist 的签收。release manifest 排除 `references/` 不能改变现有 public branch 或 Git 历史中的材料。
+
+下方保留的是此前编辑和发布审计快照，不能覆盖本节的当前结论。
 
 当前 release 为 v0.110；本版重新执行正式收敛 study 的第二组 12 个 2-rank producer，correction-on 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`。分类为 `FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN`，不把该结果写成 formal order 或 axis-charge closure。第 1--9 章入口已完成读者化审读；第 1 章的源码定位练习现从 `OneStep_nosub()` 起步，并要求读者产出粒子沉积、source 同步和场更新的三行调用表。连续审读还修复了 `1.12` 的块分隔错误：其现独立排版于 PDF 第 14 页并列入首页目录，构建验收固定检查第 1 章标题序列和 PDF 目录锚点。第 2 章现以数学符号说明 $\omega_p$、$\lambda_D$ 与 $\Delta t/\Delta x$，并把官方 1D Langmuir 输入、CMake 的 2-rank 注册、解析场和离散 Gauss-law 检查串成读者可复查的案例闭环；它明确区分输入显式设置、分析器消费的末态 surface 和不可外推范围。第 3 章现以文件路径和函数符号而非固定行号导航源码，校正运行中自适应步长入口为 `ApplyDtLimiters()`，并将 1D Langmuir 的输入、2-rank CTest 注册、分析命令、$E_z$ 误差阈值和 Gauss-law 检查闭合为一条读者可复查路线；它明确说明输入未显式设置 Maxwell solver。第 3A 章现补正 fresh-run 的 AMReX level 回调、implicit solver 属性创建、粒子/PML/callback 时序，并严格区分写入主网格场的 grid external field 与只供 gather 的 particle external field；file-driven external field 与 moving window 的实现不兼容已在正文和审计中锁定。第 5 章进一步将源码交叉检查改为读者问题导航，并把 Vay 结果收束为可用范围和不可外推边界；本轮章末结论又以连续性观察量、算法约束、source 同步和证据范围形成判断路线。第 6 章现以几何、source 时间模型、边界/耦合和验证量形成求解器选择闭环，并以官方 Picard 案例取代本地运行记录式练习。第 7 章现以稳定函数职责替代全章固定行号和内部路径：field/particle 拓扑从 `WarpX::MakeWarpX()` 起步，场/粒子边界、PML/guard-cell、embedded boundary、AMR 重映射与 scraping 分别回到对应 observable；transition-zone route ledger 仍明确保持开放。第 8 章现从待测物理量和时间层出发，按 `WarpX::Evolve`、`MultiDiagnostics` 与 `ReducedDiags` 的职责追踪输出形成，并以解析 physics gate、writer/schema、checksum 与性能 gate 区分证据强度。第 9 章现以文献判读卡和文献/实现/数值/收敛四类边界连接论文、源码与案例；教程正文已移除内部资料位置、索引和公开分发工作流。第 2、3、3A、4、5、6、7、8、9 章的深层证据段也已移除开发过程措辞和绝对工作区路径，并把读者入口改为相对链接。第 3 至 7 章原先会在 PDF 中泄露的 Mermaid 流程现均已替换为可打印的决策表、编号路线或闭合链；第 6 章宽求解器表改为分组路径速查，第 7 章以参数、场/PML、AMR 与粒子诊断串联边界闭合系统。第 4 章现已将边界、PML、AMR 和两类 QED 分叉收束为从时间层、tile 主链到观察量和模型选择的排错路线，并在章末加入官方 QED analysis 练习；附录 A 现在区分输入 `gamma*beta`、内部 `gamma*v` 和输出 metadata 的动量约定，并补充 AMR 数组生命周期提示。第 1、14--15、22、24--26、31、40--41、49--50、57、106--119、167--171、206、208、214、216、218、219、221、234、253、254、257、258、261 页已视觉抽查，且 261 页 PDF 的全页文本扫描未检出 `flowchart` 或 `-->`。全书通读、route-count ledger、axis charge correctness、RZ implicit runtime、许可和公开再分发仍保持开放。
 

@@ -124,6 +124,17 @@ def main() -> int:
             "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED",
             "docs/public-distribution-risk-register-v0.110.md",
         )),
+        "release_editorial_read_closure": all(marker in register for marker in (
+            "READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_RECORDED",
+            "编辑/版式的完整人工阅读已记录",
+            "不再以“继续人工通读”替代权利决定",
+        )) and all(
+            (root / path).is_file()
+            for path in (
+                "docs/manual-editorial-spotcheck-v0.110.md",
+                "docs/reader-facing-editorial-audit-v0.110.md",
+            )
+        ),
         "classification_boundaries": all(marker in register for marker in (
             "OPEN_EXTERNAL_ACCESS", "RUNTIME_TRANSITION_ZONE_BRANCH_ACTIVATION_OBSERVED_ROUTE_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
             "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN", "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED", "RELEASE-EDITORIAL",

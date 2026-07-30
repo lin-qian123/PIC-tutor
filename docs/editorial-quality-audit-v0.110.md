@@ -1,7 +1,7 @@
 # v0.110 automated editorial quality audit
 
-- classification: `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN`
-- scope: automated structure and artifact consistency; not a substitute for human reading or redistribution approval
+- classification: `AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_READ_RECORDED`
+- scope: automated structure and artifact consistency; current rendered PDF manual reading is recorded; redistribution approval remains open
 - headings: `333` Markdown / `333` HTML
 - PDF pages: `256`
 
@@ -16,5 +16,6 @@
 | `pdf_page_count_positive` | `PASS` |
 | `pdf_key_sections` | `PASS` |
 | `no_build_warning_markers` | `PASS` |
+| `full_current_pdf_read_is_recorded` | `PASS` |
 
-Automated audit passed does not close manual reading, layout review, licensing, or redistribution approval.
+Automated audit and current PDF manual reading are recorded; licensing and redistribution approval remain open.

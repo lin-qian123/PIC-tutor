@@ -94,8 +94,10 @@ def main() -> int:
     merged = dist / f"pic-tutor-{args.version}.md"
     html_path = dist / f"pic-tutor-{args.version}.html"
     pdf_path = dist / f"pic-tutor-{args.version}.pdf"
+    manual_spotcheck_path = root / f"docs/manual-editorial-spotcheck-{args.version}.md"
     merged_text = merged.read_text(encoding="utf-8")
     html_text = html_path.read_text(encoding="utf-8", errors="ignore")
+    manual_spotcheck = manual_spotcheck_path.read_text(encoding="utf-8") if manual_spotcheck_path.is_file() else ""
     parser_html = HeadingParser()
     parser_html.feed(html_text)
     expected_title = f"PIC-tutor {args.version}"
@@ -118,6 +120,12 @@ def main() -> int:
         else:
             chapter_checks[chapter] = numbers == sorted(numbers) and len(numbers) == len(set(numbers))
 
+    manual_read_markers = (
+        "本轮连续阅读已覆盖当前 PDF 第 1--256 页",
+        "| 1--6 |",
+        "| 254--256 |",
+    )
+    manual_read_recorded = all(marker in manual_spotcheck for marker in manual_read_markers)
     checks = {
         "files_present": all(path.is_file() for path in (merged, html_path, pdf_path)),
         "merged_heading_duplicates": not any(count > 1 for count in heading_counts.values()),
@@ -130,14 +138,25 @@ def main() -> int:
         "pdf_page_count_positive": len(pdf_reader.pages) > 0,
         "pdf_key_sections": all(marker in pdf_text for marker in ("如何阅读证据边界", "收敛研究：描述性趋势不是正式阶数", "先按更新对象理解 PSATD 系数", "用正确的 observable 判断 PML")),
         "no_build_warning_markers": not any(marker in pdf_text for marker in ("Could not fetch resource", "Missing character")),
+        "full_current_pdf_read_is_recorded": manual_read_recorded,
     }
+    classification = (
+        "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_READ_RECORDED"
+        if manual_read_recorded
+        else "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN"
+    )
+    scope = (
+        "automated structure and artifact consistency; current rendered PDF manual reading is recorded; redistribution approval remains open"
+        if manual_read_recorded
+        else "automated structure and artifact consistency; not a substitute for human reading or redistribution approval"
+    )
     result = {
         "contract": "editorial quality audit",
         "version": args.version,
         "checks": checks,
         "passed": all(checks.values()),
-        "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_MANUAL_REVIEW_OPEN",
-        "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
+        "classification": classification,
+        "scope": scope,
         "heading_count": len(headings),
         "html_heading_count": len(html_body_headings),
         "pdf_pages": len(pdf_reader.pages),
@@ -158,7 +177,10 @@ def main() -> int:
         f"- PDF pages: `{result['pdf_pages']}`", "", "| check | status |", "|---|:---:|",
     ]
     lines.extend(f"| `{name}` | `{'PASS' if passed else 'FAIL'}` |" for name, passed in checks.items())
-    lines.extend(["", "Automated audit passed does not close manual reading, layout review, licensing, or redistribution approval."])
+    if manual_read_recorded:
+        lines.extend(["", "Automated audit and current PDF manual reading are recorded; licensing and redistribution approval remain open."])
+    else:
+        lines.extend(["", "Automated audit passed does not close manual reading, layout review, licensing, or redistribution approval."])
     for output_dir in output_dirs:
         (output_dir / "contract.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2, ensure_ascii=False))

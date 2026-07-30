@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39130633,
+  "total_bytes": 39133608,
   "entries": [
     {
       "path": ".gitignore",
@@ -102,8 +102,8 @@
     },
     {
       "path": "docs/current-book-gap-register.md",
-      "bytes": 9641,
-      "sha256": "995534e0bee5daba6f187ca0beafe8cb94ed7c5ed22ba3e6798dd10775d3d9c6"
+      "bytes": 9755,
+      "sha256": "48747c5a2c4272cc42d39ff6c6f2c201688693eb018ae06f3a23ff6030d9ba8e"
     },
     {
       "path": "docs/editorial-quality-audit-v0.100.json",
@@ -207,13 +207,13 @@
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.json",
-      "bytes": 1164,
-      "sha256": "8f2672bd433d60f1460eb1382aa6b0a90c4cdcd2f75307876c2c5621aa9e26b1"
+      "bytes": 1237,
+      "sha256": "393c6f386b10dd4b62aa2689ebb98883a491fd6ae58c294e081cf437f83ec054"
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
-      "bytes": 768,
-      "sha256": "2c5521c042c38a7cc58b9dd5f1ff84271d8a9add0f0f1a8b32ef5e950018a166"
+      "bytes": 847,
+      "sha256": "d1812e9602492577491410026fe89b12a83d022fedd0e49d2c31ae137484e961"
     },
     {
       "path": "docs/editorial-quality-audit-v0.81.json",
@@ -917,8 +917,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 13994,
-      "sha256": "6d8a6aca5c36dc839c27b70a48b3a9c2998b6b62124de176e4f7286a57d734ee"
+      "bytes": 15136,
+      "sha256": "78dbb9e5bba844dfe76f55ec6fb776b431031ef429baa344ac444b77ecb67562"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -4342,8 +4342,8 @@
     },
     {
       "path": "scripts/audit_current_gap_register.py",
-      "bytes": 9354,
-      "sha256": "4f5832a36436860db202acc69cf144cdecbca8411056d263f4c9e4bc5abf0cf0"
+      "bytes": 9866,
+      "sha256": "69770d096f9ef2581e18aba6fe0b4939d2e2772106716e34b4da686048943626"
     },
     {
       "path": "scripts/audit_deposition_algorithm_selection_contract.py",
@@ -4392,8 +4392,8 @@
     },
     {
       "path": "scripts/audit_editorial_quality.py",
-      "bytes": 7690,
-      "sha256": "173250de3110e686979b27c767437e4187d2d93591f7e5cf0210b0ab96a0ad41"
+      "bytes": 8745,
+      "sha256": "eac3f4adbf15713d53db930fc7df3defa8aea1d98f7e5b1a017d11464b8074d3"
     },
     {
       "path": "scripts/audit_esirkepov_bounded_compare.py",

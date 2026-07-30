@@ -15,6 +15,7 @@ from build_v110 import PAGE_BREAK_PARTS
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_CHAPTERS = sorted((ROOT / "manuscript" / "chapters").glob("*.md"))
+APPENDIX_SYMBOLS = ROOT / "manuscript" / "appendices" / "A-symbols.md"
 MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
@@ -54,6 +55,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-05-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-06-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
+    appendix_symbols = APPENDIX_SYMBOLS.read_text(encoding="utf-8")
     merged = MERGED_MARKDOWN.read_text(encoding="utf-8")
     html = HTML.read_text(encoding="utf-8", errors="ignore")
     reader = PdfReader(str(PDF))
@@ -198,6 +200,12 @@ def main() -> None:
         "html_embedded_images": html.count("data:image/png;base64,") >= 15,
         "figure_markers": all(f"图 8-{index}" in pdf_text for index in range(1, 13)),
         "appendix_marker": "附录 A：符号、时间层与源码变量" in pdf_text,
+        "appendix_distinguishes_plotfile_from_checkpoint": all(
+            marker in appendix_symbols
+            for marker in (
+                "分析用的网格/粒子输出；不可 restart，重启使用 `Full` checkpoint",
+            )
+        ),
         "primary_sections_start_on_new_pdf_pages": merged.count("\\clearpage") == len(PAGE_BREAK_PARTS),
         "chapter_8_conclusion_is_not_orphaned": (
             len(chapter_8_conclusion_pages) == 1
@@ -1148,11 +1156,15 @@ def main() -> None:
             marker in manual_spotcheck
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
+                "本轮连续阅读已覆盖当前 PDF 第 1--256 页",
+                "| 1--6 |",
                 "| 174 |",
                 "| 183 |",
                 "| 189 |",
+                "| 249--253 |",
+                "| 254--256 |",
                 "短页为附录结尾的预期留白",
-                "全书人工通读、第三方材料许可和公开再分发仍需单独签收",
+                "第三方材料许可确认、公开再分发签收",
             )
         ),
         "public_path_hygiene_markdown": inspect(MERGED_MARKDOWN)["passed"],

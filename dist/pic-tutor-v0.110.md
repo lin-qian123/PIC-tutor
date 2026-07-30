@@ -13979,7 +13979,7 @@ $$
 
 | 名称 | 含义 |
 |---|---|
-| plotfile | WarpX/AMReX 网格和粒子状态的可重启或后处理输出 |
+| plotfile | 分析用的网格/粒子输出；不可 restart，重启使用 `Full` checkpoint |
 | openPMD | 粒子、网格或 reduced diagnostics 的结构化输出接口 |
 | `diagNNNNNNN` | diagnostics 输出的迭代目录，例如 `diag1000000` |
 | `reduced_diags` | 不保存完整场/粒子，而输出聚合标量或低维量的 diagnostics |

@@ -45,11 +45,12 @@
     "chapter_3a_laser_cases_are_reader_facing": true,
     "chapter_3a_8_long_chapter_reader_navigation": true,
     "core_chapters_have_no_versioned_prose": true,
-    "core_chapters_have_exercises": true
+    "core_chapters_have_exercises": true,
+    "full_current_pdf_read_is_recorded": true
   },
   "passed": true,
-  "classification": "READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_OPEN",
-  "scope": "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters",
+  "classification": "READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_RECORDED",
+  "scope": "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters; the current rendered PDF has a complete recorded manual read",
   "versioned_chapter_heading_count": 0,
   "versioned_chapter_headings": [],
   "versioned_prose_marker_count": 0,
@@ -91,7 +92,5 @@
   "chapter_5_stale_location_markers": [],
   "chapter_6_opening_project_markers": [],
   "chapter_6_stale_location_markers": [],
-  "open_items": [
-    "需要人工通读术语、公式、代码上下文、章节过渡和练习"
-  ]
+  "open_items": []
 }

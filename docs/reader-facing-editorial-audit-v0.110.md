@@ -1,7 +1,7 @@
 # Reader-facing content audit
 
-- classification: `READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_OPEN`
-- scope: entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters
+- classification: `READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_RECORDED`
+- scope: entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters; the current rendered PDF has a complete recorded manual read
 - versioned chapter headings remaining: `0`
 
 | check | status |
@@ -51,7 +51,8 @@
 | `chapter_3a_8_long_chapter_reader_navigation` | `PASS` |
 | `core_chapters_have_no_versioned_prose` | `PASS` |
 | `core_chapters_have_exercises` | `PASS` |
+| `full_current_pdf_read_is_recorded` | `PASS` |
 
-## Open editorial work
+## Recorded Manual Review
 
-- 需要人工通读术语、公式、代码上下文、章节过渡和练习
+- The current rendered PDF has a complete recorded manual read; external-source and redistribution boundaries remain documented separately.

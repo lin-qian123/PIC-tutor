@@ -37,6 +37,9 @@ def main() -> int:
     chapter_6 = (root / "manuscript/chapters/06-field-solvers.md").read_text(encoding="utf-8")
     chapter_7 = (root / "manuscript/chapters/07-boundaries-amr.md").read_text(encoding="utf-8")
     chapter_8 = (root / "manuscript/chapters/08-diagnostics-cases.md").read_text(encoding="utf-8")
+    manual_spotcheck = (root / "docs/manual-editorial-spotcheck-v0.110.md").read_text(
+        encoding="utf-8"
+    )
     chapter_1 = (root / "manuscript/chapters/01-kinetic-models.md").read_text(encoding="utf-8")
     chapter_2 = (root / "manuscript/chapters/02-pic-loop.md").read_text(encoding="utf-8")
     chapter_2_code_spans = re.findall(r"`([^`]*)`", chapter_2)
@@ -683,13 +686,34 @@ def main() -> int:
             marker in chapter_text
             for marker in ("练习", "源码定位", "复现实验")
         ),
+        "full_current_pdf_read_is_recorded": all(
+            marker in manual_spotcheck
+            for marker in (
+                "本轮连续阅读已覆盖当前 PDF 第 1--256 页",
+                "| 1--6 |",
+                "| 7--8 |",
+                "| 213--248 |",
+                "| 249--253 |",
+                "| 254--256 |",
+            )
+        ),
     }
+    full_pdf_read_recorded = checks["full_current_pdf_read_is_recorded"]
     result = {
         "contract": "reader-facing content audit",
         "checks": checks,
         "passed": all(checks.values()),
-        "classification": "READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_OPEN",
-        "scope": "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters",
+        "classification": (
+            "READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_RECORDED"
+            if full_pdf_read_recorded
+            else "READER_FACING_CORE_CHAPTERS_PASS_HUMAN_FULL_READ_OPEN"
+        ),
+        "scope": (
+            "entry-point and learning-path audit; versioned evidence headings have been separated "
+            "from core tutorial chapters; the current rendered PDF has a complete recorded manual read"
+            if full_pdf_read_recorded
+            else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
+        ),
         "versioned_chapter_heading_count": len(version_markers),
         "versioned_chapter_headings": version_markers,
         "versioned_prose_marker_count": len(versioned_prose_markers),
@@ -731,9 +755,9 @@ def main() -> int:
         "chapter_5_stale_location_markers": chapter_5_stale_location_markers,
         "chapter_6_opening_project_markers": chapter_6_opening_project_markers,
         "chapter_6_stale_location_markers": chapter_6_stale_location_markers,
-        "open_items": [
+        "open_items": ([] if full_pdf_read_recorded else [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
-        ],
+        ]),
     }
     args.output_json.parent.mkdir(parents=True, exist_ok=True)
     args.output_md.parent.mkdir(parents=True, exist_ok=True)
@@ -749,8 +773,16 @@ def main() -> int:
         "|---|:---:|",
     ]
     lines.extend(f"| `{name}` | `{'PASS' if value else 'FAIL'}` |" for name, value in checks.items())
-    lines.extend(["", "## Open editorial work", ""])
-    lines.extend(f"- {item}" for item in result["open_items"])
+    if result["open_items"]:
+        lines.extend(["", "## Open editorial work", ""])
+        lines.extend(f"- {item}" for item in result["open_items"])
+    else:
+        lines.extend([
+            "",
+            "## Recorded Manual Review",
+            "",
+            "- The current rendered PDF has a complete recorded manual read; external-source and redistribution boundaries remain documented separately.",
+        ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["passed"] else 1

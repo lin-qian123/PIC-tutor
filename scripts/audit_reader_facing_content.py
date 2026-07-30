@@ -74,10 +74,12 @@ def main() -> int:
     chapter_4_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_4
     )
+    chapter_4_workspace_markers = re.findall(r"\.\./warpx/", chapter_4)
     chapter_4_opening = section_between(chapter_4, "# 4. 粒子推进器", "## 4.1")
     chapter_5_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_5
     )
+    chapter_5_workspace_markers = re.findall(r"\.\./warpx/", chapter_5)
     chapter_6_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_6
     )
@@ -90,6 +92,13 @@ def main() -> int:
         chapter_8,
     )
     chapter_8_opening = section_between(chapter_8, "# 8. 诊断、验证与案例", "## Langmuir wave")
+    chapter_8_applications = section_between(
+        chapter_8, "## 激光与束流驱动的尾场加速", "## 诊断在源码中的位置"
+    )
+    chapter_8_application_record_markers = re.findall(
+        r"当前 CI|active tree|runtime matrix|workflow matrix|当前最硬断言|当前最强",
+        chapter_8_applications,
+    )
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -256,7 +265,8 @@ def main() -> int:
         ) and not chapter_9_project_path_markers and not chapter_9_project_narration_markers,
         "chapter_4_uses_reader_facing_evidence_language": not chapter_4_project_record_markers,
         "chapter_4_has_no_project_path_narration": not chapter_4_project_path_markers
-        and not chapter_4_project_narration_markers,
+        and not chapter_4_project_narration_markers
+        and not chapter_4_workspace_markers,
         "chapter_4_current_pusher_route": all(
             marker in chapter_4
             for marker in (
@@ -303,7 +313,8 @@ def main() -> int:
         )
         and not chapter_5_stale_location_markers
         and not chapter_5_project_path_markers
-        and not chapter_5_project_narration_markers,
+        and not chapter_5_project_narration_markers
+        and not chapter_5_workspace_markers,
         "chapter_6_opening_is_reader_facing": not chapter_6_opening_project_markers,
         "chapter_6_current_solver_route": all(
             marker in chapter_6
@@ -407,6 +418,16 @@ def main() -> int:
         and not chapter_8_project_path_markers
         and not chapter_8_project_narration_markers
         and not chapter_8_stale_location_markers,
+        "chapter_8_application_cases_are_reader_facing": all(
+            marker in chapter_8_applications
+            for marker in (
+                "先把诊断问题写成四项",
+                "先用解析尺度或文献给出场、相位和能谱的预期",
+                "源码案例承担“如何搭建和输出”的职责",
+                "却不是自动成立的统一物理基准",
+            )
+        )
+        and not chapter_8_application_record_markers,
         "chapter_2_3_have_reader_facing_routes": all(
             marker in chapter_2
             for marker in (

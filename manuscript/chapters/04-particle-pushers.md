@@ -702,7 +702,7 @@ $$
 \sum_{\mathbf{i}} \mathbf{B}_{\mathbf{i}} S_{\mathbf{i}}(\mathbf{x}_p).
 $$
 
-但 WarpX 不能只用一个标量形函数，因为 \(E_x,E_y,E_z,B_x,B_y,B_z\) 在交错网格上的中心位置不同；同时 Galerkin 插值会让某些分量使用低一阶形函数。运行时入口在 `../warpx/Source/Particles/Gather/FieldGather.H`：
+但 WarpX 不能只用一个标量形函数，因为 \(E_x,E_y,E_z,B_x,B_y,B_z\) 在交错网格上的中心位置不同；同时 Galerkin 插值会让某些分量使用低一阶形函数。运行时入口在 `Source/Particles/Gather/FieldGather.H`：
 
 ```cpp
 void doGatherShapeN (const amrex::ParticleReal xp,
@@ -783,7 +783,7 @@ void doGatherShapeN (const amrex::ParticleReal xp,
 
 这里的 `nox` 不是运行时循环里的 shape 阶数变量，而是被转成模板参数 `depos_order`。这样 GPU kernel 内部可以用 `if constexpr` 展开阶数，避免每个粒子再做阶数分支。`galerkin_interpolation` 同理变成第二个模板参数，后面直接影响数组长度 `depos_order + 1 - galerkin_interpolation`。
 
-模板主体开头在 `../warpx/Source/Particles/Gather/FieldGather.H`。下面只列 x 方向；y/z 方向同构，但按各自场分量的 staggering 选择 node 或 cell：
+模板主体开头在 `Source/Particles/Gather/FieldGather.H`。下面只列 x 方向；y/z 方向同构，但按各自场分量的 staggering 选择 node 或 cell：
 
 ```cpp
 template <int depos_order, int galerkin_interpolation>
@@ -867,7 +867,7 @@ void doGatherShapeN ([[maybe_unused]] const amrex::ParticleReal xp,
 2. `x` 和 `x - 0.5_rt` 分别对应 node-centered 和 cell-centered 自由度。也就是说，场分量的 staggered center 不是后处理标签，而是直接改变粒子看到的插值权重。
 3. Galerkin 路径给 `ex/by/bz` 使用 `compute_shape_factor_galerkin`，阶数是 `depos_order - 1`；非 Galerkin 时第二个模板参数为 0，因此阶数不变。
 
-以 2D XZ 编译为例，真正累加网格场的源码在 `../warpx/Source/Particles/Gather/FieldGather.H`：
+以 2D XZ 编译为例，真正累加网格场的源码在 `Source/Particles/Gather/FieldGather.H`：
 
 ```cpp
 #elif defined(WARPX_DIM_XZ)
@@ -919,7 +919,7 @@ $$
 
 `Exp/Bzp`、`Ezp/Bxp`、`Byp` 的循环上限不同，是因为 Galerkin 插值会沿某些方向把 shape order 从 \(p\) 降到 \(p-1\)。这不是任意优化，而是和离散 Maxwell operator、field staggering 与能量/电荷性质匹配的插值选择。
 
-RZ 编译下，gather 先得到柱坐标分量，再转回笛卡尔粒子 pusher 需要的 \(E_x,E_y,B_x,B_y\)。关键转换在 `../warpx/Source/Particles/Gather/FieldGather.H`：
+RZ 编译下，gather 先得到柱坐标分量，再转回笛卡尔粒子 pusher 需要的 \(E_x,E_y,B_x,B_y\)。关键转换在 `Source/Particles/Gather/FieldGather.H`：
 
 ```cpp
     amrex::Real costheta;
@@ -1105,7 +1105,7 @@ if (do_crr) {
 
 因此，打开 `do_crr` 后，当前粒子不会再走 Vay 或 Higuera--Cary，而是进入 Boris 家族分支。通常它调用“Boris 加辐射反作用”；但在编译 QED 且同步开关生效时，代码会先计算 \(\chi\)：\(\chi<t_{\chi,\max}\) 才调用该 RR 例程，较高 \(\chi\) 则调用普通 Boris。这一门限的含义是：源码保证了 pusher 家族的选择，却不保证每一个 \(\chi\) 都附加 classical RR。`Source/Particles/Pusher/UpdateMomentumBorisWithRadiationReaction.H` 中的 `UpdateMomentumBorisWithRadiationReaction()` 则表明低 \(\chi\) 分支如何实现：它先调用普通 `UpdateMomentumBoris()`，再用新旧动量平均构造中间时刻的 \(\gamma_n\)、\(\mathbf{v}_n\) 和 Lorentz force，最后再把辐射反作用力乘 `dt` 加回动量。代码结构上，这是一种 Boris 后附加阻尼项，而不是完全重写一套 relativistic mover。
 
-再看 implicit path。它和显式 `PushPX()` 的根本区别，不在于换了另一个 `UpdateMomentum*()`，而在于时间层和收敛逻辑都改了。`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 的注释直接说明了顺序：
+再看 implicit path。它和显式 `PushPX()` 的根本区别，不在于换了另一个 `UpdateMomentum*()`，而在于时间层和收敛逻辑都改了。`Source/Particles/Pusher/ImplicitPushPX.cpp` 的注释直接说明了顺序：
 
 1. 先 position push 半步；
 2. 再 gather 场；
@@ -1113,14 +1113,14 @@ if (do_crr) {
 4. 再把 old/new velocity 平均成 time-centered 值；
 5. 位置和速度彼此依赖，因此做 Picard 固定点迭代，直到 step norm 收敛。
 
-而这里真正把上一篇属性图接进来的，是 `x_n/y_n/z_n`、`ux_n/uy_n/uz_n` 和 `nsuborbits`。在 `../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp`，这些量被明确当成“the positions and velocities saved at the start of the step”取出；随后粒子初值直接从 `x_n` 和 `ux_n` 开始，而不是从当前位置盲目继续推进。也就是说，`x_n/ux_n` 在 implicit 路径里不是诊断缓存，而是 nonlinear solve 的参考态。
+而这里真正把上一篇属性图接进来的，是 `x_n/y_n/z_n`、`ux_n/uy_n/uz_n` 和 `nsuborbits`。在 `Source/Particles/Pusher/ImplicitPushPX.cpp`，这些量被明确当成“the positions and velocities saved at the start of the step”取出；随后粒子初值直接从 `x_n` 和 `ux_n` 开始，而不是从当前位置盲目继续推进。也就是说，`x_n/ux_n` 在 implicit 路径里不是诊断缓存，而是 nonlinear solve 的参考态。
 
-`nsuborbits` 则是 implicit 不收敛时的 fallback 状态。`ImplicitPushXP()` 在 `../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 中，如果粒子没收敛，就把 `nsuborbits[ip] = 2`，再通过 `SetupSuborbitParticles()` 把这些粒子的权重临时置零、单独收集索引。后续 `ImplicitPushXPSubOrbits()` 又会强制把沉积算法切到 Villasenor，见 `ImplicitPushPX.cpp`。所以 suborbit 不只是“多分几步时间步”，还会连带改变当前粒子的沉积路径。
+`nsuborbits` 则是 implicit 不收敛时的 fallback 状态。`ImplicitPushXP()` 在 `Source/Particles/Pusher/ImplicitPushPX.cpp` 中，如果粒子没收敛，就把 `nsuborbits[ip] = 2`，再通过 `SetupSuborbitParticles()` 把这些粒子的权重临时置零、单独收集索引。后续 `ImplicitPushXPSubOrbits()` 又会强制把沉积算法切到 Villasenor，见 `ImplicitPushPX.cpp`。所以 suborbit 不只是“多分几步时间步”，还会连带改变当前粒子的沉积路径。
 
-最后看 photon container。`../warpx/Source/Particles/PhotonParticleContainer.cpp` 的 `PhotonParticleContainer::Evolve()` 并没有重写 species 外层循环，而是继续调用 `PhysicalParticleContainer::Evolve(...)`。也就是说，tile loop、AMR buffer 分区、gather 外壳这些基础设施仍然复用。但 photon 通过两层专门改写改变了物理语义：
+最后看 photon container。`Source/Particles/PhotonParticleContainer.cpp` 的 `PhotonParticleContainer::Evolve()` 并没有重写 species 外层循环，而是继续调用 `PhysicalParticleContainer::Evolve(...)`。也就是说，tile loop、AMR buffer 分区、gather 外壳这些基础设施仍然复用。但 photon 通过两层专门改写改变了物理语义：
 
 - `PhotonParticleContainer.H` 中 `DepositCharge()` 和 `DepositCurrent()` 都是空实现；
-- `PhotonParticleContainer::PushPX()` 在 `../warpx/Source/Particles/PhotonParticleContainer.cpp` 里只做 gather、可选 Breit-Wheeler optical depth 演化、以及无质量 `UpdatePosition(...)`，并不调用 Boris/Vay/Higuera-Cary 的带电动量更新。
+- `PhotonParticleContainer::PushPX()` 在 `Source/Particles/PhotonParticleContainer.cpp` 里只做 gather、可选 Breit-Wheeler optical depth 演化、以及无质量 `UpdatePosition(...)`，并不调用 Boris/Vay/Higuera-Cary 的带电动量更新。
 
 因此 photon path 和普通 charged species 的差异不只是“不沉积电流”，而是连 momentum update 的物理模型都变了。它消费的 runtime attributes 主要是：
 
@@ -1138,7 +1138,7 @@ if (do_crr) {
 
 它们共享的是 `PhysicalParticleContainer::Evolve()`、gather 外壳和粒子属性系统；真正分叉的是时间层、收敛控制、沉积算法约束和具体消费的 runtime attributes。
 
-如果再往 implicit solver 深处走一步，还要继续把“suborbit 轨道本身”和“JFNK 线性化源项拼装”分开看。`../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 明确把 linear stage 的电流写成
+如果再往 implicit solver 深处走一步，还要继续把“suborbit 轨道本身”和“JFNK 线性化源项拼装”分开看。`Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 明确把 linear stage 的电流写成
 
 $$
 J(E)=J_{\mathrm{suborbit}}+J_0+\mathrm{MM}(E-E_0).
@@ -1150,7 +1150,7 @@ $$
 - `MM` 对应 `MassMatrices_X/Y/Z`；
 - `J_suborbit` 才是那些真正需要 suborbit fallback 的粒子继续显式推进后沉到 `current_fp` 的部分。
 
-这正好解释了为什么 `MultiParticleContainer::Evolve()` 在 implicit 模式下还要额外处理 `current_fp_non_suborbit` 和 `MassMatrices_PC` 的清零时机，见 `../warpx/Source/Particles/MultiParticleContainer.cpp`。它不是普通 bookkeeping，而是在维护 JFNK 的三项分拆。
+这正好解释了为什么 `MultiParticleContainer::Evolve()` 在 implicit 模式下还要额外处理 `current_fp_non_suborbit` 和 `MassMatrices_PC` 的清零时机，见 `Source/Particles/MultiParticleContainer.cpp`。它不是普通 bookkeeping，而是在维护 JFNK 的三项分拆。
 
 WarpX 为这一节提供了一条直接的 regression 入口：`Examples/Tests/radiation_reaction/`。它不是应用级 checksum，而是强 analysis：
 
@@ -1160,13 +1160,13 @@ WarpX 为这一节提供了一条直接的 regression 入口：`Examples/Tests/r
 
 因此它正好锚定了上面这条“先 Boris，再加 RR 修正”的源码路径，而不是泛化地证明“高能粒子大概会辐射”。
 
-`ImplicitPushXPSubOrbits()` 里还有两条实现约束非常重要。第一，`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 强制把 suborbit 路径的 current deposition 切到 Villasenor：
+`ImplicitPushXPSubOrbits()` 里还有两条实现约束非常重要。第一，`Source/Particles/Pusher/ImplicitPushPX.cpp` 强制把 suborbit 路径的 current deposition 切到 Villasenor：
 
 ```cpp
 const auto depos_type = CurrentDepositionAlgo::Villasenor;
 ```
 
-所以一旦粒子进入 suborbit fallback，用户原来选择的沉积算法并不会继续沿用。第二，`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 把 `deposit_mass_matrices` 限定成
+所以一旦粒子进入 suborbit fallback，用户原来选择的沉积算法并不会继续沿用。第二，`Source/Particles/Pusher/ImplicitPushPX.cpp` 把 `deposit_mass_matrices` 限定成
 
 ```cpp
 use_mass_matrices_pc && !linear_stage_of_jfnk

@@ -2342,7 +2342,7 @@ J_fp(fine)
 
 - `Reflect charge and current density over PEC boundaries, if needed.`
 
-而 `../warpx/Source/BoundaryConditions/WarpX_PEC.H` 又把底层语义钉得更死：
+而 `Source/BoundaryConditions/WarpX_PEC.H` 又把底层语义钉得更死：
 
 - `ApplyReflectiveBoundarytoRhofield(...)`：把沉积到 `PEC` 外侧的电荷密度反射回计算域；
 - `ApplyReflectiveBoundarytoJfield(...)`：把沉积到 `PEC` 外侧的电流密度反射回计算域。

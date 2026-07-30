@@ -4609,7 +4609,7 @@ $$
 \sum_{\mathbf{i}} \mathbf{B}_{\mathbf{i}} S_{\mathbf{i}}(\mathbf{x}_p).
 $$
 
-但 WarpX 不能只用一个标量形函数，因为 \(E_x,E_y,E_z,B_x,B_y,B_z\) 在交错网格上的中心位置不同；同时 Galerkin 插值会让某些分量使用低一阶形函数。运行时入口在 `../warpx/Source/Particles/Gather/FieldGather.H`：
+但 WarpX 不能只用一个标量形函数，因为 \(E_x,E_y,E_z,B_x,B_y,B_z\) 在交错网格上的中心位置不同；同时 Galerkin 插值会让某些分量使用低一阶形函数。运行时入口在 `Source/Particles/Gather/FieldGather.H`：
 
 ```cpp
 void doGatherShapeN (const amrex::ParticleReal xp,
@@ -4690,7 +4690,7 @@ void doGatherShapeN (const amrex::ParticleReal xp,
 
 这里的 `nox` 不是运行时循环里的 shape 阶数变量，而是被转成模板参数 `depos_order`。这样 GPU kernel 内部可以用 `if constexpr` 展开阶数，避免每个粒子再做阶数分支。`galerkin_interpolation` 同理变成第二个模板参数，后面直接影响数组长度 `depos_order + 1 - galerkin_interpolation`。
 
-模板主体开头在 `../warpx/Source/Particles/Gather/FieldGather.H`。下面只列 x 方向；y/z 方向同构，但按各自场分量的 staggering 选择 node 或 cell：
+模板主体开头在 `Source/Particles/Gather/FieldGather.H`。下面只列 x 方向；y/z 方向同构，但按各自场分量的 staggering 选择 node 或 cell：
 
 ```cpp
 template <int depos_order, int galerkin_interpolation>
@@ -4774,7 +4774,7 @@ void doGatherShapeN ([[maybe_unused]] const amrex::ParticleReal xp,
 2. `x` 和 `x - 0.5_rt` 分别对应 node-centered 和 cell-centered 自由度。也就是说，场分量的 staggered center 不是后处理标签，而是直接改变粒子看到的插值权重。
 3. Galerkin 路径给 `ex/by/bz` 使用 `compute_shape_factor_galerkin`，阶数是 `depos_order - 1`；非 Galerkin 时第二个模板参数为 0，因此阶数不变。
 
-以 2D XZ 编译为例，真正累加网格场的源码在 `../warpx/Source/Particles/Gather/FieldGather.H`：
+以 2D XZ 编译为例，真正累加网格场的源码在 `Source/Particles/Gather/FieldGather.H`：
 
 ```cpp
 #elif defined(WARPX_DIM_XZ)
@@ -4826,7 +4826,7 @@ $$
 
 `Exp/Bzp`、`Ezp/Bxp`、`Byp` 的循环上限不同，是因为 Galerkin 插值会沿某些方向把 shape order 从 \(p\) 降到 \(p-1\)。这不是任意优化，而是和离散 Maxwell operator、field staggering 与能量/电荷性质匹配的插值选择。
 
-RZ 编译下，gather 先得到柱坐标分量，再转回笛卡尔粒子 pusher 需要的 \(E_x,E_y,B_x,B_y\)。关键转换在 `../warpx/Source/Particles/Gather/FieldGather.H`：
+RZ 编译下，gather 先得到柱坐标分量，再转回笛卡尔粒子 pusher 需要的 \(E_x,E_y,B_x,B_y\)。关键转换在 `Source/Particles/Gather/FieldGather.H`：
 
 ```cpp
     amrex::Real costheta;
@@ -5012,7 +5012,7 @@ if (do_crr) {
 
 因此，打开 `do_crr` 后，当前粒子不会再走 Vay 或 Higuera--Cary，而是进入 Boris 家族分支。通常它调用“Boris 加辐射反作用”；但在编译 QED 且同步开关生效时，代码会先计算 \(\chi\)：\(\chi<t_{\chi,\max}\) 才调用该 RR 例程，较高 \(\chi\) 则调用普通 Boris。这一门限的含义是：源码保证了 pusher 家族的选择，却不保证每一个 \(\chi\) 都附加 classical RR。`Source/Particles/Pusher/UpdateMomentumBorisWithRadiationReaction.H` 中的 `UpdateMomentumBorisWithRadiationReaction()` 则表明低 \(\chi\) 分支如何实现：它先调用普通 `UpdateMomentumBoris()`，再用新旧动量平均构造中间时刻的 \(\gamma_n\)、\(\mathbf{v}_n\) 和 Lorentz force，最后再把辐射反作用力乘 `dt` 加回动量。代码结构上，这是一种 Boris 后附加阻尼项，而不是完全重写一套 relativistic mover。
 
-再看 implicit path。它和显式 `PushPX()` 的根本区别，不在于换了另一个 `UpdateMomentum*()`，而在于时间层和收敛逻辑都改了。`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 的注释直接说明了顺序：
+再看 implicit path。它和显式 `PushPX()` 的根本区别，不在于换了另一个 `UpdateMomentum*()`，而在于时间层和收敛逻辑都改了。`Source/Particles/Pusher/ImplicitPushPX.cpp` 的注释直接说明了顺序：
 
 1. 先 position push 半步；
 2. 再 gather 场；
@@ -5020,14 +5020,14 @@ if (do_crr) {
 4. 再把 old/new velocity 平均成 time-centered 值；
 5. 位置和速度彼此依赖，因此做 Picard 固定点迭代，直到 step norm 收敛。
 
-而这里真正把上一篇属性图接进来的，是 `x_n/y_n/z_n`、`ux_n/uy_n/uz_n` 和 `nsuborbits`。在 `../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp`，这些量被明确当成“the positions and velocities saved at the start of the step”取出；随后粒子初值直接从 `x_n` 和 `ux_n` 开始，而不是从当前位置盲目继续推进。也就是说，`x_n/ux_n` 在 implicit 路径里不是诊断缓存，而是 nonlinear solve 的参考态。
+而这里真正把上一篇属性图接进来的，是 `x_n/y_n/z_n`、`ux_n/uy_n/uz_n` 和 `nsuborbits`。在 `Source/Particles/Pusher/ImplicitPushPX.cpp`，这些量被明确当成“the positions and velocities saved at the start of the step”取出；随后粒子初值直接从 `x_n` 和 `ux_n` 开始，而不是从当前位置盲目继续推进。也就是说，`x_n/ux_n` 在 implicit 路径里不是诊断缓存，而是 nonlinear solve 的参考态。
 
-`nsuborbits` 则是 implicit 不收敛时的 fallback 状态。`ImplicitPushXP()` 在 `../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 中，如果粒子没收敛，就把 `nsuborbits[ip] = 2`，再通过 `SetupSuborbitParticles()` 把这些粒子的权重临时置零、单独收集索引。后续 `ImplicitPushXPSubOrbits()` 又会强制把沉积算法切到 Villasenor，见 `ImplicitPushPX.cpp`。所以 suborbit 不只是“多分几步时间步”，还会连带改变当前粒子的沉积路径。
+`nsuborbits` 则是 implicit 不收敛时的 fallback 状态。`ImplicitPushXP()` 在 `Source/Particles/Pusher/ImplicitPushPX.cpp` 中，如果粒子没收敛，就把 `nsuborbits[ip] = 2`，再通过 `SetupSuborbitParticles()` 把这些粒子的权重临时置零、单独收集索引。后续 `ImplicitPushXPSubOrbits()` 又会强制把沉积算法切到 Villasenor，见 `ImplicitPushPX.cpp`。所以 suborbit 不只是“多分几步时间步”，还会连带改变当前粒子的沉积路径。
 
-最后看 photon container。`../warpx/Source/Particles/PhotonParticleContainer.cpp` 的 `PhotonParticleContainer::Evolve()` 并没有重写 species 外层循环，而是继续调用 `PhysicalParticleContainer::Evolve(...)`。也就是说，tile loop、AMR buffer 分区、gather 外壳这些基础设施仍然复用。但 photon 通过两层专门改写改变了物理语义：
+最后看 photon container。`Source/Particles/PhotonParticleContainer.cpp` 的 `PhotonParticleContainer::Evolve()` 并没有重写 species 外层循环，而是继续调用 `PhysicalParticleContainer::Evolve(...)`。也就是说，tile loop、AMR buffer 分区、gather 外壳这些基础设施仍然复用。但 photon 通过两层专门改写改变了物理语义：
 
 - `PhotonParticleContainer.H` 中 `DepositCharge()` 和 `DepositCurrent()` 都是空实现；
-- `PhotonParticleContainer::PushPX()` 在 `../warpx/Source/Particles/PhotonParticleContainer.cpp` 里只做 gather、可选 Breit-Wheeler optical depth 演化、以及无质量 `UpdatePosition(...)`，并不调用 Boris/Vay/Higuera-Cary 的带电动量更新。
+- `PhotonParticleContainer::PushPX()` 在 `Source/Particles/PhotonParticleContainer.cpp` 里只做 gather、可选 Breit-Wheeler optical depth 演化、以及无质量 `UpdatePosition(...)`，并不调用 Boris/Vay/Higuera-Cary 的带电动量更新。
 
 因此 photon path 和普通 charged species 的差异不只是“不沉积电流”，而是连 momentum update 的物理模型都变了。它消费的 runtime attributes 主要是：
 
@@ -5045,7 +5045,7 @@ if (do_crr) {
 
 它们共享的是 `PhysicalParticleContainer::Evolve()`、gather 外壳和粒子属性系统；真正分叉的是时间层、收敛控制、沉积算法约束和具体消费的 runtime attributes。
 
-如果再往 implicit solver 深处走一步，还要继续把“suborbit 轨道本身”和“JFNK 线性化源项拼装”分开看。`../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 明确把 linear stage 的电流写成
+如果再往 implicit solver 深处走一步，还要继续把“suborbit 轨道本身”和“JFNK 线性化源项拼装”分开看。`Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 明确把 linear stage 的电流写成
 
 $$
 J(E)=J_{\mathrm{suborbit}}+J_0+\mathrm{MM}(E-E_0).
@@ -5057,7 +5057,7 @@ $$
 - `MM` 对应 `MassMatrices_X/Y/Z`；
 - `J_suborbit` 才是那些真正需要 suborbit fallback 的粒子继续显式推进后沉到 `current_fp` 的部分。
 
-这正好解释了为什么 `MultiParticleContainer::Evolve()` 在 implicit 模式下还要额外处理 `current_fp_non_suborbit` 和 `MassMatrices_PC` 的清零时机，见 `../warpx/Source/Particles/MultiParticleContainer.cpp`。它不是普通 bookkeeping，而是在维护 JFNK 的三项分拆。
+这正好解释了为什么 `MultiParticleContainer::Evolve()` 在 implicit 模式下还要额外处理 `current_fp_non_suborbit` 和 `MassMatrices_PC` 的清零时机，见 `Source/Particles/MultiParticleContainer.cpp`。它不是普通 bookkeeping，而是在维护 JFNK 的三项分拆。
 
 WarpX 为这一节提供了一条直接的 regression 入口：`Examples/Tests/radiation_reaction/`。它不是应用级 checksum，而是强 analysis：
 
@@ -5067,13 +5067,13 @@ WarpX 为这一节提供了一条直接的 regression 入口：`Examples/Tests/r
 
 因此它正好锚定了上面这条“先 Boris，再加 RR 修正”的源码路径，而不是泛化地证明“高能粒子大概会辐射”。
 
-`ImplicitPushXPSubOrbits()` 里还有两条实现约束非常重要。第一，`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 强制把 suborbit 路径的 current deposition 切到 Villasenor：
+`ImplicitPushXPSubOrbits()` 里还有两条实现约束非常重要。第一，`Source/Particles/Pusher/ImplicitPushPX.cpp` 强制把 suborbit 路径的 current deposition 切到 Villasenor：
 
 ```cpp
 const auto depos_type = CurrentDepositionAlgo::Villasenor;
 ```
 
-所以一旦粒子进入 suborbit fallback，用户原来选择的沉积算法并不会继续沿用。第二，`../warpx/Source/Particles/Pusher/ImplicitPushPX.cpp` 把 `deposit_mass_matrices` 限定成
+所以一旦粒子进入 suborbit fallback，用户原来选择的沉积算法并不会继续沿用。第二，`Source/Particles/Pusher/ImplicitPushPX.cpp` 把 `deposit_mass_matrices` 限定成
 
 ```cpp
 use_mass_matrices_pc && !linear_stage_of_jfnk
@@ -9153,7 +9153,7 @@ J_fp(fine)
 
 - `Reflect charge and current density over PEC boundaries, if needed.`
 
-而 `../warpx/Source/BoundaryConditions/WarpX_PEC.H` 又把底层语义钉得更死：
+而 `Source/BoundaryConditions/WarpX_PEC.H` 又把底层语义钉得更死：
 
 - `ApplyReflectiveBoundarytoRhofield(...)`：把沉积到 `PEC` 外侧的电荷密度反射回计算域；
 - `ApplyReflectiveBoundarytoJfield(...)`：把沉积到 `PEC` 外侧的电流密度反射回计算域。
@@ -12652,29 +12652,31 @@ Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族�
 
 图 8-11 由同一组输出的 reader-side 比较重建；该图展示的是并行证据边界，不是新的强 physics benchmark。
 
-## LWFA/PWFA
+## 激光与束流驱动的尾场加速
 
-应用综合章的下一条主线不应再写成单独的 `plasma_acceleration`。在案例库中，更准确的组织方式是把：
+尾场加速不应按源码目录名被拆成彼此无关的两个例子。读者面对的是同一个问题：一个相对论驱动在欠密度等离子体中建立纵向尾场，见证粒子能否在合适相位停留足够长时间而获得能量。两条分支的差别在于驱动者：
 
-- `Examples/Physics_applications/laser_acceleration/`
-- `Examples/Physics_applications/plasma_acceleration/`
+1. `LWFA` 用激光脉冲的有质动力驱动尾场；
+2. `PWFA` 用相对论束团的空间电荷和电流驱动尾场。
 
-并排视作同一类 wakefield acceleration runtime architecture 的两个分支：
+无论选哪一条分支，先把诊断问题写成四项，而不是先浏览输入文件：
 
-1. `LWFA`
-   - laser-driven
-2. `PWFA`
-   - beam-driven
+1. 纵向场的幅度、相位和相速度是否与所用近似一致；
+2. 见证粒子是否处于加速且聚焦的相位区，其能谱、能散和横向尺寸如何演化；
+3. 驱动、尾场和见证束之间的能量流向是否可从同一诊断时序中闭合；
+4. moving window、boosted frame、网格细化和前端选择是否改变上述物理量的解释，而非只改变输出文件。
 
-它们共享的不是统一的 physics hard assert，而是非常相近的工程关注点：
+`Examples/Physics_applications/laser_acceleration/` 和 `Examples/Physics_applications/plasma_acceleration/` 是回到实现的两个入口；它们能够帮助读者定位这些数值设置，却不是自动成立的统一物理基准。
 
-- moving window
-- boosted frame
-- diagnostics
-- mesh refinement
-- PICMI/native front-end split
+### LWFA：先用尺度关系建立可检验的问题
 
-这一节现在还需要保留一条更早的文献边界：当前已经开始精读的 `Tajima-Dawson 1979` 并不是现代 `laser_acceleration` family 的 analysis blueprint，而是这条应用线最早期的 scaling baseline。它把 `laser pulse -> ponderomotive wake -> trapping -> acceleration` 这条最小物理闭环压得很硬，并给出
+`Tajima-Dawson 1979` 给出了激光尾场的最小物理链：
+
+```text
+laser pulse -> ponderomotive wake -> trapping -> acceleration
+```
+
+在线性、欠密度的起点上，它给出
 
 $$
 v_p = v_g^{EM} = c\sqrt{1-\frac{\omega_p^2}{\omega^2}},
@@ -12692,9 +12694,9 @@ eE_L \cong mc\omega_p,
 l_a \cong 2\frac{\omega^2 c}{\omega_p^3}.
 $$
 
-这些式子最适合在本章里承担 `LWFA earliest scaling baseline` 的角色：它们解释为什么 wake phase velocity、dephasing、加速长度和 underdense-plasma driver 是同一条物理主线；但它们并不直接验证当代 WarpX 的 moving window、boosted frame、mesh refinement、openPMD 或 PICMI 前端实现。
+这些关系把相速度、dephasing、加速长度和驱动频率放到同一张量纲图上。它们适合用来提出量级和趋势的预期，不能直接代替现代 moving window、boosted frame、mesh refinement、openPMD 或 PICMI 输入的验证。
 
-同时，这篇文章也不是只有解析公式。当前精读已经确认它还给出了一个最小 relativistic electromagnetic PIC demonstration：`1 1/2-D`、one spatial dimension、three velocity/field dimensions、Gaussian finite-size particles、固定离子背景，并通过扫描 \(\omega/\omega_p\) 去对照最早期 scaling。文中数值结果至少压实了三件事：
+这篇早期工作还给出一个最小 relativistic electromagnetic PIC demonstration：`1 1/2-D`、一个空间维度、三个速度/场分量、Gaussian finite-size particles 和固定离子背景。通过扫描 \(\omega/\omega_p\)，文中的数值结果支持三个有限结论：
 
 1. wake longitudinal field 可达到
    $$
@@ -12704,24 +12706,9 @@ $$
 2. driver spectrum 会裂成多峰，作者明确解释为 successive / multiple forward Raman scattering，并把它和 photon deceleration、wake emission 联系起来；
 3. simulation 中的最大电子能量随 \((\omega/\omega_p)^2\) 的变化基本贴合解析式，只是在高端开始受有限系统大小和周期边界污染。
 
-这进一步说明：`Tajima-Dawson 1979` 能作为 `LWFA` 的 earliest scaling 与 minimal EM-PIC demonstration 文献入口，但它仍不能替代现代 WarpX `laser_acceleration` family 的 runtime regression 合同。
+它因此是理解 `LWFA` 尺度和最小电磁 PIC 证据的文献入口，而不是当代实现的回归说明。文中关于 1979 年工程可行性、two-laser / beat-wave alternative 以及 pulsar atmosphere 的讨论都属于历史语境，不能外推为现代单脉冲 `LWFA` 的结论。
 
-文末还要再保留三条降级边界。第一，原文的 `feasible within present-day technology` 只是 1979 年语境下的工程可行性判断，后面立刻又承认 short-pulse shaping 仍需改进。第二，作者明确保留了 \(\Delta\omega = \omega_p\) 的 two-laser / beat-wave alternative，因此这篇文章更准确地支撑的是早期 wakefield family，而不是今天单一路径的单脉冲 `LWFA`。第三，pulsar atmosphere / cosmic-ray source 的段落只应当看作历史语境下的 speculative extrapolation，不能进入现代 WarpX 应用合同。
-
-### LWFA：`laser_acceleration` 是 runtime matrix，不是统一 wake benchmark
-
-`laser_acceleration/README.rst` 明确写的是 laser-wakefield acceleration，但 `Analyze` 章节仍是 `TODO`。配合 `CMakeLists.txt` 可以看出，当前这组目录更像是：
-
-- 1D/2D/3D/RZ
-- boosted frame
-- moving window
-- refined patch
-- PICMI / Python callback
-- openPMD diagnostics
-
-这些路径的 `LWFA runtime matrix`。
-
-当前只有三条局部强 analysis：
+WarpX 的 `laser_acceleration` 目录让读者把上述问题落到 1D/2D/3D/RZ、moving window、boosted frame、细化区域、PICMI 和 openPMD 上。目录中可直接追踪的三条局部比较分别是：
 
 1. `analysis_1d_fluid_boosted.py`
    - 检查 boosted 1D 冷流体 `Ez/Jz/rho/Vz` 是否贴理论；
@@ -12730,36 +12717,13 @@ $$
 3. `analysis_openpmd_rz.py`
    - 检查 RZ openPMD diagnostics 的 mesh shape、species ordering 和 `rho_<species>` 物理中心。
 
-其余大多数 active tests 都是 `analysis = OFF` 加 checksum baseline。因此，当前 `laser_acceleration` 目录更适合在本章承担：
+这些检查分别约束冷流体场量、细化注入附近的粒子分布和 RZ openPMD 数据的结构；它们没有共同断言尾场幅度、束流增益或激光衍射。因此读者应把该目录当作实现与诊断的入口，并自行为所研究的物理量增加比较对象。
 
-- moving-window / boosted LWFA skeleton
-- diagnostics / openPMD / MR / PICMI 路径覆盖
+### PWFA：把束团和见证束的相位关系放在前面
 
-而不是完整的 wake amplitude、beam energy gain 或 laser diffraction 强 benchmark。
+`plasma_acceleration/README.rst` 指向的是 beam-driven wakefield acceleration：驱动者是相对论束团，不是 laser antenna。阅读这类输入时，首先确认驱动束、等离子体密度坡和见证束的初始相对位置；再检查 moving window、boosted frame 与数值 Cherenkov 修正是否和拟研究的相位演化相容。
 
-### PWFA：`plasma_acceleration` 是 workflow matrix，不是解析 wake benchmark
-
-`plasma_acceleration/README.rst` 明确写的是 beam-driven wakefield acceleration，而不是 generic laser-plasma acceleration。这一点非常重要，因为它决定了这里的 driver 不是 laser antenna，而是 relativistic bunch。
-
-当前目录的另一个硬边界是：
-
-- `Analyze` 仍是 `TODO`
-- `Visualize` 仍是 `TODO`
-- 3D PICMI boosted-frame 等价性也被 `README.rst` 自己标成 `TODO`
-
-同时，`CMakeLists.txt` 中所有 active tests 都是：
-
-```cmake
-OFF  # analysis
-"analysis_default_regression.py --path ..."
-```
-
-因此 `plasma_acceleration` 当前最准确的角色是：
-
-- `PWFA workflow matrix`
-- `beam-driven wakefield application baseline`
-
-它覆盖了：
+该目录覆盖的实现选择包括：
 
 - moving window
 - boosted frame
@@ -12770,32 +12734,20 @@ OFF  # analysis
 - hybrid grid
 - PICMI front-end
 
-但当前并没有目录内统一的 wakefield physics hard assert。尤其要保留一个源码树边界：3D PICMI 输入文件目前仍未像 native 输入那样真正使用 boosted frame，所以不能把它说成 native boosted PWFA 的等价前端。
+其中多数注册案例使用默认输出回归：它能发现同一输入下输出是否发生变化，却不构成尾场幅度、dephasing 或 beam loading 的解析验证。`README.rst` 还明确保留一个前端边界：3D PICMI 输入尚未像 native boosted 输入那样使用 boosted frame。因此它可作为 non-boosted PICMI 的搭建起点，不能被当作 native boosted PWFA 的等价实现。
 
-### `LWFA/PWFA` 案例能够支持的结论
+### 本节的证据边界
 
-将 `LWFA/PWFA` 重新收束后，案例证据支持的最强结论是：
-
-1. `laser_acceleration`
-   - 是 `LWFA runtime matrix`
-   - 强 analysis 只覆盖局部合同
-2. `plasma_acceleration`
-   - 是 `PWFA workflow matrix`
-   - 当前 active tree 全部 checksum-only
-3. 二者共享的主线不是统一 benchmark，而是：
-   - moving window
-   - boosted frame
-   - diagnostics
-   - MR
-   - PICMI/native front-end split
-
-这也意味着，后续书稿如果从应用角度组织 wakefield acceleration，最自然的章节结构不是简单按目录分，而是：
+两个目录共同覆盖 moving window、boosted frame、诊断、网格细化以及 PICMI/native 前端；它们不共同提供一个尾场物理基准。更稳妥的读法是：
 
 ```text
-wakefield acceleration runtime architectures
--> laser-driven branch (LWFA)
--> beam-driven branch (PWFA)
+先用解析尺度或文献给出场、相位和能谱的预期
+-> 用输入文件确认驱动和数值设置
+-> 用诊断构造同一组可比较量
+-> 再判断特定案例是否回答了该物理问题
 ```
+
+这样，源码案例承担“如何搭建和输出”的职责，解析关系和独立参考承担“是否正确”的职责，二者不会互相替代。
 
 ## Laser ion / plasma mirror / RPA/TNSA
 
@@ -12809,7 +12761,7 @@ wakefield acceleration runtime architectures
 - `laser_ion/README.rst` 背后的物理机制标签；
 - `Docs/source/glossary.rst` 里的术语定义。
 
-### `laser_ion`：最强的 laser-target application entry
+### `laser_ion`：先检验诊断一致性，再讨论离子能谱
 
 `laser_ion` 的真实角色不是“已经证明某条 ion-acceleration scaling”，而是：
 
@@ -12822,12 +12774,12 @@ wakefield acceleration runtime architectures
 
 这条组合工作流的应用入口。
 
-当前它在 CI 里的最硬断言来自 `analysis_test_laser_ion.py`，检查的是：
+注册的 `analysis_test_laser_ion.py` 检查的是：
 
 - `diagInst` 最后 5 个瞬时 `Ez` snapshot 的时间平均
 - 与 `diagTimeAvg` 的原位 time-averaged `Ez` 是否逐点一致
 
-因此它当前最强的 regression 合同是：
+因此它最直接的 regression 合同是：
 
 - diagnostics time-average consistency
 
@@ -12837,14 +12789,14 @@ wakefield acceleration runtime architectures
 - RPA threshold
 - ion conversion efficiency
 
-README 里的 `analysis_histogram_2D.py` 和 `plot_2d.py` 仍然很重要，但它们当前属于 user-facing post-processing helper，不是活跃 CI regression 本体。
+README 中的 `analysis_histogram_2D.py` 和 `plot_2d.py` 用于读者后处理，不是同一条数值比较本体。
 
-还要再保留一个细边界：`laser_ion` 确实已经有 PICMI 版输入，但其 reduced diagnostics 能力和 native 版并不完全对齐，例如 PICMI 脚本里仍留有 `ParticleHistogram2D` 的 TODO。因此更准确的说法是：
+还要保留一个前端边界：`laser_ion` 有 PICMI 版输入，但其 reduced diagnostics 能力和 native 版并不完全对齐，例如 PICMI 脚本里仍留有 `ParticleHistogram2D` 的 TODO。因此更准确的说法是：
 
 - PICMI 已覆盖主工作流与 `analysis_test_laser_ion.py` 合同；
 - 但前端能力还没有完全追平 native input。
 
-### `plasma_mirror`：laser-solid surface-plasma workflow baseline
+### `plasma_mirror`：表面等离子体的搭建入口
 
 `plasma_mirror` 当前应用语义很明确：
 
@@ -12852,7 +12804,7 @@ README 里的 `analysis_histogram_2D.py` 和 `plot_2d.py` 仍然很重要，但�
 - surface plasma
 - planar overdense target
 
-但验证层级明显更弱：
+这一案例的可比较量仍需读者自行定义：
 
 - 只有 `test_2d_plasma_mirror`
 - `analysis = OFF`
@@ -12860,7 +12812,7 @@ README 里的 `analysis_histogram_2D.py` 和 `plot_2d.py` 仍然很重要，但�
 - 没有 PICMI
 - `README.rst` 的 Analyze/Visualize 仍是 `TODO`
 
-因此它更准确的角色是：
+默认输出回归只能提供稳定输出的线索。因此它更适合承担：
 
 - laser-solid surface-plasma workflow baseline
 
@@ -12869,7 +12821,7 @@ README 里的 `analysis_histogram_2D.py` 和 `plot_2d.py` 仍然很重要，但�
 - reflectivity benchmark
 - high-harmonic benchmark
 
-### `RPA/TNSA`：当前属于物理解释层，不属于独立应用目录层
+### `RPA/TNSA`：机制标签，不是独立应用目录
 
 这条边界如果不写清，很容易把文献中的机制标签误写成案例库已有的独立 examples。最强、也最保守的结论只能是：
 
@@ -12906,9 +12858,9 @@ laser-target applications
 - Python callback Poisson solver
 - Turner benchmark profile 对照
 
-### 1D PICMI 是当前最强的 Turner benchmark 入口
+### 1D PICMI：Turner profile 的直接比较入口
 
-当前最强的两条 active tests 是：
+两条注册案例是：
 
 - `test_1d_background_mcc_picmi`
 - `test_1d_dsmc_picmi`
@@ -12926,7 +12878,7 @@ laser-target applications
 5. 可选把 ionization 切成 DSMC
 6. 累积离子密度并写出 `ion_density_case_N.npy`
 
-当前 CI `--test --pythonsolver` 模式下还会显式确认：
+`--test --pythonsolver` 模式还会显式确认：
 
 - callback solver 已经实际运行；
 - `he_ions` 的 `z` 坐标访问链可用。
@@ -12937,7 +12889,7 @@ laser-target applications
 
 应用入口之一。
 
-### 当前最硬断言是 case-1 ion-density profile
+### 可直接比较的量：case-1 ion-density profile
 
 `analysis_1d.py` 和 `analysis_dsmc.py` 当前都直接读取：
 
@@ -12970,9 +12922,9 @@ laser-target applications
 
 而不是只证明“DSMC can run”。
 
-### 2D native / PICMI 当前仍主要是 workflow baseline
+### 2D native / PICMI：搭建基线，不是 2D Turner 对照
 
-与 1D 强对照相比，当前 2D 分支只有：
+与 1D 的 profile 对照相比，2D 分支只有：
 
 - `test_2d_background_mcc`
 - `test_2d_background_mcc_picmi`
@@ -12982,34 +12934,15 @@ laser-target applications
 - `analysis = OFF`
 - checksum helper
 
-因此它们当前只能诚实记成：
+因此它们只能作为：
 
 - `2D capacitive-discharge workflow baseline`
 
-而不是 2D Turner 强 benchmark。另一个必须保留的边界是：
+而不是 2D Turner 强基准。另一个必须保留的边界是：
 
 - `test_2d_background_mcc_dp_psp`
 
-当前整条 `add_warpx_test(...)` 仍被注释掉，所以它只能作为遗留分支记录，不能再冒充活跃 test。
-
-### 既有 `plasma_acceleration` 目录边界
-
-入口：`Examples/Physics_applications/plasma_acceleration/inputs_test_3d_plasma_acceleration_boosted`
-
-这一组也需要避免被过度解读。`plasma_acceleration` family 在 `CMakeLists.txt` 中所有活跃 tests 都是 `analysis = OFF`，只复用目录内的 `analysis_default_regression.py` 做 checksum。因此它们不是 “PWFA 解析 benchmark”，而是应用工作流基线。
-
-但它们并不空泛。原生输入和 PICMI 输入合起来，已经覆盖了：
-
-- moving window
-- boosted frame
-- rigid-injected `driver/beam`
-- `particles.use_fdtd_nci_corr = 1`
-- level-1 refined patch / `add_refined_region(...)`
-- `momentum-conserving` gather 分支
-- `grid_type = hybrid`
-- field / particle diagnostics
-
-因此这组例子当前真正承担的角色是：给 beam-driven wakefield acceleration 的 runtime matrix 保留稳定输出基线，而不是直接对 wake amplitude、dephasing 或 beam loading 做强物理断言。还有一个需要显式保留的源码树边界是：`README.rst` 目前明确写着 3D PICMI 版“应该像原生输入一样使用 boosted frame，但仍是 TODO”。所以 `inputs_test_3d_plasma_acceleration_picmi.py` 当前只能诚实记成 non-boosted PICMI scaffold，不能误写成原生 boosted PWFA 的等价前端。
+整条 `add_warpx_test(...)` 仍被注释掉，所以它只能作为遗留分支记录，不能被当作已注册的比较案例。
 
 ## Magnetic reconnection
 
@@ -13047,7 +12980,7 @@ laser-target applications
 
 ### force-free sheet + reduced `FieldProbe`
 
-`inputs_test_2d_ohm_solver_magnetic_reconnection_picmi.py` 当前不是薄输入卡，而是完整应用 driver。它同时定义了：
+`inputs_test_2d_ohm_solver_magnetic_reconnection_picmi.py` 不是薄输入卡，而是完整应用 driver。它同时定义了：
 
 - 2D Cartesian 几何
 - `x` 周期、`z` 方向 `dirichlet`/`reflecting`
@@ -13061,9 +12994,9 @@ laser-target applications
 
 - `plane.dat`
 
-它来自 X 点附近的 reduced `FieldProbe`，专门供 reader-side analysis 提取重联率。
+它来自 X 点附近的 reduced `FieldProbe`，专门供后处理提取重联率。
 
-### 当前 analysis 是 observable extraction，不是强 assert
+### 重联率是可提取的 observable，不是标量强断言
 
 `analysis.py` 当前直接从 `plane.dat` 读取 `E_y`，构造：
 
@@ -13087,13 +13020,13 @@ $$
 
 - hard numerical benchmark
 
-### checksum 仍是 active coverage 的另一半
+### 输出回归补充稳定性信息
 
 `CMakeLists.txt` 里这条 test 还会同时跑：
 
 - `analysis_default_regression.py --path diags/diag1000020`
 
-所以当前 active coverage 的真实结构是：
+因此这条案例的证据结构是：
 
 1. `analysis.py`
    - 提取重联率并可视化；
@@ -13107,7 +13040,7 @@ $$
 - `magnetic_reconnection`
   - 更偏 hybrid-PIC 代表性物理案例和输出回归。
 
-因此，这条应用线在当前书稿里最准确的结论应写成：
+因此，这条应用线最准确的结论应写成：
 
 ```text
 magnetic_reconnection
@@ -13189,7 +13122,7 @@ beam and accelerator applications
 - `particles.By_external_particle_function(...)` 提供 undulator 外加粒子磁场
 - `BackTransformed` diagnostics 与 boosted-frame full diagnostics 的一致性
 
-当前最强断言来自 `analysis_fel.py`：
+`analysis_fel.py` 给出的直接断言是：
 
 1. 对 `log(E_x^2)` 的线性增长区做拟合，要求 gain length 接近 `0.22 m`；
 2. 在 lab-frame 与 boosted-frame diagnostics 上做 FFT，要求 radiation wavelength 满足 undulator 理论值。
@@ -13249,7 +13182,7 @@ $$
 
 接成了一条完整链。
 
-当前 `analysis_ion_beam_extraction.py` 会直接检查抽出离子束尾部能量是否接近 `40 keV`，因此它不是 checksum baseline，而是：
+`analysis_ion_beam_extraction.py` 会直接检查抽出离子束尾部能量是否接近 `40 keV`，因此它不是默认输出回归，而是：
 
 - `electrostatic EB extraction strong application check`
 

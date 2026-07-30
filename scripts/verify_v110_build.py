@@ -21,8 +21,8 @@ PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, the Chapter 3
 # cross-chapter state handoff, and the Chapter 6/7/9 reading routes yield
-# 269 pages.
-EXPECTED_PDF_PAGES = 269
+# 268 pages.
+EXPECTED_PDF_PAGES = 268
 
 
 def image_links(text: str) -> list[str]:
@@ -121,6 +121,7 @@ def main() -> None:
     chapter_4_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_4
     )
+    chapter_4_workspace_markers = re.findall(r"\.\./warpx/", chapter_4)
     chapter_4_opening = chapter_4[: chapter_4.index("## 4.1")]
     chapter_5 = (ROOT / "manuscript" / "chapters" / "05-deposition-shapes.md").read_text(
         encoding="utf-8"
@@ -128,6 +129,7 @@ def main() -> None:
     chapter_5_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_5
     )
+    chapter_5_workspace_markers = re.findall(r"\.\./warpx/", chapter_5)
     chapter_5_opening = chapter_5[: chapter_5.index("## 5.1")]
     chapter_5_project_markers = re.findall(
         r"scripts/|notes/|runs/|docs/|references/|contract\.\{json,md\}|"
@@ -148,6 +150,14 @@ def main() -> None:
     chapter_8_stale_location_markers = re.findall(
         r"(?:Source/[A-Za-z0-9_./-]+\.(?:cpp|H)|Docs/[A-Za-z0-9_./-]+\.rst):\d+",
         chapter_8,
+    )
+    chapter_8_applications = chapter_8[
+        chapter_8.index("## 激光与束流驱动的尾场加速") :
+        chapter_8.index("## 诊断在源码中的位置")
+    ]
+    chapter_8_application_record_markers = re.findall(
+        r"当前 CI|active tree|runtime matrix|workflow matrix|当前最硬断言|当前最强",
+        chapter_8_applications,
     )
     chapter_9 = (ROOT / "manuscript" / "chapters" / "09-literature-roadmap.md").read_text(
         encoding="utf-8"
@@ -369,6 +379,16 @@ def main() -> None:
             r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录|源码笔记",
             chapter_8,
         ),
+        "chapter_8_application_cases_are_reader_facing": all(
+            marker in chapter_8_applications
+            for marker in (
+                "先把诊断问题写成四项",
+                "先用解析尺度或文献给出场、相位和能谱的预期",
+                "源码案例承担“如何搭建和输出”的职责",
+                "却不是自动成立的统一物理基准",
+            )
+        )
+        and not chapter_8_application_record_markers,
         "chapter_9_current_literature_route": all(
             marker in chapter_9
             for marker in (
@@ -448,7 +468,7 @@ def main() -> None:
                 "UpdateMomentumHigueraCary()",
                 "## 4.16 练习与复现实验",
             )
-        ) and not chapter_4_stale_location_markers and not re.search(
+        ) and not chapter_4_stale_location_markers and not chapter_4_workspace_markers and not re.search(
             r"本地 checkout|原文精读",
             chapter_4,
         ),
@@ -471,7 +491,7 @@ def main() -> None:
                 "阅读 5.14--5.16",
             )
         ),
-        "chapter_4_has_no_project_path_narration": not re.search(
+        "chapter_4_has_no_project_path_narration": not chapter_4_workspace_markers and not re.search(
             r"scripts/|notes/code-reading|runs/stage-c-validation|contract\.\{json,md\}|"
             r"本地 checkout|原文精读",
             chapter_4,
@@ -487,7 +507,7 @@ def main() -> None:
                 "tile-loop 阶段",
                 "## 5.16 练习与源码定位",
             )
-        ) and not chapter_5_stale_location_markers and not chapter_5_project_markers,
+        ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
         "chapter_5_opening_is_reader_facing": not re.search(
             r"notes/code-reading|pkuHEDPbranch|8c488b1a9|本机|本轮|当前源码",
             chapter_5_opening,

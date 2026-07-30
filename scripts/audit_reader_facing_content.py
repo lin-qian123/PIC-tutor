@@ -403,6 +403,17 @@ def main() -> int:
         and not chapter_3_stale_location_markers
         and not chapter_3_workspace_markers
         and not chapter_3_project_path_markers,
+        "chapter_3_cross_chapter_handoff": all(
+            marker in chapter_3
+            for marker in (
+                "跨章交接卡：从调用图保留到可验证的状态",
+                "输入动量在什么单位下被解释？",
+                "显式粒子轨迹怎样变成 solver source？",
+                "怎样判断这条路径可信？",
+                "输入量纲与配置",
+                "有独立 reference 的 observable",
+            )
+        ) and not chapter_3_stale_location_markers and not chapter_3_workspace_markers,
         "chapter_1_has_no_project_path_narration": not chapter_1_project_path_markers,
         "chapter_3a_current_initialization_route": all(
             marker in chapter_3a

@@ -2072,6 +2072,29 @@ $$
 4. **单步分派：** 在 `OneStep()` 中判断该输入实际走 implicit、electrostatic/HybridPIC、`OneStep_nosub()`、subcycling 还是 JRhom。
 5. **显式主链：** 从 `PushParticlesandDeposit()` 到 `SyncCurrentAndRho()`，再到 `PushPSATD()` 或 `EvolveB/EvolveE/EvolveB`，确认粒子输运、源项同步和场推进的时间层相容。
 
+### 跨章交接卡：从调用图保留到可验证的状态
+
+第 3 章的调用图只说明控制流进入了哪些阶段；它不能替代后续章节对变量、时间层和 observable 的定义。读者从本章进入初始化、推进、沉积和诊断时，至少应保留下面四项信息：
+
+| 交接问题 | 本章已经定位的入口 | 下一章必须继续确认的内容 | 不能直接推出的结论 |
+|---|---|---|---|
+| 输入动量在什么单位下被解释？ | `ReadParameters()`、species/injector 配置 | 输入中的 `gamma*beta`、容器中的 `gamma*v` 与 diagnostics metadata 的差异，见附录 A | 同一个 `ux/uy/uz` 数值在输入、粒子数组和输出中可直接互换 |
+| 第一个物理时间步前有哪些状态？ | `InitData()`、`InitFromScratch()` / `InitFromCheckpoint()` | 第 3A 章中的 level、field、PML、external field、species 与 diagnostics 初始化顺序 | 一次对象分配或 writer 创建就证明初态的物理约束已满足 |
+| 显式粒子轨迹怎样变成 solver source？ | `PushParticlesandDeposit()`、`mypc->Evolve()`、`SyncCurrentAndRho()` | 第 4、5 章中的 \(\mathbf{x}^n\)、\(\mathbf{u}^{n-1/2}\)、\(\mathbf{J}^{n+1/2}\)、old/new \(\rho\) 以及 AMR/边界同步 | 任意 `rho` 或 `current_*` 数组都已经是场求解器消费的最终源项 |
+| 怎样判断这条路径可信？ | `Evolve()`、`OneStep()` 与 diagnostics 调度 | 第 6--8 章中的 solver 前提、边界条件、producer/consumer、reference 和 observable | 程序完成、文件写出或 checksum 一致就证明物理结论 |
+
+因此，跨章阅读时可把一条输入压缩成下列核查链：
+
+```text
+输入量纲与配置
+-> InitData 创建的离散初态
+-> 一个时间步内的粒子/源项/场时间层
+-> 同步后由 solver 消费的状态
+-> 有独立 reference 的 observable
+```
+
+这张交接卡的用途是防止两类常见跳步：把输入参数的语义直接当成内部数组语义，或把控制流命中和输出文件存在直接当成物理验证。后续章节必须分别补全这条链上的离散公式、实现分派和可检验的证据。
+
 
 <!-- source: manuscript/chapters/03a-warpx-initialization.md -->
 

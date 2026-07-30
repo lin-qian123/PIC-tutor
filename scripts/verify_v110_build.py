@@ -19,8 +19,9 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# Reader-facing chapter openings and long-chapter navigation yield 265 pages.
-EXPECTED_PDF_PAGES = 265
+# Reader-facing chapter openings, long-chapter navigation, and the Chapter 3
+# cross-chapter state handoff yield 266 pages.
+EXPECTED_PDF_PAGES = 266
 
 
 def image_links(text: str) -> list[str]:
@@ -241,6 +242,17 @@ def main() -> None:
         and not chapter_3_stale_location_markers
         and not chapter_3_workspace_markers
         and not chapter_3_project_markers,
+        "chapter_3_cross_chapter_handoff": all(
+            marker in chapter_3
+            for marker in (
+                "跨章交接卡：从调用图保留到可验证的状态",
+                "输入动量在什么单位下被解释？",
+                "显式粒子轨迹怎样变成 solver source？",
+                "怎样判断这条路径可信？",
+                "输入量纲与配置",
+                "有独立 reference 的 observable",
+            )
+        ) and not chapter_3_stale_location_markers and not chapter_3_workspace_markers,
         "chapter_2_math_and_case_closure": all(
             marker in chapter_2
             for marker in (

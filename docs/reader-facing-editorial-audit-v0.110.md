@@ -29,6 +29,7 @@
 | `chapter_2_3_have_reader_facing_routes` | `PASS` |
 | `chapter_2_3_source_navigation_is_portable` | `PASS` |
 | `chapter_3_current_source_route` | `PASS` |
+| `chapter_3_cross_chapter_handoff` | `PASS` |
 | `chapter_1_has_no_project_path_narration` | `PASS` |
 | `chapter_3a_current_initialization_route` | `PASS` |
 | `chapter_3a_8_long_chapter_reader_navigation` | `PASS` |

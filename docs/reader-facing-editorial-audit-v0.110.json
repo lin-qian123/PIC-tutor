@@ -24,6 +24,7 @@
     "chapter_2_3_have_reader_facing_routes": true,
     "chapter_2_3_source_navigation_is_portable": true,
     "chapter_3_current_source_route": true,
+    "chapter_3_cross_chapter_handoff": true,
     "chapter_1_has_no_project_path_narration": true,
     "chapter_3a_current_initialization_route": true,
     "chapter_3a_8_long_chapter_reader_navigation": true,

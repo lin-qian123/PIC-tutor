@@ -18,6 +18,8 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 
 本文件只记录发布边界和体积证据，不自动删除或移动工作区文件。真正 push 前仍需由维护者确认论文 PDF、图片和其他第三方材料的授权状态。
 
+第 9 章的读者化重写已将材料数量、转换过程和发布策略从教程主线移除，改为 A/B/C/D 证据层、可支持结论和沉积/PML 深读任务；当前产物的第 259--260 页已人工复核。该编辑不改变第三方材料的许可边界，也不签收公开再分发。
+
 ## 当前体积快照
 
 | 路径 | 当前体积 | 发布判断 |
@@ -25,9 +27,9 @@ v0.78 延续 `docs/public-evidence-index.{json,md}`，从本地 contract 生成�
 | `runs/` | 约 3.1 GB | 本地运行产物；由 `.gitignore` 忽略，不应整体 push |
 | `references/` | 约 174 MB | 逐篇检查版权/许可后再决定；不能默认整体公开 |
 | `dist/` | 约 90 MB | 含多代历史 HTML/Markdown；不应把全部历史生成物当作当前 release |
-| `dist/pic-tutor-v0.110.pdf` | 3,003,762 bytes / 264 页 | 当前成书候选，可单独审计后发布 |
-| `dist/pic-tutor-v0.110.html` | 5,256,167 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
-| `dist/pic-tutor-v0.110.md` | 864,177 bytes | 当前合订源，可作为文本 release 候选 |
+| `dist/pic-tutor-v0.110.pdf` | 3,001,015 bytes / 264 页 | 当前成书候选，可单独审计后发布 |
+| `dist/pic-tutor-v0.110.html` | 5,253,615 bytes | 自包含 MathJax + 15 张图片，可作为预览候选 |
+| `dist/pic-tutor-v0.110.md` | 861,932 bytes | 当前合订源，可作为文本 release 候选 |
 
 ## 当前边界
 

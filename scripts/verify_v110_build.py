@@ -147,9 +147,11 @@ def main() -> None:
                 "5. `Boris` 原始文献",
             )
         ),
-        "chapter_9_literature_gap_count": "这六条缺口里，`LeeCPC2015` 最特殊。" in source,
+        "chapter_9_literature_gap_count": (
+            "这六条中，`LeeCPC2015` 的边界最容易被误读" in source
+        ),
         "public_distribution_boundary_registered": (
-            "release manifest 排除 `references/` 只能约束未来 staging" in source
+            "第三方材料能否公开再分发" in source
             and "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED" in distribution_risk
             and (ROOT / "scripts/audit_public_distribution_boundary.py").is_file()
         ),
@@ -499,9 +501,8 @@ def main() -> None:
             marker in source
             for marker in (
                 "## 9.8 成书的已知证据边界",
-                "两条 publisher access、三条 runtime/source boundary",
                 "formal numerical order",
-                "缺口表的内部一致性检查",
+                "缺口登记只是帮助读者回查限制的索引",
             )
         ),
         "transition_zone_runtime_activation": all(

@@ -14175,7 +14175,7 @@ $$
 
 1. 给物理结论提供一手来源。
 2. 给数值算法和代码实现提供历史与方法边界。
-3. 给 reader-side analysis、benchmark 和 regression 判据提供外部对照。
+3. 给独立分析、benchmark 和 regression 判据提供外部对照。
 
 因此本章不把文献写成“推荐书单”，而是按证据强度和章节用途组织阅读路线：哪些来源能够支撑公式与机制，哪些只可提供历史线索，哪些问题仍应保留为开放边界。文献索引中的候选条目只能帮助定位主题；题名、DOI 或摘要不能替代全文阅读、公式核对和章节证据。
 
@@ -14184,7 +14184,7 @@ $$
 读者不需要先把全部文献读完再学习 PIC。每篇文献在本书中只承担一个明确任务：解释一个物理概念、给出一个离散算法、提供历史边界，或作为某个诊断量的外部参照。遇到文献引用时，建议连续问三件事：
 
 1. 这篇来源支持正文中的哪一句话，支持的是公式、机制还是历史事实？
-2. 本书采用的 WarpX 源码快照和运行案例分别提供了哪一层独立证据？
+2. 相关 WarpX 源码与运行案例分别提供了哪一层独立证据？
 3. 哪一步仍然只是相似性或摘要级线索，不能写成“论文已经证明 WarpX 实现”？
 
 这样读，文献路线就服务于教程的理解路径：第 1-2 章优先建立 kinetic/PIC 基础，第 4-6 章用 pusher、deposition 和 solver 文献解释离散选择，第 7 章用边界文献校准 PML/AMR 的历史语义，第 8 章再把外部理论与实际诊断对照。未取得全文或尚未完成逐段核对的来源只定义结论边界，不改变读者从概念到实现再到验证的主线。
@@ -14204,7 +14204,7 @@ $$
 
 - 只有 A 层全文可核查来源，才允许在正文里写成“已核实的一手证据”。
 - B 层来源只能写成“已取得但尚待逐段讲解”。
-- C 层和 D 层只能写成 acquisition / 背景边界，不能抬成正文论证。
+- C 层和 D 层只能写成获取线索或背景边界，不能抬成正文论证。
 
 这条规则尤其影响尚未完成全文或版本差异核对的 `Hockney-Eastwood`、`Yee 1966`、`Esirkepov 2001`、`Villasenor-Buneman 1992` 和 `LeeCPC2015`。
 
@@ -14214,88 +14214,67 @@ $$
 
 ### 9.2.1 PIC foundations
 
-可供深入阅读：
+可供深入阅读的起点是 `Birdsall-Langdon 1985`、`Tajima-Dawson 1979`、`Dawson 1983`、`Vranic 2015` 和 `Muraviev 2021`。仓库的 `references/` 目录按主题保留这些材料的检索入口；第一次阅读应先从本章所标出的概念和结论进入，而不是按目录名逐个翻找。
 
-- `references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/`
-- `references/03_pic_foundations/1979_TajimaDawson_Laser_Electron_Accelerator/`
-- `references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/`
-- `references/03_pic_foundations/2015_Vranic2015_Particle_merging_algorithm_for_PIC_codes/`
-- `references/03_pic_foundations/2021_MuravievCPC2021_Strategies_for_particle_resampling_in_PIC_simulations/`
+`Tajima-Dawson 1979` 用于解释最早期的 `driver -> wake -> trapping -> acceleration` 与 LWFA scaling。它给出历史上的物理链条，而不替代现代 WarpX case 的输入、诊断和 regression。
 
-其中 `TajimaDawson1979` 已具备 4 页 PDF、MinerU Markdown、11 张图和中文精读；材料记录位于 `runs/stage-c-validation/tajima-dawson-1979-asset/contract.{json,md}`。它支撑最早期 `driver -> wake -> trapping -> acceleration` 与 LWFA scaling 的解释，但不替代现代 WarpX regression。
-
-这些基础资产已经足以支撑：
+这些基础文献主要支撑：
 
 - 第 1 章的 superparticle、weighted particles、finite-size particles、quiet start、噪声与 heating 讨论；
 - 第 2 章的最小 PIC loop、electrostatic / EM / Darwin 模型边界；
 - 第 8 章中 diagnostics、spectrum、correlation time、weak instability dynamic range 的讨论；
 - LWFA 最早 scaling baseline 的历史入口。
 
-Vranic 2015 进一步补上了粒子 merge/resampling 这条应用线：24 页 PDF、MinerU Markdown、32 张图和中文讲解可供复查。它支撑第 4 章对“两粒子局部守恒 merge”的一手文献解释，但不替代 WarpX `VelocityCoincidenceThinning` 的逐行等价或专门 runtime consumer。
+Vranic 2015 进一步补上了粒子 merge/resampling 这条应用线。它支撑第 4 章对“两粒子局部守恒 merge”的一手文献解释，但不替代 WarpX `VelocityCoincidenceThinning` 的逐行等价或专门运行验证。
 
-Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：50 页 PDF、MinerU Markdown、38 个图像资源和中文精读可供复查。它支撑第 4 章对 agnostic down-sampling、局部权重噪声、严格守恒 thinning 和 merge/cluster 权衡的一手文献解释，但论文的 PICADOR/hi-chi QED cascade 结果不替代 WarpX runtime evidence。
+Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系。它支撑第 4 章对 agnostic down-sampling、局部权重噪声、严格守恒 thinning 和 merge/cluster 权衡的一手文献解释，但论文的 PICADOR/hi-chi QED cascade 结果不替代 WarpX 运行证据。
 
-其中 `Birdsall 1985` 因原书过长，采用分卷 PDF + 分卷 MinerU 的方式处理；这意味着它已经是 A 层资产，但仍不是“整本都已完全精读”。
+`Birdsall-Langdon 1985` 适合用作基础概念的回查书，而不是被误当作本书每个实现细节的直接来源；遇到具体 solver、pusher 或 deposition 公式时，仍应回到该算法的原始论文和对应源码。
 
 ### 9.2.2 Particle pusher
 
-可供深入阅读：
+可供深入阅读的核心论文是 `Vay 2008` 和 `Higuera-Cary 2017`。
 
-- `references/04_particle_pushers_deposition_shapes/2008_VayPOP2008_Simulation_of_beams_or_plasmas_crossing_at_relativistic_velocity/`
-- `references/04_particle_pushers_deposition_shapes/2017_HigueraPOP2017_Structure-preserving_second-order_integration_of_relativistic_charged_particle_trajectories_in_electromagnetic_fields/`
-
-这两条线当前已经足以支撑：
+这两条线主要支撑：
 
 - 第 4 章对 Vay pusher 与 Higuera-Cary pusher 的源码讲解；
 - `Source/Particles/Pusher/UpdateMomentumVay.H` 与 `UpdateMomentumHigueraCary.H` 的公式对表；
-- “相对论精度”和“结构保持”两条不同的算法卖点。
+- “相对论精度”和“结构保持”两条不同的算法目标。
 
 但这条模块还没有完成 `Boris` 原始文献闭环，因此第 4 章仍不是“推进器历史谱系全闭环”。
 
 ### 9.2.3 PSATD / Galilean / boosted-frame / NCI
 
-可供深入阅读：
+可供深入阅读的核心论文是 `Godfrey 2014`、`Kirchen 2016` 和 `Lehe 2016`。`Vay 2014` 的综述可作为第 4 章 Boris/Vay 谱系和第 6 章 PSATD/NCI 机制的统一入口；它不替代 WarpX 的源码交叉核对、案例验证或论文图形逐点复现。
 
-- `references/06_stability_filtering_nci/2014_GodfreyJCP2014_Numerical_stability_analysis_of_the_PSATD_PIC_algorithm/`
-- `references/06_stability_filtering_nci/2016_KirchenPOP2016_Stable_discrete_representation_of_relativistically_drifting_plasmas/`
-- `references/06_stability_filtering_nci/2016_LehePRE2016_Elimination_of_NCI_by_Galilean_coordinates/`
-
-`references/01_reviews_surveys/2014_VayFRACAD2014_Modeling_of_relativistic_plasmas_with_the_Particle-In-Cell_method/` 提供 9 页 PDF、MinerU Markdown、43 张图片和按论文顺序的中文精读。它为第 4 章的 Boris/Vay pusher 谱系、第 6 章的 PSATD/NCI 机制提供统一 review 入口；但不替代 WarpX 的源码交叉核对、案例验证或论文图形逐点复现。
-
-这三条线已经构成第 6 章目前最完整的一组 paper-backed 主干：
+这三条线构成第 6 章最完整的论文主干：
 
 - Godfrey 2014：fixed-grid PSATD 的 NCI 策略分类；
 - Lehe 2016：Galilean coordinates 消除 NCI 的核心离散论证；
 - Kirchen 2016：boosted-frame workflow 与稳定离散表示之间的应用层连接。
 
-`Andriyash 2016` 的专属目录保存 9 页 PDF、MinerU Markdown、26 张图片和按论文顺序的中文精读。它为 quasi-cylindrical Fourier--Bessel basis、PSATD 解析时间推进、`m±1` 横向 mode coupling 和 current-correction 公式提供全文依据；但 PLARES-PIC 与 WarpX 的函数级等价、WarpX runtime reproduction 和论文图逐点复现仍保持边界。
+`Andriyash 2016` 为 quasi-cylindrical Fourier--Bessel basis、PSATD 解析时间推进、`m±1` 横向 mode coupling 和 current-correction 公式提供全文依据；但 PLARES-PIC 与 WarpX 的函数级等价、WarpX 运行复现和论文图逐点复现仍保持边界。
 
-因此第 6 章当前虽然仍有 runtime validation 和 upstream handoff 的工程缺口，但在文献层已经不再是空心章节。
+因此，第 6 章的阅读可以从论文的离散假设出发，再回查相应源码和案例；仍未完成的运行覆盖不会被写成已经证明的算法结论。
 
 ## 9.3 关键来源的已知边界
 
-以 `TajimaDawson1982` 为例，应把“正式来源已确认”和“正文已取得”分开记录：Crossref/AIP 元数据确认 *AIP Conference Proceedings* `91(1):69-93`、DOI `10.1063/1.33805` 及 canonical resource `https://pubs.aip.org/aip/acp/article/91/1/69-93/612300`；截至 2026-07-13，该页面返回 Cloudflare HTTP `403`，所以本书不把 publisher PDF、MinerU Markdown 或逐式核对标记为已完成。FNAL 的 `p169.pdf` 是 Tajima 单作者的相关会议稿，只能作为主题旁证，不能替代 Tajima–Dawson 正式条目。
+以 `TajimaDawson1982` 为例，应把“正式来源的书目信息已确认”和“可逐段核查的正文已取得”分开。Crossref/AIP 元数据确认 *AIP Conference Proceedings* `91(1):69-93` 与 DOI `10.1063/1.33805`，但本书覆盖的材料中没有可合法逐页核查的 publisher PDF。因此，相关会议稿只能作为主题旁证，不能替代 Tajima--Dawson 的正式条目。
 
-相关会议稿已整理在 `references/03_pic_foundations/1982_Tajima_related_FNAL_conference_note_Laser_accelerator_by_plasma_waves/`：其中包含 26 页 PDF、MinerU Markdown、67 张抽取图和按论文顺序的中文讲解。它可在有限范围内解释 beat-wave 共振、前向 Raman 散射、电子俘获、退相位、自聚焦、丝化和相对论前向 Brillouin 散射；但它是单作者相关会议稿，不能替代正式 Tajima--Dawson AIP 条目。
+这份相关会议稿可在有限范围内解释 beat-wave 共振、前向 Raman 散射、电子俘获、退相位、自聚焦、丝化和相对论前向 Brillouin 散射；但它是单作者相关会议稿，不能替代正式 Tajima--Dawson AIP 条目。
 
-如果按“哪一章会因为缺它而不够出版级”排序，当前最重要的缺口不是更多新论文，而是以下几条老而关键的 primary sources。
+如果按“缺少它会让哪一章的论证最薄弱”排序，优先关注的不是更多新论文，而是以下几条老而关键的一手来源。
 
-| 缺口 | 当前状态 | 主要影响章节 | 当前可替代程度 |
+| 缺口 | 可用证据 | 主要影响章节 | 可替代程度 |
 |---|---|---|---|
-| `Hockney-Eastwood` 原书 | 仅有 BibTeX 与 fallback article 线索；尚无可公开核查的全文 | 第 1、2、5、6 章 | 只能部分由 `Birdsall 1985` 与 `Dawson 1983` 顶住 |
-| `Yee 1966` | metadata/DOI 已清楚；尚无全文与 MinerU 转换 | 第 2、6 章 | 可暂由源码与后继 FDTD 文献支撑，但缺原始历史入口 |
-| `Esirkepov 2001` | 作者 arXiv 预印本、MinerU 和中文讲解可供复查；仍缺出版商 CPC PDF 对照 | 第 5 章 | 可支撑 preprint-backed 解释，但还未完成 CPC 定稿核对 |
-| `Villasenor-Buneman 1992` | 已有论文 PDF、MinerU 转换和按论文顺序的中文讲解可供复查 | 第 5 章 | 可支撑 paper-backed 的公式与源码对照；中文讲解仍是第一轮结构精读，不能代替逐图、逐记号的出版级校订 |
-| `Andriyash 2016` | 9 页 PDF、MinerU、26 张图和中文精读可供复查；主题为 quasi-cylindrical Fourier-Bessel PSATD | 第 6 章 RZ PSATD | 可支撑全文公式解释；PLARES-PIC/WarpX 等价和 runtime reproduction 仍未完成 |
-| `LeeCPC2015` | 已有 7 页 eScholarship accepted/submitted manuscript、MinerU、13 张图和中文讲解；仍缺 publisher-formatted CPC PDF | 第 7 章 | accepted-manuscript-backed + source-grounded 已成立，但发表版差异和逐系数等价仍未完成 |
+| `Hockney-Eastwood` 原书 | 仅有书目信息与相关论文线索；尚无可逐段核查的全文 | 第 1、2、5、6 章 | 只能部分由 `Birdsall 1985` 与 `Dawson 1983` 补足 |
+| `Yee 1966` | DOI 已确认；尚无全文 | 第 2、6 章 | 可由源码与后继 FDTD 文献支撑，但缺原始历史入口 |
+| `Esirkepov 2001` | 作者预印本及其公式材料可核查；仍缺 CPC 发表版对照 | 第 5 章 | 可支撑预印本层面的解释，不能宣称 CPC 定稿已核对 |
+| `Villasenor-Buneman 1992` | 论文全文及公式阅读材料可核查 | 第 5 章 | 可支撑公式与源码对照；仍需逐图、逐记号复核 |
+| `Andriyash 2016` | 全文公式材料可核查；主题为 quasi-cylindrical Fourier-Bessel PSATD | 第 6 章 RZ PSATD | 可支撑公式解释；不能推出 PLARES-PIC 与 WarpX 等价或运行复现 |
+| `LeeCPC2015` | accepted manuscript 可核查；仍缺 publisher-formatted CPC PDF | 第 7 章 | 可支撑 accepted-manuscript 与源码的对应，不能宣称发表版逐系数等价 |
 
-这六条缺口里，`LeeCPC2015` 最特殊。它不是完全没工作，而是已经推进到：
-
-- `access-audit.md`
-- `公式映射准备.md`
-- `公式核对清单.md`
-
-也就是说，当前不是“不知道该怎么读”，而是“accepted manuscript 已可精读，仍缺 publisher-formatted CPC PDF 的版本差异核对”。
+这六条中，`LeeCPC2015` 的边界最容易被误读：accepted manuscript 已可精读，所以它足以解释文中对应的 PML 思想；但发表版的排版、系数和版本差异尚未逐项核对，因此不能借此宣称已经完成 publisher-formatted CPC PDF 的对照。
 
 ## 9.4 各章的文献覆盖范围
 
@@ -14307,110 +14286,107 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：50 
 | 第 2 章 PIC 总循环 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Yee 1966` 原始入口 |
 | 第 3/3A 章 主循环与初始化 | 中低 | 以源码为主 | 需要把基础文献和工程论文绑定得更明确 |
 | 第 4 章 粒子推进器 | 中高 | `Boris 1970` 书目信息、`Birdsall 1985`、`Vay 2008`、`Higuera-Cary 2017` | 原始 Boris 1970 会议论文 PDF 仍缺 |
-| 第 5 章 沉积与形函数 | 中等 | Esirkepov 与 Villasenor 两条 charge-conserving 主线都已有第一轮 paper-backed 资产 | 仍需把两篇论文系统回写正文；Esirkepov 还缺 CPC 定稿对照 |
-| 第 6 章 场求解器 | 高 | `Vay--Godfrey 2014`、`Godfrey 2014`、`Lehe 2016`、`Kirchen 2016` | 更多 validation/engineering 线，而不是 paper 主干 |
-| 第 7 章 边界、PML 与 AMR | 中等偏低 | `Berenger 1994/1996` 有 bibliographic anchor，源码和 regression 很强 | `LeeCPC2015` 正文仍缺 |
-| 第 8 章 诊断、验证与案例 | 中等 | `Dawson 1983` diagnostics 思路已可直接服务正文 | 还缺更多 case-specific benchmark papers |
-| 第 9 章 文献路线 | 本章即路线图 | `references/` 树和 `docs/literature-map.md` | 新来源必须按证据层级重新归类 |
+| 第 5 章 沉积与形函数 | 中等 | Esirkepov 与 Villasenor 的 charge-conserving 方法 | Esirkepov 还缺 CPC 定稿对照；两种构造不能由单一案例互相替代 |
+| 第 6 章 场求解器 | 高 | `Vay--Godfrey 2014`、`Godfrey 2014`、`Lehe 2016`、`Kirchen 2016` | 仍需把文献中的离散假设与各个具体求解器配置分别对应 |
+| 第 7 章 边界、PML 与 AMR | 中等偏低 | `Berenger 1994/1996`、WarpX 源码与代表性案例 | `LeeCPC2015` 出版社排版正文仍缺 |
+| 第 8 章 诊断、验证与案例 | 中等 | `Dawson 1983` 的诊断思路 | 还缺更多 case-specific benchmark papers |
+| 第 9 章 文献路线 | 本章即路线图 | A/B/C/D 层级与 `docs/literature-map.md` | 新来源必须按证据层级重新归类 |
 
 这个表最重要的结论是：相较于第 6 章，第 5 章和第 7 章更需要补强可逐段核查的一手文献。
 
 ## 9.5 延伸阅读的优先顺序
 
-延伸阅读不应泛泛地“多找一些相关论文”，而应按对章节可信度的影响排序：
+延伸阅读不应泛泛地“多找一些相关论文”，而应按它能补强哪一章的论证排序：
 
 1. `Esirkepov 2001` 的 CPC 定稿 PDF
-   - 当前已有作者预印本，可支持第一轮论证；下一步是把预印本与 2001 CPC 发表版逐项对齐。
+   - 预印本足以支撑本书的公式解释；与 2001 CPC 发表版逐项对齐仍是独立任务。
 2. `Yee 1966`
    - 直接补第 2 / 6 章里的原始 FDTD 入口。
 3. `LeeCPC2015` 正文 PDF
-   - 直接补第 7 章的 PML paper closure。
+   - 直接补强第 7 章的 PML 一手文献。
 4. `Hockney-Eastwood` 或其 article-level fallback
    - 继续补第 1 / 2 章的 particle-mesh foundations。
 5. `Boris` 原始文献
-   - `1970_Boris_Relativistic_plasma_simulation_optimization_of_a_hybrid_code` 的书目信息已核实；DTIC PDF 仍受限流，因此目前只把书目身份视为确定。
-   - 下一步是通过 DTIC 重试、机构访问或合法镜像获取原始 proceedings PDF，再补 MinerU 和逐页核对；在此之前不把 Birdsall 二手推导写成 Boris 原文证据。
-   - 继续补第 4 章的 pusher 历史链。
+   - 书目信息已核实，但原始 proceedings 全文尚未成为可逐页核查的材料。
+   - 在获得合法全文前，不把 Birdsall 的二手推导写成 Boris 原文证据。
 
 该顺序反映了证据分布：第 6 章已有较完整的论文主干，而第 5、7 章的原始文献支撑相对更薄。
 
 ## 9.6 文献索引的使用边界
 
-`docs/literature-map.md` 不只是 BibTeX key 列表，而是承担三种作用：
+仓库内的 `docs/literature-map.md` 不只是 BibTeX key 列表，而是承担三种作用：
 
 1. 统计可用 PDF / topic 分布；
 2. 标明哪些核心文献已有可核查阅读资产；
-3. 标明哪些来源目前只有 metadata / audit / fallback。
+3. 标明哪些来源目前只有书目信息或相关旁证。
 
 但它仍然是总索引，不适合直接拿来替代章节级写作清单。章节写作时更合理的做法是：
 
 - 第 1 / 2 章先看 `docs/foundations-literature-list.md`
 - 第 6 / 7 章结合 `references/06_stability_filtering_nci/` 与 `references/08_boundaries_pml_geometry/`
-- acquisition 计划再回到 `docs/literature-map.md` 和 `references/00_index/books_to_locate.md`
+- 查找尚未取得的来源时，再回到 `docs/literature-map.md` 和 `references/00_index/books_to_locate.md`
 
 也就是说，`literature-map` 是总表，不是每章的最终操作手册。
 
-## 9.7 两条延伸阅读路线
+## 9.7 两条深读路线
 
-若要进一步加强本书的文献基础，最值得优先投入的是下面两条路线：
+下面两条路线把延伸阅读变成可检验的学习任务，而不是资料收集清单。
 
 ### 路线 A：第 5 章沉积文献
 
-目标：
+阅读任务：
 
-- 将当前 `Esirkepov 2001` 作者 arXiv 预印本与 2001 CPC 定稿逐项对照；
-- 将 Villasenor 与 Esirkepov 的第一轮中文笔记深化为按公式推进的讲解；
-- 把第 5 章从源码校准推进到论文、源码和测试三线闭环。
+- 先用 `Esirkepov 2001` 预印本追踪连续性方程、形函数和电流构造之间的关系；
+- 再用 Villasenor 与 Esirkepov 的公式比较“轨迹分段”和“old/new shape difference”两种守恒组织；
+- 最后回到第 5 章，分别写出论文、源码和测试各自能证明什么。
 
-适合原因：
+完成标志：
 
-- 当前第 5 章是全书里最明显的“代码已读、文献未补”的章节之一；
-- 这条线一旦闭合，会显著提升前半本书的基础可信度。
+- 能说明为什么预印本公式不能自动证明 CPC 定稿逐式一致；
+- 能用一个指定 case 的 observable 说明运行通过为什么不等于全部 geometry/order 覆盖。
 
 ### 路线 B：第 7 章 PML 文献
 
-目标：
+阅读任务：
 
-- 继续推进 `LeeCPC2015` 正文获取
-- 若正文仍不可得，则至少把 `Berenger 1994/1996` 与 WarpX `PsatdAlgorithmPml.cpp` 的公式映射继续压实
+- 用 `Berenger 1994/1996` 理解 split-field PML 的吸收机制；
+- 对照 `LeeCPC2015` 的 accepted manuscript，定位高阶有限差分或伪谱 PML 的适用条件；
+- 再回查 WarpX `PsatdAlgorithmPml.cpp`，区分论文公式、程序分派和指定 regression 的角色。
 
-适合原因：
+完成标志：
 
-- 当前第 7 章源码和 regression 已经很强，只差 paper 正文闭环；
-- 一旦拿到 `LeeCPC2015` 正文，整章会从“强源码章”变成真正的 paper-backed 章节。
+- 能指出 accepted manuscript 支持的具体论断；
+- 不会把它误写成 publisher-formatted CPC PDF 的逐式核对。
 
-在这两者之间，更推荐先走路线 A。原因是：
-
-- 方案 A 不强依赖外部授权状态；
-- 方案 B 仍可能被 PDF 获取问题卡住。
+第一次做文献深读时，建议先走路线 A：它能直接连接第 5 章的连续性方程、形函数和运行观察量；路线 B 更适合已完成第 6--7 章源码阅读、准备分析 PML 表示与边界条件的读者。
 
 ### 9.7.1 文献索引的核查边界
 
-本章使用的 A/B/C/D 层级、核心目录和文献地图会通过仓库内检查保持一致。这个检查只说明“索引与可用材料的状态一致”，不证明中文讲解已经逐式审校，不证明预印本与出版社排版版逐页等价，也不把 WarpX runtime 结果升级为论文全部物理结论的验证。读者据此判断引用强度时，应始终回到具体 PDF、公式和源码案例，而不是把索引条目当成证明本身。
+本章的 A/B/C/D 层级、核心目录和文献地图必须保持一致。这种一致性只说明索引没有自相矛盾；它不证明中文讲解已经逐式审校，不证明预印本与出版社排版版逐页等价，也不把 WarpX 运行结果升级为论文全部物理结论的验证。读者据此判断引用强度时，应始终回到具体 PDF、公式和源码案例，而不是把索引条目当成证明本身。
 
 ## 9.8 成书的已知证据边界
 
-本书把“文献尚无全文”“代码路径尚无运行账本”“数值结论尚未闭合”和“第三方材料能否公开再分发”分开处理，避免把不同类型的不确定性混成一句模糊的限制。当前缺口登记覆盖两条 publisher access、三条 runtime/source boundary、一条 RZ physics boundary、一条 formal convergence study 和一条发布编辑门槛。公开 release manifest 排除 `references/` 只能约束未来 staging，不能替代对 public branch 已跟踪材料和 Git 历史的授权审查。重复 family 的 slope 一致性只能说明该组重复计算相符；它不等于 formal numerical order，也不等于 axis charge correctness。
+本书把“文献尚无全文”“代码路径尚无运行数据”“数值结论尚未闭合”和“第三方材料能否公开再分发”分开处理，避免把不同类型的不确定性混成一句模糊的限制。对读者而言，最重要的是先识别不确定性属于哪一类：缺少一手文献时不能补成公式结论；没有运行数据时不能补成程序行为；收敛或守恒边界未闭合时不能补成物理正确性。重复计算的 slope 一致性只能说明该组重复计算相符；它不等于 formal numerical order，也不等于 axis charge correctness。
 
-本登记表的分类纪律是：`OPEN_EXTERNAL_ACCESS` 不是下载失败的同义词，而是当前没有合法可读取的目标全文；`PRE_PHYSICS_BOUNDARY` 表示尚未进入物理推进，不能写成 physics PASS/FAIL；`RUNTIME_LEDGER_UNPROVEN` 表示源码与 schema 已有，但真实 producer 尚未输出账本；`CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` 表示可以计算描述性 order，但不能宣称正式阶数。
+本书采用的分类纪律是：`OPEN_EXTERNAL_ACCESS` 不是下载失败的同义词，而是没有合法可读取的目标全文；`PRE_PHYSICS_BOUNDARY` 表示尚未进入物理推进，不能写成 physics PASS/FAIL；`RUNTIME_LEDGER_UNPROVEN` 表示源码与数据结构已有，但真实运行尚未给出所需记录；`CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN` 表示可以计算描述性 order，但不能宣称正式阶数。
 
-缺口表的内部一致性检查只能保证正文和证据目录使用同一组术语，不表示本书已经达到终稿。
+因此，缺口登记只是帮助读者回查限制的索引，不是替代论文、源码或运行结果的证明。
 
 ## 9.9 本章结论
 
-本书已经不再只有书目而没有正文阅读资产，但也尚未达到“所有 primary sources fully closed”。更准确的概括是：
+本书的文献部分已经能支撑核心主线，但还没有让所有一手来源都达到逐段核查的程度。更准确的概括是：
 
 - foundations 线已有 `Birdsall 1985`、`Dawson 1983`、`Tajima-Dawson 1979`
 - pusher 线已有 `Vay 2008`、`Higuera-Cary 2017`
 - PSATD/NCI 线已有 `Godfrey 2014`、`Lehe 2016`、`Kirchen 2016`
-- PML 线已有较强源码与审计资产，但缺 `LeeCPC2015` 正文
-- deposition 线的 `Esirkepov 2001` 作者 arXiv 预印本与 `Villasenor-Buneman 1992` 全文均已有 MinerU 和第一轮中文讲解；Esirkepov 的 publisher-formatted CPC PDF 仍是明确的访问边界
+- PML 线有较强源码与案例证据，但缺 `LeeCPC2015` 的出版社排版正文
+- deposition 线的 `Esirkepov 2001` 作者预印本与 `Villasenor-Buneman 1992` 全文可供公式核查；Esirkepov 的 publisher-formatted CPC PDF 仍是明确的访问边界
 
-因此，这条路线图给读者和作者的核心约束不是“再多下载一些论文”，而是：
+因此，这条路线图的核心约束不是“再多下载一些论文”，而是：
 
 1. 优先补能直接改变章节可信度的 primary sources；
-2. 严格区分可逐段核查的正文材料和仅有 metadata-level 的线索；
-3. 将获取、文本转换、中文精读和章节回填视为同一条证据链。
+2. 严格区分可逐段核查的正文材料和仅有书目信息的线索；
+3. 将取得全文、阅读公式和回填章节视为同一条证据链。
 
 做到这三点，第 9 章才不是附录式书单，而是读者判断全书证据质量的导航章。
 
@@ -14422,11 +14398,11 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系：50 
 
 ### 9.10.2 证据边界复核练习
 
-选择一条 A 层来源和一条 C 层来源，对照 `docs/public-evidence-index.md` 中的记录，分别写出它们支持与不支持的结论。解释为什么索引一致只能说明“路线图与可用材料一致”，不能证明论文出版社版本已取得，也不能证明 WarpX runtime 已复现论文全部结论。
+选择一条 A 层来源和一条 C 层来源，对照 `docs/public-evidence-index.md` 中的记录，分别写出它们支持与不支持的结论。解释为什么索引一致只能说明“路线图与可用材料一致”，不能证明论文出版社版本已取得，也不能证明 WarpX 运行已复现论文全部结论。
 
 ### 9.10.3 延伸阅读排序练习
 
-从 `Hockney-Eastwood`、`Yee 1966`、`Esirkepov 2001` CPC 定稿、`LeeCPC2015` publisher PDF 和 Boris 1970 原始 proceedings 中选出下一项 acquisition 目标。用三列短表说明：它影响哪一章、当前已有哪一级证据、取得后会关闭哪一个具体边界。若目标仍受访问或许可限制，必须把“继续获取”和“先用现有证据回填正文”分成两个独立动作。
+从 `Hockney-Eastwood`、`Yee 1966`、`Esirkepov 2001` CPC 定稿、`LeeCPC2015` publisher PDF 和 Boris 1970 原始 proceedings 中选出下一项优先阅读或取得的来源。用三列短表说明：它影响哪一章、现有哪一级证据、取得后会澄清哪一个具体边界。若目标仍受访问或许可限制，必须把“继续取得全文”和“先用现有证据理解正文”分成两个独立动作。
 
 
 <!-- source: manuscript/appendices/A-symbols.md -->

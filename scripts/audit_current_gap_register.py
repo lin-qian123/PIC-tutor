@@ -61,9 +61,9 @@ def main() -> int:
         "chapter_section": "## 9.8 成书的已知证据边界" in chapter,
         "chapter_boundary_summary": all(marker in chapter for marker in (
             "文献尚无全文",
-            "代码路径尚无运行账本",
-            "两条 publisher access、三条 runtime/source boundary",
-            "缺口表的内部一致性检查",
+            "代码路径尚无运行数据",
+            "第三方材料能否公开再分发",
+            "缺口登记只是帮助读者回查限制的索引",
         )),
         "rz_axis_stencil_evidence": all(marker in register for marker in (
             "rz-axis-divergence-stencil-v0.98/contract.json",

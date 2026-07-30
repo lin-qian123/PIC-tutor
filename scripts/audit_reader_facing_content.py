@@ -98,6 +98,14 @@ def main() -> int:
         "chapter_9_uses_reader_facing_evidence_language": not re.search(
             r"本机|本地资产|materialize|asset contract|access audit|metadata contract|source crosswalk|本地路径",
             chapter_9,
+        )
+        and all(
+            marker in chapter_9
+            for marker in (
+                "文献是论证工具，不是书目清单",
+                "## 9.7 两条深读路线",
+                "缺口登记只是帮助读者回查限制的索引",
+            )
         ),
         "chapter_4_uses_reader_facing_evidence_language": not chapter_4_project_record_markers,
         "chapter_6_has_reader_facing_closure": all(

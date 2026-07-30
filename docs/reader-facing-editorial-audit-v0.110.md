@@ -18,6 +18,7 @@
 | `chapter_7_has_reader_facing_boundary_closure` | `PASS` |
 | `chapter_8_has_reader_facing_diagnostics_closure` | `PASS` |
 | `chapter_2_3_have_reader_facing_routes` | `PASS` |
+| `chapter_3_current_source_route` | `PASS` |
 | `core_chapters_have_no_versioned_prose` | `PASS` |
 | `core_chapters_have_exercises` | `PASS` |
 

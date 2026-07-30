@@ -37,6 +37,9 @@ def main() -> int:
     chapter_2 = (root / "manuscript/chapters/02-pic-loop.md").read_text(encoding="utf-8")
     chapter_2_code_spans = re.findall(r"`([^`]*)`", chapter_2)
     chapter_3 = (root / "manuscript/chapters/03-warpx-evolve.md").read_text(encoding="utf-8")
+    chapter_3_stale_location_markers = re.findall(
+        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
+    )
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -156,6 +159,19 @@ def main() -> int:
         and not any(
             re.search(r"\\(?:omega|lambda|Delta)", span) for span in chapter_2_code_spans
         ),
+        "chapter_3_current_source_route": all(
+            marker in chapter_3
+            for marker in (
+                "### 源码定位约定",
+                "WarpX::ApplyDtLimiters()",
+                "**没有** 显式设置 `algo.maxwell_solver`",
+                "`test_1d_langmuir_multi`",
+                "`analysis_1d.py diags/diag1000080`",
+                "**案例闭环题。**",
+            )
+        ) and "UpdateDtFromParticleSpeeds" not in chapter_3
+        and "`algo.maxwell_solver = yee`" not in chapter_3
+        and not chapter_3_stale_location_markers,
         "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text
@@ -178,6 +194,7 @@ def main() -> int:
         "chapter_6_project_record_markers": chapter_6_project_record_markers,
         "chapter_7_project_record_markers": chapter_7_project_record_markers,
         "chapter_8_project_record_markers": chapter_8_project_record_markers,
+        "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
         "open_items": [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ],

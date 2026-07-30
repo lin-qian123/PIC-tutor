@@ -1223,6 +1223,10 @@ PIC 总循环的关键不在于依次调用“推粒子、沉积、推场”三�
 
 `main.cpp` 负责生命周期，`WarpX` 类建立模拟状态，`WarpXEvolve.cpp` 组织时间推进，`WarpXInitData.cpp` 则准备首个时间步之前的状态。`OneStep_sub1()`、PSATD-JRhom 和 implicit solver 的入口会在本章中定位；场算法的离散公式、粒子的 nonlinear solve 参数和 mass-matrix kernel 分别在后续相关章节展开，避免在调用图中打断物理主线。
 
+### 源码定位约定
+
+WarpX 的实现会继续演进，固定行号只能说明某一次快照的位置，不能说明算法语义。本章因此把 **文件路径和函数/类符号** 作为可迁移的定位锚点：例如，读者在 `Source/Evolve/WarpXEvolve.cpp` 中搜索 `WarpX::OneStep_nosub`，而不是依赖某个行号。引用小段源码时，重点是观察其输入、输出和先后关系；阅读自己的 WarpX 版本时，应先重新搜索同名符号，再比较实现是否改变。
+
 ## 3.1 顶层入口：`main.cpp`
 
 WarpX 的可执行入口在 `../warpx/Source/main.cpp`。主函数的控制流非常短：
@@ -1238,25 +1242,24 @@ print timer if verbose
 finalize_external_libraries()
 ```
 
-对应行号：
+核心调用的职责如下：
 
-| 行号 | 代码含义 |
+| 源码锚点 | 代码含义 |
 |---|---|
-| `Source/main.cpp:20` | 初始化外部库。这里包括 AMReX/MPI/GPU runtime 等 WarpX 依赖的底层运行环境。 |
-| `Source/main.cpp:27` | `auto& warpx = WarpX::GetInstance();`，取得全局 `WarpX` 单例。 |
-| `Source/main.cpp:28` | `warpx.InitData();`，把参数、网格、场、粒子、诊断和边界准备好。 |
-| `Source/main.cpp:29` | `warpx.Evolve();`，进入时间推进主循环。 |
-| `Source/main.cpp:31` | `WarpX::Finalize();`，释放 `WarpX` 单例。 |
-| `Source/main.cpp:41` | 结束外部库。 |
+| `Source/main.cpp`：`initialize_external_libraries` | 初始化 AMReX/MPI/GPU runtime 等 WarpX 依赖的底层运行环境。 |
+| `Source/main.cpp`：`WarpX::GetInstance()` | 取得全局 `WarpX` 单例。 |
+| `Source/main.cpp`：`warpx.InitData()` | 把参数、网格、场、粒子、诊断和边界准备好。 |
+| `Source/main.cpp`：`warpx.Evolve()` | 进入时间推进主循环。 |
+| `Source/main.cpp`：`WarpX::Finalize()` | 释放 `WarpX` 单例。 |
+| `Source/main.cpp`：`finalize_external_libraries` | 结束外部库。 |
 
-本段源码原文如下，位置为 `../warpx/Source/main.cpp:20-41`：
+主函数中的核心段落如下：
 
 ```cpp
 warpx::initialization::initialize_external_libraries(argc, argv);
 
-auto const strt_total = amrex::second();
-auto strt = strt_total;
-BL_PROFILE_INITIALIZE();
+auto timer = ablastr::utils::timer::Timer{};
+timer.record_start_time();
 
 auto& warpx = WarpX::GetInstance();
 warpx.InitData();
@@ -1264,11 +1267,11 @@ warpx.Evolve();
 const auto is_warpx_verbose = warpx.Verbose();
 WarpX::Finalize();
 
-auto const end = amrex::second() - strt;
+timer.record_stop_time();
 if (is_warpx_verbose) {
-    amrex::Print() << "Total Time                     : " << end << '\n';
+    amrex::Print() << "Total Time                     : "
+                   << timer.get_global_duration() << '\n';
 }
-BL_PROFILE_FINALIZE();
 
 warpx::initialization::finalize_external_libraries();
 ```
@@ -1281,43 +1284,43 @@ warpx::initialization::finalize_external_libraries();
 
 `WarpX` 类定义在 `../warpx/Source/WarpX.H`。关键声明包括：
 
-| 行号 | 声明 | 作用 |
+| 源码锚点 | 声明 | 作用 |
 |---|---|---|
-| `Source/WarpX.H:85` | `class WarpX : public amrex::AmrCore` | WarpX 以 AMReX 的 AMR 基类为基础。 |
-| `Source/WarpX.H:89` | `static WarpX& GetInstance();` | 全局单例入口。 |
-| `Source/WarpX.H:97` | `static void Finalize();` | 删除单例。 |
-| `Source/WarpX.H:130` | `void InitData();` | 初始化模拟数据。 |
-| `Source/WarpX.H:132` | `void Evolve(int numsteps=-1);` | 外层时间推进。 |
-| `Source/WarpX.H:1041-1062` | `OneStep`、`OneStep_nosub`、`OneStep_sub1`、`OneStep_JRhom` | 主循环内部的单步推进路径。 |
+| `Source/WarpX.H` | `class WarpX : public amrex::AmrCore` | WarpX 以 AMReX 的 AMR 基类为基础。 |
+| `WarpX::GetInstance()` | `static WarpX& GetInstance();` | 全局单例入口。 |
+| `WarpX::Finalize()` | `static void Finalize();` | 删除单例。 |
+| `WarpX::InitData()` | `void InitData();` | 初始化模拟数据。 |
+| `WarpX::Evolve()` | `void Evolve(int numsteps=-1);` | 外层时间推进。 |
+| `WarpX::OneStep*()` | `OneStep`、`OneStep_nosub`、`OneStep_sub1`、`OneStep_JRhom` | 主循环内部的单步推进路径。 |
 
 单例实现位于 `../warpx/Source/WarpX.cpp`：
 
-- `Source/WarpX.cpp:298-305`：`GetInstance()` 检查 `m_instance`，为空则调用 `MakeWarpX()`。
-- `Source/WarpX.cpp:317-320`：`Finalize()` 调 `ResetInstance()` 删除对象。
-- `Source/WarpX.cpp:322-350`：构造函数设置 `m_instance=this`，初始化 warning manager，调用 `ReadParameters()`，做向后兼容处理，初始化 EB，建立 `istep/nsubsteps/t_new/t_old/dt` 数组，并创建 `MultiParticleContainer`。
+- `WarpX::GetInstance()` 检查 `m_instance`，为空则调用 `MakeWarpX()`。
+- `WarpX::Finalize()` 调 `ResetInstance()` 删除对象。
+- `WarpX::WarpX()` 设置 `m_instance=this`，初始化 warning manager，调用 `ReadParameters()`，做向后兼容处理，初始化 EB，建立 `istep/nsubsteps/t_new/t_old/dt` 数组，并创建 `MultiParticleContainer`。
 
-构造函数里最重要的一行是 `Source/WarpX.cpp:329` 的 `ReadParameters()`。这意味着 solver 类型、边界、步长策略、滤波、静电/电磁模式等会在 `InitData()` 前决定。
+构造函数中最重要的调用是 `ReadParameters()`。这意味着 solver 类型、边界、步长策略、滤波、静电/电磁模式等会在 `InitData()` 前决定。
 
 ## 3.3 `ReadParameters()`：主循环分支的来源
 
-`WarpX::ReadParameters()` 从 `../warpx/Source/WarpX.cpp:547` 开始。完整参数系统很大，本章只列出直接影响主循环的部分。
+`WarpX::ReadParameters()` 定义在 `../warpx/Source/WarpX.cpp`。完整参数系统很大，本章只列出直接影响主循环的部分。
 
-| 源码位置 | 参数或逻辑 | 对主循环的影响 |
+| 参数或逻辑 | 读取位置 | 对主循环的影响 |
 |---|---|---|
-| `Source/WarpX.cpp:550-552` | `max_step`、`stop_time` | `Evolve()` 用它们限制循环终点。 |
-| `Source/WarpX.cpp:563-565` | `algo.maxwell_solver` | 选择 PSATD、Yee、CKC、ECT、HybridPIC、None 等路径。 |
-| `Source/WarpX.cpp:581-595` | PSATD 不支持 PEC/PMC 的断言 | solver 选择会反过来限制边界条件。 |
-| `Source/WarpX.cpp:598` | `algo.evolve_scheme` | 决定 explicit、theta implicit 等演化框架。 |
-| `Source/WarpX.cpp:679-684` | `warpx.cfl`、`verbose`、`regrid_int`、`do_subcycling` | 控制步长、输出、重网格和 AMR 子循环。 |
-| `Source/WarpX.cpp:729-733` | `warpx.do_electrostatic` | 静电 solver 非空时把 electromagnetic solver 设为 `None`。 |
-| `Source/WarpX.cpp:796-812` | `const_dt`、`max_dt`、`dt_update_interval` | 控制固定步长和运行中步长更新。 |
-| `Source/WarpX.cpp:814-828` | filter 默认开关 | 显式 scheme 默认滤波，隐式 scheme 默认关闭滤波。 |
+| `max_step`、`stop_time` | `WarpX::ReadParameters()` | `Evolve()` 用它们限制循环终点。 |
+| `algo.maxwell_solver` | `WarpX::ReadParameters()` | 选择 PSATD、Yee、CKC、ECT、HybridPIC、None 等路径。 |
+| PSATD 不支持 PEC/PMC 的断言 | `WarpX::ReadParameters()` | solver 选择会反过来限制边界条件。 |
+| `algo.evolve_scheme` | `WarpX::ReadParameters()` | 决定 explicit、theta implicit 等演化框架。 |
+| `warpx.cfl`、`verbose`、`regrid_int`、`do_subcycling` | `WarpX::ReadParameters()` | 控制步长、输出、重网格和 AMR 子循环。 |
+| `warpx.do_electrostatic` | `WarpX::ReadParameters()` | 静电 solver 非空时把 electromagnetic solver 设为 `None`。 |
+| `const_dt`、`max_dt`、`dt_update_interval` | `WarpX::ReadParameters()` | 控制固定步长和运行中步长更新。 |
+| filter 默认开关 | `WarpX::ReadParameters()` | 显式 scheme 默认滤波，隐式 scheme 默认关闭滤波。 |
 
 这里有一个阅读原则：输入文件里的参数名只是表层。要理解参数的真实含义，必须追到 `ReadParameters()` 中它如何被读入、被断言约束、被改写，并进一步影响 `Evolve()`、`ComputeDt()` 或 solver 对象。
 
 ## 3.3.1 构造函数只建“跨 level 外壳”，不直接建完整网格数据
 
-仅从 `ReadParameters()` 还看不出一个常见实现边界：`WarpX::WarpX()` 构造函数里虽然已经决定了 solver 路线，但此时还没有有效的 `BoxArray` 和 `DistributionMapping`。源码在 `../warpx/Source/WarpX.cpp:337-341` 明说：
+仅从 `ReadParameters()` 还看不出一个常见实现边界：`WarpX::WarpX()` 构造函数里虽然已经决定了 solver 路线，但此时还没有有效的 `BoxArray` 和 `DistributionMapping`。构造函数中的注释明确说明：
 
 ```cpp
 // Geometry on all levels has been defined already.
@@ -1350,7 +1353,7 @@ warpx::initialization::finalize_external_libraries();
 
 ## 3.3.2 `AllocLevelData()` / `AllocLevelMFs()` 里，四条 solver 分支的落点不同
 
-`AllocLevelData()` 位于 `../warpx/Source/WarpX.cpp:2271` 之后。它先调用 `guard_cells.Init(...)`，再进入 `AllocLevelMFs(...)`。这一层真正决定的是：哪些 `MultiFab` 需要随着 level 一起出生。
+`AllocLevelData()` 定义在 `../warpx/Source/WarpX.cpp`。它先调用 `guard_cells.Init(...)`，再进入 `AllocLevelMFs(...)`。这一层真正决定的是：哪些 `MultiFab` 需要随着 level 一起出生。
 
 先看隐式分支。`AllocLevelMFs()` 并不会一次性把全部隐式字段都分好，它只先放两类最基础的 level 数据：
 
@@ -1444,68 +1447,60 @@ InitPML();
 
 ## 3.4 `InitData()`：把状态准备到可推进
 
-`WarpX::InitData()` 位于 `../warpx/Source/Initialization/WarpXInitData.cpp:793-949`。它不是简单分配内存，而是把一个模拟从“参数已读”变成“可以推进第一步”。
+`WarpX::InitData()` 定义在 `../warpx/Source/Initialization/WarpXInitData.cpp`。它不是简单分配内存，而是把一个模拟从“参数已读”变成“可以推进第一步”。
 
 核心顺序如下：
 
-| 行号 | 操作 | 解释 |
-|---|---|---|
-| `793-800` | 进入 `InitData()`，检查 MPI thread level | 并行运行前的运行环境检查。 |
-| `810-814` | 创建 `MultiDiagnostics` 和 `MultiReducedDiags` | 诊断系统在初始化早期建立。 |
-| `824-830` | 非 restart：`ComputeDt()`、打印步长网格、`InitFromScratch()`、`InitDiagnostics()` | 从头运行时先确定步长，再建立网格/粒子/诊断。 |
-| `831-837` | restart：`InitFromCheckpoint()`、打印步长网格、`PostRestart()` | checkpoint 恢复不走完全相同的初始化路径。 |
-| `839-847` | `ComputeMaxStep()`、PML factors、NCI corrector、buffer masks | 准备停止步数、吸收边界和数值不稳定修正。 |
-| `849-863` | 宏观介质、静电 solver、HybridPIC 初始化 | solver 相关对象拿到场布局和参数。 |
-| `865-878` | 网格摘要、guard cell 检查、打印 PIC 参数、写 used inputs | 把运行状态和输入记录下来。 |
-| `880-913` | 初始 div cleaning、自洽静电/磁静场、外场叠加 | 从头运行时在第一个 step 前建立初始场。 |
-| `918-928` | 初始 full/reduced diagnostics | 允许输出第 0 步或 restart 后诊断。 |
-| `930-948` | 性能提示和 solver issue 检查 | 给出已知风险提示。 |
+| 源码动作 | 解释 |
+|---|---|
+| 进入 `InitData()`，检查 MPI thread level | 并行运行前的运行环境检查。 |
+| 创建 `MultiDiagnostics` 和 `MultiReducedDiags` | 诊断系统在初始化早期建立。 |
+| 非 restart：`ComputeDt()`、打印步长网格、`InitFromScratch()`、`InitDiagnostics()` | 从头运行时先确定步长，再建立网格/粒子/诊断。 |
+| restart：`InitFromCheckpoint()`、打印步长网格、`PostRestart()` | checkpoint 恢复不走完全相同的初始化路径。 |
+| `ComputeMaxStep()`、PML factors、NCI corrector、buffer masks | 准备停止步数、吸收边界和数值不稳定修正。 |
+| 宏观介质、静电 solver、HybridPIC 初始化 | solver 相关对象拿到场布局和参数。 |
+| 网格摘要、guard cell 检查、打印 PIC 参数、写 used inputs | 把运行状态和输入记录下来。 |
+| 初始 div cleaning、自洽静电/磁静场、外场叠加 | 从头运行时在第一个 step 前建立初始场。 |
+| 初始 full/reduced diagnostics | 允许输出第 0 步或 restart 后诊断。 |
+| 性能提示和 solver issue 检查 | 给出已知风险提示。 |
 
-`InitFromScratch()` 在 `Source/Initialization/WarpXInitData.cpp:993-1009`。它调用 `AmrCore::InitFromScratch(time)` 建立 AMR level，然后让 `mypc->AllocData()` 和 `mypc->InitData()` 初始化粒子，最后初始化 PML。
+`InitFromScratch()` 调用 `AmrCore::InitFromScratch(time)` 建立 AMR level，然后让 `mypc->AllocData()` 和 `mypc->InitData()` 初始化粒子，最后初始化 PML。
 
 ## 3.5 `ComputeDt()`：步长不是一个固定常数
 
-`WarpX::ComputeDt()` 在 `../warpx/Source/Evolve/WarpXComputeDt.cpp:45-108`。
+`WarpX::ComputeDt()` 定义在 `../warpx/Source/Evolve/WarpXComputeDt.cpp`。
 
 逻辑可以分成四类：
 
-1. HybridPIC 必须显式给出 `warpx.const_dt`，见 `:49-50`。
-2. 纯静电或无 Maxwell solver 时，必须给出 `const_dt` 或激活 `dt_update_interval`，见 `:51-55`。
-3. 若用户给了 `const_dt`，直接使用，见 `:62-63`。
-4. 否则按 solver 计算 CFL 限制：静电/PSATD 用最小 cell size 与 \(c\)，FDTD 调用具体几何和算法的 `ComputeMaxDt()`，见 `:64-97`。
+1. HybridPIC 必须显式给出 `warpx.const_dt`。
+2. 纯静电或无 Maxwell solver 时，必须给出 `const_dt` 或激活 `dt_update_interval`。
+3. 若用户给了 `const_dt`，直接使用。
+4. 否则按 solver 计算 CFL 限制：静电/PSATD 用最小 cell size 与 \(c\)，FDTD 调用具体几何和算法的 `ComputeMaxDt()`。
 
-最终 `dt` 被 resize 到 `max_level+1`，见 `:100-101`。若启用 subcycling，粗层步长由细层步长乘 refinement ratio 得到，见 `:103-107`。
+最终 `dt` 被 resize 到 `max_level+1`。若启用 subcycling，粗层步长由细层步长乘 refinement ratio 得到。
 
-这四类其实可以再压成一张更明确的决策表，而不只是“按 CFL 算”：
+把它写成决策顺序会比宽表更容易在阅读和排版中保持清楚：
 
-| 条件 | `dt` 来源 | 说明 |
-|---|---|---|
-| `warpx.const_dt` 已设置 | `const_dt` | 直接覆盖所有 CFL 估计；稳定性由用户自己保证。 |
-| `HybridPIC` | 必须是 `const_dt` | Hybrid 路线不接受“缺省光速 CFL”。 |
-| electrostatic 且设置 `max_dt` | `max_dt` | 静电路径可直接把 `max_dt` 当作初值。 |
-| electrostatic 且未设置 `max_dt` | `cfl*min(dx)/c` | 这里只是 fallback 尺度，后续仍可由粒子速度更新。 |
-| `PSATD` | `cfl*min(dx)/c` | 谱 solver 这里用最小网格尺度给出初始步长。 |
-| Cartesian Yee/ECT | `cfl*CartesianYeeAlgorithm::ComputeMaxDt(dx)` | 显式 FDTD 由具体差分算法给出稳定上限。 |
-| Cartesian CKC | `cfl*CartesianCKCAlgorithm::ComputeMaxDt(dx)` | CKC 不是简单复用 Yee CFL。 |
-| collocated/nodal | `cfl*CartesianNodalAlgorithm::ComputeMaxDt(dx)` | collocated grid 的稳定上限单独计算。 |
-| RZ/RCYLINDER Yee | `cfl*CylindricalYeeAlgorithm::ComputeMaxDt(dx,n_modes)` | 还显式依赖 `n_rz_azimuthal_modes`。 |
-| RSPHERE Yee | `cfl*SphericalYeeAlgorithm::ComputeMaxDt(dx)` | spherical 路线单独给稳定上限。 |
+1. **用户固定步长优先。** 设置 `warpx.const_dt` 后，`ComputeDt()` 直接采用它，所有 CFL 估计都不再决定步长；稳定性责任也随之转给用户。
+2. **特殊模型先检查强制条件。** HybridPIC 必须给出 `const_dt`。静电路径若未使用固定步长，则以 `max_dt` 为初值；若也未给出，则退回到 $\mathrm{CFL}\,\Delta x_{\min}/c$。
+3. **PSATD 使用最小网格尺度的光速尺度。** 在没有固定步长时，初值为 $\mathrm{CFL}\,\Delta x_{\min}/c$。这只是本函数的初始选择，不能替代该配置的物理分辨率判断。
+4. **FDTD 按几何和网格布置选择稳定上限。** Cartesian collocated grid 调用 `CartesianNodalAlgorithm::ComputeMaxDt`；Yee/ECT 调用 `CartesianYeeAlgorithm::ComputeMaxDt`；CKC 调用 `CartesianCKCAlgorithm::ComputeMaxDt`。RZ/RCYLINDER 的 Yee 路径还使用 azimuthal mode 数，RSPHERE 则走 `SphericalYeeAlgorithm::ComputeMaxDt`。这些函数名比展开成长公式更适合作为源码阅读入口。
 
 因此，`ComputeDt()` 不只是“取最小网格长度除以光速”，而是在参数层先决定有没有用户强制时间步，再按 solver 家族和几何去选真正的稳定上限公式。
 
-运行中自适应步长在 `WarpX::UpdateDtFromParticleSpeeds()`，位于 `Source/Evolve/WarpXComputeDt.cpp:115-142`。它从 `mypc->maxParticleVelocity()` 得到最大粒子速度，用
+运行中自适应步长由 `WarpX::ApplyDtLimiters()` 处理。它首先经 `ParticleGridSpeedMax()` 从 `mypc->maxParticleVelocity()` 计算最大粒子跨网格速度，再与可选的等离子体频率、回旋频率和 `max_dt` 限制一起取最严格的步长。仅考虑粒子跨网格限制时，公式是
 
 $$
 \Delta t_{\mathrm{new}}=\mathrm{CFL}\frac{\Delta x_{\min}}{v_{\max}}
 $$
 
-更新 finest level 的 `dt`，再向粗层回推。
+`ApplyDtLimiters()` 更新 finest level 的 `dt`，再向粗层回推。因此它并不等同于一个只看粒子速度的旧接口：开启 `max_omegap_dt`、`max_omegac_dt` 或 `max_dt` 时，任何一个限制都可以成为最终瓶颈。
 
-这里还要补一条参数层边界：`warpx.const_dt` 与 `warpx.dt_update_interval` 在 `ReadParameters()` 中就是互斥的。也就是说，运行时 adaptive timestep 不是“在固定步长上再做微调”，而是一条和 `const_dt` 完全不同的时间组织路线。`Evolve()` 里只有当 `m_dt_update_interval.contains(step+1)` 为真时，才会在步首调用 `UpdateDtFromParticleSpeeds()`。
+这里还要补一条参数层边界：`warpx.const_dt` 与 `warpx.dt_update_interval` 在 `ReadParameters()` 中就是互斥的。也就是说，运行时 adaptive timestep 不是“在固定步长上再做微调”，而是一条和 `const_dt` 完全不同的时间组织路线。`Evolve()` 里只有当 `m_dt_update_interval.contains(step+1)` 为真，或首步需要应用 `max_dt` 时，才会在步首调用 `ApplyDtLimiters()`。
 
 ## 3.6 `Evolve()` 外层时间步
 
-`WarpX::Evolve()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:147-390`。它不是单纯调用 `OneStep()`，而是在每个 step 前后管理大量状态。
+`WarpX::Evolve()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。它不是单纯调用 `OneStep()`，而是在每个 step 前后管理大量状态。
 
 外层结构是：
 
@@ -1530,28 +1525,28 @@ for step in range while cur_time < stop_time:
     afterstep callback, diagnostics, warnings, signals, stop check
 ```
 
-关键行号：
+关键动作：
 
-| 行号 | 操作 | 读法 |
-|---|---|---|
-| `155-166` | 初始化 `cur_time` 和循环边界 | `numsteps=-1` 时使用全局 `max_step`。 |
-| `171-175` | 信号检查、诊断新迭代 | 支持运行中断、checkpoint 和诊断状态更新。 |
-| `192-205` | callback、负载均衡、可选步长更新 | 更新步长前需要同步粒子速度时间层。 |
-| `208-212` | `ExplicitFillBoundaryEBUpdateAux()` | 显式 scheme 为后续 field gather 准备场。 |
-| `222-232` | field ionization、QED、particle injection | 多物理事件在 `OneStep()` 前改变粒子集合。 |
-| `234-235` | `OneStep(cur_time, dt[0], step)` | 进入单步推进分派。 |
-| `248-259` | 更新 `istep` 和 `t_old/t_new` | 单步推进后更新时间状态。 |
-| `261-276` | 诊断预处理、moving window、粒子边界 | `OneStep()` 后的工程处理同样影响物理结果。 |
-| `289-323` | 静电或 HybridPIC 的场解 | 非标准电磁路径的场更新位置不同。 |
-| `326-333` | 诊断需要时同步粒子速度 | 为输出把 \(\mathbf{p}\) 与 \(\mathbf{x}\) 放到同步时间层。 |
-| `336-350` | reduced/full diagnostics 和 callback | 诊断写出发生在本步状态更新之后。 |
-| `352-372` | 未使用输入检查、计时、信号、停止 | 第一步后检查输入 typo，最后判断是否退出。 |
+| 源码动作 | 读法 |
+|---|---|
+| 初始化 `cur_time` 和循环边界 | `numsteps=-1` 时使用全局 `max_step`。 |
+| 信号检查、诊断新迭代 | 支持运行中断、checkpoint 和诊断状态更新。 |
+| callback、负载均衡、可选步长更新 | 更新步长前需要同步粒子速度时间层。 |
+| `ExplicitFillBoundaryEBUpdateAux()` | 显式 scheme 为后续 field gather 准备场。 |
+| field ionization、QED、particle injection | 多物理事件在 `OneStep()` 前改变粒子集合。 |
+| `OneStep(cur_time, dt[0], step)` | 进入单步推进分派。 |
+| 更新 `istep` 和 `t_old/t_new` | 单步推进后更新时间状态。 |
+| 诊断预处理、moving window、粒子边界 | `OneStep()` 后的工程处理同样影响物理结果。 |
+| 静电或 HybridPIC 的场解 | 非标准电磁路径的场更新位置不同。 |
+| 诊断需要时同步粒子速度 | 为输出把 \(\mathbf{p}\) 与 \(\mathbf{x}\) 放到同步时间层。 |
+| reduced/full diagnostics 和 callback | 诊断写出发生在本步状态更新之后。 |
+| 未使用输入检查、计时、信号、停止 | 第一步后检查输入 typo，最后判断是否退出。 |
 
 注意 `Evolve()` 中多物理和诊断并不都在 `OneStep()` 内部。比如 field ionization、QED 和 particle injection 在 `OneStep()` 之前，resampling、moving window、粒子边界和某些 electrostatic/hybrid 场解在 `OneStep()` 之后。
 
 ### 3.6.1 步末 moving window：连续坐标与整数网格平移
 
-moving window 的完整精读见 `notes/code-reading/evolve/05-moving-window.md`。这里先把它放回 `Evolve()` 主循环中：`MoveWindow(step+1, move_j)` 发生在 `OneStep()` 完成、`cur_time` 和 `t_new` 更新之后，粒子边界处理之前。对应源码为 `../warpx/Source/Evolve/WarpXEvolve.cpp:252-276`：
+moving window 的完整精读见 `notes/code-reading/evolve/05-moving-window.md`。这里先把它放回 `Evolve()` 主循环中：`MoveWindow(step+1, move_j)` 发生在 `OneStep()` 完成、`cur_time` 和 `t_new` 更新之后，粒子边界处理之前。对应逻辑位于 `WarpX::Evolve()`：
 
 ```cpp
 cur_time += dt[0];
@@ -1571,7 +1566,7 @@ const bool move_j = m_is_synchronized;
 const int num_moved = MoveWindow(step+1, move_j);
 ```
 
-`MoveWindow()` 的第一层逻辑是维护一个连续窗口位置 `moving_window_x`，但只有当它相对当前几何左边界跨过整数个 cell 时才真正平移网格数据。源码为 `../warpx/Source/Utils/WarpXMovingWindow.cpp:372-397`：
+`MoveWindow()` 的第一层逻辑是维护一个连续窗口位置 `moving_window_x`，但只有当它相对当前几何左边界跨过整数个 cell 时才真正平移网格数据。实现位于 `../warpx/Source/Utils/WarpXMovingWindow.cpp`：
 
 ```cpp
 if (!moving_window_active(step)) { return 0; }
@@ -1615,7 +1610,7 @@ $$
 
 若 `end_moving_window_step < 0` 则表示没有终止步。这也是为什么 `Evolve()` 调的是 `MoveWindow(step+1, ...)`：窗口平移是本步结束后、下一步开始前的状态更新。
 
-当 `num_shift_base != 0` 时，`MoveWindow()` 调用 `ResetProbDomain()` 更新几何域，并用 `shiftMF()` 平移 `E/B/current/PML/F/G/rho/fluid` 等 `MultiFab`。`shiftMF()` 的核心赋值为 `../warpx/Source/Utils/WarpXMovingWindow.cpp:180-190`：
+当 `num_shift_base != 0` 时，`MoveWindow()` 调用 `ResetProbDomain()` 更新几何域，并用 `shiftMF()` 平移 `E/B/current/PML/F/G/rho/fluid` 等 `MultiFab`。`shiftMF()` 的核心赋值为：
 
 ```cpp
 amrex::Box dstBox = mf[mfi].box();
@@ -1647,7 +1642,7 @@ $$
 
 ## 3.7 `OneStep()`：求解器分派器
 
-`WarpX::OneStep()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:392-495`。它按 solver 和 AMR 情况分派：
+`WarpX::OneStep()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。它按 solver 和 AMR 情况分派：
 
 ```text
 if m_implicit_solver:
@@ -1664,19 +1659,19 @@ else:
 
 这段代码体现了 WarpX 的设计：`OneStep()` 不直接写某一种 PIC 算法的全部细节，而是先把路径分开。
 
-| 分支 | 源码位置 | 含义 |
+| 分支 | 源码锚点 | 含义 |
 |---|---|---|
-| implicit solver | `Source/Evolve/WarpXEvolve.cpp:398-402` | 交给隐式 solver 自己推进一整步。 |
-| electrostatic / HybridPIC | `:405-445` | 粒子推进但跳过标准电磁沉积路径，场解在外层后处理。 |
-| 标准电磁无 MR | `:448-467` | 进入 `OneStep_nosub()` 或 PSATD-JRhom。 |
-| 有 MR 无 subcycling | `:469-474` | 仍进入 `OneStep_nosub()`，所有 level 使用同一步长推进。 |
-| 有 MR 且 subcycling | `:475-492` | 进入 `OneStep_sub1()`；本书采用的源码快照限制最多两个 level。 |
+| implicit solver | `m_implicit_solver->OneStep(...)` | 交给隐式 solver 自己推进一整步。 |
+| electrostatic / HybridPIC | `electromagnetic_solver_id == None/HybridPIC` | 粒子推进但跳过标准电磁沉积路径，场解在外层后处理。 |
+| 标准电磁无 MR | `finest_level == 0` | 进入 `OneStep_nosub()` 或 PSATD-JRhom。 |
+| 有 MR 无 subcycling | `!m_do_subcycling` | 仍进入 `OneStep_nosub()`，所有 level 使用同一步长推进。 |
+| 有 MR 且 subcycling | `m_do_subcycling` | 进入 `OneStep_sub1()`；当前实现限制最多两个 level。 |
 
 几个断言值得后续单独讲：
 
-- JRhom 与 split momentum collision 不能组合，见 `Source/Evolve/WarpXEvolve.cpp:456-459`。
-- subcycling 要求 `finest_level == 1`，见 `:477-480`。
-- subcycling 与 split momentum collision 也不能组合，见 `:481-484`。
+- JRhom 与 split momentum collision 不能组合。
+- subcycling 要求 `finest_level == 1`。
+- subcycling 与 split momentum collision 也不能组合。
 
 这些不是文档层面的“建议”，而是源码级功能边界。
 
@@ -1690,11 +1685,11 @@ else:
 
 ## 3.8 `OneStep_nosub()`：显式电磁标准路径
 
-`WarpX::OneStep_nosub()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:507-646`。这是本书第一个需要逐行读懂的核心函数。
+`WarpX::OneStep_nosub()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。这是本书第一个需要逐行读懂的核心函数。
 
 它的结构分为四段。
 
-第一段：粒子推进、碰撞与沉积，见 `:515-557`。
+第一段：粒子推进、碰撞与沉积。
 
 源码原文：
 
@@ -1748,7 +1743,7 @@ ExecutePythonCallback("afterdeposition");
 - 如果 `m_collisions_split_momentum_push` 为真，先做半个动量 push，再碰撞，再做位置 push 和后半动量 push。
 - 否则先做碰撞，再调用 `PushParticlesandDeposit()` 完整推进粒子并沉积。
 
-第二段：源项同步，见 `:559-572`。
+第二段：源项同步。
 
 源码原文：
 
@@ -1770,9 +1765,9 @@ if (do_pml && do_pml_j_damping) { DampJPML(); }
 - `SyncCurrentAndRho()` 会处理滤波、guard cells、AMR 跨层插值/加和和边界。
 - PML 若含粒子或需要电流阻尼，会复制和阻尼 PML 中的电流。
 
-第三段：PSATD 或 FDTD 场推进，见 `:574-642`。
+第三段：PSATD 或 FDTD 场推进。
 
-FDTD 分支的核心源码原文如下，位置为 `../warpx/Source/Evolve/WarpXEvolve.cpp:606-628`：
+FDTD 分支的核心源码如下：
 
 ```cpp
 } else {
@@ -1801,7 +1796,7 @@ FDTD 分支的核心源码原文如下，位置为 `../warpx/Source/Evolve/WarpX
 - PSATD 走 `PushPSATD(a_cur_time)`，并处理 hybrid QED、PML、平均场、\(F/G\) guard cells。
 - FDTD 走 `EvolveF/G` 半步、`EvolveB(dt/2)`、`EvolveE(dt)`、`EvolveF/G` 半步、`EvolveB(dt/2)`。
 
-第四段：回调，见 `:642`。
+第四段：回调。
 
 - `afterEsolve` callback 在场更新后执行。
 
@@ -1809,27 +1804,27 @@ FDTD 分支的核心源码原文如下，位置为 `../warpx/Source/Evolve/WarpX
 
 ## 3.9 `SyncCurrentAndRho()`：源项不是沉积完就可用
 
-`SyncCurrentAndRho()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:768-837`。
+`SyncCurrentAndRho()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。
 
 它的分支很重要：
 
-- PSATD 且 periodic single box 时，会立即同步 \(J\) 和 \(\rho\)，见 `:773-785`。
-- PSATD 非 periodic single box 时，若没有 current correction 且不是 Vay deposition，才在这里同步，见 `:787-797`。
-- Vay deposition 在特定情况下先只做 filter，见 `:799-806`。
-- FDTD 路径总是 `SyncCurrent("current_fp")` 和 `SyncRho()`，见 `:809-813`。
-- 最后对 \(\rho\) 和 \(J\) 施加 PEC 等边界处理，见 `:815-836`。
+- PSATD 且 periodic single box 时，会立即同步 \(J\) 和 \(\rho\)。
+- PSATD 非 periodic single box 时，若没有 current correction 且不是 Vay deposition，才在这里同步。
+- Vay deposition 在特定情况下先只做 filter。
+- FDTD 路径总是 `SyncCurrent("current_fp")` 和 `SyncRho()`。
+- 最后对 \(\rho\) 和 \(J\) 施加 PEC 等边界处理。
 
 这说明“沉积”与“可用于场解”之间有一段不可忽略的工程层：滤波、guard cell、AMR 和边界会改变源项数组的可用状态。
 
 ## 3.10 `PushParticlesandDeposit()`：进入粒子容器
 
-`PushParticlesandDeposit()` 的两个重载位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:1311-1415`。
+`PushParticlesandDeposit()` 的两个重载定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。
 
 第一层重载 `:1311-1333` 遍历所有 AMR level。第二层重载 `:1335-1415` 做三件事：
 
-1. 根据 `do_current_centering` 和 `current_deposition_algo == Vay` 选择当前沉积字段名，见 `:1349-1362`。
-2. 调用 `mypc->Evolve(...)`，把 field register、level、字段名、时间、`dt[lev]`、subcycling half、是否跳过沉积、位置/动量 push 类型传入粒子容器，见 `:1364-1375`。
-3. 对 RZ/柱/球几何做逆体积缩放，并在有流体物种时调用流体容器演化，见 `:1377-1413`。
+1. 根据 `do_current_centering` 和 `current_deposition_algo == Vay` 选择当前沉积字段名。
+2. 调用 `mypc->Evolve(...)`，把 field register、level、字段名、时间、`dt[lev]`、subcycling half、是否跳过沉积、位置/动量 push 类型传入粒子容器。
+3. 对 RZ/柱/球几何做逆体积缩放，并在有流体物种时调用流体容器演化。
 
 因此，下一阶段逐行阅读必须从 `mypc->Evolve()` 继续进入 `Source/Particles`。`PushParticlesandDeposit()` 是主循环到粒子模块的接口，不是粒子 pusher 本身。
 
@@ -1837,7 +1832,7 @@ FDTD 分支的核心源码原文如下，位置为 `../warpx/Source/Evolve/WarpX
 
 完整精读见 `notes/code-reading/evolve/03-subcycling-and-jrhom.md`。这里先把两个特殊分支放回主循环时间层。
 
-`OneStep_sub1()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:1043-1269`。当前 subcycling 只支持两个 level 和 refinement ratio 2：fine patch 用小步长推两次，coarse patch 和 mother grid 推一次，coarse 场使用两次 fine current 的平均效果。源码注释直接说明这一点：
+`OneStep_sub1()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。当前 subcycling 只支持两个 level 和 refinement ratio 2：fine patch 用小步长推两次，coarse patch 和 mother grid 推一次，coarse 场使用两次 fine current 的平均效果。函数注释直接说明这一点：
 
 ```cpp
  * This version of subcycling only works for 2 levels and with a refinement
@@ -1877,7 +1872,7 @@ fine level 在一个 coarse step 内走两个完整 leapfrog 小步。`RestrictC
 
 这里 `StoreCurrent()`/`RestoreCurrent()` 的角色需要说得更硬一点：subcycling 不是简单把 fine current 直接覆写 coarse current，而是要先保留 coarse 粒子本身在大步时间层上的电流，再把两次 fine-step 的 restriction 结果分别叠回 coarse half-step。否则 coarse mother grid 看到的就不是“一个 coarse 大步上等效的平均源项”，而会把 coarse 自身电流和 fine 补偿混在一起。
 
-`OneStep_JRhom()` 位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:839-1041`。它是 PSATD-JRhom 专用路径，会多次沉积 \(J\) 和 \(\rho\)，在谱空间推进字段，并支持时间平均场。入口先断言 solver 必须是 PSATD，并且粒子 push 时跳过标准沉积：
+`OneStep_JRhom()` 定义在 `../warpx/Source/Evolve/WarpXEvolve.cpp`。它是 PSATD-JRhom 专用路径，会多次沉积 \(J\) 和 \(\rho\)，在谱空间推进字段，并支持时间平均场。入口先断言 solver 必须是 PSATD，并且粒子 push 时跳过标准沉积：
 
 ```cpp
 WARPX_ALWAYS_ASSERT_WITH_MESSAGE(
@@ -1937,7 +1932,7 @@ for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
 
 ### 3.11.1 implicit 分支：一次物理步包含多次试探性 source 重建
 
-在 `WarpX::OneStep()` 中，只要 `m_implicit_solver` 非空，程序就不会进入 `OneStep_nosub()`、`OneStep_sub1()` 或 `OneStep_JRhom()`，而是把整步交给 `m_implicit_solver->OneStep(...)`。当前入口位于 `../warpx/Source/Evolve/WarpXEvolve.cpp:398-402`。
+在 `WarpX::OneStep()` 中，只要 `m_implicit_solver` 非空，程序就不会进入 `OneStep_nosub()`、`OneStep_sub1()` 或 `OneStep_JRhom()`，而是把整步交给 `m_implicit_solver->OneStep(...)`。
 
 以 `SemiImplicitEM::OneStep()` 为代表，隐式电磁步的控制流是：
 
@@ -1950,7 +1945,7 @@ for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
 | 5 | `SetElectricFieldAndApplyBCs()`、`FinishImplicitParticleUpdate()` | 将收敛的中间场写回，并把粒子从半步状态完成到 $t^{n+1}$ |
 | 6 | 第二个 `EvolveB(Δt/2)` | 完成磁场后半步，物理时间步才真正结束 |
 
-因此 `m_nlsolver->Solve()` 不是一个普通的函数调用包装，而是这条路径的核心时间组织。`SemiImplicitEM::ComputeRHS()` 会先用当前猜测的 $E^{n+1/2}$ 更新 WarpX 持有的电场，然后调用 `PreRHSOp()`；后者在 `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:784-853` 中完成：
+因此 `m_nlsolver->Solve()` 不是一个普通的函数调用包装，而是这条路径的核心时间组织。`SemiImplicitEM::ComputeRHS()` 会先用当前猜测的 $E^{n+1/2}$ 更新 WarpX 持有的电场，然后调用 `PreRHSOp()`；后者定义在 `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp`，完成：
 
 1. 以当前中间场推进粒子位置和速度；
 2. 形成 $J^{n+1/2}$；
@@ -1969,7 +1964,7 @@ implicit 还有两个容易误读的实现边界：
 
 ### 3.11.2 nonlinear solver、JFNK 与 mass-matrix：`J` 的三种构造层
 
-`ImplicitSolver::parseNonlinearSolverParams()` 位于 `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp:448-517`。它首先读取 `nonlinear_solver`，再决定后续 `J` 是通过完整粒子响应、Newton/JFNK 近似，还是 PETSc SNES 的线性阶段构造：
+`ImplicitSolver::parseNonlinearSolverParams()` 定义在 `../warpx/Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp`。它首先读取 `nonlinear_solver`，再决定后续 `J` 是通过完整粒子响应、Newton/JFNK 近似，还是 PETSc SNES 的线性阶段构造：
 
 | 配置 | solver 对象 | 粒子/电流路径 | 关键边界 |
 | --- | --- | --- | --- |
@@ -1990,13 +1985,13 @@ J(E_0+\delta E)
 =J_{\mathrm{suborbit}}+J_0+M\,\delta E,
 $$
 
-其中 (E_0) 是 Newton step 开始时由 `SaveE()` 保存的电场，(J_0) 是以 (E_0) 推进的非 mass-matrix 粒子电流，(M) 是 `MassMatrices_X/Y/Z` 表示的离散响应算子。这个式子正是 `CumulateJ()` 和 `ComputeJfromMassMatrices()` 之间的职责分界：
+其中 $E_0$ 是 Newton step 开始时由 `SaveE()` 保存的电场，$J_0$ 是以 $E_0$ 推进的非 mass-matrix 粒子电流，$M$ 是 `MassMatrices_X/Y/Z` 表示的离散响应算子。这个式子正是 `CumulateJ()` 和 `ComputeJfromMassMatrices()` 之间的职责分界：
 
 - `CumulateJ()` 把 `current_fp_non_suborbit` 加回当前 `current_fp`，补上不在 mass matrices 中的粒子贡献；
 - `ComputeJfromMassMatrices()` 根据当前 `E-E0`、`J0` 和各方向交叉响应，把 $M\,\delta E$ 写入 `current_fp`；
 - `SyncCurrentAndRho()` 只负责之后的滤波、边界、guard/level 通信，不负责判断 `J` 应该由完整粒子还是线性响应产生。
 
-`ComputeJfromMassMatrices()` 还必须处理 Yee/nodal staggering。源码先根据 `Jx/Jy/Jz` 的 `ixType()` 计算 `offset_xx ... offset_zz`，再用 `Sxx/Sxy/.../Szz` 的多分量 stencil 访问邻近电场。因此 mass matrix 不是一个可以在任意 centering 上直接相乘的标量系数；它同时编码了方向耦合、空间 support 和网格位置偏移。把它简写成“(M=dJ/dE)”只足以说明物理意图，不足以替代对 index type 和 component offset 的源码核对。
+`ComputeJfromMassMatrices()` 还必须处理 Yee/nodal staggering。源码先根据 `Jx/Jy/Jz` 的 `ixType()` 计算 `offset_xx ... offset_zz`，再用 `Sxx/Sxy/.../Szz` 的多分量 stencil 访问邻近电场。因此 mass matrix 不是一个可以在任意 centering 上直接相乘的标量系数；它同时编码了方向耦合、空间 support 和网格位置偏移。把它简写成 $M=\partial J/\partial E$ 只足以说明物理意图，不足以替代对 index type 和 component offset 的源码核对。
 
 配置层也有明确的几何限制：当前源码禁止 3D 使用 `use_mass_matrices_jacobian`，禁止 RSPHERE 使用 mass matrices；`mass_matrices_pc_width` 只在非 3D 情况下读取。因而这条路径不能被描述成所有 implicit geometry 的通用加速开关。
 
@@ -2004,20 +1999,23 @@ $$
 
 ## 3.12 参数示例与最小运行闭环
 
-如果把本章压成一个最小、可执行、可回查的演化入口，可从下面的官方样章输入开始：
+如果把本章压成一个最小、可执行、可回查的演化入口，可从下面的官方回归案例开始：
 
 - `../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
 
-它直接消费了本章讲到的顶层参数和控制流：
+输入文件直接消费了本章讲到的一组顶层参数：
 
 - `max_step = 80`
-- `algo.maxwell_solver = yee`
 - `algo.current_deposition = esirkepov`
 - `algo.field_gathering = energy-conserving`
 - `warpx.cfl = 0.8`
 - 周期场边界
 
-对本章来说，这个输入最重要的意义不是“Langmuir 物理本身”，而是它确实会走：
+这里需要避免一个常见误读：这个输入 **没有** 显式设置 `algo.maxwell_solver`。因此它不能用于证明某个 solver 参数由该输入给出；实际采用的默认 solver 必须回到该版本的 `ReadParameters()` 与官方文档确认。
+
+它成为可执行案例，是因为 `Examples/Tests/langmuir/CMakeLists.txt` 把它注册为 `test_1d_langmuir_multi`：一维、2 个 MPI rank，分析命令为 `analysis_1d.py diags/diag1000080`。也就是说，`max_step = 80` 只规定步数；最终 plotfile 名称和分析入口来自 CMake 注册，不能单凭步数猜出。
+
+对本章来说，这个案例最重要的意义不是“Langmuir 物理本身”，而是它把主循环连接到明确的消费端。对于这个显式电磁、无 AMR 的输入，主路径是：
 
 ```text
 main.cpp
@@ -2032,12 +2030,21 @@ main.cpp
 -> diagnostics
 ```
 
-`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 可把本章的“主循环入口”压成一个可复现的闭环：
+分析脚本 `analysis_1d.py` 读取最终 plotfile，按解析的 Langmuir 波重建 $E_z$，并要求最大相对误差满足
 
-- 有源码路径
-- 有参数入口
-- 有输出目录 `diags/diag1000080`
-- 有物理检查量
+$$
+\max\left|E_{z,\mathrm{sim}}-E_{z,\mathrm{theory}}\right|/
+\max\left|E_{z,\mathrm{theory}}\right| < 0.05.
+$$
+
+随后它还调用 `check_charge_conservation(data)`。对这个 Esirkepov、非 PSATD、非 RZ 的案例，辅助分析会检查离散 Gauss-law 残差；这补充了场形状的比较，但不等同于证明所有几何、所有 solver 或 AMR 分支的守恒性。
+
+这样，`inputs_test_1d_langmuir_multi` 把本章的“主循环入口”压成一个可复现的闭环：
+
+- 有参数入口：输入文件
+- 有测试编排：`test_1d_langmuir_multi` 的 CMake 注册与 2-rank 规模
+- 有明确消费端：`analysis_1d.py diags/diag1000080`
+- 有两类检查：$E_z$ 解析误差阈值和离散 Gauss-law 残差
 
 这条路线把 `WarpX` 主类生命周期和 `Evolve()` 主链从静态调用图连接到输入、输出和可检查的物理量。它只覆盖这个 Langmuir 配置，不能据此推出所有 solver、几何或 AMR 分支都已验证。
 
@@ -2054,18 +2061,17 @@ main.cpp
 1. 说明为什么 `WarpX::WarpX()` 里只能创建跨-level 外壳，而不能直接分配完整 `MultiFab` 主字段。
 2. 用本章的 `StoreCurrent()/RestoreCurrent()` 解释：为什么 subcycling 不能简单拿 fine current 覆盖 coarse current。
 3. 结合 [Langmuir 阅读笔记](../../notes/code-reading/applications/00-langmuir-wave.md)，指出 `inputs_test_1d_langmuir_multi` 中哪些参数分别进入 `ReadParameters()`、`ComputeDt()` 和 `OneStep_nosub()` 的不同层次。
+4. **案例闭环题。** 阅读该输入、`Examples/Tests/langmuir/CMakeLists.txt` 和 `analysis_1d.py`，写出四行表格：输入参数、测试规模、分析命令、通过条件。解释为什么 `max_step = 80` 不能单独推出输出目录或通过阈值，并说明两类检查各自能与不能支持什么结论。
 
 ## 3.14 本章小结
 
-本章建立的主演化路线可压缩为下表。它按读者追踪一个输入从启动到一次时间步所需要的顺序排列，而不是按源码文件的出现顺序排列：
+本章建立的主演化路线可压缩为五个读者检查点。它们按一个输入从启动到一次时间步的顺序排列，而不是按源码文件的出现顺序排列：
 
-| 阶段 | 关键入口 | 读者应确认的问题 |
-|---|---|---|
-| 启动与构造 | `main.cpp -> GetInstance() -> WarpX::WarpX() -> ReadParameters()` | 哪些参数和 solver 分支在建立网格前已确定？ |
-| 初始化 | `InitData() -> ComputeDt() -> InitFromScratch/InitFromCheckpoint` | 初始 level、粒子、场、PML 和 diagnostics 是否在第一步前就绪？ |
-| 外层推进 | `Evolve()` | 每一步前后有哪些 callback、负载均衡、注入、边界和诊断动作？ |
-| 单步分派 | `OneStep()` | 此输入走 implicit、electrostatic/HybridPIC、`OneStep_nosub()`、subcycling 还是 JRhom？ |
-| 显式主链 | `PushParticlesandDeposit() -> SyncCurrentAndRho() -> PushPSATD` 或 `EvolveB/EvolveE/EvolveB` | 粒子输运、源项同步和场推进是否使用相容的时间层？ |
+1. **启动与构造：** 从 `main.cpp` 进入 `GetInstance()`、`WarpX::WarpX()` 和 `ReadParameters()`。先问哪些参数与 solver 分支在建立网格前已经确定。
+2. **初始化：** 依次检查 `InitData()`、`ComputeDt()`、`InitFromScratch()` 或 `InitFromCheckpoint()`。确认初始 level、粒子、场、PML 和 diagnostics 在第一步前已就绪。
+3. **外层推进：** 在 `Evolve()` 中核对 callback、负载均衡、注入、边界与诊断分别发生在单步前还是单步后。
+4. **单步分派：** 在 `OneStep()` 中判断该输入实际走 implicit、electrostatic/HybridPIC、`OneStep_nosub()`、subcycling 还是 JRhom。
+5. **显式主链：** 从 `PushParticlesandDeposit()` 到 `SyncCurrentAndRho()`，再到 `PushPSATD()` 或 `EvolveB/EvolveE/EvolveB`，确认粒子输运、源项同步和场推进的时间层相容。
 
 后续章节将从 `mypc->Evolve()` 进入粒子推进、field gather 和沉积内核，再从 `EvolveE/B` 进入 FDTD/PSATD 场求解器。
 

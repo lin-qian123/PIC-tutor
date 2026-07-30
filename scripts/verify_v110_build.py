@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The current reader-facing layout, including the Chapter 2 case-reading route, has 265 pages.
-EXPECTED_PDF_PAGES = 265
+# The Chapter 3 reader-path revision removes two overwide tables; the current layout has 264 pages.
+EXPECTED_PDF_PAGES = 264
 
 
 def image_links(text: str) -> list[str]:
@@ -73,6 +73,9 @@ def main() -> None:
     chapter_2 = (ROOT / "manuscript" / "chapters" / "02-pic-loop.md").read_text(encoding="utf-8")
     chapter_2_code_spans = re.findall(r"`([^`]*)`", chapter_2)
     chapter_3 = (ROOT / "manuscript" / "chapters" / "03-warpx-evolve.md").read_text(encoding="utf-8")
+    chapter_3_stale_location_markers = re.findall(
+        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
+    )
     chapter_7 = (ROOT / "manuscript" / "chapters" / "07-boundaries-amr.md").read_text(
         encoding="utf-8"
     )
@@ -116,6 +119,19 @@ def main() -> None:
             marker in chapter_3
             for marker in ("追踪它何时变成网格、场、粒子和诊断", "InitData()", "OneStep()")
         ),
+        "chapter_3_current_source_route": all(
+            marker in chapter_3
+            for marker in (
+                "### 源码定位约定",
+                "WarpX::ApplyDtLimiters()",
+                "**没有** 显式设置 `algo.maxwell_solver`",
+                "`test_1d_langmuir_multi`",
+                "`analysis_1d.py diags/diag1000080`",
+                "**案例闭环题。**",
+            )
+        ) and "UpdateDtFromParticleSpeeds" not in chapter_3
+        and "`algo.maxwell_solver = yee`" not in chapter_3
+        and not chapter_3_stale_location_markers,
         "chapter_2_math_and_case_closure": all(
             marker in chapter_2
             for marker in (

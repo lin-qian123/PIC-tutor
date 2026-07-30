@@ -31,6 +31,7 @@
 | `chapter_6_has_reader_facing_closure` | `PASS` |
 | `chapter_7_has_reader_facing_boundary_closure` | `PASS` |
 | `chapter_7_current_boundary_route` | `PASS` |
+| `chapter_6_7_field_to_boundary_handoff` | `PASS` |
 | `chapter_7_long_chapter_reader_navigation` | `PASS` |
 | `chapter_8_has_reader_facing_diagnostics_closure` | `PASS` |
 | `chapter_8_current_diagnostics_route` | `PASS` |

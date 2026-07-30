@@ -46,6 +46,15 @@ WarpX 官方理论文档将 PML、PEC、PMC、Silver-Mueller、周期边界和�
 
 这条路线的停止条件是：能够区分 field boundary、particle boundary、PML/guard-cell 与 AMR route 分别改变的状态，并说明为什么一个通过的 case 不能替代另一类边界或几何的验证。
 
+**从第 6 章场更新到第 7 章边界状态的交接卡。** “field push 已返回”不等于主域、PML、physical boundary 和所有 guard cell 已在同一时刻准备好给下一次粒子 gather 使用。应先辨认哪个操作施加物理边界，哪个操作交换或填充离散数组，再判断后续 consumer 实际读取的场状态。
+
+1. **FDTD 的物理边界在每次场更新内施加。** `EvolveB()` 和 `EvolveE()` 都先更新 regular cells，并在启用 PML 时更新 PML cells；随后以 `new_time` 调用 `ApplyBfieldBoundary()` 或 `ApplyEfieldBoundary()`。第二半 `EvolveB()` 结束后，主循环会在 `do_pml` 路径执行 `DampPML()`，并对 `E/B/F/G` 做 moving-window 宽度的 `FillBoundary*()`。源码明确注明此时主域内 `E/B` 已更新、但 guard cells 不必全都仍然新鲜；无 PML 时 `m_safe_guard_cells` 只会额外请求 `FillBoundaryB()`。因此不能把一次 FDTD field update 概括成“所有数组和 ghost region 已闭合”。
+2. **PSATD 的场边界和后续通信也分两层。** `PushPSATD()` 在谱空间更新后推进 PML box，并对每个 fine/coarse patch 施加 `ApplyEfieldBoundary()`、`ApplyBfieldBoundary()`；回到 `OneStep_nosub()` 后，普通 PSATD 路径才以 `ng_afterPushPSATD` 填充 `E/B`，并按 cleaning 选项填充 `F/G`。谱更新、physical boundary 和 guard-cell exchange 因而是相邻但不同的 consumer 交接点。
+3. **`FillBoundary` 不是物理边界条件的别名。** `FillBoundaryE/B(lev, ...)` 会分别处理 fine 与 coarse patch；有 PML 时还先执行 valid-domain 与 PML 的 `Exchange()`，再填 PML 及主域 guard cells。它传播或同步已有数组，不能代替 PEC、PMC、Silver-Mueller、axis 或 embedded-boundary 规则本身。下一次 explicit 路径由 `ExplicitFillBoundaryEBUpdateAux()` 按 `ng_FieldGather` 准备 `E/B`，更新 auxiliary fields 后再填 auxiliary guard cells；粒子 gather 消费的是这一步准备好的表示。
+4. **粒子边界仍是独立路径。** `HandleParticlesAtBoundaries()` 另行调用粒子 `ApplyBoundaryConditions()`、收集 domain/embedded-boundary scraping buffer 并重新分配粒子。即使场的 `E/B` 边界和 guard exchange 通过，也不能据此断言吸收、反射、记录或 AMR transition-zone 的粒子路由正确。
+
+验证必须针对实际 consumer：PEC/PMC 可比较反射后解析振幅或能量账本，PML 可比较反射率或残余场，restart 应逐字段比较恢复后的输出，而 transition zone 仍需要 pre-sync route count、weight 与 `rho/J` buffer 的账本。一个主域场 snapshot 或一次 `FillBoundary` 成功都不能单独证明完整的 field-to-boundary 链已经闭合。
+
 ## 7.0 源码入口地图
 
 本章不能只按“边界条件”这个名词归类，因为 WarpX 中的边界语义会穿过参数解析、场数组 guard cell、PML split field、粒子删除/反射/记录、诊断和 AMR 重建。以下列出读代码时需要反复回查的入口：

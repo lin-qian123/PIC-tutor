@@ -444,6 +444,20 @@ def main() -> int:
         )
         and not chapter_7_stale_location_markers
         and not chapter_7_project_path_markers,
+        "chapter_6_7_field_to_boundary_handoff": all(
+            marker in chapter_7
+            for marker in (
+                "从第 6 章场更新到第 7 章边界状态的交接卡",
+                "不等于主域、PML、physical boundary 和所有 guard cell 已在同一时刻准备好",
+                "FDTD 的物理边界在每次场更新内施加",
+                "`DampPML()`，并对 `E/B/F/G` 做 moving-window 宽度的 `FillBoundary*()`",
+                "普通 PSATD 路径才以 `ng_afterPushPSATD` 填充 `E/B`",
+                "`FillBoundary` 不是物理边界条件的别名",
+                "`ExplicitFillBoundaryEBUpdateAux()` 按 `ng_FieldGather` 准备 `E/B`",
+                "粒子边界仍是独立路径",
+                "一个主域场 snapshot 或一次 `FillBoundary` 成功都不能单独证明",
+            )
+        ) and not chapter_7_stale_location_markers and not chapter_7_project_path_markers,
         "chapter_7_long_chapter_reader_navigation": all(
             marker in chapter_7
             for marker in (

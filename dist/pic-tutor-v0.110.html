@@ -17128,6 +17128,55 @@ gather/deposition buffer、coarsen 和同步；最终 plotfile 或 checksum
 boundary、PML/guard-cell 与 AMR route
 分别改变的状态，并说明为什么一个通过的 case
 不能替代另一类边界或几何的验证。</p>
+<p><strong>从第 6 章场更新到第 7 章边界状态的交接卡。</strong> “field
+push 已返回”不等于主域、PML、physical boundary 和所有 guard cell
+已在同一时刻准备好给下一次粒子 gather
+使用。应先辨认哪个操作施加物理边界，哪个操作交换或填充离散数组，再判断后续
+consumer 实际读取的场状态。</p>
+<ol type="1">
+<li><strong>FDTD 的物理边界在每次场更新内施加。</strong>
+<code>EvolveB()</code> 和 <code>EvolveE()</code> 都先更新 regular
+cells，并在启用 PML 时更新 PML cells；随后以 <code>new_time</code> 调用
+<code>ApplyBfieldBoundary()</code> 或
+<code>ApplyEfieldBoundary()</code>。第二半 <code>EvolveB()</code>
+结束后，主循环会在 <code>do_pml</code> 路径执行
+<code>DampPML()</code>，并对 <code>E/B/F/G</code> 做 moving-window
+宽度的 <code>FillBoundary*()</code>。源码明确注明此时主域内
+<code>E/B</code> 已更新、但 guard cells 不必全都仍然新鲜；无 PML 时
+<code>m_safe_guard_cells</code> 只会额外请求
+<code>FillBoundaryB()</code>。因此不能把一次 FDTD field update
+概括成“所有数组和 ghost region 已闭合”。</li>
+<li><strong>PSATD 的场边界和后续通信也分两层。</strong>
+<code>PushPSATD()</code> 在谱空间更新后推进 PML box，并对每个
+fine/coarse patch 施加
+<code>ApplyEfieldBoundary()</code>、<code>ApplyBfieldBoundary()</code>；回到
+<code>OneStep_nosub()</code> 后，普通 PSATD 路径才以
+<code>ng_afterPushPSATD</code> 填充 <code>E/B</code>，并按 cleaning
+选项填充 <code>F/G</code>。谱更新、physical boundary 和 guard-cell
+exchange 因而是相邻但不同的 consumer 交接点。</li>
+<li><strong><code>FillBoundary</code> 不是物理边界条件的别名。</strong>
+<code>FillBoundaryE/B(lev, ...)</code> 会分别处理 fine 与 coarse
+patch；有 PML 时还先执行 valid-domain 与 PML 的
+<code>Exchange()</code>，再填 PML 及主域 guard
+cells。它传播或同步已有数组，不能代替 PEC、PMC、Silver-Mueller、axis 或
+embedded-boundary 规则本身。下一次 explicit 路径由
+<code>ExplicitFillBoundaryEBUpdateAux()</code> 按
+<code>ng_FieldGather</code> 准备 <code>E/B</code>，更新 auxiliary fields
+后再填 auxiliary guard cells；粒子 gather
+消费的是这一步准备好的表示。</li>
+<li><strong>粒子边界仍是独立路径。</strong>
+<code>HandleParticlesAtBoundaries()</code> 另行调用粒子
+<code>ApplyBoundaryConditions()</code>、收集 domain/embedded-boundary
+scraping buffer 并重新分配粒子。即使场的 <code>E/B</code> 边界和 guard
+exchange 通过，也不能据此断言吸收、反射、记录或 AMR transition-zone
+的粒子路由正确。</li>
+</ol>
+<p>验证必须针对实际 consumer：PEC/PMC
+可比较反射后解析振幅或能量账本，PML 可比较反射率或残余场，restart
+应逐字段比较恢复后的输出，而 transition zone 仍需要 pre-sync route
+count、weight 与 <code>rho/J</code> buffer 的账本。一个主域场 snapshot
+或一次 <code>FillBoundary</code> 成功都不能单独证明完整的
+field-to-boundary 链已经闭合。</p>
 <h2 id="源码入口地图">7.0 源码入口地图</h2>
 <p>本章不能只按“边界条件”这个名词归类，因为 WarpX
 中的边界语义会穿过参数解析、场数组 guard cell、PML split

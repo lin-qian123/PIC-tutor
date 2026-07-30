@@ -2,6 +2,8 @@
 
 ## 2026-07-31
 
+- [x] 衔接第 6--7 章的 field 到边界状态链：在第 7 章开头补入 FDTD/PSATD 的 physical boundary、PML damping/交换、fine/coarse guard-cell 填充、下一次 explicit gather 的 auxiliary-field 准备，以及独立粒子边界处理。明确一次 field push 或 `FillBoundary` 不能代替完整边界闭合；重建保持 267 页，PDF 第 210--211 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。
+
 - [x] 衔接第 5--6 章的 source 到场更新链：在第 6 章开头补入 FDTD、standard PSATD、JRhom、implicit 与 PML 的 consumer 交接卡。明确同步函数不是所有路径同一时刻完成 source 整理的同义句；FDTD 的 PML current、非周期 PSATD 的 correction/Vay 延后整理、JRhom 的子区间 source 时间模型和 implicit trial source 分别回到实际场更新与验证量。重建保持 267 页，PDF 第 173--174 页视觉复核通过；全书逐页通读、第三方材料许可和公开再分发仍未完成。
 
 - [x] 衔接第 4--5 章的多物理状态与沉积链：在第 5.4 节补入带电容器、离化态有效电荷、QED photon/pair、explicit collision split 和 implicit source 提交的检查卡；明确粒子侧事件不等于网格 source 已闭合，验证须回到匹配时间层的 `rho/J` 或连续性/Gauss-law residual。

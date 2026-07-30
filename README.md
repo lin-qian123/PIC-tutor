@@ -26,6 +26,8 @@
 
 第 7 章已完成边界、PML 与 AMR 主线的当前源码和读者路径复核：从 `WarpX::MakeWarpX()` 解析 field/particle 拓扑开始，经过场/粒子边界、PML/guard-cell 交换与 `RemakeLevel()` 的状态重建，最终回到反射率、残余场、scraped-particle buffer 和 AMR route ledger 等可观察量。章节已移除固定行号、内部笔记和维护路径；所有结论明确区分源码职责、案例证据和未闭合的 transition-zone 逐 route 账本。PDF 第 206、208、214、216、218 页的人工版式复核通过，详见 `docs/manual-editorial-spotcheck-v0.110.md`。
 
+第 6--7 章现明确场更新的边界交接：FDTD 与 PSATD 都在各自的场更新路径内施加 physical field boundary，但 PML damping、PML/主域交换和 fine/coarse guard-cell 填充是后续的不同操作；下一次 explicit particle gather 还会重建 auxiliary fields。读者因此可将 PEC/PMC/PML 的场验证、粒子 scraping 和 AMR transition-zone route 分开判断，不再以一次 field push、场快照或 `FillBoundary` 成功替代完整边界闭合。
+
 第 6 章已完成场求解器主线的当前源码与读者路径复核：从 `OneStep_nosub()` 中已同步的 `J/rho` 出发，区分 FDTD、PSATD 与 JRhom 的时间模型，再将 PML、guard-cell、几何/FFT 约束和对应观察量接回同一判断链。章节导航已移除内部笔记、运行归档和固定行号；Yee/CKC/Nodal、Galilean/Comoving PSATD、JRhom、隐式和 Hybrid PIC 的结论均保留各自可支持与不可外推边界。当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
 
 第 5--6 章现进一步补足 source-to-field 的实际交接：普通 FDTD 在同步后才按条件复制、阻尼 PML 电流并按交错时间层消费 source；非周期 PSATD 的 current-correction/Vay 路径会在 `PushPSATD()` 内完成最后的 correction 或重构；JRhom 则按子区间重新沉积、同步并变换 source。implicit residual 中的 trial source 也与一次已提交场更新明确区分，因此读者可按对应 consumer 选择 field/cleaning residual、Gauss-law、场能或迭代收敛，而不会把单个 source snapshot 当作整条链已经正确的证明。

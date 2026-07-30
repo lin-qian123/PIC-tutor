@@ -56,6 +56,11 @@ def main() -> int:
         r"(?:\.\./warpx/)?Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
     )
     chapter_3_workspace_markers = re.findall(r"\.\./warpx/", chapter_3)
+    chapter_3_project_narration_markers = re.findall(
+        r"当前实现限制最多两个 level|当前 subcycling 只支持|"
+        r"当前实现把 `max_particle_iterations=1`|当前源码禁止",
+        chapter_3,
+    )
     chapter_3a = (root / "manuscript/chapters/03a-warpx-initialization.md").read_text(
         encoding="utf-8"
     )
@@ -492,6 +497,17 @@ def main() -> int:
         and not chapter_3_stale_location_markers
         and not chapter_3_workspace_markers
         and not chapter_3_project_path_markers,
+        "chapter_3_lifecycle_reader_route": all(
+            marker in chapter_3
+            for marker in (
+                "读者的生命周期检查卡",
+                "输入参数先决定求解器、几何和 AMR 分支",
+                "初始化负责创建可被第一步消费的离散状态",
+                "外层步只定义 $t^n\\to t^{n+1}$ 的提交边界",
+                "单步分派才决定实际进入哪条时间合同",
+                "该函数拒绝超过两个 level，且要求 2:1 refinement ratio",
+            )
+        ) and not chapter_3_project_narration_markers,
         "chapter_3_cross_chapter_handoff": all(
             marker in chapter_3
             for marker in (
@@ -620,6 +636,7 @@ def main() -> int:
         "chapter_2_workspace_markers": chapter_2_workspace_markers,
         "chapter_3_project_path_markers": chapter_3_project_path_markers,
         "chapter_3_workspace_markers": chapter_3_workspace_markers,
+        "chapter_3_project_narration_markers": chapter_3_project_narration_markers,
         "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,
         "chapter_3a_project_path_markers": chapter_3a_project_path_markers,
         "chapter_3a_project_narration_markers": chapter_3a_project_narration_markers,

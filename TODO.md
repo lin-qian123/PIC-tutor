@@ -2,6 +2,7 @@
 
 ## 2026-07-31
 
+- [x] 完成第 3 章生命周期的读者审校：在 `OneStep()` 前加入“输入分支 -> 初始化离散状态 -> 外层提交边界 -> 单步时间合同 -> reference/observable”的检查卡；将 `OneStep_sub1()` 的两级/2:1、Picard 的最小 particle iteration 及 mass-matrix 的 3D/RSPHERE 限制改为函数或参数检查的明确边界，不再作为“当前源码”项目状态叙述。读者审计与构建验收新增第 3 章生命周期路线检查；重建保持 267 页，PDF 第 36、42、44 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。
 - [x] 完成第 2 章时间合同的读者审校与宽表修复：删除“本书采用的源码快照”叙事，新增外层物理时间步、细层真实推进、JRhom source 时间积分和 implicit RHS 试探的判断卡；将 `OneStep_sub1()` 的两级/2:1 约束与 electrostatic/subcycling 拒绝条件回到函数职责。把 2.6.2 的五列表改为标准显式、PSATD-JRhom 与 implicit 三条路径，消除隐式行的列间挤压。读者审计与构建验收新增第 2 章时间合同检查；重建保持 267 页，PDF 第 24--26 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。
 - [x] 完成第 1 章连续模型的读者审校：增加“连续对象 -> 静电近似 -> 宏粒子统计代价 -> 离散交接”的阅读路线，明确 \(dN_s=f_s\,d\mathbf{x}\,d\mathbf{p}\) 与 \(n_s=\int f_s\,d\mathbf{p}\) 的归一化，避免把单粒子轨道误当作分布函数；将 electrostatic mode 明确为不捕获传播辐射/激光的建模假设，不能由单帧近静电图像事后成立。读者审计与构建验收新增第 1 章连续模型路线检查；重建保持 267 页，PDF 第 9、12 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。
 - [x] 完成第 3A 章激光初始化与应用入口的读者化收束：以“问题/几何假设 -> 案例 -> producer、输出、独立 reference -> observable”替代 runtime matrix、active tests 和 checksum baseline 的项目记录叙事；区分天线注入、文件 profile、LWFA 与 BTD，并将 solid-target、FEL、AMR 激光和表面等离子体的可支持结论分别限定在 time-averaged `Ez`、gain length/wavelength、placement 与搭建范围。明确 file-driven external field 与 moving window 的选例边界。读者审计与构建验收新增激光案例路线检查；两个目录条目改为正文标签以消除目录孤页。重建为 267 页，PDF 第 6--8、65--66 页视觉复核通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。

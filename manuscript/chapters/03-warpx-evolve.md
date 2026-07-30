@@ -442,13 +442,23 @@ else:
 
 这段代码体现了 WarpX 的设计：`OneStep()` 不直接写某一种 PIC 算法的全部细节，而是先把路径分开。
 
+**读者的生命周期检查卡。** 从一个输入追到可比较的输出时，不要把函数名称当成时间层。先确认输入参数如何决定求解器、几何和 AMR 分支；再确认 `InitData()` 已创建可被第一步消费的离散状态；随后把 `Evolve()` 视为提交一个外层区间 $t^n\to t^{n+1}$ 的边界；最后才由 `OneStep()` 判断这个区间实际采用哪一条时间合同。每次读到一次循环、一次沉积或一次 RHS 评估，都要回问：它是在推进物理时间，还是在为同一外层步重建 source？输出文件出现后，还必须接回独立 reference 和 observable，不能把控制流命中当作物理验证。
+
+可将这条检查卡压成五个连续问题：
+
+1. 输入参数先决定求解器、几何和 AMR 分支；
+2. 初始化负责创建可被第一步消费的离散状态；
+3. 外层步只定义 $t^n\to t^{n+1}$ 的提交边界；
+4. 单步分派才决定实际进入哪条时间合同；
+5. 可观察输出必须与独立 reference 一起判断。
+
 | 分支 | 源码锚点 | 含义 |
 |---|---|---|
 | implicit solver | `m_implicit_solver->OneStep(...)` | 交给隐式 solver 自己推进一整步。 |
 | electrostatic / HybridPIC | `electromagnetic_solver_id == None/HybridPIC` | 粒子推进但跳过标准电磁沉积路径，场解在外层后处理。 |
 | 标准电磁无 MR | `finest_level == 0` | 进入 `OneStep_nosub()` 或 PSATD-JRhom。 |
 | 有 MR 无 subcycling | `!m_do_subcycling` | 仍进入 `OneStep_nosub()`，所有 level 使用同一步长推进。 |
-| 有 MR 且 subcycling | `m_do_subcycling` | 进入 `OneStep_sub1()`；当前实现限制最多两个 level。 |
+| 有 MR 且 subcycling | `m_do_subcycling` | 进入 `OneStep_sub1()`；该函数拒绝超过两个 level，且要求 2:1 refinement ratio。 |
 
 几个断言值得后续单独讲：
 
@@ -615,7 +625,7 @@ FDTD 分支的核心源码如下：
 
 理解这两个特殊分支时，先把它们放回主循环时间层。
 
-`OneStep_sub1()` 定义在 `Source/Evolve/WarpXEvolve.cpp`。当前 subcycling 只支持两个 level 和 refinement ratio 2：fine patch 用小步长推两次，coarse patch 和 mother grid 推一次，coarse 场使用两次 fine current 的平均效果。函数注释直接说明这一点：
+`OneStep_sub1()` 定义在 `Source/Evolve/WarpXEvolve.cpp`。这条 subcycling 路径要求两个 level 和 2:1 refinement ratio：fine patch 用小步长推两次，coarse patch 和 mother grid 推一次，coarse 场使用两次 fine current 的平均效果。入口断言与函数注释共同限定了这个适用范围：
 
 ```cpp
  * This version of subcycling only works for 2 levels and with a refinement
@@ -751,7 +761,7 @@ implicit 还有两个容易误读的实现边界：
 
 | 配置 | solver 对象 | 粒子/电流路径 | 关键边界 |
 | --- | --- | --- | --- |
-| `picard` | `PicardSolver` | 每次 RHS 直接用当前场推进粒子并沉积 `J` | 当前实现把 `max_particle_iterations=1`、`particle_tolerance=0` 固定为最小 Picard 路径 |
+| `picard` | `PicardSolver` | 每次 RHS 直接用当前场推进粒子并沉积 `J` | `parseNonlinearSolverParams()` 将 `max_particle_iterations=1`、`particle_tolerance=0` 设为最小 Picard 路径 |
 | `newton` | `NewtonSolver` | 非线性外层配合 JFNK；可选 particle suborbits 与 mass-matrix Jacobian | `use_mass_matrices_jacobian` 和 `use_mass_matrices_pc` 只能在该类 solver 中启用 |
 | `petsc_snes` | `PETScSNES` | 由 PETSc 管理 nonlinear/linear solve，仍复用 `PreRHSOp()` 构造源项 | 必须以 `AMREX_USE_PETSC` 编译，否则源码直接 abort |
 
@@ -776,7 +786,7 @@ $$
 
 `ComputeJfromMassMatrices()` 还必须处理 Yee/nodal staggering。源码先根据 `Jx/Jy/Jz` 的 `ixType()` 计算 `offset_xx ... offset_zz`，再用 `Sxx/Sxy/.../Szz` 的多分量 stencil 访问邻近电场。因此 mass matrix 不是一个可以在任意 centering 上直接相乘的标量系数；它同时编码了方向耦合、空间 support 和网格位置偏移。把它简写成 $M=\partial J/\partial E$ 只足以说明物理意图，不足以替代对 index type 和 component offset 的源码核对。
 
-配置层也有明确的几何限制：当前源码禁止 3D 使用 `use_mass_matrices_jacobian`，禁止 RSPHERE 使用 mass matrices；`mass_matrices_pc_width` 只在非 3D 情况下读取。因而这条路径不能被描述成所有 implicit geometry 的通用加速开关。
+配置层也有明确的几何限制：参数检查拒绝在 3D 启用 `use_mass_matrices_jacobian`，拒绝在 RSPHERE 使用 mass matrices；`mass_matrices_pc_width` 只在非 3D 情况下读取。因而这条路径不能被描述成所有 implicit geometry 的通用加速开关。
 
 最后，`particle_suborbits` 改变的是粒子响应如何被拆分，而不是外层物理时间步。在线性 Jacobian 阶段，若启用 suborbit，`PreRHSOp()` 可以只推进 suborbit 粒子并用 `ComputeJfromMassMatrices(J_from_MM_only)` 补齐响应；若未启用，则由 mass matrices 直接构造线性阶段的 `J`。这正是 implicit 验证必须同时记录 solver 类型、particle suborbit、mass-matrix 开关和最终 source gate 的原因。
 
@@ -794,7 +804,7 @@ $$
 - `warpx.cfl = 0.8`
 - 周期场边界
 
-这里需要避免一个常见误读：这个输入 **没有** 显式设置 `algo.maxwell_solver`。因此它不能用于证明某个 solver 参数由该输入给出；实际采用的默认 solver 必须回到该版本的 `ReadParameters()` 与官方文档确认。
+这里需要避免一个常见误读：这个输入 **没有** 显式设置 `algo.maxwell_solver`。因此它不能用于证明某个 solver 参数由该输入给出；实际采用的默认 solver 必须回到所用版本的 `ReadParameters()` 与官方文档确认。
 
 它成为可执行案例，是因为 `Examples/Tests/langmuir/CMakeLists.txt` 把它注册为 `test_1d_langmuir_multi`：一维、2 个 MPI rank，分析命令为 `analysis_1d.py diags/diag1000080`。也就是说，`max_step = 80` 只规定步数；最终 plotfile 名称和分析入口来自 CMake 注册，不能单凭步数猜出。
 

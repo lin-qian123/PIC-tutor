@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39289473,
+  "total_bytes": 39298289,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1555420,
-      "sha256": "6a697ae68f67b9a094ef908c9da73cbaf2e2f4f3750012378d608b04fea4dc2a"
+      "bytes": 1555875,
+      "sha256": "8aa76396adeb4273631b83d67a63c331add2712f2e005b4f6aecf3dc70f7d8ba"
     },
     {
       "path": "TODO.md",
-      "bytes": 1438971,
-      "sha256": "48511c0410c0fa7a6b38d07f8f889c381b439819b1b246e7b934050be093c953"
+      "bytes": 1439592,
+      "sha256": "6241d9d40ffce94a441aa26e6e683f3e51f63d9e60e6da7a1e6137e282a92018"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5243762,
-      "sha256": "5b1790e77d90f4041cf2c561a29e927643f1eb350922ff182aab77abad7b1e98"
+      "bytes": 5245079,
+      "sha256": "d8e07fafa51379e0bc747b2aefbb3087d279ff7010cb21ce341154ff9612e746"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 854428,
-      "sha256": "c9eaab9798285ace6d5bf3e6098735830e73e49d3389f2cb76d3481a89117f36"
+      "bytes": 855557,
+      "sha256": "9e2f41d82bc65dbc96d987ed9d93195bf864e9146f9288fbb515f0599fed93cb"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2995071,
-      "sha256": "2bb19c48a320d71486bc994a5d6a1a57a0afc85aeafff99df9f2d969629797fc"
+      "bytes": 2996799,
+      "sha256": "536b4e4939594c659fa867d99d3f2134175854599f8cfbcf6ec01c4fbbf49193"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -532,8 +532,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 43714,
-      "sha256": "7c0c824029fb7234ce227a35deccdf08f99e4531d434341cabad4954b2f78c47"
+      "bytes": 44391,
+      "sha256": "86f99c8db849454d59f99ab591ff702395ee962a85f7a1f1ec149e972d169bab"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -2317,8 +2317,8 @@
     },
     {
       "path": "manuscript/chapters/03-warpx-evolve.md",
-      "bytes": 50007,
-      "sha256": "70d63c87258953e86cc3a5a6adb969c20fbfe57cbce80f38fea19f06c825fbcd"
+      "bytes": 51136,
+      "sha256": "fde42fdce3df96b870cb1c3b2556aa45c4580925cfc4ab12d125c73273cb6fc5"
     },
     {
       "path": "manuscript/chapters/03a-warpx-initialization.md",
@@ -4587,8 +4587,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 33437,
-      "sha256": "60d5fdbbef27ea30ecb2ba9a94a9c0a80c409fe4b514df3942ef07b09bf635cd"
+      "bytes": 34359,
+      "sha256": "761aa4d7a3a4073841f3481b0e394813840f9b9fe2a512a2b4f3e7c62590f3c6"
     },
     {
       "path": "scripts/audit_release_consistency.py",
@@ -5987,8 +5987,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 46412,
-      "sha256": "d07c44b54dd855ce3868768973a346c95dfcdaf554adfeb559e07b4ef14db3c2"
+      "bytes": 47250,
+      "sha256": "cdcbca1faf21e68081c7b08c6a16a81d7edd736c4be60769559e39a1d6e307ec"
     },
     {
       "path": "scripts/verify_v40_build.py",

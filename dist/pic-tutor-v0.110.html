@@ -3236,6 +3236,25 @@ else:
             OneStep_nosub or OneStep_sub1</code></pre>
 <p>这段代码体现了 WarpX 的设计：<code>OneStep()</code> 不直接写某一种
 PIC 算法的全部细节，而是先把路径分开。</p>
+<p><strong>读者的生命周期检查卡。</strong>
+从一个输入追到可比较的输出时，不要把函数名称当成时间层。先确认输入参数如何决定求解器、几何和
+AMR 分支；再确认 <code>InitData()</code>
+已创建可被第一步消费的离散状态；随后把 <code>Evolve()</code>
+视为提交一个外层区间 <span class="math inline">\(t^n\to t^{n+1}\)</span>
+的边界；最后才由 <code>OneStep()</code>
+判断这个区间实际采用哪一条时间合同。每次读到一次循环、一次沉积或一次 RHS
+评估，都要回问：它是在推进物理时间，还是在为同一外层步重建
+source？输出文件出现后，还必须接回独立 reference 和
+observable，不能把控制流命中当作物理验证。</p>
+<p>可将这条检查卡压成五个连续问题：</p>
+<ol type="1">
+<li>输入参数先决定求解器、几何和 AMR 分支；</li>
+<li>初始化负责创建可被第一步消费的离散状态；</li>
+<li>外层步只定义 <span class="math inline">\(t^n\to t^{n+1}\)</span>
+的提交边界；</li>
+<li>单步分派才决定实际进入哪条时间合同；</li>
+<li>可观察输出必须与独立 reference 一起判断。</li>
+</ol>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -3274,7 +3293,8 @@ PIC 算法的全部细节，而是先把路径分开。</p>
 <tr>
 <td>有 MR 且 subcycling</td>
 <td><code>m_do_subcycling</code></td>
-<td>进入 <code>OneStep_sub1()</code>；当前实现限制最多两个 level。</td>
+<td>进入 <code>OneStep_sub1()</code>；该函数拒绝超过两个 level，且要求
+2:1 refinement ratio。</td>
 </tr>
 </tbody>
 </table>
@@ -3446,10 +3466,10 @@ half、是否跳过沉积、位置/动量 push 类型传入粒子容器。</li>
 与 JRhom 的位置</h2>
 <p>理解这两个特殊分支时，先把它们放回主循环时间层。</p>
 <p><code>OneStep_sub1()</code> 定义在
-<code>Source/Evolve/WarpXEvolve.cpp</code>。当前 subcycling 只支持两个
-level 和 refinement ratio 2：fine patch 用小步长推两次，coarse patch 和
-mother grid 推一次，coarse 场使用两次 fine current
-的平均效果。函数注释直接说明这一点：</p>
+<code>Source/Evolve/WarpXEvolve.cpp</code>。这条 subcycling 路径要求两个
+level 和 2:1 refinement ratio：fine patch 用小步长推两次，coarse patch
+和 mother grid 推一次，coarse 场使用两次 fine current
+的平均效果。入口断言与函数注释共同限定了这个适用范围：</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a> <span class="op">*</span> This version of subcycling only works <span class="cf">for</span> <span class="dv">2</span> levels <span class="kw">and</span> with a refinement</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a> <span class="op">*</span> ratio of <span class="fl">2.</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a> <span class="op">*</span> The particles <span class="kw">and</span> fields of the fine patch are pushed twice</span>
@@ -3662,9 +3682,9 @@ nonlinear solver、JFNK 与 mass-matrix：<code>J</code> 的三种构造层</h3>
 <td><code>picard</code></td>
 <td><code>PicardSolver</code></td>
 <td>每次 RHS 直接用当前场推进粒子并沉积 <code>J</code></td>
-<td>当前实现把
+<td><code>parseNonlinearSolverParams()</code> 将
 <code>max_particle_iterations=1</code>、<code>particle_tolerance=0</code>
-固定为最小 Picard 路径</td>
+设为最小 Picard 路径</td>
 </tr>
 <tr>
 <td><code>newton</code></td>
@@ -3716,8 +3736,8 @@ matrix 不是一个可以在任意 centering
 和网格位置偏移。把它简写成 <span class="math inline">\(M=\partial
 J/\partial E\)</span> 只足以说明物理意图，不足以替代对 index type 和
 component offset 的源码核对。</p>
-<p>配置层也有明确的几何限制：当前源码禁止 3D 使用
-<code>use_mass_matrices_jacobian</code>，禁止 RSPHERE 使用 mass
+<p>配置层也有明确的几何限制：参数检查拒绝在 3D 启用
+<code>use_mass_matrices_jacobian</code>，拒绝在 RSPHERE 使用 mass
 matrices；<code>mass_matrices_pc_width</code> 只在非 3D
 情况下读取。因而这条路径不能被描述成所有 implicit geometry
 的通用加速开关。</p>
@@ -3743,7 +3763,7 @@ suborbit、mass-matrix 开关和最终 source gate 的原因。</p>
 </ul>
 <p>这里需要避免一个常见误读：这个输入 <strong>没有</strong> 显式设置
 <code>algo.maxwell_solver</code>。因此它不能用于证明某个 solver
-参数由该输入给出；实际采用的默认 solver 必须回到该版本的
+参数由该输入给出；实际采用的默认 solver 必须回到所用版本的
 <code>ReadParameters()</code> 与官方文档确认。</p>
 <p>它成为可执行案例，是因为
 <code>Examples/Tests/langmuir/CMakeLists.txt</code> 把它注册为

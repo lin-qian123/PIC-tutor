@@ -8,7 +8,7 @@ PIC 程序的可信度来自验证，而不是来自输入文件能跑完。一�
 - 结果是否能和解析解、benchmark、regression 或文献对比；
 - 源码和分析脚本是否确实覆盖了所声称的运行路径。
 
-本章以 Langmuir wave、uniform plasma 和 LWFA/PWFA 作为三条诊断主线：解析波、热背景与应用工作流分别暴露不同的验证问题。
+本章不按文件格式罗列功能，而按一条读者可追踪的证据链展开：**先定义想测的物理量，再确认它从哪些运行态生成，接着选择 reader-side 的比较对象，最后标出该比较能支持和不能支持的结论。**Langmuir wave、uniform plasma 和 LWFA/PWFA 分别提供解析波、热背景与应用工作流三条主线；后半章再把同一方法落实到 full/reduced diagnostics、plotfile/openPMD/checkpoint 和边界粒子缓冲区。
 
 在进入具体案例前，可以先记住 Dawson 1983 对 diagnostics 的一个老判断：simulation 的目标是 physics essence，而不是 detail。也就是说，diagnostics 的价值不在于“把所有字段和粒子都写出来”，而在于能否把大规模数值状态压成可解释的 observables、谱、守恒量和 reader-side 证据。对二维和三维模型，这种 diagnostics / visualization / postprocessing 的难度甚至可能不低于模型本身。WarpX 的 full diagnostics、reduced diagnostics、back-transformed diagnostics、checkpoint 以及 openPMD/plotfile reader-side analysis，都不该只按 writer 类型分类，而应按“是否真正提炼出目标 physics”来理解。
 
@@ -21,7 +21,7 @@ PIC 程序的可信度来自验证，而不是来自输入文件能跑完。一�
 - drag
   - 不是看单粒子轨道，而是固定窄速度窗口后测群体平均速度衰减；
 - velocity diffusion
-  - 不是任意时段都能读系数，而要先识别 `\tau^2` 的 short-time regime 和 decorrelation 后的近线性 regime；
+  - 不是任意时段都能读系数，而要先识别 \(\tau^2\) 的 short-time regime 和 decorrelation 后的近线性 regime；
 - field fluctuations
   - 不是先看整张场图，而是先看每个 `k` mode 的 time-averaged modal energy 是否满足热平衡与 shape-modified fluctuation 预期。
 
@@ -34,13 +34,13 @@ PIC 程序的可信度来自验证，而不是来自输入文件能跑完。一�
 - time correlations：
   - 对应的 wave memory / decorrelation time 多长；
 - magnetized peaks：
-  - 是 Bernstein、upper-hybrid、ion-cyclotron、lower-hybrid，还是 `\omega=0` 的 convective-cell / charged-flux-tube 结构。
+  - 是 Bernstein、upper-hybrid、ion-cyclotron、lower-hybrid，还是 \(\omega=0\) 的 convective-cell / charged-flux-tube 结构。
 
 这对本章的直接约束是：thermal / noisy plasma diagnostics 不该只停在 field RMS 或总场能量上，而应继续追问谱线形状、linewidth、相关时间和 peak taxonomy。否则我们只能知道“有噪声”，却不知道噪声究竟来自随机 continuum、热平衡模、磁化谐波，还是低频结构化 cells。
 
-对 nonuniform plasma，Dawson 又把这条 diagnostics 合同推进了一步：reader-side analysis 的目标不只是标出某个 `\omega` 上“有一条峰”，而是重建该峰对应的空间波函数。做法是先记录 `\phi(\mathbf r,t)`、`\mathbf E(\mathbf r,t)` 或 `\mathbf B(\mathbf r,t)`；若系统在某个方向上均匀，就先沿该方向 Fourier 分解，再在剩余坐标上分析 `\phi(k_x,y,\omega)` 这类量。对离散谱线 `\omega_1`，可以把信号分别与 `\sin\omega_1 t` 和 `\cos\omega_1 t` 做相关积分，从而恢复 mode amplitude 和 phase profile。这里有个很硬的 measurement boundary：积分窗口 `T` 必须短于该 mode 的 damping time，否则初始 coherent oscillation 衰减后、由随机粒子运动重新激发的任意相位会把空间相位结构洗掉；长运行应拆成多个短窗口再平均，而不是简单延长一次积分。对连续谱也不能一概当噪声处理，因为其中既可能出现局域在某一小块等离子体区域的 localized oscillations，也可能只是 random particle motion 的 continuum；后者就必须继续测 `\delta v(\mathbf v,x,\omega)` 这类 kinetic quantity，而不能只停在势场或电场谱图。
+对 nonuniform plasma，Dawson 又把这条 diagnostics 合同推进了一步：reader-side analysis 的目标不只是标出某个 \(\omega\) 上“有一条峰”，而是重建该峰对应的空间波函数。做法是先记录 \(\phi(\mathbf r,t)\)、\(\mathbf E(\mathbf r,t)\) 或 \(\mathbf B(\mathbf r,t)\)；若系统在某个方向上均匀，就先沿该方向 Fourier 分解，再在剩余坐标上分析 \(\phi(k_x,y,\omega)\) 这类量。对离散谱线 \(\omega_1\)，可以把信号分别与 \(\sin\omega_1 t\) 和 \(\cos\omega_1 t\) 做相关积分，从而恢复 mode amplitude 和 phase profile。这里有个很硬的 measurement boundary：积分窗口 \(T\) 必须短于该 mode 的 damping time，否则初始 coherent oscillation 衰减后、由随机粒子运动重新激发的任意相位会把空间相位结构洗掉；长运行应拆成多个短窗口再平均，而不是简单延长一次积分。对连续谱也不能一概当噪声处理，因为其中既可能出现局域在某一小块等离子体区域的 localized oscillations，也可能只是 random particle motion 的 continuum；后者就必须继续测 \(\delta v(\mathbf v,x,\omega)\) 这类 kinetic quantity，而不能只停在势场或电场谱图。
 
-这一点又和 noisy start / quiet start 的工程边界连在一起。Dawson 明确指出，对 weak instability，random start 的主要问题不只是“图更吵”，而是它会直接限制增长率测量的动态范围：给定 `k` 模的初始涨落通常是 `N^{-1/2}` 量级，而弱不稳定最终可能只长到不到百分之一到几个百分点，于是总共可用的指数增长窗口只有有限的 `\gamma t`。作者给出的数量级判断是 `\gamma t \sim \frac{1}{2}\ln N`；即便 `N=10^5`，典型也只有大约 `5` 个 e-foldings，因此增长率往往只能测到二十个百分点量级，对更弱的不稳定性甚至会被 natural noise 直接淹没。更具体地说，纯随机空间加载还会强烈过激发 small-`k` long-wavelength electrostatic modes，因为它没有体现 Debye shielding 和局域电中性；这说明 quiet-start 或 cell-neutral loading 的意义不只是“让初值更平滑”，而是把 weak-effect measurements 的可识别动态范围从噪声底里救出来。
+这一点又和 noisy start / quiet start 的工程边界连在一起。Dawson 明确指出，对 weak instability，random start 的主要问题不只是“图更吵”，而是它会直接限制增长率测量的动态范围：给定 \(k\) 模的初始涨落通常是 \(N^{-1/2}\) 量级，而弱不稳定最终可能只长到不到百分之一到几个百分点，于是总共可用的指数增长窗口只有有限的 \(\gamma t\)。作者给出的数量级判断是 \(\gamma t \sim \frac{1}{2}\ln N\)；即便 \(N=10^5\)，典型也只有大约 `5` 个 e-foldings，因此增长率往往只能测到二十个百分点量级，对更弱的不稳定性甚至会被 natural noise 直接淹没。更具体地说，纯随机空间加载还会强烈过激发 small-\(k\) long-wavelength electrostatic modes，因为它没有体现 Debye shielding 和局域电中性；这说明 quiet-start 或 cell-neutral loading 的意义不只是“让初值更平滑”，而是把 weak-effect measurements 的可识别动态范围从噪声底里救出来。
 
 ### Dawson 统计诊断链：从 modal energy 到 normal-mode reconstruction
 
@@ -58,18 +58,18 @@ $$
 G(k,\omega)=4\int_0^\infty C(k,\tau)\cos(\omega\tau)\,d\tau.
 $$
 
-因此 power spectrum 和 time correlation 不是两个互不相关的后处理图，而是同一 fluctuation process 的频域/时域表示。有限 run length `T` 还给出不可绕过的频率分辨率边界 `\Delta\omega\simeq 1/T`：如果 `1/T` 大于目标谱线宽度，所谓 peak width 主要是窗函数和有限样本造成的，不能直接当成物理 damping rate。对长期运行，应按多个短窗口分别估计，再把统计量汇总，而不是盲目延长一个相位已经失真的积分窗口。
+因此 power spectrum 和 time correlation 不是两个互不相关的后处理图，而是同一 fluctuation process 的频域/时域表示。有限 run length \(T\) 还给出不可绕过的频率分辨率边界 \(\Delta\omega\simeq 1/T\)：如果 \(1/T\) 大于目标谱线宽度，所谓 peak width 主要是窗函数和有限样本造成的，不能直接当成物理 damping rate。对长期运行，应按多个短窗口分别估计，再把统计量汇总，而不是盲目延长一个相位已经失真的积分窗口。
 
-在磁化等离子体中，peak taxonomy 本身也是物理结果。Bernstein harmonics、upper-hybrid、ion-cyclotron、lower-hybrid，以及 `\omega=0` 附近的 convective-cell / charged-flux-tube 结构，不能统一归类为“噪声峰”；它们需要结合外磁场、species mobility 和空间结构共同解释。对非均匀等离子体，若沿均匀方向先做 Fourier 分解，可在剩余坐标上构造 `\phi(k_x,y,\omega)`；再把离散频率 `\omega_1` 的信号分别与 `\sin\omega_1t`、`\cos\omega_1t` 做相关积分，就能恢复 mode amplitude、phase 和空间波函数。这里的积分窗口必须短于该 mode 的 damping time，否则初始 coherent oscillation 衰减后，随机粒子运动重新激发的任意相位会把空间结构洗掉。
+在磁化等离子体中，peak taxonomy 本身也是物理结果。Bernstein harmonics、upper-hybrid、ion-cyclotron、lower-hybrid，以及 \(\omega=0\) 附近的 convective-cell / charged-flux-tube 结构，不能统一归类为“噪声峰”；它们需要结合外磁场、species mobility 和空间结构共同解释。对非均匀等离子体，若沿均匀方向先做 Fourier 分解，可在剩余坐标上构造 \(\phi(k_x,y,\omega)\)；再把离散频率 \(\omega_1\) 的信号分别与 \(\sin\omega_1t\)、\(\cos\omega_1t\) 做相关积分，就能恢复 mode amplitude、phase 和空间波函数。这里的积分窗口必须短于该 mode 的 damping time，否则初始 coherent oscillation 衰减后，随机粒子运动重新激发的任意相位会把空间结构洗掉。
 
-continuous spectrum 也不能自动当成无意义的背景。它可能包含局域在某一小块等离子体区域的真实振荡，也可能只是随机粒子运动的 continuum；后者需要进一步观察 `\delta v(\mathbf v,x,\omega)` 等 kinetic observable，而不是只凭势场或电场谱下结论。对 weak instability，随机初态的 `N^{-1/2}` 模涨落还会消耗可用的指数增长窗口，数量级上 `\gamma t\sim\frac12\ln N`；quiet-start / cell-neutral loading 的价值因此是提高可识别动态范围，而不是保证所有后续演化都更物理。上述统计链来自 Dawson 1983 的相关章节；它支撑的是 diagnostics 设计原则，不替代 WarpX 各案例已有的具体 runtime gate。
+continuous spectrum 也不能自动当成无意义的背景。它可能包含局域在某一小块等离子体区域的真实振荡，也可能只是随机粒子运动的 continuum；后者需要进一步观察 \(\delta v(\mathbf v,x,\omega)\) 等 kinetic observable，而不是只凭势场或电场谱下结论。对 weak instability，随机初态的 \(N^{-1/2}\) 模涨落还会消耗可用的指数增长窗口，数量级上 \(\gamma t\sim\frac12\ln N\)；quiet-start / cell-neutral loading 的价值因此是提高可识别动态范围，而不是保证所有后续演化都更物理。上述统计链来自 Dawson 1983 的相关章节；它支撑的是 diagnostics 设计原则，不替代 WarpX 各案例已有的具体 runtime gate。
 此外，`Birdsall 1985` 的 `13-6` 提醒我们：即使线性介电关系显示稳定，相对漂移仍可能把自由能转入非线性相空间 clump 与 density hole；因此接近稳定阈值的案例还应保留 phase-space correlation 观察，而不能只看场能量或把它直接归类为 NCI。
 
 再往实现层压一步，Dawson 给的 quiet-start recipe 也不是抽象建议，而是明确的 phase-space construction：把相空间切成 cells，把每个空间 cell 内的目标速度分布 `P(v)` 归一到该 cell 的粒子数，再把 `P(v)` 分成等面积小区间，每个区间放一个粒子并赋予相应代表速度。对任意目标分布，还可以先构造 cumulative map `y(v)=\int_{-\infty}^{v}P(v')\,dv'`，再用其反函数把 `[0,1]` 上的均匀变量映射成所需速度分布。这说明 diagnostics 一侧讨论 noisy/quiet starts 时，不能只写“quiet start 降噪”，还要看到它真正交换掉了什么：它用更规则的有限粒子 phase-space covering 换取更大的 weak-effect dynamic range，但简单的 equal-area placement 对 tail 或低密度关键区域的分辨能力有限，于是后面才需要 weighted particles / many-size electrons 继续补这条短板。
 
 ## Langmuir wave
 
-入口：`../warpx/Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
+入口：`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi`
 
 关键设置：
 
@@ -93,9 +93,9 @@ $$
 
 ![](../assets/figures/langmuir-field-vs-theory.png)
 
-图 8-1 由官方 Langmuir 输入和 `scripts/analyze_langmuir_frequency_fit.py` 生成；发布图像位于 `manuscript/assets/figures/`，正文不依赖临时运行目录。
+图 8-1 由官方 Langmuir 输入和 reader-side analysis 生成；发布图像位于 `manuscript/assets/figures/`，正文不依赖临时运行目录。
 
-Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族分别复用 `analysis_1d.py`、`analysis_2d.py`、`analysis_3d.py`、`analysis_rz.py`，因此共享同一个“解析场解逐点比较”的主合同；其中 3D 版本还额外检查 selective particle output 和 openPMD 粒子位置上的 `Ex/Ey/Ez` 场采样。`analysis_utils.py` 又把 charge-conservation 检查做成条件分支，只在 Esirkepov、Vay deposition 或 PSATD current-correction 这些适用组合下强制比较 `divE` 与 `rho/\epsilon_0`。与之并列的 `langmuir_fluids` 则是另一棵冷流体验证树：它不只看 `E`，还把 `J` 和 `rho` 一起与解析冷流体解比较。需要单独记住的是，2D/3D/RZ 的 PICMI 变体目前大多仍是 `analysis=OFF` 的前端 + checksum scaffold，不应和原生输入的强物理断言混成同一等级。
+Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族分别复用 `analysis_1d.py`、`analysis_2d.py`、`analysis_3d.py`、`analysis_rz.py`，因此共享同一个“解析场解逐点比较”的主合同；其中 3D 版本还额外检查 selective particle output 和 openPMD 粒子位置上的 `Ex/Ey/Ez` 场采样。`analysis_utils.py` 又把 charge-conservation 检查做成条件分支，只在 Esirkepov、Vay deposition 或 PSATD current-correction 这些适用组合下强制比较 \(\nabla\cdot\mathbf E\) 与 \(\rho/\epsilon_0\)。与之并列的 `langmuir_fluids` 则是另一棵冷流体验证树：它不只看 `E`，还把 `J` 和 `rho` 一起与解析冷流体解比较。需要单独记住的是，2D/3D/RZ 的 PICMI 变体目前大多仍是 `analysis=OFF` 的前端 + checksum scaffold，不应和原生输入的强物理断言混成同一等级。
 
 从应用综合章的角度，Langmuir wave 的价值不只是“有一个 textbook 解析解”，而是它把四条核心数值主线挂到了同一个最小物理问题上：
 
@@ -108,7 +108,7 @@ Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族�
    - `energy-conserving gather`
    - `Esirkepov`、`Vay deposition`
    - `momentum-conserving gather`
-   在这个最小问题上暴露 `divE-rho/\epsilon_0` 误差。
+   在这个最小问题上暴露 \(\nabla\cdot\mathbf E-\rho/\epsilon_0\) 误差。
 3. 场求解
    - FDTD
    - PSATD
@@ -137,13 +137,13 @@ Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族�
 归档的 1D 运行产物表明，这条主线不只停在源码和 analysis 脚本层；它产生 `diags/diag1000080`，并可用同一组解析式复核核心断言：
 
 - 解析场相对误差 `error_rel = 1.70e-3 < 5e-2`
-- `divE-rho/\epsilon_0` 相对误差 `8.35e-12 < 1e-11`
+- \(\nabla\cdot\mathbf E-\rho/\epsilon_0\) 相对误差 `8.35e-12 < 1e-11`
 
-因此 `Langmuir wave` 是运行级强基准，而不只是“源码上看起来应该能验证”的基准。读者可从 `Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 出发，用与源码快照匹配的 WarpX build 和 `analysis_1d.py` 重建同一条验证链；后文的频率拟合说明补充了逐快照证据。
+因此 `Langmuir wave` 是运行级强基准，而不只是“源码上看起来应该能验证”的基准。读者可从 `Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 出发，用与所用 WarpX 版本匹配的 build 和 `analysis_1d.py` 重建同一条验证链；后文的频率拟合说明补充了逐快照证据。
 
 ## Uniform plasma
 
-入口：`../warpx/Examples/Physics_applications/uniform_plasma/inputs_test_2d_uniform_plasma`
+入口：`Examples/Physics_applications/uniform_plasma/inputs_test_2d_uniform_plasma`
 
 关键设置：
 
@@ -202,22 +202,19 @@ Langmuir 验证树已经比这个 1D 入口更大。1D/2D/3D/RZ 原生输入族�
 
 ### Checkpoint/restart 的运行证据
 
-为把上面的 restart 说明从源码和 CMake wiring 推进到运行级证据，案例在
-`runs/stage-c-validation/uniform_plasma_3d_mpi2/` 复现了同一组 3D 输入：基线从第 0 步运行到第 10 步，并在第 6 步写出
-`diags/chk000006`；restart sibling 从该 checkpoint 继续运行到第 10 步。两条路径最终都写出 `diags/diag1000010`。
+对同一组 3D 输入，基线从第 0 步推进到第 10 步，并在第 6 步写出 `diags/chk000006`；restart sibling 从该 checkpoint 继续推进到第 10 步。两条路径最终都写出 `diags/diag1000010`，可据此直接比较末态。
 
-官方 `../warpx/Examples/analysis_default_restart.py` 与项目内
-`scripts/analyze_uniform_plasma_restart.py` 都对两个末态 plotfile 的 level-0 covering grid 逐字段比较。共比较 37 个 field，包含 `Bx/By/Bz`、`Ex/Ey/Ez`、`jx/jy/jz`、`rho`，以及 `electrons` 的粒子位置、动量、权重和粒子 ID；独立 reader-side 对照的最大绝对误差为 `2.4414e-4`，最大相对误差为 `2.8631e-16`，通过官方 `1e-12` 容差。绝对误差来自量纲较大的场/电流数组，不能脱离相对误差单独解释。
+官方 `Examples/analysis_default_restart.py` 与独立 reader-side 比较都会对两个末态 plotfile 的 level-0 covering grid 逐字段比较。共比较 37 个 field，包含 `Bx/By/Bz`、`Ex/Ey/Ez`、`jx/jy/jz`、`rho`，以及 `electrons` 的粒子位置、动量、权重和粒子 ID；独立对照的最大绝对误差为 `2.4414e-4`，最大相对误差为 `2.8631e-16`，通过官方 `1e-12` 容差。绝对误差来自量纲较大的场/电流数组，不能脱离相对误差单独解释。
 
 这一证据有两个必须同时保留的边界。第一，它直接证明的是 checkpoint 状态恢复、粒子/场续跑和末态 diagnostics 的 reproducibility，不是热平衡能量守恒或某个解析波的 physics gate。第二，WarpX 的 CMake 注册把该测试配置为 2-rank MPI；使用 MPICH `mpiexec -n 2` 按官方兄弟目录布局执行后，官方 `analysis_default_restart.py` 对 37 个 field 全部通过，独立 reader-side 对照的最大相对误差为 `2.8631e-16 < 1e-12`。但仓库 checksum API 的 rank-specific 聚合参考与 2-rank producer 不一致，最大相对差为 `3.20e-2`；因此这里应写成“2-rank restart reproducibility evidence”，同时保留 checksum 非通过边界，不能把逐字段 restart pass 扩大成 checksum pass。
 
-为解释这一 checksum 边界，使用同一 WarpX binary 和官方输入分别生成 1-rank、2-rank 的非 restart 基线，并运行 `scripts/analyze_uniform_plasma_mpi_consistency.py`。两套 producer 的粒子总权重完全一致；field energy 相对差为 `1.9379e-2`，particle kinetic energy 相对差为 `8.9170e-4`，total energy 相对差为 `6.2269e-4`，physical-field 最大 L2 相对差为 `1.0185`。因此该 thermal/randomized uniform-plasma case 的 rank-invariant field contract 明确不成立，checksum 差异不能被解释成 restart 失败；只有 2-rank restart 的 plotfile-to-plotfile 一致性可写成通过证据。1-rank/2-rank 报告位于 `runs/stage-c-validation/uniform_plasma_3d_mpi2/uniform-plasma-mpi-consistency.{json,md}`。
+为解释这一 checksum 边界，可在相同输入下分别生成 1-rank、2-rank 的非-restart 基线，再比较相同时间的输出。两套 producer 的粒子总权重完全一致；field energy 相对差为 `1.9379e-2`，particle kinetic energy 相对差为 `8.9170e-4`，total energy 相对差为 `6.2269e-4`，physical-field 最大 L2 相对差为 `1.0185`。因此该 thermal/randomized uniform-plasma case 的 rank-invariant field contract 明确不成立，checksum 差异不能被解释成 restart 失败；只有 2-rank restart 的 plotfile-to-plotfile 一致性可写成通过证据。
 
 图 8-11 将这条边界压成两个可读的面板：左图显示 2-rank 相对 1-rank 的全局能量比，右图显示 `B/E/J/rho` 各组 physical field 的最大 L2 相对误差。左图说明粒子动能和总能量仍接近，但右图说明逐场 rank-invariant gate 并未成立；虚线是参考值或 `1e-12` machine-level gate，不是本案例已经通过的物理阈值。
 
 ![](../assets/figures/uniform-plasma-mpi-consistency.png)
 
-图 8-11 由 `scripts/plot_uniform_plasma_mpi_consistency.py` 从 `uniform-plasma-mpi-consistency.json` 重新生成；该图展示的是并行证据边界，不是新的强 physics benchmark。
+图 8-11 由同一组输出的 reader-side 比较重建；该图展示的是并行证据边界，不是新的强 physics benchmark。
 
 ## LWFA/PWFA
 
@@ -261,7 +258,7 @@ $$
 
 这些式子最适合在本章里承担 `LWFA earliest scaling baseline` 的角色：它们解释为什么 wake phase velocity、dephasing、加速长度和 underdense-plasma driver 是同一条物理主线；但它们并不直接验证当代 WarpX 的 moving window、boosted frame、mesh refinement、openPMD 或 PICMI 前端实现。
 
-同时，这篇文章也不是只有解析公式。当前精读已经确认它还给出了一个最小 relativistic electromagnetic PIC demonstration：`1 1/2-D`、one spatial dimension、three velocity/field dimensions、Gaussian finite-size particles、固定离子背景，并通过扫描 `\omega/\omega_p` 去对照最早期 scaling。文中数值结果至少压实了三件事：
+同时，这篇文章也不是只有解析公式。当前精读已经确认它还给出了一个最小 relativistic electromagnetic PIC demonstration：`1 1/2-D`、one spatial dimension、three velocity/field dimensions、Gaussian finite-size particles、固定离子背景，并通过扫描 \(\omega/\omega_p\) 去对照最早期 scaling。文中数值结果至少压实了三件事：
 
 1. wake longitudinal field 可达到
    $$
@@ -269,11 +266,11 @@ $$
    $$
    即冷等离子体 wave-breaking 级上限的大约 `60%`；
 2. driver spectrum 会裂成多峰，作者明确解释为 successive / multiple forward Raman scattering，并把它和 photon deceleration、wake emission 联系起来；
-3. simulation 中的最大电子能量随 `(\omega/\omega_p)^2` 的变化基本贴合解析式，只是在高端开始受有限系统大小和周期边界污染。
+3. simulation 中的最大电子能量随 \((\omega/\omega_p)^2\) 的变化基本贴合解析式，只是在高端开始受有限系统大小和周期边界污染。
 
 这进一步说明：`Tajima-Dawson 1979` 能作为 `LWFA` 的 earliest scaling 与 minimal EM-PIC demonstration 文献入口，但它仍不能替代现代 WarpX `laser_acceleration` family 的 runtime regression 合同。
 
-文末还要再保留三条降级边界。第一，原文的 `feasible within present-day technology` 只是 1979 年语境下的工程可行性判断，后面立刻又承认 short-pulse shaping 仍需改进。第二，作者明确保留了 `\Delta\omega = \omega_p` 的 two-laser / beat-wave alternative，因此这篇文章更准确地支撑的是早期 wakefield family，而不是今天单一路径的单脉冲 `LWFA`。第三，pulsar atmosphere / cosmic-ray source 的段落只应当看作历史语境下的 speculative extrapolation，不能进入现代 WarpX 应用合同。
+文末还要再保留三条降级边界。第一，原文的 `feasible within present-day technology` 只是 1979 年语境下的工程可行性判断，后面立刻又承认 short-pulse shaping 仍需改进。第二，作者明确保留了 \(\Delta\omega = \omega_p\) 的 two-laser / beat-wave alternative，因此这篇文章更准确地支撑的是早期 wakefield family，而不是今天单一路径的单脉冲 `LWFA`。第三，pulsar atmosphere / cosmic-ray source 的段落只应当看作历史语境下的 speculative extrapolation，不能进入现代 WarpX 应用合同。
 
 ### LWFA：`laser_acceleration` 是 runtime matrix，不是统一 wake benchmark
 
@@ -387,7 +384,7 @@ wakefield acceleration runtime architectures
 - reduced diagnostics
 - PICMI front-end
 
-这条组合工作流的本地入口。
+这条组合工作流的应用入口。
 
 当前它在 CI 里的最硬断言来自 `analysis_test_laser_ion.py`，检查的是：
 
@@ -436,12 +433,12 @@ README 里的 `analysis_histogram_2D.py` 和 `plot_2d.py` 仍然很重要，但�
 - reflectivity benchmark
 - high-harmonic benchmark
 
-### `RPA/TNSA`：当前属于物理解释层，不属于本地应用目录层
+### `RPA/TNSA`：当前属于物理解释层，不属于独立应用目录层
 
 这条边界如果不写清，很容易把文献中的机制标签误写成案例库已有的独立 examples。最强、也最保守的结论只能是：
 
 1. `laser_ion`
-   - 是激光打固体平面靶的本地应用骨架；
+   - 是激光打固体平面靶的应用骨架；
 2. `RPA/TNSA`
    - 是理解这类骨架时需要引入的机制标签；
 3. 当前 `Examples/` 中
@@ -455,7 +452,7 @@ README 里的 `analysis_histogram_2D.py` 和 `plot_2d.py` 仍然很重要，但�
 laser-target applications
 -> laser_ion
 -> plasma_mirror
--> RPA/TNSA as mechanism labels, not standalone local trees
+-> RPA/TNSA as mechanism labels, not standalone application trees
 ```
 
 ## Capacitive discharge
@@ -498,7 +495,7 @@ laser-target applications
 - callback solver 已经实际运行；
 - `he_ions` 的 `z` 坐标访问链可用。
 
-因此这条应用树在工程上也不只是低温等离子体 benchmark，同时还是本地最直接的：
+因此这条应用树在工程上也不只是低温等离子体 benchmark，同时还是清晰的：
 
 - PICMI + Python callback Poisson solver
 
@@ -561,7 +558,7 @@ laser-target applications
 
 ### 既有 `plasma_acceleration` 目录边界
 
-入口：`../warpx/Examples/Physics_applications/plasma_acceleration/inputs_test_3d_plasma_acceleration_boosted`
+入口：`Examples/Physics_applications/plasma_acceleration/inputs_test_3d_plasma_acceleration_boosted`
 
 这一组也需要避免被过度解读。`plasma_acceleration` family 在 `CMakeLists.txt` 中所有活跃 tests 都是 `analysis = OFF`，只复用目录内的 `analysis_default_regression.py` 做 checksum。因此它们不是 “PWFA 解析 benchmark”，而是应用工作流基线。
 
@@ -750,7 +747,7 @@ beam and accelerator applications
 
 ### `free_electron_laser`：boosted rigid-beam + undulator + BTD 的强 benchmark
 
-`free_electron_laser` 当前不是普通 laser example，因为它本质上没有 laser antenna。已有本地笔记已经压实：
+`free_electron_laser` 当前不是普通 laser example，因为它本质上没有 laser antenna。源码与官方案例表明：
 
 - 核心是 `RigidInjectedParticleContainer`
 - `particles.By_external_particle_function(...)` 提供 undulator 外加粒子磁场
@@ -778,7 +775,7 @@ k_{\mathrm{pump}} = k_{\mathrm{EM}} + k_p,\qquad
 \omega_{\mathrm{pump}} = \omega_{\mathrm{EM}} + \omega_p(k_p).
 $$
 
-它的历史 simulation 结果还明确展示了 matching-condition 谱证据、约 `36%` 的 longitudinal current 下降、约 `30%` 的束流能量转成辐射，以及 `2\lambda_0` backward mode 的危险性。对本章来说，这组文献证据的作用不是替代当前 `analysis_fel.py`，而是把 WarpX 这条 `boosted rigid-beam + undulator + BTD` benchmark 放回更早的 relativistic EM-PIC 谱系里理解。
+它的历史 simulation 结果还明确展示了 matching-condition 谱证据、约 `36%` 的 longitudinal current 下降、约 `30%` 的束流能量转成辐射，以及 \(2\lambda_0\) backward mode 的危险性。对本章来说，这组文献证据的作用不是替代当前 `analysis_fel.py`，而是把 WarpX 这条 `boosted rigid-beam + undulator + BTD` benchmark 放回更早的 relativistic EM-PIC 谱系里理解。
 
 如果再把图像层次压得更明确，`Dawson 1983` 这条 FEL 历史线已经形成一个很完整的 diagnostics contract：
 
@@ -845,18 +842,9 @@ $$
 
 ## 诊断在源码中的位置
 
-`WarpX::Evolve` 中诊断不是附加脚本，而是时间步的一部分：
+`WarpX::Evolve` 中诊断不是附加脚本，而是时间步的一部分：每一步先由 `multi_diags->NewIteration()` 重置迭代状态；随后根据 `DoComputeAndPack()` 和 `reduced_diags->DoDiags()` 判断是否需要同步粒子速度、计算/打包 reduced 或 full diagnostics；最后通过 `FilterComputePackFlush()` 写出，并在最终时间步或中断时冲刷剩余数据。源码入口为 `Source/Evolve/WarpXEvolve.cpp`、`Source/Diagnostics/MultiDiagnostics.cpp` 与 `Source/Diagnostics/Diagnostics.cpp`。
 
-- 行 173：`multi_diags->NewIteration()`。
-- 行 323-330：判断是否需要为诊断同步粒子速度。
-- 行 337-344：reduced diagnostics 和 full diagnostics 的计算、打包、写出。
-- 行 374-382：最终时间步或中断时 flush last timestep。
-
-源码目录包括：
-
-- `../warpx/Source/Diagnostics/`
-- `../warpx/Regression/Checksum/`
-- `../warpx/Examples/analysis_default_regression.py`
+读源码时应区分三个职责入口：`Source/Diagnostics/` 负责对象生命周期和 writer，`Examples/Tests/` 中的 `analysis*.py` 定义具体物理或输出比较，`Regression/Checksum/` 只保存指定输出的回归基线。三者不能互相替代。
 
 更底层地看，`Source/Diagnostics` 顶层其实分成四层角色：
 
@@ -930,31 +918,31 @@ $$
 
 因此 checkpoint 的真正对象是 restart persistence，而不是用户筛选后的诊断视图。也正因为如此，`FullDiagnostics::ReadParameters()` 对 `format = checkpoint` 做了比文档更强的源码约束：不能自定义 `fields_to_plot`、不能裁剪 `diag_lo/diag_hi`、不能做 `coarsening_ratio`、不能指定 species 子集，也不能开 raw fields。它要求的是“全量可恢复状态”，不是“最小可读输出”。
 
-从现有本地例子看，这三类 writer 的最小输入骨架也已经比较稳定：
+从官方 examples 看，这三类 writer 的最小输入骨架已经比较稳定：
 
 - 普通 `plotfile`：只写 `diag1.diag_type = Full` 和一组 `fields_to_plot` 即可，`format` 缺省就是 plotfile。
 - `openPMD`：在 full diagnostics 上再加 `diag1.format = openpmd` 和 `diag1.openpmd_backend = h5/bp*`，`laser_ion` 已经给出了带 field filtering 的最小可复用骨架。
 - `checkpoint`：通常并行放一个 `diag1` 和一个 `chk`，后者写 `chk.diag_type = Full`、`chk.format = checkpoint`；重启则用 `amr.restart = "../.../chk000XXX"` 接回。
 
-对本章当前最相关的 reduced diagnostics，也已经能直接从本地 examples 抽出最小运行入口：
+对本章最相关的 reduced diagnostics，也可以直接从官方 examples 抽出最小运行入口：
 
 - `FieldProbe`：`Examples/Tests/reduced_diags/inputs_test_3d_reduced_diags` 和 `laser_ion` 都给了 point/line 的最小参数骨架。
 - `ParticleHistogram2D`：`laser_ion` 已经给了 `histogram_function_abs/ord` 与 `value_function = "w"` 的二维相空间例子。
 - `LoadBalanceCosts`：`Docs/source/usage/workflows/plot_distribution_mapping.rst` 与 `Examples/Tests/reduced_diags/analysis_reduced_diags_load_balance_costs.py` 已经构成最小“生成 + 画图/验效”工作流。
 
-如果要看 `FieldProbe` 的强 analysis regression，本地还有一组比这些“最小骨架”更直接的条目：`Examples/Tests/field_probe/`。它不是只检查文件格式，而是把 line `FieldProbe` 接到单缝衍射 benchmark 上。analysis 会从 `FP_line.txt` 读出 step 500 的积分电磁通量，再与解析 `sinc^2` 衍射包络比较，并要求平均相对误差小于 `2.5%`。按当前 checkout 的官方输入真实运行后，这条线暂时不能作为“已通过”的例子：1-rank 和官方 2-rank MPI 配置产生完全一致的 `FP_line.txt`，但 `analysis.py` 的平均误差都是 `3.6703%`，最大选点误差为 `10.0843%`。项目内的 `scripts/analyze_field_probe_diffraction.py` 已复现同一选点范围和分母，并将结果归档到 `runs/stage-c-validation/field_probe_2d/` 与 `field_probe_2d_mpi2b/`。
+如果要看 `FieldProbe` 的强 analysis regression，官方测试树中还有一组比这些“最小骨架”更直接的条目：`Examples/Tests/field_probe/`。它不是只检查文件格式，而是把 line `FieldProbe` 接到单缝衍射 benchmark 上。analysis 会从 `FP_line.txt` 读出 step 500 的积分电磁通量，再与解析 `sinc^2` 衍射包络比较，并要求平均相对误差小于 `2.5%`。按所检验的官方输入复现后，这条线暂时不能作为“已通过”的例子：1-rank 和官方 2-rank MPI 配置产生完全一致的 `FP_line.txt`，但 `analysis.py` 的平均误差都是 `3.6703%`，最大选点误差为 `10.0843%`；独立 reader-side 比较使用相同选点和分母，得到相同的结论。
 
-这里的失败本身是诊断章节需要保留的证据。它说明 reduced diagnostic 的 writer 合同已经接通：201 个 probe 点、step 500 的积分通量和 1/2-rank 一致性都成立；但这还不足以证明 `FieldProbe` 的物理量与解析衍射包络一致。随后将网格从官方的 `lambda/16` 加密到 `lambda/32`，并在相同物理时间的 step 1000 取样，官方同口径误差降为 `0.3533%`，最大选点误差为 `1.0414%`，通过 `2.5%` gate。对照报告位于 `runs/stage-c-validation/field_probe_resolution_comparison.md`。
+这里的失败本身是诊断章节需要保留的证据。它说明 reduced diagnostic 的 writer 链已经接通：201 个 probe 点、step 500 的积分通量和 1/2-rank 一致性都成立；但这还不足以证明 `FieldProbe` 的物理量与解析衍射包络一致。随后将网格从官方的 `lambda/16` 加密到 `lambda/32`，并在相同物理时间的 step 1000 取样，官方同口径误差降为 `0.3533%`，最大选点误差为 `1.0414%`，通过 `2.5%` gate。
 
-因此当前最稳妥的成书结论是：原始 coarse case 的“输出链通过、解析 physics gate 未通过”是真实结果；网格加密后的通过结果支持 coarse-grid 离散误差是主因，但不能把 refined case 的结果反写成原始官方输入已通过。关闭 filter 只能把误差略降至 `3.5910%`，而 `interp_order=0` 在当前分支产生零通量，后者应作为另一个需要单独审计的 raw-field gather 边界，而不是有效的物理改进方案。
+因此最稳妥的成书结论是：原始 coarse case 的“输出链通过、解析 physics gate 未通过”是真实结果；网格加密后的通过结果支持 coarse-grid 离散误差是主因，但不能把 refined case 的结果反写成原始官方输入已通过。关闭 filter 只能把误差略降至 `3.5910%`，而 `interp_order=0` 在所检验版本中产生零通量，后者应作为另一个需要单独审计的 raw-field gather 边界，而不是有效的物理改进方案。
 
 图 8-3 将这条边界画成两个并排面板：左图是官方 analysis 使用的平均误差和 `2.5%` gate，右图是 40 个选点中的最大误差。颜色只表示当前报告的 pass/fail 状态；refined 的通过来自 `lambda/32`、相同物理时间的 step 1000 对照，不是对 coarse 输入的重写。
 
 ![](../assets/figures/field-probe-resolution-comparison.png)
 
-图 8-3 由 `scripts/plot_field_probe_resolution.py` 从 `runs/stage-c-validation/field_probe_resolution_comparison.json` 重新生成。
+图 8-3 由同一组 `FieldProbe` 输出的 reader-side 比较重建。
 
-同一层里，本地还有两组更偏束流诊断的强 regression。`Examples/Tests/collider_relevant_diags/` 不是普通 reduced-output 烟雾测试，而是把 `ColliderRelevant` 与 `ParticleExtrema` 并排打开，然后用解析粒子样本逐项核对 `chi_min/max/ave`、`theta_x/theta_y` 的 min/ave/max/std，再从 full openPMD 的 `rho_beam_e/rho_beam_p` 重建 `dL/dt` 与 reduced output 交叉验证。也就是说，这组例子验证的不是“表格写出来了”，而是 collider-oriented reduced quantities 的定义和聚合合同本身。
+同一层里，官方测试树中还有两组更偏束流诊断的强 regression。`Examples/Tests/collider_relevant_diags/` 不是普通 reduced-output 烟雾测试，而是把 `ColliderRelevant` 与 `ParticleExtrema` 并排打开，然后用解析粒子样本逐项核对 `chi_min/max/ave`、`theta_x/theta_y` 的 min/ave/max/std，再从 full openPMD 的 `rho_beam_e/rho_beam_p` 重建 `dL/dt` 与 reduced output 交叉验证。也就是说，这组例子验证的不是“表格写出来了”，而是 collider-oriented reduced quantities 的定义和聚合合同本身。
 
 `Examples/Tests/diff_lumi_diag/` 则把 reduced diagnostics 进一步推进到带解析谱对照的束流物理量：一维 `DifferentialLuminosity` 文本表和二维 `DifferentialLuminosity2D` openPMD 网格同时输出，analysis 直接构造两束高斯束流对撞的解析 `dL/dE` 与 `d^2L/dE_1dE_2`，再分别比较 1D/2D diagnostics。对本章来说，这组例子非常有价值，因为它把“reduced diagnostics 可以是纯文本列，也可以是 openPMD 网格”这件事，用同一个物理 benchmark 明确落地了。
 
@@ -1276,7 +1264,7 @@ diags/chk/
 
 ### 模板 D：`BoundaryScraping/openPMD`
 
-本地最清楚的真实骨架来自 `thomson_parabola_spectrometer`：
+最清楚的官方骨架来自 `thomson_parabola_spectrometer`：
 
 ```text
 diagnostics.diags_names = screen
@@ -1343,7 +1331,7 @@ ts_scraping = OpenPMDTimeSeries("./diags/diag2/particles_at_eb/")
 
 ## Python 边界 buffer 的最小消费模板
 
-如果不想先把 scraped particles 写成 openPMD，而是直接在 Python 里消费 `ParticleBoundaryBuffer`，本地 examples 说明这条路也已经很稳定，而且至少有两种典型模式。
+如果不想先把 scraped particles 写成 openPMD，而是直接在 Python 里消费 `ParticleBoundaryBuffer`，官方 examples 给出两种典型模式。
 
 ### 模式 A：运行结束后统一检查
 
@@ -1522,13 +1510,13 @@ FI_PROVIDER=tcp
 
 ## Langmuir 与均匀等离子体的运行证据
 
-下面三项运行产物分别覆盖 Langmuir 时间采样、均匀等离子体守恒统计和二者的分析入口：
+下面三项 reader-side 比较分别覆盖 Langmuir 时间采样、均匀等离子体守恒统计和二者的分析入口：
 
-1. `runs/stage-c-validation/langmuir_frequency_fit/` 使用同一份 Langmuir 官方输入，只把 `diag1/openpmd.intervals` 从 `40` 改为 `1`，重新运行 80 步，得到 81 个逐步快照；
-2. `scripts/analyze_langmuir_frequency_fit.py` 对 `Ez` 的目标空间模做投影，并用两正交分量拟合时间频率，同时逐快照计算 `divE-rho/epsilon_0`；
-3. `scripts/analyze_uniform_plasma_conservation.py` 用 `yt` 读取 uniform-plasma 初末 plotfile，统计粒子数、粒子总权重、场能、粒子动能和总能量。
+1. 对同一份 Langmuir 官方输入，将 `diag1/openpmd.intervals` 从 `40` 改为 `1`，运行 80 步，得到 81 个逐步快照；
+2. 对 `Ez` 的目标空间模做投影，用两正交分量拟合时间频率，并逐快照计算 `divE-rho/epsilon_0`；
+3. 用 `yt` 读取 uniform-plasma 初末 plotfile，统计粒子数、粒子总权重、场能、粒子动能和总能量。
 
-Langmuir 结果记录在 `runs/stage-c-validation/langmuir_frequency_fit/langmuir-frequency-fit.md`：
+Langmuir 的受控复现实验给出：
 
 - `81` 个快照；
 - 解析 `omega_p=1.128292045086e14`，拟合值为 `1.128697661742e14`；
@@ -1536,20 +1524,20 @@ Langmuir 结果记录在 `runs/stage-c-validation/langmuir_frequency_fit/langmui
 - 官方 `analysis_1d.py` 在同一族运行上给出场最大相对误差 `1.70e-3`、最终 `divE-rho/epsilon_0` 误差 `8.35e-12`，均通过原始阈值；
 - 逐步 reader-side 扫描的最大守恒误差为 `3.149e-10`，发生在中间快照，因此不能把“每一步都满足官方 `1e-11` 阈值”写成已验证事实。
 
-Uniform-plasma 结果记录在 `runs/stage-c-validation/uniform_plasma_2d/uniform-plasma-conservation.md`：
+Uniform-plasma 的受控复现实验给出：
 
 - 初末粒子数均为 `65536`；
 - 粒子总权重相对变化为 `0`；
 - 初始场能量为零，所以场能相对变化率有意标记为 `undefined (zero baseline)`；
 - 粒子动能变化约 `7.06%`，总能量变化约 `1.97%`。
 
-随后又把同一输入副本延长到 `100` 步，并每 `10` 步写出一个 plotfile；长时间序列报告位于 `runs/stage-c-validation/uniform_plasma_2d_long/uniform-plasma-conservation.md`。粒子总权重在全部 `11` 个快照中保持不变，末态总能量相对初态变化 `1.387e-2`，时间序列中的最大绝对相对偏差为 `2.518e-2`。这比单看 10 步终点更能说明当前 workflow 的短时热背景统计范围，但仍不足以构成热平衡能量守恒 gate；后者应与 `energy_conserving_thermal_plasma` 的专门 analysis 合同绑定。
+将同一输入延长到 `100` 步、每 `10` 步写出一个 plotfile 后，粒子总权重在全部 `11` 个快照中保持不变，末态总能量相对初态变化 `1.387e-2`，时间序列中的最大绝对相对偏差为 `2.518e-2`。这比单看 10 步终点更能说明短时热背景统计范围，但仍不足以构成热平衡能量守恒 gate；后者应与 `energy_conserving_thermal_plasma` 的专门 analysis 绑定。
 
-这条专门合同由运行产物闭合。`runs/stage-c-validation/energy_conserving_thermal_plasma_2d/` 使用官方 2D 输入运行 500 步，产生 `EF.txt` 和 `EP.txt` 六个 reduced-energy 样本；官方 `Examples/Tests/energy_conserving_thermal_plasma/analysis.py` 通过，`scripts/analyze_energy_conserving_thermal_plasma.py` 也复现同一 `EF+EP` 计算，得到最大总能量相对漂移 `1.031e-4`，低于官方 `3.000e-3` 阈值。由此可以把两类证据明确分开：uniform-plasma 负责粒子数、I/O 和热背景 workflow 统计，energy-conserving-thermal-plasma 才负责 energy-conserving gather 的强能量漂移 gate。
+官方 2D `energy_conserving_thermal_plasma` 输入运行 500 步，产生 `EF.txt` 和 `EP.txt` 六个 reduced-energy 样本；其 `analysis.py` 通过，独立 reader-side 计算同一 `EF+EP`，得到最大总能量相对漂移 `1.031e-4`，低于官方 `3.000e-3` 阈值。由此可以把两类证据明确分开：uniform-plasma 负责粒子数、I/O 和热背景 workflow 统计，energy-conserving-thermal-plasma 才负责 energy-conserving gather 的强能量漂移 gate。
 
-同一官方 family 的 1D sibling 也完成了复现：`runs/stage-c-validation/energy_conserving_thermal_plasma_1d/` 的 500 步运行和官方 analysis 均通过，最大漂移为 `3.009e-4`。`scripts/compare_energy_conserving_thermal_plasma_family.py` 将 1D/2D 两份报告汇总为 `runs/stage-c-validation/energy_conserving_thermal_plasma_family.md`，两者共享 `EF+EP`、`0.003` 阈值和 6 个采样点的验证合同，但不把两种几何的物理轨迹误写成数值等价。
+同一官方 family 的 1D sibling 也在 500 步运行中通过官方 analysis，最大漂移为 `3.009e-4`。1D/2D 都使用 `EF+EP`、`0.003` 阈值和 6 个采样点，但不应把两种几何的物理轨迹误写成数值等价。
 
-图 8-2 把这两份 JSON 报告中的 `EF+EP` 和归一化漂移放在同一张图里。左图保留不同几何的能量尺度差异，右图直接与共同的 `0.003` gate 对照；因此读者可以同时看到“能量在场能与粒子能之间交换”和“总能量误差仍被 gate 约束”这两个不同层次。图表由 `scripts/plot_energy_conserving_thermal_plasma.py` 从 case-local JSON 重新生成。
+图 8-2 把 1D/2D 的 `EF+EP` 和归一化漂移放在同一张图里。左图保留不同几何的能量尺度差异，右图直接与共同的 `0.003` gate 对照；因此读者可以同时看到“能量在场能与粒子能之间交换”和“总能量误差仍被 gate 约束”这两个不同层次。
 
 ![](../assets/figures/energy-conserving-thermal-plasma-1d-2d.png)
 
@@ -1557,7 +1545,7 @@ Uniform-plasma 结果记录在 `runs/stage-c-validation/uniform_plasma_2d/unifor
 
 按官方 2-rank 配置执行 `Examples/Tests/reduced_diags/inputs_test_3d_reduced_diags` 后，末态为 `diags/diag1000200`。官方 `analysis_reduced_diags.py` 从该 plotfile 重新计算粒子能量/动量、场能/动量、场最大值、rho 最大值、粒子数以及 `FR_Max/FR_Min/FR_Integral/Edotj` 等 parser-driven `FieldReduction`，再逐项与 `EP/EF/PP/PF/MF/MR/NP/FR_*/Edotj.txt` 对照。
 
-共比较 60 个 reduced observable，官方 analysis 通过。除 field energy 外，最大相对误差为 `4.125e-13`；field energy 的相对误差为 `2.483e-1`，仍低于官方为 staggered Yee reduced energy 与 cell-centered plotfile reference 设置的专用 `0.3` 容差。项目内 `scripts/analyze_reduced_diags_contract.py` 保存了官方 analysis 的逐项摘要，报告位于 `runs/stage-c-validation/reduced_diags_3d_mpi2/reduced-diags-contract.md`。
+共比较 60 个 reduced observable，官方 analysis 通过。除 field energy 外，最大相对误差为 `4.125e-13`；field energy 的相对误差为 `2.483e-1`，仍低于官方为 staggered Yee reduced energy 与 cell-centered plotfile reference 设置的专用 `0.3` 容差。独立 reader-side 比较给出相同的误差分层。
 
 这条证据的准确含义是“compact reduced observable 与 full-state reference 的定义和 writer 输出一致”，不是说 60 个量都构成独立物理守恒定律。尤其 field energy 的 `24.8%` 误差必须保留其 staggered/cell-centered 离散表示边界，不能被误读成普通量的数值精度。
 
@@ -1565,7 +1553,7 @@ Uniform-plasma 结果记录在 `runs/stage-c-validation/uniform_plasma_2d/unifor
 
 ![](../assets/figures/reduced-diags-error-layers.png)
 
-图 8-4 由 `scripts/plot_reduced_diags_error_layers.py` 从 `runs/stage-c-validation/reduced_diags_3d_mpi2/reduced-diags-contract.json` 重新生成。
+图 8-4 由同一组 reduced diagnostics 与 full-state 输出的 reader-side 比较重建。
 
 ### LoadBalanceCosts：性能诊断的 efficiency gate
 
@@ -1576,20 +1564,20 @@ $$
 \sum_r \frac{C_r}{\max_{r'} C_{r'}}.
 $$
 
-它比较第 1 行（load balance 前）与第 2 行（load balance 后），要求 `eta_after > eta_before`。本地按官方 2-rank 配置分别运行 `Heuristic` 与 `Timers` 两个 sibling：
+它比较第 1 行（load balance 前）与第 2 行（load balance 后），要求 `eta_after > eta_before`。按官方 2-rank 配置分别运行 `Heuristic` 与 `Timers` 两个 sibling：
 
 | cost source | before | after | result |
 |---|---:|---:|---|
 | `Heuristic` | `0.625252` | `1.000000` | `PASS` |
 | `Timers` | `0.744780` | `0.996162` | `PASS` |
 
-报告位于 `runs/stage-c-validation/load_balance_costs_heuristic_mpi2/load-balance-costs.md` 和 `runs/stage-c-validation/load_balance_costs_timers_mpi2/load-balance-costs.md`。因此 `LoadBalanceCosts` 的强合同不是“有一个 LBC 文本文件”，而是它能把 box-level cost 通过 MPI 汇总成 rank-level efficiency，并观察到重分配后的效率改善；这属于性能/并行态验证，不应与 `reduced_diags` 的 compact physical observable 对照混成同一类 gate。
+因此 `LoadBalanceCosts` 的强合同不是“有一个 LBC 文本文件”，而是它能把 box-level cost 通过 MPI 汇总成 rank-level efficiency，并观察到重分配后的效率改善；这属于性能/并行态验证，不应与 `reduced_diags` 的 compact physical observable 对照混成同一类 gate。
 
 图 8-6 将两条 cost source 的 rank-level efficiency 直接画成 before/after 对照。Heuristic 从 `0.625252` 提升到 `1.0`，Timers 从 `0.744780` 提升到 `0.996162`；图表表达的是负载重分配后的性能改善，不是场或粒子物理精度。
 
 ![](../assets/figures/load-balance-efficiency.png)
 
-图 8-6 由 `scripts/plot_load_balance_efficiency.py` 从两份 `load-balance-costs.json` 重新生成。
+图 8-6 由 `LBC.txt` 的 reader-side 汇总重建。
 
 ### `ColliderRelevant`：束流统计与 luminosity-rate 聚合合同
 
@@ -1600,19 +1588,19 @@ $$
 \frac{\rho_{e,i}}{q_e}\frac{\rho_{p,i}}{q_p}.
 $$
 
-本地运行归档于 `runs/stage-c-validation/collider_relevant_diags_3d_mpi2/`：两个 openPMD iteration 都得到 `dL/dt = 4.42662301265625e8`，与 reduced text 的对应两行完全一致；`ColliderRelevant` 为 2 行/33 列，两个 `ParticleExtrema` 文件各为 2 行，官方 analysis 与项目内 `scripts/analyze_collider_relevant_contract.py` 均通过。该结果验证的是 collider-oriented quantity 的定义、统计和聚合 writer 合同，不等于已经完成 `diff_lumi_diag` 的解析谱 benchmark，也不等于 `beam_beam_collision` 的 QED 应用级物理复现。
+在两次 openPMD iteration 中，`dL/dt = 4.42662301265625e8`，与 reduced text 的对应两行完全一致；`ColliderRelevant` 为 2 行/33 列，两个 `ParticleExtrema` 文件各为 2 行，官方 analysis 与独立 reader-side 比较均通过。该结果验证的是 collider-oriented quantity 的定义、统计和聚合 writer 合同，不等于已经完成 `diff_lumi_diag` 的解析谱 benchmark，也不等于 `beam_beam_collision` 的 QED 应用级物理复现。
 
 图 8-7 将两个 openPMD iteration 的 `dL/dt` 交叉结果叠加显示。两个 reader-side reconstruction 点与 `ColliderRelevant` reduced 点完全重合，且 JSON 报告给出的相对误差均为 `0`；这张图验证的是聚合定义和 writer/reader 对齐，不是 luminosity 随束流演化的独立动力学 benchmark。
 
 ![](../assets/figures/collider-dldt-consistency.png)
 
-图 8-7 由 `scripts/plot_collider_luminosity_consistency.py` 从 `collider-relevant-contract.json` 重新生成。
+图 8-7 由同一 openPMD 与 reduced-output 对照重建。
 
 ### `DifferentialLuminosity`：1D/2D 解析谱与 AMR 对照
 
 `Examples/Tests/diff_lumi_diag/` 把 reduced diagnostics 推进到能量微分 luminosity 的解析 benchmark。共享的 `inputs_base_3d` 设定两束相向高斯束，1D `DifferentialLuminosity` 输出总能量谱，2D `DifferentialLuminosity2D` 输出两个入射束能量的二维网格；官方 `analysis.py` 分别用高斯束解析式比较末态 1D 与 2D 结果。这个分析依赖 `openpmd_viewer` 读取 2D openPMD series，而不是把二维数据误当作普通文本列。
 
-本地按官方 2-rank 配置完成三组 sibling，三组都在 step 80 输出 128 个 1D 能量 bin 和 `128 x 128` 的 2D 网格：
+按官方 2-rank 配置完成三组 sibling，三组都在 step 80 输出 128 个 1D 能量 bin 和 `128 x 128` 的 2D 网格：
 
 | case | AMR max level | 1D error / tolerance | 2D error / tolerance | result |
 |---|---:|---:|---:|---|
@@ -1620,29 +1608,29 @@ $$
 | leptons + AMR | 1 | `0.9796% / 2.0%` | `3.0042% / 4.0%` | `PASS` |
 | photons | 0 | `2.0119% / 2.1%` | `4.9327% / 6.0%` | `PASS` |
 
-报告位于 `runs/stage-c-validation/diff_lumi_diag_leptons_mpi2/diff-lumi-contract.md`、`diff_lumi_diag_leptons_mr_mpi2/diff-lumi-contract.md` 和 `diff_lumi_diag_photons_mpi2/diff-lumi-contract.md`，项目脚本为 `scripts/analyze_diff_lumi_contract.py`。这组结果补上了当前束流诊断链中此前缺少的解析谱 physics gate；AMR sibling 的意义是验证中心细化区域仍能保持相同的 reduced luminosity 定义，而不是宣称 AMR 与 uniform-grid 轨迹逐点相同。
+这些比较使用独立 reader-side analysis。这组结果补上了束流诊断链中的解析谱 physics gate；AMR sibling 的意义是验证中心细化区域仍能保持相同的 reduced luminosity 定义，而不是宣称 AMR 与 uniform-grid 轨迹逐点相同。
 
 图 8-5 将三组 sibling 的 1D/2D 相对误差和各自 gate 并列展示。photons 使用报告中独立的 `2.1%/6.0%` 容差，不能直接套用 leptons 的阈值；三组柱状值均低于对应虚线 gate，图表只表达解析谱误差合同，不把 reduced writer 的文件形状误写成额外物理结论。
 
 ![](../assets/figures/diff-lumi-errors.png)
 
-图 8-5 由 `scripts/plot_diff_lumi_errors.py` 从三份 `diff-lumi-contract.json` 重新生成。
+图 8-5 由三组解析谱比较的误差结果重建。
 
 ### `ParticleHistogram2D`：二维 openPMD writer 合同
 
-当前 checkout 没有单独的 `ParticleHistogram2D` CMake regression；本地采用 `Examples/Physics_applications/laser_ion/` 的官方 2-rank application 作为完整 producer。输入同时配置 `PhaseSpaceIons` 和 `PhaseSpaceElectrons` 两个二维 histogram：两者都使用 `z` 作为 abscissa、`uz` 作为 ordinate、`1000 x 1000` bins、`value_function = w`，而 electrons 还增加 `sqrt(x*x+y*y) < 1e-6` filter。官方 CMake analysis 只负责 time-averaged field 与 instantaneous field 的一致性，因此不能单独被写成 histogram physics gate；项目脚本 `scripts/analyze_particle_histogram2d_contract.py` 对 histogram series 做独立 writer 检查。
+官方测试树目前没有单独的 `ParticleHistogram2D` CMake regression；可用 `Examples/Physics_applications/laser_ion/` 的官方 2-rank application 作为完整 producer。输入同时配置 `PhaseSpaceIons` 和 `PhaseSpaceElectrons` 两个二维 histogram：两者都使用 `z` 作为 abscissa、`uz` 作为 ordinate、`1000 x 1000` bins、`value_function = w`，而 electrons 还增加 `sqrt(x*x+y*y) < 1e-6` filter。官方 CMake analysis 只负责 time-averaged field 与 instantaneous field 的一致性，因此不能单独被写成 histogram physics gate；独立 reader-side 检查则验证 histogram series 的 writer 语义。
 
-本地运行归档于 `runs/stage-c-validation/laser_ion_histogram2d_mpi2/`。两个 series 都写出 `0` 和 `100` 两个 BP5 iteration，数据形状均为 `1000 x 1000`，axis labels 为 `uz/z`，所有数据有限且存在非零 bin；官方 time-average analysis 通过。`PhaseSpaceIons.txt` 与 `PhaseSpaceElectrons.txt` 的大小均为 `0`，这是预期结果：`ParticleHistogram2D::WriteToFile()` 绕过基类逐行文本 writer，直接创建 `reducedfiles/<name>/openpmd_%T.<backend>` series，因此空 `.txt` companion 不能被误判成 histogram 丢失。
+在受控复现实验中，两个 series 都写出 `0` 和 `100` 两个 BP5 iteration，数据形状均为 `1000 x 1000`，axis labels 为 `uz/z`，所有数据有限且存在非零 bin；官方 time-average analysis 通过。`PhaseSpaceIons.txt` 与 `PhaseSpaceElectrons.txt` 的大小均为 `0`，这是预期结果：`ParticleHistogram2D::WriteToFile()` 绕过基类逐行文本 writer，直接创建 `reducedfiles/<name>/openpmd_%T.<backend>` series，因此空 `.txt` companion 不能被误判成 histogram 丢失。
 
 这条证据的边界也需要保留：它证明二维 histogram 的配置、openPMD layout、轴元数据和 writer 输出链成立，不等于已经用独立解析分布证明 laser-ion phase-space 的物理收敛性；后者需要更高分辨率/粒子数以及针对相空间分布的物理参考结果。
 
-在不改变这条边界的前提下，项目又用 `scripts/analyze_particle_histogram2d_moments.py` 对 BP5 数组做了 reader-side 加权统计。`PhaseSpaceIons` 的总权重从 iteration 0 的 `3.9975794429219594e18` 到 iteration 100 的 `3.997579442921919e18`，相对变化约 `1.0e-14`；`std(z)` 保持在 `1.47204e-6 m`，而 `std(uz)` 从数值零增长到 `4.78558e-4`。受径向 filter 影响的 `PhaseSpaceElectrons` 总权重从 `5.30929e17` 变为 `5.32861e17`，`std(uz)` 从 `0.196998` 变为 `0.199300`。这些统计量把“相空间图发生了什么变化”从视觉判断推进成了可复现的 weighted-moment 摘要，但仍不能替代更高分辨率/粒子数的 convergence study。报告位于 `runs/stage-c-validation/laser_ion_histogram2d_mpi2/particle-histogram2d-moments.{json,md}`。
+在不改变这条边界的前提下，reader-side analysis 对 BP5 数组做加权统计。`PhaseSpaceIons` 的总权重从 iteration 0 的 `3.9975794429219594e18` 到 iteration 100 的 `3.997579442921919e18`，相对变化约 `1.0e-14`；`std(z)` 保持在 `1.47204e-6 m`，而 `std(uz)` 从数值零增长到 `4.78558e-4`。受径向 filter 影响的 `PhaseSpaceElectrons` 总权重从 `5.30929e17` 变为 `5.32861e17`，`std(uz)` 从 `0.196998` 变为 `0.199300`。这些统计量把“相空间图发生了什么变化”从视觉判断推进成可复现的 weighted-moment 摘要，但仍不能替代更高分辨率/粒子数的 convergence study。
 
-随后又做了一个匹配物理时间的 producer 对照：baseline 使用 `384x512` 网格、`dt=1.083064693e-16 s`、100 步，refined 使用 `768x1024` 网格、`dt=5.415323467e-17 s`、200 步；两者最终时间差只有 `3.31e-29 s`。`scripts/analyze_particle_histogram2d_resolution.py` 对两个 BP5 series 的总权重、`std(z)` 和 `std(uz)` 设置了 `1e-3/1e-2/5e-2` 的局部稳定性阈值，ions/electrons 均通过：`std(z)` 相对差为 `5.51e-4/2.02e-4`，`std(uz)` 相对差为 `2.04e-3/4.47e-2`。这是“网格加密后 reader-side 加权宽度仍稳定”的项目级证据，不是严格的物理收敛阶证明；两套 producer 都是单进程，运行结束时的 OFI `MPI_Finalize` 环境尾噪声不影响已写出的 BP5 数据读取。
+随后又做了一个匹配物理时间的 producer 对照：baseline 使用 `384x512` 网格、`dt=1.083064693e-16 s`、100 步，refined 使用 `768x1024` 网格、`dt=5.415323467e-17 s`、200 步；两者最终时间差只有 `3.31e-29 s`。reader-side analysis 对两个 BP5 series 的总权重、`std(z)` 和 `std(uz)` 设置了 `1e-3/1e-2/5e-2` 的局部稳定性阈值，ions/electrons 均通过：`std(z)` 相对差为 `5.51e-4/2.02e-4`，`std(uz)` 相对差为 `2.04e-3/4.47e-2`。这是“网格加密后 reader-side 加权宽度仍稳定”的局部证据，不是严格的物理收敛阶证明；两套 producer 都是单进程，运行结束时的 OFI `MPI_Finalize` 环境尾噪声不影响已写出的 BP5 数据读取。
 
-同一脚本还记录了 `1x1` particles-per-cell 的负对照。它的 ions 宽度仍接近 baseline，但 electrons 总权重相对差为 `1.9471e-3`，超过 `1e-3` 阈值，因此 `weighted_width_stability` 被拒绝。这个负结果被保留为低采样负对照，而不是被静默删除；随后四档粒子数趋势 contract 将它与高粒子数局部稳定性分开处理。完整 JSON/Markdown 产物位于 `runs/stage-c-validation/laser_ion_histogram2d_resolution/`。
+同一比较还记录了 `1x1` particles-per-cell 的负对照。它的 ions 宽度仍接近 baseline，但 electrons 总权重相对差为 `1.9471e-3`，超过 `1e-3` 阈值，因此 `weighted_width_stability` 被拒绝。这个负结果应保留为低采样负对照，而不是被静默删除；高粒子数区间需要与它分开判断。
 
-为判断该负结果是否只是单个低采样点，又补做了 `1x1/2x2/4x4/8x8` 四档 particles-per-cell 序列，并用 `scripts/analyze_particle_histogram2d_particle_count.py` 做相邻档位比较。新增 `scripts/audit_particle_histogram2d_count_trend_contract.py` 将 `1x1 -> 2x2` 明确固定为预期负对照，将 `2x2 -> 4x4` 与 `4x4 -> 8x8` 固定为高粒子数局部稳定性 gate：electrons 总权重差依次为 `1.9471e-3`、`4.2685e-4`、`3.6534e-4`，ions/electrons 的总权重、`std(z)`、`std(uz)` 高粒子数 pair 均通过。这支持“增加粒子数后该 reader-side 统计总体更稳定”的方向性判断，但仍是单进程、单一激光离子 case 的局部矩合同，不足以给出正式收敛阶或上游 regression gate。8x8 producer 的 MPI 收尾仍出现本机 OFI `MPI_Finalize` 尾噪声，但 BP5 输出和独立读取均完整；趋势 contract 位于 `runs/stage-c-validation/particle-histogram2d-count-trend/contract.{json,md}`。
+为判断该负结果是否只是单个低采样点，比较 `1x1/2x2/4x4/8x8` 四档 particles-per-cell 的相邻档位：`1x1 -> 2x2` 是预期负对照，`2x2 -> 4x4` 与 `4x4 -> 8x8` 是高粒子数局部稳定性 gate。electrons 总权重差依次为 `1.9471e-3`、`4.2685e-4`、`3.6534e-4`，ions/electrons 的总权重、`std(z)`、`std(uz)` 在高粒子数 pair 均通过。这支持“增加粒子数后该 reader-side 统计总体更稳定”的方向性判断，但仍是单进程、单一激光离子 case 的局部矩比较，不足以给出正式收敛阶或上游 regression gate。
 
 图 8-8 直接从 BP5 series 读取 `PhaseSpaceIons` 与 `PhaseSpaceElectrons` 的 iteration 0/100 数据，并按每个面板的非零 bin 裁剪显示范围。它展示的是 writer 实际落盘的 `uz-z` 相空间结构和随 iteration 的变化；由于每个面板使用独立对数颜色归一化，颜色不能用于跨 species 或跨 iteration 的绝对产额比较。完整数组仍为 `1000 x 1000`，空 `.txt` sidecar 也仍是预期的 writer 路径边界。
 
@@ -1652,33 +1640,33 @@ $$
 
 ![](../assets/figures/particle-histogram2d-particle-count.png)
 
-图 8-8 由 `scripts/plot_particle_histogram2d.py` 从 `runs/stage-c-validation/laser_ion_histogram2d_mpi2/` 的 BP5 series 重新生成。
+图 8-8 由 BP5 series 的 reader-side 读取重建。
 
 ### `BeamRelevant`：束流矩与截断高斯束合同
 
 `BeamRelevant` 是文本型束流诊断，和 `ColliderRelevant` 的逐粒子 `chi/theta` 统计不同。3D 路径固定输出 22 个物理量：位置与动量均值、`gamma` 均值、位置/动量/`gamma` rms、三方向 emittance、Twiss `alpha/beta` 以及总 charge；连同步列和时间列共 24 列。其实现先按粒子权重做并行归约，再从二阶矩构造 rms、emittance 和 Twiss 量，因此最小验证应同时检查 schema、权重聚合和几何分布，而不是只检查文件存在。
 
-以官方 `initial_distribution` 中的 `beam` 参数为基准，可以用只包含该 beam、`bmmntr = BeamRelevant` 的 3D、1-rank、`max_step=0` 输入检查初始化束流矩。`scripts/analyze_beam_relevant_contract.py` 对 `bmmntr.txt` 的独立读取给出 1 行/24 列：`z_cut=2` 的截断高斯束 charge 期望值为 `-9.544997e-21 C`，实测为 `-9.544980e-21 C`，相对误差 `1.77e-6`；横向 rms 为 `0.249884/0.249765 m`，纵向 rms 为 `0.220356 m`，均通过 `2%` gate；均值、emittance、Twiss 相关输出均有限且满足正值边界。
+以官方 `initial_distribution` 中的 `beam` 参数为基准，可以用只包含该 beam、`bmmntr = BeamRelevant` 的 3D、1-rank、`max_step=0` 输入检查初始化束流矩。reader-side analysis 对 `bmmntr.txt` 的独立读取给出 1 行/24 列：`z_cut=2` 的截断高斯束 charge 期望值为 `-9.544997e-21 C`，实测为 `-9.544980e-21 C`，相对误差 `1.77e-6`；横向 rms 为 `0.249884/0.249765 m`，纵向 rms 为 `0.220356 m`，均通过 `2%` gate；均值、emittance、Twiss 相关输出均有限且满足正值边界。
 
 图 8-9 将这个初始化检查的两个主要物理量画出来：左图是实际总 charge 相对于截断高斯期望值的比值，右图是三个位置 rms 与解析目标的对照。图中没有把单行输出扩展成虚假的时间演化；gamma、emittance 和 Twiss 量仍只要求满足有限性与正值边界。
 
 ![](../assets/figures/beam-relevant-contract.png)
 
-图 8-9 由 `scripts/plot_beam_relevant_contract.py` 从对应的束流矩检查结果重新生成。
+图 8-9 由 reader-side analysis 从对应的束流矩检查结果重新生成。
 
 ### Native external-file Gaussian beam：束斑理论包络检查
 
-`gaussian_beam/CMakeLists.txt` 中的 native `test_3d_focusing_gaussian_beam_from_openpmd` 仍引用目录内不存在的 `analysis.py`，所以不能把它表述为已恢复的上游 CMake regression。可用的物理检查是：由 prepare 脚本和 native input 生成 plotfile 与 BP5 openPMD 输出，再用 `scripts/analyze_gaussian_beam_focus_contract.py` 独立读取 iteration 0 的 `x/y/z/w`，与理论束斑包络比较。
+`gaussian_beam/CMakeLists.txt` 中的 native `test_3d_focusing_gaussian_beam_from_openpmd` 仍引用目录内不存在的 `analysis.py`，所以不能把它表述为已恢复的上游 CMake regression。可用的物理检查是：由 prepare 脚本和 native input 生成 plotfile 与 BP5 openPMD 输出，再用 reader-side analysis 独立读取 iteration 0 的 `x/y/z/w`，与理论束斑包络比较。
 
-该输入产生 `1,999,966` 个宏粒子、总权重 `1.999966e10` 和 81 个有效 z slice；按 focal-distance 理论包络计算的最大相对误差为 `sigma_x = 3.0515e-2 < 0.051`、`sigma_y = 3.6214e-2 < 0.038`。官方 `analysis_focusing_beam.py` 也能处理同一输出。这个结果支持外部文件初始化后的束斑包络检查，但不表示缺失的上游 `analysis.py` 已恢复；可复查产物位于 `runs/stage-c-validation/gaussian_beam_native_openpmd/run/`。
+该输入产生 `1,999,966` 个宏粒子、总权重 `1.999966e10` 和 81 个有效 z slice；按 focal-distance 理论包络计算的最大相对误差为 `sigma_x = 3.0515e-2 < 0.051`、`sigma_y = 3.6214e-2 < 0.038`。官方 `analysis_focusing_beam.py` 也能处理同一输出。这个结果支持外部文件初始化后的束斑包络检查，但不表示缺失的上游 `analysis.py` 已恢复。
 
 图 8-10 直接从同一 BP5 iteration 0 重建每个 z slice 的加权 `sigma_x`、`sigma_y`，并与 focal-distance 理论包络叠加。它展示外部文件初始化后的真实粒子输出与理论束斑的一致性，而不是替代缺失的上游 `analysis.py`。
 
 ![](../assets/figures/gaussian-beam-focus-contract.png)
 
-图 8-10 由 `scripts/plot_gaussian_beam_focus_contract.py` 从对应的 Gaussian beam 输出重新生成。
+图 8-10 由 reader-side analysis 从对应的 Gaussian beam 输出重新生成。
 
-完整官方 `Examples/Tests/initial_distribution/` input 已由对应源码重建的 binary 复现。producer 和官方 `analysis.py` 均以 exit code `0` 结束，10 类分布的最大相对差为 `1.8931e-2 < 0.02`。仓库 checksum 默认 `rtol=1e-9` 观察到最大相对差 `3.18e-3`，反映随机采样而非初始化失败；在显式记录的 `rtol=5e-3` sampling tolerance 下通过。因此该案例的结论是“官方分布 analysis 通过、随机 checksum 有条件通过”，但不宣称确定性 `1e-9` checksum 相等。证据目录为 `runs/stage-c-validation/initial_distribution_full_current/`。
+完整官方 `Examples/Tests/initial_distribution/` input 已由对应源码重建的 binary 复现。producer 和官方 `analysis.py` 均以 exit code `0` 结束，10 类分布的最大相对差为 `1.8931e-2 < 0.02`。仓库 checksum 默认 `rtol=1e-9` 观察到最大相对差 `3.18e-3`，反映随机采样而非初始化失败；在显式记录的 `rtol=5e-3` sampling tolerance 下通过。因此该案例的结论是“官方分布 analysis 通过、随机 checksum 有条件通过”，但不宣称确定性 `1e-9` checksum 相等。
 
 ### 第 8 章验证矩阵：观察量、结论与边界
 
@@ -1725,7 +1713,7 @@ $$
 ## 8.15 练习与复现实验
 
 1. **证据分层题**：从验证矩阵中各选一个 physics gate、writer/schema 检查和 performance gate，说明它们的 producer、analysis 量和“不能支持的结论”。
-2. **reader-side 复现题**：使用 `scripts/analyze_collider_relevant_contract.py` 或 `scripts/analyze_particle_histogram2d_contract.py` 读取一个案例输出，列出输入字段、输出文件和独立检查项。
+2. **reader-side 复现题**：使用 reader-side analysis 或 reader-side analysis 读取一个案例输出，列出输入字段、输出文件和独立检查项。
 3. **失败边界题**：解释为什么 FieldProbe coarse failure、uniform-plasma reader-side 能量漂移和 initial-distribution binary mismatch 都应保留在书中，而不能简单从验证矩阵中删除。
 
 ## 8.16 延伸验证路线

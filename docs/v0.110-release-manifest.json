@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1249,
-  "total_bytes": 39238831,
+  "total_bytes": 39230598,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1549731,
-      "sha256": "d00a2dc07da4617e90935120de8f77f2326d98c05417198097b512678e85c874"
+      "bytes": 1550360,
+      "sha256": "5739c94ae781e28443f558cd4fa96ff75c6e485a1d2ea450f865ebd700663240"
     },
     {
       "path": "TODO.md",
-      "bytes": 1427490,
-      "sha256": "049a82ac97b98b809a8f28c17caeb4a8a9f6f3d8aadbea222f7b03916bcd32ce"
+      "bytes": 1428179,
+      "sha256": "c116abbea9e8fcc0aed671d9a7049609aaef95ba751e4fb1d96a2d09605f49c1"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5247390,
-      "sha256": "ae3778832866351f6af034973978a5bdd606df5a83c2e9fc0e8ecf15cfb918b7"
+      "bytes": 5244478,
+      "sha256": "ce51cc58f5505feb4845debe4592f7197e6f1867f084458025536e7ce2a19151"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 859630,
-      "sha256": "4af2c98d258523d080ff33b23b0b6b6cd4599e58577e0c335701331035e96fee"
+      "bytes": 856540,
+      "sha256": "14979323ca0440075f6e690da41f7380028913e243b1dd39ccfff9dbd0ec2ee4"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2997139,
-      "sha256": "64e22300c8b2f34a293299c0e1c5cf381e1c412f18bd35b035608c08dc45a022"
+      "bytes": 2992216,
+      "sha256": "9398b9297eae88671dbf54ad83820ab6ed6b97f699bf8a43dd57f0efb49c1faa"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -198,12 +198,12 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.json",
       "bytes": 1164,
-      "sha256": "9a20750f03d928c65083b9d586fe78075144c24d42263e64dd88dfb0cd4082ee"
+      "sha256": "9f1bd7688fbc5f8e2a5b8cd9fd6a97fb9fe28e93766df92f97d4ea7e3161f936"
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
       "bytes": 768,
-      "sha256": "d03c94f84fb66cbb353aaae9e9d75e2dbf22fca9710a0afcb22fc8c405fa1253"
+      "sha256": "1db1799232179007bfcf07a7ab1fb335f4852063609c3c7aaf3a80a8b2f866a0"
     },
     {
       "path": "docs/editorial-quality-audit-v0.81.json",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 31328,
-      "sha256": "f1b37c81096f37a281f124929b5fd5332a4db648d0701168978e7e084d2ada8e"
+      "bytes": 32332,
+      "sha256": "faa298fb3f53e906590c2d0a5f70c13d74c1388502b7d1320590da6616d03d0c"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -668,12 +668,12 @@
     {
       "path": "docs/pdf-layout-audit-v0.110.json",
       "bytes": 646,
-      "sha256": "0720a4b613c85c326e073b801f62362cddf353bda10aa73133eda539caf5528f"
+      "sha256": "711563679d23b0ecc53008b03d38d468e3f60117a1eb85711f5d7e4e32be1540"
     },
     {
       "path": "docs/pdf-layout-audit-v0.110.md",
       "bytes": 571,
-      "sha256": "b6a61de625eb37f3f6fc1f431267b12a9a704673e17ef3a6bfa64a24f67cb683"
+      "sha256": "79b5a6fadea53e117a7130b3ab9b3816bddaabfbe2848624d9d510495960cd9e"
     },
     {
       "path": "docs/pdf-layout-audit-v0.82.json",
@@ -902,18 +902,18 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 12814,
-      "sha256": "9049e8db4549a151bbf8b0928ab38a4e5a13e0f88c0f48fe616f84df883fde5f"
+      "bytes": 13467,
+      "sha256": "701aa11a7e3baafb58e1ccf891496f4f3c9b76e748ebca2a079f4e5bd8a591a7"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
-      "bytes": 2389,
-      "sha256": "8f9c585d48bd78f51758f82e324980edd310ea530cc2fc2f9c3afe2f99be1b01"
+      "bytes": 2565,
+      "sha256": "4fb0483addfb7ceb41f8bdebb935bfc3a9bcf4ff0a61c86893dc8f6813872557"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.md",
-      "bytes": 1581,
-      "sha256": "eaae69736e5e4757142073470bea911c6346c267cb6a869bb89fe22be84c55f4"
+      "bytes": 1632,
+      "sha256": "fb1488fffa6b13439eef4c51f220ba4d53d7e279a26ed9260095c7cc8d483456"
     },
     {
       "path": "docs/rz-axis-charge-repeat-stability-v0.93.json",
@@ -2327,8 +2327,8 @@
     },
     {
       "path": "manuscript/chapters/08-diagnostics-cases.md",
-      "bytes": 110582,
-      "sha256": "37c97e8652dde1ebd035b80d1dd0855f209d17e792e38ece28a2bdfd62a31f78"
+      "bytes": 107492,
+      "sha256": "4375881628df76310670b06af37fcdffedef2a9e2c3ddc1ac6189ea792b9d8a2"
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
@@ -4507,8 +4507,8 @@
     },
     {
       "path": "scripts/audit_pdf_layout.py",
-      "bytes": 4221,
-      "sha256": "84310cb85345b0ee59800210b0be9b72bb1824a95cf47a182e87e5d8fa73c390"
+      "bytes": 4310,
+      "sha256": "3f71ee5adfa44fa67bbac3a6b7c3983ee2570e18e4d3dd2fabace6ae9e850220"
     },
     {
       "path": "scripts/audit_peiravi_birdsall_1978_asset_contract.py",
@@ -4567,8 +4567,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 17094,
-      "sha256": "b4d57ab8688b72c9b7d453d594f9b007c416983630215aee42ce21497ed94d09"
+      "bytes": 18561,
+      "sha256": "0b95198c6164cf1728568698007c0a6877eb5e88eb2012ef557430ec5628a184"
     },
     {
       "path": "scripts/audit_release_consistency.py",
@@ -5967,8 +5967,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 31224,
-      "sha256": "2604cb052296ff9eadda6a124a154f9376a77f58179bdfb101c91d3ec4e26084"
+      "bytes": 32248,
+      "sha256": "5e84ae773b0194e8fb20f2cdf5d901b6d722e61be9cb3127f0eedbb14b8ef9d1"
     },
     {
       "path": "scripts/verify_v40_build.py",

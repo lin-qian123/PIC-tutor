@@ -62,6 +62,10 @@ def main() -> int:
         r"(?:Source/[A-Za-z0-9_./-]+\.(?:cpp|H)|Docs/[A-Za-z0-9_./-]+\.rst):\d+",
         chapter_7,
     )
+    chapter_8_stale_location_markers = re.findall(
+        r"(?:Source/[A-Za-z0-9_./-]+\.(?:cpp|H)|Docs/[A-Za-z0-9_./-]+\.rst):\d+",
+        chapter_8,
+    )
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -136,6 +140,15 @@ def main() -> int:
     chapter_8_project_record_markers = re.findall(
         r"本章正文与源码同步合同|交叉检查脚本|最小输入审计脚本|runs/stage-c-validation",
         chapter_8_closure,
+    )
+    chapter_8_project_path_markers = re.findall(
+        r"scripts/|notes/code-reading|runs/stage-c-validation|"
+        r"docs/chapter-08-v0-evidence-ledger|contract\.\{json,md\}",
+        chapter_8,
+    )
+    chapter_8_project_narration_markers = re.findall(
+        r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录",
+        chapter_8,
     )
     checks = {
         "version_is_reader_facing": "不是开发日志" in version and "读者在本版可以学到什么" in version,
@@ -243,7 +256,24 @@ def main() -> int:
                 "先写问题和比较对象",
             )
         )
-        and not chapter_8_project_record_markers,
+        and not chapter_8_project_record_markers
+        and not chapter_8_project_path_markers
+        and not chapter_8_project_narration_markers
+        and not chapter_8_stale_location_markers,
+        "chapter_8_current_diagnostics_route": all(
+            marker in chapter_8
+            for marker in (
+                "本章不按文件格式罗列功能",
+                "先定义想测的物理量",
+                "WarpX::Evolve",
+                "MultiDiagnostics",
+                "ReducedDiags",
+                "## 8.15 练习与复现实验",
+            )
+        )
+        and not chapter_8_project_path_markers
+        and not chapter_8_project_narration_markers
+        and not chapter_8_stale_location_markers,
         "chapter_2_3_have_reader_facing_routes": all(
             marker in chapter_2
             for marker in (
@@ -307,6 +337,9 @@ def main() -> int:
         "chapter_7_project_path_markers": chapter_7_project_path_markers,
         "chapter_7_stale_location_markers": chapter_7_stale_location_markers,
         "chapter_8_project_record_markers": chapter_8_project_record_markers,
+        "chapter_8_project_path_markers": chapter_8_project_path_markers,
+        "chapter_8_project_narration_markers": chapter_8_project_narration_markers,
+        "chapter_8_stale_location_markers": chapter_8_stale_location_markers,
         "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
         "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,
         "chapter_4_stale_location_markers": chapter_4_stale_location_markers,

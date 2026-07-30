@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The current Chapter 6 reader-path revision compacts the built layout to 263 pages.
-EXPECTED_PDF_PAGES = 263
+# The current Chapter 8 reader-path revision compacts the built layout to 261 pages.
+EXPECTED_PDF_PAGES = 261
 
 
 def image_links(text: str) -> list[str]:
@@ -105,6 +105,13 @@ def main() -> None:
     chapter_7_stale_location_markers = re.findall(
         r"(?:Source/[A-Za-z0-9_./-]+\.(?:cpp|H)|Docs/[A-Za-z0-9_./-]+\.rst):\d+",
         chapter_7,
+    )
+    chapter_8 = (ROOT / "manuscript" / "chapters" / "08-diagnostics-cases.md").read_text(
+        encoding="utf-8"
+    )
+    chapter_8_stale_location_markers = re.findall(
+        r"(?:Source/[A-Za-z0-9_./-]+\.(?:cpp|H)|Docs/[A-Za-z0-9_./-]+\.rst):\d+",
+        chapter_8,
     )
     chapter_3a_numbers = [
         int(number)
@@ -214,6 +221,24 @@ def main() -> None:
             r"scripts/|notes/code-reading|runs/stage-c-validation|"
             r"docs/chapter-07-v0-evidence-ledger|contract\.\{json,md\}",
             chapter_7,
+        ),
+        "chapter_8_current_diagnostics_route": all(
+            marker in chapter_8
+            for marker in (
+                "本章不按文件格式罗列功能",
+                "先定义想测的物理量",
+                "WarpX::Evolve",
+                "MultiDiagnostics",
+                "ReducedDiags",
+                "## 8.15 练习与复现实验",
+            )
+        )
+        and not chapter_8_stale_location_markers
+        and not re.search(
+            r"scripts/|notes/code-reading|runs/stage-c-validation|"
+            r"docs/chapter-08-v0-evidence-ledger|contract\.\{json,md\}|"
+            r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录",
+            chapter_8,
         ),
         "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),
         "chapter_3a_current_initialization_route": all(

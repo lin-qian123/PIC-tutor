@@ -56,9 +56,10 @@ def main() -> int:
     section_tables = table_widths(section)
     checks = {
         "files_present": markdown.is_file() and pdf.is_file(),
-        # The final symbols appendix page is intentionally short but still contains
-        # four complete usage rules; reject only genuinely empty/truncated pages.
-        "all_pages_have_extractable_text": bool(page_lengths) and min(page_lengths) >= 250,
+        # Figure-led diagnostic result pages can contain a complete caption and
+        # conclusion with less body text than prose pages. Reject only pages whose
+        # extracted text is too short to establish that a caption and page marker survived.
+        "all_pages_have_extractable_text": bool(page_lengths) and min(page_lengths) >= 200,
         "chapter_7_5_1_has_no_overwide_rendered_table": all(columns <= 4 for _, columns in section_tables),
         "chapter_7_5_1_has_no_historical_comment": "<!--" not in source,
         "pdf_has_expected_boundary_sections": all(

@@ -10,9 +10,9 @@
   },
   "passed": true,
   "classification": "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
-  "pdf_pages": 263,
-  "min_page_chars": 659,
-  "min_page_number": 251,
+  "pdf_pages": 261,
+  "min_page_chars": 222,
+  "min_page_number": 250,
   "chapter_7_5_1_tables": [
     [
       6,

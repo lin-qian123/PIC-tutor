@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39400123,
+  "total_bytes": 39400923,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1559835,
-      "sha256": "3c934a0955c8e89f57adb10cc7a46a0eee0495f9ad58b42f2d91318e8f22ef00"
+      "bytes": 1559986,
+      "sha256": "3404832a5ea86ca0724fda8bd14203d784cf105f1c0200b27223abbab1d02b1c"
     },
     {
       "path": "TODO.md",
-      "bytes": 1444433,
-      "sha256": "4c8d25727b7d9e0f0cbef997c64cf9bb0b724aeef7cc4c61558c3979dda2dad5"
+      "bytes": 1445152,
+      "sha256": "bbbe98e1e94402d70499778f79b12fa26fd46c899c252366e0d483056ef2d121"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5264389,
-      "sha256": "8e4caaed5e512e2cae7723e3c938e6b353f0ee070cecc50c8b550edd74f10c93"
+      "bytes": 5263550,
+      "sha256": "dadc9e0d94b72a79af26f133ab138e205f8a3a12e1dc0bda5f20c9d4aadff2a5"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 870950,
-      "sha256": "d8e4c66c360c1ae8148577745baf3079427751f5e8aa8667cf87833e160c6a58"
+      "bytes": 870568,
+      "sha256": "fe2e007cc6703e350603817bfd3bef5eebb7125fead6ba9ecce00c8bfd7918d7"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 3017615,
-      "sha256": "f5f91e04d512f039caeb5ad9d0bad0b65cbd8879339c8bbe0207dc4b76ab5395"
+      "bytes": 3017356,
+      "sha256": "d3b334ec656fb5f6e053c491382b1d84dc4a4aea332a90f604d24e0f0fa9309c"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -208,7 +208,7 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.json",
       "bytes": 1164,
-      "sha256": "1be55351db52a3d86f1e62ce343a0b66b08c14b392c3da4b59d75a00b27a4f85"
+      "sha256": "afd95bddada7e49cda52bae3271d92e60709593614ce563838754a23af402657"
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
@@ -532,8 +532,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 50806,
-      "sha256": "ba2c08b70c0faff013922852a2af2118ecb5cc2c7df4eaeb0d8967d741d1d973"
+      "bytes": 51199,
+      "sha256": "62338495629c383c2ecffba295fa7793b4f05b9755d847b438c4846384e956c9"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -2322,8 +2322,8 @@
     },
     {
       "path": "manuscript/chapters/03a-warpx-initialization.md",
-      "bytes": 96782,
-      "sha256": "7b7f262275ee754af0715eaed64589c0d742e740168e59a70c399ed20ac121d0"
+      "bytes": 96400,
+      "sha256": "831d2498ac29efdc38a2fe98391d0ac2469c6dd28db36ab88f0abf1ccf430a20"
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
@@ -5987,8 +5987,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 55931,
-      "sha256": "725228b94ed765c132b93f876e3d782b900f988b0416941a9521343767587134"
+      "bytes": 57330,
+      "sha256": "50bc1bf4c016ae28538384dab8597b420f30e170c963b37d79aa8b2d1316a062"
     },
     {
       "path": "scripts/verify_v40_build.py",

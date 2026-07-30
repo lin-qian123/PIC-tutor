@@ -4893,18 +4893,22 @@ w_p \approx n(\mathbf{x})\frac{\Delta V}{N_{ppc}}.
 <span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>                                          plasma_injector<span class="op">-&gt;</span>single_particle_u<span class="op">[</span><span class="dv">1</span><span class="op">],</span></span>
 <span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>                                          plasma_injector<span class="op">-&gt;</span>single_particle_u<span class="op">[</span><span class="dv">2</span><span class="op">]);</span></span>
 <span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;</span> xp <span class="op">=</span> <span class="op">{</span>plasma_injector<span class="op">-&gt;</span>single_particle_pos<span class="op">[</span><span class="dv">0</span><span class="op">]};</span></span>
-<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;</span> yp <span class="op">=</span> <span class="op">{</span>plasma_injector<span class="op">-&gt;</span>single_particle_pos<span class="op">[</span><span class="dv">1</span><span class="op">]};</span></span>
-<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;</span> zp <span class="op">=</span> <span class="op">{</span>plasma_injector<span class="op">-&gt;</span>single_particle_pos<span class="op">[</span><span class="dv">2</span><span class="op">]};</span></span>
-<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;</span> uxp <span class="op">=</span> <span class="op">{</span>plasma_injector<span class="op">-&gt;</span>single_particle_u<span class="op">[</span><span class="dv">0</span><span class="op">]};</span></span>
-<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;</span> uyp <span class="op">=</span> <span class="op">{</span>plasma_injector<span class="op">-&gt;</span>single_particle_u<span class="op">[</span><span class="dv">1</span><span class="op">]};</span></span>
-<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;</span> uzp <span class="op">=</span> <span class="op">{</span>plasma_injector<span class="op">-&gt;</span>single_particle_u<span class="op">[</span><span class="dv">2</span><span class="op">]};</span></span>
-<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;&gt;</span> attr <span class="op">=</span> <span class="op">{{</span>plasma_injector<span class="op">-&gt;</span>single_particle_weight<span class="op">}};</span></span>
-<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>amrex<span class="op">::</span>Vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&gt;</span> attr_int<span class="op">;</span></span>
-<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>            AddNParticles<span class="op">(</span>lev<span class="op">,</span> <span class="dv">1</span><span class="op">,</span> xp<span class="op">,</span> yp<span class="op">,</span> zp<span class="op">,</span> uxp<span class="op">,</span> uyp<span class="op">,</span> uzp<span class="op">,</span></span>
-<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>                          <span class="dv">1</span><span class="op">,</span> attr<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> attr_int<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
-<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span><span class="op">;</span></span>
-<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span></code></pre></div>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>            <span class="kw">auto</span> <span class="at">const</span><span class="op">&amp;</span> pos <span class="op">=</span> plasma_injector<span class="op">-&gt;</span>single_particle_pos<span class="op">;</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>            <span class="kw">auto</span> <span class="at">const</span><span class="op">&amp;</span> u <span class="op">=</span> plasma_injector<span class="op">-&gt;</span>single_particle_u<span class="op">;</span></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span> weight <span class="op">=</span> plasma_injector<span class="op">-&gt;</span>single_particle_weight<span class="op">;</span></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span> xp <span class="op">=</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;{</span>pos<span class="op">[</span><span class="dv">0</span><span class="op">]};</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span> yp <span class="op">=</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;{</span>pos<span class="op">[</span><span class="dv">1</span><span class="op">]};</span></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span> zp <span class="op">=</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;{</span>pos<span class="op">[</span><span class="dv">2</span><span class="op">]};</span></span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span> uxp <span class="op">=</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;{</span>u<span class="op">[</span><span class="dv">0</span><span class="op">]};</span></span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span> uyp <span class="op">=</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;{</span>u<span class="op">[</span><span class="dv">1</span><span class="op">]};</span></span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span> uzp <span class="op">=</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;{</span>u<span class="op">[</span><span class="dv">2</span><span class="op">]};</span></span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span> attr <span class="op">=</span></span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>                amrex<span class="op">::</span>Vector<span class="op">&lt;</span>amrex<span class="op">::</span>Vector<span class="op">&lt;</span>ParticleReal<span class="op">&gt;&gt;{{</span>weight<span class="op">}};</span></span>
+<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> amrex<span class="op">::</span>Vector<span class="op">&lt;</span>amrex<span class="op">::</span>Vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&gt;</span> attr_int<span class="op">;</span></span>
+<span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a>            AddNParticles<span class="op">(</span>lev<span class="op">,</span> <span class="dv">1</span><span class="op">,</span> xp<span class="op">,</span> yp<span class="op">,</span> zp<span class="op">,</span> uxp<span class="op">,</span> uyp<span class="op">,</span> uzp<span class="op">,</span></span>
+<span id="cb45-30"><a href="#cb45-30" aria-hidden="true" tabindex="-1"></a>                          <span class="dv">1</span><span class="op">,</span> attr<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> attr_int<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb45-31"><a href="#cb45-31" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb45-32"><a href="#cb45-32" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span></code></pre></div>
 <p>后半段分派如下：</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>plasma_injector<span class="op">-&gt;</span>gaussian_beam<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>            AddGaussianBeam<span class="op">(*</span>plasma_injector<span class="op">);</span></span>
@@ -4959,13 +4963,15 @@ boosted-frame 位置反推到 lab-frame 初始面。其公式是：</p>
 z_{0,lab}=\gamma_b\left[z_{boost}(1-\beta_b\beta_z)-ct_{boost}(\beta_z-\beta_b)\right].
 \]</span></p>
 <p>随后用 prefix scan 得到写入 offset：</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>Long max_new_particles <span class="op">=</span> amrex<span class="op">::</span>Scan<span class="op">::</span>ExclusiveSum<span class="op">(</span>counts<span class="op">.</span>size<span class="op">(),</span> counts<span class="op">.</span>data<span class="op">(),</span> offset<span class="op">.</span>data<span class="op">());</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>Long pid<span class="op">;</span></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    pid <span class="op">=</span> ParticleType<span class="op">::</span>NextID<span class="op">();</span></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>    ParticleType<span class="op">::</span>NextID<span class="op">(</span>pid<span class="op">+</span>max_new_particles<span class="op">);</span></span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> max_new_particles <span class="op">=</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Scan<span class="op">::</span>ExclusiveSum<span class="op">(</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>        counts<span class="op">.</span>size<span class="op">(),</span> counts<span class="op">.</span>data<span class="op">(),</span> offset<span class="op">.</span>data<span class="op">());</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>Long pid<span class="op">;</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    pid <span class="op">=</span> ParticleType<span class="op">::</span>NextID<span class="op">();</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>    ParticleType<span class="op">::</span>NextID<span class="op">(</span>pid<span class="op">+</span>max_new_particles<span class="op">);</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>这种“两遍法”避免在 GPU kernel 中动态 push 粒子。</p>
 <p>真正填充粒子时，体注入权重系数为：</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE</span>
@@ -5078,28 +5084,22 @@ t =
 <span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>    utils<span class="op">::</span>parser<span class="op">::</span>queryWithParser<span class="op">(</span>pp_species<span class="op">,</span> source_name<span class="op">,</span> <span class="st">&quot;z_shift&quot;</span><span class="op">,</span>z_shift<span class="op">);</span></span></code></pre></div>
 <p>质量和电荷优先级是：</p>
 <pre class="text"><code>input charge/mass &gt; input species_type &gt; openPMD charge/mass record</code></pre>
-<p>真正读入粒子时：
-源码文件：<code>Source/Particles/ParticleCreation/AddParticles.cpp</code>
-函数：<code>PhysicalParticleContainer::AddPlasmaFromFile(...)</code></p>
+<p>真正读入粒子时，先略去只负责几何维度开关的预处理，再看每个已存在坐标的单位组合：</p>
+<ul>
+<li>源码文件：<code>Source/Particles/ParticleCreation/AddParticles.cpp</code></li>
+<li>函数：<code>PhysicalParticleContainer::AddPlasmaFromFile(...)</code></li>
+</ul>
 <div class="sourceCode" id="cb57"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="kw">auto</span> i <span class="op">=</span> <span class="kw">decltype</span><span class="op">(</span>npart<span class="op">){</span><span class="dv">0</span><span class="op">};</span> i<span class="op">&lt;</span>npart<span class="op">;</span> <span class="op">++</span>i<span class="op">){</span></span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>ParticleReal <span class="at">const</span> weight <span class="op">=</span> ptr_w<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]*</span>w_unit<span class="op">;</span></span>
 <span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="pp">#if !defined(WARPX_DIM_1D_Z)</span></span>
-<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>ParticleReal <span class="at">const</span> x <span class="op">=</span> ptr_x<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]*</span>position_unit_x <span class="op">+</span> ptr_offset_x<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]*</span>position_offset_unit_x<span class="op">;</span></span>
-<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="pp">#else</span></span>
-<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>ParticleReal <span class="at">const</span> x <span class="op">=</span> <span class="fl">0.0</span><span class="op">_prt;</span></span>
-<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span>
-<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a><span class="pp">#if defined(WARPX_DIM_3D) || defined(WARPX_DIM_RZ) || defined(WARPX_DIM_RCYLINDER) || defined(WARPX_DIM_RSPHERE)</span></span>
-<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>ParticleReal <span class="at">const</span> y <span class="op">=</span> ptr_y<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]*</span>position_unit_y <span class="op">+</span> ptr_offset_y<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]*</span>position_offset_unit_y<span class="op">;</span></span>
-<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a><span class="pp">#else</span></span>
-<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>ParticleReal <span class="at">const</span> y <span class="op">=</span> <span class="fl">0.0</span><span class="op">_prt;</span></span>
-<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span>
-<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a><span class="pp">#if !defined(WARPX_DIM_RCYLINDER)</span></span>
-<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>ParticleReal <span class="at">const</span> z <span class="op">=</span> ptr_z<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]*</span>position_unit_z <span class="op">+</span> ptr_offset_z<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]*</span>position_offset_unit_z <span class="op">+</span> z_shift<span class="op">;</span></span>
-<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a><span class="pp">#else</span></span>
-<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>ParticleReal <span class="at">const</span> z <span class="op">=</span> <span class="fl">0.0</span><span class="op">_prt;</span></span>
-<span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span></code></pre></div>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> x <span class="op">=</span> ptr_x<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]</span> <span class="op">*</span> position_unit_x</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>                 <span class="op">+</span> ptr_offset_x<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]</span> <span class="op">*</span> position_offset_unit_x<span class="op">;</span></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> y <span class="op">=</span> ptr_y<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]</span> <span class="op">*</span> position_unit_y</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>                 <span class="op">+</span> ptr_offset_y<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]</span> <span class="op">*</span> position_offset_unit_y<span class="op">;</span></span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> z <span class="op">=</span> ptr_z<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]</span> <span class="op">*</span> position_unit_z</span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>                 <span class="op">+</span> ptr_offset_z<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]</span> <span class="op">*</span> position_offset_unit_z</span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>                 <span class="op">+</span> z_shift<span class="op">;</span></span></code></pre></div>
 <p>openPMD 的 <code>position</code> 和 <code>positionOffset</code>
 都乘以各自 <code>unitSI</code>，<code>z_shift</code> 是 WarpX
 额外偏移。</p>
@@ -5382,8 +5382,12 @@ geometry 修正，而是直接逐粒子求值：</p>
 hack。它同样要遵守 implicit particle-centering 合同，并继续进入普通
 <code>DepositCurrent()/DepositCharge()</code> 主链。</p>
 <p>在本书引用的 WarpX 源树中，<code>parse_field_function</code>
-的最明确真实用例是
-<code>Examples/Tests/particle_absorbing_boundary/inputs_test_1d_particle_absorbing_boundary</code>。这个输入把：</p>
+的最明确真实用例位于：</p>
+<ul>
+<li>目录：<code>Examples/Tests/particle_absorbing_boundary/</code></li>
+<li>输入：<code>inputs_test_1d_particle_absorbing_boundary</code></li>
+</ul>
+<p>这个输入把：</p>
 <ul>
 <li><code>laser1.profile = parse_field_function</code></li>
 <li><code>laser1.field_function(X,Y,t) = ...</code></li>
@@ -6067,75 +6071,63 @@ Computer Simulation</em>；现代实现应从
 和 <code>Source/FieldSolver/</code> 的对应职责回查。</p>
 <table>
 <colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
+<col style="width: 50%" />
+<col style="width: 50%" />
 </colgroup>
 <thead>
 <tr>
 <th><code>3A ES1</code> 阶段</th>
-<th>历史程序的物理职责</th>
-<th>WarpX 中最接近的阶段</th>
-<th>不能直接等同的部分</th>
+<th>WarpX 的现代映射与不能直接等同的部分</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>INIT</code></td>
-<td>建立网格、粒子、权重、边界和初始参数</td>
-<td><code>ReadParameters()</code>、<code>WarpX::InitData()</code>、<code>InitFromScratch()</code>、<code>AllocLevelData()</code>
-与 <code>mypc-&gt;AllocData()</code></td>
-<td>WarpX 还要处理 AMR、多几何、solver 分支、PML、外部场、restart
-和并行布局</td>
+<td>建立网格、粒子、权重、边界和初始参数，对应
+<code>ReadParameters()</code>、<code>WarpX::InitData()</code>、<code>InitFromScratch()</code>、<code>AllocLevelData()</code>
+与 <code>mypc-&gt;AllocData()</code>；WarpX 还要处理 AMR、多几何、solver
+分支、PML、外部场、restart 和并行布局。</td>
 </tr>
 <tr>
 <td><code>SETRHO</code></td>
-<td>用初始粒子位置完成第一次 charge deposition</td>
-<td><code>PlasmaInjector</code>/<code>AddParticles</code> 之后的初始
-<code>rho</code> 构造及相关 field-register 路径</td>
-<td>现代 WarpX 的 <code>rho</code> 是否直接写入、重新沉积或由 solver
-分支消费，取决于 geometry、solver 和初始化选项</td>
+<td>用初始位置形成源，对应
+<code>PlasmaInjector</code>/<code>AddParticles</code> 后的初始
+<code>rho</code> 构造及 field-register 路径；<code>rho</code>
+是否直接写入、重新沉积或被 solver 消费，取决于 geometry、solver
+和初始化选项。</td>
 </tr>
 <tr>
 <td><code>FIELDS</code></td>
-<td>从 <code>rho</code> 求解静电势和电场，并形成可供粒子使用的场</td>
-<td>electrostatic solver 的
-<code>InitData()</code>、<code>ComputeSpaceChargeField()</code>、初始场填充与
-projection cleaning</td>
-<td>WarpX 不只有一条 FFT Poisson 路径；EM、PSATD、RZ、EB 和
-external-field 分支会改变字段对象与约束</td>
+<td>从 <code>rho</code> 求势和场，对应 electrostatic solver 的
+<code>InitData()</code>、<code>ComputeSpaceChargeField()</code>、初始场填充和
+projection cleaning；不能简化成单一 FFT Poisson 路径，EM、PSATD、RZ、EB
+与 external field 会改变对象和约束。</td>
 </tr>
 <tr>
 <td><code>SETV</code></td>
-<td>设置初始速度、热分布和漂移</td>
-<td><code>SpeciesUtils</code>、<code>InjectorMomentum</code>、temperature/velocity
-functor 与粒子属性创建</td>
-<td>WarpX 还可能创建 relativistic、spin、implicit 或 pusher-specific
-attributes；并非一次简单数组赋值</td>
+<td>设置热分布和漂移，对应
+<code>SpeciesUtils</code>、<code>InjectorMomentum</code>、temperature/velocity
+functor 与粒子属性创建；WarpX 还可能创建 relativistic、spin、implicit 或
+pusher-specific attributes。</td>
 </tr>
 <tr>
 <td><code>ACCEL</code></td>
-<td>用当前电场/磁场更新粒子速度</td>
-<td><code>Evolve()</code> 内的 particle push 与 gather</td>
-<td>历史 ES1 的静电推进不能覆盖现代 EM、Boris/Vay/Higuera-Cary、implicit
-和 subcycling 路径</td>
+<td>用场更新速度，对应 <code>Evolve()</code> 内 particle push 与
+gather；历史静电推进不能覆盖现代 EM、Boris/Vay/Higuera-Cary、implicit 和
+subcycling。</td>
 </tr>
 <tr>
 <td><code>MOVE</code></td>
-<td>用更新后的速度推进粒子位置</td>
-<td><code>PushParticlesAndDeposit()</code> 中的 position
-update、边界处理和 current deposition</td>
-<td>WarpX 还要处理 AMR tile、moving window、particle
-boundary、suborbit/crossing 和 MPI 交换</td>
+<td>用新速度更新位置，对应 <code>PushParticlesAndDeposit()</code> 的
+position update、边界处理和 current deposition；WarpX 还要处理 AMR
+tile、moving window、particle boundary、suborbit/crossing 和 MPI
+交换。</td>
 </tr>
 <tr>
 <td><code>HISTRY</code></td>
-<td>记录历史量、能量或分布函数</td>
-<td>full/reduced diagnostics、openPMD/plotfile writer 与 reader-side
-analysis</td>
-<td>现代 diagnostics 是独立 writer/schema
-合同，不等于旧程序中的一个历史数组</td>
+<td>记录历史量，对应 full/reduced diagnostics、openPMD/plotfile writer
+与 reader-side analysis；现代 diagnostics 是独立 writer/schema
+合同，不是旧程序中的一个历史数组。</td>
 </tr>
 </tbody>
 </table>

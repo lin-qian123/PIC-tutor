@@ -706,13 +706,17 @@ PhysicalParticleContainer::AddParticles (int lev)
                                           plasma_injector->single_particle_u[1],
                                           plasma_injector->single_particle_u[2]);
             }
-            const amrex::Vector<ParticleReal> xp = {plasma_injector->single_particle_pos[0]};
-            const amrex::Vector<ParticleReal> yp = {plasma_injector->single_particle_pos[1]};
-            const amrex::Vector<ParticleReal> zp = {plasma_injector->single_particle_pos[2]};
-            const amrex::Vector<ParticleReal> uxp = {plasma_injector->single_particle_u[0]};
-            const amrex::Vector<ParticleReal> uyp = {plasma_injector->single_particle_u[1]};
-            const amrex::Vector<ParticleReal> uzp = {plasma_injector->single_particle_u[2]};
-            const amrex::Vector<amrex::Vector<ParticleReal>> attr = {{plasma_injector->single_particle_weight}};
+            auto const& pos = plasma_injector->single_particle_pos;
+            auto const& u = plasma_injector->single_particle_u;
+            const auto weight = plasma_injector->single_particle_weight;
+            const auto xp = amrex::Vector<ParticleReal>{pos[0]};
+            const auto yp = amrex::Vector<ParticleReal>{pos[1]};
+            const auto zp = amrex::Vector<ParticleReal>{pos[2]};
+            const auto uxp = amrex::Vector<ParticleReal>{u[0]};
+            const auto uyp = amrex::Vector<ParticleReal>{u[1]};
+            const auto uzp = amrex::Vector<ParticleReal>{u[2]};
+            const auto attr =
+                amrex::Vector<amrex::Vector<ParticleReal>>{{weight}};
             const amrex::Vector<amrex::Vector<int>> attr_int;
             AddNParticles(lev, 1, xp, yp, zp, uxp, uyp, uzp,
                           1, attr, 0, attr_int, 0);
@@ -784,7 +788,9 @@ $$
 随后用 prefix scan 得到写入 offset：
 
 ```cpp
-const amrex::Long max_new_particles = amrex::Scan::ExclusiveSum(counts.size(), counts.data(), offset.data());
+const auto max_new_particles =
+    amrex::Scan::ExclusiveSum(
+        counts.size(), counts.data(), offset.data());
 
 amrex::Long pid;
 {
@@ -943,30 +949,23 @@ void PlasmaInjector::setupExternalFile (amrex::ParmParse const& pp_species)
 input charge/mass > input species_type > openPMD charge/mass record
 ```
 
-真正读入粒子时：
-源码文件：`Source/Particles/ParticleCreation/AddParticles.cpp`
-函数：`PhysicalParticleContainer::AddPlasmaFromFile(...)`
+真正读入粒子时，先略去只负责几何维度开关的预处理，再看每个已存在坐标的单位组合：
+
+- 源码文件：`Source/Particles/ParticleCreation/AddParticles.cpp`
+- 函数：`PhysicalParticleContainer::AddPlasmaFromFile(...)`
 
 ```cpp
 for (auto i = decltype(npart){0}; i<npart; ++i){
 
     amrex::ParticleReal const weight = ptr_w.get()[i]*w_unit;
 
-#if !defined(WARPX_DIM_1D_Z)
-    amrex::ParticleReal const x = ptr_x.get()[i]*position_unit_x + ptr_offset_x.get()[i]*position_offset_unit_x;
-#else
-    amrex::ParticleReal const x = 0.0_prt;
-#endif
-#if defined(WARPX_DIM_3D) || defined(WARPX_DIM_RZ) || defined(WARPX_DIM_RCYLINDER) || defined(WARPX_DIM_RSPHERE)
-    amrex::ParticleReal const y = ptr_y.get()[i]*position_unit_y + ptr_offset_y.get()[i]*position_offset_unit_y;
-#else
-    amrex::ParticleReal const y = 0.0_prt;
-#endif
-#if !defined(WARPX_DIM_RCYLINDER)
-    amrex::ParticleReal const z = ptr_z.get()[i]*position_unit_z + ptr_offset_z.get()[i]*position_offset_unit_z + z_shift;
-#else
-    amrex::ParticleReal const z = 0.0_prt;
-#endif
+    const auto x = ptr_x.get()[i] * position_unit_x
+                 + ptr_offset_x.get()[i] * position_offset_unit_x;
+    const auto y = ptr_y.get()[i] * position_unit_y
+                 + ptr_offset_y.get()[i] * position_offset_unit_y;
+    const auto z = ptr_z.get()[i] * position_unit_z
+                 + ptr_offset_z.get()[i] * position_offset_unit_z
+                 + z_shift;
 ```
 
 openPMD 的 `position` 和 `positionOffset` 都乘以各自 `unitSI`，`z_shift` 是 WarpX 额外偏移。
@@ -1244,7 +1243,12 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 
 因此 laser 的人工天线粒子并不是一个只服务显式 solver 的简单边界 hack。它同样要遵守 implicit particle-centering 合同，并继续进入普通 `DepositCurrent()/DepositCharge()` 主链。
 
-在本书引用的 WarpX 源树中，`parse_field_function` 的最明确真实用例是 `Examples/Tests/particle_absorbing_boundary/inputs_test_1d_particle_absorbing_boundary`。这个输入把：
+在本书引用的 WarpX 源树中，`parse_field_function` 的最明确真实用例位于：
+
+- 目录：`Examples/Tests/particle_absorbing_boundary/`
+- 输入：`inputs_test_1d_particle_absorbing_boundary`
+
+这个输入把：
 
 - `laser1.profile = parse_field_function`
 - `laser1.field_function(X,Y,t) = ...`
@@ -1698,15 +1702,15 @@ INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY
 
 这条链可以帮助读者理解“初始化结束后第一步推进究竟从哪里开始”，但不能把旧程序的子程序名直接当成 WarpX 的函数名。历史参照见 Birdsall 与 Langdon 的 *Plasma Physics via Computer Simulation*；现代实现应从 `Source/Initialization/WarpXInitData.cpp`、`Source/Particles/` 和 `Source/FieldSolver/` 的对应职责回查。
 
-| `3A ES1` 阶段 | 历史程序的物理职责 | WarpX 中最接近的阶段 | 不能直接等同的部分 |
-|---|---|---|---|
-| `INIT` | 建立网格、粒子、权重、边界和初始参数 | `ReadParameters()`、`WarpX::InitData()`、`InitFromScratch()`、`AllocLevelData()` 与 `mypc->AllocData()` | WarpX 还要处理 AMR、多几何、solver 分支、PML、外部场、restart 和并行布局 |
-| `SETRHO` | 用初始粒子位置完成第一次 charge deposition | `PlasmaInjector`/`AddParticles` 之后的初始 `rho` 构造及相关 field-register 路径 | 现代 WarpX 的 `rho` 是否直接写入、重新沉积或由 solver 分支消费，取决于 geometry、solver 和初始化选项 |
-| `FIELDS` | 从 `rho` 求解静电势和电场，并形成可供粒子使用的场 | electrostatic solver 的 `InitData()`、`ComputeSpaceChargeField()`、初始场填充与 projection cleaning | WarpX 不只有一条 FFT Poisson 路径；EM、PSATD、RZ、EB 和 external-field 分支会改变字段对象与约束 |
-| `SETV` | 设置初始速度、热分布和漂移 | `SpeciesUtils`、`InjectorMomentum`、temperature/velocity functor 与粒子属性创建 | WarpX 还可能创建 relativistic、spin、implicit 或 pusher-specific attributes；并非一次简单数组赋值 |
-| `ACCEL` | 用当前电场/磁场更新粒子速度 | `Evolve()` 内的 particle push 与 gather | 历史 ES1 的静电推进不能覆盖现代 EM、Boris/Vay/Higuera-Cary、implicit 和 subcycling 路径 |
-| `MOVE` | 用更新后的速度推进粒子位置 | `PushParticlesAndDeposit()` 中的 position update、边界处理和 current deposition | WarpX 还要处理 AMR tile、moving window、particle boundary、suborbit/crossing 和 MPI 交换 |
-| `HISTRY` | 记录历史量、能量或分布函数 | full/reduced diagnostics、openPMD/plotfile writer 与 reader-side analysis | 现代 diagnostics 是独立 writer/schema 合同，不等于旧程序中的一个历史数组 |
+| `3A ES1` 阶段 | WarpX 的现代映射与不能直接等同的部分 |
+|---|---|
+| `INIT` | 建立网格、粒子、权重、边界和初始参数，对应 `ReadParameters()`、`WarpX::InitData()`、`InitFromScratch()`、`AllocLevelData()` 与 `mypc->AllocData()`；WarpX 还要处理 AMR、多几何、solver 分支、PML、外部场、restart 和并行布局。 |
+| `SETRHO` | 用初始位置形成源，对应 `PlasmaInjector`/`AddParticles` 后的初始 `rho` 构造及 field-register 路径；`rho` 是否直接写入、重新沉积或被 solver 消费，取决于 geometry、solver 和初始化选项。 |
+| `FIELDS` | 从 `rho` 求势和场，对应 electrostatic solver 的 `InitData()`、`ComputeSpaceChargeField()`、初始场填充和 projection cleaning；不能简化成单一 FFT Poisson 路径，EM、PSATD、RZ、EB 与 external field 会改变对象和约束。 |
+| `SETV` | 设置热分布和漂移，对应 `SpeciesUtils`、`InjectorMomentum`、temperature/velocity functor 与粒子属性创建；WarpX 还可能创建 relativistic、spin、implicit 或 pusher-specific attributes。 |
+| `ACCEL` | 用场更新速度，对应 `Evolve()` 内 particle push 与 gather；历史静电推进不能覆盖现代 EM、Boris/Vay/Higuera-Cary、implicit 和 subcycling。 |
+| `MOVE` | 用新速度更新位置，对应 `PushParticlesAndDeposit()` 的 position update、边界处理和 current deposition；WarpX 还要处理 AMR tile、moving window、particle boundary、suborbit/crossing 和 MPI 交换。 |
+| `HISTRY` | 记录历史量，对应 full/reduced diagnostics、openPMD/plotfile writer 与 reader-side analysis；现代 diagnostics 是独立 writer/schema 合同，不是旧程序中的一个历史数组。 |
 
 最容易误读的是 `SETRHO -> FIELDS -> SETV` 的顺序。对历史 ES1 来说，它表达的是“先由初始位置形成源，再求场，再给粒子速度”；对 WarpX fresh run，实际初始化链还要先完成 AMReX level 和 field data 分配，并根据 solver、外场和 `initialize_self_fields` 等条件决定哪些源/场对象被创建。因而更可靠的读法是：Birdsall 骨架提供物理阶段的语义，WarpX 源码决定这些语义在现代对象图和分支条件中的落点。
 

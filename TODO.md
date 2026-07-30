@@ -2,6 +2,8 @@
 
 ## 2026-07-31
 
+- [x] 完成第 3A 章的连续读者审阅：从 PDF 第 45 页连续读至第 74 页，核对 fresh/restart、level/field allocation、粒子注入、openPMD、projection cleaning、laser antenna/profile、初始化 regression、历史 ES1 映射与进入 pusher 的交接。修复 single-particle、prefix scan 和 openPMD 坐标的超宽源码片段，拆分长测试路径，并将四列历史映射表重排为两列，消除右侧截断与列间覆盖；构建验收新增 3A 源码续行、路径和映射表 PDF 标识检查。保持 267 页版式和第 3A 章完整收束。下一连续区间为第 4 章（PDF 第 75--118 页）；全书逐页通读、第三方材料许可和公开再分发仍未完成。
+
 - [x] 完成第 3 章的连续读者审阅：从 PDF 第 29 页连续读至第 44 页，核对生命周期、构造/level 分配、初始化、步长、外层时间步、moving window、显式/AMR/JRhom/implicit 分派、Langmuir 闭环与跨章交接。修复 moving window 速度更新、FDTD 第二半步、subcycling restriction/第二半步、JRhom 沉积及 moving-window 字段清单的超宽截断；保持源码语义、267 页版式和第 3 章末完整收束。构建验收新增源码续行和 PDF 关键标识检查。下一连续区间为第 3A 章（PDF 第 45--74 页）；全书逐页通读、第三方材料许可和公开再分发仍未完成。
 
 - [x] 建立连续读者审阅的可核查起点：从当前 PDF 第 7 页连续读至第 28 页，完整覆盖教程首页/前言、第 1 章和第 2 章，并同时回读对应 Markdown。核对叙事是否以读者问题而非项目记录组织、物理时间层与公式是否自洽、源码入口是否可迁移，以及表格/代码/公式是否存在裁切或断义。修复第 1 章将 `\Delta x`、`\Delta t` 和两个尺度比误排为代码文本的问题；构建验收会拒绝这些写法回归。下一连续区间为第 3 章（PDF 第 29--44 页）；全书逐页通读、第三方材料许可和公开再分发仍未完成。

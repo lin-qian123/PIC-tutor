@@ -589,6 +589,32 @@ def main() -> None:
                 "每一层只为相应的 producer/consumer 接口提供证据",
             )
         ) and not chapter_3a_application_record_markers,
+        "chapter_3a_reader_code_examples_are_wrapped": all(
+            marker in chapter_3a
+            for marker in (
+                "auto const& pos = plasma_injector->single_particle_pos;",
+                "const auto max_new_particles =\n    amrex::Scan::ExclusiveSum(",
+                "先略去只负责几何维度开关的预处理",
+                "目录：`Examples/Tests/particle_absorbing_boundary/`",
+                "| `3A ES1` 阶段 | WarpX 的现代映射与不能直接等同的部分 |",
+            )
+        ) and all(
+            marker not in chapter_3a
+            for marker in (
+                "const amrex::Long max_new_particles = amrex::Scan::ExclusiveSum(counts.size(), counts.data(), offset.data());",
+                "const amrex::Vector<ParticleReal> uxp = {plasma_injector->single_particle_u[0]};",
+                "Examples/Tests/particle_absorbing_boundary/inputs_test_1d_particle_absorbing_boundary",
+                "| `3A ES1` 阶段 | 历史程序的物理职责 | WarpX 中最接近的阶段 | 不能直接等同的部分 |",
+            )
+        ) and all(
+            marker in pdf_text
+            for marker in (
+                "const auto max_new_particles",
+                "position_offset_unit_x",
+                "particle_absorbing_boundary",
+                "WarpX 的现代映射与不能直接等同的部分",
+            )
+        ),
         "chapter_3a_8_long_chapter_reader_navigation": all(
             marker in chapter_3a_opening
             for marker in (

@@ -2,6 +2,8 @@
 
 ## 2026-07-31
 
+- [x] 完成第 6 章的连续读者审阅：在当前 256 页 PDF 中从第 164 页连续读至第 199 页，核对 FDTD/PML、标准/Galilean/Comoving PSATD、JRhom、RZ Hankel/mode 表示、静电/静磁、Hybrid Ohm、隐式能量/Gauss-law/迭代数与 regression 入口。将 JRhom 子区间循环和 RZ mode/Hankel/current-correction 的长 C++ 实现改为明确标注的阅读伪代码或公式说明，清理遗留行内数学，并把发生列间覆盖的 regression 索引从五列表改为分组项目列表。构建验收页数更新为 256；下一连续区间为第 7 章（PDF 第 200 页起）；全书逐页通读、第三方材料许可和公开再分发仍未完成。
+
 - [x] 完成第 5 章的连续读者审阅：在当前 258 页 PDF 中从第 120 页连续读至第 163 页，核对 shape 的支撑与左端索引、old/new `rho` 与半步 `J` 的时间层、AMR buffer、current/charge dispatch、Direct/Esirkepov/Villasenor/Vay、source synchronization、径向几何与章末收束。将 0--4 阶 shape、charge/direct current 和 Esirkepov 的长 C++ 实现改为明确标注的等价阅读伪代码，修复全章遗留的裸 LaTeX/数学代码 span，并将练习压入结论页，消除低信息孤页。构建验收新增第 5 章节选/伪代码声明检查；下一连续区间为第 6 章（PDF 第 164 页起）；全书逐页通读、第三方材料许可和公开再分发仍未完成。
 
 - [x] 完成第 4 章的连续读者审阅：在当时 265 页 PDF 中从第 74 页连续读至第 119 页，核对 Lorentz 时间层、Boris/Vay/Higuera--Cary、容器层次、`PushPX()`、gather、RR/implicit/photon、ionization/collision、QED、结论与进入第 5 章的交接。将超宽 Boris/Vay 源码重排为明确的核心节选，把 gather 的完整签名和模板参数改为标明范围的阅读伪代码，拆分长 implicit-source 说明，并修复 Vay/Higuera-Cary/EB 段中的裸 LaTeX。构建验收新增第 4 章节选/伪代码声明检查；后续第 5 章编辑将当前候选压缩为 258 页。全书逐页通读、第三方材料许可和公开再分发仍未完成。

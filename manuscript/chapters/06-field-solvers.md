@@ -254,7 +254,7 @@ if (ncp == 3) {
             m_h_stencil_coefs_r, m_h_stencil_coefs_z );
 ```
 
-cylindrical Yee 的核心算子不是 $\partial_rF$，而是
+cylindrical Yee 的核心算子不是 \(\partial_rF\)，而是
 
 $$
 \frac{1}{r}\frac{\partial(rF)}{\partial r}.
@@ -266,7 +266,7 @@ $$
 return 1._rt/r * inv_dr*( (r+0.5_rt*dr)*F(i+1,j,k,comp) - (r-0.5_rt*dr)*F(i,j,k,comp) );
 ```
 
-RZ 的 azimuthal mode 展开使 $\partial_\theta$ 变成 $im$，所以实部/虚部会互相耦合。`EvolveBCylindrical()` 中 `Br` 的高阶 mode 更新为：
+RZ 的 azimuthal mode 展开使 \(\partial_\theta\) 变成 \(im\)，所以实部/虚部会互相耦合。`EvolveBCylindrical()` 中 `Br` 的高阶 mode 更新为：
 
 ```cpp
 Br(i, j, 0, 2*m-1) += dt*(
@@ -277,7 +277,7 @@ Br(i, j, 0, 2*m  ) += dt*(
     + m * Ez(i, j, 0, 2*m-1)/r );
 ```
 
-轴上 $r=0$ 不能直接除以 r，源码显式使用正则化条件。例如 `Etheta(r=0,m=1)=-i Er(r=0,m=1)`：
+轴上 \(r=0\) 不能直接除以 r，源码显式使用正则化条件。例如 `Etheta(r=0,m=1)=-i Er(r=0,m=1)`：
 
 ```cpp
 Etheta(i,j,0,2*m-1) =  Er(i,j,0,2*m  );
@@ -397,11 +397,11 @@ if (!is_nodal_2) { spectral_field_value *= shift2_arr[k]; }
 pshift[i] = amrex::exp( I*sign*pk[i]*0.5_rt*t_dx_idim);
 ```
 
-即 $e^{\pm ik\Delta x/2}$。这一步是把 Yee staggered 数据映射到谱算法假定的位置；没有这一步，谱空间 curl 与实空间场的位置会错半格。
+即 \(e^{\pm ik\Delta x/2}\)。这一步是把 Yee staggered 数据映射到谱算法假定的位置；没有这一步，谱空间 curl 与实空间场的位置会错半格。
 
 ## 6.6 标准/Galilean PSATD 系数和 current correction
 
-`Source/FieldSolver/SpectralSolver/PsatdAlgorithmGalilean.cpp` 实现 Galilean 分支。标准 PSATD 是 Galilean 实现的 $v_G=0$ 极限；源码中
+`Source/FieldSolver/SpectralSolver/PsatdAlgorithmGalilean.cpp` 实现 Galilean 分支。标准 PSATD 是 Galilean 实现的 \(v_G=0\) 极限；源码中
 
 $$
 w_c=\mathbf k_c\cdot\mathbf v_G,\qquad T_2=e^{iw_c\Delta t}.
@@ -435,7 +435,7 @@ else
 T2(i,j,k) = theta_c * theta_c;
 ```
 
-其中 `om_s = c*|k_s|`。`X1-X4` 把电流和电荷项折叠进统一更新式；源码显式处理 $k=0$ 和 $w_c=0$ 极限，避免除零。
+其中 `om_s = c*|k_s|`。`X1-X4` 把电流和电荷项折叠进统一更新式；源码显式处理 \(k=0\) 和 \(w_c=0\) 极限，避免除零。
 
 current correction 的源码与官方参数文档逐项对应。标准分支为：
 
@@ -463,7 +463,7 @@ fields(i,j,k,Idx.Jx_mid) = Jx - (k_dot_J - k_dot_vg * (rho_new - rho_old_mod) / 
     * kx / (k_norm * k_norm);
 ```
 
-这里 `rho_old_mod` 是 $\rho^n\theta^2$，`den` 是 $1-\theta^2$。因此 current correction 的目的不是平滑电流，而是投影掉违反谱空间连续性方程的纵向误差，使修正后的电流与 `rho_old/rho_new` 相容。
+这里 `rho_old_mod` 是 \(\rho^n\theta^2\)，`den` 是 \(1-\theta^2\)。因此 current correction 的目的不是平滑电流，而是投影掉违反谱空间连续性方程的纵向误差，使修正后的电流与 `rho_old/rho_new` 相容。
 
 ### 6.6.1 先按更新对象理解 PSATD 系数
 
@@ -476,7 +476,7 @@ fields(i,j,k,Idx.Jx_mid) = Jx - (k_dot_J - k_dot_vg * (rho_new - rho_old_mod) / 
 | `Psi1/Psi2/Y1-Y4` | time-averaged `E/B` 输出 | 平均区间及 `rho_old/rho_new` | ordinary-field push 的同名 `Y` |
 | JRhom `Y1-Y8` | 子区间内常量、线性或二次源项 | `old/mid/new` 源项层 | Galilean average-field 的 complex `Y1-Y4` |
 
-因此，Cartesian standard/Galilean PSATD 的场更新可先作为一个结构来读：`C/S_ck` 推进真空旋转，`X4` 接收横向电流，`X2/X3` 把新旧电荷端点接入纵向场，`T2` 只在 Galilean 表示中携带相位。$k=0$、$\omega_c=0$ 和退化分母的专门分支并不是实现细节的例外，而是解析积分在零模和共振极限必须连续的条件。
+因此，Cartesian standard/Galilean PSATD 的场更新可先作为一个结构来读：`C/S_ck` 推进真空旋转，`X4` 接收横向电流，`X2/X3` 把新旧电荷端点接入纵向场，`T2` 只在 Galilean 表示中携带相位。\(k=0\)、\(\omega_c=0\) 和退化分母的专门分支并不是实现细节的例外，而是解析积分在零模和共振极限必须连续的条件。
 
 打开 `psatd.do_time_averaging=1` 后，输出的 `E_avg/B_avg` 不是把两个普通场快照简单相加。WarpX 要求它与 `psatd.update_with_rho=1` 一起使用，因为平均场的解析表达也同时依赖 `J` 与两个电荷端点。读者若只需要普通场推进，应先停在 `X1-X4`；若要解释 particle gather、平均场诊断或对应 regression，才沿 `Psi/Y` 继续追到 `PSATDScaleAverageFields()` 与反变换路径。
 
@@ -488,7 +488,7 @@ $$
 \mathbf{x}'=\mathbf{x}-\mathbf{v}_{gal}t
 $$
 
-把均匀漂移等离子体在数值网格中改写为近似静止的背景。旧电荷因而要携带相位，离散连续性方程也从普通端点差分变成带 $\theta^2=\exp(i\mathbf{k}\cdot\mathbf{v}_{gal}\Delta t)$ 的形式。这正是上面 `rho_old_mod` 出现的原因。
+把均匀漂移等离子体在数值网格中改写为近似静止的背景。旧电荷因而要携带相位，离散连续性方程也从普通端点差分变成带 \(\theta^2=\exp(i\mathbf{k}\cdot\mathbf{v}_{gal}\Delta t)\) 的形式。这正是上面 `rho_old_mod` 出现的原因。
 
 对 boosted-frame 问题，读者应把选择过程分成三步：先由物理问题确定背景等离子体在计算坐标中的漂移方向；再让 `v_galilean` 接近该背景漂移，而不是任意取一个移动速度；最后用稳定性和物理量两类证据分别检查。Lehe et al. 的理论说明这种表示能消除主要的漂移 alias resonance；Kirchen et al. 的应用说明抑制 NCI 后仍须检查回变换的加速器物理量。需要进一步判断公式或适用范围时，应直接回到两篇论文的正文，并将其假设与当前输入、源码分派和输出观察量逐项对应。
 
@@ -501,7 +501,7 @@ filter、current correction 与 Galilean 表示因此必须分开：`warpx.use_f
 | 证据入口 | 主要 observable | 可以支持的结论 | 仍不能支持的结论 |
 |---|---|---|---|
 | `analysis_galilean.py` | 最终场能量相对不稳定参考值 | 给定输入和分支下的 NCI 抑制 | 通用色散关系或所有 PSATD 组合稳定 |
-| current-correction 分支 | 场能量与 `max|divE-rho/eps0|` | 稳定性和该路径的连续性/Gauss-law 投影 | Godfrey 型 $\zeta(k)$ current scaling 已实现 |
+| current-correction 分支 | 场能量与 `max|divE-rho/eps0|` | 稳定性和该路径的连续性/Gauss-law 投影 | Godfrey 型 \(\zeta(k)\) current scaling 已实现 |
 | `analysis_psatd_CC1.py` | JRhom CC1 的电场能量 | 该 consumer 的 NCI energy gate | 其他 JRhom 时间模型或 charge closure |
 | checksum-only case | 输出是否与已知基线一致 | workflow、写盘和回归可重复 | 独立的物理正确性断言 |
 
@@ -540,7 +540,7 @@ amrex::Real solver_dt = dt[lev];
 if (WarpX::m_JRhom) { solver_dt /= static_cast<amrex::Real>(WarpX::m_JRhom_subintervals); }
 ```
 
-因此 `PsatdAlgorithmJRhom*` 内部看到的是 $\delta t=\Delta t/m$。
+因此 `PsatdAlgorithmJRhom*` 内部看到的是 \(\delta t=\Delta t/m\)。
 
 JRhom 的外层 PIC loop 不走普通 `PushPSATD()`。它先推进粒子，但跳过普通沉积：
 
@@ -555,61 +555,29 @@ PushParticlesandDeposit(cur_time, skip_deposition);
 
 随后在每个子区间按时间依赖类型重新沉积 `J/rho`：
 
-```cpp
-const int n_deposit = WarpX::m_JRhom_subintervals;
-const amrex::Real sub_dt = dt[0] / static_cast<amrex::Real>(n_deposit);
-const int n_loop = (WarpX::fft_do_time_averaging) ? 2*n_deposit : n_deposit;
+下面是与该循环等价的**阅读伪代码**，只保留时间层与沉积顺序；不是可编译源码：
 
-for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
-{
-    if (time_dependency_J != TimeDependencyJ::Constant) { PSATDMoveJNewToJOld(); }
-
-    const amrex::Real t_deposit_current = (time_dependency_J == TimeDependencyJ::Linear) ?
-        (i_deposit-n_deposit+1)*sub_dt : (i_deposit-n_deposit+0.5_rt)*sub_dt;
-
-    const amrex::Real t_deposit_charge = (time_dependency_rho == TimeDependencyRho::Linear) ?
-        (i_deposit-n_deposit+1)*sub_dt : (i_deposit-n_deposit+0.5_rt)*sub_dt;
+```text
+sub_dt = PIC_dt / JRhom_subintervals
+repeat one subinterval (or the extra averaging pass):
+    if J is not constant: move J_new to J_old
+    choose deposition time:
+        linear J/rho -> subinterval endpoint
+        constant or quadratic J/rho -> subinterval midpoint
+    deposit the requested J and rho sample, synchronize it, then FFT it
 ```
 
 线性依赖使用子区间端点，常量和二次依赖使用中点；二次依赖还会额外沉积一次，形成 `old/mid/new` 三个时间层：
 
-```cpp
-if (time_dependency_J == TimeDependencyJ::Quadratic)
-{
-    PSATDMoveJNewToJMid();
-    mypc->DepositCurrent( m_fields.get_mr_levels_alldirs(current_string, finest_level),  dt[0], t_deposit_current + 0.5_rt*sub_dt);
-    SyncCurrent("current_fp");
-    PSATDForwardTransformJ("current_fp", "current_cp");
-}
-```
+对二次 (J)，实现还会在子区间中点取得额外样本。因此需要保留 `J_old`、`J_mid`、`J_new`；线性模型只需要端点，常量模型只需要中点。每个新样本都经历“沉积 -> 同步 -> FFT”后才成为谱算法的输入。
 
 谱数组的 `old/mid/new` component 由 `SpectralFieldIndex` 分配：
 
-```cpp
-if (time_dependency_J == TimeDependencyJ::Quadratic)
-{
-    Jx_old = c++; Jy_old = c++; Jz_old = c++;
-    Jx_new = c++; Jy_new = c++; Jz_new = c++;
-    Jx_mid = c++; Jy_mid = c++; Jz_mid = c++;
-}
-else if (time_dependency_J == TimeDependencyJ::Linear)
-{
-    Jx_old = c++; Jy_old = c++; Jz_old = c++;
-    Jx_new = c++; Jy_new = c++; Jz_new = c++;
-}
-```
+`SpectralFieldIndex` 负责把这些逻辑时间层映射到连续的谱数组 component。读代码时不必记住 `c++` 的编号顺序；只需核对所选时间模型是否实际分配了 `old/mid/new` 所需的分量。
 
 二阶 JRhom kernel 把这些时间层组合成多项式系数：
 
-```cpp
-const Complex a_jx = (J_quadratic) ? (Jx_new - 2._rt * Jx_mid + Jx_old) : 0._rt;
-const Complex b_jx = (J_linear || J_quadratic) ? (Jx_new - Jx_old) : 0._rt;
-const Complex c_jx = (J_linear) ? (Jx_new + Jx_old)/2._rt : Jx_mid;
-
-const Complex a_rho = (rho_quadratic) ? (rho_new - 2._rt * rho_mid + rho_old) : 0._rt;
-const Complex b_rho = (rho_linear || rho_quadratic) ? (rho_new - rho_old) : 0._rt;
-const Complex c_rho = (rho_linear) ? (rho_new + rho_old)/2._rt : rho_mid;
-```
+谱 kernel 再以离散端点/中点差分形成多项式系数：二次项是 `new - 2*mid + old`，一次项是 `new - old`，常量项取中点或两端均值。对 (J) 和 (ho) 分别执行同一层次的构造。
 
 这对应每个子区间内
 
@@ -621,24 +589,20 @@ $$
 
 电场更新式以 `Ex` 为例：
 
-```cpp
-fields(i,j,k,Idx.Ex) = C * Ex_old
-    + I * c2 * S_ck * (ky * Bz_old - kz * By_old)
-    + Y3 * a_jx + Y2 * b_jx - S_ck/ep0 * c_jx
-    + I * c2 * kx * sum_rho;
-```
+以 \(E_x\) 为例，等价的阅读式是
 
-这里 `(ky*Bz-kz*By)` 是谱空间 curl(B)，`Y3/Y2/S_ck` 分别积分二次、一次和常量电流源项，`sum_rho` 则是电荷密度多项式带来的纵向修正。
+$$
+E_x^{\rm new}=C E_x^{\rm old}
++ i c^2 S_{ck}(k_yB_z-k_zB_y)
++Y_3a_{J_x}+Y_2b_{J_x}-S_{ck}c_{J_x}/\epsilon_0
++i c^2 k_x\,\mathrm{sum\_rho}.
+$$
 
-磁场更新式同样含有 `k x J` 的多项式积分：
+这里 `(ky*Bz-kz*By)` 是谱空间 \(\operatorname{curl}(\mathbf{B})\)，`Y3/Y2/S_ck` 分别积分二次、一次和常量电流源项，`sum_rho` 则是电荷密度多项式带来的纵向修正。
 
-```cpp
-fields(i,j,k,Idx.Bx) = C * Bx_old
-    - I * S_ck * (ky * Ez_old - kz * Ey_old)
-    - I * Y1 * (ky * a_jz - kz * a_jy)
-    + I * Y5 * (ky * b_jz - kz * b_jy)
-    + I * Y4 * (ky * c_jz - kz * c_jy );
-```
+磁场更新式同样含有 \(\mathbf{k}\times\mathbf{J}\) 的多项式积分：
+
+磁场的对应项保留真空 curl(\(E\))，再按 \(Y_1,Y_5,Y_4\) 分别积分二次、一次与常量的 \(\mathbf{k}\times\mathbf{J}\) 项。完整的 x/y/z 三个分量循环、零模分支和 time-averaging 贡献仍在 `PsatdAlgorithmJRhomSecondOrder.cpp` 中；上式不是可编译源码。
 
 JRhom 的支持边界也必须写清楚：源码禁止 Vay deposition 与 JRhom 组合，默认关闭 JRhom current correction，并禁止 Galilean PSATD：
 
@@ -672,7 +636,7 @@ if (m_JRhom)
 
 选择 JRhom 前应依次确认：问题是否确实需要在一个 PIC 大步内解析更丰富的源项时间依赖；输入的沉积算法是否允许这一分支；以及后续要观察 ordinary fields 还是 time-averaged fields。只有这三个问题都明确，`Y1-Y8` 才有物理语义。把它们当成“比 `X1-X4` 更高阶的一组数”会掩盖真正变化的对象，即源项采样与子区间推进顺序。
 
-二阶 JRhom 中，`Y1-Y5` 积分 ordinary `E/B` 更新内的二次、一次和常量电流项，`Y6-Y8` 只在 time averaging 打开时累加平均场的源项贡献。它们都使用子区间步长 $\delta t=\Delta t/m$，不是外层完整 PIC 步长。这是阅读 `PsatdAlgorithmJRhomSecondOrder.cpp` 时最重要的尺度检查。
+二阶 JRhom 中，`Y1-Y5` 积分 ordinary `E/B` 更新内的二次、一次和常量电流项，`Y6-Y8` 只在 time averaging 打开时累加平均场的源项贡献。它们都使用子区间步长 \(\delta t=\Delta t/m\)，不是外层完整 PIC 步长。这是阅读 `PsatdAlgorithmJRhomSecondOrder.cpp` 时最重要的尺度检查。
 
 ### 6.7.2 组合限制与验证边界
 
@@ -695,52 +659,21 @@ $$
 n_\mathrm{comps}=2n_\mathrm{modes}-1.
 $$
 
-源码中：
-
-```cpp
-utils::parser::queryWithParser(pp_warpx, "n_rz_azimuthal_modes", n_rz_azimuthal_modes);
-WARPX_ALWAYS_ASSERT_WITH_MESSAGE( n_rz_azimuthal_modes > 0,
-    "The number of azimuthal modes (n_rz_azimuthal_modes) must be at least 1");
-```
-
-```cpp
-ncomps = n_rz_azimuthal_modes*2 - 1;
-```
+输入 `n_rz_azimuthal_modes` 必须为正；实空间场的 component 数为 \(2n_{\rm modes}-1\)。这分别保存 \(m=0\) 的实部，以及每个非零 mode 的实部和虚部。
 
 RZ spectral solver 入口选择标准、Galilean 或 PML 算法：
 
-```cpp
-if (with_pml) {
-        PML_algorithm = std::make_unique<PsatdAlgorithmPmlRZ>(
-            k_space, dm, m_spectral_index, n_rz_azimuthal_modes, norder_z, grid_type, dt);
-}
-if (v_galilean[2] == 0) {
-    algorithm = std::make_unique<PsatdAlgorithmRZ>(
-        k_space, dm, m_spectral_index, n_rz_azimuthal_modes, norder_z, grid_type, dt,
-        update_with_rho, fft_do_time_averaging, time_dependency_J, time_dependency_rho, dive_cleaning, divb_cleaning);
-} else {
-    algorithm = std::make_unique<PsatdAlgorithmGalileanRZ>(
-        k_space, dm, m_spectral_index, n_rz_azimuthal_modes, norder_z, grid_type, v_galilean, dt, update_with_rho);
-}
+算法构造的**阅读伪代码**如下：
+
+```text
+if PML is requested: additionally construct PsatdAlgorithmPmlRZ
+if axial Galilean velocity is zero: construct PsatdAlgorithmRZ
+otherwise: construct PsatdAlgorithmGalileanRZ
 ```
 
-RZ 的 `kz` 来自 z 向 FFT，而 `kr` 来自径向 Hankel transform 的 Bessel roots。`SpectralKSpaceRZ` 只构造 z 向 k：
+完整构造参数还接收 mode 数、轴向 finite-order、grid type、时间步和 source 时间模型；它们决定具体类可支持的组合，不能由这个选择逻辑省略。
 
-```cpp
-const int i_dim = 1;
-const bool only_positive_k = false;
-k_vec[i_dim] = getKComponent(dm, realspace_ba, i_dim, only_positive_k);
-```
-
-Hankel transformer 为每个 mode 建立三套 transform：
-
-```cpp
-for (int mode=0 ; mode < m_n_rz_azimuthal_modes ; mode++) {
-    dht0[mode] = std::make_unique<HankelTransform>(mode  , mode, m_nr, rmax);
-    dhtp[mode] = std::make_unique<HankelTransform>(mode+1, mode, m_nr, rmax);
-    dhtm[mode] = std::make_unique<HankelTransform>(mode-1, mode, m_nr, rmax);
-}
-```
+RZ 的 `kz` 来自 z 向 FFT，而 `kr` 来自径向 Hankel transform 的 Bessel roots。`SpectralKSpaceRZ` 只在 z 方向构造 FFT 波数；每个 mode 则建立标量的 `dht0`、横向 (p) 组合的 `dhtp` 和横向 (m) 组合的 `dhtm`，其阶数分别为 (m)、(m+1)、(m-1)。
 
 标量用 `dht0`。横向矢量场先组合为
 
@@ -749,48 +682,18 @@ F_p=\frac{F_r-iF_\theta}{2},\qquad
 F_m=\frac{F_r+iF_\theta}{2},
 $$
 
-源码中对应：
+源码先按上式把实/虚 component 组合为 (F_p,F_m)，再分别对它们应用 `dhtp/dhtm`。这是**等价阅读伪代码**：
 
-```cpp
-// temp_p = (F_r - I*F_t)/2
-// temp_m = (F_r + I*F_t)/2
-F_r_physical_array(i,j,k,mode_r) = 0.5_rt*(r_real + t_imag);
-F_r_physical_array(i,j,k,mode_i) = 0.5_rt*(r_imag - t_real);
-F_t_physical_array(i,j,k,mode_r) = 0.5_rt*(r_real - t_imag);
-F_t_physical_array(i,j,k,mode_i) = 0.5_rt*(r_imag + t_real);
+```text
+for each azimuthal mode:
+    form F_p = (F_r - i F_theta) / 2
+    form F_m = (F_r + i F_theta) / 2
+    Hankel-transform F_p with dhtp and F_m with dhtm
 ```
 
-然后分别做 `dhtp/dhtm`：
+所以 `PsatdAlgorithmRZ` 中的 `Ep/Em` 不是 `Ex/Ey`，而是由 `E_r/E_theta` 组合出的谱分量。`SpectralFieldIndex` 用“每 mode 一组 field slots”的布局把 `Ep, Em, Ez, Bp, Bm, Bz` 及 source 时间层映射到数组 component；具体整数偏移不是物理定义。
 
-```cpp
-dhtp[mode]->HankelForwardTransform(F_r_physical, mode_r, G_p_spectral, mode_r);
-dhtm[mode]->HankelForwardTransform(F_t_physical, mode_r, G_m_spectral, mode_r);
-```
-
-所以 `PsatdAlgorithmRZ` 中的 `Ep/Em` 不是 `Ex/Ey`，而是由 `E_r/E_theta` 组合出的谱分量：
-
-```cpp
-int const Ep_m = Idx.Ex + Idx.n_fields*mode;
-int const Em_m = Idx.Ey + Idx.n_fields*mode;
-int const Ez_m = Idx.Ez + Idx.n_fields*mode;
-int const Bp_m = Idx.Bx + Idx.n_fields*mode;
-int const Bm_m = Idx.By + Idx.n_fields*mode;
-int const Bz_m = Idx.Bz + Idx.n_fields*mode;
-```
-
-RZ PSATD 的电场更新以 `Ep/Em/Ez` 为变量：
-
-```cpp
-fields(i,j,k,Ep_m) = C*Ep_old
-            + S_ck*(-c2*I*kr/2._rt*Bz_old + c2*kz*Bp_old - inv_ep0*Jp)
-            + 0.5_rt*kr*rho_diff;
-fields(i,j,k,Em_m) = C*Em_old
-            + S_ck*(-c2*I*kr/2._rt*Bz_old - c2*kz*Bm_old - inv_ep0*Jm)
-            - 0.5_rt*kr*rho_diff;
-fields(i,j,k,Ez_m) = C*Ez_old
-            + S_ck*(c2*I*kr*Bp_old + c2*I*kr*Bm_old - inv_ep0*Jz)
-            - I*kz*rho_diff;
-```
+RZ PSATD 的电场更新以 `Ep/Em/Ez` 为变量：以 \(C\) 传播旧场、以 \(S_{ck}\) 乘对应的谱 \(\operatorname{curl}(\mathbf{B})\) 与电流，再将 `rho_diff` 分别沿 \(+k_r/2,-k_r/2,-ik_z\) 注入 \(E_p,E_m,E_z\)。源码中的完整分支还处理时间平均、cleaning、零模与不同 `rho/J` 时间模型；本段不是可编译源码。
 
 RZ 的谱散度写成
 
@@ -799,54 +702,29 @@ $$
 \rightarrow k_r(E_p-E_m)+ik_zE_z.
 $$
 
-源码中 `update_with_rho=0` 时用它重构电荷项：
-
-```cpp
-Complex const divE = kr*(Ep_old - Em_old) + I*kz*Ez_old;
-Complex const divJ = kr*(Jp - Jm) + I*kz*Jz;
-
-rho_diff = (X2 - X3)*PhysConst::epsilon_0*divE - X2*dt*divJ;
-```
+源码在 `update_with_rho=0` 时先构造 `divE = kr*(Ep_old-Em_old)+i*kz*Ez_old` 与 `divJ = kr*(Jp-Jm)+i*kz*Jz`，再以 `X2/X3` 从两者重构 `rho_diff`。这一分支说明电荷项可来自谱散度关系，而不是直接读取 `rho` 数组。
 
 RZ current correction 也沿这个谱散度结构投影：
 
-```cpp
-Complex const F = - ((rho_new - rho_old)/dt + I*kz*Jz + kr*(Jp - Jm))/k_norm2;
-
-fields(i,j,k,Jp_m) += +0.5_rt*kr*F;
-fields(i,j,k,Jm_m) += -0.5_rt*kr*F;
-fields(i,j,k,Jz_m) += -I*kz*F;
-```
+current correction 先由连续性残差除以 \(k^2\) 得到标量 \(F\)，再分别向 `Jp/Jm/Jz` 加上 \(+k_rF/2,-k_rF/2,-ik_zF\)。方向、符号和 \(p/m\) 组合是 RZ 投影本身的一部分，不能替换为 Cartesian 的三分量修正。
 
 反变换后，RZ 还要按 mode 对称性填充轴下 guard cells：
 
-```cpp
-if (i < 0) {
-    ii = -i - 1;
-    if (icomp == 0) {
-        // Mode zero is symmetric
-        sign = +1._rt;
-    } else {
-        // Odd modes are anti-symmetric
-        const auto imode = (icomp + 1)/2;
-        sign = static_cast<amrex::Real>(std::pow(-1._rt, imode));
-    }
-}
-```
+反变换后，轴下 guard cell 由镜像索引 \(ii=-i-1\) 填充；\(m=0\) 取对称号，非零 mode 按其 mode parity 取正或负号。完整实现还区分实/虚 component 与场分量，读者应以该对称性合同检查轴邻域，而不是把所有 guard cell 当作普通复制。
 
 这说明 RZ PSATD 的“正确性”同时依赖三件事：Hankel/Bessel 谱基、`Ep/Em` 横向矢量代数、以及轴上/轴下 mode 对称性。把 Cartesian PSATD 的 `kx,ky,kz` 公式机械删去一个方向，得不到 WarpX 的 RZ 实现。
 
 ### 6.8.1 RZ 中先认清字段表示，再读系数
 
-RZ 的关键不是把三维 Cartesian 公式少写一个方向，而是先把 $(r,\theta)$ 横向矢量改写为 $p/m$ 组合，再在每个 azimuthal mode 上使用 Hankel 变换。`Ep/Em`、`Bp/Bm` 和 `Jp/Jm` 因而是由物理横向分量组合得到的谱变量，不是 `Ex/Ey` 的别名。
+RZ 的关键不是把三维 Cartesian 公式少写一个方向，而是先把 \((r,\theta)\) 横向矢量改写为 \(p/m\) 组合，再在每个 azimuthal mode 上使用 Hankel 变换。`Ep/Em`、`Bp/Bm` 和 `Jp/Jm` 因而是由物理横向分量组合得到的谱变量，不是 `Ex/Ey` 的别名。
 
-这会直接改变散度、current correction 和电荷项的写法：RZ 谱散度包含 $k_r(E_p-E_m)+ik_zE_z$，修正电流也沿 $J_p-J_m$ 与 $J_z$ 的组合投影。标准 RZ、Galilean RZ 和 RZ PML 可以共享基础的振荡思想，却不能直接复用 Cartesian `X1-X4` 的更新式或验证结论。轴下 guard-cell 的 mode 对称性又是反变换后独立的一层条件。
+这会直接改变散度、current correction 和电荷项的写法：RZ 谱散度包含 \(k_r(E_p-E_m)+ik_zE_z\)，修正电流也沿 \(J_p-J_m\) 与 \(J_z\) 的组合投影。标准 RZ、Galilean RZ 和 RZ PML 可以共享基础的振荡思想，却不能直接复用 Cartesian `X1-X4` 的更新式或验证结论。轴下 guard-cell 的 mode 对称性又是反变换后独立的一层条件。
 
 对读者而言，一个实用检查顺序是：先看 `n_rz_azimuthal_modes` 与 fields 的 mode 组件数；再定位 `PsatdAlgorithmRZ`、`PsatdAlgorithmGalileanRZ` 或 `PsatdAlgorithmPmlRZ` 中哪一类实际被构造；最后才对照该类自己的 `rho/J` 时间模型和 analysis。这样不会把同名 `X`、`Y` 或同样叫 current correction 的路径误认成同一算法。
 
 ### 6.8.2 Comoving 与 Galilean 都有相位，但问题不同
 
-Galilean PSATD 选择的是随背景漂移移动的网格表示；comoving PSATD 则是 regular-domain 上另一套具有独立相位、波数分工和组合限制的算法。两者不能仅因都出现 $\Theta_2$ 或移动速度就互换。
+Galilean PSATD 选择的是随背景漂移移动的网格表示；comoving PSATD 则是 regular-domain 上另一套具有独立相位、波数分工和组合限制的算法。两者不能仅因都出现 \(\Theta_2\) 或移动速度就互换。
 
 comoving 分支要求 direct current deposition 与 `psatd.update_with_rho=1`，并与 Esirkepov、Villasenor、Vay 以及 JRhom 组合受限。它的 `C/S_ck` 用有限阶 modified wave number，comoving 相位却使用另一组波数与速度；这种双波数分工必须保留到解释退化极限和 current correction 时。`psatd.use_default_v_comoving` 还依赖 `warpx.gamma_boost`，输入层的归一化速度会在算法内转换为 SI 速度。
 
@@ -879,7 +757,7 @@ $$
 \nabla^2\mathbf A=-\mu_0\mathbf J,\qquad \mathbf B=\nabla\times\mathbf A.
 $$
 
-如果启用 `relativistic`，WarpX 对每个 species 用平均速度 $\boldsymbol\beta=\langle\mathbf v\rangle/c$ 解修正 Poisson 方程：
+如果启用 `relativistic`，WarpX 对每个 species 用平均速度 \(\boldsymbol\beta=\langle\mathbf v\rangle/c\) 解修正 Poisson 方程：
 
 $$
 \left[\nabla^2-(\boldsymbol\beta\cdot\nabla)^2\right]\phi=-\rho/\epsilon_0,
@@ -969,7 +847,7 @@ if (dirichlet_flag[2*idim+1] && iv[idim] == domain.bigEnd(idim)) {
 }
 ```
 
-因此边界电势是解空间上的约束，而不是加到 $\rho$ 的体源项。
+因此边界电势是解空间上的约束，而不是加到 \(\rho\) 的体源项。
 
 ### 6.9.2 Lab-frame 静电
 
@@ -1033,7 +911,7 @@ computeE( Efield_fp, amrex::GetVecOfPtrs(phi), beta );
 computeB( Bfield_fp, amrex::GetVecOfPtrs(phi), beta );
 ```
 
-`computeE()` 的 nodal 3D `Ex` 代码正是 $(\beta_i\beta_j-\delta_{ij})\partial_j\phi$：
+`computeE()` 的 nodal 3D `Ex` 代码正是 \((\beta_i\beta_j-\delta_{ij})\partial_j\phi\)：
 
 ```cpp
 Ex_arr(i,j,k) +=
@@ -1042,7 +920,7 @@ Ex_arr(i,j,k) +=
     + beta_x*beta_z       *0.5_rt*inv_dz*(phi_arr(i  ,j  ,k+1)-phi_arr(i  ,j  ,k-1));
 ```
 
-`computeB()` 在 `beta=0` 时立即返回；否则按 $-\boldsymbol\beta\times\nabla\phi/c$ 生成磁场：
+`computeB()` 在 `beta=0` 时立即返回；否则按 \(-\boldsymbol\beta\times\nabla\phi/c\) 生成磁场：
 
 ```cpp
 if ((beta[0] == 0._rt) && (beta[1] == 0._rt) && (beta[2] == 0._rt)) { return; }
@@ -1898,7 +1776,7 @@ if (m_use_mass_matrices_pc) {
 
 - `current_fp_non_suborbit = J_0`；
 - `MassMatrices_X/Y/Z = dJ/dE` 的完整局域响应；
-- `MassMatrices_PC` 是从主质量矩阵裁剪、通信、施边界、再乘上 $c^2\mu_0\theta\Delta t$ 后供 preconditioner 使用的近似系数场。
+- `MassMatrices_PC` 是从主质量矩阵裁剪、通信、施边界、再乘上 \(c^2\mu_0\theta\Delta t\) 后供 preconditioner 使用的近似系数场。
 
 随后 `Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 通过 `ComputeJfromMassMatrices()` 将 linear stage 的电流明确写成
 
@@ -2006,7 +1884,7 @@ if (ridx_l < 0) { return; }
 2. 若 `thetaDt>0`，再写 `curl(alpha curl .)` 的离散条目；
 3. 若 `m_include_mass_matrices=true`，最后再把 `MassMatrices_PC` 的同分量局域窗口写进去。
 
-不同几何的差异主要体现在第二层。1D `Z` 几何下只有横向 `Ex/Ey` 行带三点二阶差分，`Ez` 不带 curl-curl；XZ / RZ 下 `dir=0,2` 不只是本分量三点模板，还会额外跨到横向分量写四个 mixed-derivative 角点条目，对应二维的 $\partial_x\partial_z$ 交叉导数；3D 下每个分量行都会同时耦合到另外两个分量，在两个横向方向上写二阶项和 mixed-derivative 项；RCYLINDER 则没有这类跨分量 mixed derivative，但径向二阶项都显式带有 `1 \pm 0.5/i` 这类圆柱几何因子。所有这些条目都通过 `insertOrAdd()` 合并到同一行里，并逐项乘上 `BC_mask_Edir_arr(...)`，所以边界条件不是事后再修，而是在矩阵条目生成时就已经嵌入 stencil。
+不同几何的差异主要体现在第二层。1D `Z` 几何下只有横向 `Ex/Ey` 行带三点二阶差分，`Ez` 不带 curl-curl；XZ / RZ 下 `dir=0,2` 不只是本分量三点模板，还会额外跨到横向分量写四个 mixed-derivative 角点条目，对应二维的 \(\partial_x\partial_z\) 交叉导数；3D 下每个分量行都会同时耦合到另外两个分量，在两个横向方向上写二阶项和 mixed-derivative 项；RCYLINDER 则没有这类跨分量 mixed derivative，但径向二阶项都显式带有 \(1 \pm 0.5/i\) 这类圆柱几何因子。所有这些条目都通过 `insertOrAdd()` 合并到同一行里，并逐项乘上 `BC_mask_Edir_arr(...)`，所以边界条件不是事后再修，而是在矩阵条目生成时就已经嵌入 stencil。
 
 而 `BC_mask_Edir_arr(...)` 本身也不是临时判断得到的布尔开关，而是 `Source/FieldSolver/ImplicitSolvers/ThetaImplicitEM.cpp` 在 `pc_petsc` 模式下预先分配并写好的系数场。`InitializeCurlCurlBCMasks()` 会根据几何维度先决定每个 `E` 分量需要多少类 mask，然后再把 PEC、PMC、Silver-Mueller、PECInsulator 甚至轴线 `None` 的边界重构系数直接写进这些分量里。所以 `MatrixPC::Assemble()` 在边界上不是“先写标准 stencil，再删条目”，而是直接把已经改写好的离散系数乘进对角项、邻点项和 mixed-derivative 项。
 
@@ -2095,7 +1973,7 @@ assert total_newton_iters == num_steps
 
 ### 6.11.7 Hybrid Ohm solver：哪些是强判据，哪些只是输出回归
 
-Hybrid Ohm solver 的测试更接近物理 benchmark。`ohm_solver_em_modes/analysis_rz.py` 先对 $E_\theta(r,z,t)$ 做径向 Hankel 投影、轴向 Fourier transform 和时间 Fourier transform：
+Hybrid Ohm solver 的测试更接近物理 benchmark。`ohm_solver_em_modes/analysis_rz.py` 先对 \(E_\theta(r,z,t)\) 做径向 Hankel 投影、轴向 Fourier transform 和时间 Fourier transform：
 
 ```python
 def transform_spatially(data_for_transform):
@@ -2120,7 +1998,7 @@ assert np.allclose(
 )
 ```
 
-所以这不是完整色散关系拟合，而是谱结构回归。Ion beam R instability 更接近增长率 benchmark：对 `B_y(z,t)` 做空间 FFT，追踪 `m=4,5,6` 模，并用 Munoz et al. 2018 Fig. 12a 的增长率在 $10<t\Omega_i<40$ 内拟合：
+所以这不是完整色散关系拟合，而是谱结构回归。Ion beam R instability 更接近增长率 benchmark：对 `B_y(z,t)` 做空间 FFT，追踪 `m=4,5,6` 模，并用 Munoz et al. 2018 Fig. 12a 的增长率在 \(10<t\Omega_i<40\) 内拟合：
 
 ```python
 gamma4 = 0.1915611861780133
@@ -2142,7 +2020,7 @@ assert np.isclose(m4_rms_error, 1.546, atol=0.01)
 
 另外几类 Hybrid Ohm 测试没有显式 assert：
 
-- `ohm_solver_ion_Landau_damping/analysis.py` 画出 $|E_z(k_m,t)|/|E_z(k_m,0)|$ 与 $\exp(-\gamma t)$ 的比较，$\gamma$ 来自 Munoz et al. 2018 Fig. 14b 插值。
+- `ohm_solver_ion_Landau_damping/analysis.py` 画出 \(|E_z(k_m,t)|/|E_z(k_m,0)|\) 与 \(\exp(-\gamma t)\) 的比较，\(\gamma\) 来自 Munoz et al. 2018 Fig. 14b 插值。
 - `ohm_solver_magnetic_reconnection/analysis.py` 输出重联率
 
 $$
@@ -2158,20 +2036,23 @@ $$
 
 上面的验证讨论按物理检查量组织。实际维护时，还需要知道哪些 regression 入口正在覆盖这些检查。下表按当前 `Examples/Tests` 的 CMake 与 analysis 脚本整理，目的是让读者能从正文回到可运行测试，而不是只停留在抽象“有验证”的说法上。
 
-| family | 代表输入 / 测试名 | analysis 入口 | 主要判据 | 本章对应的源码风险 |
-|---|---|---|---|---|
-| PML FDTD Yee | `pml/inputs_test_2d_pml_x_yee` | `pml/analysis_pml_yee.py diags/diag1000300` | 末态场能量除以初始激光能量，反射率相对理论值误差 `< 5%` | `EvolveBPML/EPML`、sigma damping、`PML::Exchange()` 是否能吸收而不反射 |
-| PML FDTD CKC | `pml/inputs_test_2d_pml_x_ckc` | `pml/analysis_pml_ckc.py diags/diag1000300` | 同样检查反射率，理论参考值不同，误差 `< 5%` | CKC stencil 与 split-field PML 是否组合正确 |
-| PML PSATD / Galilean | `pml/inputs_test_2d_pml_x_psatd`、`inputs_test_2d_pml_x_galilean` | `pml/analysis_pml_psatd.py diags/diag1000300` | 先要求 iteration 50 的能量与脚本常量一致到 `1e-14`，再要求最终反射率 `< 1e-6` | `PushPSATD()` 后的 `PML::PushPSATD()`、谱场回填和 PML 边界是否正确 |
-| PML restart | `pml/inputs_test_2d_pml_x_yee_restart`、`inputs_test_2d_pml_x_psatd_restart` | `analysis_default_restart.py` + checksum | 重启前后最终 plotfile 一致 | PML split fields 和场 guard cells 是否可 checkpoint/restart |
-| RZ PML PSATD | `pml/inputs_test_rz_pml_psatd` | `pml/analysis_pml_psatd_rz.py diags/diag1000500` | 末态 `max(|Er|, |Ez|) < 2.0` | `PML_RZ::PushPSATD()`、RZ spectral PML 和径向边界吸收 |
-| Galilean PSATD NCI | `nci_psatd_stability/inputs_test_{2d,3d,rz}_galilean_psatd*` | `nci_psatd_stability/analysis_galilean.py` | 电场能量与不稳定参考能量之比小于维度/分支容差；current correction 分支还检查 `max|divE-rho/eps0|` 相对误差 | Galilean `PsatdAlgorithm` 是否抑制 boosted-frame NCI，并保持 Gauss law |
-| Averaged Galilean PSATD | `inputs_test_2d_averaged_galilean_psatd*`、`inputs_test_3d_averaged_galilean_psatd*` | `analysis_galilean.py` | 同样用电场能量比检查稳定性，time averaging 分支容差更宽 | `fft_do_time_averaging` 的平均场回填是否稳定 |
-| PSATD-JRhom NCI | `inputs_test_3d_uniform_plasma_psatd_JRhom_CC1` | `analysis_psatd_CC1.py diags/diag1000300` | 电场能量除以 `66e6` 后 `< 1e-8` | `OneStep_JRhom()` 多次沉积与 `PsatdAlgorithmJRhom*` 源项积分是否抑制 NCI |
-| RZ PSATD-JRhom smoke | `inputs_test_rz_psatd_JRhom_LL2` | `analysis=OFF` + checksum | 只有最终 plotfile checksum | RZ JRhom 当前是输出回归入口，不应写成物理强判据 |
-| Langmuir FDTD / PSATD 2D | `langmuir/inputs_test_2d_langmuir_multi*` | `langmuir/analysis_2d.py diags/diag1000080` | `Ex/Ez` 与解析 Langmuir 场最大相对误差 `< 0.0503`；四阶形函数分支 `< 0.07`；部分分支追加 charge conservation | 场求解器、沉积、gather 和 guard-cell 同步在解析 plasma wave 中是否闭合 |
-| Langmuir 3D / div cleaning | `langmuir/inputs_test_3d_langmuir_multi*` | `langmuir/analysis_3d.py diags/diag1000040` | 网格场与粒子处场均与解析场比较，误差 `< 5e-2`；div-cleaning 分支还检查 `dF/dt = divE-rho/eps0` 到 `1e-2` | 3D PSATD/FDTD、粒子场诊断和 divergence cleaning 的一致性 |
-| Langmuir RZ / RZ PSATD | `langmuir/inputs_test_rz_langmuir_multi*` | `langmuir/analysis_rz.py diags/diag1000080` | `Er/Ez` 与 RZ 解析 Langmuir 场误差 `< 0.12`，并检查 RZ 粒子过滤诊断 | RZ field solver、RZ PSATD/current correction/JRhom 和诊断过滤是否共同正确 |
+**PML 与 FDTD。**
+
+- `inputs_test_2d_pml_x_yee`: 反射率误差 `< 5%`；检验 `EvolveBPML/EPML`、sigma damping 与 `PML::Exchange()`。
+- `inputs_test_2d_pml_x_ckc`: 同样要求反射率误差 `< 5%`；重点是 CKC stencil 与 split-field PML 的组合。
+- `inputs_test_2d_pml_x_{psatd,galilean}`: iteration 50 能量匹配 `1e-14`，最终反射率 `< 1e-6`。
+- `inputs_test_2d_pml_x_{yee,psatd}_restart`: restart + checksum，不是物理反射率断言。
+- `inputs_test_rz_pml_psatd`: `max(|Er|,|Ez|) < 2.0`，覆盖 RZ 径向吸收。
+
+#### PSATD、JRhom 与 Langmuir
+
+- `inputs_test_{2d,3d,rz}_galilean_psatd*`: 场能量比；current correction 还检查 `max|divE-rho/eps0|`。
+- `inputs_test_{2d,3d}_averaged_galilean_psatd*`: 同一能量比 gate，time-averaging 有独立容差。
+- `inputs_test_3d_uniform_plasma_psatd_JRhom_CC1`: 场能量除以 `66e6` 后 `< 1e-8`。
+- `inputs_test_rz_psatd_JRhom_LL2`: `analysis=OFF` + checksum，不是物理强判据。
+- `langmuir/inputs_test_2d_langmuir_multi*`: `Ex/Ez` 误差 `< 0.0503`；四阶形函数分支 `< 0.07`。
+- `langmuir/inputs_test_3d_langmuir_multi*`: 网格/粒子处场误差 `< 5e-2`；div-cleaning 还检查 `dF/dt`。
+- `langmuir/inputs_test_rz_langmuir_multi*`: `Er/Ez` 误差 `< 0.12`，并检查 RZ 粒子过滤诊断。
 
 这个索引表也暴露了一个写作边界：有些 regression 是物理强判据，例如 Langmuir 解析场、PML 反射率、NCI 电场能量比；有些只是 checksum 或 restart 路径，例如 RZ PSATD-JRhom smoke 和部分 PML restart。正文讨论“验证链”时要区分这两类证据，不能把 checksum 说成完整物理验证。
 
@@ -2207,9 +2088,9 @@ $$
 
 | 求解器路径 | analysis 量 | 主要检查 |
 |---|---|---|
-| FDTD + NCI corrector | $\sum(E_x^2+E_z^2+c^2B_y^2)$ | 数值 Cherenkov 是否被抑制 |
-| PSATD Galilean/current correction | 电场能量比、$\nabla\cdot E-\rho/\epsilon_0$ | NCI 抑制和 Gauss law |
-| Electrostatic Poisson | 均匀球解析 $E_r$ 的三轴 L2、粒子势能/动能 | Poisson 场、边界和能量一致性 |
+| FDTD + NCI corrector | \(\sum(E_x^2+E_z^2+c^2B_y^2)\) | 数值 Cherenkov 是否被抑制 |
+| PSATD Galilean/current correction | 电场能量比、\(\nabla\cdot E-\rho/\epsilon_0\) | NCI 抑制和 Gauss law |
+| Electrostatic Poisson | 均匀球解析 \(E_r\) 的三轴 L2、粒子势能/动能 | Poisson 场、边界和能量一致性 |
 | Implicit EM | 总能量漂移、Gauss RMS、Newton/GMRES 迭代数 | 隐式离散守恒和求解器结构 |
 | Hybrid Ohm | 谱采样、增长率 RMS、阻尼/重联图像、checksum | Ohm solver 的物理 benchmark 和输出回归 |
 

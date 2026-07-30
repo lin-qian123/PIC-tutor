@@ -19,9 +19,9 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# Reader-facing chapter openings, long-chapter navigation, and the Chapter 4/5
-# source extracts rendered as declared reader pseudocode yield 258 pages.
-EXPECTED_PDF_PAGES = 258
+# Reader-facing chapter openings, long-chapter navigation, and the Chapter 4--6
+# source extracts rendered as declared reader pseudocode yield 256 pages.
+EXPECTED_PDF_PAGES = 256
 
 
 def image_links(text: str) -> list[str]:

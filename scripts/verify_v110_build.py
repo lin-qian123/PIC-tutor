@@ -345,6 +345,33 @@ def main() -> None:
                 "该函数拒绝超过两个 level，且要求 2:1 refinement ratio",
             )
         ) and not chapter_3_project_narration_markers,
+        "chapter_3_reader_code_examples_are_wrapped": all(
+            marker in chapter_3
+            for marker in (
+                "moving_window_x += (moving_window_v - WarpX::beta_boost * PhysConst::c)\n",
+                "EvolveB(0.5_rt * dt[0], SubcyclingHalf::SecondHalf,\n",
+                "FieldType::current_cp, finest_level, skip_lev0_coarse_patch),",
+                "EvolveB(fine_lev, PatchType::fine, 0.5_rt*dt[fine_lev],\n",
+                "mypc->DepositCurrent(\n        m_fields.get_mr_levels_alldirs(current_string, finest_level),",
+            )
+        ) and all(
+            marker not in chapter_3
+            for marker in (
+                "moving_window_x += (moving_window_v - WarpX::beta_boost * PhysConst::c)/(1 -",
+                "EvolveB(0.5_rt * dt[0], SubcyclingHalf::SecondHalf, a_cur_time",
+                "FieldType::current_cp, finest_level, skip_lev0_coarse_patch), fine_lev);",
+                "EvolveB(fine_lev, PatchType::fine, 0.5_rt*dt[fine_lev], SubcyclingHalf::SecondHalf",
+                "mypc->DepositCurrent( m_fields.get_mr_levels_alldirs(current_string, finest_level)",
+            )
+        ) and all(
+            marker in pdf_text
+            for marker in (
+                "moving_window_v * WarpX::beta_boost / PhysConst::c",
+                "skip_lev0_coarse_patch",
+                "t_deposit_current",
+                "fluid 的 MultiFab",
+            )
+        ) and "`E/B/current/PML/F/G/rho/fluid`" not in chapter_3,
         "chapter_3_cross_chapter_handoff": all(
             marker in chapter_3
             for marker in (

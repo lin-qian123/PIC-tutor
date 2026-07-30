@@ -356,7 +356,8 @@ if (!moving_window_active(step)) { return 0; }
 
 // Update the continuous position of the moving window,
 // and of the plasma injection
-moving_window_x += (moving_window_v - WarpX::beta_boost * PhysConst::c)/(1 - moving_window_v * WarpX::beta_boost / PhysConst::c) * dt[0];
+moving_window_x += (moving_window_v - WarpX::beta_boost * PhysConst::c)
+                   / (1 - moving_window_v * WarpX::beta_boost / PhysConst::c) * dt[0];
 const int dir = moving_window_dir;
 
 // Update current injection position for all containers
@@ -393,7 +394,7 @@ $$
 
 若 `end_moving_window_step < 0` 则表示没有终止步。这也是为什么 `Evolve()` 调的是 `MoveWindow(step+1, ...)`：窗口平移是本步结束后、下一步开始前的状态更新。
 
-当 `num_shift_base != 0` 时，`MoveWindow()` 调用 `ResetProbDomain()` 更新几何域，并用 `shiftMF()` 平移 `E/B/current/PML/F/G/rho/fluid` 等 `MultiFab`。`shiftMF()` 的核心赋值为：
+当 `num_shift_base != 0` 时，`MoveWindow()` 调用 `ResetProbDomain()` 更新几何域，随后由 `shiftMF()` 平移场、source、PML、\(F/G\)、\(\rho\) 与 fluid 的 `MultiFab`。核心赋值为：
 
 ```cpp
 amrex::Box dstBox = mf[mfi].box();
@@ -583,7 +584,8 @@ FDTD 分支的核心源码如下：
 
     EvolveF(0.5_rt * dt[0], /*rho_comp=*/1);
     EvolveG(0.5_rt * dt[0]);
-    EvolveB(0.5_rt * dt[0], SubcyclingHalf::SecondHalf, a_cur_time + 0.5_rt * dt[0]); // We now have B^{n+1}
+    EvolveB(0.5_rt * dt[0], SubcyclingHalf::SecondHalf,
+            a_cur_time + 0.5_rt * dt[0]); // We now have B^{n+1}
 ```
 
 - PSATD 走 `PushPSATD(a_cur_time)`，并处理 hybrid QED、PML、平均场、\(F/G\) guard cells。
@@ -645,13 +647,17 @@ FDTD 分支的核心源码如下：
 PushParticlesandDeposit(fine_lev, cur_time, SubcyclingHalf::FirstHalf);
 RestrictCurrentFromFineToCoarsePatch(
     m_fields.get_mr_levels_alldirs(FieldType::current_fp, finest_level),
-    m_fields.get_mr_levels_alldirs(FieldType::current_cp, finest_level, skip_lev0_coarse_patch), fine_lev);
+    m_fields.get_mr_levels_alldirs(
+        FieldType::current_cp, finest_level, skip_lev0_coarse_patch),
+    fine_lev);
 RestrictRhoFromFineToCoarsePatch(fine_lev);
 
 EvolveB(fine_lev, PatchType::fine, 0.5_rt*dt[fine_lev], SubcyclingHalf::FirstHalf, cur_time);
 EvolveF(fine_lev, PatchType::fine, 0.5_rt*dt[fine_lev], /*rho_comp=*/0);
 EvolveE(fine_lev, PatchType::fine, dt[fine_lev], cur_time);
-EvolveB(fine_lev, PatchType::fine, 0.5_rt*dt[fine_lev], SubcyclingHalf::SecondHalf, cur_time + 0.5_rt * dt[fine_lev]);
+EvolveB(fine_lev, PatchType::fine, 0.5_rt*dt[fine_lev],
+        SubcyclingHalf::SecondHalf,
+        cur_time + 0.5_rt * dt[fine_lev]);
 EvolveF(fine_lev, PatchType::fine, 0.5_rt*dt[fine_lev], /*rho_comp=*/1);
 ```
 
@@ -661,7 +667,7 @@ $$
 \Delta t_0=2\Delta t_1.
 $$
 
-fine level 在一个 coarse step 内走两个完整 leapfrog 小步。`RestrictCurrentFromFineToCoarsePatch()` 和 `RestrictRhoFromFineToCoarsePatch()` 把 fine 层沉积源项平均到 coarse patch；`StoreCurrent()`/`RestoreCurrent()` 保证 coarse 粒子自身 current 能在两个 half coarse step 中分别叠加对应的 fine contribution。
+fine level 在一个 coarse step 内走两个完整 leapfrog 小步。随后对 current 和 \(\rho\) 做 restriction 到 coarse patch；`StoreCurrent()`/`RestoreCurrent()` 保证 coarse 粒子自身 current 能在两个 half coarse step 中分别叠加对应的 fine contribution。
 
 这里 `StoreCurrent()`/`RestoreCurrent()` 的角色需要说得更硬一点：subcycling 不是简单把 fine current 直接覆写 coarse current，而是要先保留 coarse 粒子本身在大步时间层上的电流，再把两次 fine-step 的 restriction 结果分别叠回 coarse half-step。否则 coarse mother grid 看到的就不是“一个 coarse 大步上等效的平均源项”，而会把 coarse 自身电流和 fine 补偿混在一起。
 
@@ -709,7 +715,9 @@ for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
     const amrex::Real t_deposit_charge = (time_dependency_rho == TimeDependencyRho::Linear) ?
         (i_deposit-n_deposit+1)*sub_dt : (i_deposit-n_deposit+0.5_rt)*sub_dt;
 
-    mypc->DepositCurrent( m_fields.get_mr_levels_alldirs(current_string, finest_level), dt[0], t_deposit_current);
+    mypc->DepositCurrent(
+        m_fields.get_mr_levels_alldirs(current_string, finest_level),
+        dt[0], t_deposit_current);
     SyncCurrent("current_fp");
     PSATDForwardTransformJ("current_fp", "current_cp");
 ```

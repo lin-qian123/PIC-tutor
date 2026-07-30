@@ -35,6 +35,7 @@ def main() -> int:
     chapter_7 = (root / "manuscript/chapters/07-boundaries-amr.md").read_text(encoding="utf-8")
     chapter_8 = (root / "manuscript/chapters/08-diagnostics-cases.md").read_text(encoding="utf-8")
     chapter_2 = (root / "manuscript/chapters/02-pic-loop.md").read_text(encoding="utf-8")
+    chapter_2_code_spans = re.findall(r"`([^`]*)`", chapter_2)
     chapter_3 = (root / "manuscript/chapters/03-warpx-evolve.md").read_text(encoding="utf-8")
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
@@ -144,9 +145,17 @@ def main() -> int:
         and not chapter_8_project_record_markers,
         "chapter_2_3_have_reader_facing_routes": all(
             marker in chapter_2
-            for marker in ("## 2.11 本章结论", "粒子与网格的交换方式", "与问题匹配的 observable")
+            for marker in (
+                "## 2.11 本章结论",
+                "粒子与网格的交换方式",
+                "与问题匹配的 observable",
+                "**案例闭环题**",
+            )
         ) and "pkuHEDPbranch" not in chapter_2[:2500]
-        and "pkuHEDPbranch" not in chapter_3[:2500],
+        and "pkuHEDPbranch" not in chapter_3[:2500]
+        and not any(
+            re.search(r"\\(?:omega|lambda|Delta)", span) for span in chapter_2_code_spans
+        ),
         "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text

@@ -663,7 +663,7 @@ Deposit charge density rho^{n}
 
 这四行是读 WarpX 主循环的锚点。任何 field gather、collision、ionization、deposition、sync、field solve 的位置都应围绕这些时间层理解。
 
-### 2.3.1 `\omega_p` 不是背景常数，而是时间离散必须尊重的最快等离子体尺度
+### 2.3.1 $\omega_p$ 不是背景常数，而是时间离散必须尊重的最快等离子体尺度
 
 对电子等离子体，最基本的本征时间尺度是 plasma frequency：
 
@@ -697,11 +697,11 @@ $$
 所以本章这里先压实一个最重要的判断：
 
 - `ComputeDt()` 保证的是一层离散稳定性和时间步组织约束；
-- `\omega_p \Delta t` 是否足够小，仍然是物理建模和分辨率设计问题。
+- $\omega_p\Delta t$ 是否足够小，仍然是物理建模和分辨率设计问题。
 
-### 2.3.2 `\lambda_D` 不只是一条长度定义，它直接约束 `\Delta x`
+### 2.3.2 $\lambda_D$ 不只是一条长度定义，它直接约束 $\Delta x$
 
-和 `\omega_p` 对偶的空间尺度是 Debye length。对非相对论热电子，
+和 $\omega_p$ 对偶的空间尺度是 Debye length。对非相对论热电子，
 
 $$
 \lambda_D=\sqrt{\frac{\epsilon_0 k_B T_e}{n_e e^2}}
@@ -716,10 +716,10 @@ $$
 \Delta x \gg \lambda_D,
 $$
 
-那么 cell 内已经把最基本的 shielding 结构粗化掉了。接下来即使宏观波形看起来还能跑，field fluctuation、aliasing、self-force 和 nonphysical collisionality 也会被系统性放大。这就是为什么第 1 章已经把 `\lambda_D`、`N_D` 和统计时间尺度单独拎出来；在第 2 章里，它进一步变成主循环的硬分辨率边界：
+那么 cell 内已经把最基本的 shielding 结构粗化掉了。接下来即使宏观波形看起来还能跑，field fluctuation、aliasing、self-force 和 nonphysical collisionality 也会被系统性放大。这就是为什么第 1 章已经把 $\lambda_D$、$N_D$ 和统计时间尺度单独拎出来；在第 2 章里，它进一步变成主循环的硬分辨率边界：
 
-- `\Delta t` 决定是否分辨 `\omega_p`；
-- `\Delta x` 决定是否分辨 `\lambda_D`；
+- $\Delta t$ 决定是否分辨 $\omega_p$；
+- $\Delta x$ 决定是否分辨 $\lambda_D$；
 - 两者一起决定 leapfrog + grid PIC 到底是在近似同一个 plasma，还是已经换成了另一个更噪、更热、更强 alias 的离散模型。
 
 ## 2.4 FDTD 场更新的数学骨架
@@ -801,7 +801,7 @@ EvolveB(0.5_rt * dt[0], SubcyclingHalf::SecondHalf, a_cur_time + 0.5_rt * dt[0])
 
 ### 2.4.1 `CFL` 不是经验参数，而是离散 Maxwell 更新的因果上界
 
-WarpX 的 `ComputeDt()` 不会把 FDTD 时间步写死成 `min(\Delta x_i)/c`，而是把这件事委托给具体差分算法。`../warpx/Source/Evolve/WarpXComputeDt.cpp:68-88` 直接把 solver 分叉写死在主类层：
+WarpX 的 `ComputeDt()` 不会把 FDTD 时间步写死成 $\min(\Delta x_i)/c$，而是把这件事委托给具体差分算法。`../warpx/Source/Evolve/WarpXComputeDt.cpp:68-88` 直接把 solver 分叉写死在主类层：
 
 ```cpp
 } else if (electromagnetic_solver_id == ElectromagneticSolverAlgo::PSATD) {
@@ -974,9 +974,9 @@ FDTD 在实空间用局部 stencil 近似 curl。PSATD 则在谱空间解析积�
 这条分界线和前面几节正好连起来：
 
 - `leapfrog` 规定了粒子、场和源项的时间层关系；
-- `\omega_p` 与 `\lambda_D` 规定了 plasma 自身是否被给定的 `\Delta t/\Delta x` 分辨；
+- $\omega_p$ 与 $\lambda_D$ 规定了 plasma 自身是否被给定的 $\Delta t/\Delta x$ 分辨；
 - `CFL` 规定了 Maxwell 更新是否还能保持离散因果；
-- `Yee/Nodal/CKC/PSATD` 则进一步决定同一组 `\Delta t,\Delta x` 会把波动相速度、群速度和 aliasing 改写成什么样。
+- `Yee/Nodal/CKC/PSATD` 则进一步决定同一组 $\Delta t,\Delta x$ 会把波动相速度、群速度和 aliasing 改写成什么样。
 
 所以“主循环能跑”不等于“主循环近似的是对的物理系统”。真正的 PIC loop 要同时满足：
 
@@ -1131,7 +1131,6 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 它把本章真正讨论的五类量都放在同一个最小问题上：
 
 - `geometry.dims = 1`
-- `algo.maxwell_solver = yee`
 - `algo.current_deposition = esirkepov`
 - `algo.field_gathering = energy-conserving`
 - `warpx.cfl = 0.8`
@@ -1141,25 +1140,28 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 也就是说，本章的抽象讨论并不是悬空的。这里的：
 
 - `leapfrog` 时间层
-- `\omega_p`
-- `\lambda_D`
+- $\omega_p$
+- $\lambda_D$
 - FDTD curl 更新
 - `rho/J` 连续性关系
 
 都能在这条最小 Langmuir 主线上落到真实输入。
 
-`Examples/Tests/langmuir/inputs_test_1d_langmuir_multi` 给出一条可复现的最小验证路线。其记录的误差量说明，读者运行这个案例时不应只看“程序成功退出”，还应检查：
+`Examples/Tests/langmuir/CMakeLists.txt` 将这张输入卡注册为 `test_1d_langmuir_multi`：它使用两个 MPI rank，并把末态 plotfile `diags/diag1000080` 交给 `analysis_1d.py`。这给出了一条读者可回查的闭环，而不是一串脱离上下文的历史数字：
 
-- 解析场相对误差 `1.7027848999745115e-3 < 5e-2`
-- `divE-rho/\epsilon_0` 相对误差 `8.34503170903001e-12 < 1e-11`
+1. 输入卡设置 `max_step = 80`、周期边界、`esirkepov` 沉积和第 40/80 步的 full diagnostics；
+2. `analysis_1d.py` 从传入的末态 plotfile 读取 `Ez`，按脚本中的解析 Langmuir 解重建同一时刻的场，并要求 `error_rel < 0.05`；
+3. 脚本随后调用 `analysis_utils.py` 的 `check_charge_conservation(data)`。对这张 `esirkepov`、非 PSATD、非 RZ 的输入，helper 实际检查
 
-因此，完成这个案例的最低验收应包括：
+   $$
+   \frac{\max\left|\mathrm{div}E-\rho/\epsilon_0\right|}
+        {\max\left|\rho/\epsilon_0\right|}
+   < 10^{-11}.
+   $$
 
-- 参数示例
-- 最小运行案例
-- 物理检查量
+这里的 `divE` 是诊断输出中的离散散度字段；这项 gate 检查的是该离散表示下的 Gauss-law/source 一致性，不是“任意几何、边界、粒子形函数和求解器组合都守恒”的证明。单次运行得到的具体误差会随构建、并行布局和案例修改而变化，因此读者应以分析脚本的定义和阈值为准，而不是把某次残差数值当成通用常数。
 
-而不是只停在连续模型和离散方程层。
+因此，完成这个案例的最低交付应包括：输入参数、所消费的末态诊断、解析场误差和离散 Gauss-law 误差分别说明什么，以及它们不能外推到哪些算法组合。这样才真正把连续模型、离散方程和可运行的验证量连起来。
 
 ## 2.9 基础文献与证据范围
 
@@ -1167,8 +1169,8 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 
 - `Birdsall 1985`
   - leapfrog 最小教学骨架
-  - `\omega_p \Delta t`
-  - `v_t \Delta t/\Delta x`
+  - $\omega_p\Delta t$
+  - $v_t\Delta t/\Delta x$
   - finite-grid / aliasing / heating 主线
 - `Dawson 1983`
   - electrostatic / full EM 的数值模型边界
@@ -1189,14 +1191,15 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 进一步阅读：
 
 1. [第 3 章：WarpX 演化](03-warpx-evolve.md)：把本章的 PIC loop 抽象结构接到 `main.cpp -> WarpX::Evolve()` 的真实调用链。
-2. [Birdsall 1985 中文讲解](../../references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation-中文讲解.md)：继续看 `\omega_p\Delta t`、`\lambda_D/\Delta x`、finite-grid aliasing 和 numerical heating。
+2. [Birdsall 1985 中文讲解](../../references/02_books_lecture_notes/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation/1985_BirdsallLangdon_Plasma_physics_via_computer_simulation-中文讲解.md)：继续看 $\omega_p\Delta t$、$\lambda_D/\Delta x$、finite-grid aliasing 和 numerical heating。
 3. [Dawson 1983 中文讲解](../../references/03_pic_foundations/1983_Dawson_Particle_simulation_of_plasmas/1983_Dawson_Particle_simulation_of_plasmas-中文讲解.md)：继续看 full EM、Darwin、quiet start 和 statistical measurements 如何改变“PIC 总循环”的解释方式。
 
 练习题：
 
-1. 解释为什么 `ComputeDt()` 给出的可运行时间步，不自动保证 `\omega_p \Delta t \ll 1`。
-2. 用本章的 `\lambda_D` 讨论说明：为什么 `\Delta x \gg \lambda_D` 时，即使主循环稳定，也可能已经不是同一个物理 plasma。
+1. 解释为什么 `ComputeDt()` 给出的可运行时间步，不自动保证 $\omega_p\Delta t \ll 1$。
+2. 用本章的 $\lambda_D$ 讨论说明：为什么 $\Delta x \gg \lambda_D$ 时，即使主循环稳定，也可能已经不是同一个物理 plasma。
 3. 对照 [Langmuir 阅读笔记](../../notes/code-reading/applications/00-langmuir-wave.md)，指出 `analysis_1d.py` 的两条核心断言分别对应本章哪两类理论边界。
+4. **案例闭环题**：依次读取 `inputs_test_1d_langmuir_multi`、`langmuir/CMakeLists.txt` 和 `analysis_1d.py`，交付一张四行表（输入设置、诊断 surface、分析断言、不可外推范围）。表中必须写清 `test_1d_langmuir_multi` 的两个 rank、`analysis_1d.py diags/diag1000080` 的绑定，以及为什么不能只从 `max_step = 80` 猜测分析器实际消费的输出路径和检查量。
 
 ## 2.11 本章结论
 
@@ -1205,7 +1208,7 @@ PIC 总循环的关键不在于依次调用“推粒子、沉积、推场”三�
 1. **先确定连续问题与可分辨尺度。**等离子体频率、Debye 长度、光波 CFL 和预期物理时间窗决定 `dt`、网格和粒子采样是否有机会描述目标问题。
 2. **再确定粒子与网格的交换方式。**gather、形函数和 `rho/J` deposition 必须共同满足连续性和离散布局要求；仅有稳定的场更新不能补偿不相容的源项。
 3. **区分外层时间步和内部重复。**implicit nonlinear iteration、JRhom 的 source 时间积分与 AMR subcycling 都可能在一个外层步内多次执行，但它们分别代表试探、积分和真实细层推进，不能混用同一类验证量解释。
-4. **最后用与问题匹配的 observable 验证。**Langmuir 的解析场与 `divE-rho/epsilon_0` 能检验指定输入下的波动和 Gauss-law 链；程序退出或 checksum 本身不能证明所有几何、边界和算法组合正确。
+4. **最后用与问题匹配的 observable 验证。**Langmuir 的解析场与 $\mathrm{div}E-\rho/\epsilon_0$ 能检验指定输入下的波动和 Gauss-law 链；程序退出或 checksum 本身不能证明所有几何、边界和算法组合正确。
 
 这条顺序把连续 Vlasov--Maxwell 模型连接到真实的离散时间推进，也为第 3 章的生命周期调用图、第 4、5 章的粒子/沉积链和第 6 章的场求解器选择提供共同的时间层坐标。
 

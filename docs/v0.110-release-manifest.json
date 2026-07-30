@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1248,
-  "total_bytes": 39221874,
+  "total_bytes": 39231933,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1545976,
-      "sha256": "4984e0e54b1614a6b0ab24d6ba10a47d6d4955f3f4df579069e75a2e73dd2a04"
+      "bytes": 1546276,
+      "sha256": "c56a92f0f35beece4ea309d0a051e4aa29112c6b74f1ea484eba0f3a115fc3e5"
     },
     {
       "path": "TODO.md",
-      "bytes": 1422623,
-      "sha256": "8cdd92251c6a781d5ee24a511075468fdca78ed0e2b4a352bb5bdf4d7a9cdfbf"
+      "bytes": 1423197,
+      "sha256": "41e697fc745e54629068402405afeb94bd4f885644601d294aa51b274388714b"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5253848,
-      "sha256": "aca76d415992b14a9acbfd565f7931460b9e48d14cff5d6126aacac6a0ae4d41"
+      "bytes": 5256187,
+      "sha256": "59cdc951bf1a866efeac415c66f542671b013e1e8fec68dbbef0c2ede0c46e73"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 861933,
-      "sha256": "ca96cc6fee825f2fc0e7a514f2d165ad23b6fa94ad1b3e36e3f193c2f9f33203"
+      "bytes": 863382,
+      "sha256": "41d8910314cf55e37adcf2eec75d9f724af1fbde103e3d87cfd752c1c2d29dbb"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 3001044,
-      "sha256": "6c35b021e7a23447b39e2a3e5f6daebe9ff60033ef7a119f56ea189d9803d412"
+      "bytes": 3003228,
+      "sha256": "fa93f2c876e74ff5857f17144ee7efec1abc6d32c6ff68d8570b63a235c3fec0"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -198,12 +198,12 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.json",
       "bytes": 1164,
-      "sha256": "fd938af20086bc5992a4581b242f3adb152dae9ed3b1c9e3d77759467d28bbdf"
+      "sha256": "944d5f73d1c51cf134e0b1a55eeab3bff6d1a743a38a835922a1db39bd0a9e3a"
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
       "bytes": 768,
-      "sha256": "e8c15c3c5a6f95a97d903c4345c969dfb180e5523e2f9a63056f8641475e27b5"
+      "sha256": "b15fd5ef55fdc7ffcbc5e68eef03b0682223a00deab8ca983cab455daf33df31"
     },
     {
       "path": "docs/editorial-quality-audit-v0.81.json",
@@ -522,8 +522,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 24540,
-      "sha256": "ec7dedd1110ee78608b577cffc7839491238ff7c93782f57149ef71d57bea56d"
+      "bytes": 25158,
+      "sha256": "cfdb1de6678b55312a25a249e29fd1fd20a1da0b5cb7b34c9803d1bcba8d33eb"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -668,7 +668,7 @@
     {
       "path": "docs/pdf-layout-audit-v0.110.md",
       "bytes": 571,
-      "sha256": "d68278fd812d03b3c3498d3cc3547b72486d6cb7cffd9115c6ebcb561a409761"
+      "sha256": "24aeaedeb641cc0ee6106250a6ff4561b1482b107b0d2c9c37742c054fe14702"
     },
     {
       "path": "docs/pdf-layout-audit-v0.82.json",
@@ -897,8 +897,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 9557,
-      "sha256": "55dfd6d1acbc88ae8e99b9e7da090a00363eac8575b362063107b5ad68c8aa98"
+      "bytes": 9883,
+      "sha256": "9e13a8647b5f4fff70980512513e3c0d4a7b0c0adfd8c7a61212c8abc6b8e3a3"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2287,8 +2287,8 @@
     },
     {
       "path": "manuscript/chapters/02-pic-loop.md",
-      "bytes": 33572,
-      "sha256": "33b2a64c031c56dc9ba2346435d908eb5536b40bc8312c4e24b6656f22c3fea1"
+      "bytes": 35021,
+      "sha256": "e9aba884a07acbcba5ce13d71bb3e13d55e43f935ed6262b23e187c7decbaed3"
     },
     {
       "path": "manuscript/chapters/03-warpx-evolve.md",
@@ -4562,8 +4562,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 10200,
-      "sha256": "818899e17b760e86b97692d7fe4e32a788b02cf1bf8bd42b39169ed7fae1e993"
+      "bytes": 10486,
+      "sha256": "68db898b6dccebcdac49404b9769ac98d3cb0db8185c74ae95168aa780498565"
     },
     {
       "path": "scripts/audit_release_consistency.py",
@@ -5962,8 +5962,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 25485,
-      "sha256": "de2f2071996979d80bf244a8c14c637565c75995514cb51166913a7047895bb8"
+      "bytes": 26019,
+      "sha256": "6eece415273a4835059b0042af8c5574257b855c386bc6737851efa4f23b9042"
     },
     {
       "path": "scripts/verify_v40_build.py",

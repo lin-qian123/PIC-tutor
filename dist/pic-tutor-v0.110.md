@@ -9004,6 +9004,49 @@ RZ Esirkepov 是本章最容易被误读的例子。默认 axis correction 下�
 
 读者应按以下顺序分析类似残差：先分离 field、all-cell charge、axis 与 off-axis residual；再检查粒子状态、时间层、RZ divergence stencil 与 inverse-volume scaling；最后才讨论 deposition、axis correction 或 diagnostics 的哪条路径需要更强证据。当前准确分类仍是 `BOUNDARY`，而不是“默认算法错误”或“默认算法已证明正确”。
 
+### 5.14.5.1 RZ 轴线判读卡：把一个 residual 拆成三条链
+
+遇到 RZ 的
+
+$$
+R=\nabla_h\!\cdot\!\mathbf E-\frac{\rho}{\epsilon_0}
+$$
+
+在轴线上明显大于 off-axis 区域时，最危险的做法是只看一张 `rho` 图或一个全域范数，然后断言“沉积错了”或“axis correction 修好了问题”。RZ 的轴线同时牵涉三条不同链：**粒子如何写入未缩放 source，几何体积如何把 source 转成密度，以及 field diagnostic 如何在轴线取离散散度。**下面的步骤把它们拆开；每一步只回答一个问题。
+
+1. **先固定 residual 的离散定义和空间区域。**把 axis cell、off-axis cells 和全域分别报告，且让 rho 与 E 来自同一输出时间层。轴线上不能把 Cartesian 或连续的径向散度公式直接代入轴线。WarpX 的 RZ `ComputeDivE` 分支对 mode 0 使用
+
+   $$
+   (\nabla_h\!\cdot\!\mathbf E)_{r=0}
+   =\frac{4E_r(0)}{\Delta r}+D_z^-E_z,
+   $$
+
+   并把高阶 azimuthal modes 的 axis divergence 设为零。因而一个用 `2 Er / Delta r` 或连续径向公式重算出来的数，连同代码实际 consumer 都没有对齐，不能用来判定 source 是否正确。
+
+2. **再把 volume scaling 当作单独的 source 链核查。**粒子 kernel 先按 shape 写入局部数组；物种汇总后，inverse-volume scaling 才把 RZ 轴线上的 rho 除以 `pi*dr*axis_volume_factor`。默认 axis correction 取 `axis_volume_factor = 1/3`，关闭时取 `1/4`。如果只有这一处因子在变化、且写入它之前的数组完全相同，on/off 的轴线密度比应为 `0.75`，off-axis 比应为 `1`。这只是一个可检验的**纯体积因子预测**，不是对真实输出的预设答案。
+
+3. **用配对控制排除“单一缩放因子”解释。**在同一几何、粒子初态、时间层和输出时刻下，仅切换 axis correction，分别比较 `rho_electrons`、`rho_ions`、total `rho` 的 axis/off-axis 比。已有三档 RZ 初始帧的配对读数中，两个 species 的 off-axis 比均为 `1`，而 axis 比稳定为 `0.85`，并非纯体积因子预测的 `0.75`。这说明 axis 上还存在需要区分的沉积、几何或 diagnostic 表示边界；它**不**说明哪一个 kernel 必然错误，也不能由中性 total `rho` 的抵消现象替代 species-level 检查。
+
+4. **独立核对 field operator，而不要由 rho 的变化反推它。**把同一个轴线输出写成
+
+   $$
+   (\nabla_h\!\cdot\!\mathbf E)_{r=0}
+   \approx c\,\frac{E_r(0)}{\Delta r}+D_z^-E_z,
+   $$
+
+   并仅拟合 `c`。六个 RZ correction-on/off、三档分辨率输出得到的 `c` 都比 naive 的 `2` 更接近源码的 `4`。这支持“reader 采用的 axis operator 与源码的正则化方向相容”，却不能证明 rho 的体积缩放、粒子沉积或完整 Gauss-law 已正确。
+
+5. **最后再看分辨率与重复性。**默认 correction-on 的 RZ shape=1 axis residual 从 `3.593e-3`（`64x128`）降到 `7.554e-4`（`256x512`），但每一档仍大于对应 off-axis residual。两组独立的 2-rank family 对 correction-on axis residual 的重复差在既定容差内，说明这是稳定的 reader-side observation；它不把下降趋势或可重复性升级为 kernel root cause、charge closure 或 formal order。
+
+将上述五步压成一次实际检查时，输出应至少包含：
+
+1. `axis / off-axis / all-cell` 三个同时间层 residual；
+2. correction-on/off 的 species `rho` 与 total `rho` 配对比；
+3. 与 `4 Er / Delta r + D_z^- Ez` 对齐的轴线 field operator；
+4. 相同控制变量下的多分辨率、独立 family 和不可外推范围。
+
+这样得到的结论才是可审查的：**当前观察定位了一个稳定的 RZ axis-charge boundary，并排除了“只用 naive axis divergence”或“只用单一 volume factor”解释它的做法；它尚未把边界归因为某个 deposition kernel，也没有关闭 charge correctness。**这张卡应成为读者遇到任何柱坐标 residual 时的起点，而不是一个建议修改默认参数的配方。
+
 ### 5.14.6 收敛研究：描述性趋势不是正式阶数
 
 本章的 RZ 与 RSPHERE family 可比较相邻网格的误差趋势；两组独立 2-rank producer 的 correction-on repeat-slope 共 14 项都在预注册容差内，最大绝对差为 `2.0135e-11`。这证明同一 reader-side norm 下的重复性，不自动给出唯一的 formal numerical order。正式收敛还必须固定 geometry、误差范数、时间步、粒子数、边界、拟合区间与 primary observable；尤其不能以 all-cell residual 代替 axis residual。correction-on 的 axis-charge boundary 仍开放，correction-off 接近 numerical floor，只可作负对照。

@@ -2,6 +2,7 @@
 
 ## 2026-07-31
 
+- [x] 将第 5 章 RZ axis-charge boundary 写成读者判读卡：以 residual 的离散定义、axis/off-axis 分区、inverse-volume scaling 的 `0.75` 纯因子预测、species 配对的 `0.85` 读数、axis field operator 与多分辨率重复性依次排除误读；明确它定位稳定边界，却不归因 deposition kernel、不开启 charge closure。重建 `v0.110` 为 259 页，新增卡跨第 164--165 页并完成视觉复核；读者化审计与构建验收增加回归标记。
 - [x] 新增当前 WarpX 源码范围审计：以 `c311e49` 为基准，重跑第 3A--8 章六组代表性 source crosswalk，全部通过；显式记录 41 个受审计源码/analysis 锚点与 12 个相邻工作树未提交路径的零交集。报告为 `docs/live-warpX-source-audit-v0.110.{json,md}`，它不把局部源码核查扩大成干净工作树、语义等价或 runtime physics proof。同步把交叉审计的旧维护词匹配更新为读者正文中的生命周期、PML、transition-zone 和证据链措辞。
 - [x] 完成第 7 章 PML 配置与验证卡：按无源 Cartesian 波、粒子入 PML、Cartesian PSATD cleaning 和 RZ 径向 PML 分开参数依赖、最小案例、consumer 与不可外推范围；明确 `pml_ncell`/`pml_delta` 的职责差异，以及 AMR + 高阶 shape + J damping 的源码 warning。重建后的当前候选为 258 页；第 207 页配置路径和第 208 页 EB 交界视觉复核通过。
 

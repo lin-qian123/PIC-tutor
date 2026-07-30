@@ -367,6 +367,18 @@ def main() -> int:
                 "正式阶数与 axis-charge closure 仍未建立",
             )
         ) and not chapter_5_project_narration_markers,
+        "chapter_5_rz_axis_reader_card": all(
+            marker in chapter_5
+            for marker in (
+                "### 5.14.5.1 RZ 轴线判读卡：把一个 residual 拆成三条链",
+                "粒子如何写入未缩放 source，几何体积如何把 source 转成密度，以及 field diagnostic 如何在",
+                "4E_r(0)",
+                "纯体积因子预测",
+                "axis 比稳定为 `0.85`",
+                "比 naive 的 `2` 更接近源码的 `4`",
+                "没有关闭 charge correctness",
+            )
+        ) and not chapter_5_project_narration_markers,
         "chapter_4_5_multiphysics_source_handoff": all(
             marker in chapter_5
             for marker in (
@@ -711,12 +723,12 @@ def main() -> int:
         "full_current_pdf_read_is_recorded": all(
             marker in manual_spotcheck
             for marker in (
-                "本轮连续阅读已覆盖当前 PDF 第 1--258 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--259 页",
                 "| 1--6 |",
                 "| 7--8 |",
-                "| 215--250 |",
-                "| 251--255 |",
-                "| 256--258 |",
+                "| 216--251 |",
+                "| 252--256 |",
+                "| 257--259 |",
             )
         ),
     }

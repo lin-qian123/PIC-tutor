@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 5 convergence card and Chapter 7 PML configuration card yield 258 pages.
-EXPECTED_PDF_PAGES = 258
+# The Chapter 5 RZ axis and convergence cards plus the Chapter 7 PML card yield 259 pages.
+EXPECTED_PDF_PAGES = 259
 
 
 def image_links(text: str) -> list[str]:
@@ -30,7 +30,7 @@ def image_links(text: str) -> list[str]:
 
 
 def chapter_subheading_numbers(path: Path, chapter: str) -> list[tuple[int, ...]]:
-    pattern = re.compile(rf"^### ({re.escape(chapter)}\.\d+\.\d+)\b", re.MULTILINE)
+    pattern = re.compile(rf"^### ({re.escape(chapter)}(?:\.\d+)+)\b", re.MULTILINE)
     return [tuple(int(part) for part in match.split(".")) for match in pattern.findall(path.read_text(encoding="utf-8"))]
 
 
@@ -765,6 +765,18 @@ def main() -> None:
                 "正式阶数与 axis-charge closure 仍未建立",
             )
         ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
+        "chapter_5_rz_axis_reader_card": all(
+            marker in chapter_5
+            for marker in (
+                "### 5.14.5.1 RZ 轴线判读卡：把一个 residual 拆成三条链",
+                "粒子如何写入未缩放 source，几何体积如何把 source 转成密度，以及 field diagnostic 如何在",
+                "4E_r(0)",
+                "纯体积因子预测",
+                "axis 比稳定为 `0.85`",
+                "比 naive 的 `2` 更接近源码的 `4`",
+                "没有关闭 charge correctness",
+            )
+        ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
         "chapter_5_reader_extracts_are_declared": all(
             marker in chapter_5
             for marker in (
@@ -1182,13 +1194,13 @@ def main() -> None:
             marker in manual_spotcheck
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
-                "本轮连续阅读已覆盖当前 PDF 第 1--258 页",
+                "本轮连续阅读已覆盖当前 PDF 第 1--259 页",
                 "| 1--6 |",
-                "| 120--164 |",
-                "| 165--200 |",
-                "| 215--250 |",
-                "| 251--255 |",
-                "| 256--258 |",
+                "| 120--166 |",
+                "| 167--201 |",
+                "| 216--251 |",
+                "| 252--256 |",
+                "| 257--259 |",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

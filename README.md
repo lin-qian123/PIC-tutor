@@ -1,10 +1,10 @@
 # PIC-tutor
 
-本轮已完成当前 258 页 PDF 的连续读者审阅：目录、首页、前言、第 1--9 章和附录均逐页检查 Markdown、公式语义、源码入口、跨章交接和 PDF 版式。第 4、5 章将长源码改为明确声明的阅读伪代码，第 5 章新增收敛判读卡，区分相邻网格斜率的可重复性、formal numerical order 与 axis-charge correctness；第 6 章压缩 JRhom/RZ 的实现循环并重排 regression 索引，第 7 章校正 EB 初始化源码路径，并新增 PML 配置与验证卡，区分波动、粒子入 PML、Cartesian PSATD cleaning 与 RZ 的输入依赖和 observable；第 8 章补入诊断记录卡，第 9 章以证据层级和判读卡组织文献路线；附录 A 还明确 `plotfile` 用于分析、`Full` `checkpoint` 才用于 restart，防止把输出文件角色混同。覆盖记录见 `docs/manual-editorial-spotcheck-v0.110.md`。
+本轮已完成当前 259 页 PDF 的连续读者审阅：目录、首页、前言、第 1--9 章和附录均逐页检查 Markdown、公式语义、源码入口、跨章交接和 PDF 版式。第 4、5 章将长源码改为明确声明的阅读伪代码；第 5 章新增 RZ 轴线判读卡与收敛判读卡，分别把离散 axis operator、inverse-volume scaling、species-level 配对读数和多分辨率重复性分开，区分可重复趋势、formal numerical order 与 axis-charge correctness；第 6 章压缩 JRhom/RZ 的实现循环并重排 regression 索引，第 7 章校正 EB 初始化源码路径，并新增 PML 配置与验证卡，区分波动、粒子入 PML、Cartesian PSATD cleaning 与 RZ 的输入依赖和 observable；第 8 章补入诊断记录卡，第 9 章以证据层级和判读卡组织文献路线；附录 A 还明确 `plotfile` 用于分析、`Full` `checkpoint` 才用于 restart，防止把输出文件角色混同。覆盖记录见 `docs/manual-editorial-spotcheck-v0.110.md`。
 
 第 8 章结尾让 `8.16 延伸验证路线` 与 `8.17 本章结论` 连续收束，避免任一节成为低信息孤页；构建验收要求结论页同时保留“延伸验证路线”和“保留失败与不可外推范围”。当前 PDF 的完整人工阅读记录证明读者路径与版式已逐页复核，但不替代每篇外部文献的再次全文校对、第三方材料许可确认或公开再分发签收。附录中的 auxiliary-field 构造方法名也已更正为源码实际符号 `UpdateAuxiliaryData`。
 
-当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `258` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航表、第 3 章跨章交接卡、第 3A、4--9 章阅读路线、收敛判读卡、PML 配置与验证卡和末页均已纳入当前 PDF 的完整人工阅读记录；该记录不替代第三方材料许可或公开再分发签收。
+当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `259` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航表、第 3 章跨章交接卡、第 3A、4--9 章阅读路线、RZ 轴线判读卡、收敛判读卡、PML 配置与验证卡和末页均已纳入当前 PDF 的完整人工阅读记录；该记录不替代第三方材料许可或公开再分发签收。
 
 当前源码范围审计固定在 WarpX `c311e49`：第 3A--8 章的六组代表性 source crosswalk 全部通过，且 41 个受审计源码/analysis 锚点与相邻 WarpX 工作树的 12 个未提交路径零交集。完整的版本、脏路径和适用范围见 `docs/live-warpX-source-audit-v0.110.{json,md}`；这只证明已检查的源码表面，不能替代干净工作树声明、语义等价或运行物理验证。
 
@@ -16,7 +16,7 @@
 
 第 3 章的生命周期现在先要求读者依次定位输入分支、`InitData()` 建立的离散初态、`Evolve()` 的外层提交边界和 `OneStep()` 的实际时间合同，再用独立 reference 判断输出。`OneStep_sub1()` 的两级/2:1 要求、Picard 的最小 particle iteration 与 mass-matrix 的 3D/RSPHERE 限制均表述为函数或参数检查的边界，而非项目快照状态。当前 PDF 第 36、42、44 页已视觉复核。
 
-第 4 章的显式粒子路径现增加单粒子状态检查卡：明确 `PushPX()` 的 pusher 只消费有效电荷/质量与合成后的 particle field，宏粒子权重只在后续 charge/current deposition 中进入 source。它也将 momentum half push、完整位置推进和一次 `PushPX()` 调用严格区分，因此单粒子轨道案例不再被误用为对 self-consistent source 或场演化的证明。Boris/Vay 的长函数签名、分派参数和 gather 模板改为可回查的核心节选或阅读伪代码，Higuera-Cary 与 Vay 论证中的数学记号统一为行内数学。第 5 章接着把 source 的 old/new 时间层、形函数、守恒电流、同步和收敛判读组织成一条读者可追踪的因果链。当前 PDF 第 74--164 页已连续视觉复核。
+第 4 章的显式粒子路径现增加单粒子状态检查卡：明确 `PushPX()` 的 pusher 只消费有效电荷/质量与合成后的 particle field，宏粒子权重只在后续 charge/current deposition 中进入 source。它也将 momentum half push、完整位置推进和一次 `PushPX()` 调用严格区分，因此单粒子轨道案例不再被误用为对 self-consistent source 或场演化的证明。Boris/Vay 的长函数签名、分派参数和 gather 模板改为可回查的核心节选或阅读伪代码，Higuera-Cary 与 Vay 论证中的数学记号统一为行内数学。第 5 章接着把 source 的 old/new 时间层、形函数、守恒电流、同步、RZ 轴线判读和收敛判读组织成一条读者可追踪的因果链。当前 PDF 第 74--165 页已连续视觉复核。
 
 第 4 章多物理分支现补足状态交接卡：区分外层 `doFieldIonization()`、QED event pass、注入与 `OneStep()` 的次序，说明 optical depth 的演化和 QED product materialization 不是同一动作；也明确 collision 的 split-momentum 仅适用于 explicit 路径，JRhom/subcycling 必须关闭它。RR、implicit、photon、ionization 与 collision 的验证均回到各自的状态变化、source 和可观察量，不以开发过程或测试清单组织。
 

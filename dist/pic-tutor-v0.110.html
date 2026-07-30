@@ -6719,8 +6719,8 @@ pusher、场更新、current deposition、field gather、filtering
 gather，同样会决定相对论计算的误差结构。</p>
 <p>因此第 4 章应按四层证据阅读：Vay 2008 解释 frame-consistency
 这一原始算法目标；该综述给出推进器在完整 PIC 方法谱系中的位置；WarpX
-源码说明本书采用的实现中 kernel
-的变量和时间层；明确输入和观察量的算例才说明某个条件下实际测到了什么。任何一层都不能替代另一层，尤其不能把综述中的历史算法图或其他
+源码说明 kernel
+实际消费的变量和时间层；明确输入和观察量的算例才说明某个条件下实际测到了什么。任何一层都不能替代另一层，尤其不能把综述中的历史算法图或其他
 PIC 程序的结果写成 WarpX 的验证结论。</p>
 <p>本节的核心判断不依赖于资料整理方式：Vay 是为特定的相对论
 frame-consistency
@@ -7229,6 +7229,32 @@ callback，再应用 <code>scaleFields()</code>。</td>
     push position to x^(n+1)</code></pre>
 <p>随后 <code>PhysicalParticleContainer::Evolve()</code>
 沉积半步电流与新时间层电荷。</p>
+<p><strong>读者的单粒子状态检查卡。</strong>
+追踪一颗宏粒子时，要把“决定轨道的量”和“决定它对网格 source
+的量”分开记账：</p>
+<ol type="1">
+<li>进入 kernel 的动力学状态是 <span class="math inline">\(\mathbf{x}^n\)</span>、<span class="math inline">\(\mathbf{u}^{n-1/2}\)</span>、物种质量 <span class="math inline">\(m\)</span> 与有效电荷 <span class="math inline">\(q_{\mathrm{eff}}=q\,\texttt{ionizationLevel}\)</span>。<code>doParticleMomentumPush()</code>
+接收的是这个 <span class="math inline">\(q_{\mathrm{eff}}\)</span> 和
+<span class="math inline">\(m\)</span>，并不接收宏粒子权重 <span class="math inline">\(w\)</span>。</li>
+<li>pusher 实际消费的场不是某个原始 <code>MultiFab</code> 的单个值。常量
+particle external field 先写入局部
+<code>Exp...Bzp</code>；<code>doGatherShapeN()</code> 将
+<code>Efield_aux/Bfield_aux</code>
+的插值<strong>累加</strong>到这些局部量；每粒子 external-field functor
+再继续叠加，最后 <code>scaleFields()</code> 才给出 <span class="math inline">\(\mathbf{E}_{\mathrm{push}},\mathbf{B}_{\mathrm{push}}\)</span>。因此轨道诊断必须说明它比较的是网格场、外场，还是二者合成后的
+pusher 场。</li>
+<li>只有 <code>PositionPushType::Full</code> 才会把更新后的 <span class="math inline">\(\mathbf{u}^{n+1/2}\)</span> 交给
+<code>UpdatePosition()</code> 并写回 <span class="math inline">\(\mathbf{x}^{n+1}\)</span>。一次
+<code>PushPX()</code> 调用、一次 momentum half push
+与一次完整物理位移不是同义词。</li>
+<li>随后的 charge/current deposition 才构造 <span class="math inline">\(wq=q\,w\,\texttt{ionizationLevel}\)</span>。因此两个宏粒子即使具有相同的
+<span class="math inline">\(\mathbf{x},\mathbf{u},q/m\)</span>
+而权重不同，也会有相同的单粒子轨道、不同的 <span class="math inline">\(\rho/\mathbf J\)</span> 贡献。</li>
+</ol>
+<p>这张卡直接限定验证结论：单粒子轨道、force-free pusher 或 Larmor
+类案例能够检查 gather/push/position 的局部合同；它们不能单独证明宏粒子
+source、连续性或自洽场演化正确。后者必须连同权重、沉积算法和
+<code>SyncCurrentAndRho()</code> 进入第 5 章的验证链。</p>
 <h2 id="dogathershapen从网格场到粒子场">4.9
 <code>doGatherShapeN()</code>：从网格场到粒子场</h2>
 <p><code>PushPX()</code> 在调用 pusher 前先调用

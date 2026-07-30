@@ -528,9 +528,22 @@ def main() -> None:
                 "## 4.16 练习与复现实验",
             )
         ) and not chapter_4_stale_location_markers and not chapter_4_workspace_markers and not re.search(
-            r"本地 checkout|原文精读",
+            r"本地 checkout|原文精读|本书采用的实现",
             chapter_4,
         ),
+        "chapter_4_particle_state_reader_route": all(
+            marker in chapter_4
+            for marker in (
+                "读者的单粒子状态检查卡",
+                "决定轨道的量”和“决定它对网格 source 的量",
+                r"有效电荷 \(q_{\mathrm{eff}}=q\,\texttt{ionizationLevel}\)",
+                r"并不接收宏粒子权重 \(w\)",
+                "只有 `PositionPushType::Full` 才会",
+                r"随后的 charge/current deposition 才构造 \(wq=q\,w\,\texttt{ionizationLevel}\)",
+                r"相同的单粒子轨道、不同的 \(\rho/\mathbf J\) 贡献",
+                "不能单独证明宏粒子 source、连续性或自洽场演化正确",
+            )
+        ) and not re.search(r"本地 checkout|原文精读|本书采用的实现", chapter_4),
         "chapter_4_5_long_chapter_reader_navigation": all(
             marker in chapter_4_opening
             for marker in (

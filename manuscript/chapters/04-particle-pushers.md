@@ -373,7 +373,7 @@ Vay 2008 与 Higuera--Cary 2017 在本章承担不同作用：前者说明为何
 
 Vay--Godfrey 2014 review 的读者价值，不是替 WarpX 的 `UpdateMomentumVay.H` 背书，而是把 Boris、Lorentz-invariant pusher、场更新、current deposition、field gather、filtering 与数值稳定性放在同一条 PIC 离散链上。它提醒读者：推进行为不能只凭一条单粒子轨迹判断，场与源项怎样被离散、怎样被 gather，同样会决定相对论计算的误差结构。
 
-因此第 4 章应按四层证据阅读：Vay 2008 解释 frame-consistency 这一原始算法目标；该综述给出推进器在完整 PIC 方法谱系中的位置；WarpX 源码说明本书采用的实现中 kernel 的变量和时间层；明确输入和观察量的算例才说明某个条件下实际测到了什么。任何一层都不能替代另一层，尤其不能把综述中的历史算法图或其他 PIC 程序的结果写成 WarpX 的验证结论。
+因此第 4 章应按四层证据阅读：Vay 2008 解释 frame-consistency 这一原始算法目标；该综述给出推进器在完整 PIC 方法谱系中的位置；WarpX 源码说明 kernel 实际消费的变量和时间层；明确输入和观察量的算例才说明某个条件下实际测到了什么。任何一层都不能替代另一层，尤其不能把综述中的历史算法图或其他 PIC 程序的结果写成 WarpX 的验证结论。
 
 本节的核心判断不依赖于资料整理方式：Vay 是为特定的相对论 frame-consistency 问题设计的推进器。选择它之前，仍要同时检查粒子推进、场更新、沉积和诊断路径，而不能只依据一个 mover 名称或一条单粒子轨道。
 
@@ -687,6 +687,15 @@ for particle in tile:
 ```
 
 随后 `PhysicalParticleContainer::Evolve()` 沉积半步电流与新时间层电荷。
+
+**读者的单粒子状态检查卡。** 追踪一颗宏粒子时，要把“决定轨道的量”和“决定它对网格 source 的量”分开记账：
+
+1. 进入 kernel 的动力学状态是 \(\mathbf{x}^n\)、\(\mathbf{u}^{n-1/2}\)、物种质量 \(m\) 与有效电荷 \(q_{\mathrm{eff}}=q\,\texttt{ionizationLevel}\)。`doParticleMomentumPush()` 接收的是这个 \(q_{\mathrm{eff}}\) 和 \(m\)，并不接收宏粒子权重 \(w\)。
+2. pusher 实际消费的场不是某个原始 `MultiFab` 的单个值。常量 particle external field 先写入局部 `Exp...Bzp`；`doGatherShapeN()` 将 `Efield_aux/Bfield_aux` 的插值**累加**到这些局部量；每粒子 external-field functor 再继续叠加，最后 `scaleFields()` 才给出 \(\mathbf{E}_{\mathrm{push}},\mathbf{B}_{\mathrm{push}}\)。因此轨道诊断必须说明它比较的是网格场、外场，还是二者合成后的 pusher 场。
+3. 只有 `PositionPushType::Full` 才会把更新后的 \(\mathbf{u}^{n+1/2}\) 交给 `UpdatePosition()` 并写回 \(\mathbf{x}^{n+1}\)。一次 `PushPX()` 调用、一次 momentum half push 与一次完整物理位移不是同义词。
+4. 随后的 charge/current deposition 才构造 \(wq=q\,w\,\texttt{ionizationLevel}\)。因此两个宏粒子即使具有相同的 \(\mathbf{x},\mathbf{u},q/m\) 而权重不同，也会有相同的单粒子轨道、不同的 \(\rho/\mathbf J\) 贡献。
+
+这张卡直接限定验证结论：单粒子轨道、force-free pusher 或 Larmor 类案例能够检查 gather/push/position 的局部合同；它们不能单独证明宏粒子 source、连续性或自洽场演化正确。后者必须连同权重、沉积算法和 `SyncCurrentAndRho()` 进入第 5 章的验证链。
 
 ## 4.9 `doGatherShapeN()`：从网格场到粒子场
 

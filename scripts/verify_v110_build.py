@@ -21,8 +21,8 @@ PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, the Chapter 3
 # cross-chapter state handoff, and the Chapter 6/7/9 reading routes yield
-# 268 pages.
-EXPECTED_PDF_PAGES = 268
+# 267 pages.
+EXPECTED_PDF_PAGES = 267
 
 
 def image_links(text: str) -> list[str]:
@@ -113,6 +113,10 @@ def main() -> None:
         r"scripts/|notes/code-reading|runs/stage-c-validation|docs/|references/|contract\.\{json,md\}|"
         r"本地|本机|当前 checkout|当前分支|项目内|项目级|维护台账|交接记录|"
         r"源码笔记|初始化笔记|笔记编号",
+        chapter_3a,
+    )
+    chapter_3a_application_record_markers = re.findall(
+        r"runtime matrix|active tests|checksum baseline",
         chapter_3a,
     )
     chapter_4 = (ROOT / "manuscript" / "chapters" / "04-particle-pushers.md").read_text(
@@ -437,7 +441,18 @@ def main() -> None:
                 "ProjectionDivCleaner::setSourceFromField()",
                 "输入创建了什么初态？比较的 observable 是什么？",
             )
-        ) and not chapter_3a_stale_location_markers and not chapter_3a_project_markers,
+        ) and not chapter_3a_stale_location_markers and not chapter_3a_project_markers and not chapter_3a_application_record_markers,
+        "chapter_3a_laser_cases_are_reader_facing": all(
+            marker in chapter_3a
+            for marker in (
+                "选择激光案例：先匹配问题，再读取输入",
+                "问题与几何假设",
+                "只对该 reference 覆盖的 observable 下结论",
+                "应用输入提供的是搭建起点，而不是已经完成的物理说明",
+                "激光在应用输入中的四种角色",
+                "每一层只为相应的 producer/consumer 接口提供证据",
+            )
+        ) and not chapter_3a_application_record_markers,
         "chapter_3a_8_long_chapter_reader_navigation": all(
             marker in chapter_3a_opening
             for marker in (

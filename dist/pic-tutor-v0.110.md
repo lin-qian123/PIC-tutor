@@ -3409,40 +3409,44 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 
 这条边界在解释 `Laser/` 模块时很关键，因为它说明“外部 laser 文件格式合同”本身已经是 active regression 的一部分，而不只是示例配套脚本。
 
-但到了 `Examples/Physics_applications/laser_acceleration/`，情况就不一样了。这个目录本质上不是一组 laser-injection 单元测试，而是一套 LWFA runtime matrix。`README.rst` 自己都把 `Analyze` 章节留成了 `TODO`，而当前大多数 active tests 在 `CMakeLists.txt` 中也都配置成 `analysis = OFF`，只保留 checksum；只有少数变体有明确 analysis：
+**选择激光案例：先匹配问题，再读取输入**
 
-- `analysis_1d_fluid_boosted.py`：把 laser 驱动的 1D boosted fluid WFA 结果与理论 ODE 解对照，检查 `Ez/Jz/rho/Vz`
-- `analysis_refined_injection.py`：检查 `warpx.refine_plasma = 1` 场景下的总粒子数和 refinement edge 前方 `rho` 切片均匀性
-- `analysis_openpmd_rz.py`：检查 RZ openPMD diagnostics 的 mesh shape、species ordering 和 `rho_<species>` 物理中心位置
+激光案例不应按目录数量或测试名称判断强弱。读者首先要说明自己想验证的是哪一层：
 
-更进一步，`inputs_base_1d/2d/3d/rz` 四个基础输入也说明了这组 family 先定义的是不同维度下的运行骨架：
+1. **天线是否给出了预期的场？**选 `laser_injection/`，用 Gaussian 注入场的包络和主频作为比较量；
+2. **外部 profile 文件是否被正确消费？**选 `laser_injection_from_file/`，沿“生成外部文件 -> 注入 -> 包络/频率比较”三段检查；
+3. **给定几何和驱动下如何搭建尾场加速？**选 `laser_acceleration/`，先确认驱动、等离子体、moving window、边界和 diagnostics，再为场、相位或能谱另行定义 reference；
+4. **输出在 boosted frame 和实验室系之间是否一致？**选 `boosted_diags/`，比较同一 `Ez` 和粒子采样规则，而不把 writer 对齐误读成激光传播的解析验证。
 
-- 1D：moving window + 连续电子注入 + Gaussian laser antenna + `FieldProbe`
-- 2D：PML + moving window + refined patch + 连续背景电子 + Gaussian `beam`
-- 3D：moving window + openPMD Full diagnostics + 自定义粒子属性
-- RZ：`n_rz_azimuthal_modes = 2` + beam/plasma 共存 + species 变量输出
+官方 `laser_acceleration/README.rst` 把它定位为 LWFA 的 lab/boosted-frame 例子，并明确指出：接近圆柱对称时，RZ 可用较低成本捕捉相关物理；非圆激光或强 hosing 等明显非对称问题则需要 3D。于是读这些输入的第一步是选几何假设，不是从输出文件开始。
 
-因此 `laser_acceleration` 目录里的大多数条目当前更准确的定位应该是：
+四个基础输入把这个选择具体化：
 
-- LWFA application/runtime checksum baseline
-- 以及 boosted / MR / PICMI / Python callback / RZ / openPMD 的路径覆盖
+- 1D：moving window、连续电子注入、Gaussian laser antenna 与 `FieldProbe`；
+- 2D：PML、moving window、细化区域、连续背景电子与 Gaussian `beam`；
+- 3D：moving window、openPMD full diagnostics 与自定义粒子属性；
+- RZ：`n_rz_azimuthal_modes = 2`、beam/plasma 共存与 species 变量输出。
 
-而不是统一的 wake amplitude 或 laser envelope 解析 benchmark。
+这四类设置说明如何组装不同维度下的应用问题，却不会自动给出一个共同的尾场幅度、dephasing 或能量增益结论。目录中可直接用于局部比较的脚本只有三类：
 
-此外，`Examples/Tests/boosted_diags/analysis.py` 对 `test_3d_laser_acceleration_btd` 的验证重点也不是 laser 包络本身，而是：
+- `analysis_1d_fluid_boosted.py`：将 1D boosted fluid WFA 的 `Ez/Jz/rho/Vz` 与理论 ODE 解比较；
+- `analysis_refined_injection.py`：比较细化注入时的总粒子数和 refinement edge 前方 `rho` 均匀性；
+- `analysis_openpmd_rz.py`：比较 RZ openPMD 的 mesh shape、species ordering 与 `rho_<species>` 的物理中心位置。
 
-1. BTD plotfile 与 BTD openPMD 的 `Ez` 是否逐点一致
-2. `random_fraction` 粒子子采样是否真的生效
+其余多数输入采用默认输出回归。它适合发现同一输入的输出是否发生意外变化，却不能替代场幅、相位、beam loading 或激光衍射的独立比较。`README.rst` 仍将 `Analyze` 保留为 `TODO`，也正好提醒读者：应用输入提供的是搭建起点，而不是已经完成的物理说明。
 
-因此，本书引用的 WarpX 源树对 laser 的回归支持应这样理解：
+`Examples/Tests/boosted_diags/analysis.py` 对 `test_3d_laser_acceleration_btd` 检查的是 BTD plotfile 与 BTD openPMD 的 `Ez` 逐点一致，以及 `random_fraction` 粒子子采样是否生效。它验证的是诊断重建和采样语义；不能由此推出激光包络、尾场相位或加速器性能。
 
-- 注入本体：1D/2D 强，3D 较弱
-- `from_file`：强
-- `parse_field_function`：有真实入口，但主要是间接覆盖
-- `laser_acceleration`：多数是下游 LWFA/LPI 工作流回归，不应误写成 laser 注入公式的直接解析验证
-- BTD / openPMD / Python callback：更偏 diagnostics 和 workflow 合同
+因此，阅读激光相关输入时应保持一条清楚的证据链：
 
-这组边界在书稿中必须显式写出，否则很容易把“有 analysis.py”误判成“已经有强物理断言”，或者把 `laser_acceleration` 目录整体误判成 laser injection 的单元测试集合。
+```text
+问题与几何假设
+-> 选择注入、文件 profile、LWFA 或 BTD 案例
+-> 明确 producer、输出和独立 reference
+-> 只对该 reference 覆盖的 observable 下结论
+```
+
+这样，`laser_injection`、`from_file`、`parse_field_function`、`laser_acceleration` 与 BTD 不再是一张测试清单，而是回答不同问题的五类案例入口。
 
 再往运行态交界看一层，laser 初始化还必须和 moving window、boosted frame、continuous injection、external fields 的更新合同一起理解。`WarpX::MoveWindow()` 在真正平移网格前，会先做三件互不等价的更新：
 
@@ -3477,41 +3481,22 @@ srcfab(i,j,k,n) = external_field;
 srcfab(i,j,k,n) = field_parser(x,y,z);
 ```
 
-因此 constant/parser 外场可以跟着 moving window 继续生成，而 `read_from_file` 缺少“窗口每推进一次就按新的 physical coordinates 增量重读”的实现，所以被源码显式禁止。这也解释了为什么当前 `load_external_field*` regressions 都天然是静态窗口场景，而 `laser_acceleration_boosted`、`refined_injection`、`subcycling_mr` 这些例子才更贴近 laser 与 moving-window 交界的真实运行态合同。
+因此 constant/parser 外场可以跟着 moving window 继续生成，而 `read_from_file` 缺少“窗口每推进一次就按新的 physical coordinates 增量重读”的实现，所以被源码显式禁止。读者若研究文件外场，应选择固定窗口的 `load_external_field*` 案例；若问题是激光与 moving window 的交界，则应转向 `laser_acceleration_boosted`、`refined_injection` 或 `subcycling_mr`，再为目标 observable 定义独立比较。
 
-再往应用层走，laser 已分叉成三种不同角色。`laser_ion` 是最典型的“laser 作为驱动器”的场景：输入里同时绑了 Gaussian laser、solid-density target、full diagnostics、time-averaged diagnostics、`ParticleHistogram`、`FieldProbe` 和 `ParticleHistogram2D`。但它最硬的 regression 断言并不是离子能量标度，而是 `analysis_test_laser_ion.py` 对 `diagInst` 最后 5 个 snapshot 的瞬时 `Ez` 平均值与 `diagTimeAvg` 原位 time-averaged `Ez` 的逐点比较。因此它最适合承担“laser 主链怎样进入复杂 diagnostics 组合场景”的角色。
+**激光在应用输入中的四种角色**
 
-`free_electron_laser` 则正好是反例：它没有 `lasers.names = ...`，而是通过刚性注入电子/正电子束、boosted frame、moving window 和外加 undulator `B_y(z)` 让辐射在束流中自发增长。`analysis_fel.py` 在 lab-frame 与 boosted-frame diagnostics 上分别拟合 gain length，并通过 FFT 反推出 radiation wavelength。这说明这里的“laser/辐射”不是天线输入，而是束流和 external particle field 共同产生的结果量，所以它更像 laser 相关应用，而不是 Laser 模块本身的 injection regression。
+同一个 Gaussian laser 在应用输入中可能是驱动、结果量、AMR 对象或表面等离子体的起点。首先分清这个角色，才能选择正确的 observable。
 
-再往实现层拆，`free_electron_laser` 真正依赖的三块基础设施是：
+1. **驱动固体靶：`laser_ion`。**输入把 Gaussian laser、solid-density target、full/time-averaged diagnostics、`ParticleHistogram`、`FieldProbe` 与 `ParticleHistogram2D` 放到同一场景。`analysis_test_laser_ion.py` 直接比较的是 `diagInst` 最后 5 个瞬时 `Ez` 的平均与 `diagTimeAvg` 的同一点值。因此它验证 time-averaged diagnostics 的定义；并不由此给出 TNSA cutoff energy、RPA threshold 或离子转换效率。
+2. **把辐射当作结果量：`free_electron_laser`。**它没有 `lasers.names`，而以刚性注入电子/正电子束、boosted frame、moving window 和 undulator `B_y(z)` 产生辐射。`analysis_fel.py` 用 lab-frame 与 boosted-frame diagnostics 拟合 gain length，并以 FFT 比较 radiation wavelength。这里要解释的是束流辐射，而不是天线注入。
+3. **检查细化区域中的天线：`laser_on_fine`。**该输入的关键选择是 `max_level = 1`、`fine_tag_lo/hi`、`laser1.prob_lo/prob_hi` 与 PML。默认输出回归只能告诉读者这些 AMR/求解器设置下输出没有意外变化；它不是传播、衍射或靶相互作用的独立物理比较。
+4. **建立过密靶表面等离子体：`plasma_mirror`。**它组合了 Gaussian laser、solid-density target、前后指数梯度、PML、field filter 和双 species 靶。该输入是研究反射率或高次谐波前的搭建起点；没有独立比较量时，不能把它称作这两类量的 benchmark。
 
-1. `RigidInjectedParticleContainer`
-2. `particles.B_ext_particle_init_style = parse_B_ext_particle_function`
-3. `BackTransformed` diagnostics
+第二项的实现尤其容易被误读。`free_electron_laser` 由 `RigidInjectedParticleContainer`、`particles.B_ext_particle_init_style = parse_B_ext_particle_function` 与 `BackTransformed` diagnostics 组成。`zinject_plane` 和 `rigid_advance` 决定注入面前束团如何刚体传播；undulator 场不写入主场 `Bfield_fp`，而是在 gather 时以 particle external field 的 `B_y(z)` 提供。因此它的解释链是“刚性束流 -> 粒子背景场 -> BTD 恢复实验室系 -> gain length/wavelength”，不是“激光天线 -> 场注入”。
 
-它的 species 不会实例化普通 `PhysicalParticleContainer`，而是被 `MultiParticleContainer` 切到 `RigidInjectedParticleContainer`。`zinject_plane` 和 `rigid_advance` 决定束团在注入面之前是按各自 `v_z` 还是按平均束流速度作刚体传播；boosted-frame 下 `zinject_plane_levels` 还会继续按 `beta_boost c` 平移。与此同时，undulator 场也不是写入主场 `Bfield_fp`，而是通过 particle external field parser 直接在 gather 侧提供 `B_y(z)`。因此这里的主链其实是“刚性束流 + 粒子背景场 + BTD 恢复 lab-frame 物理”，而不是 laser antenna 本体。
+这条链的三个比较层也不能混用：`analysis_fel.py` 比较 FEL 的 gain length 和 wavelength；`rigid_injection` 检查刚性传播以及 plotfile/openPMD 中的束团状态；`boosted_diags` 检查 BTD writer 对齐和 `random_fraction` 子采样。每一层只为相应的 producer/consumer 接口提供证据。
 
-`rigid_injection` 和 `boosted_diags` 两组 tests 则给这条链提供了更基础的硬断言。前者分别在 lab frame 和 BTD 下检查：刚性传播是否真的把束宽保持到 `zinject_plane`、以及 plotfile/openPMD 回写的束团位置与动量是否一致；后者额外验证 BTD 两种 writer 的场数据一致性与 `random_fraction` 粒子子采样合同。也就是说，`analysis_fel.py` 负责最终 FEL 标度，`rigid_injection*` 负责 rigid propagation 本身，`boosted_diags` 负责 BTD 基础设施，而这三层不应再被混写成一个笼统的“laser regression”。
-
-`laser_on_fine` 则又是第三类。它确实使用真正的 Gaussian laser antenna，但 `CMakeLists.txt` 里没有独立 analysis，主要依赖 checksum；输入重点在 `max_level = 1`、`fine_tag_lo/hi`、`laser1.prob_lo/prob_hi` 和 PML。也就是说它更像一个 AMR placement/solver 稳定性测试，而不是下游应用 physics 场景。
-
-因此，后续书稿中的 laser 应用层不应只按 profile 分类，而应按三种角色拆分：
-
-1. laser 作为驱动器并配套 diagnostics 组合：`laser_ion`
-2. 辐射/laser 作为输出结果量：`free_electron_laser`
-3. laser 作为 AMR/placement 测试对象：`laser_on_fine`
-
-还需要再补一个当前证据层更弱、但应用语义很典型的角色：`plasma_mirror`。它的输入已经把 Gaussian laser、solid-density target、前后指数梯度、PML、field filter 和双 species 固体靶骨架接在一起，因此在应用语义上非常像“laser-solid surface-plasma 最小样板”；但当前 active regression 只有 checksum helper，没有独立 analysis，也没有 PICMI 版输入。所以它更适合在书稿里承担“过密靶/表面等离子体应用骨架已经存在，但强物理断言仍未单独压实”的角色，而不应被写成 plasma-mirror 反射率或高次谐波 benchmark。
-
-还需要再补一句边界：`laser_ion` 当前并不是“多物理全开”的综合 benchmark。它的输入确实给了三条可切换分叉：
-
-- `hydrogen.do_field_ionization = 1`
-- `collisions.collision_names = ...`
-- 将来再接 `do_qed_*`
-
-但在当前 regression 版本里，这些开关都没有同时启用。它真正激活的是“Gaussian laser + 预电离 target + full/time-averaged/reduced diagnostics”。因此更准确的写法应该是：`laser_ion` 提供了一个 laser-target 骨架，field ionization、collisions 和 QED 都可以从这个骨架分叉出去，但它们各自的物理正确性仍然主要由 `field_ionization/`、`collision/`、`qed/` 这些独立 regression 目录兜底，而不是由 `analysis_test_laser_ion.py` 一次性证明。
-
-从源码链看，这三条分叉接入的位置也不同。field ionization 在 species 构造期只先记住 `do_field_ionization`，真正的 `InitIonizationModule()`、`mapSpeciesProduct()` 和 `doFieldIonization()` 要到 `MultiParticleContainer::InitMultiPhysicsModules()` 与推进循环里才发生；collisions 则走 `CollisionHandler` 和 `collision_names`，并额外受 `collisions.split_momentum_push` 的 operator ordering 影响；QED 又只在 `#ifdef WARPX_QED` 编译路径下才会继续增加 `opticalDepthQSR/BW`、product species 映射和 `InitQED()`。所以，`laser_ion` 更适合承担“应用输入如何把这些模块挂到同一目标骨架上”的说明，而不应把不同层级的验证合同混写成一条单一主链。
+最后，不要把 `laser_ion` 当作“所有多物理同时开启”的总基准。它能作为 laser-target 骨架，field ionization、collisions 与 QED 可从此分叉；但这些模块分别在 `InitIonizationModule()`、`CollisionHandler` 与 `InitQED()` 接入，拥有不同的输入前提和推进时序。研究相应机制时，应到各自的 `field_ionization/`、`collision/` 或 `qed/` 案例定义独立 observable，而不是把 time-averaged `Ez` 的比较扩大成多物理正确性证明。
 
 ## 3A.13 初始化验证入口：哪些 regressions 真正在兜底
 

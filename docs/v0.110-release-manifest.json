@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39277734,
+  "total_bytes": 39274961,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1553992,
-      "sha256": "fb39883ec644c51d4228b04f8165f9a6bc6013ad3885b8737979c34de87ec7b7"
+      "bytes": 1554558,
+      "sha256": "a9cc1887b2eefb2d782e72604d1c0796a5dede07dd071e06ede991701c0605b7"
     },
     {
       "path": "TODO.md",
-      "bytes": 1436900,
-      "sha256": "785e5b7f0b25db4d4f8175dcad8162cd36c10ab1083905df9f35acd7bdf6860d"
+      "bytes": 1437700,
+      "sha256": "be5ecd73a4015d0bdfd1d8ea2c6bccfb245ea014ec82d16948dde2fa99c3cda7"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5243376,
-      "sha256": "3a7fba94a9fbbddd7832e4eb5e5eee6b0c22645813a43c9f6e441dd6565c1a39"
+      "bytes": 5241651,
+      "sha256": "ff8d05fe57b3541efa8ef9f2d7fb931dfa457da47712a2b3223c5d822497e60b"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 854016,
-      "sha256": "cf2dcbaeedfba5246eea0a2455cda909377388887a50c20cc13a2949bdea3d96"
+      "bytes": 852425,
+      "sha256": "c2c58479c0cd6c2728b4e8af257c2430ce92fb4abd0e6a7911227a6a3c8f8acd"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2995112,
-      "sha256": "e64333b12848f40a9c81c92c959ddca1d100f8fdf7f753805314c086d9ebcb86"
+      "bytes": 2993003,
+      "sha256": "95af5091c611832331b6dbe2fccaaedfde1ab30bac07c7f1227d07cf898e6621"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -532,8 +532,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 41546,
-      "sha256": "35bfacc6a9c10078c7abc461027840e1dcc16b2b847dd4ac042bd34436905a21"
+      "bytes": 42729,
+      "sha256": "2781bca82216e5e0daf84d21076c3cba7ac2747e6c94ea111625cd600948d43f"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -2322,8 +2322,8 @@
     },
     {
       "path": "manuscript/chapters/03a-warpx-initialization.md",
-      "bytes": 98373,
-      "sha256": "89322e594b8d7317a369ead3dc854d92b44fe1aeb1382e32541d23a2e23723d4"
+      "bytes": 96782,
+      "sha256": "7b7f262275ee754af0715eaed64589c0d742e740168e59a70c399ed20ac121d0"
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
@@ -4587,8 +4587,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 30931,
-      "sha256": "a08c3e6b17caba594a2b737a5c8a6903f88824863cddc6f82a9aa2d0f34a6970"
+      "bytes": 31830,
+      "sha256": "add4442fcd9e13b8d88c3d6b0bb35ba6b7fea9467e174222f2771210bd8417d4"
     },
     {
       "path": "scripts/audit_release_consistency.py",
@@ -5987,8 +5987,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 44015,
-      "sha256": "b3994df7d859b26bc8aa2d056a3e08ace1bbea22fc367cf7ebd13ad939ce5cb3"
+      "bytes": 44810,
+      "sha256": "29d99fb4ceb74336414e5a20dcfc55a083c24fbd75bcbe9d29d51f0e85ce7859"
     },
     {
       "path": "scripts/verify_v40_build.py",

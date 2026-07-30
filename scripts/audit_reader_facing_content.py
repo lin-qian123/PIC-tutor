@@ -71,6 +71,10 @@ def main() -> int:
         r"源码笔记|初始化笔记|笔记编号",
         chapter_3a,
     )
+    chapter_3a_application_record_markers = re.findall(
+        r"runtime matrix|active tests|checksum baseline",
+        chapter_3a,
+    )
     chapter_4_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_4
     )
@@ -514,7 +518,20 @@ def main() -> int:
         )
         and not chapter_3a_stale_location_markers
         and not chapter_3a_project_path_markers
-        and not chapter_3a_project_narration_markers,
+        and not chapter_3a_project_narration_markers
+        and not chapter_3a_application_record_markers,
+        "chapter_3a_laser_cases_are_reader_facing": all(
+            marker in chapter_3a
+            for marker in (
+                "选择激光案例：先匹配问题，再读取输入",
+                "问题与几何假设",
+                "只对该 reference 覆盖的 observable 下结论",
+                "应用输入提供的是搭建起点，而不是已经完成的物理说明",
+                "激光在应用输入中的四种角色",
+                "每一层只为相应的 producer/consumer 接口提供证据",
+            )
+        )
+        and not chapter_3a_application_record_markers,
         "chapter_3a_8_long_chapter_reader_navigation": all(
             marker in chapter_3a_opening
             for marker in (
@@ -578,6 +595,7 @@ def main() -> int:
         "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,
         "chapter_3a_project_path_markers": chapter_3a_project_path_markers,
         "chapter_3a_project_narration_markers": chapter_3a_project_narration_markers,
+        "chapter_3a_application_record_markers": chapter_3a_application_record_markers,
         "chapter_4_stale_location_markers": chapter_4_stale_location_markers,
         "chapter_5_opening_project_markers": chapter_5_opening_project_markers,
         "chapter_5_project_path_markers": chapter_5_project_path_markers,

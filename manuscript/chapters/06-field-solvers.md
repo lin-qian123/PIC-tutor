@@ -401,7 +401,7 @@ pshift[i] = amrex::exp( I*sign*pk[i]*0.5_rt*t_dx_idim);
 
 ## 6.6 标准/Galilean PSATD 系数和 current correction
 
-`Source/FieldSolver/SpectralSolver/PsatdAlgorithmGalilean.cpp` 实现 Galilean 分支。标准 PSATD 是 Galilean 实现的 \(v_G=0\) 极限；源码中
+`Source/FieldSolver/SpectralSolver/SpectralAlgorithms/PsatdAlgorithmGalilean.cpp` 实现 Galilean 分支。标准 PSATD 是 Galilean 实现的 \(v_G=0\) 极限；源码中
 
 $$
 w_c=\mathbf k_c\cdot\mathbf v_G,\qquad T_2=e^{iw_c\Delta t}.

@@ -278,6 +278,16 @@ def main() -> int:
                 "不能支持",
             )
         ) and not chapter_9_project_path_markers and not chapter_9_project_narration_markers,
+        "chapter_9_evidence_routes_reader_card": all(
+            marker in chapter_9
+            for marker in (
+                "### 9.6.1 三条从文献走到可观察量的读者路线",
+                "并不证明所有 shape、二维或 RZ",
+                "不是解析 NCI growth rate",
+                "不是对 LeeCPC2015 所有系数或扫描的复现",
+                "论文 -> 实现 -> 输入 -> consumer",
+            )
+        ) and not chapter_9_project_path_markers and not chapter_9_project_narration_markers,
         "chapter_4_uses_reader_facing_evidence_language": not chapter_4_project_record_markers,
         "chapter_4_has_no_project_path_narration": not chapter_4_project_path_markers
         and not chapter_4_project_narration_markers
@@ -762,10 +772,11 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（263 页候选）",
+                "当前增量复核（264 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
+                "| 259--261 |",
                 "| 229 |",
                 "| 230 |",
                 "| 256 |",
@@ -786,7 +797,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 263-page candidate has a recorded Chapter 8 incremental review"
+            "the current 264-page candidate has recorded Chapter 8 and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -857,7 +868,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 263-page candidate has a recorded Chapter 8 incremental review. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 264-page candidate has recorded Chapter 8 and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

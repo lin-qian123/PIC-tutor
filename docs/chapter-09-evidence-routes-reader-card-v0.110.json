@@ -1,0 +1,20 @@
+{
+  "contract": "chapter 9 evidence routes reader card",
+  "classification": "SOURCE_GROUNDED_READER_EVIDENCE_ROUTES",
+  "warpx_revision": "c311e49d4ffb19e39727182929c2f914cc7b776d",
+  "warpx_source_paths": [
+    "Examples/Tests/langmuir/",
+    "Examples/Tests/nci_psatd_stability/",
+    "Examples/Tests/pml/",
+    "Source/Particles/Deposition/",
+    "Source/FieldSolver/SpectralSolver/"
+  ],
+  "checks": {
+    "reader_card_present": true,
+    "esirkepov_route_contract": true,
+    "galilean_route_contract": true,
+    "pml_route_contract": true
+  },
+  "passed": true,
+  "scope": "Source and reader-text consistency for three Chapter 9 evidence routes. It does not rerun WarpX or establish equivalence between a paper, every WarpX path, or a general physics result."
+}

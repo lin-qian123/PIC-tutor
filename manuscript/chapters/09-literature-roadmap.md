@@ -165,6 +165,33 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系。它
 
 例如，读 `Esirkepov 2001` 时，卡片应把连续性方程与第 5 章的形函数/电流沉积并列；读 `Lehe 2016` 时，应把 Galilean 表示的离散假设与第 6 章的 PSATD 选择条件并列；读 `LeeCPC2015` 时，则应把 PML 的公式与第 7 章的残余场观察量并列。这样，读者获得的不是一份资料清单，而是一组可检验的论证连接。
 
+### 9.6.1 三条从文献走到可观察量的读者路线
+
+下面的三条路线故意选取不同类型的比较：解析 Langmuir 场与 Gauss-law residual、受控不稳定参考下的场能量、以及穿过 PML 后的总场能量比。它们共同遵守“论文 -> 实现 -> 输入 -> consumer”的顺序，却不能共享同一种通过结论。
+
+#### 路线 1：Esirkepov 的守恒构造如何成为一个网格检查
+
+- **先从文献取走什么：** `Esirkepov 2001` 的作者预印本把 old/new form factor 的差分组织为离散连续性方程。这可支撑算法机制，但不等于已逐项核对 CPC 定稿。
+- **再定位什么实现与输入：** 第 5 章的 `Compute_shifted_shape_factor` 将 old/new shape 对齐，`doEsirkepovDepositionShapeN` 写入守恒电流；`Examples/Tests/langmuir/inputs_test_3d_langmuir_multi` 继承显式的 3D Esirkepov 设置。
+- **consumer 实际比较什么：** `analysis_3d.py` 先比较 `Ex/Ey/Ez` 与 Langmuir 解析场，默认最大相对误差 `< 5%`；随后 `analysis_utils.py` 对已启用的 Esirkepov 条件计算归一化的 `divE-rho/epsilon_0` residual，默认容差 `1e-11`。
+- **可以写出的结论与必须保留的边界：** 该 3D Langmuir 配置同时把解析场和指定 Gauss-law residual 接到 Esirkepov 输入上；它并不证明所有 shape、二维或 RZ，也不证明被 analysis 明确排除的 Esirkepov + PSATD 组合。
+
+#### 路线 2：Galilean 表示是否压低了这类流动等离子体的 NCI
+
+- **先从文献取走什么：** `Lehe 2016` 说明当 `v_gal` 与背景漂移相配时，移动表示改变数值共振条件；它不是 moving window 的同义词，也不是任意速度都稳定。
+- **再定位什么实现与输入：** `SpectralSolver` 在非零 `v_galilean` 时构造 `PsatdAlgorithmGalilean`；`inputs_test_2d_galilean_psatd` 选择 direct deposition 与不带 current correction 的基线，另有 current-correction sibling。
+- **consumer 实际比较什么：** `analysis_galilean.py` 按几何、time averaging 与 correction 分支选择 reference electric-field energy，并要求能量比小于该分支容差；开启 correction 时才额外检查 `divE-rho/epsilon_0`。
+- **可以写出的结论与必须保留的边界：** 对这些已注册 NCI cases，可以说指定 Galilean 配置满足场能量稳定 gate，且 correction sibling 还满足指定 Gauss-law gate；reference 是受控的不稳定比较，不是解析 NCI growth rate，也不能推出任意漂移、deposition、边界或 AMR 组合同样稳定。
+
+#### 路线 3：PSATD-PML 是否在这一入射与边界设置中保持低反射
+
+- **先从文献取走什么：** `LeeCPC2015` 的 accepted manuscript 解释 split-field/PSTD PML 与反射率的依赖；它不等于 publisher-formatted 版本的逐系数核对。
+- **再定位什么实现与输入：** `SpectralSolver` 为 PML 区选择 `PsatdAlgorithmPml`，`PushPSATD()` 单独推进 PML 场；`inputs_test_2d_pml_x_psatd` 选择 PSATD、`current_correction = 0`、无 PML divergence cleaning。
+- **consumer 实际比较什么：** `analysis_pml_psatd.py` 先在 iteration 50 复算初始总场能量，再以末态/初态能量给出 reflectivity，并要求 `< 1e-6`。
+- **可以写出的结论与必须保留的边界：** 这证明该 2D Cartesian、指定参数与无 correction/cleaning 的 PML case 满足总场能量反射率 gate；它不是对 LeeCPC2015 所有系数或扫描的复现，也不能外推到 RZ PML、Galilean/cleaning 组合或任意入射谱。
+
+这三条路线还有一个共同的检查动作：先读输入是否真的选择了论文所讨论的表示或算法，再读 consumer 是否测量了该主张需要的 observable，最后才读取 PASS。若第一行只剩 checksum，它就不再是解析场或 Gauss-law 的合同；若第二行没有 current correction，便没有 Gauss-law gate；若第三行改成 RZ 的残余场 consumer，便不能继续引用这里的 Cartesian reflectivity 容差。读者在扩展任一路线前，应重新写出这四项，而不是沿用原案例的结论。
+
 ## 9.7 两条深读路线
 
 下面两条路线把延伸阅读变成可检验的学习任务，而不是资料收集清单。

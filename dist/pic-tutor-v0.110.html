@@ -819,7 +819,11 @@ boosted-frame / NCI</a></li>
 <li><a href="#延伸阅读的优先顺序" id="toc-延伸阅读的优先顺序">9.5
 延伸阅读的优先顺序</a></li>
 <li><a href="#用一张文献判读卡连接论文源码与算例" id="toc-用一张文献判读卡连接论文源码与算例">9.6
-用一张文献判读卡连接论文、源码与算例</a></li>
+用一张文献判读卡连接论文、源码与算例</a>
+<ul>
+<li><a href="#三条从文献走到可观察量的读者路线" id="toc-三条从文献走到可观察量的读者路线">9.6.1
+三条从文献走到可观察量的读者路线</a></li>
+</ul></li>
 <li><a href="#两条深读路线" id="toc-两条深读路线">9.7 两条深读路线</a>
 <ul>
 <li><a href="#路线-a第-5-章沉积文献" id="toc-路线-a第-5-章沉积文献">路线
@@ -14739,7 +14743,7 @@ x/2}\)</span>。这一步是把 Yee staggered
 与实空间场的位置会错半格。</p>
 <h2 id="标准galilean-psatd-系数和-current-correction">6.6 标准/Galilean
 PSATD 系数和 current correction</h2>
-<p><code>Source/FieldSolver/SpectralSolver/PsatdAlgorithmGalilean.cpp</code>
+<p><code>Source/FieldSolver/SpectralSolver/SpectralAlgorithms/PsatdAlgorithmGalilean.cpp</code>
 实现 Galilean 分支。标准 PSATD 是 Galilean 实现的 <span class="math inline">\(v_G=0\)</span> 极限；源码中</p>
 <p><span class="math display">\[
 w_c=\mathbf k_c\cdot\mathbf v_G,\qquad T_2=e^{iw_c\Delta t}.
@@ -21019,6 +21023,84 @@ publisher-formatted CPC PDF 的对照。</p>
 表示的离散假设与第 6 章的 PSATD 选择条件并列；读 <code>LeeCPC2015</code>
 时，则应把 PML 的公式与第 7
 章的残余场观察量并列。这样，读者获得的不是一份资料清单，而是一组可检验的论证连接。</p>
+<h3 id="三条从文献走到可观察量的读者路线">9.6.1
+三条从文献走到可观察量的读者路线</h3>
+<p>下面的三条路线故意选取不同类型的比较：解析 Langmuir 场与 Gauss-law
+residual、受控不稳定参考下的场能量、以及穿过 PML
+后的总场能量比。它们共同遵守“论文 -&gt; 实现 -&gt; 输入 -&gt;
+consumer”的顺序，却不能共享同一种通过结论。</p>
+<h4 id="路线-1esirkepov-的守恒构造如何成为一个网格检查">路线
+1：Esirkepov 的守恒构造如何成为一个网格检查</h4>
+<ul>
+<li><strong>先从文献取走什么：</strong> <code>Esirkepov 2001</code>
+的作者预印本把 old/new form factor
+的差分组织为离散连续性方程。这可支撑算法机制，但不等于已逐项核对 CPC
+定稿。</li>
+<li><strong>再定位什么实现与输入：</strong> 第 5 章的
+<code>Compute_shifted_shape_factor</code> 将 old/new shape
+对齐，<code>doEsirkepovDepositionShapeN</code>
+写入守恒电流；<code>Examples/Tests/langmuir/inputs_test_3d_langmuir_multi</code>
+继承显式的 3D Esirkepov 设置。</li>
+<li><strong>consumer 实际比较什么：</strong> <code>analysis_3d.py</code>
+先比较 <code>Ex/Ey/Ez</code> 与 Langmuir 解析场，默认最大相对误差
+<code>&lt; 5%</code>；随后 <code>analysis_utils.py</code> 对已启用的
+Esirkepov 条件计算归一化的 <code>divE-rho/epsilon_0</code>
+residual，默认容差 <code>1e-11</code>。</li>
+<li><strong>可以写出的结论与必须保留的边界：</strong> 该 3D Langmuir
+配置同时把解析场和指定 Gauss-law residual 接到 Esirkepov
+输入上；它并不证明所有 shape、二维或 RZ，也不证明被 analysis 明确排除的
+Esirkepov + PSATD 组合。</li>
+</ul>
+<h4 id="路线-2galilean-表示是否压低了这类流动等离子体的-nci">路线
+2：Galilean 表示是否压低了这类流动等离子体的 NCI</h4>
+<ul>
+<li><strong>先从文献取走什么：</strong> <code>Lehe 2016</code> 说明当
+<code>v_gal</code> 与背景漂移相配时，移动表示改变数值共振条件；它不是
+moving window 的同义词，也不是任意速度都稳定。</li>
+<li><strong>再定位什么实现与输入：</strong> <code>SpectralSolver</code>
+在非零 <code>v_galilean</code> 时构造
+<code>PsatdAlgorithmGalilean</code>；<code>inputs_test_2d_galilean_psatd</code>
+选择 direct deposition 与不带 current correction 的基线，另有
+current-correction sibling。</li>
+<li><strong>consumer 实际比较什么：</strong>
+<code>analysis_galilean.py</code> 按几何、time averaging 与 correction
+分支选择 reference electric-field
+energy，并要求能量比小于该分支容差；开启 correction 时才额外检查
+<code>divE-rho/epsilon_0</code>。</li>
+<li><strong>可以写出的结论与必须保留的边界：</strong> 对这些已注册 NCI
+cases，可以说指定 Galilean 配置满足场能量稳定 gate，且 correction
+sibling 还满足指定 Gauss-law gate；reference
+是受控的不稳定比较，不是解析 NCI growth
+rate，也不能推出任意漂移、deposition、边界或 AMR 组合同样稳定。</li>
+</ul>
+<h4 id="路线-3psatd-pml-是否在这一入射与边界设置中保持低反射">路线
+3：PSATD-PML 是否在这一入射与边界设置中保持低反射</h4>
+<ul>
+<li><strong>先从文献取走什么：</strong> <code>LeeCPC2015</code> 的
+accepted manuscript 解释 split-field/PSTD PML 与反射率的依赖；它不等于
+publisher-formatted 版本的逐系数核对。</li>
+<li><strong>再定位什么实现与输入：</strong> <code>SpectralSolver</code>
+为 PML 区选择 <code>PsatdAlgorithmPml</code>，<code>PushPSATD()</code>
+单独推进 PML 场；<code>inputs_test_2d_pml_x_psatd</code> 选择
+PSATD、<code>current_correction = 0</code>、无 PML divergence
+cleaning。</li>
+<li><strong>consumer 实际比较什么：</strong>
+<code>analysis_pml_psatd.py</code> 先在 iteration 50
+复算初始总场能量，再以末态/初态能量给出 reflectivity，并要求
+<code>&lt; 1e-6</code>。</li>
+<li><strong>可以写出的结论与必须保留的边界：</strong> 这证明该 2D
+Cartesian、指定参数与无 correction/cleaning 的 PML case
+满足总场能量反射率 gate；它不是对 LeeCPC2015
+所有系数或扫描的复现，也不能外推到 RZ PML、Galilean/cleaning
+组合或任意入射谱。</li>
+</ul>
+<p>这三条路线还有一个共同的检查动作：先读输入是否真的选择了论文所讨论的表示或算法，再读
+consumer 是否测量了该主张需要的 observable，最后才读取
+PASS。若第一行只剩 checksum，它就不再是解析场或 Gauss-law
+的合同；若第二行没有 current correction，便没有 Gauss-law
+gate；若第三行改成 RZ 的残余场 consumer，便不能继续引用这里的 Cartesian
+reflectivity
+容差。读者在扩展任一路线前，应重新写出这四项，而不是沿用原案例的结论。</p>
 <h2 id="两条深读路线">9.7 两条深读路线</h2>
 <p>下面两条路线把延伸阅读变成可检验的学习任务，而不是资料收集清单。</p>
 <h3 id="路线-a第-5-章沉积文献">路线 A：第 5 章沉积文献</h3>

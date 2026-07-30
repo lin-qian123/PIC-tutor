@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 8 validation-contract reader card yields 263 pages.
-EXPECTED_PDF_PAGES = 263
+# The Chapter 8 validation card and Chapter 9 evidence routes yield 264 pages.
+EXPECTED_PDF_PAGES = 264
 
 
 def image_links(text: str) -> list[str]:
@@ -56,6 +56,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-06-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-validation-reader-card-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-09-evidence-routes-reader-card-v0.110.md").read_text(encoding="utf-8")
     appendix_symbols = APPENDIX_SYMBOLS.read_text(encoding="utf-8")
     merged = MERGED_MARKDOWN.read_text(encoding="utf-8")
     html = HTML.read_text(encoding="utf-8", errors="ignore")
@@ -624,6 +625,17 @@ def main() -> None:
             r"CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN",
             chapter_9,
         ),
+        "chapter_9_evidence_routes_reader_card": all(
+            marker in chapter_9
+            for marker in (
+                "### 9.6.1 三条从文献走到可观察量的读者路线",
+                "并不证明所有 shape、二维或 RZ",
+                "不是解析 NCI growth rate",
+                "不是对 LeeCPC2015 所有系数或扫描的复现",
+                "论文 -> 实现 -> 输入 -> consumer",
+            )
+        ) and (ROOT / "scripts/audit_chapter_09_evidence_routes.py").is_file()
+        and "SOURCE_GROUNDED_READER_EVIDENCE_ROUTES" in source,
         "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),
         "chapter_3a_current_initialization_route": all(
             marker in chapter_3a
@@ -1238,16 +1250,17 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（263 页候选）",
+                "当前增量复核（264 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
+                "| 259--261 |",
                 "| 219--254 |",
                 "| 229 |",
                 "| 230 |",
                 "| 256 |",
-                "| 261 |",
-                "262 页基线完整连续阅读 + 第 8 章变更范围与受影响版式的增量复核已记录",
+                "| 262 |",
+                "262 页基线完整连续阅读 + 第 8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

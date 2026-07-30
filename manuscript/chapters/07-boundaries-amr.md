@@ -34,6 +34,18 @@ WarpX 官方理论文档将 PML、PEC、PMC、Silver-Mueller、周期边界和�
 
 本章后面的案例段不是另一套理论，而是这条链上不同节点的检验。通过一个 PML 反射率 gate，不代表 RZ 残余场、粒子入 PML 或 AMR transition-zone route ledger 也已证明；读者应始终沿 producer/consumer 和 observable 的边界解释结果。
 
+### 分段阅读：先闭合拓扑，再进入几何与 AMR
+
+第 7 章的对象横跨参数、场、粒子、几何和并行数据迁移。第一次阅读可按下面五段前进，避免把某个边界名、一个 PML 参数或一次末态输出误当成完整边界验证：
+
+1. **先读 7.0--7.3。** 从 `MakeWarpX()` 的 field/particle 拓扑开始，区分 periodic、PEC/PMC、Silver-Mueller 和 `rho/J` 镜像；这一步固定“哪个对象在哪个方向受什么条件约束”。
+2. **再读 7.4--7.5。** 把 PML 作为参与时间推进的独立子域，区分 split field、PML 电流和反射率/残余场的观察量；不要以主域 curl 或单一场快照替代 PML 证据。
+3. **按几何需求读 7.6--7.8。** Embedded boundary 先定义 cut-cell 几何与辅助标记，再处理 face extension、粒子 signed-distance、吸收和 scraped buffer；场边界与粒子命运必须分别核查。
+4. **最后读 7.9。** AMR transition zone 要同时追踪 gather/deposition buffer、coarsen 和同步；最终 plotfile 或 checksum 只能说明末态一致，不能证明细粗网格路由逐项被命中。
+5. **用 7.10--7.11 收束。** 为所选 case 写出“拓扑 -> 更新/迁移 -> observable -> 不可外推范围”；只有同时给出边界对象、时间层和比较量，才算完成本章阅读。
+
+这条路线的停止条件是：能够区分 field boundary、particle boundary、PML/guard-cell 与 AMR route 分别改变的状态，并说明为什么一个通过的 case 不能替代另一类边界或几何的验证。
+
 ## 7.0 源码入口地图
 
 本章不能只按“边界条件”这个名词归类，因为 WarpX 中的边界语义会穿过参数解析、场数组 guard cell、PML split field、粒子删除/反射/记录、诊断和 AMR 重建。以下列出读代码时需要反复回查的入口：

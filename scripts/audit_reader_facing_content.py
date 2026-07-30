@@ -231,6 +231,18 @@ def main() -> int:
                 "第 8 章的验证矩阵",
             )
         ),
+        "chapter_9_reader_navigation": all(
+            marker in chapter_9
+            for marker in (
+                "阅读路线：先分类证据，再把一条主张接回教程",
+                "先读 9.1。",
+                "再读 9.2 与当前章节对应的一条主线。",
+                "用 9.3--9.5 确认缺口与优先级。",
+                "用 9.6--9.10 输出一张判读卡。",
+                "能支持",
+                "不能支持",
+            )
+        ) and not chapter_9_project_path_markers and not chapter_9_project_narration_markers,
         "chapter_4_uses_reader_facing_evidence_language": not chapter_4_project_record_markers,
         "chapter_4_has_no_project_path_narration": not chapter_4_project_path_markers
         and not chapter_4_project_narration_markers,
@@ -344,6 +356,18 @@ def main() -> int:
         )
         and not chapter_7_stale_location_markers
         and not chapter_7_project_path_markers,
+        "chapter_7_long_chapter_reader_navigation": all(
+            marker in chapter_7
+            for marker in (
+                "分段阅读：先闭合拓扑，再进入几何与 AMR",
+                "先读 7.0--7.3。",
+                "再读 7.4--7.5。",
+                "按几何需求读 7.6--7.8。",
+                "最后读 7.9。",
+                "用 7.10--7.11 收束。",
+                "拓扑 -> 更新/迁移 -> observable -> 不可外推范围",
+            )
+        ) and not chapter_7_project_path_markers and not chapter_7_project_record_markers,
         "chapter_8_has_reader_facing_diagnostics_closure": all(
             marker in chapter_8_closure
             for marker in (

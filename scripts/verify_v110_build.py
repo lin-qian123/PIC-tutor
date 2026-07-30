@@ -20,9 +20,9 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, the Chapter 3
-# cross-chapter state handoff, and the Chapter 6 solver reading route yield
-# 267 pages.
-EXPECTED_PDF_PAGES = 267
+# cross-chapter state handoff, and the Chapter 6/7/9 reading routes yield
+# 268 pages.
+EXPECTED_PDF_PAGES = 268
 
 
 def image_links(text: str) -> list[str]:
@@ -307,6 +307,22 @@ def main() -> None:
             r"docs/chapter-07-v0-evidence-ledger|contract\.\{json,md\}",
             chapter_7,
         ),
+        "chapter_7_long_chapter_reader_navigation": all(
+            marker in chapter_7
+            for marker in (
+                "分段阅读：先闭合拓扑，再进入几何与 AMR",
+                "先读 7.0--7.3。",
+                "再读 7.4--7.5。",
+                "按几何需求读 7.6--7.8。",
+                "最后读 7.9。",
+                "用 7.10--7.11 收束。",
+                "拓扑 -> 更新/迁移 -> observable -> 不可外推范围",
+            )
+        ) and not re.search(
+            r"scripts/|notes/code-reading|runs/stage-c-validation|"
+            r"docs/chapter-07-v0-evidence-ledger|contract\.\{json,md\}",
+            chapter_7,
+        ),
         "chapter_8_current_diagnostics_route": all(
             marker in chapter_8
             for marker in (
@@ -337,6 +353,24 @@ def main() -> None:
             )
         )
         and not re.search(
+            r"docs/|references/|notes/|runs/|scripts/|public-evidence-index|literature-map|"
+            r"仓库|核心目录|文献地图|缺口登记|公开再分发|OPEN_EXTERNAL_ACCESS|"
+            r"PRE_PHYSICS_BOUNDARY|RUNTIME_LEDGER_UNPROVEN|"
+            r"CONVERGENCE_READINESS_WITH_FORMAL_ORDER_UNPROVEN",
+            chapter_9,
+        ),
+        "chapter_9_reader_navigation": all(
+            marker in chapter_9
+            for marker in (
+                "阅读路线：先分类证据，再把一条主张接回教程",
+                "先读 9.1。",
+                "再读 9.2 与当前章节对应的一条主线。",
+                "用 9.3--9.5 确认缺口与优先级。",
+                "用 9.6--9.10 输出一张判读卡。",
+                "能支持",
+                "不能支持",
+            )
+        ) and not re.search(
             r"docs/|references/|notes/|runs/|scripts/|public-evidence-index|literature-map|"
             r"仓库|核心目录|文献地图|缺口登记|公开再分发|OPEN_EXTERNAL_ACCESS|"
             r"PRE_PHYSICS_BOUNDARY|RUNTIME_LEDGER_UNPROVEN|"

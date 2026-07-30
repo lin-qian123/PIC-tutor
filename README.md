@@ -1,6 +1,8 @@
 # PIC-tutor
 
-当前成书版本为 `v0.110`：在 v0.109 三密度 RZ 对照基础上，重新执行正式收敛 study 的第二组 12 个 2-rank producer。RZ/RSPHERE correction-on 的 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`；该证据确认 gate 可复现，但不宣称 formal numerical order 或 axis-charge closure 已完成。
+当前成书版本为 `v0.110`：2026-07-30 可复现构建生成 `264` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页与末页已补充视觉抽查；该抽查不替代全书逐页通读、第三方材料许可或公开再分发签收。
+
+在 v0.109 三密度 RZ 对照基础上，本版重新执行正式收敛 study 的第二组 12 个 2-rank producer。RZ/RSPHERE correction-on 的 14 项 repeat-slope gate 全部通过，最大绝对 slope 差为 `2.0135e-11`；该证据确认 gate 可复现，但不宣称 formal numerical order 或 axis-charge closure 已完成。
 
 第 1 章的源码定位练习已补为可独立执行的任务：读者从 `OneStep_nosub()` 进入，追踪粒子推进/沉积、`J/rho` 同步和 PSATD 或 FDTD 场更新，并交付一个三行调用表。当前候选为 264 页；PDF 第 15 页已人工复核，构建验收也固定了这些入口锚点。全书逐页通读、第三方材料许可和公开再分发仍未完成。
 

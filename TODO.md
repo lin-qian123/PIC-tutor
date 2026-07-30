@@ -1,5 +1,9 @@
 # TODO
 
+## 2026-07-30
+
+- [x] 以当前 `main` 重建 v0.110，确认 PDF 为 `264` 页（Markdown `864,177` bytes、HTML `5,256,167` bytes、PDF `3,003,762` bytes）。修正构建验收的旧 265 页常量，补充目录首页与末页的有限视觉抽查；读者化、缺口登记和发行元数据审计通过。全书逐页通读、第三方材料许可和公开再分发仍未完成。
+
 ## 2026-07-18
 
 - [ ] 公开再分发阻断：GitHub remote 已确认是 public，但 Git 跟踪 `references/` 下 `2,425` 个第三方文件（`52` 个 PDF、`2,259` 个图片，约 `190.7 MB`），且根目录没有项目许可证。`v0.110` manifest 排除 `references/` 不能移除 public branch 或历史中的材料。维护者需明确选择逐项授权保留、从 public branch 移除并决定历史策略，或临时转 private；详见 `docs/public-distribution-risk-register-v0.110.md`。

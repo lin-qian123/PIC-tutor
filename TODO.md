@@ -2,6 +2,7 @@
 
 ## 2026-07-30
 
+- [x] 完成第 3A 章初始化链的连续源码复核：全部源码导航统一为文件路径/函数符号，修正 `InitFromScratch()` 的真实回调链为 `AmrCore::InitFromScratch()` -> `MakeNewLevelFromScratch()` -> `AllocLevelData()/InitLevelData()`，补入 implicit solver 属性创建与 `allocdata` callback。外加场部分明确区分 grid external field 的主场叠加和 particle external field 的 gather 消费，并记录所有 file-driven external field 与 moving window 的当前不兼容断言；密度文件 profile 补全 `density_mesh_name`、几何和 distributed 读取边界。读者化与构建验收新增第 3A 源码路线检查；重建页数、哈希和视觉复核记录以本轮 manifest 为准。
 - [x] 完成第 3 章连续读者审阅与当前源码复核：以文件路径/函数符号替代易漂移行号，修正 adaptive timestep 为 `ApplyDtLimiters()`（并保留粒子、等离子体频率、回旋频率和 `max_dt` 的联合限制），修正 1D Langmuir 输入未显式设置 Maxwell solver 的事实。案例现闭合到 `test_1d_langmuir_multi` 的 2-rank CTest 注册、`analysis_1d.py diags/diag1000080`、$E_z$ 解析误差阈值与离散 Gauss-law 检查；读者审计新增该章回归项。为消除 PDF 第 3 章两处宽表文字挤压，已改为短的决策顺序/检查点列表；完整重建为 264 页，最终哈希、版式审计和页面抽查记录见本轮发行记录。
 - [x] 该轮以当时的 `main` 重建 v0.110，确认 PDF 为 `264` 页（Markdown `864,177` bytes、HTML `5,256,167` bytes、PDF `3,003,762` bytes）。修正当时的构建验收页数常量，补充目录首页与末页的有限视觉抽查；后续重建页数以 README 与当前 manifest 为准。全书逐页通读、第三方材料许可和公开再分发仍未完成。
 - [x] 完成第 9 章连续读者审阅：将 PDF/图片数量、转换产物、访问状态、维护路线和发布策略改为 A/B/C/D 证据层、可支持/不可支持的结论，以及第 5 章沉积和第 7 章 PML 的两条深读任务。该轮重建为 `264` 页（Markdown `861,932` bytes、HTML `5,253,615` bytes、PDF `3,001,015` bytes）；PDF 第 259--260 页已人工复核，读者化、构建验收、缺口登记和自动版式审计通过。后续重建页数以当前 manifest 为准。全书逐页通读、第三方材料许可和公开再分发仍未完成。

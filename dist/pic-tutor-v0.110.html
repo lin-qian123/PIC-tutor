@@ -4324,10 +4324,9 @@ restart，这一步则取决于
 diagnostics。</p>
 <h2 id="a.3-顶层入口fresh-run-与-restart-分叉">3A.3 顶层入口：fresh run
 与 restart 分叉</h2>
-<p><code>WarpX::InitData()</code> 位于
-<code>../warpx/Source/Initialization/WarpXInitData.cpp:794-951</code>。第
-3 章已经给过总表，这里看核心源码原文。</p>
-<p>源码位置：<code>../warpx/Source/Initialization/WarpXInitData.cpp:826-839</code>。</p>
+<p>源码文件：<code>Source/Initialization/WarpXInitData.cpp</code>
+函数：<code>WarpX::InitData()</code></p>
+<p>第 3 章已经给过总表，这里看决定数据来源的核心分支。</p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>restart_chkfile<span class="op">.</span>empty<span class="op">())</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    InitFromCheckpoint<span class="op">(</span>restart_chkfile<span class="op">);</span></span>
@@ -4374,7 +4373,7 @@ restart 后处理</td>
 </tr>
 <tr>
 <td>fresh run</td>
-<td><code>ComputeDt() -&gt; InitFromScratch() -&gt; AllocLevelData() -&gt; mypc-&gt;AllocData()/InitData() -&gt; external fields/PML -&gt; InitDiagnostics()</code></td>
+<td><code>ComputeDt() -&gt; InitFromScratch() -&gt; MakeNewLevelFromScratch() -&gt; mypc-&gt;AllocData()/InitData() -&gt; PML -&gt; InitDiagnostics()</code></td>
 <td>根据输入重新建立 AMR、solver、粒子、外部场和初始 diagnostics</td>
 </tr>
 </tbody>
@@ -4388,34 +4387,51 @@ projection cleaning 都必须放在 fresh-run 分支内理解，不能被误写�
 restart 的重复初始化。</p>
 <h2 id="a.4-initfromscratchamrex-level-与粒子初始化">3A.4
 <code>InitFromScratch()</code>：AMReX level 与粒子初始化</h2>
-<p>源码位置：<code>../warpx/Source/Initialization/WarpXInitData.cpp:999-1016</code>。</p>
+<p>源码文件：<code>Source/Initialization/WarpXInitData.cpp</code>
+函数：<code>WarpX::InitFromScratch()</code></p>
+<p>AMReX 回调文件：<code>Source/WarpX.cpp</code>
+回调函数：<code>WarpX::MakeNewLevelFromScratch()</code></p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>WarpX<span class="op">::</span>InitFromScratch <span class="op">()</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    BL_PROFILE<span class="op">(</span><span class="st">&quot;WarpX::InitFromScratch()&quot;</span><span class="op">);</span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>Real time <span class="op">=</span> <span class="fl">0.0</span><span class="op">;</span></span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>AmrCore<span class="op">::</span>InitFromScratch<span class="op">(</span>time<span class="op">);</span></span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    AllocLevelData<span class="op">();</span></span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    mypc<span class="op">-&gt;</span>AllocData<span class="op">();</span></span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    mypc<span class="op">-&gt;</span>InitData<span class="op">();</span></span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    InitPML<span class="op">();</span></span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> Real time <span class="op">=</span> <span class="fl">0.0</span><span class="op">;</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    AmrCore<span class="op">::</span>InitFromScratch<span class="op">(</span>time<span class="op">);</span> <span class="co">// calls MakeNewLevelFromScratch</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span><span class="va">m_implicit_solver</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">m_implicit_solver</span><span class="op">-&gt;</span>Define<span class="op">(</span><span class="kw">this</span><span class="op">,</span> <span class="co">/*from_restart=*/</span><span class="kw">false</span><span class="op">);</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">m_implicit_solver</span><span class="op">-&gt;</span>CreateParticleAttributes<span class="op">();</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    mypc<span class="op">-&gt;</span>AllocData<span class="op">();</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    mypc<span class="op">-&gt;</span>InitData<span class="op">();</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    InitPML<span class="op">();</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>    ExecutePythonCallback<span class="op">(</span><span class="st">&quot;allocdata&quot;</span><span class="op">);</span></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>这里的顺序很重要：</p>
 <ol type="1">
-<li><code>AmrCore::InitFromScratch(time)</code> 创建 AMR level。</li>
-<li><code>AllocLevelData()</code> 分配 WarpX
-自己管理的场、solver、buffer 和 level 数据。</li>
-<li><code>mypc-&gt;AllocData()</code> 为粒子容器准备数据结构。</li>
-<li><code>mypc-&gt;InitData()</code> 创建初始粒子。</li>
-<li><code>InitPML()</code> 初始化吸收边界数据结构。</li>
+<li><code>AmrCore::InitFromScratch(time)</code> 驱动 AMReX 创建 AMR
+level；它会回调
+<code>WarpX::MakeNewLevelFromScratch()</code>，后者对每个 level 依次调用
+<code>AllocLevelData(lev, ...)</code> 和
+<code>InitLevelData(lev, time)</code>。因此 <code>AllocLevelData</code>
+是这个回调链的一部分，不是 <code>InitFromScratch()</code>
+顶层直接调用的无参步骤。</li>
+<li>若启用了 implicit solver，<code>Define()</code> 与
+<code>CreateParticleAttributes()</code>
+在粒子初始化前建立求解器状态和所需粒子属性。</li>
+<li><code>mypc-&gt;AllocData()</code>
+为粒子容器准备数据结构，<code>mypc-&gt;InitData()</code>
+创建初始粒子。</li>
+<li><code>InitPML()</code> 初始化吸收边界数据结构；随后
+<code>allocdata</code> Python callback
+才获得已经分配完的初始化对象。</li>
 </ol>
 <p>因此，species 初始化发生在 field/level
 数据结构已经存在之后，但在正式时间推进之前。</p>
-<p>粒子容器入口源码位置：<code>../warpx/Source/Particles/PhysicalParticleContainer.cpp:429-433</code>。</p>
+<p>粒子容器入口：
+源码文件：<code>Source/Particles/PhysicalParticleContainer.cpp</code>
+函数：<code>PhysicalParticleContainer::InitData()</code></p>
 <div class="sourceCode" id="cb39"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> PhysicalParticleContainer<span class="op">::</span>InitData <span class="op">()</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    AddParticles<span class="op">(</span><span class="dv">0</span><span class="op">);</span> <span class="co">// Note - add on level 0</span></span>
@@ -4428,26 +4444,38 @@ tile，并清理 invalid 粒子。</p>
 外部场初始化：grid field 与 particle external field</h2>
 <p>WarpX 支持两类外部场：</p>
 <ul>
-<li>grid external field：外部场先放在网格 MultiFab 上，可参与 field
-solve 或作为背景场；</li>
-<li>particle external field：外部场在 particle gather
-时参与粒子受力。</li>
+<li>grid external field：外部场先放在
+<code>Efield_fp_external/Bfield_fp_external</code> 网格 MultiFab
+上，随后由 <code>AddExternalFields()</code> 叠加到初始 <code>E/B</code>
+网格场并施加 field boundary；</li>
+<li>particle external field：外部场保存在
+<code>E/B_external_particle_field</code> 中，在 particle gather
+时参与粒子受力，并不经 <code>AddExternalFields()</code> 写入主
+<code>E/B</code> 场。</li>
 </ul>
 <p>外部场初始化的关键是：外部场可以是常量、parser 函数、openPMD 文件或
 Python 回调。读者应避免把“外部场”理解成单一数组。</p>
-<p>以 projection cleaner 前的 external grid field
-判断为例，源码位置：<code>../warpx/Source/Initialization/WarpXInitData.cpp:1658-1664</code>。</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span> <span class="op">(</span><span class="va">m_p_ext_field_params</span><span class="op">-&gt;</span><span class="dt">B_ext_grid_type</span> <span class="op">==</span> ExternalFieldType<span class="op">::</span>read_from_file<span class="op">)</span> <span class="op">||</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>     <span class="op">(</span><span class="va">m_p_ext_field_params</span><span class="op">-&gt;</span><span class="dt">E_ext_grid_type</span> <span class="op">==</span> ExternalFieldType<span class="op">::</span>read_from_file<span class="op">)</span> <span class="op">||</span></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>     <span class="op">(</span>mypc<span class="op">-&gt;</span><span class="va">m_B_ext_particle_s</span> <span class="op">==</span> <span class="st">&quot;read_from_file&quot;</span><span class="op">)</span> <span class="op">||</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>     <span class="op">(</span>mypc<span class="op">-&gt;</span><span class="va">m_E_ext_particle_s</span> <span class="op">==</span> <span class="st">&quot;read_from_file&quot;</span><span class="op">)</span> <span class="op">)</span> <span class="op">{</span></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    ReadExternalFieldFromFile<span class="op">();</span></span>
+<p>源码文件：<code>Source/Initialization/WarpXInitData.cpp</code>
+函数：<code>WarpX::LoadExternalFields(int lev)</code></p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>grid_B_from_file <span class="op">||</span> grid_E_from_file <span class="op">||</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    particle_B_from_file <span class="op">||</span> particle_E_from_file<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    WARPX_ALWAYS_ASSERT_WITH_MESSAGE<span class="op">(</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>        WarpX<span class="op">::</span>do_moving_window <span class="op">==</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;External fields from file are not compatible with the moving window.&quot;</span><span class="op">);</span></span>
 <span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>这段代码把 grid external field 与 particle external field
-放在同一个文件读取入口下处理。真正写入哪一类
-MultiFab，取决于前面解析出的
-<code>B_ext_grid_type/E_ext_grid_type</code> 和
-<code>m_B_ext_particle_s/m_E_ext_particle_s</code>。</p>
+<p>这里的布尔名是为阅读压缩后的语义名；源码中展开检查
+<code>B_ext_grid_type/E_ext_grid_type</code> 与
+<code>m_B_ext_particle_s/m_E_ext_particle_s</code>。这个断言覆盖
+<strong>grid 和 particle 两类</strong> file-driven external
+field：moving window 移动后，文件场的 MultiFab
+没有自动重读/平移机制，故当前实现直接拒绝这个组合。</p>
+<p>断言之后，<code>LoadExternalFields()</code> 分三步处理数据：parser
+或文件填充 grid external field；在 finest level 调用
+<code>loadExternalFields</code> Python callback；再按 metadata 的每张
+map 填充 particle external
+field。不要把这三步压成一个无参的“读文件函数”：实际的
+<code>ReadExternalFieldFromFile(path, MultiFab*, field, component, map_index)</code>
+总是明确写出目标场与分量。</p>
 <p>外部场的物理约束是：如果读入的是 <code>B</code> 或矢势
 <code>A</code>，数值上还需要检查离散散度误差；这就是后面 projection
 divergence cleaner 的用途。</p>
@@ -4455,7 +4483,8 @@ divergence cleaner 的用途。</p>
 初始化：<code>PlasmaInjector</code> 是参数总容器</h2>
 <p><code>PlasmaInjector</code> 的职责不是推进粒子，而是把输入文件中一个
 species 的初始化规则收集成一组可供 kernel 调用的对象。</p>
-<p>源码位置：<code>../warpx/Source/Initialization/PlasmaInjector.cpp:126-153</code>。</p>
+<p>源码文件：<code>Source/Initialization/PlasmaInjector.cpp</code>
+函数：<code>PlasmaInjector::PlasmaInjector()</code></p>
 <div class="sourceCode" id="cb41"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string injection_style <span class="op">=</span> <span class="st">&quot;none&quot;</span><span class="op">;</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>utils<span class="op">::</span>parser<span class="op">::</span>query<span class="op">(</span>pp_species<span class="op">,</span> source_name<span class="op">,</span> <span class="st">&quot;injection_style&quot;</span><span class="op">,</span> injection_style<span class="op">);</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>transform<span class="op">(</span>injection_style<span class="op">.</span>begin<span class="op">(),</span></span>
@@ -4530,31 +4559,38 @@ species 的初始化规则收集成一组可供 kernel 调用的对象。</p>
 拷贝到 device 侧，保证后续 GPU kernel 可以调用。</p>
 <h2 id="a.7-密度和动量分布从文本参数到-functor">3A.7
 密度和动量分布：从文本参数到 functor</h2>
-<p>密度解析由 <code>SpeciesUtils::parseDensity()</code>
-完成。源码位置：<code>../warpx/Source/Utils/SpeciesUtils.cpp:80-114</code>。</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span> profile <span class="op">==</span> <span class="st">&quot;constant&quot;</span> <span class="op">){</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    pp_species_name<span class="op">.</span>query<span class="op">(</span><span class="st">&quot;density&quot;</span><span class="op">,</span> plasma_injector<span class="op">.</span>density<span class="op">);</span></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    plasma_injector<span class="op">.</span><span class="va">m_inj_rho</span> <span class="op">=</span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>make_unique<span class="op">&lt;</span>InjectorDensity<span class="op">&gt;(</span>InjectorDensityConstant<span class="op">{</span></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>            plasma_injector<span class="op">.</span>density<span class="op">});</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>profile <span class="op">==</span> <span class="st">&quot;parse_density_function&quot;</span><span class="op">)</span> <span class="op">{</span></span>
+<p>密度解析由 <code>SpeciesUtils::parseDensity()</code> 完成。
+源码文件：<code>Source/Utils/SpeciesUtils.cpp</code></p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>rho_prof_s <span class="op">==</span> <span class="st">&quot;constant&quot;</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Real density <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    utils<span class="op">::</span>parser<span class="op">::</span>getWithParser<span class="op">(</span>pp_species<span class="op">,</span> source_name<span class="op">,</span> <span class="st">&quot;density&quot;</span><span class="op">,</span> density<span class="op">);</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    h_inj_rho<span class="op">.</span>reset<span class="op">(</span><span class="kw">new</span> InjectorDensity<span class="op">(</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span>InjectorDensityConstant<span class="op">*)</span><span class="kw">nullptr</span><span class="op">,</span> density<span class="op">));</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>rho_prof_s <span class="op">==</span> <span class="st">&quot;parse_density_function&quot;</span><span class="op">)</span> <span class="op">{</span></span>
 <span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>string str_density_function<span class="op">;</span></span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    utils<span class="op">::</span>parser<span class="op">::</span>queryWithParser<span class="op">(</span>pp_species_name<span class="op">,</span> <span class="st">&quot;density_function(x,y,z)&quot;</span><span class="op">,</span> str_density_function<span class="op">);</span></span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> density_parser <span class="op">=</span></span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>make_unique<span class="op">&lt;</span>amrex<span class="op">::</span>Parser<span class="op">&gt;(</span></span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>            utils<span class="op">::</span>parser<span class="op">::</span>makeParser<span class="op">(</span>str_density_function<span class="op">,{</span><span class="st">&quot;x&quot;</span><span class="op">,</span><span class="st">&quot;y&quot;</span><span class="op">,</span><span class="st">&quot;z&quot;</span><span class="op">}));</span></span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    plasma_injector<span class="op">.</span><span class="va">m_inj_rho</span> <span class="op">=</span></span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>make_unique<span class="op">&lt;</span>InjectorDensity<span class="op">&gt;(</span>InjectorDensityParser<span class="op">{</span></span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>            <span class="bu">std::</span>move<span class="op">(</span>density_parser<span class="op">)});</span></span>
-<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>profile <span class="op">==</span> <span class="st">&quot;read_from_file&quot;</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>string read_density_from_path<span class="op">;</span></span>
-<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>    pp_species_name<span class="op">.</span>query<span class="op">(</span><span class="st">&quot;read_density_from_path&quot;</span><span class="op">,</span> read_density_from_path<span class="op">);</span></span>
-<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> read_density_distributed <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
-<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>    pp_species_name<span class="op">.</span>query<span class="op">(</span><span class="st">&quot;read_density_distributed&quot;</span><span class="op">,</span> read_density_distributed<span class="op">);</span></span>
-<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>    plasma_injector<span class="op">.</span><span class="va">m_inj_rho</span> <span class="op">=</span></span>
-<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>make_unique<span class="op">&lt;</span>InjectorDensity<span class="op">&gt;(</span>InjectorDensityFromFile<span class="op">{</span></span>
-<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>            read_density_from_path<span class="op">,</span> read_density_distributed<span class="op">});</span></span>
-<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    utils<span class="op">::</span>parser<span class="op">::</span>Store_parserString<span class="op">(</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>        pp_species<span class="op">,</span> source_name<span class="op">,</span> <span class="st">&quot;density_function(x,y,z)&quot;</span><span class="op">,</span> str_density_function<span class="op">);</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>    density_parser <span class="op">=</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>amrex<span class="op">::</span>Parser<span class="op">&gt;(</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>        utils<span class="op">::</span>parser<span class="op">::</span>makeParser<span class="op">(</span>str_density_function<span class="op">,{</span><span class="st">&quot;x&quot;</span><span class="op">,</span><span class="st">&quot;y&quot;</span><span class="op">,</span><span class="st">&quot;z&quot;</span><span class="op">}));</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    h_inj_rho<span class="op">.</span>reset<span class="op">(</span><span class="kw">new</span> InjectorDensity<span class="op">(</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span>InjectorDensityParser<span class="op">*)</span><span class="kw">nullptr</span><span class="op">,</span> density_parser<span class="op">-&gt;</span>compile<span class="op">&lt;</span><span class="dv">3</span><span class="op">&gt;()));</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>rho_prof_s <span class="op">==</span> <span class="st">&quot;read_from_file&quot;</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>string density_file<span class="op">;</span></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>string field_name <span class="op">=</span> <span class="st">&quot;density&quot;</span><span class="op">;</span></span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> distributed <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>    utils<span class="op">::</span>parser<span class="op">::</span>get<span class="op">(</span>pp_species<span class="op">,</span> source_name<span class="op">,</span></span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot;read_density_from_path&quot;</span><span class="op">,</span> density_file<span class="op">);</span></span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>    utils<span class="op">::</span>parser<span class="op">::</span>query<span class="op">(</span>pp_species<span class="op">,</span> source_name<span class="op">,</span></span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;density_mesh_name&quot;</span><span class="op">,</span> field_name<span class="op">);</span></span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>    pp_species<span class="op">.</span>query<span class="op">(</span><span class="st">&quot;read_density_distributed&quot;</span><span class="op">,</span> distributed<span class="op">);</span></span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a>    h_inj_rho<span class="op">.</span>reset<span class="op">(</span><span class="kw">new</span> InjectorDensity<span class="op">(</span></span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span>InjectorDensityFromFile<span class="op">*)</span><span class="kw">nullptr</span><span class="op">,</span></span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>        density_file<span class="op">,</span> field_name<span class="op">,</span> geom<span class="op">,</span> distributed<span class="op">));</span></span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>因此 file profile 不只是一个路径：<code>density_mesh_name</code>
+选择文件中的 mesh record（默认 <code>density</code>），<code>geom</code>
+提供目标几何，<code>read_density_distributed</code>
+决定读取布局。复现实验时应把这四项与文件坐标/单位一起检查，而不应只确认路径可打开。</p>
 <p>体注入中的宏粒子权重由密度决定：</p>
 <p><span class="math display">\[
 w_p \approx n(\mathbf{x})\frac{\Delta V}{N_{ppc}}.
@@ -4572,8 +4608,9 @@ w_p \approx n(\mathbf{x})\frac{\Delta V}{N_{ppc}}.
 <li><code>maxwell_juttner</code>：相对论热平衡分布；</li>
 <li><code>parse_momentum_function</code>：空间解析函数。</li>
 </ul>
-<p><code>InjectorMomentum</code> 的关键工程实现是手写 tagged
-union。源码位置：<code>../warpx/Source/Initialization/InjectorMomentum.H:459-719</code>。</p>
+<p><code>InjectorMomentum</code> 的关键工程实现是手写 tagged union。
+源码文件：<code>Source/Initialization/InjectorMomentum.H</code>
+对象：<code>InjectorMomentum</code></p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> InjectorMomentum</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">enum</span> <span class="kw">struct</span> Type <span class="op">{</span></span>
@@ -4604,7 +4641,8 @@ union。源码位置：<code>../warpx/Source/Initialization/InjectorMomentum.H:4
 采样单粒子动量，用 <code>getBulkMomentum()</code> 得到平均漂移速度。</p>
 <h2 id="a.8-addparticles按注入类型进入创建函数">3A.8
 <code>AddParticles()</code>：按注入类型进入创建函数</h2>
-<p>源码位置：<code>../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:194-260</code>。</p>
+<p>源码文件：<code>Source/Particles/ParticleCreation/AddParticles.cpp</code>
+函数：<code>PhysicalParticleContainer::AddParticles(int lev)</code></p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>PhysicalParticleContainer<span class="op">::</span>AddParticles <span class="op">(</span><span class="dt">int</span> lev<span class="op">)</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
@@ -4656,7 +4694,8 @@ union。源码位置：<code>../warpx/Source/Initialization/InjectorMomentum.H:4
 <p>体注入的核心思想是：先按 cell 和 <code>num_particles_per_cell</code>
 创建候选粒子，然后用真实 density/bounds 筛掉无效粒子，并把有效粒子写入
 SoA。</p>
-<p>源码位置：<code>../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:854-912</code>。</p>
+<p>源码文件：<code>Source/Particles/ParticleCreation/AddParticles.cpp</code>
+函数：<code>PhysicalParticleContainer::AddPlasma(...)</code></p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co">// count the number of particles that each cell in overlap_box could add</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>Gpu<span class="op">::</span>DeviceVector<span class="op">&lt;</span>amrex<span class="op">::</span>Long<span class="op">&gt;</span> counts<span class="op">(</span>overlap_box<span class="op">.</span>numPts<span class="op">(),</span> <span class="dv">0</span><span class="op">);</span></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>Gpu<span class="op">::</span>DeviceVector<span class="op">&lt;</span>amrex<span class="op">::</span>Long<span class="op">&gt;</span> offset<span class="op">(</span>overlap_box<span class="op">.</span>numPts<span class="op">());</span></span>
@@ -4731,7 +4770,8 @@ u_z&#39;=\gamma_b(u_z-\beta_b\gamma).
 beam：显式束流列表注入</h2>
 <p>Gaussian beam 不使用 <code>InjectorDensity</code>，而是在 IO rank
 上显式随机生成粒子列表。</p>
-<p>源码位置：<code>../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:396-407</code>。</p>
+<p>源码文件：<code>Source/Particles/ParticleCreation/AddParticles.cpp</code>
+函数：<code>PhysicalParticleContainer::AddGaussianBeam(...)</code></p>
 <div class="sourceCode" id="cb51"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>ParallelDescriptor<span class="op">::</span>IOProcessor<span class="op">())</span> <span class="op">{</span></span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// If do_symmetrize, create either 4x or 8x fewer particles, and</span></span>
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Replicate each particle either 4 times (x,y) (-x,y) (x,-y) (-x,-y)</span></span>
@@ -4747,7 +4787,7 @@ beam：显式束流列表注入</h2>
 <p><span class="math display">\[
 w_{3d} =
 \begin{cases}
-N_{\mathrm{tot}}/N_p,\\
+N_{\mathrm{tot}}/N_p,
 Q_{\mathrm{tot}}/(N_p q).
 \end{cases}
 \]</span></p>
@@ -4770,7 +4810,7 @@ t =
 \qquad
 \mathbf{x}\leftarrow \mathbf{x}-\mathbf{v}_\perp t.
 \]</span></p>
-<p>源码位置：<code>../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:453-462</code>。</p>
+<p>同一函数在 focal-plane 分支中计算交叉时刻并反推横向初始位置：</p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Compute the time at which the particle will cross the focal plane</span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>Real v_dot_n <span class="op">=</span> v_x <span class="op">*</span> n_x <span class="op">+</span> v_y <span class="op">*</span> n_y <span class="op">+</span> v_z <span class="op">*</span> n_z<span class="op">;</span></span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>Real t <span class="op">=</span> <span class="op">((</span>x_f<span class="op">-</span>x<span class="op">)*</span>n_x <span class="op">+</span> <span class="op">(</span>y_f<span class="op">-</span>y<span class="op">)*</span>n_y <span class="op">+</span> <span class="op">(</span>z_f<span class="op">-</span>z<span class="op">)*</span>n_z<span class="op">)</span> <span class="op">/</span> v_dot_n<span class="op">;</span></span>
@@ -4786,7 +4826,9 @@ t =
 <h2 id="a.11-openpmd-粒子文件文件粒子列表注入">3A.11 openPMD
 粒子文件：文件粒子列表注入</h2>
 <p><code>external_file</code> 路径在构造期先打开 openPMD 文件，读取可选
-<code>charge/mass</code>。源码位置：<code>../warpx/Source/Initialization/PlasmaInjector.cpp:483-584</code>。</p>
+<code>charge/mass</code>。
+源码文件：<code>Source/Initialization/PlasmaInjector.cpp</code>
+函数：<code>PlasmaInjector::setupExternalFile()</code></p>
 <div class="sourceCode" id="cb54"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> PlasmaInjector<span class="op">::</span>setupExternalFile <span class="op">(</span>amrex<span class="op">::</span>ParmParse <span class="at">const</span><span class="op">&amp;</span> pp_species<span class="op">)</span></span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#ifndef WARPX_USE_OPENPMD</span></span>
@@ -4802,7 +4844,9 @@ t =
 <span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>    utils<span class="op">::</span>parser<span class="op">::</span>queryWithParser<span class="op">(</span>pp_species<span class="op">,</span> source_name<span class="op">,</span> <span class="st">&quot;z_shift&quot;</span><span class="op">,</span>z_shift<span class="op">);</span></span></code></pre></div>
 <p>质量和电荷优先级是：</p>
 <pre class="text"><code>input charge/mass &gt; input species_type &gt; openPMD charge/mass record</code></pre>
-<p>真正读入粒子时，源码位置：<code>../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:680-715</code>。</p>
+<p>真正读入粒子时：
+源码文件：<code>Source/Particles/ParticleCreation/AddParticles.cpp</code>
+函数：<code>PhysicalParticleContainer::AddPlasmaFromFile(...)</code></p>
 <div class="sourceCode" id="cb56"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="kw">auto</span> i <span class="op">=</span> <span class="kw">decltype</span><span class="op">(</span>npart<span class="op">){</span><span class="dv">0</span><span class="op">};</span> i<span class="op">&lt;</span>npart<span class="op">;</span> <span class="op">++</span>i<span class="op">){</span></span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>ParticleReal <span class="at">const</span> weight <span class="op">=</span> ptr_w<span class="op">.</span>get<span class="op">()[</span>i<span class="op">]*</span>w_unit<span class="op">;</span></span>
@@ -4857,17 +4901,21 @@ Projection divergence cleaning：外部 <code>A/B</code>
 <p><span class="math display">\[
 \nabla_h^2\phi=-\nabla_h\cdot\mathbf{F}.
 \]</span></p>
-<p>源码位置：<code>../warpx/Source/Initialization/DivCleaner/ProjectionDivCleaner.cpp:256-264</code>。</p>
+<p>源码文件：
+<code>Source/Initialization/DivCleaner/ProjectionDivCleaner.cpp</code></p>
+<p>函数： <code>ProjectionDivCleaner::setSourceFromField()</code></p>
 <div class="sourceCode" id="cb58"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>WarpX<span class="op">::</span>ComputeDivB<span class="op">(</span></span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span><span class="va">m_source</span><span class="op">[</span>ilev<span class="op">],</span></span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span><span class="op">,</span></span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span>Bx<span class="op">,</span> By<span class="op">,</span> Bz<span class="op">},</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">{&amp;</span>Bx<span class="op">,</span> <span class="op">&amp;</span>By<span class="op">,</span> <span class="op">&amp;</span>Bz<span class="op">},</span></span>
 <span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>    WarpX<span class="op">::</span>CellSize<span class="op">(</span><span class="dv">0</span><span class="op">)</span></span>
 <span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span></span>
 <span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="va">m_source</span><span class="op">[</span>ilev<span class="op">]-&gt;</span>mult<span class="op">(-</span><span class="fl">1.</span><span class="op">_rt);</span></span></code></pre></div>
-<p>然后用 AMReX MLMG 解 Poisson
-方程。源码位置：<code>../warpx/Source/Initialization/DivCleaner/ProjectionDivCleaner.H:93-100</code>。</p>
+<p>然后 <code>ProjectionDivCleaner::solve()</code> 用 AMReX MLMG 解
+Poisson 方程。</p>
+<p>配置文件：
+<code>Source/Initialization/DivCleaner/ProjectionDivCleaner.H</code></p>
 <div class="sourceCode" id="cb59"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>MLMG mlmg<span class="op">(</span>linop<span class="op">);</span></span>
 <span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>mlmg<span class="op">.</span>setMaxIter<span class="op">(</span><span class="va">m_max_iter</span><span class="op">);</span></span>
 <span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>mlmg<span class="op">.</span>setMaxFmgIter<span class="op">(</span><span class="va">m_max_fmg_iter</span><span class="op">);</span></span>

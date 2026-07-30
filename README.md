@@ -1,6 +1,8 @@
 # PIC-tutor
 
-当前成书版本为 `v0.110`：2026-07-30 可复现构建生成 `264` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页与末页已补充视觉抽查；该抽查不替代全书逐页通读、第三方材料许可或公开再分发签收。
+当前成书版本为 `v0.110`：2026-07-30 可复现构建生成 `265` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页与末页已补充视觉抽查；该抽查不替代全书逐页通读、第三方材料许可或公开再分发签收。
+
+第 3A 章现以稳定的“文件路径 + 函数符号”追踪初始化，而不使用会随源码演化的固定行号。fresh-run 路径明确区分 `AmrCore::InitFromScratch()` 对 `MakeNewLevelFromScratch()` 的回调、implicit solver 属性创建、粒子容器、PML 与 `allocdata` callback；外加场部分区分写入主网格场的 grid field 与只供 gather 的 particle field，并明确 file-driven external field 与 moving window 不能组合。完整重建后的页数、哈希和人工版式复核以当前 manifest 与 `docs/manual-editorial-spotcheck-v0.110.md` 为准。
 
 第 3 章现以稳定的“文件路径 + 函数符号”引导源码阅读，不再把会随版本漂移的固定行号当作教程语义。该章校正了自适应时间步入口为 `ApplyDtLimiters()`，并将 1D Langmuir 案例闭合到输入、2-rank CTest 注册、`analysis_1d.py` 的 $E_z$ 误差阈值和离散 Gauss-law 检查；读者练习要求明确区分这些证据能与不能支持的结论。完成本轮重建后的页数与视觉复核记录以当前 manifest 和 `docs/manual-editorial-spotcheck-v0.110.md` 为准。
 

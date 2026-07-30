@@ -420,9 +420,10 @@ Python callback 也不是一个统一“初始化结束后调用”的事件，�
 
 ## 3A.3 顶层入口：fresh run 与 restart 分叉
 
-`WarpX::InitData()` 位于 `../warpx/Source/Initialization/WarpXInitData.cpp:794-951`。第 3 章已经给过总表，这里看核心源码原文。
+源码文件：`Source/Initialization/WarpXInitData.cpp`
+函数：`WarpX::InitData()`
 
-源码位置：`../warpx/Source/Initialization/WarpXInitData.cpp:826-839`。
+第 3 章已经给过总表，这里看决定数据来源的核心分支。
 
 ```cpp
 if (!restart_chkfile.empty())
@@ -452,43 +453,50 @@ else
 | 输入状态 | 主要调用顺序 | 进入 `Evolve()` 前必须具备的状态 |
 |---|---|---|
 | checkpoint restart | `InitFromCheckpoint() -> PostRestart()` | 从 checkpoint 恢复 AMR level、fields、particles 和时间层，再完成 restart 后处理 |
-| fresh run | `ComputeDt() -> InitFromScratch() -> AllocLevelData() -> mypc->AllocData()/InitData() -> external fields/PML -> InitDiagnostics()` | 根据输入重新建立 AMR、solver、粒子、外部场和初始 diagnostics |
+| fresh run | `ComputeDt() -> InitFromScratch() -> MakeNewLevelFromScratch() -> mypc->AllocData()/InitData() -> PML -> InitDiagnostics()` | 根据输入重新建立 AMR、solver、粒子、外部场和初始 diagnostics |
 
 这张图的重点不是列出每一个初始化 helper，而是固定数据来源的不可互换性：restart 路径恢复已经离散化的状态，fresh run 路径才负责从参数重新物化 AMR、solver、粒子、外部场和初始 diagnostics。后面的 `PlasmaInjector`、Gaussian beam、openPMD 文件注入和 projection cleaning 都必须放在 fresh-run 分支内理解，不能被误写成 restart 的重复初始化。
 
 ## 3A.4 `InitFromScratch()`：AMReX level 与粒子初始化
 
-源码位置：`../warpx/Source/Initialization/WarpXInitData.cpp:999-1016`。
+源码文件：`Source/Initialization/WarpXInitData.cpp`
+函数：`WarpX::InitFromScratch()`
+
+AMReX 回调文件：`Source/WarpX.cpp`
+回调函数：`WarpX::MakeNewLevelFromScratch()`
 
 ```cpp
 void
 WarpX::InitFromScratch ()
 {
-    BL_PROFILE("WarpX::InitFromScratch()");
+    const Real time = 0.0;
+    AmrCore::InitFromScratch(time); // calls MakeNewLevelFromScratch
 
-    const amrex::Real time = 0.0;
-    amrex::AmrCore::InitFromScratch(time);
-
-    AllocLevelData();
+    if (m_implicit_solver) {
+        m_implicit_solver->Define(this, /*from_restart=*/false);
+        m_implicit_solver->CreateParticleAttributes();
+    }
 
     mypc->AllocData();
     mypc->InitData();
 
     InitPML();
+    ExecutePythonCallback("allocdata");
 }
 ```
 
 这里的顺序很重要：
 
-1. `AmrCore::InitFromScratch(time)` 创建 AMR level。
-2. `AllocLevelData()` 分配 WarpX 自己管理的场、solver、buffer 和 level 数据。
-3. `mypc->AllocData()` 为粒子容器准备数据结构。
-4. `mypc->InitData()` 创建初始粒子。
-5. `InitPML()` 初始化吸收边界数据结构。
+1. `AmrCore::InitFromScratch(time)` 驱动 AMReX 创建 AMR level；它会回调 `WarpX::MakeNewLevelFromScratch()`，后者对每个 level 依次调用 `AllocLevelData(lev, ...)` 和 `InitLevelData(lev, time)`。因此 `AllocLevelData` 是这个回调链的一部分，不是 `InitFromScratch()` 顶层直接调用的无参步骤。
+2. 若启用了 implicit solver，`Define()` 与 `CreateParticleAttributes()` 在粒子初始化前建立求解器状态和所需粒子属性。
+3. `mypc->AllocData()` 为粒子容器准备数据结构，`mypc->InitData()` 创建初始粒子。
+4. `InitPML()` 初始化吸收边界数据结构；随后 `allocdata` Python callback 才获得已经分配完的初始化对象。
 
 因此，species 初始化发生在 field/level 数据结构已经存在之后，但在正式时间推进之前。
 
-粒子容器入口源码位置：`../warpx/Source/Particles/PhysicalParticleContainer.cpp:429-433`。
+粒子容器入口：
+源码文件：`Source/Particles/PhysicalParticleContainer.cpp`
+函数：`PhysicalParticleContainer::InitData()`
 
 ```cpp
 void PhysicalParticleContainer::InitData ()
@@ -504,23 +512,26 @@ void PhysicalParticleContainer::InitData ()
 
 WarpX 支持两类外部场：
 
-- grid external field：外部场先放在网格 MultiFab 上，可参与 field solve 或作为背景场；
-- particle external field：外部场在 particle gather 时参与粒子受力。
+- grid external field：外部场先放在 `Efield_fp_external/Bfield_fp_external` 网格 MultiFab 上，随后由 `AddExternalFields()` 叠加到初始 `E/B` 网格场并施加 field boundary；
+- particle external field：外部场保存在 `E/B_external_particle_field` 中，在 particle gather 时参与粒子受力，并不经 `AddExternalFields()` 写入主 `E/B` 场。
 
 外部场初始化的关键是：外部场可以是常量、parser 函数、openPMD 文件或 Python 回调。读者应避免把“外部场”理解成单一数组。
 
-以 projection cleaner 前的 external grid field 判断为例，源码位置：`../warpx/Source/Initialization/WarpXInitData.cpp:1658-1664`。
+源码文件：`Source/Initialization/WarpXInitData.cpp`
+函数：`WarpX::LoadExternalFields(int lev)`
 
 ```cpp
-if ( (m_p_ext_field_params->B_ext_grid_type == ExternalFieldType::read_from_file) ||
-     (m_p_ext_field_params->E_ext_grid_type == ExternalFieldType::read_from_file) ||
-     (mypc->m_B_ext_particle_s == "read_from_file") ||
-     (mypc->m_E_ext_particle_s == "read_from_file") ) {
-    ReadExternalFieldFromFile();
+if (grid_B_from_file || grid_E_from_file ||
+    particle_B_from_file || particle_E_from_file) {
+    WARPX_ALWAYS_ASSERT_WITH_MESSAGE(
+        WarpX::do_moving_window == 0,
+        "External fields from file are not compatible with the moving window.");
 }
 ```
 
-这段代码把 grid external field 与 particle external field 放在同一个文件读取入口下处理。真正写入哪一类 MultiFab，取决于前面解析出的 `B_ext_grid_type/E_ext_grid_type` 和 `m_B_ext_particle_s/m_E_ext_particle_s`。
+这里的布尔名是为阅读压缩后的语义名；源码中展开检查 `B_ext_grid_type/E_ext_grid_type` 与 `m_B_ext_particle_s/m_E_ext_particle_s`。这个断言覆盖 **grid 和 particle 两类** file-driven external field：moving window 移动后，文件场的 MultiFab 没有自动重读/平移机制，故当前实现直接拒绝这个组合。
+
+断言之后，`LoadExternalFields()` 分三步处理数据：parser 或文件填充 grid external field；在 finest level 调用 `loadExternalFields` Python callback；再按 metadata 的每张 map 填充 particle external field。不要把这三步压成一个无参的“读文件函数”：实际的 `ReadExternalFieldFromFile(path, MultiFab*, field, component, map_index)` 总是明确写出目标场与分量。
 
 外部场的物理约束是：如果读入的是 `B` 或矢势 `A`，数值上还需要检查离散散度误差；这就是后面 projection divergence cleaner 的用途。
 
@@ -528,7 +539,8 @@ if ( (m_p_ext_field_params->B_ext_grid_type == ExternalFieldType::read_from_file
 
 `PlasmaInjector` 的职责不是推进粒子，而是把输入文件中一个 species 的初始化规则收集成一组可供 kernel 调用的对象。
 
-源码位置：`../warpx/Source/Initialization/PlasmaInjector.cpp:126-153`。
+源码文件：`Source/Initialization/PlasmaInjector.cpp`
+函数：`PlasmaInjector::PlasmaInjector()`
 
 ```cpp
 std::string injection_style = "none";
@@ -576,33 +588,39 @@ if (injection_style == "singleparticle") {
 
 ## 3A.7 密度和动量分布：从文本参数到 functor
 
-密度解析由 `SpeciesUtils::parseDensity()` 完成。源码位置：`../warpx/Source/Utils/SpeciesUtils.cpp:80-114`。
+密度解析由 `SpeciesUtils::parseDensity()` 完成。
+源码文件：`Source/Utils/SpeciesUtils.cpp`
 
 ```cpp
-if ( profile == "constant" ){
-    pp_species_name.query("density", plasma_injector.density);
-    plasma_injector.m_inj_rho =
-        std::make_unique<InjectorDensity>(InjectorDensityConstant{
-            plasma_injector.density});
-} else if (profile == "parse_density_function") {
+if (rho_prof_s == "constant") {
+    amrex::Real density = 0;
+    utils::parser::getWithParser(pp_species, source_name, "density", density);
+    h_inj_rho.reset(new InjectorDensity(
+        (InjectorDensityConstant*)nullptr, density));
+} else if (rho_prof_s == "parse_density_function") {
     std::string str_density_function;
-    utils::parser::queryWithParser(pp_species_name, "density_function(x,y,z)", str_density_function);
-    auto density_parser =
-        std::make_unique<amrex::Parser>(
-            utils::parser::makeParser(str_density_function,{"x","y","z"}));
-    plasma_injector.m_inj_rho =
-        std::make_unique<InjectorDensity>(InjectorDensityParser{
-            std::move(density_parser)});
-} else if (profile == "read_from_file") {
-    std::string read_density_from_path;
-    pp_species_name.query("read_density_from_path", read_density_from_path);
-    bool read_density_distributed = false;
-    pp_species_name.query("read_density_distributed", read_density_distributed);
-    plasma_injector.m_inj_rho =
-        std::make_unique<InjectorDensity>(InjectorDensityFromFile{
-            read_density_from_path, read_density_distributed});
+    utils::parser::Store_parserString(
+        pp_species, source_name, "density_function(x,y,z)", str_density_function);
+    density_parser = std::make_unique<amrex::Parser>(
+        utils::parser::makeParser(str_density_function,{"x","y","z"}));
+    h_inj_rho.reset(new InjectorDensity(
+        (InjectorDensityParser*)nullptr, density_parser->compile<3>()));
+} else if (rho_prof_s == "read_from_file") {
+    std::string density_file;
+    std::string field_name = "density";
+    bool distributed = true;
+    utils::parser::get(pp_species, source_name,
+                       "read_density_from_path", density_file);
+    utils::parser::query(pp_species, source_name,
+                         "density_mesh_name", field_name);
+    pp_species.query("read_density_distributed", distributed);
+    h_inj_rho.reset(new InjectorDensity(
+        (InjectorDensityFromFile*)nullptr,
+        density_file, field_name, geom, distributed));
 }
 ```
+
+因此 file profile 不只是一个路径：`density_mesh_name` 选择文件中的 mesh record（默认 `density`），`geom` 提供目标几何，`read_density_distributed` 决定读取布局。复现实验时应把这四项与文件坐标/单位一起检查，而不应只确认路径可打开。
 
 体注入中的宏粒子权重由密度决定：
 
@@ -621,7 +639,9 @@ $$
 - `maxwell_juttner`：相对论热平衡分布；
 - `parse_momentum_function`：空间解析函数。
 
-`InjectorMomentum` 的关键工程实现是手写 tagged union。源码位置：`../warpx/Source/Initialization/InjectorMomentum.H:459-719`。
+`InjectorMomentum` 的关键工程实现是手写 tagged union。
+源码文件：`Source/Initialization/InjectorMomentum.H`
+对象：`InjectorMomentum`
 
 ```cpp
 struct InjectorMomentum
@@ -655,7 +675,8 @@ struct InjectorMomentum
 
 ## 3A.8 `AddParticles()`：按注入类型进入创建函数
 
-源码位置：`../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:194-260`。
+源码文件：`Source/Particles/ParticleCreation/AddParticles.cpp`
+函数：`PhysicalParticleContainer::AddParticles(int lev)`
 
 ```cpp
 void
@@ -714,7 +735,8 @@ PhysicalParticleContainer::AddParticles (int lev)
 
 体注入的核心思想是：先按 cell 和 `num_particles_per_cell` 创建候选粒子，然后用真实 density/bounds 筛掉无效粒子，并把有效粒子写入 SoA。
 
-源码位置：`../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:854-912`。
+源码文件：`Source/Particles/ParticleCreation/AddParticles.cpp`
+函数：`PhysicalParticleContainer::AddPlasma(...)`
 
 ```cpp
 // count the number of particles that each cell in overlap_box could add
@@ -815,7 +837,8 @@ pa[PIdx::uz][ip] = u.z;
 
 Gaussian beam 不使用 `InjectorDensity`，而是在 IO rank 上显式随机生成粒子列表。
 
-源码位置：`../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:396-407`。
+源码文件：`Source/Particles/ParticleCreation/AddParticles.cpp`
+函数：`PhysicalParticleContainer::AddGaussianBeam(...)`
 
 ```cpp
 if (ParallelDescriptor::IOProcessor()) {
@@ -836,7 +859,7 @@ if (ParallelDescriptor::IOProcessor()) {
 $$
 w_{3d} =
 \begin{cases}
-N_{\mathrm{tot}}/N_p,\\
+N_{\mathrm{tot}}/N_p,
 Q_{\mathrm{tot}}/(N_p q).
 \end{cases}
 $$
@@ -864,7 +887,7 @@ t = \frac{(\mathbf{x}_f-\mathbf{x})\cdot\mathbf{n}}{\mathbf{v}\cdot\mathbf{n}},
 \mathbf{x}\leftarrow \mathbf{x}-\mathbf{v}_\perp t.
 $$
 
-源码位置：`../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:453-462`。
+同一函数在 focal-plane 分支中计算交叉时刻并反推横向初始位置：
 
 ```cpp
 // Compute the time at which the particle will cross the focal plane
@@ -883,7 +906,9 @@ z = z - (v_z - v_dot_n*n_z) * t;
 
 ## 3A.11 openPMD 粒子文件：文件粒子列表注入
 
-`external_file` 路径在构造期先打开 openPMD 文件，读取可选 `charge/mass`。源码位置：`../warpx/Source/Initialization/PlasmaInjector.cpp:483-584`。
+`external_file` 路径在构造期先打开 openPMD 文件，读取可选 `charge/mass`。
+源码文件：`Source/Initialization/PlasmaInjector.cpp`
+函数：`PlasmaInjector::setupExternalFile()`
 
 ```cpp
 void PlasmaInjector::setupExternalFile (amrex::ParmParse const& pp_species)
@@ -907,7 +932,9 @@ void PlasmaInjector::setupExternalFile (amrex::ParmParse const& pp_species)
 input charge/mass > input species_type > openPMD charge/mass record
 ```
 
-真正读入粒子时，源码位置：`../warpx/Source/Particles/ParticleCreation/AddParticles.cpp:680-715`。
+真正读入粒子时：
+源码文件：`Source/Particles/ParticleCreation/AddParticles.cpp`
+函数：`PhysicalParticleContainer::AddPlasmaFromFile(...)`
 
 ```cpp
 for (auto i = decltype(npart){0}; i<npart; ++i){
@@ -969,20 +996,27 @@ $$
 \nabla_h^2\phi=-\nabla_h\cdot\mathbf{F}.
 $$
 
-源码位置：`../warpx/Source/Initialization/DivCleaner/ProjectionDivCleaner.cpp:256-264`。
+源码文件：
+`Source/Initialization/DivCleaner/ProjectionDivCleaner.cpp`
+
+函数：
+`ProjectionDivCleaner::setSourceFromField()`
 
 ```cpp
 WarpX::ComputeDivB(
     *m_source[ilev],
     0,
-    {Bx, By, Bz},
+    {&Bx, &By, &Bz},
     WarpX::CellSize(0)
     );
 
 m_source[ilev]->mult(-1._rt);
 ```
 
-然后用 AMReX MLMG 解 Poisson 方程。源码位置：`../warpx/Source/Initialization/DivCleaner/ProjectionDivCleaner.H:93-100`。
+然后 `ProjectionDivCleaner::solve()` 用 AMReX MLMG 解 Poisson 方程。
+
+配置文件：
+`Source/Initialization/DivCleaner/ProjectionDivCleaner.H`
 
 ```cpp
 amrex::MLMG mlmg(linop);

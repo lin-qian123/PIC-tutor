@@ -18,8 +18,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# The Chapter 3 reader-path revision removes two overwide tables; the current layout has 264 pages.
-EXPECTED_PDF_PAGES = 264
+# The Chapter 3A initialization-route revision adds one page; the current layout has 265 pages.
+EXPECTED_PDF_PAGES = 265
 
 
 def image_links(text: str) -> list[str]:
@@ -76,6 +76,12 @@ def main() -> None:
     chapter_3_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
     )
+    chapter_3a = (ROOT / "manuscript" / "chapters" / "03a-warpx-initialization.md").read_text(
+        encoding="utf-8"
+    )
+    chapter_3a_stale_location_markers = re.findall(
+        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3a
+    )
     chapter_7 = (ROOT / "manuscript" / "chapters" / "07-boundaries-amr.md").read_text(
         encoding="utf-8"
     )
@@ -83,7 +89,7 @@ def main() -> None:
         int(number)
         for number in re.findall(
             r"^## 3A\.(\d+)\b",
-            (ROOT / "manuscript" / "chapters" / "03a-warpx-initialization.md").read_text(encoding="utf-8"),
+            chapter_3a,
             re.MULTILINE,
         )
     ]
@@ -155,6 +161,17 @@ def main() -> None:
             )
         ),
         "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),
+        "chapter_3a_current_initialization_route": all(
+            marker in chapter_3a
+            for marker in (
+                "WarpX::MakeNewLevelFromScratch()",
+                "m_implicit_solver->Define",
+                'ExecutePythonCallback("allocdata")',
+                "WarpX::LoadExternalFields(int lev)",
+                "External fields from file are not compatible with the moving window.",
+                "ProjectionDivCleaner::setSourceFromField()",
+            )
+        ) and not chapter_3a_stale_location_markers,
         "chapter_1_section_order": chapter_1_numbers == list(range(1, 15)),
         "chapter_1_pdf_toc_entries": all(
             marker in toc_text

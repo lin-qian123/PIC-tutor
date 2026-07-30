@@ -40,6 +40,12 @@ def main() -> int:
     chapter_3_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3
     )
+    chapter_3a = (root / "manuscript/chapters/03a-warpx-initialization.md").read_text(
+        encoding="utf-8"
+    )
+    chapter_3a_stale_location_markers = re.findall(
+        r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_3a
+    )
     reader_chapters = [path for path in chapters if path.name != "00-preface.md"]
     chapter_openings = "\n".join(
         path.read_text(encoding="utf-8")[:2500] for path in reader_chapters
@@ -172,6 +178,17 @@ def main() -> int:
         ) and "UpdateDtFromParticleSpeeds" not in chapter_3
         and "`algo.maxwell_solver = yee`" not in chapter_3
         and not chapter_3_stale_location_markers,
+        "chapter_3a_current_initialization_route": all(
+            marker in chapter_3a
+            for marker in (
+                "WarpX::MakeNewLevelFromScratch()",
+                "m_implicit_solver->Define",
+                'ExecutePythonCallback("allocdata")',
+                "WarpX::LoadExternalFields(int lev)",
+                "External fields from file are not compatible with the moving window.",
+                "ProjectionDivCleaner::setSourceFromField()",
+            )
+        ) and not chapter_3a_stale_location_markers,
         "core_chapters_have_no_versioned_prose": not versioned_prose_markers,
         "core_chapters_have_exercises": all(
             marker in chapter_text
@@ -195,6 +212,7 @@ def main() -> int:
         "chapter_7_project_record_markers": chapter_7_project_record_markers,
         "chapter_8_project_record_markers": chapter_8_project_record_markers,
         "chapter_3_stale_location_markers": chapter_3_stale_location_markers,
+        "chapter_3a_stale_location_markers": chapter_3a_stale_location_markers,
         "open_items": [
             "需要人工通读术语、公式、代码上下文、章节过渡和练习",
         ],

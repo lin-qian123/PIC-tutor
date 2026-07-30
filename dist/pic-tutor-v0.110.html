@@ -338,7 +338,8 @@ WarpX 如何选择 pusher</a></li>
 pusher：相对论速度变换一致性的更新</a>
 <ul>
 <li><a href="#vay-appendix-ab显式-gamma-根与回旋半径边界" id="toc-vay-appendix-ab显式-gamma-根与回旋半径边界">4.4.1 Vay Appendix
-A/B：显式 <code>\gamma</code> 根与回旋半径边界</a></li>
+A/B：显式 <span class="math inline">\(\gamma\)</span>
+根与回旋半径边界</a></li>
 <li><a href="#用推进器谱系约束-vay-的结论范围" id="toc-用推进器谱系约束-vay-的结论范围">4.4.2 用推进器谱系约束 Vay
 的结论范围</a></li>
 </ul></li>
@@ -6330,46 +6331,56 @@ pusher。</p>
 \]</span></p>
 <p>源码文件：<code>Source/Particles/Pusher/UpdateMomentumBoris.H</code>
 函数：<code>UpdateMomentumBoris()</code></p>
-<p>源码原文如下：</p>
+<p>下面是为阅读重排的核心节选；变量名和控制流与源码一致，完整函数仍以该文件和函数名为准：</p>
 <div class="sourceCode" id="cb91"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal econst <span class="op">=</span> <span class="fl">0.5</span><span class="op">_prt*</span>q<span class="op">*</span>dt<span class="op">/</span>m<span class="op">;</span></span>
-<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>FirstHalf <span class="op">||</span> <span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>Full<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// First half-push for E</span></span>
-<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a>    ux <span class="op">+=</span> econst<span class="op">*</span>Ex<span class="op">;</span></span>
-<span id="cb91-6"><a href="#cb91-6" aria-hidden="true" tabindex="-1"></a>    uy <span class="op">+=</span> econst<span class="op">*</span>Ey<span class="op">;</span></span>
-<span id="cb91-7"><a href="#cb91-7" aria-hidden="true" tabindex="-1"></a>    uz <span class="op">+=</span> econst<span class="op">*</span>Ez<span class="op">;</span></span>
-<span id="cb91-8"><a href="#cb91-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb91-9"><a href="#cb91-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Compute temporary gamma factor</span></span>
-<span id="cb91-10"><a href="#cb91-10" aria-hidden="true" tabindex="-1"></a><span class="kw">constexpr</span> <span class="kw">auto</span> inv_c2 <span class="op">=</span> PhysConst<span class="op">::</span>inv_c2_v<span class="op">&lt;</span> amrex<span class="op">::</span>ParticleReal<span class="op">&gt;;</span></span>
-<span id="cb91-11"><a href="#cb91-11" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal inv_gamma <span class="op">=</span> <span class="fl">1.</span><span class="op">_prt/</span><span class="bu">std::</span>sqrt<span class="op">(</span><span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span> <span class="op">(</span>ux<span class="op">*</span>ux <span class="op">+</span> uy<span class="op">*</span>uy <span class="op">+</span> uz<span class="op">*</span>uz<span class="op">)*</span>inv_c2<span class="op">);</span></span>
-<span id="cb91-12"><a href="#cb91-12" aria-hidden="true" tabindex="-1"></a><span class="co">// Magnetic rotation</span></span>
-<span id="cb91-13"><a href="#cb91-13" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>ParticleReal tx <span class="op">=</span> econst<span class="op">*</span>inv_gamma<span class="op">*</span>Bx<span class="op">;</span></span>
-<span id="cb91-14"><a href="#cb91-14" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>ParticleReal ty <span class="op">=</span> econst<span class="op">*</span>inv_gamma<span class="op">*</span>By<span class="op">;</span></span>
-<span id="cb91-15"><a href="#cb91-15" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>ParticleReal tz <span class="op">=</span> econst<span class="op">*</span>inv_gamma<span class="op">*</span>Bz<span class="op">;</span></span>
-<span id="cb91-16"><a href="#cb91-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>FirstHalf <span class="op">||</span> <span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>SecondHalf<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb91-17"><a href="#cb91-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tsq <span class="op">=</span> tx<span class="op">*</span>tx <span class="op">+</span> ty<span class="op">*</span>ty <span class="op">+</span> tz<span class="op">*</span>tz<span class="op">;</span></span>
-<span id="cb91-18"><a href="#cb91-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal factor <span class="op">=</span> <span class="op">(</span>tsq <span class="op">&gt;</span> <span class="fl">0.</span><span class="op">_prt)</span> <span class="op">?</span> <span class="op">(</span><span class="bu">std::</span>sqrt<span class="op">(</span><span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span> tsq<span class="op">)</span> <span class="op">-</span> <span class="fl">1.</span><span class="op">_prt)</span> <span class="op">/</span> tsq <span class="op">:</span> <span class="fl">0.5</span><span class="op">_prt;</span></span>
-<span id="cb91-19"><a href="#cb91-19" aria-hidden="true" tabindex="-1"></a>    tx <span class="op">*=</span> factor<span class="op">;</span></span>
-<span id="cb91-20"><a href="#cb91-20" aria-hidden="true" tabindex="-1"></a>    ty <span class="op">*=</span> factor<span class="op">;</span></span>
-<span id="cb91-21"><a href="#cb91-21" aria-hidden="true" tabindex="-1"></a>    tz <span class="op">*=</span> factor<span class="op">;</span></span>
-<span id="cb91-22"><a href="#cb91-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb91-23"><a href="#cb91-23" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal tsqi <span class="op">=</span> <span class="fl">2.</span><span class="op">_prt/(</span><span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span> tx<span class="op">*</span>tx <span class="op">+</span> ty<span class="op">*</span>ty <span class="op">+</span> tz<span class="op">*</span>tz<span class="op">);</span></span>
-<span id="cb91-24"><a href="#cb91-24" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal sx <span class="op">=</span> tx<span class="op">*</span>tsqi<span class="op">;</span></span>
-<span id="cb91-25"><a href="#cb91-25" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal sy <span class="op">=</span> ty<span class="op">*</span>tsqi<span class="op">;</span></span>
-<span id="cb91-26"><a href="#cb91-26" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal sz <span class="op">=</span> tz<span class="op">*</span>tsqi<span class="op">;</span></span>
-<span id="cb91-27"><a href="#cb91-27" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal ux_p <span class="op">=</span> ux <span class="op">+</span> uy<span class="op">*</span>tz <span class="op">-</span> uz<span class="op">*</span>ty<span class="op">;</span></span>
-<span id="cb91-28"><a href="#cb91-28" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal uy_p <span class="op">=</span> uy <span class="op">+</span> uz<span class="op">*</span>tx <span class="op">-</span> ux<span class="op">*</span>tz<span class="op">;</span></span>
-<span id="cb91-29"><a href="#cb91-29" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal uz_p <span class="op">=</span> uz <span class="op">+</span> ux<span class="op">*</span>ty <span class="op">-</span> uy<span class="op">*</span>tx<span class="op">;</span></span>
-<span id="cb91-30"><a href="#cb91-30" aria-hidden="true" tabindex="-1"></a><span class="co">// - Update momentum</span></span>
-<span id="cb91-31"><a href="#cb91-31" aria-hidden="true" tabindex="-1"></a>ux <span class="op">+=</span> uy_p<span class="op">*</span>sz <span class="op">-</span> uz_p<span class="op">*</span>sy<span class="op">;</span></span>
-<span id="cb91-32"><a href="#cb91-32" aria-hidden="true" tabindex="-1"></a>uy <span class="op">+=</span> uz_p<span class="op">*</span>sx <span class="op">-</span> ux_p<span class="op">*</span>sz<span class="op">;</span></span>
-<span id="cb91-33"><a href="#cb91-33" aria-hidden="true" tabindex="-1"></a>uz <span class="op">+=</span> ux_p<span class="op">*</span>sy <span class="op">-</span> uy_p<span class="op">*</span>sx<span class="op">;</span></span>
-<span id="cb91-34"><a href="#cb91-34" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>SecondHalf <span class="op">||</span> <span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>Full<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb91-35"><a href="#cb91-35" aria-hidden="true" tabindex="-1"></a><span class="co">// Second half-push for E</span></span>
-<span id="cb91-36"><a href="#cb91-36" aria-hidden="true" tabindex="-1"></a>    ux <span class="op">+=</span> econst<span class="op">*</span>Ex<span class="op">;</span></span>
-<span id="cb91-37"><a href="#cb91-37" aria-hidden="true" tabindex="-1"></a>    uy <span class="op">+=</span> econst<span class="op">*</span>Ey<span class="op">;</span></span>
-<span id="cb91-38"><a href="#cb91-38" aria-hidden="true" tabindex="-1"></a>    uz <span class="op">+=</span> econst<span class="op">*</span>Ez<span class="op">;</span></span>
-<span id="cb91-39"><a href="#cb91-39" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="dt">bool</span> first_or_full <span class="op">=</span></span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>FirstHalf <span class="op">||</span></span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>Full<span class="op">;</span></span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="dt">bool</span> second_or_full <span class="op">=</span></span>
+<span id="cb91-6"><a href="#cb91-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>SecondHalf <span class="op">||</span></span>
+<span id="cb91-7"><a href="#cb91-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>Full<span class="op">;</span></span>
+<span id="cb91-8"><a href="#cb91-8" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="dt">bool</span> split_half <span class="op">=</span></span>
+<span id="cb91-9"><a href="#cb91-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>FirstHalf <span class="op">||</span></span>
+<span id="cb91-10"><a href="#cb91-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>SecondHalf<span class="op">;</span></span>
+<span id="cb91-11"><a href="#cb91-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-12"><a href="#cb91-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>first_or_full<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb91-13"><a href="#cb91-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// First half-push for E</span></span>
+<span id="cb91-14"><a href="#cb91-14" aria-hidden="true" tabindex="-1"></a>    ux <span class="op">+=</span> econst<span class="op">*</span>Ex<span class="op">;</span></span>
+<span id="cb91-15"><a href="#cb91-15" aria-hidden="true" tabindex="-1"></a>    uy <span class="op">+=</span> econst<span class="op">*</span>Ey<span class="op">;</span></span>
+<span id="cb91-16"><a href="#cb91-16" aria-hidden="true" tabindex="-1"></a>    uz <span class="op">+=</span> econst<span class="op">*</span>Ez<span class="op">;</span></span>
+<span id="cb91-17"><a href="#cb91-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb91-18"><a href="#cb91-18" aria-hidden="true" tabindex="-1"></a><span class="co">// Compute temporary gamma factor</span></span>
+<span id="cb91-19"><a href="#cb91-19" aria-hidden="true" tabindex="-1"></a><span class="kw">constexpr</span> <span class="kw">auto</span> inv_c2 <span class="op">=</span> PhysConst<span class="op">::</span>inv_c2_v<span class="op">&lt;</span> amrex<span class="op">::</span>ParticleReal<span class="op">&gt;;</span></span>
+<span id="cb91-20"><a href="#cb91-20" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal inv_gamma <span class="op">=</span> <span class="fl">1.</span><span class="op">_prt/</span><span class="bu">std::</span>sqrt<span class="op">(</span><span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span> <span class="op">(</span>ux<span class="op">*</span>ux <span class="op">+</span> uy<span class="op">*</span>uy <span class="op">+</span> uz<span class="op">*</span>uz<span class="op">)*</span>inv_c2<span class="op">);</span></span>
+<span id="cb91-21"><a href="#cb91-21" aria-hidden="true" tabindex="-1"></a><span class="co">// Magnetic rotation</span></span>
+<span id="cb91-22"><a href="#cb91-22" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>ParticleReal tx <span class="op">=</span> econst<span class="op">*</span>inv_gamma<span class="op">*</span>Bx<span class="op">;</span></span>
+<span id="cb91-23"><a href="#cb91-23" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>ParticleReal ty <span class="op">=</span> econst<span class="op">*</span>inv_gamma<span class="op">*</span>By<span class="op">;</span></span>
+<span id="cb91-24"><a href="#cb91-24" aria-hidden="true" tabindex="-1"></a>amrex<span class="op">::</span>ParticleReal tz <span class="op">=</span> econst<span class="op">*</span>inv_gamma<span class="op">*</span>Bz<span class="op">;</span></span>
+<span id="cb91-25"><a href="#cb91-25" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>split_half<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb91-26"><a href="#cb91-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tsq <span class="op">=</span> tx<span class="op">*</span>tx <span class="op">+</span> ty<span class="op">*</span>ty <span class="op">+</span> tz<span class="op">*</span>tz<span class="op">;</span></span>
+<span id="cb91-27"><a href="#cb91-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal factor <span class="op">=</span> <span class="op">(</span>tsq <span class="op">&gt;</span> <span class="fl">0.</span><span class="op">_prt)</span></span>
+<span id="cb91-28"><a href="#cb91-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">?</span> <span class="op">(</span><span class="bu">std::</span>sqrt<span class="op">(</span><span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span> tsq<span class="op">)</span> <span class="op">-</span> <span class="fl">1.</span><span class="op">_prt)</span> <span class="op">/</span> tsq <span class="op">:</span> <span class="fl">0.5</span><span class="op">_prt;</span></span>
+<span id="cb91-29"><a href="#cb91-29" aria-hidden="true" tabindex="-1"></a>    tx <span class="op">*=</span> factor<span class="op">;</span></span>
+<span id="cb91-30"><a href="#cb91-30" aria-hidden="true" tabindex="-1"></a>    ty <span class="op">*=</span> factor<span class="op">;</span></span>
+<span id="cb91-31"><a href="#cb91-31" aria-hidden="true" tabindex="-1"></a>    tz <span class="op">*=</span> factor<span class="op">;</span></span>
+<span id="cb91-32"><a href="#cb91-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb91-33"><a href="#cb91-33" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal tsqi <span class="op">=</span> <span class="fl">2.</span><span class="op">_prt/(</span><span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span> tx<span class="op">*</span>tx <span class="op">+</span> ty<span class="op">*</span>ty <span class="op">+</span> tz<span class="op">*</span>tz<span class="op">);</span></span>
+<span id="cb91-34"><a href="#cb91-34" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal sx <span class="op">=</span> tx<span class="op">*</span>tsqi<span class="op">;</span></span>
+<span id="cb91-35"><a href="#cb91-35" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal sy <span class="op">=</span> ty<span class="op">*</span>tsqi<span class="op">;</span></span>
+<span id="cb91-36"><a href="#cb91-36" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal sz <span class="op">=</span> tz<span class="op">*</span>tsqi<span class="op">;</span></span>
+<span id="cb91-37"><a href="#cb91-37" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal ux_p <span class="op">=</span> ux <span class="op">+</span> uy<span class="op">*</span>tz <span class="op">-</span> uz<span class="op">*</span>ty<span class="op">;</span></span>
+<span id="cb91-38"><a href="#cb91-38" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal uy_p <span class="op">=</span> uy <span class="op">+</span> uz<span class="op">*</span>tx <span class="op">-</span> ux<span class="op">*</span>tz<span class="op">;</span></span>
+<span id="cb91-39"><a href="#cb91-39" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal uz_p <span class="op">=</span> uz <span class="op">+</span> ux<span class="op">*</span>ty <span class="op">-</span> uy<span class="op">*</span>tx<span class="op">;</span></span>
+<span id="cb91-40"><a href="#cb91-40" aria-hidden="true" tabindex="-1"></a><span class="co">// - Update momentum</span></span>
+<span id="cb91-41"><a href="#cb91-41" aria-hidden="true" tabindex="-1"></a>ux <span class="op">+=</span> uy_p<span class="op">*</span>sz <span class="op">-</span> uz_p<span class="op">*</span>sy<span class="op">;</span></span>
+<span id="cb91-42"><a href="#cb91-42" aria-hidden="true" tabindex="-1"></a>uy <span class="op">+=</span> uz_p<span class="op">*</span>sx <span class="op">-</span> ux_p<span class="op">*</span>sz<span class="op">;</span></span>
+<span id="cb91-43"><a href="#cb91-43" aria-hidden="true" tabindex="-1"></a>uz <span class="op">+=</span> ux_p<span class="op">*</span>sy <span class="op">-</span> uy_p<span class="op">*</span>sx<span class="op">;</span></span>
+<span id="cb91-44"><a href="#cb91-44" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>second_or_full<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb91-45"><a href="#cb91-45" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Second half-push for E</span></span>
+<span id="cb91-46"><a href="#cb91-46" aria-hidden="true" tabindex="-1"></a>    ux <span class="op">+=</span> econst<span class="op">*</span>Ex<span class="op">;</span></span>
+<span id="cb91-47"><a href="#cb91-47" aria-hidden="true" tabindex="-1"></a>    uy <span class="op">+=</span> econst<span class="op">*</span>Ey<span class="op">;</span></span>
+<span id="cb91-48"><a href="#cb91-48" aria-hidden="true" tabindex="-1"></a>    uz <span class="op">+=</span> econst<span class="op">*</span>Ez<span class="op">;</span></span>
+<span id="cb91-49"><a href="#cb91-49" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -6421,9 +6432,9 @@ pusher。</p>
 更新数学等价。这正好服务于 <code>WarpXEvolve.cpp</code> 中把碰撞放在
 momentum push 中间的路径。</p>
 <p>这里有一个必须区分的实现细节：WarpX 的 half momentum push 不是简单把
-<code>q dt B/(2m\gamma)</code> 再乘
-<code>1/2</code>。<code>UpdateMomentumBoris()</code> 的 half-push
-分支使用</p>
+<span class="math inline">\(q\,\Delta t\,B/(2m\gamma)\)</span> 再乘
+<span class="math inline">\(1/2\)</span>。<code>UpdateMomentumBoris()</code>
+的 half-push 分支使用</p>
 <p><span class="math display">\[
 \frac{|t_{\mathrm{half}}|}{|t_{\mathrm{full}}|}
 =
@@ -6479,8 +6490,7 @@ update。下面继续展开 Vay 与 Higuera-Cary 的源码。</p>
 <p>这一节背后的经典来源可以直接回到 Birdsall-Langdon 1985 第一分卷
 <code>4-3</code> 到
 <code>4-5</code>。那里把磁推进的核心先写成几何分裂：电场部分是半步
-impulse，磁场部分是速度空间旋转；随后再把旋转压成
-<code>t=\tan(\theta/2)</code>、<code>s=2t/(1+t^2)</code>、<code>c=(1-t^2)/(1+t^2)</code>
+impulse，磁场部分是速度空间旋转；随后再把旋转压成 <span class="math inline">\(t=\tan(\theta/2)\)</span>、<span class="math inline">\(s=2t/(1+t^2)\)</span>、<span class="math inline">\(c=(1-t^2)/(1+t^2)\)</span>
 这组半角变量，并进一步给出向量 Boris
 形式。对本章来说，这个来源有两个价值。第一，WarpX 的 Boris
 更新不是孤立经验公式，而是这条 “half-accel + rotation + half-accel”
@@ -6509,68 +6519,55 @@ pusher：相对论速度变换一致性的更新</h2>
 函数：<code>UpdateMomentumVay()</code></p>
 <p>源码注释明确引用 Vay 2008 的公式 (9)-(13)，并说明
 <code>FirstHalf</code> 与 <code>SecondHalf</code> 连续执行应等价于
-<code>Full</code>：</p>
-<div class="sourceCode" id="cb92"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="co">/** </span><span class="an">\brief</span><span class="co"> Push the particle&#39;s positions over one timestep,</span></span>
-<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a><span class="co"> *    given the value of its momenta `ux`, `uy`, `uz`</span></span>
-<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a><span class="co"> *    Note that UpdateMomentumVay algorithm can be splitted into FirstHalf and SecondHalf</span></span>
-<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a><span class="co"> *    momentum updates. FirstHalf and SecondHalf updates are constructed so that</span></span>
-<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a><span class="co"> *    performing FirstHalf followed by SecondHalf is mathematically</span></span>
-<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a><span class="co"> *    equivalent to a single Full update.</span></span>
-<span id="cb92-7"><a href="#cb92-7" aria-hidden="true" tabindex="-1"></a><span class="co"> *    For more details, see formulas (9)-(13) in J.L.Vay, &quot;Simulation of beams or plasmas crossing at</span></span>
-<span id="cb92-8"><a href="#cb92-8" aria-hidden="true" tabindex="-1"></a><span class="co"> *    relativistic velocity&quot;, Phys. Plasmas 15, 056701 (2008).</span></span>
-<span id="cb92-9"><a href="#cb92-9" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
-<span id="cb92-10"><a href="#cb92-10" aria-hidden="true" tabindex="-1"></a>AMREX_GPU_HOST_DEVICE AMREX_INLINE</span>
-<span id="cb92-11"><a href="#cb92-11" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> UpdateMomentumVay<span class="op">(</span></span>
-<span id="cb92-12"><a href="#cb92-12" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> ux<span class="op">,</span> amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> uy<span class="op">,</span> amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> uz<span class="op">,</span></span>
-<span id="cb92-13"><a href="#cb92-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal Ex<span class="op">,</span> <span class="at">const</span> amrex<span class="op">::</span>ParticleReal Ey<span class="op">,</span> <span class="at">const</span> amrex<span class="op">::</span>ParticleReal Ez<span class="op">,</span></span>
-<span id="cb92-14"><a href="#cb92-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal Bx<span class="op">,</span> <span class="at">const</span> amrex<span class="op">::</span>ParticleReal By<span class="op">,</span> <span class="at">const</span> amrex<span class="op">::</span>ParticleReal Bz<span class="op">,</span></span>
-<span id="cb92-15"><a href="#cb92-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal q<span class="op">,</span> <span class="at">const</span> amrex<span class="op">::</span>ParticleReal m<span class="op">,</span> <span class="at">const</span> amrex<span class="op">::</span>Real dt<span class="op">,</span></span>
-<span id="cb92-16"><a href="#cb92-16" aria-hidden="true" tabindex="-1"></a>    MomentumPushType <span class="dt">momentum_push_type</span><span class="op">)</span></span>
-<span id="cb92-17"><a href="#cb92-17" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb92-18"><a href="#cb92-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">using</span> <span class="kw">namespace</span> amrex<span class="op">::</span>literals<span class="op">;</span></span>
-<span id="cb92-19"><a href="#cb92-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb92-20"><a href="#cb92-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Constants</span></span>
-<span id="cb92-21"><a href="#cb92-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal econst <span class="op">=</span> q<span class="op">*</span>dt<span class="op">/</span>m <span class="op">*</span> <span class="op">((</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>Full<span class="op">)</span> <span class="op">?</span> <span class="fl">1.0</span><span class="op">_prt</span> <span class="op">:</span> <span class="fl">0.5</span><span class="op">_prt);</span></span>
-<span id="cb92-22"><a href="#cb92-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal bconst <span class="op">=</span> <span class="fl">0.5</span><span class="op">_prt*</span>q<span class="op">*</span>dt<span class="op">/</span>m<span class="op">;</span></span>
-<span id="cb92-23"><a href="#cb92-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Compute initial gamma</span></span>
-<span id="cb92-24"><a href="#cb92-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal inv_gamma <span class="op">=</span> <span class="fl">1.</span><span class="op">_prt/</span><span class="bu">std::</span>sqrt<span class="op">(</span><span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span> <span class="op">(</span>ux<span class="op">*</span>ux <span class="op">+</span> uy<span class="op">*</span>uy <span class="op">+</span> uz<span class="op">*</span>uz<span class="op">)*</span>PhysConst<span class="op">::</span>inv_c2_v<span class="op">&lt;</span>amrex<span class="op">::</span>ParticleReal<span class="op">&gt;);</span></span>
-<span id="cb92-25"><a href="#cb92-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Get tau</span></span>
-<span id="cb92-26"><a href="#cb92-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal taux <span class="op">=</span> bconst<span class="op">*</span>Bx<span class="op">;</span></span>
-<span id="cb92-27"><a href="#cb92-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tauy <span class="op">=</span> bconst<span class="op">*</span>By<span class="op">;</span></span>
-<span id="cb92-28"><a href="#cb92-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tauz <span class="op">=</span> bconst<span class="op">*</span>Bz<span class="op">;</span></span>
-<span id="cb92-29"><a href="#cb92-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tausq <span class="op">=</span> taux<span class="op">*</span>taux<span class="op">+</span>tauy<span class="op">*</span>tauy<span class="op">+</span>tauz<span class="op">*</span>tauz<span class="op">;</span></span>
-<span id="cb92-30"><a href="#cb92-30" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Get U&#39;, gamma&#39;^2</span></span>
-<span id="cb92-31"><a href="#cb92-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal uxpr <span class="op">=</span> ux <span class="op">+</span> econst<span class="op">*</span>Ex <span class="op">+</span> <span class="op">((</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>SecondHalf<span class="op">)</span> <span class="op">?</span> <span class="fl">0.0</span><span class="op">_prt</span> <span class="op">:</span> <span class="op">(</span>uy<span class="op">*</span>tauz<span class="op">-</span>uz<span class="op">*</span>tauy<span class="op">)*</span>inv_gamma<span class="op">);</span></span>
-<span id="cb92-32"><a href="#cb92-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal uypr <span class="op">=</span> uy <span class="op">+</span> econst<span class="op">*</span>Ey <span class="op">+</span> <span class="op">((</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>SecondHalf<span class="op">)</span> <span class="op">?</span> <span class="fl">0.0</span><span class="op">_prt</span> <span class="op">:</span> <span class="op">(</span>uz<span class="op">*</span>taux<span class="op">-</span>ux<span class="op">*</span>tauz<span class="op">)*</span>inv_gamma<span class="op">);</span></span>
-<span id="cb92-33"><a href="#cb92-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal uzpr <span class="op">=</span> uz <span class="op">+</span> econst<span class="op">*</span>Ez <span class="op">+</span> <span class="op">((</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>SecondHalf<span class="op">)</span> <span class="op">?</span> <span class="fl">0.0</span><span class="op">_prt</span> <span class="op">:</span> <span class="op">(</span>ux<span class="op">*</span>tauy<span class="op">-</span>uy<span class="op">*</span>taux<span class="op">)*</span>inv_gamma<span class="op">);</span></span>
-<span id="cb92-34"><a href="#cb92-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb92-35"><a href="#cb92-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span><span class="dt">momentum_push_type</span> <span class="op">!=</span>  MomentumPushType<span class="op">::</span>FirstHalf<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb92-36"><a href="#cb92-36" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get gamma&#39;^2</span></span>
-<span id="cb92-37"><a href="#cb92-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> amrex<span class="op">::</span>ParticleReal gprsq <span class="op">=</span> <span class="op">(</span><span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span> <span class="op">(</span>uxpr<span class="op">*</span>uxpr <span class="op">+</span> uypr<span class="op">*</span>uypr <span class="op">+</span> uzpr<span class="op">*</span>uzpr<span class="op">)*</span>PhysConst<span class="op">::</span>inv_c2_v<span class="op">&lt;</span>amrex<span class="op">::</span>ParticleReal<span class="op">&gt;);</span></span>
-<span id="cb92-38"><a href="#cb92-38" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get u*</span></span>
-<span id="cb92-39"><a href="#cb92-39" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> amrex<span class="op">::</span>ParticleReal ust <span class="op">=</span> <span class="op">(</span>uxpr<span class="op">*</span>taux <span class="op">+</span> uypr<span class="op">*</span>tauy <span class="op">+</span> uzpr<span class="op">*</span>tauz<span class="op">)*</span>PhysConst<span class="op">::</span>inv_c_v<span class="op">&lt;</span>amrex<span class="op">::</span>ParticleReal<span class="op">&gt;;</span></span>
-<span id="cb92-40"><a href="#cb92-40" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get new gamma</span></span>
-<span id="cb92-41"><a href="#cb92-41" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> amrex<span class="op">::</span>ParticleReal sigma <span class="op">=</span> gprsq<span class="op">-</span>tausq<span class="op">;</span></span>
-<span id="cb92-42"><a href="#cb92-42" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> amrex<span class="op">::</span>ParticleReal gisq <span class="op">=</span> <span class="fl">2.</span><span class="op">_prt/(</span>sigma <span class="op">+</span> <span class="bu">std::</span>sqrt<span class="op">(</span>sigma<span class="op">*</span>sigma <span class="op">+</span> <span class="fl">4.</span><span class="op">_prt*(</span>tausq <span class="op">+</span> ust<span class="op">*</span>ust<span class="op">))</span> <span class="op">);</span></span>
-<span id="cb92-43"><a href="#cb92-43" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get t, s</span></span>
-<span id="cb92-44"><a href="#cb92-44" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> amrex<span class="op">::</span>ParticleReal bg <span class="op">=</span> bconst<span class="op">*</span><span class="bu">std::</span>sqrt<span class="op">(</span>gisq<span class="op">);</span></span>
-<span id="cb92-45"><a href="#cb92-45" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tx <span class="op">=</span> bg<span class="op">*</span>Bx<span class="op">;</span></span>
-<span id="cb92-46"><a href="#cb92-46" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> amrex<span class="op">::</span>ParticleReal ty <span class="op">=</span> bg<span class="op">*</span>By<span class="op">;</span></span>
-<span id="cb92-47"><a href="#cb92-47" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tz <span class="op">=</span> bg<span class="op">*</span>Bz<span class="op">;</span></span>
-<span id="cb92-48"><a href="#cb92-48" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> amrex<span class="op">::</span>ParticleReal s <span class="op">=</span> <span class="fl">1.</span><span class="op">_prt/(</span><span class="fl">1.</span><span class="op">_prt+</span>tausq<span class="op">*</span>gisq<span class="op">);</span></span>
-<span id="cb92-49"><a href="#cb92-49" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get t.u&#39;</span></span>
-<span id="cb92-50"><a href="#cb92-50" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tu <span class="op">=</span> tx<span class="op">*</span>uxpr <span class="op">+</span> ty<span class="op">*</span>uypr <span class="op">+</span> tz<span class="op">*</span>uzpr<span class="op">;</span></span>
-<span id="cb92-51"><a href="#cb92-51" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get new U</span></span>
-<span id="cb92-52"><a href="#cb92-52" aria-hidden="true" tabindex="-1"></a>        ux <span class="op">=</span> s<span class="op">*(</span>uxpr<span class="op">+</span>tx<span class="op">*</span>tu<span class="op">+</span>uypr<span class="op">*</span>tz<span class="op">-</span>uzpr<span class="op">*</span>ty<span class="op">);</span></span>
-<span id="cb92-53"><a href="#cb92-53" aria-hidden="true" tabindex="-1"></a>        uy <span class="op">=</span> s<span class="op">*(</span>uypr<span class="op">+</span>ty<span class="op">*</span>tu<span class="op">+</span>uzpr<span class="op">*</span>tx<span class="op">-</span>uxpr<span class="op">*</span>tz<span class="op">);</span></span>
-<span id="cb92-54"><a href="#cb92-54" aria-hidden="true" tabindex="-1"></a>        uz <span class="op">=</span> s<span class="op">*(</span>uzpr<span class="op">+</span>tz<span class="op">*</span>tu<span class="op">+</span>uxpr<span class="op">*</span>ty<span class="op">-</span>uypr<span class="op">*</span>tx<span class="op">);</span></span>
-<span id="cb92-55"><a href="#cb92-55" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb92-56"><a href="#cb92-56" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb92-57"><a href="#cb92-57" aria-hidden="true" tabindex="-1"></a>        ux <span class="op">=</span> uxpr<span class="op">;</span></span>
-<span id="cb92-58"><a href="#cb92-58" aria-hidden="true" tabindex="-1"></a>        uy <span class="op">=</span> uypr<span class="op">;</span></span>
-<span id="cb92-59"><a href="#cb92-59" aria-hidden="true" tabindex="-1"></a>        uz <span class="op">=</span> uzpr<span class="op">;</span></span>
-<span id="cb92-60"><a href="#cb92-60" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb92-61"><a href="#cb92-61" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<code>Full</code>。下面是为阅读压缩的核心节选；它省略函数签名和重复分量，但保留时间层分支、<span class="math inline">\(\gamma\)</span> 根和旋转结构：</p>
+<div class="sourceCode" id="cb92"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal econst <span class="op">=</span> q<span class="op">*</span>dt<span class="op">/</span>m <span class="op">*</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">((</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>Full<span class="op">)</span> <span class="op">?</span> <span class="fl">1.0</span><span class="op">_prt</span> <span class="op">:</span> <span class="fl">0.5</span><span class="op">_prt);</span></span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal bconst <span class="op">=</span> <span class="fl">0.5</span><span class="op">_prt*</span>q<span class="op">*</span>dt<span class="op">/</span>m<span class="op">;</span></span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal inv_gamma <span class="op">=</span> <span class="fl">1.</span><span class="op">_prt/</span><span class="bu">std::</span>sqrt<span class="op">(</span></span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>    <span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span> <span class="op">(</span>ux<span class="op">*</span>ux <span class="op">+</span> uy<span class="op">*</span>uy <span class="op">+</span> uz<span class="op">*</span>uz<span class="op">)*</span>PhysConst<span class="op">::</span>inv_c2_v<span class="op">&lt;</span>amrex<span class="op">::</span>ParticleReal<span class="op">&gt;);</span></span>
+<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Get tau</span></span>
+<span id="cb92-7"><a href="#cb92-7" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal taux <span class="op">=</span> bconst<span class="op">*</span>Bx<span class="op">;</span></span>
+<span id="cb92-8"><a href="#cb92-8" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal tauy <span class="op">=</span> bconst<span class="op">*</span>By<span class="op">;</span></span>
+<span id="cb92-9"><a href="#cb92-9" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal tauz <span class="op">=</span> bconst<span class="op">*</span>Bz<span class="op">;</span></span>
+<span id="cb92-10"><a href="#cb92-10" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal tausq <span class="op">=</span> taux<span class="op">*</span>taux <span class="op">+</span> tauy<span class="op">*</span>tauy <span class="op">+</span> tauz<span class="op">*</span>tauz<span class="op">;</span></span>
+<span id="cb92-11"><a href="#cb92-11" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal uxpr <span class="op">=</span> ux <span class="op">+</span> econst<span class="op">*</span>Ex <span class="op">+</span></span>
+<span id="cb92-12"><a href="#cb92-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">((</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>SecondHalf<span class="op">)</span></span>
+<span id="cb92-13"><a href="#cb92-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">?</span> <span class="fl">0.0</span><span class="op">_prt</span> <span class="op">:</span> <span class="op">(</span>uy<span class="op">*</span>tauz <span class="op">-</span> uz<span class="op">*</span>tauy<span class="op">)*</span>inv_gamma<span class="op">);</span></span>
+<span id="cb92-14"><a href="#cb92-14" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal uypr <span class="op">=</span> uy <span class="op">+</span> econst<span class="op">*</span>Ey <span class="op">+</span></span>
+<span id="cb92-15"><a href="#cb92-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">((</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>SecondHalf<span class="op">)</span></span>
+<span id="cb92-16"><a href="#cb92-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">?</span> <span class="fl">0.0</span><span class="op">_prt</span> <span class="op">:</span> <span class="op">(</span>uz<span class="op">*</span>taux <span class="op">-</span> ux<span class="op">*</span>tauz<span class="op">)*</span>inv_gamma<span class="op">);</span></span>
+<span id="cb92-17"><a href="#cb92-17" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>ParticleReal uzpr <span class="op">=</span> uz <span class="op">+</span> econst<span class="op">*</span>Ez <span class="op">+</span></span>
+<span id="cb92-18"><a href="#cb92-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">((</span><span class="dt">momentum_push_type</span> <span class="op">==</span> MomentumPushType<span class="op">::</span>SecondHalf<span class="op">)</span></span>
+<span id="cb92-19"><a href="#cb92-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">?</span> <span class="fl">0.0</span><span class="op">_prt</span> <span class="op">:</span> <span class="op">(</span>ux<span class="op">*</span>tauy <span class="op">-</span> uy<span class="op">*</span>taux<span class="op">)*</span>inv_gamma<span class="op">);</span></span>
+<span id="cb92-20"><a href="#cb92-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-21"><a href="#cb92-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span><span class="dt">momentum_push_type</span> <span class="op">!=</span> MomentumPushType<span class="op">::</span>FirstHalf<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb92-22"><a href="#cb92-22" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get gamma&#39;^2</span></span>
+<span id="cb92-23"><a href="#cb92-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal gprsq <span class="op">=</span> <span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span></span>
+<span id="cb92-24"><a href="#cb92-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span>uxpr<span class="op">*</span>uxpr <span class="op">+</span> uypr<span class="op">*</span>uypr <span class="op">+</span> uzpr<span class="op">*</span>uzpr<span class="op">)*</span>PhysConst<span class="op">::</span>inv_c2_v<span class="op">&lt;</span>amrex<span class="op">::</span>ParticleReal<span class="op">&gt;;</span></span>
+<span id="cb92-25"><a href="#cb92-25" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get u*</span></span>
+<span id="cb92-26"><a href="#cb92-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal ust <span class="op">=</span></span>
+<span id="cb92-27"><a href="#cb92-27" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span>uxpr<span class="op">*</span>taux <span class="op">+</span> uypr<span class="op">*</span>tauy <span class="op">+</span> uzpr<span class="op">*</span>tauz<span class="op">)*</span>PhysConst<span class="op">::</span>inv_c_v<span class="op">&lt;</span>amrex<span class="op">::</span>ParticleReal<span class="op">&gt;;</span></span>
+<span id="cb92-28"><a href="#cb92-28" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get new gamma</span></span>
+<span id="cb92-29"><a href="#cb92-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal sigma <span class="op">=</span> gprsq <span class="op">-</span> tausq<span class="op">;</span></span>
+<span id="cb92-30"><a href="#cb92-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal gisq <span class="op">=</span> <span class="fl">2.</span><span class="op">_prt/(</span>sigma <span class="op">+</span> <span class="bu">std::</span>sqrt<span class="op">(</span></span>
+<span id="cb92-31"><a href="#cb92-31" aria-hidden="true" tabindex="-1"></a>        sigma<span class="op">*</span>sigma <span class="op">+</span> <span class="fl">4.</span><span class="op">_prt*(</span>tausq <span class="op">+</span> ust<span class="op">*</span>ust<span class="op">)));</span></span>
+<span id="cb92-32"><a href="#cb92-32" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get t, s</span></span>
+<span id="cb92-33"><a href="#cb92-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal bg <span class="op">=</span> bconst<span class="op">*</span><span class="bu">std::</span>sqrt<span class="op">(</span>gisq<span class="op">);</span></span>
+<span id="cb92-34"><a href="#cb92-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tx <span class="op">=</span> bg<span class="op">*</span>Bx<span class="op">;</span></span>
+<span id="cb92-35"><a href="#cb92-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal ty <span class="op">=</span> bg<span class="op">*</span>By<span class="op">;</span></span>
+<span id="cb92-36"><a href="#cb92-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tz <span class="op">=</span> bg<span class="op">*</span>Bz<span class="op">;</span></span>
+<span id="cb92-37"><a href="#cb92-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal s <span class="op">=</span> <span class="fl">1.</span><span class="op">_prt/(</span><span class="fl">1.</span><span class="op">_prt</span> <span class="op">+</span> tausq<span class="op">*</span>gisq<span class="op">);</span></span>
+<span id="cb92-38"><a href="#cb92-38" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get t.u&#39;</span></span>
+<span id="cb92-39"><a href="#cb92-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>ParticleReal tu <span class="op">=</span> tx<span class="op">*</span>uxpr <span class="op">+</span> ty<span class="op">*</span>uypr <span class="op">+</span> tz<span class="op">*</span>uzpr<span class="op">;</span></span>
+<span id="cb92-40"><a href="#cb92-40" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get new U</span></span>
+<span id="cb92-41"><a href="#cb92-41" aria-hidden="true" tabindex="-1"></a>    ux <span class="op">=</span> s<span class="op">*(</span>uxpr <span class="op">+</span> tx<span class="op">*</span>tu <span class="op">+</span> uypr<span class="op">*</span>tz <span class="op">-</span> uzpr<span class="op">*</span>ty<span class="op">);</span></span>
+<span id="cb92-42"><a href="#cb92-42" aria-hidden="true" tabindex="-1"></a>    uy <span class="op">=</span> s<span class="op">*(</span>uypr <span class="op">+</span> ty<span class="op">*</span>tu <span class="op">+</span> uzpr<span class="op">*</span>tx <span class="op">-</span> uxpr<span class="op">*</span>tz<span class="op">);</span></span>
+<span id="cb92-43"><a href="#cb92-43" aria-hidden="true" tabindex="-1"></a>    uz <span class="op">=</span> s<span class="op">*(</span>uzpr <span class="op">+</span> tz<span class="op">*</span>tu <span class="op">+</span> uxpr<span class="op">*</span>ty <span class="op">-</span> uypr<span class="op">*</span>tx<span class="op">);</span></span>
+<span id="cb92-44"><a href="#cb92-44" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb92-45"><a href="#cb92-45" aria-hidden="true" tabindex="-1"></a>    ux <span class="op">=</span> uxpr<span class="op">;</span></span>
+<span id="cb92-46"><a href="#cb92-46" aria-hidden="true" tabindex="-1"></a>    uy <span class="op">=</span> uypr<span class="op">;</span></span>
+<span id="cb92-47"><a href="#cb92-47" aria-hidden="true" tabindex="-1"></a>    uz <span class="op">=</span> uzpr<span class="op">;</span></span>
+<span id="cb92-48"><a href="#cb92-48" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Vay pusher 和 Boris 的主要差别在求解更新后的相对论因子这一步。Boris
 使用旧的 <span class="math inline">\(\gamma^-\)</span> 构造磁旋转；Vay
 先构造 <span class="math inline">\(\mathbf{u}&#39;\)</span>，再通过</p>
@@ -6601,47 +6598,48 @@ crossing / boosted-frame 场景，离散 Lorentz force 必须尽量保住 electr
 average。于是 WarpX 的 <code>UpdateMomentumVay.H</code>
 最值得保留的历史定位不是“Boris 的另一个变体”，而是：它实现的是一条以
 frame-change consistency 为目标的专门修正路线。</p>
-<p>Vay 2008 后半段把这条历史论证链又压实了两次。第一，<code>II.C</code>
-的两个单粒子测试并不是普通轨道展示，而是同一物理系统在 laboratory frame
-和 moving frame 下都要和解析解一致的 frame-consistency test。常量
-<code>B_z</code> 例子中，粒子以 <code>v_x=10^{-2}c</code>
-起步、<code>\Delta t=10^{-2}\times 2\pi/\omega_c</code>，新 pusher
-在实验室系和沿 <code>\hat y</code> 方向 <code>\gamma_f=2</code> 的
-moving frame 里都贴住解析轨道；Boris 即使加上
-<code>\tan(\omega_c\Delta t)/(\omega_c\Delta t)</code> 修正，也会在
-moving frame 中明显偏离，而且误差在 <code>\gamma_f=3</code>
-后迅速放大。常量
-<code>E_x=1\,\mathrm{kV/m}</code>、电子在实验室系初始静止、<code>100</code>
-步 <code>1\,\mathrm{ns}</code> 更新的例子更直接：三种 mover
-在实验室系里都正确，只有新 pusher 在 <code>\gamma_f=100</code> 的 moving
-frame 中仍保持解析一致。于是这篇文献给本章的最硬证据不是“Vay 在某些 case
-里更稳”，而是 Boris 的误差会在 frame change 后由次要项变成主导项。</p>
-<p>第二，这篇论文并没有顺手给出一个通用 Maxwell solver。它在
-<code>III</code> 节明确把场求解边界限定在 waves 和 retardation
-可忽略、并且对每个 species 可以在共动系里近似取</p>
+<p>Vay 2008 的 <code>II.C</code>
+单粒子测试不是普通轨道展示，而是同一物理系统在 laboratory frame 和
+moving frame 下都要和解析解一致的 frame-consistency test。常量 <span class="math inline">\(B_z\)</span> 例子以 <span class="math inline">\(v_x=10^{-2}c\)</span> 起步，并取 <span class="math inline">\(\Delta t=10^{-2}\times 2\pi/\omega_c\)</span>：新
+pusher 在实验室系和沿 <span class="math inline">\(\hat y\)</span>
+方向、<span class="math inline">\(\gamma_f=2\)</span> 的 moving frame
+中都贴住解析轨道；Boris 即使加上 <span class="math inline">\(\tan(\omega_c\Delta t)/(\omega_c\Delta t)\)</span>
+修正，也会在 moving frame 中偏离，且误差在 <span class="math inline">\(\gamma_f=3\)</span> 后迅速放大。</p>
+<p>常量 <span class="math inline">\(E_x=1\,\mathrm{kV/m}\)</span>
+的测试给出相同结论：电子在实验室系初始静止，经历 <code>100</code>
+步、每步 <span class="math inline">\(1\,\mathrm{ns}\)</span>
+的更新时，三种 mover 在实验室系里都正确；只有新 pusher 在 <span class="math inline">\(\gamma_f=100\)</span> 的 moving frame
+中仍保持解析一致。因此这篇文献的硬证据不是“Vay 在某些 case 里更稳”，而是
+Boris 的误差会在 frame change 后由次要项变成主导项。</p>
+<p>这篇论文也没有顺手给出一个通用 Maxwell solver。它在 <code>III</code>
+节明确把场求解边界限定在 waves 和 retardation 可忽略、并且对每个 species
+可以在共动系里近似取</p>
 <p><span class="math display">\[
 v_z \gg v_x,v_y,
 \qquad
 \frac{\partial}{\partial t}\approx v_z\frac{\partial}{\partial z}
 \]</span></p>
-<p>的场景。于是 field side 被压成带 <code>\gamma z</code> 拉伸的 Poisson
-型求解，并近似保留 electrostatic、magnetostatic 以及沿主流向的 inductive
-effect。对 <code>N</code> 个 species，代价就是 <code>N</code> 次这类
-Poisson solve。这条 bounded Darwin-lite explicit approximation
-解释了为什么 <code>IV</code> 节的 LHC-like ultrarelativistic beam /
-electron-cloud 应用会特意选在 <code>\gamma\approx16.5</code> 的 moving
-frame 中做 first-principles PIC：在那里 beam 与 electron cloud 的
+<p>的场景。于是 field side 被压成带 <span class="math inline">\(\gamma
+z\)</span> 拉伸的 Poisson 型求解，并近似保留
+electrostatic、magnetostatic 以及沿主流向的 inductive effect。对
+<code>N</code> 个 species，代价就是 <code>N</code> 次这类 Poisson
+solve。这条有边界的 Darwin-lite explicit approximation 解释了为什么
+<code>IV</code> 节的 LHC-like ultrarelativistic beam / electron-cloud
+应用会特意选在 <span class="math inline">\(\gamma\approx16.5\)</span> 的
+moving frame 中做 first-principles PIC：在那里 beam 与 electron cloud 的
 self-electric / self-magnetic cancellation 最强，最能放大 mover 的
-frame-consistency 缺陷。文中报告 Boris 无论是否带 <code>\tan</code>
+frame-consistency 缺陷。</p>
+<p>文中报告 Boris 无论是否带 <span class="math inline">\(\tan\)</span>
 修正，都会让 beam 和 electron 宏粒子以非物理速度丢失；只有新 pusher
-才能恢复预期的 hose-like instability，并且给出和实验室系 quasistatic
-WARP calculation 一致的 vertical emittance growth rate 与 saturation
+才能恢复预期的 hose-like instability，并给出与实验室系 quasistatic WARP
+calculation 一致的 vertical emittance growth rate 和 saturation
 level。因此，对 WarpX 而言，<code>UpdateMomentumVay.H</code>
 的历史角色应理解成 relativistic beam-crossing / boosted-frame
 consistency repair，而不是一个与一般场求解器或一般 relativistic mover
 等价并列的“备选算法”。</p>
 <h3 id="vay-appendix-ab显式-gamma-根与回旋半径边界">4.4.1 Vay Appendix
-A/B：显式 <code>\gamma</code> 根与回旋半径边界</h3>
+A/B：显式 <span class="math inline">\(\gamma\)</span>
+根与回旋半径边界</h3>
 <p>Vay 2008 的 Appendix A 给出了源码中 <code>gisq</code> /
 <code>gamma_new</code> 公式为什么可以显式计算。磁旋转中先定义</p>
 <p><span class="math display">\[
@@ -6650,16 +6648,15 @@ t)\mathbf t+\mathbf u&#39;\times\mathbf t\right],
 \qquad s=\frac{1}{1+t^2},
 \qquad \mathbf t=\frac{\boldsymbol\tau}{\gamma^{i+1}},
 \]</span></p>
-<p>其中 <code>\boldsymbol\tau=(q\Delta t/2m)\mathbf B</code>。对上式与
-<code>\mathbf u</code> 做点积，利用
-<code>\gamma^2=1+u^2/c^2</code>，并令</p>
+<p>其中 <span class="math inline">\(\boldsymbol\tau=(q\Delta
+t/2m)\mathbf B\)</span>。对上式与 <span class="math inline">\(\mathbf
+u\)</span> 做点积，利用 <span class="math inline">\(\gamma^2=1+u^2/c^2\)</span>，并令</p>
 <p><span class="math display">\[
 \gamma&#39;=\sqrt{1+u&#39;^2/c^2},
 \qquad u^*=\frac{\mathbf u&#39;\cdot\boldsymbol\tau}{c},
 \qquad \sigma=\gamma&#39;^2-\tau^2,
 \]</span></p>
-<p>可把隐式的 relativistic factor 压成一个关于 <code>\gamma^2</code>
-的二次方程：</p>
+<p>可把隐式的 relativistic factor 压成一个关于 <span class="math inline">\(\gamma^2\)</span> 的二次方程：</p>
 <p><span class="math display">\[
 \gamma^4+(\tau^2-\gamma&#39;^2)\gamma^2-\tau^2-u^{*2}=0.
 \]</span></p>
@@ -6669,12 +6666,13 @@ t)\mathbf t+\mathbf u&#39;\times\mathbf t\right],
 \]</span></p>
 <p>这解释了 <code>UpdateMomentumVay.H</code> 的实现顺序：先用
 <code>u&#39;</code> 和 <code>tau</code> 构造标量不变量，再取正根，最后由
-<code>t=\tau/\gamma</code> 和 <code>s=1/(1+t^2)</code>
-完成旋转。<code>gisq</code> 存的是 <code>\gamma^{-2}</code>，因此 device
-loop 不需要迭代求解 <code>\gamma</code>。这是 Appendix A 与当前 kernel
-的直接公式桥接，不是普通 Boris 旋转中的经验系数。</p>
-<p>Appendix B 则给出常磁场、<code>\mathbf E=0</code> 时的 gyroradius
-边界：</p>
+<span class="math inline">\(t=\tau/\gamma\)</span> 和 <span class="math inline">\(s=1/(1+t^2)\)</span> 完成旋转。<code>gisq</code>
+存的是 <span class="math inline">\(\gamma^{-2}\)</span>，因此 device
+loop 不需要迭代求解 <span class="math inline">\(\gamma\)</span>。这是
+Appendix A 与当前 kernel 的直接公式桥接，不是普通 Boris
+旋转中的经验系数。</p>
+<p>Appendix B 则给出常磁场、<span class="math inline">\(\mathbf
+E=0\)</span> 时的 gyroradius 边界：</p>
 <p><span class="math display">\[
 \Delta\theta=2\arctan\left(\frac{\omega_c\Delta t}{2}\right),
 \qquad
@@ -6688,10 +6686,9 @@ R=\frac{\|\mathbf v^{i+1/2}\|}{\omega_c}
 t}{2}\right)^2\right]^{1/2}\frac{\|\mathbf v^i\|}{\omega_c}.
 \]</span></p>
 <p>所以“Vay 在任意时间步都给出正确
-gyroradius”必须加限定：若用于位置推进的半步速度满足
-<code>\|\mathbf v^{i+1/2}\|=v_0</code>，则
-<code>R=v_0/\omega_c</code>；若把整数时刻速度直接当作
-<code>v_0</code>，仍会出现与 Boris 类似的放大因子。pusher
+gyroradius”必须加限定：若用于位置推进的半步速度满足 <span class="math inline">\(\|\mathbf v^{i+1/2}\|=v_0\)</span>，则 <span class="math inline">\(R=v_0/\omega_c\)</span>；若把整数时刻速度直接当作
+<span class="math inline">\(v_0\)</span>，仍会出现与 Boris
+类似的放大因子。pusher
 的动量更新、半步速度定义和位置更新必须一起检查。</p>
 <p>一个有用的最小验证是去掉自洽场、AMR 和
 PML，只保留均匀磁场，然后同时比较三类量：离散相位、由相邻位置差构造的速度
@@ -6786,8 +6783,8 @@ u_* = \frac{\mathbf{u}^-\cdot\boldsymbol{\beta}}{c},
 \]</span></p>
 <p>并通过平方根表达式得到新的 <code>gamma</code>，这里变量名
 <code>gamma</code> 在这一行之后实际保存的是 <span class="math inline">\(\gamma^{-1}\)</span>。<code>tx,ty,tz</code> 是
-<span class="math inline">\(\boldsymbol{\beta}/\gamma\)</span>，<code>s=1/(1+t^2)</code>。<code>u_plus</code>
-的形式像 Boris 的磁旋转，但最后不是单纯加第二个电半步，而是</p>
+<span class="math inline">\(\boldsymbol{\beta}/\gamma\)</span>，<span class="math inline">\(s=1/(1+t^2)\)</span>。<code>u_plus</code> 的形式像
+Boris 的磁旋转，但最后不是单纯加第二个电半步，而是</p>
 <p><span class="math display">\[
 \mathbf{u}^{n+1/2}
 =
@@ -6823,11 +6820,12 @@ WarpX 源码里 <code>UpdateMomentumHigueraCary.H</code> 的外形与 Boris
 factor 路径上分叉。第二层是数值/几何证据：作者用 Poincare surface of
 section 而不是普通能量曲线来比较 practical timestep
 下的轨道拓扑。小时间步时三种方法都能给出嵌套曲线；但在更接近实际模拟的
-<code>\Delta t=1/10</code> 下，Vay 会出现 resonance island 和不同轨道
-section 交叉，而 Boris 与 Higuera-Cary 仍保持正确的 phase-space
-topology。对本章来说，这意味着 Higuera-Cary 的价值判断标准不是
-<code>Vay 2008</code> 那种 frame-change consistency，而是
-geometric/topological preservation at practical timestep。</p>
+<span class="math inline">\(\Delta t=1/10\)</span> 下，Vay 会出现
+resonance island 和不同轨道 section 交叉，而 Boris 与 Higuera-Cary
+仍保持正确的 phase-space topology。对本章来说，这意味着 Higuera-Cary
+的价值判断标准不是 <code>Vay 2008</code> 那种 frame-change
+consistency，而是 geometric/topological preservation at practical
+timestep。</p>
 <p>如果进一步把论文公式和 WarpX kernel
 逐式对位，这条关系会更直观。Higuera-Cary 论文先定义</p>
 <p><span class="math display">\[
@@ -6850,7 +6848,7 @@ geometric/topological preservation at practical timestep。</p>
 \right),
 \]</span></p>
 <p>WarpX 则不先存 <span class="math inline">\(\gamma_{new}^2\)</span>，而是直接用
-<code>sigma = gamma - betam</code>、<code>ust = (u_- \cdot beta)/c</code>
+<code>sigma = gamma - betam</code>、<span class="math inline">\(u_*=(\mathbf u_-\cdot\boldsymbol\beta)/c\)</span>
 和下一行的平方根公式，把变量 <code>gamma</code> 改写成 <span class="math inline">\(\gamma_{new}^{-1}\)</span>。这一点很关键：代码里的
 <code>gamma</code> 在函数中段被重载了，前半段是 <span class="math inline">\(\gamma_-^2\)</span>，后半段则变成 rotation
 要消费的 inverse relativistic factor。之后
@@ -6863,9 +6861,8 @@ geometric/topological preservation at practical timestep。</p>
 <p>的直接实现。因此，<code>UpdateMomentumHigueraCary.H</code>
 最本质的实现差异可以压成一句话：它在 Boris 的 rotation skeleton
 上，仅通过改写 <span class="math inline">\(\gamma\)</span>
-prescription，就把 <code>volume-preserving</code> 与
-<code>\mathbf E\times\mathbf B</code> drift preservation
-这两条性质同时保住了。</p>
+prescription，就把 <code>volume-preserving</code> 与 <span class="math inline">\(\mathbf E\times\mathbf B\)</span> drift
+preservation 这两条性质同时保住了。</p>
 <p>论文第 V 节的 Jacobian 证明也让这一点不再停留在口头层。作者证明新
 integrator 的前后半步 Jacobian determinant 互为倒数，所以一步更新的总体
 Jacobian 恰好等于 <code>1</code>；而 Vay 的 Jacobian 一般写成
@@ -6873,10 +6870,10 @@ Jacobian 恰好等于 <code>1</code>；而 Vay 的 Jacobian 一般写成
 <code>1</code>。这正是后面数值例子里 Vay 在 practical timestep 下出现
 resonance island 和轨道交叉，而 Higuera-Cary 仍保持 phase-space topology
 的几何根源。</p>
-<p>如果把这段证明再往下压一层，最关键的中间对象其实是
-<code>I-\Omega</code>。Higuera-Cary 论文先把后半步对 <span class="math inline">\(\bar u_{new}\)</span> 的 Jacobian 写成 “Boris-like
-rotation 主干 <code>I-\Omega</code> + 一个 rank-one correction”，其中
-<span class="math inline">\(\Omega\cdot V=(\beta\times
+<p>如果把这段证明再往下压一层，最关键的中间对象其实是 <span class="math inline">\(I-\Omega\)</span>。Higuera-Cary 论文先把后半步对
+<span class="math inline">\(\bar u_{new}\)</span> 的 Jacobian 写成
+“Boris-like rotation 主干 <span class="math inline">\(I-\Omega\)</span>
++ 一个 rank-one correction”，其中 <span class="math inline">\(\Omega\cdot V=(\beta\times
 V)/\gamma_{new}\)</span>。这一步意味着作者不是直接对整个复杂映射硬算
 determinant，而是先把旋转骨架和 relativistic correction 拆开。随后利用
 determinant lemma，把后半步体积变化写成</p>
@@ -6894,8 +6891,7 @@ J _ { f , new } = 1 + \frac { \beta ^ { 2 } + ( \vec { \beta } \cdot
 <code>1</code>。这一点很重要，因为它把
 <code>UpdateMomentumHigueraCary.H</code>
 的稳定性来源从经验判断提升成了明确的 Jacobian 结构断言。</p>
-<p>这里还要额外提醒一个记号陷阱：论文里 <code>J_{f,new}</code> 和
-<code>J_{i,new}</code>
+<p>这里还要额外提醒一个记号陷阱：论文里 <span class="math inline">\(J_{f,new}\)</span> 和 <span class="math inline">\(J_{i,new}\)</span>
 最后都被压成相同的显式标量函数，但这不表示它们是“同一个
 Jacobian”。它们对应的是后半步和前半步那两条相反方向映射上的
 determinant，因此恰恰是因为它们处在 reciprocal 位置，整步 Jacobian
@@ -6933,9 +6929,11 @@ resonance-sensitive screen 已建立，论文等价的 topology gate
 <p>源码文件：<code>Source/Evolve/WarpXEvolve.cpp</code>
 函数：<code>WarpX::PushParticlesandDeposit()</code></p>
 <p>它选择 current 字段名后调用 <code>mypc-&gt;Evolve(...)</code>。</p>
-<p><code>mypc</code> 是 <code>MultiParticleContainer</code>。
-源码文件：<code>Source/Particles/MultiParticleContainer.cpp</code>
-函数：<code>MultiParticleContainer::Evolve()</code></p>
+<p><code>mypc</code> 是 <code>MultiParticleContainer</code>。</p>
+<ul>
+<li>源码文件：<code>Source/Particles/MultiParticleContainer.cpp</code></li>
+<li>函数：<code>MultiParticleContainer::Evolve()</code></li>
+</ul>
 <table>
 <colgroup>
 <col style="width: 50%" />
@@ -7022,27 +7020,36 @@ prescribed motion 和 current deposition，不需要普通
 <code>opticalDepthQSR</code>、<code>opticalDepthBW</code>、<code>prev_*</code>、<code>ionizationLevel</code>；</li>
 <li>更晚才按算法路径加入的临时缓存属性。</li>
 </ol>
-<p>最典型的临时属性来自 implicit
-solver。<code>Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp</code>
-中的 <code>ImplicitSolver::CreateParticleAttributes()</code>
-会统一给粒子容器补加：</p>
+<p>最典型的临时属性来自 implicit solver：</p>
+<ul>
+<li>函数：<code>ImplicitSolver::CreateParticleAttributes()</code></li>
+<li>源码：<code>Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp</code></li>
+</ul>
+<p>它会统一给粒子容器补加：</p>
 <ul>
 <li><code>x_n/y_n/z_n</code></li>
 <li><code>ux_n/uy_n/uz_n</code></li>
 <li>如果启用 particle suborbits，再加 <code>nsuborbits</code></li>
 </ul>
 <p>而且都用 <code>comm = 0</code> 注册，所以这些量既不参与通信，也不写入
-checkpoint。随后
-<code>Source/FieldSolver/ImplicitSolvers/WarpXImplicitOps.cpp</code> 的
-step-start 初始化会把当前位置和动量快照写入 <code>x_n</code> 和
-<code>ux_n</code> 这组缓存，并把 <code>nsuborbits</code> 先置成
-1。它们的角色不是长期物理属性，而是 implicit
+checkpoint。step-start 初始化的来源为：</p>
+<ul>
+<li>源码：<code>Source/FieldSolver/ImplicitSolvers/WarpXImplicitOps.cpp</code></li>
+<li>动作：把当前位置和动量快照写入 <code>x_n</code> 和
+<code>ux_n</code>，并把 <code>nsuborbits</code> 先置成 1。</li>
+</ul>
+<p>它们的角色不是长期物理属性，而是 implicit
 时间推进器本步用的局部状态。</p>
 <p><code>WarpXParticleContainer::AddNParticles()</code>
-进一步说明了这套系统怎样落地。<code>Source/Particles/WarpXParticleContainer.cpp</code>
-先写 builtin <code>x/y/z/w/ux/uy/uz</code>，再写调用者显式提供的 runtime
+进一步说明了这套系统怎样落地。</p>
+<ul>
+<li>源码：<code>Source/Particles/WarpXParticleContainer.cpp</code></li>
+<li>顺序：先写 builtin
+<code>x/y/z/w/ux/uy/uz</code>，再写调用者显式提供的 runtime
 real/int，最后调用 <code>DefaultInitializeRuntimeAttributes()</code>
-给剩余 runtime attrs 自动补默认值。于是：</p>
+给剩余 runtime attrs 自动补默认值。</li>
+</ul>
+<p>于是：</p>
 <ul>
 <li><code>opticalDepthQSR/BW</code> 可以由 QED engine 随机初始化；</li>
 <li><code>ionizationLevel</code> 可以统一设成
@@ -7270,163 +7277,49 @@ source、连续性或自洽场演化正确。后者必须连同权重、沉积�
 <p>但 WarpX 不能只用一个标量形函数，因为 <span class="math inline">\(E_x,E_y,E_z,B_x,B_y,B_z\)</span>
 在交错网格上的中心位置不同；同时 Galerkin
 插值会让某些分量使用低一阶形函数。运行时入口在
-<code>Source/Particles/Gather/FieldGather.H</code>：</p>
-<div class="sourceCode" id="cb97"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> doGatherShapeN <span class="op">(</span><span class="at">const</span> amrex<span class="op">::</span>ParticleReal xp<span class="op">,</span></span>
-<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>ParticleReal yp<span class="op">,</span></span>
-<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>ParticleReal zp<span class="op">,</span></span>
-<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Exp<span class="op">,</span></span>
-<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Eyp<span class="op">,</span></span>
-<span id="cb97-6"><a href="#cb97-6" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Ezp<span class="op">,</span></span>
-<span id="cb97-7"><a href="#cb97-7" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Bxp<span class="op">,</span></span>
-<span id="cb97-8"><a href="#cb97-8" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Byp<span class="op">,</span></span>
-<span id="cb97-9"><a href="#cb97-9" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Bzp<span class="op">,</span></span>
-<span id="cb97-10"><a href="#cb97-10" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> ex_arr<span class="op">,</span></span>
-<span id="cb97-11"><a href="#cb97-11" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> ey_arr<span class="op">,</span></span>
-<span id="cb97-12"><a href="#cb97-12" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> ez_arr<span class="op">,</span></span>
-<span id="cb97-13"><a href="#cb97-13" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> bx_arr<span class="op">,</span></span>
-<span id="cb97-14"><a href="#cb97-14" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> by_arr<span class="op">,</span></span>
-<span id="cb97-15"><a href="#cb97-15" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> bz_arr<span class="op">,</span></span>
-<span id="cb97-16"><a href="#cb97-16" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">ex_type</span><span class="op">,</span></span>
-<span id="cb97-17"><a href="#cb97-17" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">ey_type</span><span class="op">,</span></span>
-<span id="cb97-18"><a href="#cb97-18" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">ez_type</span><span class="op">,</span></span>
-<span id="cb97-19"><a href="#cb97-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">bx_type</span><span class="op">,</span></span>
-<span id="cb97-20"><a href="#cb97-20" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">by_type</span><span class="op">,</span></span>
-<span id="cb97-21"><a href="#cb97-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">bz_type</span><span class="op">,</span></span>
-<span id="cb97-22"><a href="#cb97-22" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>XDim3 <span class="op">&amp;</span> dinv<span class="op">,</span></span>
-<span id="cb97-23"><a href="#cb97-23" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>XDim3 <span class="op">&amp;</span> xyzmin<span class="op">,</span></span>
-<span id="cb97-24"><a href="#cb97-24" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>Dim3<span class="op">&amp;</span> lo<span class="op">,</span></span>
-<span id="cb97-25"><a href="#cb97-25" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> <span class="dt">int</span> n_rz_azimuthal_modes<span class="op">,</span></span>
-<span id="cb97-26"><a href="#cb97-26" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> <span class="dt">int</span> nox<span class="op">,</span></span>
-<span id="cb97-27"><a href="#cb97-27" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> <span class="dt">bool</span> galerkin_interpolation<span class="op">)</span></span>
-<span id="cb97-28"><a href="#cb97-28" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb97-29"><a href="#cb97-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>galerkin_interpolation<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb97-30"><a href="#cb97-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb97-31"><a href="#cb97-31" aria-hidden="true" tabindex="-1"></a>            doGatherShapeN<span class="op">&lt;</span><span class="dv">1</span><span class="op">,</span><span class="dv">1</span><span class="op">&gt;(</span>xp<span class="op">,</span> yp<span class="op">,</span> zp<span class="op">,</span> Exp<span class="op">,</span> Eyp<span class="op">,</span> Ezp<span class="op">,</span> Bxp<span class="op">,</span> Byp<span class="op">,</span> Bzp<span class="op">,</span></span>
-<span id="cb97-32"><a href="#cb97-32" aria-hidden="true" tabindex="-1"></a>                                ex_arr<span class="op">,</span> ey_arr<span class="op">,</span> ez_arr<span class="op">,</span> bx_arr<span class="op">,</span> by_arr<span class="op">,</span> bz_arr<span class="op">,</span></span>
-<span id="cb97-33"><a href="#cb97-33" aria-hidden="true" tabindex="-1"></a>                                <span class="dt">ex_type</span><span class="op">,</span> <span class="dt">ey_type</span><span class="op">,</span> <span class="dt">ez_type</span><span class="op">,</span> <span class="dt">bx_type</span><span class="op">,</span> <span class="dt">by_type</span><span class="op">,</span> <span class="dt">bz_type</span><span class="op">,</span></span>
-<span id="cb97-34"><a href="#cb97-34" aria-hidden="true" tabindex="-1"></a>                                dinv<span class="op">,</span> xyzmin<span class="op">,</span> lo<span class="op">,</span> n_rz_azimuthal_modes<span class="op">);</span></span>
-<span id="cb97-35"><a href="#cb97-35" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">2</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb97-36"><a href="#cb97-36" aria-hidden="true" tabindex="-1"></a>            doGatherShapeN<span class="op">&lt;</span><span class="dv">2</span><span class="op">,</span><span class="dv">1</span><span class="op">&gt;(</span>xp<span class="op">,</span> yp<span class="op">,</span> zp<span class="op">,</span> Exp<span class="op">,</span> Eyp<span class="op">,</span> Ezp<span class="op">,</span> Bxp<span class="op">,</span> Byp<span class="op">,</span> Bzp<span class="op">,</span></span>
-<span id="cb97-37"><a href="#cb97-37" aria-hidden="true" tabindex="-1"></a>                                ex_arr<span class="op">,</span> ey_arr<span class="op">,</span> ez_arr<span class="op">,</span> bx_arr<span class="op">,</span> by_arr<span class="op">,</span> bz_arr<span class="op">,</span></span>
-<span id="cb97-38"><a href="#cb97-38" aria-hidden="true" tabindex="-1"></a>                                <span class="dt">ex_type</span><span class="op">,</span> <span class="dt">ey_type</span><span class="op">,</span> <span class="dt">ez_type</span><span class="op">,</span> <span class="dt">bx_type</span><span class="op">,</span> <span class="dt">by_type</span><span class="op">,</span> <span class="dt">bz_type</span><span class="op">,</span></span>
-<span id="cb97-39"><a href="#cb97-39" aria-hidden="true" tabindex="-1"></a>                                dinv<span class="op">,</span> xyzmin<span class="op">,</span> lo<span class="op">,</span> n_rz_azimuthal_modes<span class="op">);</span></span>
-<span id="cb97-40"><a href="#cb97-40" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">3</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb97-41"><a href="#cb97-41" aria-hidden="true" tabindex="-1"></a>            doGatherShapeN<span class="op">&lt;</span><span class="dv">3</span><span class="op">,</span><span class="dv">1</span><span class="op">&gt;(</span>xp<span class="op">,</span> yp<span class="op">,</span> zp<span class="op">,</span> Exp<span class="op">,</span> Eyp<span class="op">,</span> Ezp<span class="op">,</span> Bxp<span class="op">,</span> Byp<span class="op">,</span> Bzp<span class="op">,</span></span>
-<span id="cb97-42"><a href="#cb97-42" aria-hidden="true" tabindex="-1"></a>                                ex_arr<span class="op">,</span> ey_arr<span class="op">,</span> ez_arr<span class="op">,</span> bx_arr<span class="op">,</span> by_arr<span class="op">,</span> bz_arr<span class="op">,</span></span>
-<span id="cb97-43"><a href="#cb97-43" aria-hidden="true" tabindex="-1"></a>                                <span class="dt">ex_type</span><span class="op">,</span> <span class="dt">ey_type</span><span class="op">,</span> <span class="dt">ez_type</span><span class="op">,</span> <span class="dt">bx_type</span><span class="op">,</span> <span class="dt">by_type</span><span class="op">,</span> <span class="dt">bz_type</span><span class="op">,</span></span>
-<span id="cb97-44"><a href="#cb97-44" aria-hidden="true" tabindex="-1"></a>                                dinv<span class="op">,</span> xyzmin<span class="op">,</span> lo<span class="op">,</span> n_rz_azimuthal_modes<span class="op">);</span></span>
-<span id="cb97-45"><a href="#cb97-45" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">4</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb97-46"><a href="#cb97-46" aria-hidden="true" tabindex="-1"></a>            doGatherShapeN<span class="op">&lt;</span><span class="dv">4</span><span class="op">,</span><span class="dv">1</span><span class="op">&gt;(</span>xp<span class="op">,</span> yp<span class="op">,</span> zp<span class="op">,</span> Exp<span class="op">,</span> Eyp<span class="op">,</span> Ezp<span class="op">,</span> Bxp<span class="op">,</span> Byp<span class="op">,</span> Bzp<span class="op">,</span></span>
-<span id="cb97-47"><a href="#cb97-47" aria-hidden="true" tabindex="-1"></a>                                ex_arr<span class="op">,</span> ey_arr<span class="op">,</span> ez_arr<span class="op">,</span> bx_arr<span class="op">,</span> by_arr<span class="op">,</span> bz_arr<span class="op">,</span></span>
-<span id="cb97-48"><a href="#cb97-48" aria-hidden="true" tabindex="-1"></a>                                <span class="dt">ex_type</span><span class="op">,</span> <span class="dt">ey_type</span><span class="op">,</span> <span class="dt">ez_type</span><span class="op">,</span> <span class="dt">bx_type</span><span class="op">,</span> <span class="dt">by_type</span><span class="op">,</span> <span class="dt">bz_type</span><span class="op">,</span></span>
-<span id="cb97-49"><a href="#cb97-49" aria-hidden="true" tabindex="-1"></a>                                dinv<span class="op">,</span> xyzmin<span class="op">,</span> lo<span class="op">,</span> n_rz_azimuthal_modes<span class="op">);</span></span>
-<span id="cb97-50"><a href="#cb97-50" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb97-51"><a href="#cb97-51" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb97-52"><a href="#cb97-52" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb97-53"><a href="#cb97-53" aria-hidden="true" tabindex="-1"></a>            doGatherShapeN<span class="op">&lt;</span><span class="dv">1</span><span class="op">,</span><span class="dv">0</span><span class="op">&gt;(</span>xp<span class="op">,</span> yp<span class="op">,</span> zp<span class="op">,</span> Exp<span class="op">,</span> Eyp<span class="op">,</span> Ezp<span class="op">,</span> Bxp<span class="op">,</span> Byp<span class="op">,</span> Bzp<span class="op">,</span></span>
-<span id="cb97-54"><a href="#cb97-54" aria-hidden="true" tabindex="-1"></a>                                ex_arr<span class="op">,</span> ey_arr<span class="op">,</span> ez_arr<span class="op">,</span> bx_arr<span class="op">,</span> by_arr<span class="op">,</span> bz_arr<span class="op">,</span></span>
-<span id="cb97-55"><a href="#cb97-55" aria-hidden="true" tabindex="-1"></a>                                <span class="dt">ex_type</span><span class="op">,</span> <span class="dt">ey_type</span><span class="op">,</span> <span class="dt">ez_type</span><span class="op">,</span> <span class="dt">bx_type</span><span class="op">,</span> <span class="dt">by_type</span><span class="op">,</span> <span class="dt">bz_type</span><span class="op">,</span></span>
-<span id="cb97-56"><a href="#cb97-56" aria-hidden="true" tabindex="-1"></a>                                dinv<span class="op">,</span> xyzmin<span class="op">,</span> lo<span class="op">,</span> n_rz_azimuthal_modes<span class="op">);</span></span>
-<span id="cb97-57"><a href="#cb97-57" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">2</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb97-58"><a href="#cb97-58" aria-hidden="true" tabindex="-1"></a>            doGatherShapeN<span class="op">&lt;</span><span class="dv">2</span><span class="op">,</span><span class="dv">0</span><span class="op">&gt;(</span>xp<span class="op">,</span> yp<span class="op">,</span> zp<span class="op">,</span> Exp<span class="op">,</span> Eyp<span class="op">,</span> Ezp<span class="op">,</span> Bxp<span class="op">,</span> Byp<span class="op">,</span> Bzp<span class="op">,</span></span>
-<span id="cb97-59"><a href="#cb97-59" aria-hidden="true" tabindex="-1"></a>                                ex_arr<span class="op">,</span> ey_arr<span class="op">,</span> ez_arr<span class="op">,</span> bx_arr<span class="op">,</span> by_arr<span class="op">,</span> bz_arr<span class="op">,</span></span>
-<span id="cb97-60"><a href="#cb97-60" aria-hidden="true" tabindex="-1"></a>                                <span class="dt">ex_type</span><span class="op">,</span> <span class="dt">ey_type</span><span class="op">,</span> <span class="dt">ez_type</span><span class="op">,</span> <span class="dt">bx_type</span><span class="op">,</span> <span class="dt">by_type</span><span class="op">,</span> <span class="dt">bz_type</span><span class="op">,</span></span>
-<span id="cb97-61"><a href="#cb97-61" aria-hidden="true" tabindex="-1"></a>                                dinv<span class="op">,</span> xyzmin<span class="op">,</span> lo<span class="op">,</span> n_rz_azimuthal_modes<span class="op">);</span></span>
-<span id="cb97-62"><a href="#cb97-62" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">3</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb97-63"><a href="#cb97-63" aria-hidden="true" tabindex="-1"></a>            doGatherShapeN<span class="op">&lt;</span><span class="dv">3</span><span class="op">,</span><span class="dv">0</span><span class="op">&gt;(</span>xp<span class="op">,</span> yp<span class="op">,</span> zp<span class="op">,</span> Exp<span class="op">,</span> Eyp<span class="op">,</span> Ezp<span class="op">,</span> Bxp<span class="op">,</span> Byp<span class="op">,</span> Bzp<span class="op">,</span></span>
-<span id="cb97-64"><a href="#cb97-64" aria-hidden="true" tabindex="-1"></a>                                ex_arr<span class="op">,</span> ey_arr<span class="op">,</span> ez_arr<span class="op">,</span> bx_arr<span class="op">,</span> by_arr<span class="op">,</span> bz_arr<span class="op">,</span></span>
-<span id="cb97-65"><a href="#cb97-65" aria-hidden="true" tabindex="-1"></a>                                <span class="dt">ex_type</span><span class="op">,</span> <span class="dt">ey_type</span><span class="op">,</span> <span class="dt">ez_type</span><span class="op">,</span> <span class="dt">bx_type</span><span class="op">,</span> <span class="dt">by_type</span><span class="op">,</span> <span class="dt">bz_type</span><span class="op">,</span></span>
-<span id="cb97-66"><a href="#cb97-66" aria-hidden="true" tabindex="-1"></a>                                dinv<span class="op">,</span> xyzmin<span class="op">,</span> lo<span class="op">,</span> n_rz_azimuthal_modes<span class="op">);</span></span>
-<span id="cb97-67"><a href="#cb97-67" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">4</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb97-68"><a href="#cb97-68" aria-hidden="true" tabindex="-1"></a>            doGatherShapeN<span class="op">&lt;</span><span class="dv">4</span><span class="op">,</span><span class="dv">0</span><span class="op">&gt;(</span>xp<span class="op">,</span> yp<span class="op">,</span> zp<span class="op">,</span> Exp<span class="op">,</span> Eyp<span class="op">,</span> Ezp<span class="op">,</span> Bxp<span class="op">,</span> Byp<span class="op">,</span> Bzp<span class="op">,</span></span>
-<span id="cb97-69"><a href="#cb97-69" aria-hidden="true" tabindex="-1"></a>                                ex_arr<span class="op">,</span> ey_arr<span class="op">,</span> ez_arr<span class="op">,</span> bx_arr<span class="op">,</span> by_arr<span class="op">,</span> bz_arr<span class="op">,</span></span>
-<span id="cb97-70"><a href="#cb97-70" aria-hidden="true" tabindex="-1"></a>                                <span class="dt">ex_type</span><span class="op">,</span> <span class="dt">ey_type</span><span class="op">,</span> <span class="dt">ez_type</span><span class="op">,</span> <span class="dt">bx_type</span><span class="op">,</span> <span class="dt">by_type</span><span class="op">,</span> <span class="dt">bz_type</span><span class="op">,</span></span>
-<span id="cb97-71"><a href="#cb97-71" aria-hidden="true" tabindex="-1"></a>                                dinv<span class="op">,</span> xyzmin<span class="op">,</span> lo<span class="op">,</span> n_rz_azimuthal_modes<span class="op">);</span></span>
-<span id="cb97-72"><a href="#cb97-72" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb97-73"><a href="#cb97-73" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb97-74"><a href="#cb97-74" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<code>Source/Particles/Gather/FieldGather.H</code>。其完整函数签名包含粒子坐标、六个输出分量、六个场数组、六个
+<code>IndexType</code>
+和几何元数据；对理解分派而言，下面是等价的阅读伪代码：</p>
+<div class="sourceCode" id="cb97"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="co">// args 表示完整签名中的坐标、场数组、centering 与几何元数据。</span></span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>galerkin_interpolation<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> doGatherShapeN<span class="op">&lt;</span><span class="dv">1</span><span class="op">,</span><span class="dv">1</span><span class="op">&gt;(</span>args<span class="op">);</span></span>
+<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">2</span><span class="op">)</span> doGatherShapeN<span class="op">&lt;</span><span class="dv">2</span><span class="op">,</span><span class="dv">1</span><span class="op">&gt;(</span>args<span class="op">);</span></span>
+<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">3</span><span class="op">)</span> doGatherShapeN<span class="op">&lt;</span><span class="dv">3</span><span class="op">,</span><span class="dv">1</span><span class="op">&gt;(</span>args<span class="op">);</span></span>
+<span id="cb97-6"><a href="#cb97-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">4</span><span class="op">)</span> doGatherShapeN<span class="op">&lt;</span><span class="dv">4</span><span class="op">,</span><span class="dv">1</span><span class="op">&gt;(</span>args<span class="op">);</span></span>
+<span id="cb97-7"><a href="#cb97-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb97-8"><a href="#cb97-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> doGatherShapeN<span class="op">&lt;</span><span class="dv">1</span><span class="op">,</span><span class="dv">0</span><span class="op">&gt;(</span>args<span class="op">);</span></span>
+<span id="cb97-9"><a href="#cb97-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">2</span><span class="op">)</span> doGatherShapeN<span class="op">&lt;</span><span class="dv">2</span><span class="op">,</span><span class="dv">0</span><span class="op">&gt;(</span>args<span class="op">);</span></span>
+<span id="cb97-10"><a href="#cb97-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">3</span><span class="op">)</span> doGatherShapeN<span class="op">&lt;</span><span class="dv">3</span><span class="op">,</span><span class="dv">0</span><span class="op">&gt;(</span>args<span class="op">);</span></span>
+<span id="cb97-11"><a href="#cb97-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>nox <span class="op">==</span> <span class="dv">4</span><span class="op">)</span> doGatherShapeN<span class="op">&lt;</span><span class="dv">4</span><span class="op">,</span><span class="dv">0</span><span class="op">&gt;(</span>args<span class="op">);</span></span>
+<span id="cb97-12"><a href="#cb97-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>这里的 <code>nox</code> 不是运行时循环里的 shape
 阶数变量，而是被转成模板参数 <code>depos_order</code>。这样 GPU kernel
 内部可以用 <code>if constexpr</code>
 展开阶数，避免每个粒子再做阶数分支。<code>galerkin_interpolation</code>
 同理变成第二个模板参数，后面直接影响数组长度
 <code>depos_order + 1 - galerkin_interpolation</code>。</p>
-<p>模板主体开头在
-<code>Source/Particles/Gather/FieldGather.H</code>。下面只列 x 方向；y/z
-方向同构，但按各自场分量的 staggering 选择 node 或 cell：</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="dt">int</span> depos_order<span class="op">,</span> <span class="dt">int</span> galerkin_interpolation<span class="op">&gt;</span></span>
-<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE</span>
-<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> doGatherShapeN <span class="op">([[</span><span class="at">maybe_unused</span><span class="op">]]</span> <span class="at">const</span> amrex<span class="op">::</span>ParticleReal xp<span class="op">,</span></span>
-<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>                     <span class="op">[[</span><span class="at">maybe_unused</span><span class="op">]]</span> <span class="at">const</span> amrex<span class="op">::</span>ParticleReal yp<span class="op">,</span></span>
-<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>                     <span class="op">[[</span><span class="at">maybe_unused</span><span class="op">]]</span> <span class="at">const</span> amrex<span class="op">::</span>ParticleReal zp<span class="op">,</span></span>
-<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Exp<span class="op">,</span></span>
-<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Eyp<span class="op">,</span></span>
-<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Ezp<span class="op">,</span></span>
-<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Bxp<span class="op">,</span></span>
-<span id="cb98-10"><a href="#cb98-10" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Byp<span class="op">,</span></span>
-<span id="cb98-11"><a href="#cb98-11" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>ParticleReal<span class="op">&amp;</span> Bzp<span class="op">,</span></span>
-<span id="cb98-12"><a href="#cb98-12" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> ex_arr<span class="op">,</span></span>
-<span id="cb98-13"><a href="#cb98-13" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> ey_arr<span class="op">,</span></span>
-<span id="cb98-14"><a href="#cb98-14" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> ez_arr<span class="op">,</span></span>
-<span id="cb98-15"><a href="#cb98-15" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> bx_arr<span class="op">,</span></span>
-<span id="cb98-16"><a href="#cb98-16" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> by_arr<span class="op">,</span></span>
-<span id="cb98-17"><a href="#cb98-17" aria-hidden="true" tabindex="-1"></a>                     amrex<span class="op">::</span>Array4<span class="op">&lt;</span>amrex<span class="op">::</span>Real <span class="at">const</span><span class="op">&gt;</span> <span class="at">const</span><span class="op">&amp;</span> bz_arr<span class="op">,</span></span>
-<span id="cb98-18"><a href="#cb98-18" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">ex_type</span><span class="op">,</span></span>
-<span id="cb98-19"><a href="#cb98-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">ey_type</span><span class="op">,</span></span>
-<span id="cb98-20"><a href="#cb98-20" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">ez_type</span><span class="op">,</span></span>
-<span id="cb98-21"><a href="#cb98-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">bx_type</span><span class="op">,</span></span>
-<span id="cb98-22"><a href="#cb98-22" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">by_type</span><span class="op">,</span></span>
-<span id="cb98-23"><a href="#cb98-23" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>IndexType <span class="dt">bz_type</span><span class="op">,</span></span>
-<span id="cb98-24"><a href="#cb98-24" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>XDim3 <span class="op">&amp;</span> dinv<span class="op">,</span></span>
-<span id="cb98-25"><a href="#cb98-25" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>XDim3 <span class="op">&amp;</span> xyzmin<span class="op">,</span></span>
-<span id="cb98-26"><a href="#cb98-26" aria-hidden="true" tabindex="-1"></a>                     <span class="at">const</span> amrex<span class="op">::</span>Dim3<span class="op">&amp;</span> lo<span class="op">,</span></span>
-<span id="cb98-27"><a href="#cb98-27" aria-hidden="true" tabindex="-1"></a>                     <span class="op">[[</span><span class="at">maybe_unused</span><span class="op">]]</span> <span class="at">const</span> <span class="dt">int</span> n_rz_azimuthal_modes<span class="op">)</span></span>
-<span id="cb98-28"><a href="#cb98-28" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb98-29"><a href="#cb98-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">using</span> <span class="kw">namespace</span> amrex<span class="op">;</span></span>
-<span id="cb98-30"><a href="#cb98-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb98-31"><a href="#cb98-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constexpr</span> <span class="dt">int</span> NODE <span class="op">=</span> amrex<span class="op">::</span>IndexType<span class="op">::</span>NODE<span class="op">;</span></span>
-<span id="cb98-32"><a href="#cb98-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constexpr</span> <span class="dt">int</span> CELL <span class="op">=</span> amrex<span class="op">::</span>IndexType<span class="op">::</span>CELL<span class="op">;</span></span>
-<span id="cb98-33"><a href="#cb98-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb98-34"><a href="#cb98-34" aria-hidden="true" tabindex="-1"></a>    Compute_shape_factor<span class="op">&lt;</span> depos_order <span class="op">&gt;</span> <span class="at">const</span> compute_shape_factor<span class="op">;</span></span>
-<span id="cb98-35"><a href="#cb98-35" aria-hidden="true" tabindex="-1"></a>    Compute_shape_factor<span class="op">&lt;</span>depos_order <span class="op">-</span> galerkin_interpolation <span class="op">&gt;</span> <span class="at">const</span> compute_shape_factor_galerkin<span class="op">;</span></span>
-<span id="cb98-36"><a href="#cb98-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb98-37"><a href="#cb98-37" aria-hidden="true" tabindex="-1"></a><span class="pp">#if !defined(WARPX_DIM_1D_Z)</span></span>
-<span id="cb98-38"><a href="#cb98-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>Real x <span class="op">=</span> <span class="op">(</span>xp <span class="op">-</span> xyzmin<span class="op">.</span>x<span class="op">)*</span>dinv<span class="op">.</span>x<span class="op">;</span></span>
-<span id="cb98-39"><a href="#cb98-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb98-40"><a href="#cb98-40" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Real sx_node<span class="op">[</span>depos_order <span class="op">+</span> <span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="fl">0.</span><span class="op">_rt};</span></span>
-<span id="cb98-41"><a href="#cb98-41" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Real sx_cell<span class="op">[</span>depos_order <span class="op">+</span> <span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="fl">0.</span><span class="op">_rt};</span></span>
-<span id="cb98-42"><a href="#cb98-42" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Real sx_node_galerkin<span class="op">[</span>depos_order <span class="op">+</span> <span class="dv">1</span> <span class="op">-</span> galerkin_interpolation<span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="fl">0.</span><span class="op">_rt};</span></span>
-<span id="cb98-43"><a href="#cb98-43" aria-hidden="true" tabindex="-1"></a>    amrex<span class="op">::</span>Real sx_cell_galerkin<span class="op">[</span>depos_order <span class="op">+</span> <span class="dv">1</span> <span class="op">-</span> galerkin_interpolation<span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="fl">0.</span><span class="op">_rt};</span></span>
-<span id="cb98-44"><a href="#cb98-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb98-45"><a href="#cb98-45" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> j_node <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb98-46"><a href="#cb98-46" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> j_cell <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb98-47"><a href="#cb98-47" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> j_node_v <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb98-48"><a href="#cb98-48" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> j_cell_v <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb98-49"><a href="#cb98-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">((</span><span class="dt">ey_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">||</span> <span class="op">(</span><span class="dt">ez_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">||</span> <span class="op">(</span><span class="dt">bx_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb98-50"><a href="#cb98-50" aria-hidden="true" tabindex="-1"></a>        j_node <span class="op">=</span> compute_shape_factor<span class="op">(</span>sx_node<span class="op">,</span> x<span class="op">);</span></span>
-<span id="cb98-51"><a href="#cb98-51" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb98-52"><a href="#cb98-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">((</span><span class="dt">ey_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> CELL<span class="op">)</span> <span class="op">||</span> <span class="op">(</span><span class="dt">ez_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> CELL<span class="op">)</span> <span class="op">||</span> <span class="op">(</span><span class="dt">bx_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> CELL<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb98-53"><a href="#cb98-53" aria-hidden="true" tabindex="-1"></a>        j_cell <span class="op">=</span> compute_shape_factor<span class="op">(</span>sx_cell<span class="op">,</span> x <span class="op">-</span> <span class="fl">0.5</span><span class="op">_rt);</span></span>
-<span id="cb98-54"><a href="#cb98-54" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb98-55"><a href="#cb98-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">((</span><span class="dt">ex_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">||</span> <span class="op">(</span><span class="dt">by_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">||</span> <span class="op">(</span><span class="dt">bz_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb98-56"><a href="#cb98-56" aria-hidden="true" tabindex="-1"></a>        j_node_v <span class="op">=</span> compute_shape_factor_galerkin<span class="op">(</span>sx_node_galerkin<span class="op">,</span> x<span class="op">);</span></span>
-<span id="cb98-57"><a href="#cb98-57" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb98-58"><a href="#cb98-58" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">((</span><span class="dt">ex_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> CELL<span class="op">)</span> <span class="op">||</span> <span class="op">(</span><span class="dt">by_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> CELL<span class="op">)</span> <span class="op">||</span> <span class="op">(</span><span class="dt">bz_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> CELL<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb98-59"><a href="#cb98-59" aria-hidden="true" tabindex="-1"></a>        j_cell_v <span class="op">=</span> compute_shape_factor_galerkin<span class="op">(</span>sx_cell_galerkin<span class="op">,</span> x <span class="op">-</span> <span class="fl">0.5</span><span class="op">_rt);</span></span>
-<span id="cb98-60"><a href="#cb98-60" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb98-61"><a href="#cb98-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>Real <span class="op">(&amp;</span>sx_ex<span class="op">)[</span>depos_order <span class="op">+</span> <span class="dv">1</span> <span class="op">-</span> galerkin_interpolation<span class="op">]</span> <span class="op">=</span> <span class="op">((</span><span class="dt">ex_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> sx_node_galerkin <span class="op">:</span> sx_cell_galerkin<span class="op">);</span></span>
-<span id="cb98-62"><a href="#cb98-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>Real <span class="op">(&amp;</span>sx_ey<span class="op">)[</span>depos_order <span class="op">+</span> <span class="dv">1</span>             <span class="op">]</span> <span class="op">=</span> <span class="op">((</span><span class="dt">ey_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> sx_node   <span class="op">:</span> sx_cell  <span class="op">);</span></span>
-<span id="cb98-63"><a href="#cb98-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>Real <span class="op">(&amp;</span>sx_ez<span class="op">)[</span>depos_order <span class="op">+</span> <span class="dv">1</span>             <span class="op">]</span> <span class="op">=</span> <span class="op">((</span><span class="dt">ez_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> sx_node   <span class="op">:</span> sx_cell  <span class="op">);</span></span>
-<span id="cb98-64"><a href="#cb98-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>Real <span class="op">(&amp;</span>sx_bx<span class="op">)[</span>depos_order <span class="op">+</span> <span class="dv">1</span>             <span class="op">]</span> <span class="op">=</span> <span class="op">((</span><span class="dt">bx_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> sx_node   <span class="op">:</span> sx_cell  <span class="op">);</span></span>
-<span id="cb98-65"><a href="#cb98-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>Real <span class="op">(&amp;</span>sx_by<span class="op">)[</span>depos_order <span class="op">+</span> <span class="dv">1</span> <span class="op">-</span> galerkin_interpolation<span class="op">]</span> <span class="op">=</span> <span class="op">((</span><span class="dt">by_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> sx_node_galerkin <span class="op">:</span> sx_cell_galerkin<span class="op">);</span></span>
-<span id="cb98-66"><a href="#cb98-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> amrex<span class="op">::</span>Real <span class="op">(&amp;</span>sx_bz<span class="op">)[</span>depos_order <span class="op">+</span> <span class="dv">1</span> <span class="op">-</span> galerkin_interpolation<span class="op">]</span> <span class="op">=</span> <span class="op">((</span><span class="dt">bz_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> sx_node_galerkin <span class="op">:</span> sx_cell_galerkin<span class="op">);</span></span>
-<span id="cb98-67"><a href="#cb98-67" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="at">const</span> j_ex <span class="op">=</span> <span class="op">((</span><span class="dt">ex_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> j_node_v <span class="op">:</span> j_cell_v<span class="op">);</span></span>
-<span id="cb98-68"><a href="#cb98-68" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="at">const</span> j_ey <span class="op">=</span> <span class="op">((</span><span class="dt">ey_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> j_node   <span class="op">:</span> j_cell  <span class="op">);</span></span>
-<span id="cb98-69"><a href="#cb98-69" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="at">const</span> j_ez <span class="op">=</span> <span class="op">((</span><span class="dt">ez_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> j_node   <span class="op">:</span> j_cell  <span class="op">);</span></span>
-<span id="cb98-70"><a href="#cb98-70" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="at">const</span> j_bx <span class="op">=</span> <span class="op">((</span><span class="dt">bx_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> j_node   <span class="op">:</span> j_cell  <span class="op">);</span></span>
-<span id="cb98-71"><a href="#cb98-71" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="at">const</span> j_by <span class="op">=</span> <span class="op">((</span><span class="dt">by_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> j_node_v <span class="op">:</span> j_cell_v<span class="op">);</span></span>
-<span id="cb98-72"><a href="#cb98-72" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="at">const</span> j_bz <span class="op">=</span> <span class="op">((</span><span class="dt">bz_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> j_node_v <span class="op">:</span> j_cell_v<span class="op">);</span></span>
-<span id="cb98-73"><a href="#cb98-73" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span></code></pre></div>
+<p>模板主体开头也在
+<code>Source/Particles/Gather/FieldGather.H</code>。下面是 x
+方向有效计算的阅读伪代码；完整模板签名以及与 x 方向同构的 y/z
+参数从略。<code>NODE</code>/<code>CELL</code>
+的判断仍是源码中的判断：</p>
+<div class="sourceCode" id="cb98"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="kw">constexpr</span> <span class="dt">int</span> NODE <span class="op">=</span> amrex<span class="op">::</span>IndexType<span class="op">::</span>NODE<span class="op">;</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="kw">constexpr</span> <span class="dt">int</span> CELL <span class="op">=</span> amrex<span class="op">::</span>IndexType<span class="op">::</span>CELL<span class="op">;</span></span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>Compute_shape_factor<span class="op">&lt;</span>depos_order<span class="op">&gt;</span> <span class="at">const</span> shape<span class="op">;</span></span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>Compute_shape_factor<span class="op">&lt;</span>depos_order <span class="op">-</span> galerkin_interpolation<span class="op">&gt;</span> <span class="at">const</span> gshape<span class="op">;</span></span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> amrex<span class="op">::</span>Real x <span class="op">=</span> <span class="op">(</span>xp <span class="op">-</span> xyzmin<span class="op">.</span>x<span class="op">)*</span>dinv<span class="op">.</span>x<span class="op">;</span></span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>component_needs_node<span class="op">)</span> j_node <span class="op">=</span> shape<span class="op">(</span>sx_node<span class="op">,</span> x<span class="op">);</span></span>
+<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>component_needs_cell<span class="op">)</span> j_cell <span class="op">=</span> shape<span class="op">(</span>sx_cell<span class="op">,</span> x <span class="op">-</span> <span class="fl">0.5</span><span class="op">_rt);</span></span>
+<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>component_needs_node_galerkin<span class="op">)</span> j_node_v <span class="op">=</span> gshape<span class="op">(</span>sx_node_galerkin<span class="op">,</span> x<span class="op">);</span></span>
+<span id="cb98-10"><a href="#cb98-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>component_needs_cell_galerkin<span class="op">)</span> j_cell_v <span class="op">=</span></span>
+<span id="cb98-11"><a href="#cb98-11" aria-hidden="true" tabindex="-1"></a>    gshape<span class="op">(</span>sx_cell_galerkin<span class="op">,</span> x <span class="op">-</span> <span class="fl">0.5</span><span class="op">_rt);</span></span>
+<span id="cb98-12"><a href="#cb98-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-13"><a href="#cb98-13" aria-hidden="true" tabindex="-1"></a><span class="co">// ex/by/bz 选择 Galerkin 权重；其余分量选择常规权重。</span></span>
+<span id="cb98-14"><a href="#cb98-14" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span><span class="op">&amp;</span> sx_ex <span class="op">=</span> <span class="op">(</span><span class="dt">ex_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> sx_node_galerkin <span class="op">:</span> sx_cell_galerkin<span class="op">;</span></span>
+<span id="cb98-15"><a href="#cb98-15" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span><span class="op">&amp;</span> sx_ey <span class="op">=</span> <span class="op">(</span><span class="dt">ey_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> sx_node <span class="op">:</span> sx_cell<span class="op">;</span></span>
+<span id="cb98-16"><a href="#cb98-16" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="dt">int</span> j_ex <span class="op">=</span> <span class="op">(</span><span class="dt">ex_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> j_node_v <span class="op">:</span> j_cell_v<span class="op">;</span></span>
+<span id="cb98-17"><a href="#cb98-17" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="dt">int</span> j_ey <span class="op">=</span> <span class="op">(</span><span class="dt">ey_type</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> NODE<span class="op">)</span> <span class="op">?</span> j_node <span class="op">:</span> j_cell<span class="op">;</span></span></code></pre></div>
 <p>这段源码有三个关键点。</p>
 <ol type="1">
 <li><code>x = (xp - xyzmin.x)*dinv.x</code>
@@ -7600,13 +7493,13 @@ W_E=\frac{V_c}{2}\sum_j \rho_j\phi_j
 <p><span class="math display">\[
 \mathbf F_i=-\frac{\partial W_E}{\partial \mathbf x_i},
 \]</span></p>
-<p>也就是不再先“在网格上差分 <code>\phi</code> 得 <code>E</code>、再把
-<code>E</code> gather 给粒子”，而是要求粒子受力、离散 Poisson
-解和场能量账本共享同一套 reciprocity 合同。对 WarpX
-来说，这当然不意味着当前 <code>FieldGather.H</code> 里就直接复现了
-Birdsall 的整个 energy-conserving electrostatic
-变分算法；更准确的说法是，官方文档和 regression 里保留下来的
-<code>energy-conserving gather</code> /
+<p>也就是不再先“在网格上差分 <span class="math inline">\(\phi\)</span>
+得 <code>E</code>、再把 <code>E</code> gather
+给粒子”，而是要求粒子受力、离散 Poisson 解和场能量账本共享同一套
+reciprocity 合同。对 WarpX 来说，这当然不意味着当前
+<code>FieldGather.H</code> 里就直接复现了 Birdsall 的整个
+energy-conserving electrostatic 变分算法；更准确的说法是，官方文档和
+regression 里保留下来的 <code>energy-conserving gather</code> /
 <code>momentum-conserving gather</code>
 命名，只有放回这条更老的理论分叉里才不会被误解成“两个 wrapper 里哪一个
 stencil 更光滑”。</p>
@@ -9501,14 +9394,14 @@ q = 4 \pi \epsilon_0 \phi_0 R
 </ul></li>
 <li>RZ <code>analysis_rz_mr.py</code>
 <ul>
-<li>把同一 <code>\phi/Er</code> 对照扩展到每个 refinement level</li>
+<li>把同一 <span class="math inline">\(\phi/E_r\)</span> 对照扩展到每个
+refinement level</li>
 </ul></li>
 </ol>
 <p>只有 <code>inputs_test_3d_electrostatic_sphere_eb_mixed_bc</code>
 没有独立 analysis，因此它只提供 mixed-BC 配置的 checksum
 基线。其余例子分别把导体总电荷、覆盖区域、RZ 解析势/径向场和各
-refinement level 的误差作为观察量；不能把通过的 checksum 当作解析
-<code>phi/Er</code>
+refinement level 的误差作为观察量；不能把通过的 checksum 当作解析 <span class="math inline">\(\phi/E_r\)</span>
 比较，也不能把一个对称球的结果外推为任意电极几何。</p>
 <p>综上，embedded-boundary
 验证至少应同时问四个问题：几何是否表示正确，场是否满足已知解析解，吸收是否留下数值电荷，Python
@@ -9561,9 +9454,12 @@ depth、谁接收新粒子”分开；只有先分清这些角色，才能正确
 <span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a>InitQED<span class="op">();</span></span></code></pre></div>
 <p>这里三步分别对应：</p>
 <ol type="1">
-<li>把
-<code>qed_quantum_sync_phot_product_species</code>、<code>qed_breit_wheeler_ele_product_species</code>、<code>qed_breit_wheeler_pos_product_species</code>
-从字符串映射成容器索引；</li>
+<li>把三个 product-species 参数从字符串映射成容器索引：
+<ul>
+<li><code>qed_quantum_sync_phot_product_species</code></li>
+<li><code>qed_breit_wheeler_ele_product_species</code></li>
+<li><code>qed_breit_wheeler_pos_product_species</code></li>
+</ul></li>
 <li>检查 product species 类型是否正确；</li>
 <li>创建 <code>QuantumSynchrotronEngine</code> /
 <code>BreitWheelerEngine</code> 并按
@@ -9954,54 +9850,38 @@ photon/lepton 的转化，沿 <code>ElementaryProcess</code>
 树阅读。两棵树的输入参数、随机变量、守恒检查与适用范围不能互换。</p>
 <h2 id="本章结论-1">4.15 本章结论</h2>
 <p>粒子推进器不等于孤立的 Boris 公式。一次 WarpX
-粒子更新同时连接时间层、场插值、动量更新、位置更新、沉积、边界和多物理创建。读者面对异常轨道、错误粒子数或不守恒的场时，可以按下列顺序缩小问题：</p>
+粒子更新连接时间层、场插值、动量/位置更新、沉积、边界和多物理创建。面对异常轨道、错误粒子数或不守恒的场，可按三步缩小问题：</p>
 <ol type="1">
-<li><strong>先确定观察量和时间层。</strong>位置、机械动量、<code>rho</code>、current、scraped
-buffer 和 reduced diagnostic
-不一定在同一时刻；先写清比较的是单粒子轨道、粒子数、场残余还是守恒量。</li>
-<li><strong>再追 tile
-的带电粒子主链。</strong><code>PushParticlesandDeposit()</code> 经
-<code>MultiParticleContainer::Evolve()</code> 进入
-<code>PhysicalParticleContainer::Evolve()</code>；<code>rho</code>
-component 0 保存旧时间层，<code>doGatherShapeN()</code>
-取得粒子场，<code>doParticleMomentumPush()</code> 选择
-Boris、Vay、Higuera–Cary 或 RR，<code>UpdatePosition()</code>
-用半步速度更新位置，随后沉积 current 与下一时间层的 <code>rho</code>
-component 1。</li>
-<li><strong>把边界与 AMR 当成独立观察问题。</strong>粒子消失、scraped
-接触几何、PML 残余场和 coarse/fine 组合 checksum
-分别需要不同输出；其中只有解析基准或守恒量比较能支持更强的物理结论。</li>
-<li><strong>最后选择正确的产生模型。</strong>强场 QED 沿
-<code>chi -&gt; optical depth -&gt; lookup table -&gt; source/product</code>
-路线读取；virtual photons、linear Breit-Wheeler 与 linear Compton 则沿
-cell-local <code>BinaryCollision</code>
-路线读取。两者不能以相同参数或相同守恒检查互相替代。</li>
+<li><strong>先固定观察量和时间层。</strong>
+位置、机械动量、<code>rho</code>、current、scraped buffer 和 reduced
+diagnostic 不一定在同一时刻；先写清比较对象。</li>
+<li><strong>再追带电粒子主链。</strong>
+<code>PushParticlesandDeposit()</code> 经容器 tile loop 依次组织旧
+<code>rho</code>、gather、Boris/Vay/Higuera–Cary/RR、<code>UpdatePosition()</code>、current
+和新 <code>rho</code>。</li>
+<li><strong>最后拆开独立分支。</strong> particle boundary、PML、AMR
+与产生模型需要各自的 observable；强场 QED 沿
+<code>chi -&gt; optical depth -&gt; lookup table -&gt; source/product</code>，virtual-photon/linear
+碰撞沿 <code>BinaryCollision</code>，两者不能互换参数或守恒检查。</li>
 </ol>
-<p>这条路线也给出了后续章节的接口：第 5 章解释
-<code>DepositCurrent/DepositCharge()</code> 的守恒沉积，第 6
-章解释场如何推进，第 7 章解释 PML、AMR 与边界，第 8
-章说明如何把上述观察量写成可判断的 diagnostics。</p>
+<p>这也给出了后续章节接口：第 5 章解释守恒沉积，第 6 章解释场推进，第 7
+章解释 PML/AMR/边界，第 8 章将上述量写成可判断的 diagnostics。</p>
 <h2 id="练习与复现实验">4.16 练习与复现实验</h2>
 <ol type="1">
-<li><strong>pusher 对照题</strong>：比较 Boris、Vay 与 Higuera-Cary
-的同类案例结果，解释为什么 Boris
-的大位移不能简单归结为“代码运行失败”，而应联系 force-free relativistic
-pusher 的适用条件判断。</li>
+<li><strong>pusher 对照题</strong>：比较 Boris、Vay 与
+Higuera-Cary，说明 Boris 的大位移为何需要回到 force-free relativistic
+pusher 的适用条件，而非简单归为“代码运行失败”。</li>
 <li><strong>源码定位题</strong>：从
-<code>PhysicalParticleContainer::Evolve()</code> 定位
-<code>doGatherShapeN()</code>、momentum
-push、<code>UpdatePosition</code> 和 current/charge
-deposition，画出一次粒子 tile loop 的四个时间层节点。</li>
-<li><strong>最小复现实验</strong>：运行官方 <code>particle_pusher</code>
-或 <code>photon_pusher</code>
-analysis，并分别记录位置、动量和是否发生电流沉积的观测量；说明带电
-pusher 的位置误差和无质量 photon
-的位置/动量误差为何不能共用同一容差。</li>
-<li><strong>QED 路线题</strong>：选择 <code>Examples/Tests/qed/</code>
-的 quantum-synchrotron 或 Breit-Wheeler case，列出
-source、product、<code>opticalDepthQSR/BW</code>、主观察量和一个不能由该
-case 证明的结论；再说明为什么同一张表不能用
-<code>linear_breit_wheeler</code> 的碰撞参数替代。</li>
+<code>PhysicalParticleContainer::Evolve()</code> 追到 gather、momentum
+push、<code>UpdatePosition</code> 和 current/charge deposition，画出
+tile loop 的四个时间层节点。</li>
+<li><strong>最小复现实验</strong>：运行 <code>particle_pusher</code> 或
+<code>photon_pusher</code> analysis，记录位置、动量和电流沉积；解释带电
+pusher 与无质量 photon 为何不能共用位置/动量容差。</li>
+<li><strong>QED 路线题</strong>：选一个 quantum-synchrotron 或
+Breit-Wheeler case，列出
+source、product、<code>opticalDepthQSR/BW</code>、主观察量和一个不可外推结论，并说明它不能替代
+<code>linear_breit_wheeler</code> 的碰撞参数。</li>
 </ol>
 <!-- source: manuscript/chapters/05-deposition-shapes.md -->
 <h1 id="电荷电流沉积与形函数源项如何回到网格">5.

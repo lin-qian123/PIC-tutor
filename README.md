@@ -1,10 +1,10 @@
 # PIC-tutor
 
-本轮将“已抽查”推进为可核查的连续阅读：已从 PDF 第 7 页连续读至第 74 页，完整覆盖教程首页与前言、第 1--3 章及第 3A 章。审阅同时核对 Markdown、公式语义、源码入口、跨章交接和 PDF 版式；第 1 章修复两处误用代码样式的尺度符号，第 3 章修复 moving window、FDTD、subcycling 与 JRhom 源码片段的超宽截断，第 3A 章则重排 single-particle、prefix scan、openPMD 坐标、文件路径与 Birdsall 映射表，消除超宽代码和列间覆盖，并加入回归检查。覆盖记录见 `docs/manual-editorial-spotcheck-v0.110.md`；尚未通读的第 4 章及以后页面仍保持未完成状态。
+本轮将“已抽查”推进为可核查的连续阅读：已从当前 PDF 第 7 页连续读至第 119 页，完整覆盖教程首页与前言、第 1--3 章、第 3A 章及第 4 章。审阅同时核对 Markdown、公式语义、源码入口、跨章交接和 PDF 版式；第 1 章修复两处误用代码样式的尺度符号，第 3 章修复 moving window、FDTD、subcycling 与 JRhom 源码片段的超宽截断，第 3A 章重排 single-particle、prefix scan、openPMD 坐标、文件路径与 Birdsall 映射表，第 4 章则将 Boris/Vay 源码节选、gather 模板和多物理路径重排为可读的核心节选或明确标注的阅读伪代码，消除右侧裁切和裸 LaTeX。覆盖记录见 `docs/manual-editorial-spotcheck-v0.110.md`；第 5 章及以后页面仍未完成连续通读。
 
 第 8 章结尾现让 `8.17 本章结论` 在 PDF 中完整起页，避免读者只看到一条脱离上下文的续页结论；构建验收同时要求该页保留第四条“失败与不可外推范围”。第 9 章的证据层、文献判读卡和两条深读路线，以及附录 A 的符号/时间层表已做本轮连续视觉复核；附录中的 auxiliary-field 构造方法名更正为源码实际符号 `UpdateAuxiliaryData`。这些抽查不构成全书逐页人工通读完成的声明。
 
-当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `267` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航表、第 3 章跨章交接卡、第 3A、4--9 章阅读路线和末页已补充视觉抽查；该抽查不替代全书逐页通读、第三方材料许可或公开再分发签收。
+当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `265` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航表、第 3 章跨章交接卡、第 3A、4--9 章阅读路线和末页已补充视觉抽查；该抽查不替代全书逐页通读、第三方材料许可或公开再分发签收。
 
 第 3A 章的激光初始化与应用入口现按“问题 -> 几何假设 -> 案例 -> producer/output/reference -> observable”阅读：天线注入、文件 profile、LWFA、BTD、固体靶、FEL、AMR 与表面等离子体各自对应不同的比较对象和证据边界。`laser_ion` 的 time-averaged `Ez` 对照、FEL 的 gain-length/wavelength、`laser_on_fine` 的 AMR placement 与 `plasma_mirror` 的搭建范围不再混写；文件外场与 moving window 的不兼容也回到选例条件。当前 PDF 第 6--8、65--66 页已视觉复核。
 
@@ -14,7 +14,7 @@
 
 第 3 章的生命周期现在先要求读者依次定位输入分支、`InitData()` 建立的离散初态、`Evolve()` 的外层提交边界和 `OneStep()` 的实际时间合同，再用独立 reference 判断输出。`OneStep_sub1()` 的两级/2:1 要求、Picard 的最小 particle iteration 与 mass-matrix 的 3D/RSPHERE 限制均表述为函数或参数检查的边界，而非项目快照状态。当前 PDF 第 36、42、44 页已视觉复核。
 
-第 4 章的显式粒子路径现增加单粒子状态检查卡：明确 `PushPX()` 的 pusher 只消费有效电荷/质量与合成后的 particle field，宏粒子权重只在后续 charge/current deposition 中进入 source。它也将 momentum half push、完整位置推进和一次 `PushPX()` 调用严格区分，因此单粒子轨道案例不再被误用为对 self-consistent source 或场演化的证明。当前 PDF 第 85--86 页已视觉复核。
+第 4 章的显式粒子路径现增加单粒子状态检查卡：明确 `PushPX()` 的 pusher 只消费有效电荷/质量与合成后的 particle field，宏粒子权重只在后续 charge/current deposition 中进入 source。它也将 momentum half push、完整位置推进和一次 `PushPX()` 调用严格区分，因此单粒子轨道案例不再被误用为对 self-consistent source 或场演化的证明。Boris/Vay 的长函数签名、分派参数和 gather 模板改为可回查的核心节选或阅读伪代码，Higuera-Cary 与 Vay 论证中的数学记号统一为行内数学。当前 PDF 第 74--119 页已连续视觉复核。
 
 第 4 章多物理分支现补足状态交接卡：区分外层 `doFieldIonization()`、QED event pass、注入与 `OneStep()` 的次序，说明 optical depth 的演化和 QED product materialization 不是同一动作；也明确 collision 的 split-momentum 仅适用于 explicit 路径，JRhom/subcycling 必须关闭它。RR、implicit、photon、ionization 与 collision 的验证均回到各自的状态变化、source 和可观察量，不以开发过程或测试清单组织。
 

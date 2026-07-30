@@ -119,12 +119,21 @@ $$
 源码文件：`Source/Particles/Pusher/UpdateMomentumBoris.H`
 函数：`UpdateMomentumBoris()`
 
-源码原文如下：
+下面是为阅读重排的核心节选；变量名和控制流与源码一致，完整函数仍以该文件和函数名为准：
 
 ```cpp
 const amrex::ParticleReal econst = 0.5_prt*q*dt/m;
+const bool first_or_full =
+    momentum_push_type == MomentumPushType::FirstHalf ||
+    momentum_push_type == MomentumPushType::Full;
+const bool second_or_full =
+    momentum_push_type == MomentumPushType::SecondHalf ||
+    momentum_push_type == MomentumPushType::Full;
+const bool split_half =
+    momentum_push_type == MomentumPushType::FirstHalf ||
+    momentum_push_type == MomentumPushType::SecondHalf;
 
-if (momentum_push_type == MomentumPushType::FirstHalf || momentum_push_type == MomentumPushType::Full) {
+if (first_or_full) {
     // First half-push for E
     ux += econst*Ex;
     uy += econst*Ey;
@@ -137,9 +146,10 @@ const amrex::ParticleReal inv_gamma = 1._prt/std::sqrt(1._prt + (ux*ux + uy*uy +
 amrex::ParticleReal tx = econst*inv_gamma*Bx;
 amrex::ParticleReal ty = econst*inv_gamma*By;
 amrex::ParticleReal tz = econst*inv_gamma*Bz;
-if (momentum_push_type == MomentumPushType::FirstHalf || momentum_push_type == MomentumPushType::SecondHalf) {
+if (split_half) {
     const amrex::ParticleReal tsq = tx*tx + ty*ty + tz*tz;
-    const amrex::ParticleReal factor = (tsq > 0._prt) ? (std::sqrt(1._prt + tsq) - 1._prt) / tsq : 0.5_prt;
+    const amrex::ParticleReal factor = (tsq > 0._prt)
+        ? (std::sqrt(1._prt + tsq) - 1._prt) / tsq : 0.5_prt;
     tx *= factor;
     ty *= factor;
     tz *= factor;
@@ -155,8 +165,8 @@ const amrex::ParticleReal uz_p = uz + ux*ty - uy*tx;
 ux += uy_p*sz - uz_p*sy;
 uy += uz_p*sx - ux_p*sz;
 uz += ux_p*sy - uy_p*sx;
-if (momentum_push_type == MomentumPushType::SecondHalf || momentum_push_type == MomentumPushType::Full) {
-// Second half-push for E
+if (second_or_full) {
+    // Second half-push for E
     ux += econst*Ex;
     uy += econst*Ey;
     uz += econst*Ez;
@@ -174,7 +184,7 @@ if (momentum_push_type == MomentumPushType::SecondHalf || momentum_push_type == 
 
 函数注释说明 `FirstHalf` 和 `SecondHalf` 可以分裂执行，并且连续执行应与一次 `Full` 更新数学等价。这正好服务于 `WarpXEvolve.cpp` 中把碰撞放在 momentum push 中间的路径。
 
-这里有一个必须区分的实现细节：WarpX 的 half momentum push 不是简单把 `q dt B/(2m\gamma)` 再乘 `1/2`。`UpdateMomentumBoris()` 的 half-push 分支使用
+这里有一个必须区分的实现细节：WarpX 的 half momentum push 不是简单把 \(q\,\Delta t\,B/(2m\gamma)\) 再乘 \(1/2\)。`UpdateMomentumBoris()` 的 half-push 分支使用
 
 $$
 \frac{|t_{\mathrm{half}}|}{|t_{\mathrm{full}}|}
@@ -199,7 +209,7 @@ $$
 
 这说明输入参数选择的不是一个高层“粒子模块”，而是每个粒子在 `PushPX()` device loop 内调用的单粒子 momentum update。下面继续展开 Vay 与 Higuera-Cary 的源码。
 
-这一节背后的经典来源可以直接回到 Birdsall-Langdon 1985 第一分卷 `4-3` 到 `4-5`。那里把磁推进的核心先写成几何分裂：电场部分是半步 impulse，磁场部分是速度空间旋转；随后再把旋转压成 `t=\tan(\theta/2)`、`s=2t/(1+t^2)`、`c=(1-t^2)/(1+t^2)` 这组半角变量，并进一步给出向量 Boris 形式。对本章来说，这个来源有两个价值。第一，WarpX 的 Boris 更新不是孤立经验公式，而是这条 “half-accel + rotation + half-accel” 离散合同的现代实现。第二，Birdsall 在 `4-5` 里明确区分了 `1d2v/1d3v` 和真正的一维动力学，这正好解释了为什么即使空间维数较低，本章后面讨论的 mover 仍必须保留多速度分量与磁旋转结构。
+这一节背后的经典来源可以直接回到 Birdsall-Langdon 1985 第一分卷 `4-3` 到 `4-5`。那里把磁推进的核心先写成几何分裂：电场部分是半步 impulse，磁场部分是速度空间旋转；随后再把旋转压成 \(t=\tan(\theta/2)\)、\(s=2t/(1+t^2)\)、\(c=(1-t^2)/(1+t^2)\) 这组半角变量，并进一步给出向量 Boris 形式。对本章来说，这个来源有两个价值。第一，WarpX 的 Boris 更新不是孤立经验公式，而是这条 “half-accel + rotation + half-accel” 离散合同的现代实现。第二，Birdsall 在 `4-5` 里明确区分了 `1d2v/1d3v` 和真正的一维动力学，这正好解释了为什么即使空间维数较低，本章后面讨论的 mover 仍必须保留多速度分量与磁旋转结构。
 
 Boris 1970 的原始历史位置需要单独标注边界：本书给出 J. P. Boris 的会议论文书目和 DTIC `ADA023511` 入口，但目前没有可逐页核对的会议论文全文。因此，本章的算法推导采用 Birdsall--Langdon 1985 的完整讲解，WarpX 的实现说明则回到 `Source/Particles/Pusher/UpdateMomentumBoris.H`；Boris 1970 不能作为已经逐页核查的直接公式依据。
 
@@ -216,69 +226,56 @@ Boris 1970 的原始历史位置需要单独标注边界：本书给出 J. P. Bo
 源码文件：`Source/Particles/Pusher/UpdateMomentumVay.H`
 函数：`UpdateMomentumVay()`
 
-源码注释明确引用 Vay 2008 的公式 (9)-(13)，并说明 `FirstHalf` 与 `SecondHalf` 连续执行应等价于 `Full`：
+源码注释明确引用 Vay 2008 的公式 (9)-(13)，并说明 `FirstHalf` 与 `SecondHalf` 连续执行应等价于 `Full`。下面是为阅读压缩的核心节选；它省略函数签名和重复分量，但保留时间层分支、\(\gamma\) 根和旋转结构：
 
 ```cpp
-/** \brief Push the particle's positions over one timestep,
- *    given the value of its momenta `ux`, `uy`, `uz`
- *    Note that UpdateMomentumVay algorithm can be splitted into FirstHalf and SecondHalf
- *    momentum updates. FirstHalf and SecondHalf updates are constructed so that
- *    performing FirstHalf followed by SecondHalf is mathematically
- *    equivalent to a single Full update.
- *    For more details, see formulas (9)-(13) in J.L.Vay, "Simulation of beams or plasmas crossing at
- *    relativistic velocity", Phys. Plasmas 15, 056701 (2008).
- */
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void UpdateMomentumVay(
-    amrex::ParticleReal& ux, amrex::ParticleReal& uy, amrex::ParticleReal& uz,
-    const amrex::ParticleReal Ex, const amrex::ParticleReal Ey, const amrex::ParticleReal Ez,
-    const amrex::ParticleReal Bx, const amrex::ParticleReal By, const amrex::ParticleReal Bz,
-    const amrex::ParticleReal q, const amrex::ParticleReal m, const amrex::Real dt,
-    MomentumPushType momentum_push_type)
-{
-    using namespace amrex::literals;
-
-    // Constants
-    const amrex::ParticleReal econst = q*dt/m * ((momentum_push_type == MomentumPushType::Full) ? 1.0_prt : 0.5_prt);
-    const amrex::ParticleReal bconst = 0.5_prt*q*dt/m;
-    // Compute initial gamma
-    const amrex::ParticleReal inv_gamma = 1._prt/std::sqrt(1._prt + (ux*ux + uy*uy + uz*uz)*PhysConst::inv_c2_v<amrex::ParticleReal>);
+const amrex::ParticleReal econst = q*dt/m *
+    ((momentum_push_type == MomentumPushType::Full) ? 1.0_prt : 0.5_prt);
+const amrex::ParticleReal bconst = 0.5_prt*q*dt/m;
+const amrex::ParticleReal inv_gamma = 1._prt/std::sqrt(
+    1._prt + (ux*ux + uy*uy + uz*uz)*PhysConst::inv_c2_v<amrex::ParticleReal>);
     // Get tau
-    const amrex::ParticleReal taux = bconst*Bx;
-    const amrex::ParticleReal tauy = bconst*By;
-    const amrex::ParticleReal tauz = bconst*Bz;
-    const amrex::ParticleReal tausq = taux*taux+tauy*tauy+tauz*tauz;
-    // Get U', gamma'^2
-    const amrex::ParticleReal uxpr = ux + econst*Ex + ((momentum_push_type == MomentumPushType::SecondHalf) ? 0.0_prt : (uy*tauz-uz*tauy)*inv_gamma);
-    const amrex::ParticleReal uypr = uy + econst*Ey + ((momentum_push_type == MomentumPushType::SecondHalf) ? 0.0_prt : (uz*taux-ux*tauz)*inv_gamma);
-    const amrex::ParticleReal uzpr = uz + econst*Ez + ((momentum_push_type == MomentumPushType::SecondHalf) ? 0.0_prt : (ux*tauy-uy*taux)*inv_gamma);
+const amrex::ParticleReal taux = bconst*Bx;
+const amrex::ParticleReal tauy = bconst*By;
+const amrex::ParticleReal tauz = bconst*Bz;
+const amrex::ParticleReal tausq = taux*taux + tauy*tauy + tauz*tauz;
+const amrex::ParticleReal uxpr = ux + econst*Ex +
+    ((momentum_push_type == MomentumPushType::SecondHalf)
+        ? 0.0_prt : (uy*tauz - uz*tauy)*inv_gamma);
+const amrex::ParticleReal uypr = uy + econst*Ey +
+    ((momentum_push_type == MomentumPushType::SecondHalf)
+        ? 0.0_prt : (uz*taux - ux*tauz)*inv_gamma);
+const amrex::ParticleReal uzpr = uz + econst*Ez +
+    ((momentum_push_type == MomentumPushType::SecondHalf)
+        ? 0.0_prt : (ux*tauy - uy*taux)*inv_gamma);
 
-    if (momentum_push_type !=  MomentumPushType::FirstHalf) {
+if (momentum_push_type != MomentumPushType::FirstHalf) {
         // Get gamma'^2
-        const amrex::ParticleReal gprsq = (1._prt + (uxpr*uxpr + uypr*uypr + uzpr*uzpr)*PhysConst::inv_c2_v<amrex::ParticleReal>);
+    const amrex::ParticleReal gprsq = 1._prt +
+        (uxpr*uxpr + uypr*uypr + uzpr*uzpr)*PhysConst::inv_c2_v<amrex::ParticleReal>;
         // Get u*
-        const amrex::ParticleReal ust = (uxpr*taux + uypr*tauy + uzpr*tauz)*PhysConst::inv_c_v<amrex::ParticleReal>;
+    const amrex::ParticleReal ust =
+        (uxpr*taux + uypr*tauy + uzpr*tauz)*PhysConst::inv_c_v<amrex::ParticleReal>;
         // Get new gamma
-        const amrex::ParticleReal sigma = gprsq-tausq;
-        const amrex::ParticleReal gisq = 2._prt/(sigma + std::sqrt(sigma*sigma + 4._prt*(tausq + ust*ust)) );
+    const amrex::ParticleReal sigma = gprsq - tausq;
+    const amrex::ParticleReal gisq = 2._prt/(sigma + std::sqrt(
+        sigma*sigma + 4._prt*(tausq + ust*ust)));
         // Get t, s
-        const amrex::ParticleReal bg = bconst*std::sqrt(gisq);
-        const amrex::ParticleReal tx = bg*Bx;
-        const amrex::ParticleReal ty = bg*By;
-        const amrex::ParticleReal tz = bg*Bz;
-        const amrex::ParticleReal s = 1._prt/(1._prt+tausq*gisq);
+    const amrex::ParticleReal bg = bconst*std::sqrt(gisq);
+    const amrex::ParticleReal tx = bg*Bx;
+    const amrex::ParticleReal ty = bg*By;
+    const amrex::ParticleReal tz = bg*Bz;
+    const amrex::ParticleReal s = 1._prt/(1._prt + tausq*gisq);
         // Get t.u'
-        const amrex::ParticleReal tu = tx*uxpr + ty*uypr + tz*uzpr;
+    const amrex::ParticleReal tu = tx*uxpr + ty*uypr + tz*uzpr;
         // Get new U
-        ux = s*(uxpr+tx*tu+uypr*tz-uzpr*ty);
-        uy = s*(uypr+ty*tu+uzpr*tx-uxpr*tz);
-        uz = s*(uzpr+tz*tu+uxpr*ty-uypr*tx);
-    }
-    else {
-        ux = uxpr;
-        uy = uypr;
-        uz = uzpr;
-    }
+    ux = s*(uxpr + tx*tu + uypr*tz - uzpr*ty);
+    uy = s*(uypr + ty*tu + uzpr*tx - uxpr*tz);
+    uz = s*(uzpr + tz*tu + uxpr*ty - uypr*tx);
+} else {
+    ux = uxpr;
+    uy = uypr;
+    uz = uzpr;
 }
 ```
 
@@ -304,9 +301,11 @@ $$
 
 这个试金石说明 Boris 在一般非零 `E`、`B` 情况下会出现 spurious force，然后才提出新的 leapfrog velocity average。于是 WarpX 的 `UpdateMomentumVay.H` 最值得保留的历史定位不是“Boris 的另一个变体”，而是：它实现的是一条以 frame-change consistency 为目标的专门修正路线。
 
-Vay 2008 后半段把这条历史论证链又压实了两次。第一，`II.C` 的两个单粒子测试并不是普通轨道展示，而是同一物理系统在 laboratory frame 和 moving frame 下都要和解析解一致的 frame-consistency test。常量 `B_z` 例子中，粒子以 `v_x=10^{-2}c` 起步、`\Delta t=10^{-2}\times 2\pi/\omega_c`，新 pusher 在实验室系和沿 `\hat y` 方向 `\gamma_f=2` 的 moving frame 里都贴住解析轨道；Boris 即使加上 `\tan(\omega_c\Delta t)/(\omega_c\Delta t)` 修正，也会在 moving frame 中明显偏离，而且误差在 `\gamma_f=3` 后迅速放大。常量 `E_x=1\,\mathrm{kV/m}`、电子在实验室系初始静止、`100` 步 `1\,\mathrm{ns}` 更新的例子更直接：三种 mover 在实验室系里都正确，只有新 pusher 在 `\gamma_f=100` 的 moving frame 中仍保持解析一致。于是这篇文献给本章的最硬证据不是“Vay 在某些 case 里更稳”，而是 Boris 的误差会在 frame change 后由次要项变成主导项。
+Vay 2008 的 `II.C` 单粒子测试不是普通轨道展示，而是同一物理系统在 laboratory frame 和 moving frame 下都要和解析解一致的 frame-consistency test。常量 \(B_z\) 例子以 \(v_x=10^{-2}c\) 起步，并取 \(\Delta t=10^{-2}\times 2\pi/\omega_c\)：新 pusher 在实验室系和沿 \(\hat y\) 方向、\(\gamma_f=2\) 的 moving frame 中都贴住解析轨道；Boris 即使加上 \(\tan(\omega_c\Delta t)/(\omega_c\Delta t)\) 修正，也会在 moving frame 中偏离，且误差在 \(\gamma_f=3\) 后迅速放大。
 
-第二，这篇论文并没有顺手给出一个通用 Maxwell solver。它在 `III` 节明确把场求解边界限定在 waves 和 retardation 可忽略、并且对每个 species 可以在共动系里近似取
+常量 \(E_x=1\,\mathrm{kV/m}\) 的测试给出相同结论：电子在实验室系初始静止，经历 `100` 步、每步 \(1\,\mathrm{ns}\) 的更新时，三种 mover 在实验室系里都正确；只有新 pusher 在 \(\gamma_f=100\) 的 moving frame 中仍保持解析一致。因此这篇文献的硬证据不是“Vay 在某些 case 里更稳”，而是 Boris 的误差会在 frame change 后由次要项变成主导项。
+
+这篇论文也没有顺手给出一个通用 Maxwell solver。它在 `III` 节明确把场求解边界限定在 waves 和 retardation 可忽略、并且对每个 species 可以在共动系里近似取
 
 $$
 v_z \gg v_x,v_y,
@@ -314,9 +313,11 @@ v_z \gg v_x,v_y,
 \frac{\partial}{\partial t}\approx v_z\frac{\partial}{\partial z}
 $$
 
-的场景。于是 field side 被压成带 `\gamma z` 拉伸的 Poisson 型求解，并近似保留 electrostatic、magnetostatic 以及沿主流向的 inductive effect。对 `N` 个 species，代价就是 `N` 次这类 Poisson solve。这条 bounded Darwin-lite explicit approximation 解释了为什么 `IV` 节的 LHC-like ultrarelativistic beam / electron-cloud 应用会特意选在 `\gamma\approx16.5` 的 moving frame 中做 first-principles PIC：在那里 beam 与 electron cloud 的 self-electric / self-magnetic cancellation 最强，最能放大 mover 的 frame-consistency 缺陷。文中报告 Boris 无论是否带 `\tan` 修正，都会让 beam 和 electron 宏粒子以非物理速度丢失；只有新 pusher 才能恢复预期的 hose-like instability，并且给出和实验室系 quasistatic WARP calculation 一致的 vertical emittance growth rate 与 saturation level。因此，对 WarpX 而言，`UpdateMomentumVay.H` 的历史角色应理解成 relativistic beam-crossing / boosted-frame consistency repair，而不是一个与一般场求解器或一般 relativistic mover 等价并列的“备选算法”。
+的场景。于是 field side 被压成带 \(\gamma z\) 拉伸的 Poisson 型求解，并近似保留 electrostatic、magnetostatic 以及沿主流向的 inductive effect。对 `N` 个 species，代价就是 `N` 次这类 Poisson solve。这条有边界的 Darwin-lite explicit approximation 解释了为什么 `IV` 节的 LHC-like ultrarelativistic beam / electron-cloud 应用会特意选在 \(\gamma\approx16.5\) 的 moving frame 中做 first-principles PIC：在那里 beam 与 electron cloud 的 self-electric / self-magnetic cancellation 最强，最能放大 mover 的 frame-consistency 缺陷。
 
-### 4.4.1 Vay Appendix A/B：显式 `\gamma` 根与回旋半径边界
+文中报告 Boris 无论是否带 \(\tan\) 修正，都会让 beam 和 electron 宏粒子以非物理速度丢失；只有新 pusher 才能恢复预期的 hose-like instability，并给出与实验室系 quasistatic WARP calculation 一致的 vertical emittance growth rate 和 saturation level。因此，对 WarpX 而言，`UpdateMomentumVay.H` 的历史角色应理解成 relativistic beam-crossing / boosted-frame consistency repair，而不是一个与一般场求解器或一般 relativistic mover 等价并列的“备选算法”。
+
+### 4.4.1 Vay Appendix A/B：显式 \(\gamma\) 根与回旋半径边界
 
 Vay 2008 的 Appendix A 给出了源码中 `gisq` / `gamma_new` 公式为什么可以显式计算。磁旋转中先定义
 
@@ -326,7 +327,7 @@ $$
 \qquad \mathbf t=\frac{\boldsymbol\tau}{\gamma^{i+1}},
 $$
 
-其中 `\boldsymbol\tau=(q\Delta t/2m)\mathbf B`。对上式与 `\mathbf u` 做点积，利用 `\gamma^2=1+u^2/c^2`，并令
+其中 \(\boldsymbol\tau=(q\Delta t/2m)\mathbf B\)。对上式与 \(\mathbf u\) 做点积，利用 \(\gamma^2=1+u^2/c^2\)，并令
 
 $$
 \gamma'=\sqrt{1+u'^2/c^2},
@@ -334,7 +335,7 @@ $$
 \qquad \sigma=\gamma'^2-\tau^2,
 $$
 
-可把隐式的 relativistic factor 压成一个关于 `\gamma^2` 的二次方程：
+可把隐式的 relativistic factor 压成一个关于 \(\gamma^2\) 的二次方程：
 
 $$
 \gamma^4+(\tau^2-\gamma'^2)\gamma^2-\tau^2-u^{*2}=0.
@@ -346,9 +347,9 @@ $$
 \gamma^{i+1}=\sqrt{\frac{\sigma+\sqrt{\sigma^2+4(\tau^2+u^{*2})}}{2}}.
 $$
 
-这解释了 `UpdateMomentumVay.H` 的实现顺序：先用 `u'` 和 `tau` 构造标量不变量，再取正根，最后由 `t=\tau/\gamma` 和 `s=1/(1+t^2)` 完成旋转。`gisq` 存的是 `\gamma^{-2}`，因此 device loop 不需要迭代求解 `\gamma`。这是 Appendix A 与当前 kernel 的直接公式桥接，不是普通 Boris 旋转中的经验系数。
+这解释了 `UpdateMomentumVay.H` 的实现顺序：先用 `u'` 和 `tau` 构造标量不变量，再取正根，最后由 \(t=\tau/\gamma\) 和 \(s=1/(1+t^2)\) 完成旋转。`gisq` 存的是 \(\gamma^{-2}\)，因此 device loop 不需要迭代求解 \(\gamma\)。这是 Appendix A 与当前 kernel 的直接公式桥接，不是普通 Boris 旋转中的经验系数。
 
-Appendix B 则给出常磁场、`\mathbf E=0` 时的 gyroradius 边界：
+Appendix B 则给出常磁场、\(\mathbf E=0\) 时的 gyroradius 边界：
 
 $$
 \Delta\theta=2\arctan\left(\frac{\omega_c\Delta t}{2}\right),
@@ -363,7 +364,7 @@ R=\frac{\|\mathbf v^{i+1/2}\|}{\omega_c}
 =\left[1+\left(\frac{\omega_c\Delta t}{2}\right)^2\right]^{1/2}\frac{\|\mathbf v^i\|}{\omega_c}.
 $$
 
-所以“Vay 在任意时间步都给出正确 gyroradius”必须加限定：若用于位置推进的半步速度满足 `\|\mathbf v^{i+1/2}\|=v_0`，则 `R=v_0/\omega_c`；若把整数时刻速度直接当作 `v_0`，仍会出现与 Boris 类似的放大因子。pusher 的动量更新、半步速度定义和位置更新必须一起检查。
+所以“Vay 在任意时间步都给出正确 gyroradius”必须加限定：若用于位置推进的半步速度满足 \(\|\mathbf v^{i+1/2}\|=v_0\)，则 \(R=v_0/\omega_c\)；若把整数时刻速度直接当作 \(v_0\)，仍会出现与 Boris 类似的放大因子。pusher 的动量更新、半步速度定义和位置更新必须一起检查。
 
 一个有用的最小验证是去掉自洽场、AMR 和 PML，只保留均匀磁场，然后同时比较三类量：离散相位、由相邻位置差构造的速度 proxy、以及由该 proxy 得到的 gyroradius。这样的比较能够检查“公式中的半步速度是否与实际位置更新相容”，也能把 Higuera--Cary 的相位行为与 Boris/Vay 分开观察；它不能证明输出文件中存在可直接读取的 half-step 速度，更不能代替论文图形的逐点复现。读者应把 Appendix B 当成一个关于时间层的判别题，而不是把任何圆形轨道都视作该附录结论的证明。
 
@@ -445,7 +446,7 @@ $$
 u_* = \frac{\mathbf{u}^-\cdot\boldsymbol{\beta}}{c},
 $$
 
-并通过平方根表达式得到新的 `gamma`，这里变量名 `gamma` 在这一行之后实际保存的是 \(\gamma^{-1}\)。`tx,ty,tz` 是 \(\boldsymbol{\beta}/\gamma\)，`s=1/(1+t^2)`。`u_plus` 的形式像 Boris 的磁旋转，但最后不是单纯加第二个电半步，而是
+并通过平方根表达式得到新的 `gamma`，这里变量名 `gamma` 在这一行之后实际保存的是 \(\gamma^{-1}\)。`tx,ty,tz` 是 \(\boldsymbol{\beta}/\gamma\)，\(s=1/(1+t^2)\)。`u_plus` 的形式像 Boris 的磁旋转，但最后不是单纯加第二个电半步，而是
 
 $$
 \mathbf{u}^{n+1/2}
@@ -459,7 +460,7 @@ $$
 
 把这段 kernel 放回 Higuera-Cary 2017 原文，WarpX 里这条算法线的真实边界会更清楚。那篇论文并不是在 `Vay 2008` 的 boosted-frame cancellation 问题上继续竞争，而是把 Boris、Vay 和新方法放到三个并列判据下比较：`E=0` 时的能量守恒、crossed `E/B` 场下正确的 \(\mathbf E\times\mathbf B\) drift、以及 phase-space volume preservation。作者的核心判断是：Boris 保住 volume 但 drift 不对；Vay 保住 drift 但不 volume-preserving；Higuera-Cary 则是三者中唯一同时保住 volume 与 \(\mathbf E\times\mathbf B\) drift 的二阶 relativistic momentum integrator。因此，`UpdateMomentumHigueraCary.H` 最准确的历史定位不是“又一个 Boris-like 变体”，而是：在 Boris 的 rotation skeleton 上，把 centered average 和 \(\gamma\) 的 prescription 改写成一条双结构保持路线。
 
-Higuera-Cary 2017 的 `III-VI` 节还把这个判断压成了 WarpX 读者真正需要的两层证据。第一层是实现证据：新方法表面上仍是 implicit centered scheme，但最终可以像 Boris/Vay 一样显式实现，真正的实现分叉点几乎全部浓缩在 \(\gamma_{new}\) 的求法上。这正好解释了为什么 WarpX 源码里 `UpdateMomentumHigueraCary.H` 的外形与 Boris 非常接近，却在 `sigma`、`ust` 和新的 relativistic factor 路径上分叉。第二层是数值/几何证据：作者用 Poincare surface of section 而不是普通能量曲线来比较 practical timestep 下的轨道拓扑。小时间步时三种方法都能给出嵌套曲线；但在更接近实际模拟的 `\Delta t=1/10` 下，Vay 会出现 resonance island 和不同轨道 section 交叉，而 Boris 与 Higuera-Cary 仍保持正确的 phase-space topology。对本章来说，这意味着 Higuera-Cary 的价值判断标准不是 `Vay 2008` 那种 frame-change consistency，而是 geometric/topological preservation at practical timestep。
+Higuera-Cary 2017 的 `III-VI` 节还把这个判断压成了 WarpX 读者真正需要的两层证据。第一层是实现证据：新方法表面上仍是 implicit centered scheme，但最终可以像 Boris/Vay 一样显式实现，真正的实现分叉点几乎全部浓缩在 \(\gamma_{new}\) 的求法上。这正好解释了为什么 WarpX 源码里 `UpdateMomentumHigueraCary.H` 的外形与 Boris 非常接近，却在 `sigma`、`ust` 和新的 relativistic factor 路径上分叉。第二层是数值/几何证据：作者用 Poincare surface of section 而不是普通能量曲线来比较 practical timestep 下的轨道拓扑。小时间步时三种方法都能给出嵌套曲线；但在更接近实际模拟的 \(\Delta t=1/10\) 下，Vay 会出现 resonance island 和不同轨道 section 交叉，而 Boris 与 Higuera-Cary 仍保持正确的 phase-space topology。对本章来说，这意味着 Higuera-Cary 的价值判断标准不是 `Vay 2008` 那种 frame-change consistency，而是 geometric/topological preservation at practical timestep。
 
 如果进一步把论文公式和 WarpX kernel 逐式对位，这条关系会更直观。Higuera-Cary 论文先定义
 
@@ -483,17 +484,17 @@ $$
 \right),
 $$
 
-WarpX 则不先存 \(\gamma_{new}^2\)，而是直接用 `sigma = gamma - betam`、`ust = (u_- \cdot beta)/c` 和下一行的平方根公式，把变量 `gamma` 改写成 \(\gamma_{new}^{-1}\)。这一点很关键：代码里的 `gamma` 在函数中段被重载了，前半段是 \(\gamma_-^2\)，后半段则变成 rotation 要消费的 inverse relativistic factor。之后 `tx/ty/tz`、`s`、`umt`、`upx/upy/upz` 这条链，就是论文 Boris-like rotation equation
+WarpX 则不先存 \(\gamma_{new}^2\)，而是直接用 `sigma = gamma - betam`、\(u_*=(\mathbf u_-\cdot\boldsymbol\beta)/c\) 和下一行的平方根公式，把变量 `gamma` 改写成 \(\gamma_{new}^{-1}\)。这一点很关键：代码里的 `gamma` 在函数中段被重载了，前半段是 \(\gamma_-^2\)，后半段则变成 rotation 要消费的 inverse relativistic factor。之后 `tx/ty/tz`、`s`、`umt`、`upx/upy/upz` 这条链，就是论文 Boris-like rotation equation
 
 $$
 \vec u_+ - \vec u_- = (\vec u_+ + \vec u_-) \times \frac{\vec\beta}{\gamma_{new}}
 $$
 
-的直接实现。因此，`UpdateMomentumHigueraCary.H` 最本质的实现差异可以压成一句话：它在 Boris 的 rotation skeleton 上，仅通过改写 \(\gamma\) prescription，就把 `volume-preserving` 与 `\mathbf E\times\mathbf B` drift preservation 这两条性质同时保住了。
+的直接实现。因此，`UpdateMomentumHigueraCary.H` 最本质的实现差异可以压成一句话：它在 Boris 的 rotation skeleton 上，仅通过改写 \(\gamma\) prescription，就把 `volume-preserving` 与 \(\mathbf E\times\mathbf B\) drift preservation 这两条性质同时保住了。
 
 论文第 V 节的 Jacobian 证明也让这一点不再停留在口头层。作者证明新 integrator 的前后半步 Jacobian determinant 互为倒数，所以一步更新的总体 Jacobian 恰好等于 `1`；而 Vay 的 Jacobian 一般写成 `J(x_i,u_i)/J(x_i,u_f)` 这样的比值，通常不会化成 `1`。这正是后面数值例子里 Vay 在 practical timestep 下出现 resonance island 和轨道交叉，而 Higuera-Cary 仍保持 phase-space topology 的几何根源。
 
-如果把这段证明再往下压一层，最关键的中间对象其实是 `I-\Omega`。Higuera-Cary 论文先把后半步对 \(\bar u_{new}\) 的 Jacobian 写成 “Boris-like rotation 主干 `I-\Omega` + 一个 rank-one correction”，其中 \(\Omega\cdot V=(\beta\times V)/\gamma_{new}\)。这一步意味着作者不是直接对整个复杂映射硬算 determinant，而是先把旋转骨架和 relativistic correction 拆开。随后利用 determinant lemma，把后半步体积变化写成
+如果把这段证明再往下压一层，最关键的中间对象其实是 \(I-\Omega\)。Higuera-Cary 论文先把后半步对 \(\bar u_{new}\) 的 Jacobian 写成 “Boris-like rotation 主干 \(I-\Omega\) + 一个 rank-one correction”，其中 \(\Omega\cdot V=(\beta\times V)/\gamma_{new}\)。这一步意味着作者不是直接对整个复杂映射硬算 determinant，而是先把旋转骨架和 relativistic correction 拆开。随后利用 determinant lemma，把后半步体积变化写成
 
 $$
 J_{f,new}=\det(I-\Omega)\times(\text{scalar correction}),
@@ -507,7 +508,7 @@ $$
 
 前半步可得同一形式的 determinant，因此真正的 volume-preserving 不是“每个子步都单独等于 1”，而是前后半步 Jacobian determinant 互为逆，整步更新的 Jacobian 才严格等于 `1`。这一点很重要，因为它把 `UpdateMomentumHigueraCary.H` 的稳定性来源从经验判断提升成了明确的 Jacobian 结构断言。
 
-这里还要额外提醒一个记号陷阱：论文里 `J_{f,new}` 和 `J_{i,new}` 最后都被压成相同的显式标量函数，但这不表示它们是“同一个 Jacobian”。它们对应的是后半步和前半步那两条相反方向映射上的 determinant，因此恰恰是因为它们处在 reciprocal 位置，整步 Jacobian 才会严格回到 `1`。同样，论文对 Vay 的结论也不是“任何情况下都会立刻出现 attractor/repeller”。作者保留了一个例外边界：若磁场在时空上恒定，`J(x_i,u_i)/J(x_i,u_f)` 这串比值会 telescoping，再结合 `J(x,u)` 在有界区域里的有界性，不能直接推出灾难性体积失真。真正的问题是它缺少一般性的 volume-preservation，因此在 practical timestep 和更复杂轨道拓扑下更容易暴露出 resonance-island 与 trajectory-crossing 这类非物理后果。
+这里还要额外提醒一个记号陷阱：论文里 \(J_{f,new}\) 和 \(J_{i,new}\) 最后都被压成相同的显式标量函数，但这不表示它们是“同一个 Jacobian”。它们对应的是后半步和前半步那两条相反方向映射上的 determinant，因此恰恰是因为它们处在 reciprocal 位置，整步 Jacobian 才会严格回到 `1`。同样，论文对 Vay 的结论也不是“任何情况下都会立刻出现 attractor/repeller”。作者保留了一个例外边界：若磁场在时空上恒定，`J(x_i,u_i)/J(x_i,u_f)` 这串比值会 telescoping，再结合 `J(x,u)` 在有界区域里的有界性，不能直接推出灾难性体积失真。真正的问题是它缺少一般性的 volume-preservation，因此在 practical timestep 和更复杂轨道拓扑下更容易暴露出 resonance-island 与 trajectory-crossing 这类非物理后果。
 
 这组 regression 和文献的配对仍需保守表述。`Examples/Tests/particle_pusher` 提供 force-free Higuera-Cary 强断言；Poincare 合同则验证 `x=0,p_x>0` 截面、`I_y` 顺序和解析 quartic reference。topology classifier 同时保留时间顺序和相空间中心角顺序；在 32³、2201-frame 长轨道上，后三种 pusher 的角排序候选均无自交或轨道间交叉，说明原先时间折线的交叉计数是连接顺序伪影，而不是物理 resonance-island 证据。14-species dense family 与 64³ `p_y=1.6/1.8` control 进一步显示 Vay 窗口漂移约 `6.5e-2`，控制组约 `1e-3`，但该 resonance-sensitive screen 仍不是 two-fold island 或 trajectory-crossing topology proof。
 
@@ -521,8 +522,9 @@ $$
 它选择 current 字段名后调用 `mypc->Evolve(...)`。
 
 `mypc` 是 `MultiParticleContainer`。
-源码文件：`Source/Particles/MultiParticleContainer.cpp`
-函数：`MultiParticleContainer::Evolve()`
+
+- 源码文件：`Source/Particles/MultiParticleContainer.cpp`
+- 函数：`MultiParticleContainer::Evolve()`
 
 | 调度阶段 | 操作 |
 |---|---|
@@ -574,15 +576,30 @@ MultiParticleContainer
 2. 构造期或模块初始化期动态加入的持久物理状态：如 `opticalDepthQSR`、`opticalDepthBW`、`prev_*`、`ionizationLevel`；
 3. 更晚才按算法路径加入的临时缓存属性。
 
-最典型的临时属性来自 implicit solver。`Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp` 中的 `ImplicitSolver::CreateParticleAttributes()` 会统一给粒子容器补加：
+最典型的临时属性来自 implicit solver：
+
+- 函数：`ImplicitSolver::CreateParticleAttributes()`
+- 源码：`Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp`
+
+它会统一给粒子容器补加：
 
 - `x_n/y_n/z_n`
 - `ux_n/uy_n/uz_n`
 - 如果启用 particle suborbits，再加 `nsuborbits`
 
-而且都用 `comm = 0` 注册，所以这些量既不参与通信，也不写入 checkpoint。随后 `Source/FieldSolver/ImplicitSolvers/WarpXImplicitOps.cpp` 的 step-start 初始化会把当前位置和动量快照写入 `x_n` 和 `ux_n` 这组缓存，并把 `nsuborbits` 先置成 1。它们的角色不是长期物理属性，而是 implicit 时间推进器本步用的局部状态。
+而且都用 `comm = 0` 注册，所以这些量既不参与通信，也不写入 checkpoint。step-start 初始化的来源为：
 
-`WarpXParticleContainer::AddNParticles()` 进一步说明了这套系统怎样落地。`Source/Particles/WarpXParticleContainer.cpp` 先写 builtin `x/y/z/w/ux/uy/uz`，再写调用者显式提供的 runtime real/int，最后调用 `DefaultInitializeRuntimeAttributes()` 给剩余 runtime attrs 自动补默认值。于是：
+- 源码：`Source/FieldSolver/ImplicitSolvers/WarpXImplicitOps.cpp`
+- 动作：把当前位置和动量快照写入 `x_n` 和 `ux_n`，并把 `nsuborbits` 先置成 1。
+
+它们的角色不是长期物理属性，而是 implicit 时间推进器本步用的局部状态。
+
+`WarpXParticleContainer::AddNParticles()` 进一步说明了这套系统怎样落地。
+
+- 源码：`Source/Particles/WarpXParticleContainer.cpp`
+- 顺序：先写 builtin `x/y/z/w/ux/uy/uz`，再写调用者显式提供的 runtime real/int，最后调用 `DefaultInitializeRuntimeAttributes()` 给剩余 runtime attrs 自动补默认值。
+
+于是：
 
 - `opticalDepthQSR/BW` 可以由 QED engine 随机初始化；
 - `ionizationLevel` 可以统一设成 `ionization_initial_level`；
@@ -711,163 +728,45 @@ $$
 \sum_{\mathbf{i}} \mathbf{B}_{\mathbf{i}} S_{\mathbf{i}}(\mathbf{x}_p).
 $$
 
-但 WarpX 不能只用一个标量形函数，因为 \(E_x,E_y,E_z,B_x,B_y,B_z\) 在交错网格上的中心位置不同；同时 Galerkin 插值会让某些分量使用低一阶形函数。运行时入口在 `Source/Particles/Gather/FieldGather.H`：
+但 WarpX 不能只用一个标量形函数，因为 \(E_x,E_y,E_z,B_x,B_y,B_z\) 在交错网格上的中心位置不同；同时 Galerkin 插值会让某些分量使用低一阶形函数。运行时入口在 `Source/Particles/Gather/FieldGather.H`。其完整函数签名包含粒子坐标、六个输出分量、六个场数组、六个 `IndexType` 和几何元数据；对理解分派而言，下面是等价的阅读伪代码：
 
 ```cpp
-void doGatherShapeN (const amrex::ParticleReal xp,
-                     const amrex::ParticleReal yp,
-                     const amrex::ParticleReal zp,
-                     amrex::ParticleReal& Exp,
-                     amrex::ParticleReal& Eyp,
-                     amrex::ParticleReal& Ezp,
-                     amrex::ParticleReal& Bxp,
-                     amrex::ParticleReal& Byp,
-                     amrex::ParticleReal& Bzp,
-                     amrex::Array4<amrex::Real const> const& ex_arr,
-                     amrex::Array4<amrex::Real const> const& ey_arr,
-                     amrex::Array4<amrex::Real const> const& ez_arr,
-                     amrex::Array4<amrex::Real const> const& bx_arr,
-                     amrex::Array4<amrex::Real const> const& by_arr,
-                     amrex::Array4<amrex::Real const> const& bz_arr,
-                     const amrex::IndexType ex_type,
-                     const amrex::IndexType ey_type,
-                     const amrex::IndexType ez_type,
-                     const amrex::IndexType bx_type,
-                     const amrex::IndexType by_type,
-                     const amrex::IndexType bz_type,
-                     const amrex::XDim3 & dinv,
-                     const amrex::XDim3 & xyzmin,
-                     const amrex::Dim3& lo,
-                     const int n_rz_azimuthal_modes,
-                     const int nox,
-                     const bool galerkin_interpolation)
-{
-    if (galerkin_interpolation) {
-        if (nox == 1) {
-            doGatherShapeN<1,1>(xp, yp, zp, Exp, Eyp, Ezp, Bxp, Byp, Bzp,
-                                ex_arr, ey_arr, ez_arr, bx_arr, by_arr, bz_arr,
-                                ex_type, ey_type, ez_type, bx_type, by_type, bz_type,
-                                dinv, xyzmin, lo, n_rz_azimuthal_modes);
-        } else if (nox == 2) {
-            doGatherShapeN<2,1>(xp, yp, zp, Exp, Eyp, Ezp, Bxp, Byp, Bzp,
-                                ex_arr, ey_arr, ez_arr, bx_arr, by_arr, bz_arr,
-                                ex_type, ey_type, ez_type, bx_type, by_type, bz_type,
-                                dinv, xyzmin, lo, n_rz_azimuthal_modes);
-        } else if (nox == 3) {
-            doGatherShapeN<3,1>(xp, yp, zp, Exp, Eyp, Ezp, Bxp, Byp, Bzp,
-                                ex_arr, ey_arr, ez_arr, bx_arr, by_arr, bz_arr,
-                                ex_type, ey_type, ez_type, bx_type, by_type, bz_type,
-                                dinv, xyzmin, lo, n_rz_azimuthal_modes);
-        } else if (nox == 4) {
-            doGatherShapeN<4,1>(xp, yp, zp, Exp, Eyp, Ezp, Bxp, Byp, Bzp,
-                                ex_arr, ey_arr, ez_arr, bx_arr, by_arr, bz_arr,
-                                ex_type, ey_type, ez_type, bx_type, by_type, bz_type,
-                                dinv, xyzmin, lo, n_rz_azimuthal_modes);
-        }
-    } else {
-        if (nox == 1) {
-            doGatherShapeN<1,0>(xp, yp, zp, Exp, Eyp, Ezp, Bxp, Byp, Bzp,
-                                ex_arr, ey_arr, ez_arr, bx_arr, by_arr, bz_arr,
-                                ex_type, ey_type, ez_type, bx_type, by_type, bz_type,
-                                dinv, xyzmin, lo, n_rz_azimuthal_modes);
-        } else if (nox == 2) {
-            doGatherShapeN<2,0>(xp, yp, zp, Exp, Eyp, Ezp, Bxp, Byp, Bzp,
-                                ex_arr, ey_arr, ez_arr, bx_arr, by_arr, bz_arr,
-                                ex_type, ey_type, ez_type, bx_type, by_type, bz_type,
-                                dinv, xyzmin, lo, n_rz_azimuthal_modes);
-        } else if (nox == 3) {
-            doGatherShapeN<3,0>(xp, yp, zp, Exp, Eyp, Ezp, Bxp, Byp, Bzp,
-                                ex_arr, ey_arr, ez_arr, bx_arr, by_arr, bz_arr,
-                                ex_type, ey_type, ez_type, bx_type, by_type, bz_type,
-                                dinv, xyzmin, lo, n_rz_azimuthal_modes);
-        } else if (nox == 4) {
-            doGatherShapeN<4,0>(xp, yp, zp, Exp, Eyp, Ezp, Bxp, Byp, Bzp,
-                                ex_arr, ey_arr, ez_arr, bx_arr, by_arr, bz_arr,
-                                ex_type, ey_type, ez_type, bx_type, by_type, bz_type,
-                                dinv, xyzmin, lo, n_rz_azimuthal_modes);
-        }
-    }
+// args 表示完整签名中的坐标、场数组、centering 与几何元数据。
+if (galerkin_interpolation) {
+    if (nox == 1) doGatherShapeN<1,1>(args);
+    if (nox == 2) doGatherShapeN<2,1>(args);
+    if (nox == 3) doGatherShapeN<3,1>(args);
+    if (nox == 4) doGatherShapeN<4,1>(args);
+} else {
+    if (nox == 1) doGatherShapeN<1,0>(args);
+    if (nox == 2) doGatherShapeN<2,0>(args);
+    if (nox == 3) doGatherShapeN<3,0>(args);
+    if (nox == 4) doGatherShapeN<4,0>(args);
 }
 ```
 
 这里的 `nox` 不是运行时循环里的 shape 阶数变量，而是被转成模板参数 `depos_order`。这样 GPU kernel 内部可以用 `if constexpr` 展开阶数，避免每个粒子再做阶数分支。`galerkin_interpolation` 同理变成第二个模板参数，后面直接影响数组长度 `depos_order + 1 - galerkin_interpolation`。
 
-模板主体开头在 `Source/Particles/Gather/FieldGather.H`。下面只列 x 方向；y/z 方向同构，但按各自场分量的 staggering 选择 node 或 cell：
+模板主体开头也在 `Source/Particles/Gather/FieldGather.H`。下面是 x 方向有效计算的阅读伪代码；完整模板签名以及与 x 方向同构的 y/z 参数从略。`NODE`/`CELL` 的判断仍是源码中的判断：
 
 ```cpp
-template <int depos_order, int galerkin_interpolation>
-AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE
-void doGatherShapeN ([[maybe_unused]] const amrex::ParticleReal xp,
-                     [[maybe_unused]] const amrex::ParticleReal yp,
-                     [[maybe_unused]] const amrex::ParticleReal zp,
-                     amrex::ParticleReal& Exp,
-                     amrex::ParticleReal& Eyp,
-                     amrex::ParticleReal& Ezp,
-                     amrex::ParticleReal& Bxp,
-                     amrex::ParticleReal& Byp,
-                     amrex::ParticleReal& Bzp,
-                     amrex::Array4<amrex::Real const> const& ex_arr,
-                     amrex::Array4<amrex::Real const> const& ey_arr,
-                     amrex::Array4<amrex::Real const> const& ez_arr,
-                     amrex::Array4<amrex::Real const> const& bx_arr,
-                     amrex::Array4<amrex::Real const> const& by_arr,
-                     amrex::Array4<amrex::Real const> const& bz_arr,
-                     const amrex::IndexType ex_type,
-                     const amrex::IndexType ey_type,
-                     const amrex::IndexType ez_type,
-                     const amrex::IndexType bx_type,
-                     const amrex::IndexType by_type,
-                     const amrex::IndexType bz_type,
-                     const amrex::XDim3 & dinv,
-                     const amrex::XDim3 & xyzmin,
-                     const amrex::Dim3& lo,
-                     [[maybe_unused]] const int n_rz_azimuthal_modes)
-{
-    using namespace amrex;
+constexpr int NODE = amrex::IndexType::NODE;
+constexpr int CELL = amrex::IndexType::CELL;
+Compute_shape_factor<depos_order> const shape;
+Compute_shape_factor<depos_order - galerkin_interpolation> const gshape;
+const amrex::Real x = (xp - xyzmin.x)*dinv.x;
 
-    constexpr int NODE = amrex::IndexType::NODE;
-    constexpr int CELL = amrex::IndexType::CELL;
+if (component_needs_node) j_node = shape(sx_node, x);
+if (component_needs_cell) j_cell = shape(sx_cell, x - 0.5_rt);
+if (component_needs_node_galerkin) j_node_v = gshape(sx_node_galerkin, x);
+if (component_needs_cell_galerkin) j_cell_v =
+    gshape(sx_cell_galerkin, x - 0.5_rt);
 
-    Compute_shape_factor< depos_order > const compute_shape_factor;
-    Compute_shape_factor<depos_order - galerkin_interpolation > const compute_shape_factor_galerkin;
-
-#if !defined(WARPX_DIM_1D_Z)
-    const amrex::Real x = (xp - xyzmin.x)*dinv.x;
-
-    amrex::Real sx_node[depos_order + 1] = {0._rt};
-    amrex::Real sx_cell[depos_order + 1] = {0._rt};
-    amrex::Real sx_node_galerkin[depos_order + 1 - galerkin_interpolation] = {0._rt};
-    amrex::Real sx_cell_galerkin[depos_order + 1 - galerkin_interpolation] = {0._rt};
-
-    int j_node = 0;
-    int j_cell = 0;
-    int j_node_v = 0;
-    int j_cell_v = 0;
-    if ((ey_type[0] == NODE) || (ez_type[0] == NODE) || (bx_type[0] == NODE)) {
-        j_node = compute_shape_factor(sx_node, x);
-    }
-    if ((ey_type[0] == CELL) || (ez_type[0] == CELL) || (bx_type[0] == CELL)) {
-        j_cell = compute_shape_factor(sx_cell, x - 0.5_rt);
-    }
-    if ((ex_type[0] == NODE) || (by_type[0] == NODE) || (bz_type[0] == NODE)) {
-        j_node_v = compute_shape_factor_galerkin(sx_node_galerkin, x);
-    }
-    if ((ex_type[0] == CELL) || (by_type[0] == CELL) || (bz_type[0] == CELL)) {
-        j_cell_v = compute_shape_factor_galerkin(sx_cell_galerkin, x - 0.5_rt);
-    }
-    const amrex::Real (&sx_ex)[depos_order + 1 - galerkin_interpolation] = ((ex_type[0] == NODE) ? sx_node_galerkin : sx_cell_galerkin);
-    const amrex::Real (&sx_ey)[depos_order + 1             ] = ((ey_type[0] == NODE) ? sx_node   : sx_cell  );
-    const amrex::Real (&sx_ez)[depos_order + 1             ] = ((ez_type[0] == NODE) ? sx_node   : sx_cell  );
-    const amrex::Real (&sx_bx)[depos_order + 1             ] = ((bx_type[0] == NODE) ? sx_node   : sx_cell  );
-    const amrex::Real (&sx_by)[depos_order + 1 - galerkin_interpolation] = ((by_type[0] == NODE) ? sx_node_galerkin : sx_cell_galerkin);
-    const amrex::Real (&sx_bz)[depos_order + 1 - galerkin_interpolation] = ((bz_type[0] == NODE) ? sx_node_galerkin : sx_cell_galerkin);
-    int const j_ex = ((ex_type[0] == NODE) ? j_node_v : j_cell_v);
-    int const j_ey = ((ey_type[0] == NODE) ? j_node   : j_cell  );
-    int const j_ez = ((ez_type[0] == NODE) ? j_node   : j_cell  );
-    int const j_bx = ((bx_type[0] == NODE) ? j_node   : j_cell  );
-    int const j_by = ((by_type[0] == NODE) ? j_node_v : j_cell_v);
-    int const j_bz = ((bz_type[0] == NODE) ? j_node_v : j_cell_v);
-#endif
+// ex/by/bz 选择 Galerkin 权重；其余分量选择常规权重。
+const auto& sx_ex = (ex_type[0] == NODE) ? sx_node_galerkin : sx_cell_galerkin;
+const auto& sx_ey = (ey_type[0] == NODE) ? sx_node : sx_cell;
+const int j_ex = (ex_type[0] == NODE) ? j_node_v : j_cell_v;
+const int j_ey = (ey_type[0] == NODE) ? j_node : j_cell;
 ```
 
 这段源码有三个关键点。
@@ -1023,7 +922,7 @@ $$
 \mathbf F_i=-\frac{\partial W_E}{\partial \mathbf x_i},
 $$
 
-也就是不再先“在网格上差分 `\phi` 得 `E`、再把 `E` gather 给粒子”，而是要求粒子受力、离散 Poisson 解和场能量账本共享同一套 reciprocity 合同。对 WarpX 来说，这当然不意味着当前 `FieldGather.H` 里就直接复现了 Birdsall 的整个 energy-conserving electrostatic 变分算法；更准确的说法是，官方文档和 regression 里保留下来的 `energy-conserving gather` / `momentum-conserving gather` 命名，只有放回这条更老的理论分叉里才不会被误解成“两个 wrapper 里哪一个 stencil 更光滑”。
+也就是不再先“在网格上差分 \(\phi\) 得 `E`、再把 `E` gather 给粒子”，而是要求粒子受力、离散 Poisson 解和场能量账本共享同一套 reciprocity 合同。对 WarpX 来说，这当然不意味着当前 `FieldGather.H` 里就直接复现了 Birdsall 的整个 energy-conserving electrostatic 变分算法；更准确的说法是，官方文档和 regression 里保留下来的 `energy-conserving gather` / `momentum-conserving gather` 命名，只有放回这条更老的理论分叉里才不会被误解成“两个 wrapper 里哪一个 stencil 更光滑”。
 
 因此，本章后面凡是提到 gather family、field centering、collocated grid、Langmuir 守恒基线时，都应该记住自己实际上在比较三层东西：
 
@@ -2504,9 +2403,9 @@ $$
      \phi(r)=A+B\log r,\qquad E_r(r)=-B/r
      $$
 3. RZ `analysis_rz_mr.py`
-   - 把同一 `\phi/Er` 对照扩展到每个 refinement level
+   - 把同一 \(\phi/E_r\) 对照扩展到每个 refinement level
 
-只有 `inputs_test_3d_electrostatic_sphere_eb_mixed_bc` 没有独立 analysis，因此它只提供 mixed-BC 配置的 checksum 基线。其余例子分别把导体总电荷、覆盖区域、RZ 解析势/径向场和各 refinement level 的误差作为观察量；不能把通过的 checksum 当作解析 `phi/Er` 比较，也不能把一个对称球的结果外推为任意电极几何。
+只有 `inputs_test_3d_electrostatic_sphere_eb_mixed_bc` 没有独立 analysis，因此它只提供 mixed-BC 配置的 checksum 基线。其余例子分别把导体总电荷、覆盖区域、RZ 解析势/径向场和各 refinement level 的误差作为观察量；不能把通过的 checksum 当作解析 \(\phi/E_r\) 比较，也不能把一个对称球的结果外推为任意电极几何。
 
 综上，embedded-boundary 验证至少应同时问四个问题：几何是否表示正确，场是否满足已知解析解，吸收是否留下数值电荷，Python 或 writer 是否导出了预期的几何/粒子数据。不同问题需要不同的输出量，任何一个单独通过都不等于整个 EB 物理闭合。
 
@@ -2563,7 +2462,10 @@ InitQED();
 
 这里三步分别对应：
 
-1. 把 `qed_quantum_sync_phot_product_species`、`qed_breit_wheeler_ele_product_species`、`qed_breit_wheeler_pos_product_species` 从字符串映射成容器索引；
+1. 把三个 product-species 参数从字符串映射成容器索引：
+   - `qed_quantum_sync_phot_product_species`
+   - `qed_breit_wheeler_ele_product_species`
+   - `qed_breit_wheeler_pos_product_species`
 2. 检查 product species 类型是否正确；
 3. 创建 `QuantumSynchrotronEngine` / `BreitWheelerEngine` 并按 `qed_qs.*`、`qed_bw.*` 初始化 lookup tables。
 
@@ -2900,18 +2802,17 @@ optional GenerateVirtualPhotons()
 
 ## 4.15 本章结论
 
-粒子推进器不等于孤立的 Boris 公式。一次 WarpX 粒子更新同时连接时间层、场插值、动量更新、位置更新、沉积、边界和多物理创建。读者面对异常轨道、错误粒子数或不守恒的场时，可以按下列顺序缩小问题：
+粒子推进器不等于孤立的 Boris 公式。一次 WarpX 粒子更新连接时间层、场插值、动量/位置更新、沉积、边界和多物理创建。面对异常轨道、错误粒子数或不守恒的场，可按三步缩小问题：
 
-1. **先确定观察量和时间层。**位置、机械动量、`rho`、current、scraped buffer 和 reduced diagnostic 不一定在同一时刻；先写清比较的是单粒子轨道、粒子数、场残余还是守恒量。
-2. **再追 tile 的带电粒子主链。**`PushParticlesandDeposit()` 经 `MultiParticleContainer::Evolve()` 进入 `PhysicalParticleContainer::Evolve()`；`rho` component 0 保存旧时间层，`doGatherShapeN()` 取得粒子场，`doParticleMomentumPush()` 选择 Boris、Vay、Higuera--Cary 或 RR，`UpdatePosition()` 用半步速度更新位置，随后沉积 current 与下一时间层的 `rho` component 1。
-3. **把边界与 AMR 当成独立观察问题。**粒子消失、scraped 接触几何、PML 残余场和 coarse/fine 组合 checksum 分别需要不同输出；其中只有解析基准或守恒量比较能支持更强的物理结论。
-4. **最后选择正确的产生模型。**强场 QED 沿 `chi -> optical depth -> lookup table -> source/product` 路线读取；virtual photons、linear Breit-Wheeler 与 linear Compton 则沿 cell-local `BinaryCollision` 路线读取。两者不能以相同参数或相同守恒检查互相替代。
+1. **先固定观察量和时间层。** 位置、机械动量、`rho`、current、scraped buffer 和 reduced diagnostic 不一定在同一时刻；先写清比较对象。
+2. **再追带电粒子主链。** `PushParticlesandDeposit()` 经容器 tile loop 依次组织旧 `rho`、gather、Boris/Vay/Higuera--Cary/RR、`UpdatePosition()`、current 和新 `rho`。
+3. **最后拆开独立分支。** particle boundary、PML、AMR 与产生模型需要各自的 observable；强场 QED 沿 `chi -> optical depth -> lookup table -> source/product`，virtual-photon/linear 碰撞沿 `BinaryCollision`，两者不能互换参数或守恒检查。
 
-这条路线也给出了后续章节的接口：第 5 章解释 `DepositCurrent/DepositCharge()` 的守恒沉积，第 6 章解释场如何推进，第 7 章解释 PML、AMR 与边界，第 8 章说明如何把上述观察量写成可判断的 diagnostics。
+这也给出了后续章节接口：第 5 章解释守恒沉积，第 6 章解释场推进，第 7 章解释 PML/AMR/边界，第 8 章将上述量写成可判断的 diagnostics。
 
 ## 4.16 练习与复现实验
 
-1. **pusher 对照题**：比较 Boris、Vay 与 Higuera-Cary 的同类案例结果，解释为什么 Boris 的大位移不能简单归结为“代码运行失败”，而应联系 force-free relativistic pusher 的适用条件判断。
-2. **源码定位题**：从 `PhysicalParticleContainer::Evolve()` 定位 `doGatherShapeN()`、momentum push、`UpdatePosition` 和 current/charge deposition，画出一次粒子 tile loop 的四个时间层节点。
-3. **最小复现实验**：运行官方 `particle_pusher` 或 `photon_pusher` analysis，并分别记录位置、动量和是否发生电流沉积的观测量；说明带电 pusher 的位置误差和无质量 photon 的位置/动量误差为何不能共用同一容差。
-4. **QED 路线题**：选择 `Examples/Tests/qed/` 的 quantum-synchrotron 或 Breit-Wheeler case，列出 source、product、`opticalDepthQSR/BW`、主观察量和一个不能由该 case 证明的结论；再说明为什么同一张表不能用 `linear_breit_wheeler` 的碰撞参数替代。
+1. **pusher 对照题**：比较 Boris、Vay 与 Higuera-Cary，说明 Boris 的大位移为何需要回到 force-free relativistic pusher 的适用条件，而非简单归为“代码运行失败”。
+2. **源码定位题**：从 `PhysicalParticleContainer::Evolve()` 追到 gather、momentum push、`UpdatePosition` 和 current/charge deposition，画出 tile loop 的四个时间层节点。
+3. **最小复现实验**：运行 `particle_pusher` 或 `photon_pusher` analysis，记录位置、动量和电流沉积；解释带电 pusher 与无质量 photon 为何不能共用位置/动量容差。
+4. **QED 路线题**：选一个 quantum-synchrotron 或 Breit-Wheeler case，列出 source、product、`opticalDepthQSR/BW`、主观察量和一个不可外推结论，并说明它不能替代 `linear_breit_wheeler` 的碰撞参数。

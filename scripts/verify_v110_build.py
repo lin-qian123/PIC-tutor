@@ -21,8 +21,8 @@ PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, the Chapter 3
 # cross-chapter state handoff, and the Chapter 6/7/9 reading routes yield
-# 267 pages.
-EXPECTED_PDF_PAGES = 267
+# 265 pages.
+EXPECTED_PDF_PAGES = 265
 
 
 def image_links(text: str) -> list[str]:
@@ -662,6 +662,16 @@ def main() -> None:
                 "不能单独证明宏粒子 source、连续性或自洽场演化正确",
             )
         ) and not re.search(r"本地 checkout|原文精读|本书采用的实现", chapter_4),
+        "chapter_4_reader_extracts_are_declared": all(
+            marker in chapter_4
+            for marker in (
+                "为阅读重排的核心节选",
+                "为阅读压缩的核心节选",
+                "等价的阅读伪代码",
+                "x 方向有效计算的阅读伪代码",
+                "component_needs_node",
+            )
+        ) and "源码原文如下：" not in chapter_4,
         "chapter_4_multiphysics_state_reader_route": all(
             marker in chapter_4
             for marker in (

@@ -2,7 +2,9 @@
 
 ## 2026-07-31
 
-- [x] 完成第 3A 章的连续读者审阅：从 PDF 第 45 页连续读至第 74 页，核对 fresh/restart、level/field allocation、粒子注入、openPMD、projection cleaning、laser antenna/profile、初始化 regression、历史 ES1 映射与进入 pusher 的交接。修复 single-particle、prefix scan 和 openPMD 坐标的超宽源码片段，拆分长测试路径，并将四列历史映射表重排为两列，消除右侧截断与列间覆盖；构建验收新增 3A 源码续行、路径和映射表 PDF 标识检查。保持 267 页版式和第 3A 章完整收束。下一连续区间为第 4 章（PDF 第 75--118 页）；全书逐页通读、第三方材料许可和公开再分发仍未完成。
+- [x] 完成第 4 章的连续读者审阅：在当前 265 页 PDF 中从第 74 页连续读至第 119 页，核对 Lorentz 时间层、Boris/Vay/Higuera--Cary、容器层次、`PushPX()`、gather、RR/implicit/photon、ionization/collision、QED、结论与进入第 5 章的交接。将超宽 Boris/Vay 源码重排为明确的核心节选，把 gather 的完整签名和模板参数改为标明范围的阅读伪代码，拆分长 implicit-source 说明，并修复 Vay/Higuera-Cary/EB 段中的裸 LaTeX。构建验收新增第 4 章节选/伪代码声明检查；新页数为 265。下一连续区间为第 5 章（PDF 第 120 页起）；全书逐页通读、第三方材料许可和公开再分发仍未完成。
+
+- [x] 完成第 3A 章的连续读者审阅：从 PDF 第 45 页连续读至第 74 页，核对 fresh/restart、level/field allocation、粒子注入、openPMD、projection cleaning、laser antenna/profile、初始化 regression、历史 ES1 映射与进入 pusher 的交接。修复 single-particle、prefix scan 和 openPMD 坐标的超宽源码片段，拆分长测试路径，并将四列历史映射表重排为两列，消除右侧截断与列间覆盖；构建验收新增 3A 源码续行、路径和映射表 PDF 标识检查。保持当时 267 页版式和第 3A 章完整收束；后续已完成第 4 章连续审阅。全书逐页通读、第三方材料许可和公开再分发仍未完成。
 
 - [x] 完成第 3 章的连续读者审阅：从 PDF 第 29 页连续读至第 44 页，核对生命周期、构造/level 分配、初始化、步长、外层时间步、moving window、显式/AMR/JRhom/implicit 分派、Langmuir 闭环与跨章交接。修复 moving window 速度更新、FDTD 第二半步、subcycling restriction/第二半步、JRhom 沉积及 moving-window 字段清单的超宽截断；保持源码语义、267 页版式和第 3 章末完整收束。构建验收新增源码续行和 PDF 关键标识检查。下一连续区间为第 3A 章（PDF 第 45--74 页）；全书逐页通读、第三方材料许可和公开再分发仍未完成。
 

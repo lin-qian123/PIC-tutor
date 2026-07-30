@@ -17,20 +17,20 @@
   "scope": "automated structure and artifact consistency; not a substitute for human reading or redistribution approval",
   "heading_count": 332,
   "html_heading_count": 332,
-  "pdf_pages": 267,
+  "pdf_pages": 265,
   "table_issues": [],
   "artifacts": {
     "pic-tutor-v0.110.md": {
-      "bytes": 870568,
-      "sha256": "fe2e007cc6703e350603817bfd3bef5eebb7125fead6ba9ecce00c8bfd7918d7"
+      "bytes": 862445,
+      "sha256": "6e80db476c6b1ad81499ffafa99996ad6e1a48c369b18c6f2e2bf6e7ca803c53"
     },
     "pic-tutor-v0.110.html": {
-      "bytes": 5263550,
-      "sha256": "dadc9e0d94b72a79af26f133ab138e205f8a3a12e1dc0bda5f20c9d4aadff2a5"
+      "bytes": 5225852,
+      "sha256": "138ecb86b8daed7f7c921bc6705866e566db9067b49c4bd91c56d54db55ded9f"
     },
     "pic-tutor-v0.110.pdf": {
-      "bytes": 3017356,
-      "sha256": "d3b334ec656fb5f6e053c491382b1d84dc4a4aea332a90f604d24e0f0fa9309c"
+      "bytes": 3003860,
+      "sha256": "06be6cec730bedf2295258d6f4013178366c1c169b6956dc014569e0952ec943"
     }
   }
 }

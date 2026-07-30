@@ -21,8 +21,8 @@ PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, the Chapter 3
 # cross-chapter state handoff, and the Chapter 6/7/9 reading routes yield
-# 268 pages.
-EXPECTED_PDF_PAGES = 268
+# 269 pages.
+EXPECTED_PDF_PAGES = 269
 
 
 def image_links(text: str) -> list[str]:
@@ -281,6 +281,23 @@ def main() -> None:
                 "有独立 reference 的 observable",
             )
         ) and not chapter_3_stale_location_markers and not chapter_3_workspace_markers,
+        "chapter_1_2_model_to_loop_handoff": all(
+            marker in chapter_1
+            for marker in (
+                "跨章交接卡：从连续对象进入离散循环",
+                "第 1 章回答“哪些物理对象必须被表示”；第 2 章回答“这些对象在一个离散时间步的什么时刻交换”",
+                "一次 charge deposition 不能替代守恒的 current deposition 或 source synchronization",
+                "CFL 可通过不表示",
+            )
+        ) and all(
+            marker in chapter_2
+            for marker in (
+                "从第 1 章进入本章：先写状态，再读调用顺序",
+                r"当前粒子状态是 \(x^n,p^{n-1/2},w\)",
+                r"\(\omega_p\Delta t\)、\(\lambda_D/\Delta x\)、CFL 和统计粒子数",
+                "状态转换的实现，而不是可以脱离物理和时间层独立记忆的调用顺序",
+            )
+        ),
         "chapter_2_math_and_case_closure": all(
             marker in chapter_2
             for marker in (

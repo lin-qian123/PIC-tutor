@@ -167,7 +167,10 @@ bug，而是模型代价</a></li>
 <li><a href="#从连续模型到-pic-离散变量" id="toc-从连续模型到-pic-离散变量">1.11 从连续模型到 PIC
 离散变量</a></li>
 <li><a href="#这一章对后面源码章节的真正约束" id="toc-这一章对后面源码章节的真正约束">1.12
-这一章对后面源码章节的真正约束</a></li>
+这一章对后面源码章节的真正约束</a>
+<ul>
+<li><a href="#跨章交接卡从连续对象进入离散循环" id="toc-跨章交接卡从连续对象进入离散循环">跨章交接卡：从连续对象进入离散循环</a></li>
+</ul></li>
 <li><a href="#证据范围与继续阅读" id="toc-证据范围与继续阅读">1.13
 证据范围与继续阅读</a></li>
 <li><a href="#练习与源码定位" id="toc-练习与源码定位">1.14
@@ -176,6 +179,8 @@ bug，而是模型代价</a></li>
 <li><a href="#pic-总循环从-vlasov-maxwell-到离散时间推进" id="toc-pic-总循环从-vlasov-maxwell-到离散时间推进">2. PIC 总循环：从
 Vlasov-Maxwell 到离散时间推进</a>
 <ul>
+<li><a href="#从第-1-章进入本章先写状态再读调用顺序" id="toc-从第-1-章进入本章先写状态再读调用顺序">从第 1
+章进入本章：先写状态，再读调用顺序</a></li>
 <li><a href="#连续模型vlasov-maxwell-系统" id="toc-连续模型vlasov-maxwell-系统">2.1 连续模型：Vlasov-Maxwell
 系统</a></li>
 <li><a href="#宏粒子表示与形函数" id="toc-宏粒子表示与形函数">2.2
@@ -1458,6 +1463,61 @@ self-force 的？</li>
 <li><code>ImplicitSolver</code></li>
 </ul>
 <p>都会被读成“工程控制流”，而不是“连续模型的离散化实现”。</p>
+<h3 id="跨章交接卡从连续对象进入离散循环">跨章交接卡：从连续对象进入离散循环</h3>
+<p>第 1 章回答“哪些物理对象必须被表示”；第 2
+章回答“这些对象在一个离散时间步的什么时刻交换”。因此，进入第 2
+章前，不应只带着一张函数名清单，而应先写出下列状态账本：</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>连续问题</th>
+<th>必须保留的离散状态</th>
+<th>进入第 2 章后首先核对</th>
+<th>不能直接推出的结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分布函数 <span class="math inline">\(f_s\)</span> 怎样被近似</td>
+<td>宏粒子的 <span class="math inline">\(x_p\)</span>、<span class="math inline">\(p_p\)</span>、<span class="math inline">\(w_p\)</span> 与 shape</td>
+<td>2.2 中粒子样本如何 gather、deposit</td>
+<td>宏粒子数较多不自动保证相空间的每个细节都被分辨</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\rho\)</span> 与 <span class="math inline">\(\mathbf{J}\)</span> 怎样成为场的 source</td>
+<td>单时间层 <span class="math inline">\(\rho^n\)</span> 与跨轨迹的
+<span class="math inline">\(\mathbf{J}^{n+1/2}\)</span></td>
+<td>2.2–2.3 中连续性方程和 leapfrog 时间层</td>
+<td>一次 charge deposition 不能替代守恒的 current deposition 或 source
+synchronization</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\mathbf{E},\mathbf{B}\)</span>
+怎样作用于粒子又被 source 改写</td>
+<td>网格位置、时间层和场表示</td>
+<td>2.3–2.5 中交错 FDTD 或谱空间推进</td>
+<td>“有 Maxwell 方程”不说明某个 stencil、边界或 solver
+组合具有可接受色散</td>
+</tr>
+<tr>
+<td>哪些尺度必须由网格和步长承担</td>
+<td><span class="math inline">\(\omega_p\)</span>、<span class="math inline">\(\lambda_D\)</span>、特征速度、<span class="math inline">\(\Delta t\)</span>、<span class="math inline">\(\Delta x\)</span></td>
+<td>2.3 的时间层和可分辨尺度讨论</td>
+<td>CFL 可通过不表示 <span class="math inline">\(\omega_p\Delta
+t\)</span>、<span class="math inline">\(\lambda_D/\Delta x\)</span>
+或统计误差已经满足物理目标</td>
+</tr>
+</tbody>
+</table>
+<p>这张表给出一个严格的交接顺序：先说明粒子和场分别代表什么，再标出它们所在的时间层，最后才追踪程序调用。若不先区分“连续对象”“离散状态”和“可比较
+observable”，就会把稳定性、守恒性与物理分辨率误当成同一类判断。第 2
+章开头的接读卡将把这四类状态排成一次 <span class="math inline">\(n\rightarrow n+1\)</span> 的实际交换顺序。</p>
 <h2 id="证据范围与继续阅读">1.13 证据范围与继续阅读</h2>
 <p>本章下列论述可直接回到两部已提供逐段讲解的基础来源：</p>
 <ul>
@@ -1526,6 +1586,25 @@ API。</p>
 stencil、时间层或色散推导；这些内容由连续方程、离散推导和现代实现三层分别说明。<code>CartesianYeeAlgorithm.H</code>、<code>FiniteDifferenceSolver.cpp</code>、<code>EvolveB.cpp</code>
 与 <code>EvolveE.cpp</code>
 的交叉定位可供读者复查，但现代代码不构成对历史论文逐式等价的证明。</p>
+<h3 id="从第-1-章进入本章先写状态再读调用顺序">从第 1
+章进入本章：先写状态，再读调用顺序</h3>
+<p>承接第 1
+章的交接卡，本章把“连续对象的离散表示”排成一次真正的时间交换。读者第一次阅读时，先把下面四个问题写在同一页上：</p>
+<ol type="1">
+<li>当前粒子状态是 <span class="math inline">\(x^n,p^{n-1/2},w\)</span>，还是某个初始化、碰撞或隐式迭代中的试探状态？</li>
+<li>当前 <span class="math inline">\(\rho\)</span>
+是对哪个位置时间层的取样，<span class="math inline">\(\mathbf{J}\)</span> 是否已经表示了 <span class="math inline">\(x^n\rightarrow x^{n+1}\)</span> 的粒子输运？</li>
+<li>场 <span class="math inline">\(\mathbf{E},\mathbf{B}\)</span>
+位于何种网格和时间层，它们在 gather、沉积和 field solve
+前后分别被谁消费？</li>
+<li><span class="math inline">\(\omega_p\Delta t\)</span>、<span class="math inline">\(\lambda_D/\Delta x\)</span>、CFL
+和统计粒子数分别约束哪一种误差，而不是把它们缩成一个“稳定”标签？</li>
+</ol>
+<p>可按如下顺序进入正文：先用 2.1–2.2 把 <span class="math inline">\(f_s\)</span>、粒子、shape、<span class="math inline">\(\rho\)</span> 与 <span class="math inline">\(\mathbf{J}\)</span> 对齐；再用 2.3
+写清整数步、半整数步和可分辨尺度；随后用 2.4–2.5 区分场更新表示；最后用
+2.6 将这些状态接入真实 PIC
+step。这样，<code>PushParticlesandDeposit()</code>、<code>SyncCurrentAndRho()</code>
+与场推进函数才是状态转换的实现，而不是可以脱离物理和时间层独立记忆的调用顺序。</p>
 <h2 id="连续模型vlasov-maxwell-系统">2.1 连续模型：Vlasov-Maxwell
 系统</h2>
 <p>对物种 <span class="math inline">\(s\)</span>，相空间分布函数 <span class="math inline">\(f_s(\mathbf{x},\mathbf{p},t)\)</span> 满足 Vlasov

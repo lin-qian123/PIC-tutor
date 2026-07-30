@@ -39,7 +39,7 @@ def main() -> int:
 
     checks = [
         ("chapter_taxonomy", "正文 diagnostics 分类", chapter, ["plotfile", "openPMD", "checkpoint", "BoundaryScraping", "physics gate", "writer/schema contract"]),
-        ("chapter_matrix", "正文验证矩阵与证据等级", chapter, ["第 8 章验证矩阵", "producer / MPI", "主要 gate", "case-local 证据目录", "不能支持的结论"]),
+        ("chapter_evidence_chain", "正文问题到证据的验证链", chapter, ["物理问题", "producer", "consumer", "比较对象", "不能支持的结论"]),
         ("chapter_reduced", "正文 reduced diagnostics 族", chapter, ["FieldProbe", "ParticleHistogram2D", "LoadBalanceCosts", "ColliderRelevant", "DifferentialLuminosity"]),
         ("chapter_source_map", "正文 diagnostics 源码位置", chapter, ["ComputeDiagFunctors/", "ParticleIO", "WarpXOpenPMD", "FlushFormats/"]),
         ("chapter_boundary", "正文 BoundaryScraping/Python 边界", chapter, ["BoundaryScrapingDiagnostics", "Python scraped-particle buffer", "callback", "openPMD"]),

@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1253,
-  "total_bytes": 39176440,
+  "total_bytes": 39190841,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1560583,
-      "sha256": "02c1defe158bb34eac7b8c2b6354b8164c54ac3a7b081118fd1a097c5594a14e"
+      "bytes": 1561011,
+      "sha256": "61c3f37ad7cf4aeed8d27c851019c864b6162ec029e3a1c8650a4d2f83ba64f1"
     },
     {
       "path": "TODO.md",
-      "bytes": 1450839,
-      "sha256": "21b6e1c0758d0e28ccc59496ccacaa5a442b0d10d6d5f58c544b3fc4a7bb89af"
+      "bytes": 1451367,
+      "sha256": "74acdae18bf8a83e42d77c82a89b4703025404d8f2a6730858cf28d9d94819ba"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
@@ -89,16 +89,6 @@
       "path": "docs/chapter-template.md",
       "bytes": 1979,
       "sha256": "dfa2864a2de6acffe454d6c9e8d74337e01da3b101108667e785ee8e572a23f1"
-    },
-    {
-      "path": "docs/contract.json",
-      "bytes": 598,
-      "sha256": "ab410303046c87a1cb63e75f36a83b9192115a67adffae3755dbf73eb8277f02"
-    },
-    {
-      "path": "docs/contract.md",
-      "bytes": 676,
-      "sha256": "325ea394dcc954ffb64e009d73ede19f4ed654e1931c8de037289d0f6a588372"
     },
     {
       "path": "docs/current-book-gap-register.md",
@@ -481,6 +471,16 @@
       "sha256": "b3d1cc5a48cd373c9d7679f166ff0a2fbe73316d29b0c59fce6299dc7224ea47"
     },
     {
+      "path": "docs/live-warpX-source-audit-v0.110.json",
+      "bytes": 3321,
+      "sha256": "588218412aa2546f2abaf28ed9dbcc06183cbbc3d6f1927d03c0555726f6c050"
+    },
+    {
+      "path": "docs/live-warpX-source-audit-v0.110.md",
+      "bytes": 2037,
+      "sha256": "e0f1562fa1d3bb219402fcb7ceed21e2745a293a446a0ef2d815cac3bab3b0bb"
+    },
+    {
       "path": "docs/manual-editorial-spotcheck-v0.100.md",
       "bytes": 1764,
       "sha256": "49738dd315fcc9e56991057c2547ddc7636bccde9d5c550bc6af28ffae7f43fc"
@@ -844,11 +844,6 @@
       "path": "docs/pdf-layout-audit-v0.99.md",
       "bytes": 578,
       "sha256": "87e4d60ea782c3cbc4ae367eb457f7ab4e5f484be41a7f5c450e5db0eba9be03"
-    },
-    {
-      "path": "docs/public-distribution-risk-register-v0.110.json",
-      "bytes": 722,
-      "sha256": "3575c632b445635432d422f6a34ffa9b9327d388f4158403ca5f13518f5b6df5"
     },
     {
       "path": "docs/public-distribution-risk-register-v0.110.md",
@@ -4297,8 +4292,8 @@
     },
     {
       "path": "scripts/audit_3a_birdsall_warpx_crosswalk.py",
-      "bytes": 4441,
-      "sha256": "5cea0ac28d30378828fdf766f2c817199bec6488aee0e0beb3b3d2edf733210b"
+      "bytes": 4559,
+      "sha256": "9383015cc83a6fffd7d8bc6a836c055a083b1c1567f99251dbfb6d9b6d2a6ac9"
     },
     {
       "path": "scripts/audit_abe_1975_abstract_contract.py",
@@ -4318,12 +4313,12 @@
     {
       "path": "scripts/audit_boris_source_crosswalk.py",
       "bytes": 3727,
-      "sha256": "8540c81e9166a3930f2131d0ab056a156d3dcbc607852d90e45c93e6dce98b8d"
+      "sha256": "a4b028bf102c956aa721de87ead31aa1c1337ebb4f21874c2de00064ca87c806"
     },
     {
       "path": "scripts/audit_boundary_amr_chapter_source_crosswalk.py",
-      "bytes": 6047,
-      "sha256": "923c4f1f0a368362edab355dfca4c2326969bd7c74ca36e1671c1720722a124a"
+      "bytes": 6182,
+      "sha256": "67e7fad8dd88f53077a61fa5c9954d5024a3fad10305ff9bc0ddf5889a8f0acb"
     },
     {
       "path": "scripts/audit_charge_deposition_bridge_contract.py",
@@ -4382,8 +4377,8 @@
     },
     {
       "path": "scripts/audit_diagnostics_chapter_source_crosswalk.py",
-      "bytes": 5992,
-      "sha256": "8b7c4ed603c2479178d1476fdb3eab2e3a61b516bc69ea35db21b804d1b940e7"
+      "bytes": 5971,
+      "sha256": "cee77125326fa133f23afb48cef67ef1cec18eae1cc9f236807856ae72f09dc1"
     },
     {
       "path": "scripts/audit_diagnostics_minimal_inputs.py",
@@ -4474,6 +4469,11 @@
       "path": "scripts/audit_literature_roadmap_asset_contract.py",
       "bytes": 5509,
       "sha256": "6e41184c65021b353403d2b44ed319d408313547e3b28e8ffe4e1635056db685"
+    },
+    {
+      "path": "scripts/audit_live_warpx_source_contract.py",
+      "bytes": 9910,
+      "sha256": "16e97509db97b83991d79bb75643275867ce976830c863520362c237148a8586"
     },
     {
       "path": "scripts/audit_muraviev_2021_asset_contract.py",
@@ -5497,8 +5497,8 @@
     },
     {
       "path": "scripts/prepare_v110_release_manifest.py",
-      "bytes": 4991,
-      "sha256": "8a31b7bc5a7425b4965983bf82476917df50d5ce33565cac9d6311f3ba275be5"
+      "bytes": 4932,
+      "sha256": "e93ee58134890c5288d2f11cb3ae646314ae8d59ff08f2b9e945b834b5b8694d"
     },
     {
       "path": "scripts/prepare_v41_release_manifest.py",
@@ -6298,6 +6298,7 @@
   ],
   "notes": [
     "This manifest is a release allowlist, not a git staging operation.",
+    "Only paths already present in the Git index are eligible for this allowlist.",
     "The references/ tree is excluded pending per-item redistribution review.",
     "The runs/ tree is excluded because it contains local producer outputs and logs."
   ]

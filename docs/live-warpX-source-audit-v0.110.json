@@ -1,0 +1,109 @@
+{
+  "contract": "PIC-tutor live WarpX source scope audit",
+  "classification": "CURRENT_WARPX_CORE_CHAPTER_SOURCE_ANCHORS_VERIFIED_DIRTY_UNRELATED_PATHS_RECORDED",
+  "scope": "Runs the Chapter 3A--8 representative source crosswalks at one Git revision. A dirty WarpX worktree is acceptable only when none of its paths intersects the explicit audited anchors; this is not a clean-tree assertion, a semantic equivalence proof, or a runtime physics regression.",
+  "warpx_head": "c311e49d4ffb19e39727182929c2f914cc7b776d",
+  "warpx_dirty_entries": [
+    {
+      "status": " M",
+      "path": "Docs/source/usage/parameters.rst"
+    },
+    {
+      "status": " M",
+      "path": "Docs/source/usage/workflows.rst"
+    },
+    {
+      "status": "D ",
+      "path": "Simulation/particle_work_validation/designs/2026-07-28-extended-cpu-validation-design.md"
+    },
+    {
+      "status": "D ",
+      "path": "Simulation/particle_work_validation/designs/2026-07-28-extended-cpu-validation-implementation-plan.md"
+    },
+    {
+      "status": "D ",
+      "path": "Simulation/particle_work_validation/extended/AGENTS.md"
+    },
+    {
+      "status": "D ",
+      "path": "Simulation/particle_work_validation/extended/README.md"
+    },
+    {
+      "status": "D ",
+      "path": "Simulation/particle_work_validation/extended/TODO.md"
+    },
+    {
+      "status": " M",
+      "path": "Source/Laser/LaserProfiles.H"
+    },
+    {
+      "status": " M",
+      "path": "Source/Laser/LaserProfilesImpl/CMakeLists.txt"
+    },
+    {
+      "status": " M",
+      "path": "Source/Laser/LaserProfilesImpl/Make.package"
+    },
+    {
+      "status": "??",
+      "path": "Docs/source/usage/workflows/flying_focus_laser.rst"
+    },
+    {
+      "status": "??",
+      "path": "Source/Laser/LaserProfilesImpl/LaserProfileFlyingFocus.cpp"
+    }
+  ],
+  "source_anchor_count": 41,
+  "source_anchor_dirty_paths": [],
+  "crosswalks": [
+    {
+      "id": "chapter_3a",
+      "status": "PASS",
+      "returncode": 0,
+      "classification": "CHAPTER_3A_HISTORICAL_MODERN_MAPPING_SOURCE_ANCHORS_VERIFIED",
+      "output": "chapter_3a.json",
+      "stderr": ""
+    },
+    {
+      "id": "chapter_4_boris",
+      "status": "PASS",
+      "returncode": 0,
+      "classification": "CURRENT_WARPX_SOURCE_GROUNDED_BORIS_CROSSWALK_HISTORICAL_PROCEEDINGS_FULL_TEXT_MISSING",
+      "output": "chapter_4_boris/contract.json",
+      "stderr": ""
+    },
+    {
+      "id": "chapter_5_deposition",
+      "status": "PASS",
+      "returncode": 0,
+      "classification": "CHAPTER_SOURCE_CROSSWALK_CURRENT_WARPX_ANCHORS_VERIFIED",
+      "output": "chapter_5.json",
+      "stderr": ""
+    },
+    {
+      "id": "chapter_6_field_solver",
+      "status": "PASS",
+      "returncode": 0,
+      "classification": "CHAPTER_6_FIELDSOLVER_SOURCE_ANCHORS_VERIFIED",
+      "output": "chapter_6.json",
+      "stderr": ""
+    },
+    {
+      "id": "chapter_7_boundary_amr",
+      "status": "PASS",
+      "returncode": 0,
+      "classification": "CHAPTER_7_BOUNDARY_AMR_SOURCE_ANCHORS_VERIFIED",
+      "output": "chapter_7.json",
+      "stderr": ""
+    },
+    {
+      "id": "chapter_8_diagnostics",
+      "status": "PASS",
+      "returncode": 0,
+      "classification": "CHAPTER_8_DIAGNOSTICS_SOURCE_ANCHORS_VERIFIED",
+      "output": "chapter_8.json",
+      "stderr": ""
+    }
+  ],
+  "passed": true
+}

@@ -6,6 +6,8 @@
 
 当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `258` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航表、第 3 章跨章交接卡、第 3A、4--9 章阅读路线、收敛判读卡、PML 配置与验证卡和末页均已纳入当前 PDF 的完整人工阅读记录；该记录不替代第三方材料许可或公开再分发签收。
 
+当前源码范围审计固定在 WarpX `c311e49`：第 3A--8 章的六组代表性 source crosswalk 全部通过，且 41 个受审计源码/analysis 锚点与相邻 WarpX 工作树的 12 个未提交路径零交集。完整的版本、脏路径和适用范围见 `docs/live-warpX-source-audit-v0.110.{json,md}`；这只证明已检查的源码表面，不能替代干净工作树声明、语义等价或运行物理验证。
+
 第 3A 章的激光初始化与应用入口现按“问题 -> 几何假设 -> 案例 -> producer/output/reference -> observable”阅读：天线注入、文件 profile、LWFA、BTD、固体靶、FEL、AMR 与表面等离子体各自对应不同的比较对象和证据边界。`laser_ion` 的 time-averaged `Ez` 对照、FEL 的 gain-length/wavelength、`laser_on_fine` 的 AMR placement 与 `plasma_mirror` 的搭建范围不再混写；文件外场与 moving window 的不兼容也回到选例条件。当前 PDF 第 6--8、65--66 页已视觉复核。
 
 第 1 章现在先说明分布函数的归一化和连续对象，再把读者依次带到相空间守恒、source 与约束、静电近似、宏粒子/shape 的统计代价，以及第 2 章的离散时间步。`warpx.do_electrostatic` 的选择被明确限定为建模假设：它不捕获传播的电磁辐射或激光，不能由单帧图像“看起来近静电”来事后证明。当前 PDF 第 9、12 页已视觉复核。

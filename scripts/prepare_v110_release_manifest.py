@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
+import subprocess
 from pathlib import Path
 
 
@@ -41,21 +41,15 @@ def is_candidate(path: Path) -> bool:
 
 
 def iter_candidates() -> list[Path]:
-    paths: list[Path] = []
-    for rel in ALLOWED_FILES + RELEASE_DIST:
-        path = ROOT / rel
-        if path.exists():
-            paths.append(path)
-    for root_name in ALLOWED_ROOTS:
-        root = ROOT / root_name
-        if not root.exists():
-            continue
-        for directory, _, filenames in os.walk(root):
-            for filename in filenames:
-                path = Path(directory) / filename
-                if is_candidate(path):
-                    paths.append(path)
-    return sorted(set(paths), key=lambda path: path.relative_to(ROOT).as_posix())
+    """Return only files already selected in the Git index for publication."""
+    tracked = subprocess.check_output(
+        ["git", "-C", str(ROOT), "ls-files", "--cached"], text=True
+    ).splitlines()
+    paths = [ROOT / relative for relative in tracked]
+    return sorted(
+        (path for path in paths if path.exists() and is_candidate(path)),
+        key=lambda path: path.relative_to(ROOT).as_posix(),
+    )
 
 
 def digest(path: Path) -> tuple[int, str]:
@@ -87,6 +81,7 @@ def main() -> None:
         "entries": entries,
         "notes": [
             "This manifest is a release allowlist, not a git staging operation.",
+            "Only paths already present in the Git index are eligible for this allowlist.",
             "The references/ tree is excluded pending per-item redistribution review.",
             "The runs/ tree is excluded because it contains local producer outputs and logs.",
         ],

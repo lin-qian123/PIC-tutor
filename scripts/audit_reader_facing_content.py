@@ -71,6 +71,7 @@ def main() -> int:
     chapter_4_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_4
     )
+    chapter_4_opening = section_between(chapter_4, "# 4. 粒子推进器", "## 4.1")
     chapter_5_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_5
     )
@@ -241,6 +242,25 @@ def main() -> int:
                 "## 4.16 练习与复现实验",
             )
         ) and not chapter_4_stale_location_markers,
+        "chapter_4_5_long_chapter_reader_navigation": all(
+            marker in chapter_4_opening
+            for marker in (
+                "阅读路线：先定位一条带电粒子的时间链",
+                "先读 4.1--4.4",
+                "再读 4.5--4.10",
+                "按需要进入 4.11--4.14",
+                "最后用 4.15--4.16 收束",
+            )
+        ) and all(
+            marker in chapter_5_opening
+            for marker in (
+                "阅读路线：先把守恒问题变成四个可回答的问题",
+                "阅读 5.1--5.3",
+                "阅读 5.4--5.8",
+                "阅读 5.9--5.13",
+                "阅读 5.14--5.16",
+            )
+        ),
         "chapter_5_opening_is_reader_facing": not chapter_5_opening_project_markers,
         "chapter_5_current_deposition_route": all(
             marker in chapter_5

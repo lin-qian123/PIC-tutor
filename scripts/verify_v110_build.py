@@ -19,8 +19,8 @@ MERGED_MARKDOWN = ROOT / "dist" / "pic-tutor-v0.110.md"
 HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
-# Reader-facing chapter openings and portable source navigation yield 262 pages.
-EXPECTED_PDF_PAGES = 262
+# Reader-facing chapter openings and long-chapter navigation yield 263 pages.
+EXPECTED_PDF_PAGES = 263
 
 
 def image_links(text: str) -> list[str]:
@@ -118,6 +118,7 @@ def main() -> None:
     chapter_4_stale_location_markers = re.findall(
         r"Source/[A-Za-z0-9_./-]+\.(?:cpp|H):\d+", chapter_4
     )
+    chapter_4_opening = chapter_4[: chapter_4.index("## 4.1")]
     chapter_5 = (ROOT / "manuscript" / "chapters" / "05-deposition-shapes.md").read_text(
         encoding="utf-8"
     )
@@ -338,6 +339,25 @@ def main() -> None:
         ) and not chapter_4_stale_location_markers and not re.search(
             r"本地 checkout|原文精读",
             chapter_4,
+        ),
+        "chapter_4_5_long_chapter_reader_navigation": all(
+            marker in chapter_4_opening
+            for marker in (
+                "阅读路线：先定位一条带电粒子的时间链",
+                "先读 4.1--4.4",
+                "再读 4.5--4.10",
+                "按需要进入 4.11--4.14",
+                "最后用 4.15--4.16 收束",
+            )
+        ) and all(
+            marker in chapter_5_opening
+            for marker in (
+                "阅读路线：先把守恒问题变成四个可回答的问题",
+                "阅读 5.1--5.3",
+                "阅读 5.4--5.8",
+                "阅读 5.9--5.13",
+                "阅读 5.14--5.16",
+            )
         ),
         "chapter_4_has_no_project_path_narration": not re.search(
             r"scripts/|notes/code-reading|runs/stage-c-validation|contract\.\{json,md\}|"

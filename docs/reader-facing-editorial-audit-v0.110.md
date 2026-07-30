@@ -16,6 +16,7 @@
 | `chapter_4_uses_reader_facing_evidence_language` | `PASS` |
 | `chapter_4_has_no_project_path_narration` | `PASS` |
 | `chapter_4_current_pusher_route` | `PASS` |
+| `chapter_4_5_long_chapter_reader_navigation` | `PASS` |
 | `chapter_5_opening_is_reader_facing` | `PASS` |
 | `chapter_5_current_deposition_route` | `PASS` |
 | `chapter_6_opening_is_reader_facing` | `PASS` |

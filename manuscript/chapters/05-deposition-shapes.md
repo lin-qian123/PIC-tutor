@@ -8,6 +8,17 @@
 
 `Examples/Tests/langmuir/analysis_utils.py` 与 `Examples/Tests/vay_deposition/analysis.py` 提供代表性的 `divE-rho/epsilon_0` consumer，但每个 consumer 都只覆盖给定的几何、时间层和输入条件。本章会持续区分：公式解释离散构造，源码定位实现分派，而案例分析只检验其指定条件下的结果。
 
+### 阅读路线：先把守恒问题变成四个可回答的问题
+
+本章包含形函数公式、kernel 细节、AMR 同步和多组几何证据。第一次阅读可按下面顺序建立判断框架，第二次再回到相应的源码或案例：
+
+1. **为什么沉积不是普通插值？** 阅读 5.1--5.3，先从单时间层的 \(\rho\) 写到 old/new shape difference 与离散连续性方程。这一步回答粒子走过一个时间步后，网格源项必须如何变化。
+2. **源项在哪个时间层进入主循环？** 阅读 5.4--5.8，区分旧 `rho`、半步 `J` 和新 `rho`，再定位 `DepositCurrent()`、`DepositCharge()` 与物种汇总。这一步回答局部 kernel 写入的对象何时能被场求解器消费。
+3. **守恒算法实际怎样构造？** 阅读 5.9--5.13，按需要比较 Direct、Esirkepov、Villasenor--Buneman 与 Vay，并把 tile、guard cell、AMR 和边界同步视为同一条 source 链的不同阶段。
+4. **怎样把证据变成输入决策？** 阅读 5.14--5.16，先检查 geometry、AMR 和时间层是否允许该路径，再选择与 observable 匹配的 analysis，并明确案例不能外推到的组合。
+
+因此，本章的阅读终点不是记住某个 kernel 名称，而是能回答四个问题：源项改变了什么、由哪条轨迹或时间层构造、经过哪些同步后被消费、以及哪一个 observable 真正检验了它。
+
 本章引用 Esirkepov 2001 的作者预印本来解释 `W^1/W^2/W^3`、`Eq.(23)` 和二阶 spline 的构造；CPC 发表版的书目信息和摘要已核实，但没有可逐页核对的 publisher PDF。Villasenor-Buneman 1992 则可作为 crossing-based deposition 的全文来源。两条路径的论文、源码和运行证据将在 5.11 与 5.14 分层说明，不能相互替代。
 
 Birdsall-Langdon 在 `Plasma Physics via Computer Simulation` 第一分卷的 `4-6` 到 `4-8` 给了一个很硬的理论边界：只要粒子通过空间网格被观测和求场，它就不再表现成零厚度 point particle，而必须被理解成具有有效形状因子 `S(x)`、频域响应 `S(k)` 的 finite-size cloud。这样一来，shape order 不是单纯“更光滑的插值公式”，而是同时改写三件事：
@@ -2528,21 +2539,6 @@ RCYLINDER/RSPHERE 的 shape=1/2/3/4 都可得到径向 `Er` field gate，但 `rh
 Vay 的可用范围尤其需要按“能运行的条件”而不是算法名称来读。源码分派和官方测试入口确认其 Cartesian 2D/3D 路径，以及 RZ/1D/implicit 的 guard。在该范围内，单进程和两进程的 Cartesian Langmuir 分析都能通过指定的 `divE-rho/epsilon_0` gate，shape 扩展到 `1..4` 的 sibling 也有通过记录。这些结果只能支持“指定 Cartesian 配置可用”，不能外推到 AMR、边界裁剪、RZ、1D、非 Cartesian geometry 或正式收敛阶。
 
 对 AMR，准确结论更强也更窄：WarpX 在初始化阶段显式拒绝 `Vay + mesh refinement`，并非一次进入物理推进后的数值失败。读者应把它当作输入组合限制，并在尝试运行前检查，而不是用某个 Cartesian 通过案例替代这条 guard。
-
-### 读者主线：从守恒问题走到可解释的输入选择
-
-到这里，读者不需要按 v0.x 的时间顺序记住每一次新增实验。更有用的阅读方式是把本章压缩成四个问题：
-
-1. **粒子走过一段轨迹后，网格上应该改变什么？**
-   旧电荷、新电荷和半步电流必须满足离散连续性方程；因此 Esirkepov 和 Villasenor-Buneman 的核心差别，是它们怎样把端点形函数或轨迹 crossing 变成守恒的面通量。
-2. **同一个算法为什么在不同几何上不能直接互相替代？**
-   Cartesian、RZ、RCYLINDER、RSPHERE 的网格自由度、轴处理和体积因子不同。某个几何的 `divE-rho` 通过，只能证明该几何、shape、时间步和诊断 consumer 的组合。
-3. **看到一个残差时，先怀疑什么？**
-   先分开 field error、all-cell charge、axis charge 和 off-axis charge，再检查粒子状态、时间层、stencil 和 inverse-volume scaling。不要用 all-cell 平均掩盖轴向局部误差，也不要用 correction-off 的局部 PASS 推断默认 correction-on 已修复。
-4. **怎样把证据转成输入决策？**
-   先查 geometry/AMR/时间层是否允许该 deposition path，再查 shape 和 guard-cell 预算，最后选择与当前 observable 对应的 analysis。输入选择的结论应写成“在这些条件下可复现”，而不是“这个算法永远更准确”。
-
-后续小节保留代表性实验的数字、命令和分类，适合作为证据索引；第一次阅读可以先跳到 `5.15` 的结论和 `5.16` 的练习，第二遍再用这些小节核对上述四个问题。
 
 ### 5.14.3 选择沉积算法：先问约束，再问精度
 

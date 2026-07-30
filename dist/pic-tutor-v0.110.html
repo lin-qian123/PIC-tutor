@@ -315,6 +315,7 @@ WarpX：历史最小程序骨架的现代映射</a></li>
 <li><a href="#粒子推进器从-lorentz-方程到-pushpx" id="toc-粒子推进器从-lorentz-方程到-pushpx">4. 粒子推进器：从 Lorentz
 方程到 <code>PushPX()</code></a>
 <ul>
+<li><a href="#阅读路线先定位一条带电粒子的时间链" id="toc-阅读路线先定位一条带电粒子的时间链">阅读路线：先定位一条带电粒子的时间链</a></li>
 <li><a href="#连续-lorentz-方程" id="toc-连续-lorentz-方程">4.1 连续
 Lorentz 方程</a></li>
 <li><a href="#boris-推进的结构" id="toc-boris-推进的结构">4.2 Boris
@@ -417,6 +418,7 @@ lookup table 是采样器的一部分，不是可有可无的附属文件</a></l
 <li><a href="#电荷电流沉积与形函数源项如何回到网格" id="toc-电荷电流沉积与形函数源项如何回到网格">5.
 电荷、电流沉积与形函数：源项如何回到网格</a>
 <ul>
+<li><a href="#阅读路线先把守恒问题变成四个可回答的问题" id="toc-阅读路线先把守恒问题变成四个可回答的问题">阅读路线：先把守恒问题变成四个可回答的问题</a></li>
 <li><a href="#电荷沉积的基本形式" id="toc-电荷沉积的基本形式">5.1
 电荷沉积的基本形式</a></li>
 <li><a href="#shapefactors.hwarpx-实际使用的-0-到-4-阶形函数" id="toc-shapefactors.hwarpx-实际使用的-0-到-4-阶形函数">5.2
@@ -498,7 +500,6 @@ mask、filter、SumBoundary</a></li>
 源码定位与结论范围</a></li>
 <li><a href="#覆盖范围与已知空白" id="toc-覆盖范围与已知空白">5.14.2
 覆盖范围与已知空白</a></li>
-<li><a href="#读者主线从守恒问题走到可解释的输入选择" id="toc-读者主线从守恒问题走到可解释的输入选择">读者主线：从守恒问题走到可解释的输入选择</a></li>
 <li><a href="#选择沉积算法先问约束再问精度" id="toc-选择沉积算法先问约束再问精度">5.14.3
 选择沉积算法：先问约束，再问精度</a></li>
 <li><a href="#读懂证据公式源码和运行结果各回答什么" id="toc-读懂证据公式源码和运行结果各回答什么">5.14.4
@@ -6013,6 +6014,26 @@ gather、外场、push、位置更新和沉积如何接在同一 tile loop
 <p>阅读 Boris 推进时要特别区分半步磁旋转的 Birdsall–Langdon
 半角关系，不能把旋转系数机械地除以二；<code>Examples/Tests/particle_pusher</code>
 提供 Higuera–Cary force-free 路径的直接验证入口。</p>
+<h3 id="阅读路线先定位一条带电粒子的时间链">阅读路线：先定位一条带电粒子的时间链</h3>
+<p>第一次阅读不必逐个记住后面的多物理分支。先用以下四步建立一条能够排错的主线：</p>
+<ol type="1">
+<li><strong>先读 4.1–4.4。</strong> 固定 <span class="math inline">\(\mathbf{x}^n\)</span>、<span class="math inline">\(\mathbf{u}^{n-1/2}\)</span>、<span class="math inline">\(\mathbf{u}^{n+1/2}\)</span> 的时间层，理解
+Boris、Vay 与 Higuera–Cary
+各自要解决的离散更新问题；这一步回答“更新的对象是什么”。</li>
+<li><strong>再读 4.5–4.10。</strong> 沿
+<code>PushParticlesandDeposit()</code> 到 <code>PushPX()</code>
+追踪一次带质量粒子的 tile
+loop：gather、外场叠加、动量更新、位置更新和沉积的顺序不能互换；这一步回答“这些公式何时真正发生”。</li>
+<li><strong>按需要进入 4.11–4.14。</strong>
+辐射反作用、隐式推进、ionization、collisions、边界粒子与 QED
+都会改变粒子状态或创建/移除粒子。选择其中一节时，先写清
+source、product、时间位置和要比较的
+observable，避免把独立的物理模型误当作 Boris 的一个参数。</li>
+<li><strong>最后用 4.15–4.16 收束。</strong>
+把异常轨道、粒子数、场残差或守恒量映射回时间层、tile 主链和相应
+analysis；练习要求的结论必须注明一个不能由该案例外推的范围。</li>
+</ol>
+<p>这条路线把本章的细节压缩成一个判断顺序：先问粒子状态在哪个时间层，再问哪条更新链消费它，最后才问某个扩展模型或回归能证明什么。</p>
 <h2 id="连续-lorentz-方程">4.1 连续 Lorentz 方程</h2>
 <p>WarpX 对带质量粒子推进的基本方程是相对论 Lorentz 方程。令</p>
 <p><span class="math display">\[
@@ -9743,6 +9764,28 @@ cells、物种求和、AMR 和边界如何把 tile 局部写入变成场求解�
 <code>Examples/Tests/vay_deposition/analysis.py</code> 提供代表性的
 <code>divE-rho/epsilon_0</code> consumer，但每个 consumer
 都只覆盖给定的几何、时间层和输入条件。本章会持续区分：公式解释离散构造，源码定位实现分派，而案例分析只检验其指定条件下的结果。</p>
+<h3 id="阅读路线先把守恒问题变成四个可回答的问题">阅读路线：先把守恒问题变成四个可回答的问题</h3>
+<p>本章包含形函数公式、kernel 细节、AMR
+同步和多组几何证据。第一次阅读可按下面顺序建立判断框架，第二次再回到相应的源码或案例：</p>
+<ol type="1">
+<li><strong>为什么沉积不是普通插值？</strong> 阅读
+5.1–5.3，先从单时间层的 <span class="math inline">\(\rho\)</span> 写到
+old/new shape difference
+与离散连续性方程。这一步回答粒子走过一个时间步后，网格源项必须如何变化。</li>
+<li><strong>源项在哪个时间层进入主循环？</strong> 阅读 5.4–5.8，区分旧
+<code>rho</code>、半步 <code>J</code> 和新 <code>rho</code>，再定位
+<code>DepositCurrent()</code>、<code>DepositCharge()</code>
+与物种汇总。这一步回答局部 kernel 写入的对象何时能被场求解器消费。</li>
+<li><strong>守恒算法实际怎样构造？</strong> 阅读 5.9–5.13，按需要比较
+Direct、Esirkepov、Villasenor–Buneman 与 Vay，并把 tile、guard cell、AMR
+和边界同步视为同一条 source 链的不同阶段。</li>
+<li><strong>怎样把证据变成输入决策？</strong> 阅读 5.14–5.16，先检查
+geometry、AMR 和时间层是否允许该路径，再选择与 observable 匹配的
+analysis，并明确案例不能外推到的组合。</li>
+</ol>
+<p>因此，本章的阅读终点不是记住某个 kernel
+名称，而是能回答四个问题：源项改变了什么、由哪条轨迹或时间层构造、经过哪些同步后被消费、以及哪一个
+observable 真正检验了它。</p>
 <p>本章引用 Esirkepov 2001 的作者预印本来解释
 <code>W^1/W^2/W^3</code>、<code>Eq.(23)</code> 和二阶 spline 的构造；CPC
 发表版的书目信息和摘要已核实，但没有可逐页核对的 publisher
@@ -13788,31 +13831,6 @@ geometry 或正式收敛阶。</p>
 <p>对 AMR，准确结论更强也更窄：WarpX 在初始化阶段显式拒绝
 <code>Vay + mesh refinement</code>，并非一次进入物理推进后的数值失败。读者应把它当作输入组合限制，并在尝试运行前检查，而不是用某个
 Cartesian 通过案例替代这条 guard。</p>
-<h3 id="读者主线从守恒问题走到可解释的输入选择">读者主线：从守恒问题走到可解释的输入选择</h3>
-<p>到这里，读者不需要按 v0.x
-的时间顺序记住每一次新增实验。更有用的阅读方式是把本章压缩成四个问题：</p>
-<ol type="1">
-<li><strong>粒子走过一段轨迹后，网格上应该改变什么？</strong>
-旧电荷、新电荷和半步电流必须满足离散连续性方程；因此 Esirkepov 和
-Villasenor-Buneman 的核心差别，是它们怎样把端点形函数或轨迹 crossing
-变成守恒的面通量。</li>
-<li><strong>同一个算法为什么在不同几何上不能直接互相替代？</strong>
-Cartesian、RZ、RCYLINDER、RSPHERE
-的网格自由度、轴处理和体积因子不同。某个几何的 <code>divE-rho</code>
-通过，只能证明该几何、shape、时间步和诊断 consumer 的组合。</li>
-<li><strong>看到一个残差时，先怀疑什么？</strong> 先分开 field
-error、all-cell charge、axis charge 和 off-axis
-charge，再检查粒子状态、时间层、stencil 和 inverse-volume
-scaling。不要用 all-cell 平均掩盖轴向局部误差，也不要用 correction-off
-的局部 PASS 推断默认 correction-on 已修复。</li>
-<li><strong>怎样把证据转成输入决策？</strong> 先查
-geometry/AMR/时间层是否允许该 deposition path，再查 shape 和 guard-cell
-预算，最后选择与当前 observable 对应的
-analysis。输入选择的结论应写成“在这些条件下可复现”，而不是“这个算法永远更准确”。</li>
-</ol>
-<p>后续小节保留代表性实验的数字、命令和分类，适合作为证据索引；第一次阅读可以先跳到
-<code>5.15</code> 的结论和 <code>5.16</code>
-的练习，第二遍再用这些小节核对上述四个问题。</p>
 <h3 id="选择沉积算法先问约束再问精度">5.14.3
 选择沉积算法：先问约束，再问精度</h3>
 <p>选择电流沉积算法时，名称不是第一判断条件。应依次检查几何和网格布局、显式或隐式时间层、轨迹信息是否足够、以及可用的诊断量。下表给出读者可以直接用于输入设计的稳定结论。</p>

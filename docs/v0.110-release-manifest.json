@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 1268,
-  "total_bytes": 39102531,
+  "entry_count": 1271,
+  "total_bytes": 39131299,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1563305,
-      "sha256": "6fc09ab6aa06abd57ea62b6136e46929634431b8a1eae137ecd9d6c3735e18eb"
+      "bytes": 1563712,
+      "sha256": "24f1300858aa5845b8040343adc18c1deabbbe58d25b5cc97288b795b09579c3"
     },
     {
       "path": "TODO.md",
-      "bytes": 1458590,
-      "sha256": "44482ba0f84e6296597f7b74c34ba25f193ea02e3c8b40bdcc2dc0889abfad83"
+      "bytes": 1459266,
+      "sha256": "4042d6c67a91305d23b97278994f04711029510387c8fcd90cb50fd371d82b8b"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 4947085,
-      "sha256": "0a71023d2859f291e8056dc1c90d68d1e6ec19faed43cf08f4d3a07dc9aa900c"
+      "bytes": 4951592,
+      "sha256": "0cb05f64b63cb8f431ba5619a4b53834d560ab42d7458387b26c22e9efb0c6ec"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 885506,
-      "sha256": "31ce6ea795f2b2f07b67ef8edf73a2675e08202567290b387705d7717d722228"
+      "bytes": 889170,
+      "sha256": "f66a6694b5d0daabd16c1f51c09518e57d0164a23fe2ecc1e519e3091290487f"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2899205,
-      "sha256": "5000fee630412402c98b45d4f77c3075c1f7d0e8a0e6623ede00039a81a2dfe6"
+      "bytes": 2903732,
+      "sha256": "b55648520c884665046c9840c7c6b6a64237a7322f6b1c09d0edfc88ceb082ce"
     },
     {
       "path": "docs/chapter-02-first-run-reader-card-v0.110.json",
@@ -84,6 +84,16 @@
       "path": "docs/chapter-03-lifecycle-trace-reader-card-v0.110.md",
       "bytes": 928,
       "sha256": "41929dfeea4e3ff62daef79aa0b3fe2dc60cf23bea50b9e318028e945baae9e7"
+    },
+    {
+      "path": "docs/chapter-03a-initialization-reader-card-v0.110.json",
+      "bytes": 1119,
+      "sha256": "8bae51d2029a24681af394aa7e589a00c4bc4db69345d17d888053fb63b1198f"
+    },
+    {
+      "path": "docs/chapter-03a-initialization-reader-card-v0.110.md",
+      "bytes": 1097,
+      "sha256": "b9764f7e1295bd878b6ded1f38c059b32423198e24d8b1d98938c024373200e3"
     },
     {
       "path": "docs/chapter-04-v0-evidence-ledger.md",
@@ -582,8 +592,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 59354,
-      "sha256": "ee9c603365d23283824e2390b7e13d6fad6400f663c8a4d494d244dbcdb54f85"
+      "bytes": 59811,
+      "sha256": "3ae33168b9563f14cddc21e1b479eb268f016ec53982b14a4581e99f9178f4f1"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -897,8 +907,8 @@
     },
     {
       "path": "docs/public-distribution-risk-register-v0.110.md",
-      "bytes": 1588,
-      "sha256": "75d3ac2f3f832c0d6dc1ce86a77d6f1e60ea7fd92424d358c69d6ccc20618c20"
+      "bytes": 1589,
+      "sha256": "287ceca2363708bbd9f6fd021b26fbf018efba712276665625cfda9129768cb5"
     },
     {
       "path": "docs/public-evidence-index.json",
@@ -967,13 +977,13 @@
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
-      "bytes": 5138,
-      "sha256": "ca976da499dfe5d3acc9284a81e623dd1d3746a905b1b5bbee02b5f521ed1280"
+      "bytes": 5214,
+      "sha256": "0cbdaeb878e4bfd9b3c06b5b6d5716fceebe95cdc41d9df2d5264f751a2dc8ab"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.md",
-      "bytes": 3773,
-      "sha256": "5b7a33a0c04aefdb99311c1a5c96127930d6549db24152ec6cb3da7143628f30"
+      "bytes": 3863,
+      "sha256": "07d9d4e344b3708f37c8497960d2a17517f3ee474aaafad6c42c712c5b7f3643"
     },
     {
       "path": "docs/rz-axis-charge-repeat-stability-v0.93.json",
@@ -2367,8 +2377,8 @@
     },
     {
       "path": "manuscript/chapters/03a-warpx-initialization.md",
-      "bytes": 96400,
-      "sha256": "831d2498ac29efdc38a2fe98391d0ac2469c6dd28db36ab88f0abf1ccf430a20"
+      "bytes": 100064,
+      "sha256": "633c0c6bc049ac597d4c908f19876419d7196ba690b0dd32f6bc816a845b2015"
     },
     {
       "path": "manuscript/chapters/04-particle-pushers.md",
@@ -4381,6 +4391,11 @@
       "sha256": "59d4d9cd02c83b7466571f9990597e065e7b48950005dc9db26886e033ec7110"
     },
     {
+      "path": "scripts/audit_chapter_03a_initialization_reader_card.py",
+      "bytes": 7255,
+      "sha256": "df8f0a612246719ab80131d82c5c97a81b17558d257710c6f25a37c223b4a24e"
+    },
+    {
       "path": "scripts/audit_chapter_08_restart_reader_card.py",
       "bytes": 4443,
       "sha256": "024ac311a37093c5ce396bde5bf9d3fdc158c37408b6b88943ba510b7f82f1b2"
@@ -4462,8 +4477,8 @@
     },
     {
       "path": "scripts/audit_editorial_quality.py",
-      "bytes": 9380,
-      "sha256": "1d6960d05086df8385234a28e4ba5b5de82dcde3c7518ff566200b9e62e6196f"
+      "bytes": 9402,
+      "sha256": "8ed11c3427b5e6b72660cd65df0b0529fc348e1cbbf481f1822cf89a8972b244"
     },
     {
       "path": "scripts/audit_esirkepov_bounded_compare.py",
@@ -4662,8 +4677,8 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 48416,
-      "sha256": "64186aa6e23170edefd1c974a983d3c7d73bf4d274bbab45367ec3b3d9baae87"
+      "bytes": 48964,
+      "sha256": "f8d11f0a21e545a1242c4dcbfb4f68e04617dc7b94da5ba180de3eefe9206c77"
     },
     {
       "path": "scripts/audit_release_consistency.py",
@@ -6062,8 +6077,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 67173,
-      "sha256": "73caf72092323ba0614dc7f919122792563caad48ef50bcbe2fef75e9c551bee"
+      "bytes": 67831,
+      "sha256": "9a6fba80516838253c89a45d23d84e86187047c3e1a89f809f6865e421dde35b"
     },
     {
       "path": "scripts/verify_v40_build.py",

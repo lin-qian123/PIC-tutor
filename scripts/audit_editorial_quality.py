@@ -123,16 +123,17 @@ def main() -> int:
 
     manual_review_markers = (
         "基线 262 页快照已完成连续阅读",
-        "当前增量复核（265 页候选）",
+        "当前增量复核（266 页候选）",
         "| 1--6 |",
         "| 28 |",
         "| 29 |",
         "| 30--31 |",
         "| 45--47 |",
+        "| 71--73 |",
         "| 226 |",
         "| 231 |",
         "| 257 |",
-        "| 263 |",
+        "| 264 |",
     )
     manual_review_recorded = all(marker in manual_spotcheck for marker in manual_review_markers)
     checks = {

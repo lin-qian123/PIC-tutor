@@ -1465,6 +1465,28 @@ analysis 脚本把 reduced histogram、束斑统计和解析分布逐条对照�
 
 由于初始化使用随机采样，checksum 的默认容差不应被理解为跨机器、跨 MPI 布局都逐位相同的物理合同。复现实验应优先比较 analysis 脚本定义的直方图、均值、方差、束斑等统计量，并在报告中写清样本量、随机数种子（若可控）、并行布局和容差；只有这些条件一致时，checksum 才能作为补充证据。
 
+### 3A.13.1 初始化验证卡：分布统计和初始自场是两份合同
+
+初态常被一句“束流已经初始化”概括，但这至少混合了两件不同的事：粒子的位置、权重和动量是否来自预期分布；以及这些粒子是否已经在第一步前建立了应有的自场。前者即使完全正确，也不推出 Poisson 或 space-charge 初始化正确；后者即使场形状正确，也不能替代对粒子分布和总电荷的检查。读者应把它们拆成两条 producer -> observable -> consumer 链。
+
+**合同 A：粒子分布。**`initial_distribution` 的输入设定 `max_step = 0`，并以 `ParticleHistogram` reduced diagnostics 输出各 species 的动量或位置直方图。例如 `h1x/h1y/h1z` 对 Gaussian species 统计 `ux/uy/uz`，`h4x/h4y/h4z` 对 Gaussian beam 统计空间坐标；同一组还写出 beam 的总电荷。CTest 将 producer 接到 `analysis.py`，该 consumer 读取这些 reduced diagnostics，将 Gaussian、Maxwellian、Maxwell-Juttner 和 beam 的位置统计分别与解析密度比较，并对归一化误差及相对电荷误差断言容差。
+
+这条设计的关键价值在于 `max_step = 0`：它把比较对象限定为初始化完成后、尚未由时间推进改变的粒子统计。因此它能支持的结论是“给定输入、采样数、诊断定义和分析容差下，粒子初始化分布与指定解析分布相符”。它不能支持“初始空间电荷场已经正确”或“随后任意步数、任意求解器和任意 MPI 布局的动力学都正确”。若读者修改的是 `momentum_distribution_type`、parser mean/std、束斑 rms、截断或粒子数，应先复用这一类 histogram/charge observable；不要只看 plotfile 是否写出。
+
+**合同 B：初始自场。**`space_charge_initialization` 选择静止 Gaussian beam，并显式给出：
+
+```text
+beam.injection_style = "gaussian_beam"
+beam.initialize_self_fields = 1
+beam.momentum_distribution_type = "at_rest"
+```
+
+这时 producer 不止是粒子生成。`WarpX::InitData()` 的 fresh-run 分支会遍历 species；只要发现任一 `initialize_self_fields` 为真，便在第一步推进之前调用 `ComputeSpaceChargeField(reset_E_field=false, reset_B_field=false)`。输入还请求 Full diagnostics 写出 `Ex/Ey/Ez`，CTest 将 `diags/diag1000001` 交给 `analysis.py`。这个 consumer 按二维或三维 Gaussian charge distribution 构造理论场，再对输出的 `Ex/Ey`，以及三维时的 `Ez` 做逐数组 `allclose` 容差检查。
+
+因此这条合同能支持的结论是“在该静止 Gaussian-beam、边界、网格、shape、两 rank 注册布局和字段比较容差下，初始化自场与该理论场一致”。它不把 `initial_distribution` 的 histogram 通过自动升级为场求解验证，也不覆盖相对论自场、open-boundary FFT、embedded boundary 或后续 pusher 的正确性；这些问题应分别进入 `relativistic_space_charge_initialization`、`open_bc_poisson_solver`、`magnetostatic_eb` 或 `repelling_particles` 的 consumer。
+
+**实际操作顺序。**当一个新输入同时改了束流分布和 `initialize_self_fields` 时，先在零步或等价的初态输出上锁定合同 A，再在明确的初始 field diagnostic 上锁定合同 B；随后才用轨迹、能量或束斑演化回答“该初场被 pusher 消费后会怎样”。若 A 失败，先查 injection style、parser、随机采样、权重和 histogram 定义；若 A 通过而 B 失败，转查边界、solver、field diagnostic、`initialize_self_fields` 与初始场求解。两类失败的定位入口不同，不能合并成“初始化失败”。
+
 第二组是 `initial_plasma_profile`。这组当前没有独立 `analysis.py`，只有 checksum helper，但输入本身非常明确：
 
 - `injection_style = NUniformPerCell`

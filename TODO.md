@@ -2,6 +2,7 @@
 
 ## 2026-07-31
 
+- [x] 为第 3A 章补齐初始化双合同读者卡：以 `initial_distribution` 的 `max_step = 0`、`ParticleHistogram`、总电荷与解析分布 consumer，以及 `space_charge_initialization` 的 `initialize_self_fields`、`ComputeSpaceChargeField()`、Full `Ex/Ey/Ez` diagnostics 与理论场 consumer 为依据，明确“粒子分布正确”不能替代“初始自场正确”；给出新输入同时修改分布和自场时的先后检查顺序与故障分类。新增 `scripts/audit_chapter_03a_initialization_reader_card.py`；重建为 266 页，PDF 第 71--73 页视觉复核通过。全书逐页重读、第三方材料许可和公开再分发仍未完成。
 - [x] 为第 3 章补齐输入到 consumer 的生命周期追踪卡：以 `main.cpp`、`WarpX::WarpX()`/`ReadParameters()`、`InitData()`、`Evolve()` 与 Langmuir CTest/analysis 为依据，分开 `max_step` 的读取、`warpx_used_inputs` 的初始化后段记录点、外层步上限、Full diagnostics 与 analysis consumer；给出无 used-input、缺 diagnostics、analysis 失败三类故障分类，避免把它们混成“参数无效”或“物理失败”。新增 `scripts/audit_chapter_03_lifecycle_trace_reader_card.py`；重建为 265 页，PDF 第 45--47、226、231、257、263 页视觉复核通过。全书逐页重读、第三方材料许可和公开再分发仍未完成。
 - [x] 为第 2 章补齐命令行受控修改路线：以官方运行文档的参数覆盖/`warpx_used_inputs` 语义，以及 Langmuir 输入的 `max_step = 80`、`diag1.intervals = 40`、CTest 的 `analysis_1d.py diags/diag1000080` consumer 和分析器的时间/容差/连续性检查为依据，明确 `max_step=10` 只能证明覆盖进入 producer，不能复用原末态 consumer；要求独立目录、实际 diagnostics 核对，并分开“保持官方合同”与“建立新合同”。第 29 页新增路线、第 30--31 页收束与第 3 章起页视觉复核通过；重建保持 264 页。全书逐页重读、第三方材料许可和公开再分发仍未完成。
 - [x] 为第 2 章补齐首次运行的读者路线：以官方 CMake、运行文档、当前 binary 命名逻辑和 `test_1d_langmuir_multi` CTest 注册为依据，分开 1D 编译能力、2-rank CTest producer/consumer 合同与独立目录的手动运行/analysis；明确 `warpx_used_inputs`、`diags/` 与退出码各自能说明什么。新增 `scripts/audit_chapter_02_first_run_reader_card.py`；重建为 264 页，PDF 第 28--29、225、230、256、262 页视觉复核通过。全书逐页重读、第三方材料许可和公开再分发仍未完成。

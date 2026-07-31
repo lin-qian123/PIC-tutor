@@ -772,6 +772,16 @@ def main() -> int:
         and not chapter_3a_project_path_markers
         and not chapter_3a_project_narration_markers
         and not chapter_3a_application_record_markers,
+        "chapter_3a_initialization_two_contract_reader_card": all(
+            marker in chapter_3a
+            for marker in (
+                "### 3A.13.1 初始化验证卡：分布统计和初始自场是两份合同",
+                "合同 A：粒子分布。",
+                "合同 B：初始自场。",
+                "producer -> observable -> consumer 链",
+                "不能合并成“初始化失败”",
+            )
+        ) and not chapter_3a_project_path_markers,
         "chapter_3a_laser_cases_are_reader_facing": all(
             marker in chapter_3a
             for marker in (
@@ -812,7 +822,7 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（265 页候选）",
+                "当前增量复核（266 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
@@ -820,11 +830,12 @@ def main() -> int:
                 "| 29 |",
                 "| 30--31 |",
                 "| 45--47 |",
+                "| 71--73 |",
                 "| 260--262 |",
                 "| 226 |",
                 "| 231 |",
                 "| 257 |",
-                "| 263 |",
+                "| 264 |",
             )
         ),
     }
@@ -841,7 +852,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 265-page candidate has recorded Chapter 2, Chapter 3, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 266-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -913,7 +924,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 265-page candidate has recorded Chapter 2, Chapter 3, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 266-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

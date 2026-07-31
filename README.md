@@ -283,6 +283,8 @@ AMR transition-zone 的下一阶段接口已落成可执行设计合同：`pytho
 本项目不修改 `../warpx` 原仓库；所有书稿、计划、素材索引和后续脚本都应保存在 `PIC-tutor` 内。
 
 ## 当前状态
+
+- 2026-07-31：第 3A 章补入“分布统计和初始自场是两份合同”读者验证卡。它以 `initial_distribution` 的零步 `ParticleHistogram`/总电荷 consumer 和 `space_charge_initialization` 的 `Ex/Ey/Ez` 理论场 consumer 为两条独立路线，明确分布统计不能替代初始自场验证；对应源码锚点审计、读者审计和 v0.110 三种成书产物已同步更新。
 - 2026-07-12：完成 RZ `256x512` correction-on/off shape=1/2/3/4 双侧 family：field gate 8/8 全通过；correction-on charge 全为 BOUNDARY，correction-off 中 shape=3/4 通过 `1e-11`，shape=1/2 分别为 `1.639e-11/1.020e-11`，保留为 charge/field tradeoff。汇总见 `runs/stage-c-validation/esirkepov_langmuir_rz_highres_correction-family/`。
 - 2026-07-12：完成 RZ correction-on `256x512` shape=1/2/3/4 high-resolution family：field gate 全通过，charge residual 为 `7.554e-4/8.990e-4/9.289e-4/9.729e-4`，均由 axis cell 主导并保留 BOUNDARY；汇总见 `runs/stage-c-validation/esirkepov_langmuir_rz_highres_shape-family/`。
 - 2026-07-12：完成 RZ shape=1 `256x512` resolution control：correction-on 的 axis charge residual 由 `3.593e-3 -> 1.520e-3 -> 7.554e-4` 单调下降，但 correction-off 为 `5.513e-12 -> 9.353e-12 -> 1.639e-11`，最高分辨率反而越过强 gate；该结果支持 correction-on 的分辨率趋势，但不支持把 correction-off 写成通用修复。报告见 `runs/stage-c-validation/esirkepov_langmuir_rz_resolution-trend/`。

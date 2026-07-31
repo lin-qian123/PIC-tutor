@@ -1,0 +1,29 @@
+# Chapter 3A Initialization Reader Card
+
+Classification: `SOURCE_GROUNDED_INITIALIZATION_TWO_CONTRACT_READER_CARD`.
+
+Result: PASS.
+
+## Source Routes
+
+- `Source/Initialization/WarpXInitData.cpp`
+- `Docs/source/usage/parameters.rst`
+- `Examples/Tests/initial_distribution/inputs_test_3d_initial_distribution`
+- `Examples/Tests/initial_distribution/CMakeLists.txt`
+- `Examples/Tests/initial_distribution/analysis.py`
+- `Examples/Tests/space_charge_initialization/inputs_test_2d_space_charge_initialization`
+- `Examples/Tests/space_charge_initialization/CMakeLists.txt`
+- `Examples/Tests/space_charge_initialization/analysis.py`
+
+## Checks
+
+- `reader_card_present`: `PASS`
+- `distribution_producer_and_consumer`: `PASS`
+- `self_field_producer_and_consumer`: `PASS`
+- `initialization_source_contract`: `PASS`
+
+## Scope
+
+- No WarpX build or runtime execution is performed by this audit.
+- The reader card separates zero-step particle-distribution statistics from initial self-field validation.
+- It does not establish relativistic, open-boundary, embedded-boundary, pusher, or cross-layout correctness.

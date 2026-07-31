@@ -140,7 +140,16 @@ def main() -> int:
             "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN", "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED", "RELEASE-EDITORIAL",
         )),
         "closure_language": all(marker in register for marker in ("关闭条件", "真实 `current_buf/rho_buf`", "publisher PDF")),
-        "exercise_renumbering": all(marker in chapter for marker in ("## 9.10 练习与复核", "### 9.10.1", "### 9.10.2", "### 9.10.3")),
+        "exercise_renumbering": all(
+            marker in chapter
+            for marker in (
+                "## 9.11 练习与复核",
+                "### 9.11.1",
+                "### 9.11.2",
+                "### 9.11.3",
+                "### 9.11.4",
+            )
+        ),
     }
     result = {
         "contract": "current book gap register",

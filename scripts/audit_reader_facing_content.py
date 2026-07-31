@@ -299,6 +299,7 @@ def main() -> int:
                 "一张文献判读卡",
                 "## 9.7 两条深读路线",
                 "## 9.8 如何阅读证据边界",
+                "## 9.9 把证据边界变成下一次判断",
                 "第 8 章的验证矩阵",
             )
         ),
@@ -309,7 +310,7 @@ def main() -> int:
                 "先读 9.1。",
                 "再读 9.2 与当前章节对应的一条主线。",
                 "用 9.3--9.5 确认缺口与优先级。",
-                "用 9.6--9.10 输出一张判读卡。",
+                "用 9.6--9.11 输出一张判读卡。",
                 "能支持",
                 "不能支持",
             )
@@ -322,6 +323,20 @@ def main() -> int:
                 "不是解析 NCI growth rate",
                 "不是对 LeeCPC2015 所有系数或扫描的复现",
                 "论文 -> 实现 -> 输入 -> consumer",
+            )
+        ) and not chapter_9_project_path_markers and not chapter_9_project_narration_markers,
+        "chapter_9_boundary_action_map": all(
+            marker in chapter_9
+            for marker in (
+                "## 9.9 把证据边界变成下一次判断",
+                "目标文献版本尚不能逐段核对",
+                "源码职责清楚，实际数据路线尚未被独立观察",
+                "配置在初始化或运行前被 guard 拒绝",
+                "某个 observable 有稳定残余，但根因尚未归属",
+                "重复 family 有趋势，却尚不足以给出正式收敛阶",
+                "边界行动卡",
+                "当前能说什么：",
+                "在它完成前不能说什么：",
             )
         ) and not chapter_9_project_path_markers and not chapter_9_project_narration_markers,
         "chapter_4_uses_reader_facing_evidence_language": not chapter_4_project_record_markers,
@@ -973,7 +988,7 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（274 页候选）",
+                "当前增量复核（275 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
@@ -994,7 +1009,8 @@ def main() -> int:
                 "| 231 |",
                 "| 236 |",
                 "| 265 |",
-                "| 271 |",
+                "| 271--272 |",
+                "| 273--275 |",
             )
         ),
     }
@@ -1011,7 +1027,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 274-page candidate has recorded preface, Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 275-page candidate has recorded preface, Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -1083,7 +1099,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 273-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 275-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

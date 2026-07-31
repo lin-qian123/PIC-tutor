@@ -2,7 +2,7 @@
 
 PIC-tutor 是一本中文的 Particle-In-Cell（PIC）教程：从 Vlasov--Maxwell 模型和离散算法出发，逐步走到 WarpX 的源码职责、输入设计和可解释的验证。它面向希望读懂 PIC 程序、设计模拟并判断结果证据强度的读者，不是开发日志或测试报告的汇编。
 
-当前可审阅版本为 `v0.110`，包含 274 页 PDF、合订 Markdown 和自包含 HTML。书稿内容、构建产物和当前发行哈希由同一 release manifest 固定。
+当前可审阅版本为 `v0.110`，包含 275 页 PDF、合订 Markdown 和自包含 HTML。书稿内容、构建产物和当前发行哈希由同一 release manifest 固定。
 
 ## 阅读书稿
 
@@ -56,7 +56,7 @@ python scripts/audit_release_consistency.py
 
 ## 当前状态与边界
 
-- 书稿已完成目录、前言、第 1--9 章和附录的 262 页基线连续阅读，并对当前 274 页候选的受影响内容进行增量版式复核；记录见 [人工审读记录](docs/manual-editorial-spotcheck-v0.110.md)。
+- 书稿已完成目录、前言、第 1--9 章和附录的 262 页基线连续阅读，并对当前 275 页候选的受影响内容进行增量版式复核；记录见 [人工审读记录](docs/manual-editorial-spotcheck-v0.110.md)。
 - 当前核心开放问题包括部分 publisher-formatted 论文的访问边界、RZ axis-charge correctness、完整 transition-zone route ledger、若干 geometry/algorithm runtime coverage 和公开发行权利。它们的证据与关闭条件见 [当前缺口登记](docs/current-book-gap-register.md)。
 - 本仓库的公开再分发尚未签收：public branch 已跟踪第三方 `references/` 资产，且尚无项目许可证。发行阻断的事实和维护者决策路径见 [公开发行审计](docs/public-repo-release-audit.md) 与 [风险登记](docs/public-distribution-risk-register-v0.110.md)。书稿可供审阅不等于这些第三方材料已获再分发授权。
 

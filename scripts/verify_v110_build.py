@@ -22,7 +22,7 @@ PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
 # Updated after each reader-facing rebuild; the thermal-plasma card may repaginate.
-EXPECTED_PDF_PAGES = 274
+EXPECTED_PDF_PAGES = 275
 
 
 def image_links(text: str) -> list[str]:
@@ -805,8 +805,9 @@ def main() -> None:
                 "一张文献判读卡",
                 "## 9.7 两条深读路线",
                 "## 9.8 如何阅读证据边界",
+                "## 9.9 把证据边界变成下一次判断",
                 "第 8 章的验证矩阵",
-                "## 9.10 练习与复核",
+                "## 9.11 练习与复核",
             )
         )
         and not re.search(
@@ -823,7 +824,7 @@ def main() -> None:
                 "先读 9.1。",
                 "再读 9.2 与当前章节对应的一条主线。",
                 "用 9.3--9.5 确认缺口与优先级。",
-                "用 9.6--9.10 输出一张判读卡。",
+                "用 9.6--9.11 输出一张判读卡。",
                 "能支持",
                 "不能支持",
             )
@@ -845,6 +846,20 @@ def main() -> None:
             )
         ) and (ROOT / "scripts/audit_chapter_09_evidence_routes.py").is_file()
         and "SOURCE_GROUNDED_READER_EVIDENCE_ROUTES" in source,
+        "chapter_9_boundary_action_map": all(
+            marker in chapter_9
+            for marker in (
+                "## 9.9 把证据边界变成下一次判断",
+                "目标文献版本尚不能逐段核对",
+                "源码职责清楚，实际数据路线尚未被独立观察",
+                "配置在初始化或运行前被 guard 拒绝",
+                "某个 observable 有稳定残余，但根因尚未归属",
+                "重复 family 有趋势，却尚不足以给出正式收敛阶",
+                "边界行动卡",
+                "当前能说什么：",
+                "在它完成前不能说什么：",
+            )
+        ),
         "chapter_3a_section_order": chapter_3a_numbers == list(range(1, 17)),
         "chapter_3a_current_initialization_route": all(
             marker in chapter_3a
@@ -1124,10 +1139,11 @@ def main() -> None:
         "chapter_9_exercises": all(
             marker in source
             for marker in (
-                "## 9.10 练习与复核",
-                "### 9.10.1 证据层分类练习",
-                "### 9.10.2 证据边界复核练习",
-                "### 9.10.3 延伸阅读排序练习",
+                "## 9.11 练习与复核",
+                "### 9.11.1 证据层分类练习",
+                "### 9.11.2 证据边界复核练习",
+                "### 9.11.3 延伸阅读排序练习",
+                "### 9.11.4 边界行动卡练习",
             )
         ),
         "chapter_9_reading_priority_order": all(
@@ -1482,7 +1498,7 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（274 页候选）",
+                "当前增量复核（275 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
@@ -1504,7 +1520,8 @@ def main() -> None:
                 "| 231 |",
                 "| 236 |",
                 "| 265 |",
-                "| 271 |",
+                "| 271--272 |",
+                "| 273--275 |",
                 "| 9 |",
                 "| 176--177 |",
                 "262 页基线完整连续阅读 + 第 1、2、3、3A、4、5、6、7、8、9 章及前言变更范围与受影响版式的增量复核已记录",

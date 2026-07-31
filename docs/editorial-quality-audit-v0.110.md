@@ -2,8 +2,8 @@
 
 - classification: `AUTOMATED_EDITORIAL_AUDIT_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED`
 - scope: automated structure and artifact consistency; baseline full read and current incremental review are recorded; redistribution approval remains open
-- headings: `357` Markdown / `357` HTML
-- PDF pages: `273`
+- headings: `368` Markdown / `368` HTML
+- PDF pages: `275`
 
 | check | status |
 |---|:---:|

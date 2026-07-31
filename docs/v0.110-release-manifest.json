@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1298,
-  "total_bytes": 37874751,
+  "total_bytes": 37895751,
   "entries": [
     {
       "path": ".gitignore",
@@ -43,27 +43,27 @@
     {
       "path": "README.md",
       "bytes": 5350,
-      "sha256": "7db33d27136c3722162fcc3963da80c0e23e83b46aa860e597c2f473024ed94d"
+      "sha256": "0a46208247a713fff9b43c47935ef331e014decf580e6c18bc1e916fc70f417f"
     },
     {
       "path": "TODO.md",
-      "bytes": 1467617,
-      "sha256": "531dc21d22bec9a3b627bd487620ef16b2705d428ba1ce524afefe0fe3740523"
+      "bytes": 1468150,
+      "sha256": "54c990805b7d8286ddb7b66f065358c81d375e8bad45a6f53638a93fae1c4644"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 5001678,
-      "sha256": "7d1b7550597991a50a6d79edf4c6d716e6c34e51148825842f42abbff3b7e967"
+      "bytes": 5006340,
+      "sha256": "ed0981c40c02ad5501073a738fe4b9dc7f589ddc40abf898aa8fb7b027561037"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 928513,
-      "sha256": "715a84e63de366f8ee779e9ecfbfb75f49aa2cc3a246cfcbbd3ff4af479c4a4a"
+      "bytes": 932573,
+      "sha256": "760d46111b658e274de15cf92d4789e0001466ce580f5f110ac747f3daeedae2"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2957052,
-      "sha256": "1445bad6be6556f34202c5b1d021dba5965fb5e021c048ca9727eb2ebffbf011"
+      "bytes": 2962255,
+      "sha256": "a32aba0d5d3e3ba9303218f6e903aa22b97b157daa2fcd3cb198f6404071fbb6"
     },
     {
       "path": "docs/chapter-01-electrostatic-model-validation-card-v0.110.json",
@@ -353,7 +353,7 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
       "bytes": 928,
-      "sha256": "b4710c5412233a6a604b6cb5317fc3f2b61d490368d974464ffd116f351dc5f8"
+      "sha256": "efc5c1ac1fc3fad5780e85bd1673e75f24ebe316cae9e4680bc0e73c358f39f2"
     },
     {
       "path": "docs/editorial-quality-audit-v0.81.json",
@@ -682,8 +682,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 63669,
-      "sha256": "11bbf201ed7bde02cdfa264e54b22376a6a48f6565d4fe27681fd426cd1f0761"
+      "bytes": 64023,
+      "sha256": "d115a1ad3c4e93f87dbcb44a69764c00cf83eb0f133b288f7538dda5ec03454e"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -833,7 +833,7 @@
     {
       "path": "docs/pdf-layout-audit-v0.110.md",
       "bytes": 625,
-      "sha256": "2fa777b61064f994cd684030f4ea72d24b27e932e46b4f1587add84df832497d"
+      "sha256": "91e6f429150c5834ff1a790dcad857b884d4f738fde4a9ea755002c712982233"
     },
     {
       "path": "docs/pdf-layout-audit-v0.82.json",
@@ -998,7 +998,7 @@
     {
       "path": "docs/public-distribution-risk-register-v0.110.md",
       "bytes": 1588,
-      "sha256": "0d030af4f2e4c9d4ccc80306ce24e3a7c2d03ec36ddbd610cc0678766370732b"
+      "sha256": "f897facca135250c3630670f3cca9c1294b76242d7738c3f22b778143629df8a"
     },
     {
       "path": "docs/public-evidence-index.json",
@@ -1062,8 +1062,8 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 16816,
-      "sha256": "cc8c3997199634a3866c9108714219469feda266145bf43b2bdc25a79d4cb009"
+      "bytes": 16880,
+      "sha256": "682e0b7859e70699e971e5798d6e92fd76ae343243e07527a209c45eb3b02280"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
@@ -2497,8 +2497,8 @@
     },
     {
       "path": "manuscript/chapters/09-literature-roadmap.md",
-      "bytes": 23525,
-      "sha256": "6aefff504f06d6670ba91dd91c1d7e0427a79b98945e59b06bcf85c004214a57"
+      "bytes": 27585,
+      "sha256": "07bb1195fba031777230ef234c9b9cb7d76138ee044d71f14a424ec80644b1e3"
     },
     {
       "path": "notes/code-reading/README.md",
@@ -4562,8 +4562,8 @@
     },
     {
       "path": "scripts/audit_current_gap_register.py",
-      "bytes": 9907,
-      "sha256": "ce733cda388fd9334f556b4d3a4e0b91df1573c52c4952e3ef79a2ecf44cae6c"
+      "bytes": 10050,
+      "sha256": "11c386c10183354947beb7b4ad8e915df25ce5f5de073b66ea6d1456114800b6"
     },
     {
       "path": "scripts/audit_deposition_algorithm_selection_contract.py",
@@ -4612,8 +4612,8 @@
     },
     {
       "path": "scripts/audit_editorial_quality.py",
-      "bytes": 10200,
-      "sha256": "da9e8363393989b85f8a465556b978c74ccc162a502ce3778c77221c34c38103"
+      "bytes": 10309,
+      "sha256": "00df311176270d97a19ffad279e5b989fafbe6bffa48e2a03d219c11315668bf"
     },
     {
       "path": "scripts/audit_esirkepov_bounded_compare.py",
@@ -4752,8 +4752,8 @@
     },
     {
       "path": "scripts/audit_pdf_layout.py",
-      "bytes": 4522,
-      "sha256": "b3e0923120798af08a31bc3483d96ffcc8277250b3e5778d090e16075be5fb13"
+      "bytes": 4625,
+      "sha256": "b534ecafad70faeaba67283a288f2cb25483c47389f645469f5f5999347259dd"
     },
     {
       "path": "scripts/audit_peiravi_birdsall_1978_asset_contract.py",
@@ -4812,13 +4812,13 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 58102,
-      "sha256": "7cf54c476ef4b36588aa71e89af57802ab0655a944626dfc030eff86e0050e9f"
+      "bytes": 58972,
+      "sha256": "411137ce8a71e2610a2df3a6d34446f0a261222e084e64cfa82c4e2ccab9a5ab"
     },
     {
       "path": "scripts/audit_release_consistency.py",
       "bytes": 3225,
-      "sha256": "8641eaa6f010c43f5549626a7a9cd9d7d27ea6f04010d84523d7c4a575ac24ef"
+      "sha256": "f0127910c0a6ca39943a5ca1d1bcdf66649f0d72e00c7d71d20c8b39b653a887"
     },
     {
       "path": "scripts/audit_rz_axis_charge_source_crosswalk.py",
@@ -6212,8 +6212,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 79674,
-      "sha256": "7a695f1781cfe1084a82eba0e3fb0754acf01d238a8956fb5c5db1af5db33bb0"
+      "bytes": 80513,
+      "sha256": "510f7d0b0fbb2b7b8e3618e34919b577815b58191331dee5495f31f7cb034f07"
     },
     {
       "path": "scripts/verify_v40_build.py",

@@ -67,7 +67,11 @@ def main() -> int:
         and not table_widths(pml_reader_card),
         "pdf_has_expected_boundary_sections": all(
             marker in "\n".join(page.extract_text() or "" for page in reader.pages)
-            for marker in ("7.5.1 用正确的 observable 判断 PML", "如何阅读证据边界")
+            for marker in (
+                "7.5.1 用正确的 observable 判断 PML",
+                "如何阅读证据边界",
+                "把证据边界变成下一次判断",
+            )
         ),
     }
     result = {

@@ -59,6 +59,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-03-lifecycle-trace-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03a-initialization-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-04-pusher-validation-ladder-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-05-deposition-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-validation-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-restart-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-09-evidence-routes-reader-card-v0.110.md").read_text(encoding="utf-8")
@@ -408,6 +409,15 @@ def main() -> None:
                 "SOURCE_GROUNDED_PUSHER_VALIDATION_LADDER_READER_CARD",
             )
         ) and (ROOT / "scripts/audit_chapter_04_pusher_validation_ladder.py").is_file(),
+        "chapter_5_deposition_validation_ladder_reader_card": all(
+            marker in source
+            for marker in (
+                "### 5.14.2.3 修改沉积后的验证阶梯：先核 source，再解释场",
+                "第二层：把 `divE-rho/epsilon_0` 当作 source consumer",
+                "第三层：解析场是 field consumer",
+                "SOURCE_GROUNDED_DEPOSITION_VALIDATION_LADDER_READER_CARD",
+            )
+        ) and (ROOT / "scripts/audit_chapter_05_deposition_validation_ladder.py").is_file(),
         "chapter_3_reader_code_examples_are_wrapped": all(
             marker in chapter_3
             for marker in (
@@ -897,6 +907,17 @@ def main() -> None:
                 "隐式 PIC 的配置、solver definition、nonlinear residual、粒子推进、source synchronization 和物理 observable 是连续但不同的阶段",
             )
         ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
+        "chapter_5_deposition_validation_ladder_reader_card": all(
+            marker in chapter_5
+            for marker in (
+                "### 5.14.2.3 修改沉积后的验证阶梯：先核 source，再解释场",
+                "第一层：先确认配置能够到达对应 kernel",
+                "第二层：把 `divE-rho/epsilon_0` 当作 source consumer",
+                "第三层：解析场是 field consumer",
+                "第四层：checksum 是回归 consumer",
+                "未执行检查”误读为 PASS",
+            )
+        ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
         "chapter_5_reader_extracts_are_declared": all(
             marker in chapter_5
             for marker in (
@@ -1325,13 +1346,14 @@ def main() -> None:
                 "| 45--47 |",
                 "| 71--73 |",
                 "| 109--110 |",
+                "| 168--169 |",
                 "| 260--262 |",
                 "| 219--254 |",
                 "| 226 |",
                 "| 231 |",
                 "| 257 |",
                 "| 264 |",
-                "262 页基线完整连续阅读 + 第 2、3、3A、4、8、9 章变更范围与受影响版式的增量复核已记录",
+                "262 页基线完整连续阅读 + 第 2、3、3A、4、5、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

@@ -422,6 +422,17 @@ def main() -> int:
                 "隐式 PIC 的配置、solver definition、nonlinear residual、粒子推进、source synchronization 和物理 observable 是连续但不同的阶段",
             )
         ) and not chapter_5_project_narration_markers,
+        "chapter_5_deposition_validation_ladder_reader_card": all(
+            marker in chapter_5
+            for marker in (
+                "### 5.14.2.3 修改沉积后的验证阶梯：先核 source，再解释场",
+                "第一层：先确认配置能够到达对应 kernel",
+                "第二层：把 `divE-rho/epsilon_0` 当作 source consumer",
+                "第三层：解析场是 field consumer",
+                "第四层：checksum 是回归 consumer",
+                "未执行检查”误读为 PASS",
+            )
+        ) and not chapter_5_project_narration_markers,
         "chapter_4_5_multiphysics_source_handoff": all(
             marker in chapter_5
             for marker in (
@@ -843,6 +854,7 @@ def main() -> int:
                 "| 45--47 |",
                 "| 71--73 |",
                 "| 109--110 |",
+                "| 168--169 |",
                 "| 260--262 |",
                 "| 226 |",
                 "| 231 |",
@@ -864,7 +876,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -936,7 +948,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

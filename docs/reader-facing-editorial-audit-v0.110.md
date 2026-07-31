@@ -1,7 +1,7 @@
 # Reader-facing content audit
 
 - classification: `READER_FACING_CORE_CHAPTERS_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED`
-- scope: entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters; a 262-page baseline has a complete recorded manual read and the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 8, and Chapter 9 incremental reviews
+- scope: entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters; a 262-page baseline has a complete recorded manual read and the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 8, and Chapter 9 incremental reviews
 - versioned chapter headings remaining: `0`
 
 | check | status |
@@ -29,6 +29,7 @@
 | `chapter_5_rz_axis_reader_card` | `PASS` |
 | `chapter_5_vay_configuration_reader_card` | `PASS` |
 | `chapter_5_rz_implicit_villasenor_reader_card` | `PASS` |
+| `chapter_5_deposition_validation_ladder_reader_card` | `PASS` |
 | `chapter_4_5_multiphysics_source_handoff` | `PASS` |
 | `chapter_6_opening_is_reader_facing` | `PASS` |
 | `chapter_6_current_solver_route` | `PASS` |
@@ -68,4 +69,4 @@
 
 ## Recorded Manual Review
 
-- A 262-page baseline has a complete recorded manual read; the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.
+- A 262-page baseline has a complete recorded manual read; the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.

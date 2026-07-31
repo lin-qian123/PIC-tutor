@@ -2255,6 +2255,27 @@ Vay 的可用范围尤其需要按“能运行的条件”而不是算法名称�
 
 这张卡的停止条件故意比“进程没有退出”更严格：隐式 PIC 的配置、solver definition、nonlinear residual、粒子推进、source synchronization 和物理 observable 是连续但不同的阶段。读者必须先定位失败位于哪一阶段，才能决定应修复构建、输入、求解器还是沉积/物理模型。
 
+### 5.14.2.3 修改沉积后的验证阶梯：先核 source，再解释场
+
+改动 `WarpXParticleContainer::DepositCurrent()`、某个 shape specialization、old/new position 的取法，或 `SyncCurrentAndRho()` 附近的 source 路径时，最常见的误判是只看一张电场图，或只看 checksum，就宣布“沉积正确”。沉积至少跨越了**输入是否实际选中分派、`rho/J` 是否与离散约束相容、场求解器消费后是否仍符合参考解、以及数值回归是否意外改变**四个问题。它们需要不同的 consumer；下面的阶梯不是“由弱到强”的单一排名，而是按被修改对象选择证据。
+
+**第一层：先确认配置能够到达对应 kernel，但不要把通过配置当成 source 通过。**`DepositCurrent()` 对 Esirkepov 和 Villasenor 会拒绝 collocated grid；shared-memory deposition 又会拒绝 Esirkepov、Villasenor 和 Vay。Vay 分派还拒绝 implicit push，且其 kernel 在 RZ、1D、RCYLINDER 和 RSPHERE 编译维度中明确 abort。因而改动了算法选择、grid type、shared-memory 或 push type 时，首先应保留实际 `warpx_used_inputs` 和初始化/分派错误信息，确认没有在 source 写入之前被拒绝。这只能回答“请求是否到达可用分派”，不能回答 `rho/J`、场或守恒是否正确。
+
+**第二层：把 `divE-rho/epsilon_0` 当作 source consumer，而不是场图的附属数字。**官方 `test_2d_vay_deposition` 在 2 个 MPI rank 上运行到 `diag1000050`；其 input 固定 `current_deposition = vay`、PSATD、Vay pusher、`max_level = 0`，并输出 `rho` 与 `divE`。`analysis.py` 直接计算
+
+$$
+\frac{\max\left|\nabla\!\cdot\!E-\rho/\epsilon_0\right|}
+     {\max\left|\rho/\epsilon_0\right|}<10^{-3}.
+$$
+
+它适合在改动 Vay source 路径、其 $D$-field 组织或同步接口后检查该指定 Cartesian 配置的 source/field 一致性。它不提供解析 Langmuir 场、AMR、RZ、隐式路径或任意 particle shape 的证明。相反，`test_3d_langmuir_multi` 的 2-rank Esirkepov 输入是 staggered 3D、shape 1、显式路径；`analysis_3d.py` 读取实际 `warpx_used_inputs`，只在 Esirkepov 且非 RZ、非 PSATD 时启用该 source consumer，阈值为 $10^{-11}$。因此同一分析器**不执行**某个 geometry/solver 组合的 charge check，表示这个 consumer 对该组合不适用，绝不表示它已经通过。
+
+**第三层：解析场是 field consumer，仍不能替代 source consumer。**同一个 3D Langmuir analysis 对 `Ex/Ey/Ez` 与解析 plasma-wave 场比较，最大相对误差要求小于 $5\times10^{-2}$；随后才调用上面的条件化 charge check。若只改动沉积后场波形仍接近解析解，可以说明该测试的 field observable 没有超过容差，却不能单独证明 `rho/J` 时间层、连续性、guard-cell 合并或粒子 source 已闭合。反过来，source residual 通过也不能证明不同场求解器、边界条件或输出时间的解析场准确。
+
+**第四层：checksum 是回归 consumer，不是物理 consumer。**上述 CMake 注册都还调用 `analysis_default_regression.py`，它可发现同一测试基线的输出发生变化，却没有替代解析场或 `divE-rho/epsilon_0` 的比较对象。修改后若只有 checksum 改变，先回到实际 input、输出时间层和对应 source/field consumer；若 checksum 保持不变，也仍只能说明该基线未见差异，不能把未覆盖的 RZ、AMR transition zone、Villasenor implicit 或新 shape 写成通过。
+
+实际排错可按以下顺序执行：改动分派或配置 guard 时，先处理第一层的拒绝条件；改动 current/charge kernel、old/new trajectory 或同步时，先选第二层的 `rho/divE` consumer；改动 source 被场 solver 消费后的路径时，再同时保留第三层的解析场 consumer；最后以第四层 checksum 防止已知基线漂移。若输入改为 RZ、PSATD Esirkepov、AMR 或 implicit，则必须为那个组合建立新的 producer 和 consumer，不能把本卡的“未执行检查”误读为 PASS。
+
 ### 5.14.3 选择沉积算法：先问约束，再问精度
 
 选择电流沉积算法时，名称不是第一判断条件。应依次检查几何和网格布局、显式或隐式时间层、轨迹信息是否足够、以及可用的诊断量。下表给出读者可以直接用于输入设计的稳定结论。

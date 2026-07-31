@@ -658,6 +658,18 @@ def main() -> int:
         and not chapter_8_project_path_markers
         and not chapter_8_project_narration_markers
         and not chapter_8_restart_record_markers,
+        "chapter_8_diagnostics_validation_ladder_reader_card": all(
+            marker in chapter_8
+            for marker in (
+                "### 8.14.3 修改诊断后的验证阶梯：先核 producer，再解释输出",
+                "第一层：先确认调度与时间层真的到达",
+                "第二层：改 compact reduced observable 时，以 full state 作 reference",
+                "第三层：改 bin、轴标签或 openPMD reduced mesh 时，用解析谱而非文件形状验收",
+                "第四层：改 sampling geometry、gather 或时间积分时，让 observable 匹配采样定义",
+                "第五层：有跨步状态时，restart 与 checksum 只检查各自的生命周期",
+                "不能把缺少 comparison 写成通过",
+            )
+        ) and not chapter_8_project_path_markers and not chapter_8_project_narration_markers,
         "chapter_2_3_have_reader_facing_routes": all(
             marker in chapter_2
             for marker in (
@@ -868,11 +880,12 @@ def main() -> int:
                 "| 109--110 |",
                 "| 168--169 |",
                 "| 206--207 |",
+                "| 258--259 |",
                 "| 260--262 |",
                 "| 226 |",
                 "| 231 |",
-                "| 257 |",
-                "| 264 |",
+                "| 260 |",
+                "| 266 |",
             )
         ),
     }

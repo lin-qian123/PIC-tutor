@@ -21,7 +21,7 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 6 field-solver validation ladder yields 268 pages.
+# The Chapter 8 diagnostics validation ladder yields 268 pages.
 EXPECTED_PDF_PAGES = 268
 
 
@@ -61,6 +61,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-04-pusher-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-05-deposition-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-06-field-solver-validation-ladder-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-08-diagnostics-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-validation-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-restart-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-09-evidence-routes-reader-card-v0.110.md").read_text(encoding="utf-8")
@@ -691,6 +692,18 @@ def main() -> None:
         )
         and (ROOT / "scripts/audit_chapter_08_restart_reader_card.py").is_file()
         and "SOURCE_GROUNDED_RESTART_READER_CONTRACT" in source,
+        "chapter_8_diagnostics_validation_ladder_reader_card": all(
+            marker in source
+            for marker in (
+                "### 8.14.3 修改诊断后的验证阶梯：先核 producer，再解释输出",
+                "第一层：先确认调度与时间层真的到达",
+                "第二层：改 compact reduced observable 时，以 full state 作 reference",
+                "第三层：改 bin、轴标签或 openPMD reduced mesh 时，用解析谱而非文件形状验收",
+                "第四层：改 sampling geometry、gather 或时间积分时，让 observable 匹配采样定义",
+                "第五层：有跨步状态时，restart 与 checksum 只检查各自的生命周期",
+                "SOURCE_GROUNDED_DIAGNOSTICS_VALIDATION_LADDER_READER_CARD",
+            )
+        ) and (ROOT / "scripts/audit_chapter_08_diagnostics_validation_ladder.py").is_file(),
         "chapter_9_current_literature_route": all(
             marker in chapter_9
             for marker in (
@@ -1375,12 +1388,13 @@ def main() -> None:
                 "| 109--110 |",
                 "| 168--169 |",
                 "| 206--207 |",
+                "| 258--259 |",
                 "| 260--262 |",
                 "| 219--254 |",
                 "| 226 |",
                 "| 231 |",
-                "| 257 |",
-                "| 264 |",
+                "| 260 |",
+                "| 266 |",
                 "262 页基线完整连续阅读 + 第 2、3、3A、4、5、6、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )

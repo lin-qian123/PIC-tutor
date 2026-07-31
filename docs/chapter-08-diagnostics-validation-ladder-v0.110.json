@@ -1,0 +1,26 @@
+{
+  "classification": "SOURCE_GROUNDED_DIAGNOSTICS_VALIDATION_LADDER_READER_CARD",
+  "passed": true,
+  "checks": {
+    "reader_card_present": [],
+    "diagnostic_scheduling_contract": [],
+    "reduced_full_state_contract": [],
+    "differential_luminosity_contract": [],
+    "field_probe_sampling_contract": [],
+    "restart_and_accumulator_contract": []
+  },
+  "source_routes": [
+    "Source/Evolve/WarpXEvolve.cpp",
+    "Source/Diagnostics/{MultiDiagnostics.cpp,ReducedDiags/ReducedDiags.cpp,ReducedDiags/FieldPoyntingFlux.cpp}",
+    "Examples/Tests/reduced_diags/{CMakeLists.txt,inputs_test_3d_reduced_diags,analysis_reduced_diags_impl.py}",
+    "Examples/Tests/diff_lumi_diag/{CMakeLists.txt,inputs_base_3d,analysis.py}",
+    "Examples/Tests/field_probe/{CMakeLists.txt,inputs_test_2d_field_probe,analysis.py}",
+    "Examples/Physics_applications/uniform_plasma/{CMakeLists.txt,inputs_test_3d_uniform_plasma_restart}",
+    "Examples/analysis_default_restart.py"
+  ],
+  "scope": [
+    "No WarpX build or runtime execution is performed by this audit.",
+    "The card separates scheduling, reduced/full-state consistency, analytic spectra, sampled fluence, and restart/checksum consumers.",
+    "It does not establish new geometry, interval, binning, MPI-layout, or physical-reference coverage."
+  ]
+}

@@ -1687,6 +1687,22 @@ $$
 
 这张卡的作用不是增加一层文档，而是防止“输入、输出、比较和结论”在阅读中脱节。只有五项能逐一对应时，某个 PASS 才能被解释为可复查的证据；任何一项缺失，都应将结果降级为工作流、writer 或源码接线线索。
 
+### 8.14.3 修改诊断后的验证阶梯：先核 producer，再解释输出
+
+修改诊断代码或输入后，最常见的误读是“文件写出来了，所以物理量正确”。诊断跨越调度、归约/采样、writer 和 reader-side comparison；改动任一层，都应选择实际消费该层状态的检查。
+
+**第一层：先确认调度与时间层真的到达。**`WarpX::Evolve()` 仅在 `DoComputeAndPack(step)` 或 `DoDiags(step)` 为真时列入诊断，必要时先同步速度；reduced diagnostics 走 `ComputeDiags()`/`WriteToFile()`，其余由 `FilterComputePackFlush()` 分派。改 `intervals`、`diag_type`、writer 或同步条件时，先核输出的 step、时间、对象与字段。它只证明 producer 到达正确时间层，不能证明归约公式或参考量正确。
+
+**第二层：改 compact reduced observable 时，以 full state 作 reference。**2-rank `test_3d_reduced_diags` 同时输出 Full plotfile 与能量、动量、最大值、粒子数和 `FieldReduction`；分析器从 Full 重算并比较各文本列。除 staggered/cell-centered 的 field energy 用 `< 0.3` 外，其余默认 `< 1e-12`。它适合检查归约定义、加权、MPI reduction 与列写出，支持同一时刻的 compact/full-state 一致，不能代替其他 writer、interval、几何或守恒律验证。
+
+**第三层：改 bin、轴标签或 openPMD reduced mesh 时，用解析谱而非文件形状验收。**3D、2-rank `test_3d_diff_lumi_diag_leptons` 比较 128-bin 文本谱与 `128 x 128` openPMD 谱，核对二维轴顺序，并与 Gaussian-beam 解析谱比较；leptons 的 1D/2D 误差阈值为 `0.02`/`0.04`。它检验 binning、metadata 与聚合，不能推出其他 species、range、AMR 或 collider-QED application 已复现。
+
+**第四层：改 sampling geometry、gather 或时间积分时，让 observable 匹配采样定义。**`test_2d_field_probe` 在 step 500 读取 line probe；`integrate = 1` 给出 fluence，不是瞬时强度，analysis 以单缝 \(\mathrm{sinc}^2\) 包络要求平均误差 `< 2.5%`。它检查 probe 几何、`E/B` gather、积分与坐标选择；文件生成不等于通过，改变积分或位置必须另建 reference。
+
+**第五层：有跨步状态时，restart 与 checksum 只检查各自的生命周期。**2-rank `test_3d_uniform_plasma_restart` 从 `chk000006` 续跑，对同布局 level-0 `field_list` 逐字段 `< 1e-12` 比较；checksum 以 `--rtol 1e-12` 锁定指定输出。累积量还须有 checkpoint hook，如 `FieldPoyntingFlux` 的读写接口。它们不能替代 full-state、解析谱或采样物理量。
+
+按改动对象选层：scheduling/writer、reduced quantity、二维谱/bin/metadata、probe/integration、checkpoint/累计量依次对应第一至第五层。未执行 consumer 只能是“不适用或尚未执行”，不能把缺少 comparison 写成通过；所有层都不能替代跨分辨率、跨 MPI 布局或新的物理 reference。
+
 ## 8.15 练习与复现实验
 
 1. **证据分层题**：从验证矩阵中各选一个 physics gate、writer/schema 检查和 performance gate，说明它们的 producer、analysis 量和“不能支持的结论”。

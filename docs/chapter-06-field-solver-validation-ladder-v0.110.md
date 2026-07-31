@@ -1,0 +1,29 @@
+# Chapter 6 Field-Solver Validation Ladder
+
+Classification: `SOURCE_GROUNDED_FIELD_SOLVER_VALIDATION_LADDER_READER_CARD`.
+
+Result: PASS.
+
+## Source Routes
+
+- `Source/FieldSolver/WarpXPushFieldsEM.cpp`
+- `Source/FieldSolver/WarpXSolveFieldsES.cpp`
+- `Source/FieldSolver/ElectrostaticSolvers/ElectrostaticSolver.cpp`
+- `Examples/Tests/pml/{CMakeLists.txt,analysis_pml_yee.py}`
+- `Examples/Tests/nci_psatd_stability/{CMakeLists.txt,inputs_test_2d_galilean_psatd_current_correction,analysis_galilean.py}`
+- `Examples/Tests/electrostatic_sphere/{CMakeLists.txt,inputs_test_3d_electrostatic_sphere_lab_frame,analysis_electrostatic_sphere.py}`
+- `Examples/analysis_default_restart.py`
+
+## Checks
+
+- `reader_card_present`: `PASS`
+- `pml_reflectivity_contract`: `PASS`
+- `galilean_current_correction_contract`: `PASS`
+- `electrostatic_sphere_contract`: `PASS`
+- `restart_contract`: `PASS`
+
+## Scope
+
+- No WarpX build or runtime execution is performed by this audit.
+- The card separates PML absorption, NCI/current-correction, electrostatic analytic fields, and restart/checksum consumers.
+- It does not establish cross-geometry, AMR, arbitrary MPI-layout, or convergence coverage.

@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 4 pusher validation ladder yields 267 pages.
-EXPECTED_PDF_PAGES = 267
+# The Chapter 6 field-solver validation ladder yields 268 pages.
+EXPECTED_PDF_PAGES = 268
 
 
 def image_links(text: str) -> list[str]:
@@ -60,6 +60,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-03a-initialization-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-04-pusher-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-05-deposition-validation-ladder-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-06-field-solver-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-validation-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-restart-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-09-evidence-routes-reader-card-v0.110.md").read_text(encoding="utf-8")
@@ -269,6 +270,21 @@ def main() -> None:
             r"contract\.\{json,md\}|全文笔记|逐式记录|证据台账",
             chapter_6,
         ),
+        "chapter_6_field_solver_validation_ladder_reader_card": all(
+            marker in chapter_6
+            for marker in (
+                "### 6.11.10 场求解器修改后的验证阶梯：先匹配场量，再解释通过",
+                "第一层：FDTD/PML 应先看反射率，而不是 checksum",
+                "第二层：改 PSATD、Galilean frame 或 current correction 时看 NCI consumer",
+                "第三层：改 Poisson 求解或 $\\phi\\to\\mathbf E$ 离散梯度时看解析场",
+                "第四层：restart 和 checksum 是生命周期回归 consumer",
+                "不是 PASS",
+            )
+        ) and not chapter_6_stale_location_markers and not re.search(
+            r"scripts/|notes/code-reading|runs/stage-c-validation|docs/chapter-06-v0-evidence-ledger|"
+            r"contract\.\{json,md\}|全文笔记|逐式记录|证据台账",
+            chapter_6,
+        ),
         "chapter_5_6_source_to_field_handoff": all(
             marker in chapter_6
             for marker in (
@@ -418,6 +434,17 @@ def main() -> None:
                 "SOURCE_GROUNDED_DEPOSITION_VALIDATION_LADDER_READER_CARD",
             )
         ) and (ROOT / "scripts/audit_chapter_05_deposition_validation_ladder.py").is_file(),
+        "chapter_6_field_solver_validation_ladder_reader_card": all(
+            marker in source
+            for marker in (
+                "### 6.11.10 场求解器修改后的验证阶梯：先匹配场量，再解释通过",
+                "第一层：FDTD/PML 应先看反射率，而不是 checksum",
+                "第二层：改 PSATD、Galilean frame 或 current correction 时看 NCI consumer",
+                "第三层：改 Poisson 求解或 $\\phi\\to\\mathbf E$ 离散梯度时看解析场",
+                "第四层：restart 和 checksum 是生命周期回归 consumer",
+                "SOURCE_GROUNDED_FIELD_SOLVER_VALIDATION_LADDER_READER_CARD",
+            )
+        ) and (ROOT / "scripts/audit_chapter_06_field_solver_validation_ladder.py").is_file(),
         "chapter_3_reader_code_examples_are_wrapped": all(
             marker in chapter_3
             for marker in (
@@ -1336,7 +1363,7 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（267 页候选）",
+                "当前增量复核（268 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
@@ -1347,13 +1374,14 @@ def main() -> None:
                 "| 71--73 |",
                 "| 109--110 |",
                 "| 168--169 |",
+                "| 206--207 |",
                 "| 260--262 |",
                 "| 219--254 |",
                 "| 226 |",
                 "| 231 |",
                 "| 257 |",
                 "| 264 |",
-                "262 页基线完整连续阅读 + 第 2、3、3A、4、5、8、9 章变更范围与受影响版式的增量复核已记录",
+                "262 页基线完整连续阅读 + 第 2、3、3A、4、5、6、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

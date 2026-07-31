@@ -643,6 +643,8 @@ solver：哪些是强判据，哪些只是输出回归</a></li>
 入口索引</a></li>
 <li><a href="#从源码入口回查验证量" id="toc-从源码入口回查验证量">6.11.9
 从源码入口回查验证量</a></li>
+<li><a href="#场求解器修改后的验证阶梯先匹配场量再解释通过" id="toc-场求解器修改后的验证阶梯先匹配场量再解释通过">6.11.10
+场求解器修改后的验证阶梯：先匹配场量，再解释通过</a></li>
 </ul></li>
 <li><a href="#练习与运行验证" id="toc-练习与运行验证">6.12
 练习与运行验证</a></li>
@@ -17095,6 +17097,77 @@ PML，电场能量与 <code>divE-rho</code> 对应 NCI/Gauss law，解析 Langmu
 source，以及该测试实际测量的
 observable。反过来，测试通过也不表示任意几何、边界、AMR
 层数或沉积方式都已被证明正确。</p>
+<h3 id="场求解器修改后的验证阶梯先匹配场量再解释通过">6.11.10
+场求解器修改后的验证阶梯：先匹配场量，再解释通过</h3>
+<p>修改场更新时，最容易犯的错误是把一次“测试通过”概括成“Maxwell solver
+正确”。这在本章尤其不成立：PML、Galilean PSATD、静电 Poisson 和 restart
+分别消费不同的场状态，回答的也不是同一个物理问题。下面的阶梯把官方
+regression
+组织为可执行的选择顺序。每一层先确认输入确实到达相应路线，再只解释该层实际读取的
+observable。</p>
+<p><strong>第一层：FDTD/PML 应先看反射率，而不是
+checksum。</strong>若改动的是 split-field、sigma profile、PML patch
+交换或 Yee 的 PML 更新，入口是
+<code>Examples/Tests/pml/test_2d_pml_x_yee</code>：它以 2 个 MPI rank
+运行 <code>inputs_test_2d_pml_x_yee</code>，由
+<code>analysis_pml_yee.py</code>
+从终态全场重建电磁能量，并将数值反射率相对理论反射率的误差限制为
+<code>&lt; 5%</code>。这正对应 <code>WarpXPushFieldsEM.cpp</code> 中
+regular-cell <code>EvolveB/EvolveE</code> 后的
+<code>EvolveBPML/EvolveEPML</code> 路线，以及 <code>PML.cpp</code>
+的交换职责。通过它可以说：这一组 2D Cartesian Yee、给定 PML
+参数和激光脉冲的吸收行为仍与理论值相符。它不能证明 PSATD PML、RZ
+轴线、带粒子 PML、AMR 界面或任意入射角。</p>
+<p><strong>第二层：改 PSATD、Galilean frame 或 current correction 时看
+NCI
+consumer。</strong><code>Examples/Tests/nci_psatd_stability/test_2d_galilean_psatd_current_correction</code>
+同样使用 2 个 MPI rank；其输入开启
+<code>psatd.current_correction = 1</code> 且关闭
+<code>periodic_single_box_fft</code>。<code>analysis_galilean.py</code>
+将终态电场能量除以该配置对应的 reference energy，并要求小于该分支的
+<code>2e-8</code>；同时对归一化</p>
+<p><span class="math display">\[
+\frac{\max |\nabla\!\cdot\!\mathbf E-\rho/\epsilon_0|}
+{\max(\max|\nabla\!\cdot\!\mathbf E|,\max|\rho/\epsilon_0|)}
+\]</span></p>
+<p>要求 <code>&lt; 2e-4</code>。reference 是把相同 case 关闭 Galilean
+frame 或 time averaging 后得到的 NCI 不稳定结果，因而这一层的能量 gate
+是该离散配置下的 NCI
+抑制证据，不是解析电磁场误差，也不是一般意义的能量守恒证明。源码回查应从
+<code>PushPSATD()</code> 的 <code>J/rho</code> 变换与 current correction
+开始；若没有启用 correction，脚本本身也不会执行上面的 Gauss-law
+分支。</p>
+<p><strong>第三层：改 Poisson 求解或 <span class="math inline">\(\phi\to\mathbf E\)</span>
+离散梯度时看解析场。</strong><code>Examples/Tests/electrostatic_sphere/test_3d_electrostatic_sphere_lab_frame</code>
+以 2 个 MPI rank 运行带 <code>warpx.do_electrostatic = labframe</code>
+的均匀带电球。<code>analysis_electrostatic_sphere.py</code>
+先由已知球半径演化构造三条轴线上的解析电场，再要求
+<code>E_x,E_y,E_z</code> 的相对 L2 误差各自 <code>&lt; 0.05</code>；该
+lab-frame 输入还输出粒子
+<code>phi</code>，于是脚本额外要求势能发生显著转移且总能量变化小于初值的
+<code>0.0032</code>。这层对应
+<code>ComputeSpaceChargeField()</code>、<code>ElectrostaticSolver::computePhi()</code>
+与 <code>computeE()</code>，因此适用于 Poisson RHS、边界条件或由势到
+staggered electric field 的改动。它不替代电磁 FDTD/PSATD
+波传播验证，也不能覆盖粒子形函数、开放边界、AMR 或 RZ。</p>
+<p><strong>第四层：restart 和 checksum 是生命周期回归
+consumer。</strong>若变更的是
+checkpoint/restart、诊断字段或序列化，应使用
+<code>test_2d_pml_x_yee_restart</code>
+的独立比较；<code>analysis_default_restart.py</code> 会遍历 benchmark
+中的所有网格场、粒子种类与属性，逐字段要求相对误差
+<code>&lt; 1e-12</code>。其后的
+<code>analysis_default_regression.py</code> checksum
+用于发现同一输出基线的回归。二者能说明原始运行与续跑在这套输出上等价，并能锁住既有数值轨迹；它们不能替代第一层的
+PML 反射率、第二层的 NCI/Gauss law 或第三层的解析静电场。</p>
+<p>因此，修改前可先按对象选 consumer：PML split-field
+先跑第一层；谱系数、Galilean frame 或 correction
+先跑第二层；Poisson/<code>phi</code>/<code>E</code>
+路线先跑第三层；restart 和 I/O
+再看第四层。若某一层因构建选项、几何或输入 guard
+未被执行，正确结论是“这个 consumer 对当前配置不适用或尚未执行”，不是
+PASS。四层都没有替代跨网格、跨 MPI
+布局、跨几何的收敛研究；它们只是把一次源代码修改接到最贴近的场量。</p>
 <h2 id="练习与运行验证">6.12 练习与运行验证</h2>
 <ol type="1">
 <li><strong>solver 分派题</strong>：给定

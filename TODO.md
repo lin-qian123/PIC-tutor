@@ -5075,3 +5075,4 @@
 - [x] 新增第 7 章 v0.77 PML 证据梯度矩阵：区分 Cartesian FDTD/PSATD 反射率、RZ residual、restart、粒子入 PML 和 3D cleaning reader-side 证据，并显式记录 `C1-C25`、`F/G`、Galilean `T2`、RZ 与 AMR 的负面边界。
 - [x] 新增 `scripts/audit_pml_evidence_gradient_contract.py`，绑定第 7 章正文、WarpX 只读源码和代表性 PML runtime contracts；分类为 `PML_EVIDENCE_GRADIENT_WITH_EXPLICIT_RUNTIME_BOUNDARIES`。
 - [ ] 继续获取 LeeCPC2015 publisher-formatted PDF，并在全文可得后逐式核对 `C1-C25`、`F/G`、`T2` 与 RZ 分支；当前 accepted manuscript 和源码/runtime 证据已闭环，但 publisher PDF 仍是边界。
+- [x] 为第 6 章补齐场求解器修改后的验证阶梯：以 2-rank `test_2d_pml_x_yee` 的反射率理论误差、2-rank `test_2d_galilean_psatd_current_correction` 的 NCI 电场能量与条件化 Gauss-law residual、2-rank `test_3d_electrostatic_sphere_lab_frame` 的解析场 L2/势能-动能 consumer，以及 PML restart 的逐字段比较和 checksum 为依据，明确 PML 吸收、PSATD/current-correction、Poisson 解和生命周期回归不能互相替代；未执行的 consumer 只能表示不适用或尚未执行。新增 `scripts/audit_chapter_06_field_solver_validation_ladder.py`；重建为 268 页，PDF 第 206--207 页视觉复核通过。全书逐页重读、第三方材料许可和公开再分发仍未完成。

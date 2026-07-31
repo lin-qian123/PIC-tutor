@@ -461,6 +461,18 @@ def main() -> int:
             )
         ) and not chapter_6_stale_location_markers and not chapter_6_project_path_markers
         and not chapter_6_project_narration_markers,
+        "chapter_6_field_solver_validation_ladder_reader_card": all(
+            marker in chapter_6
+            for marker in (
+                "### 6.11.10 场求解器修改后的验证阶梯：先匹配场量，再解释通过",
+                "第一层：FDTD/PML 应先看反射率，而不是 checksum",
+                "第二层：改 PSATD、Galilean frame 或 current correction 时看 NCI consumer",
+                "第三层：改 Poisson 求解或 $\\phi\\to\\mathbf E$ 离散梯度时看解析场",
+                "第四层：restart 和 checksum 是生命周期回归 consumer",
+                "不是 PASS",
+            )
+        ) and not chapter_6_stale_location_markers and not chapter_6_project_path_markers
+        and not chapter_6_project_narration_markers,
         "chapter_5_6_source_to_field_handoff": all(
             marker in chapter_6
             for marker in (
@@ -844,7 +856,7 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（267 页候选）",
+                "当前增量复核（268 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
@@ -855,6 +867,7 @@ def main() -> int:
                 "| 71--73 |",
                 "| 109--110 |",
                 "| 168--169 |",
+                "| 206--207 |",
                 "| 260--262 |",
                 "| 226 |",
                 "| 231 |",
@@ -876,7 +889,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 268-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -948,7 +961,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 268-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

@@ -22,7 +22,7 @@ PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
 # Updated after each reader-facing rebuild; the thermal-plasma card may repaginate.
-EXPECTED_PDF_PAGES = 273
+EXPECTED_PDF_PAGES = 274
 
 
 def image_links(text: str) -> list[str]:
@@ -234,6 +234,17 @@ def main() -> None:
         "reader_facing_front_matter": all(
             marker in version + "\n" + preface
             for marker in ("# PIC-tutor", "建议的阅读方式", "如何使用本书", "遇到一个新的输入或源码分支时")
+        ) and not front_matter_project_markers,
+        "preface_goal_oriented_reading_routes": all(
+            marker in preface
+            for marker in (
+                "按目标选择阅读路线",
+                "路线 A：先能运行并解释一个最小 PIC case",
+                "路线 B：先读懂一条从粒子到场的源码链",
+                "路线 C：先学会设计验证，而不是只收集输出",
+                "终点不是“作业跑完”",
+                "终点是一份可审查的验证合同",
+            )
         ) and not front_matter_project_markers,
         "preface_defines_cross_chapter_terms": all(
             marker in preface
@@ -949,7 +960,7 @@ def main() -> None:
                 "阅读 5.1--5.3",
                 "阅读 5.4--5.8",
                 "阅读 5.9--5.13",
-                "阅读 5.14--5.15",
+                "阅读 5.14--5.16",
             )
         ),
         "chapter_4_has_no_project_path_narration": not chapter_4_workspace_markers and not re.search(
@@ -966,7 +977,19 @@ def main() -> None:
                 "WarpXParticleContainer::DepositCurrent()",
                 "WarpX::SyncCurrentAndRho()",
                 "tile-loop 阶段",
-                "核查练习。",
+                "### 5.16.3 核查练习：从 source 到验证合同",
+            )
+        ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
+        "chapter_5_executable_exercise_route": all(
+            marker in chapter_5
+            for marker in (
+                "## 5.16 练习与验证路径",
+                "### 5.16.1 时间层与 consumer 定位题",
+                "### 5.16.2 分派与输入约束题",
+                "### 5.16.3 核查练习：从 source 到验证合同",
+                "### 5.16.4 RZ residual 判读题",
+                "不能把未运行的预期写成通过结果",
+                "该 case 不能证明的 geometry、AMR、implicit 或 particle-shape 结论",
             )
         ) and not chapter_5_stale_location_markers and not chapter_5_workspace_markers and not chapter_5_project_markers,
         "chapter_5_convergence_reader_card": all(
@@ -1438,7 +1461,7 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（273 页候选）",
+                "当前增量复核（274 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
@@ -1461,7 +1484,9 @@ def main() -> None:
                 "| 236 |",
                 "| 265 |",
                 "| 271 |",
-                "262 页基线完整连续阅读 + 第 1、2、3、3A、4、5、6、7、8、9 章变更范围与受影响版式的增量复核已记录",
+                "| 9 |",
+                "| 176--177 |",
+                "262 页基线完整连续阅读 + 第 1、2、3、3A、4、5、6、7、8、9 章及前言变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

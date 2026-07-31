@@ -141,6 +141,15 @@ Object.defineProperty(e,"__esModule",{value:!0}),e.mhchemParser=void 0;var r=fun
 <ul>
 <li><a href="#四个跨章节术语" id="toc-四个跨章节术语">四个跨章节术语</a></li>
 </ul></li>
+<li><a href="#按目标选择阅读路线" id="toc-按目标选择阅读路线">按目标选择阅读路线</a>
+<ul>
+<li><a href="#路线-a先能运行并解释一个最小-pic-case" id="toc-路线-a先能运行并解释一个最小-pic-case">路线
+A：先能运行并解释一个最小 PIC case</a></li>
+<li><a href="#路线-b先读懂一条从粒子到场的源码链" id="toc-路线-b先读懂一条从粒子到场的源码链">路线
+B：先读懂一条从粒子到场的源码链</a></li>
+<li><a href="#路线-c先学会设计验证而不是只收集输出" id="toc-路线-c先学会设计验证而不是只收集输出">路线
+C：先学会设计验证，而不是只收集输出</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#动理学模型与-pic-的基本思想" id="toc-动理学模型与-pic-的基本思想">1. 动理学模型与 PIC 的基本思想</a>
 <ul>
@@ -563,6 +572,18 @@ residual：把局部诊断和算法错误分开</a></li>
 收敛判读卡：先检验斜率，再讨论阶数</a></li>
 </ul></li>
 <li><a href="#本章结论-2" id="toc-本章结论-2">5.15 本章结论</a></li>
+<li><a href="#练习与验证路径" id="toc-练习与验证路径">5.16
+练习与验证路径</a>
+<ul>
+<li><a href="#时间层与-consumer-定位题" id="toc-时间层与-consumer-定位题">5.16.1 时间层与 consumer
+定位题</a></li>
+<li><a href="#分派与输入约束题" id="toc-分派与输入约束题">5.16.2
+分派与输入约束题</a></li>
+<li><a href="#核查练习从-source-到验证合同" id="toc-核查练习从-source-到验证合同">5.16.3 核查练习：从 source
+到验证合同</a></li>
+<li><a href="#rz-residual-判读题" id="toc-rz-residual-判读题">5.16.4 RZ
+residual 判读题</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#电磁场求解器" id="toc-电磁场求解器">6. 电磁场求解器</a>
 <ul>
@@ -1032,9 +1053,39 @@ observable，全文文献可以支撑公式或机制；它们必须互相独立�
 <span class="math inline">\(\mathbf{E},\mathbf{B}\)</span>，电荷和电流密度为
 <span class="math inline">\(\rho,\mathbf{J}\)</span>，粒子权重为 <span class="math inline">\(w_p\)</span>，形函数为 <span class="math inline">\(S\)</span>。网格量的上标表示时间层，例如 <span class="math inline">\(\mathbf{B}^{n+1/2}\)</span>；粒子量一般按 leapfrog
 交错在位置和动量时间层上。</p>
-<p>阅读建议：先读第 1-3 章建立“物理-算法-代码调用链”的整体图，再读第 4-7
-章理解各个核心模块，最后用第 8 章的 Langmuir wave 和 uniform plasma
-案例检查自己是否真正能把输入参数、源码和输出诊断连起来。</p>
+<h2 id="按目标选择阅读路线">按目标选择阅读路线</h2>
+<p>不必把全书当作一条只能从头到尾走完的线。先选择你要获得的能力，再沿相应路线完成每个终点练习；三条路线共享术语和证据边界，但不能用其中一条的通过替代另一条的结论。</p>
+<h3 id="路线-a先能运行并解释一个最小-pic-case">路线
+A：先能运行并解释一个最小 PIC case</h3>
+<p>适合已经会启动程序、但还不能说明输出为何可信的读者。先读第
+1.10–1.14，写出 Debye 长度、时间尺度和一个要保留的 observable；再读第
+2.6–2.10，把它放进一个完整 PIC step 和最小输入；接着用第 3.12–3.13
+追踪输入、<code>warpx_used_inputs</code>、输出与 analysis
+的交接；最后完成第 8.15 的 Langmuir 或 uniform-plasma
+练习。终点不是“作业跑完”，而是能写出该 case 的
+producer、consumer、比较量、容差以及它不能覆盖的
+geometry、算法和物理范围。</p>
+<h3 id="路线-b先读懂一条从粒子到场的源码链">路线
+B：先读懂一条从粒子到场的源码链</h3>
+<p>适合需要修改或审查实现、但不希望先被所有模块细节淹没的读者。以第 2.7
+的导航为索引，读第 3.4–3.10 确定初始化、外层时间步和 source
+同步的职责；然后依次完成第 4.16、5.16、6.12
+的练习，分别追踪粒子状态、<code>rho/J</code>
+和场更新的时间层。每次定位函数时先写“它消费什么、产生什么、下一位
+consumer 是谁”，再阅读分派或
+kernel；不能从找到一次数组写入就推断求解器已经消费了物理上完整的
+source。</p>
+<h3 id="路线-c先学会设计验证而不是只收集输出">路线
+C：先学会设计验证，而不是只收集输出</h3>
+<p>适合准备建立新 case、改变数值算法或解释异常结果的读者。先读第 1.5.1
+与第 1.9.1，区分模型选择、能量账本和统计量；再读第 5.14.2.3 与第
+5.14.7，把 source residual、解析场、checksum 和收敛趋势拆成不同
+consumer；随后以第 8.14–8.16 设计一张诊断记录卡；最后用第 9.8–9.10
+复核文献、源码和运行证据能否支持措辞。终点是一份可审查的验证合同，而不是一张看起来合理的场图或一次
+regression PASS。</p>
+<p>第一次阅读仍可先走路线 A，再按需要进入 B 或
+C。无论选择哪条路线，遇到一个新的输入或源码分支，都回到本节前的四步：连续物理量、离散表示、producer/consumer
+和带范围说明的 observable。</p>
 <!-- source: manuscript/chapters/01-kinetic-models.md -->
 <h1 id="动理学模型与-pic-的基本思想">1. 动理学模型与 PIC 的基本思想</h1>
 <p>PIC
@@ -10526,9 +10577,9 @@ old/new shape difference
 <li><strong>守恒算法实际怎样构造？</strong> 阅读 5.9–5.13，按需要比较
 Direct、Esirkepov、Villasenor–Buneman 与 Vay，并把 tile、guard cell、AMR
 和边界同步视为同一条 source 链的不同阶段。</li>
-<li><strong>怎样把证据变成输入决策？</strong> 阅读 5.14–5.15，先检查
+<li><strong>怎样把证据变成输入决策？</strong> 阅读 5.14–5.16，先检查
 geometry、AMR 和时间层是否允许该路径，再选择与 observable 匹配的
-analysis，并明确案例不能外推到的组合。</li>
+analysis，并完成一项明确范围的练习；案例不能外推到的组合必须写在结论中。</li>
 </ol>
 <p>因此，本章的阅读终点不是记住某个 kernel
 名称，而是能回答四个问题：源项改变了什么、由哪条轨迹或时间层构造、经过哪些同步后被消费、以及哪一个
@@ -14869,14 +14920,61 @@ Cartesian case 外推到 RZ axis、径向几何、AMR transition zone
 solver 如何消费它们；第 7 章继续解释边界、PML 和 AMR 如何改变 source
 的有效定义；第 8 章则把本章涉及的场、粒子与守恒量组织成
 diagnostics。</p>
-<p><strong>核查练习。</strong> 以一个 Langmuir current-correction 或
-Vay-deposition 变体为对象，依次写出：old/new <code>rho</code> 与半步
-<code>J</code>
-的时间层；<code>DepositCharge()</code>、<code>DepositCurrent()</code>、<code>SyncCurrentAndRho()</code>
-各自负责和不负责的动作；其场量、source 一致性量与容差；以及这个 case
-不能证明的 geometry、AMR 或隐式结论。最后用 5.11 的 old/new shape
-difference 与 Villasenor crossing 分段说明，公式、源码分派和端到端
-Gauss-law case 为什么不能互相替代。</p>
+<h2 id="练习与验证路径">5.16 练习与验证路径</h2>
+<p>下面的练习按“时间链 -&gt; 分派条件 -&gt; 可观察量 -&gt;
+证据边界”排列。它们要求读者建立可以复查的判断，而不是修改参数后只比较一张场图。若没有实际运行环境，可以完成源码定位、预期和验证合同；不能把未运行的预期写成通过结果。</p>
+<h3 id="时间层与-consumer-定位题">5.16.1 时间层与 consumer 定位题</h3>
+<p>以一个显式 Langmuir case
+为对象，画出从粒子位置/动量到场更新的最短链。至少标明：old
+<code>rho</code>、new <code>rho</code>、半步 <code>J</code>
+分别在哪个阶段产生；<code>DepositCharge()</code>、<code>DepositCurrent()</code>
+和 <code>SyncCurrentAndRho()</code> 各自负责与不负责的动作；以及场
+solver 实际消费的是哪一种同步后的 source。答案应能回到第 5.4、5.7、5.8
+和 5.13 的函数职责，而不能用“都在 <code>DepositCurrent()</code>
+里”代替时间层说明。</p>
+<p>完成后自查：若把 source consumer 改成某个诊断 writer，或只观察
+tile-local 数组，这条链为什么不再能说明场更新实际使用的
+<code>rho/J</code>？写出至少一个 guard cell、AMR
+或边界同步会改变这个判断的原因。</p>
+<h3 id="分派与输入约束题">5.16.2 分派与输入约束题</h3>
+<p>选择 Direct、Esirkepov、Villasenor–Buneman 或 Vay
+中的一种算法，建立一张四列表：输入中的
+<code>current_deposition</code>、geometry/grid/pusher/AMR
+条件、源码分派或初始化 guard、以及适合它的 source 或 field
+consumer。然后再选一个不满足条件的组合，说明它应在配置/初始化阶段拒绝、在
+source 写入前终止，还是需要另建验证合同。</p>
+<p>这里的合格答案必须把“配置被接受”与“沉积正确”分开。例如，Vay 或
+Esirkepov 的分派条件只能说明请求到达可用路径；只有与指定
+<code>rho</code>、<code>divE</code>、解析场或其他比较对象对应的
+consumer，才能检验给定输入下的数值结论。不要把某个组合没有进入某一
+analysis branch 写成 PASS。</p>
+<h3 id="核查练习从-source-到验证合同">5.16.3 核查练习：从 source
+到验证合同</h3>
+<p>以 Langmuir current-correction 或 Vay-deposition
+变体为对象，写出一页验证合同，至少包含：</p>
+<ol type="1">
+<li>producer 的输入、old/new <code>rho</code> 与半步 <code>J</code>
+时间层，以及 <code>SyncCurrentAndRho()</code> 后的消费点；</li>
+<li>一个 source 一致性 observable、一个 field observable 和各自的
+reference/容差；</li>
+<li>checksum 在该 case 中作为回归 consumer 的作用；</li>
+<li>该 case 不能证明的 geometry、AMR、implicit 或 particle-shape
+结论。</li>
+</ol>
+<p>最后用第 5.11 的 old/new shape difference 与 Villasenor crossing
+分段解释，为什么公式、源码分派和端到端 Gauss-law case
+必须相互补充，而不能互相替代。若你实际执行了测试，记录实际输入、输出时间层和分析命令；若没有执行，则只把这份内容称为验证设计。</p>
+<h3 id="rz-residual-判读题">5.16.4 RZ residual 判读题</h3>
+<p>对一个 RZ residual 假设，分别写出 axis、off-axis 和 all-cell
+的同时间层量；再说明仅切换 axis correction 时，为什么必须分别比较
+species <code>rho</code>、total <code>rho</code>、field operator
+和分辨率趋势。根据第 5.14.5.1 与
+5.14.7，给出一句最终结论，其措辞必须同时保留“目前的 observable
+支持什么”和“尚不能归因为哪个 deposition kernel”。</p>
+<p>这题的目标是避免两种相反但同样错误的缩写：axis residual
+较大不自动证明 kernel 错误；某一场误差下降或重复 family
+一致，也不自动关闭 axis-charge correctness 或建立 formal numerical
+order。</p>
 <!-- source: manuscript/chapters/06-field-solvers.md -->
 <h1 id="电磁场求解器">6. 电磁场求解器</h1>
 <p>场求解器把上一章已经同步的电荷与电流变成下一时刻的电磁场。本章不按“有哪些

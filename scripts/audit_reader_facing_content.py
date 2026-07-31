@@ -240,6 +240,17 @@ def main() -> int:
         and "读者的核查顺序" in readme and "不是面向维护者的提交记录" in readme,
         "preface_has_learning_outcomes": "读者应当能够" in preface and "如何使用本书" in preface
         and "遇到一个新的输入或源码分支时" in preface and not front_matter_project_markers,
+        "preface_has_goal_oriented_reading_routes": all(
+            marker in preface
+            for marker in (
+                "按目标选择阅读路线",
+                "路线 A：先能运行并解释一个最小 PIC case",
+                "路线 B：先读懂一条从粒子到场的源码链",
+                "路线 C：先学会设计验证，而不是只收集输出",
+                "终点不是“作业跑完”",
+                "终点是一份可审查的验证合同",
+            )
+        ) and not front_matter_project_markers,
         "preface_defines_cross_chapter_terms": all(
             marker in preface
             for marker in (
@@ -361,7 +372,7 @@ def main() -> int:
                 "阅读 5.1--5.3",
                 "阅读 5.4--5.8",
                 "阅读 5.9--5.13",
-                "阅读 5.14--5.15",
+                "阅读 5.14--5.16",
             )
         ),
         "chapter_5_opening_is_reader_facing": not chapter_5_opening_project_markers,
@@ -374,10 +385,25 @@ def main() -> int:
                 "WarpXParticleContainer::DepositCurrent()",
                 "WarpX::SyncCurrentAndRho()",
                 "tile-loop 阶段",
-                "核查练习。",
+                "### 5.16.3 核查练习：从 source 到验证合同",
             )
         )
         and not chapter_5_stale_location_markers
+        and not chapter_5_project_path_markers
+        and not chapter_5_project_narration_markers
+        and not chapter_5_workspace_markers,
+        "chapter_5_has_executable_exercise_route": all(
+            marker in chapter_5
+            for marker in (
+                "## 5.16 练习与验证路径",
+                "### 5.16.1 时间层与 consumer 定位题",
+                "### 5.16.2 分派与输入约束题",
+                "### 5.16.3 核查练习：从 source 到验证合同",
+                "### 5.16.4 RZ residual 判读题",
+                "不能把未运行的预期写成通过结果",
+                "该 case 不能证明的 geometry、AMR、implicit 或 particle-shape 结论",
+            )
+        ) and not chapter_5_stale_location_markers
         and not chapter_5_project_path_markers
         and not chapter_5_project_narration_markers
         and not chapter_5_workspace_markers,
@@ -926,7 +952,7 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（273 页候选）",
+                "当前增量复核（274 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
@@ -964,7 +990,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 273-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 274-page candidate has recorded preface, Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),

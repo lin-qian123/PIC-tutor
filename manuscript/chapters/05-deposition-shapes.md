@@ -15,7 +15,7 @@
 1. **为什么沉积不是普通插值？** 阅读 5.1--5.3，先从单时间层的 \(\rho\) 写到 old/new shape difference 与离散连续性方程。这一步回答粒子走过一个时间步后，网格源项必须如何变化。
 2. **源项在哪个时间层进入主循环？** 阅读 5.4--5.8，区分旧 `rho`、半步 `J` 和新 `rho`，再定位 `DepositCurrent()`、`DepositCharge()` 与物种汇总。这一步回答局部 kernel 写入的对象何时能被场求解器消费。
 3. **守恒算法实际怎样构造？** 阅读 5.9--5.13，按需要比较 Direct、Esirkepov、Villasenor--Buneman 与 Vay，并把 tile、guard cell、AMR 和边界同步视为同一条 source 链的不同阶段。
-4. **怎样把证据变成输入决策？** 阅读 5.14--5.15，先检查 geometry、AMR 和时间层是否允许该路径，再选择与 observable 匹配的 analysis，并明确案例不能外推到的组合。
+4. **怎样把证据变成输入决策？** 阅读 5.14--5.16，先检查 geometry、AMR 和时间层是否允许该路径，再选择与 observable 匹配的 analysis，并完成一项明确范围的练习；案例不能外推到的组合必须写在结论中。
 
 因此，本章的阅读终点不是记住某个 kernel 名称，而是能回答四个问题：源项改变了什么、由哪条轨迹或时间层构造、经过哪些同步后被消费、以及哪一个 observable 真正检验了它。
 
@@ -2403,4 +2403,35 @@ $$
 
 第 6 章将从这里接手已经同步的 `rho/J`，讨论不同 Maxwell solver 如何消费它们；第 7 章继续解释边界、PML 和 AMR 如何改变 source 的有效定义；第 8 章则把本章涉及的场、粒子与守恒量组织成 diagnostics。
 
-**核查练习。** 以一个 Langmuir current-correction 或 Vay-deposition 变体为对象，依次写出：old/new `rho` 与半步 `J` 的时间层；`DepositCharge()`、`DepositCurrent()`、`SyncCurrentAndRho()` 各自负责和不负责的动作；其场量、source 一致性量与容差；以及这个 case 不能证明的 geometry、AMR 或隐式结论。最后用 5.11 的 old/new shape difference 与 Villasenor crossing 分段说明，公式、源码分派和端到端 Gauss-law case 为什么不能互相替代。
+## 5.16 练习与验证路径
+
+下面的练习按“时间链 -> 分派条件 -> 可观察量 -> 证据边界”排列。它们要求读者建立可以复查的判断，而不是修改参数后只比较一张场图。若没有实际运行环境，可以完成源码定位、预期和验证合同；不能把未运行的预期写成通过结果。
+
+### 5.16.1 时间层与 consumer 定位题
+
+以一个显式 Langmuir case 为对象，画出从粒子位置/动量到场更新的最短链。至少标明：old `rho`、new `rho`、半步 `J` 分别在哪个阶段产生；`DepositCharge()`、`DepositCurrent()` 和 `SyncCurrentAndRho()` 各自负责与不负责的动作；以及场 solver 实际消费的是哪一种同步后的 source。答案应能回到第 5.4、5.7、5.8 和 5.13 的函数职责，而不能用“都在 `DepositCurrent()` 里”代替时间层说明。
+
+完成后自查：若把 source consumer 改成某个诊断 writer，或只观察 tile-local 数组，这条链为什么不再能说明场更新实际使用的 `rho/J`？写出至少一个 guard cell、AMR 或边界同步会改变这个判断的原因。
+
+### 5.16.2 分派与输入约束题
+
+选择 Direct、Esirkepov、Villasenor--Buneman 或 Vay 中的一种算法，建立一张四列表：输入中的 `current_deposition`、geometry/grid/pusher/AMR 条件、源码分派或初始化 guard、以及适合它的 source 或 field consumer。然后再选一个不满足条件的组合，说明它应在配置/初始化阶段拒绝、在 source 写入前终止，还是需要另建验证合同。
+
+这里的合格答案必须把“配置被接受”与“沉积正确”分开。例如，Vay 或 Esirkepov 的分派条件只能说明请求到达可用路径；只有与指定 `rho`、`divE`、解析场或其他比较对象对应的 consumer，才能检验给定输入下的数值结论。不要把某个组合没有进入某一 analysis branch 写成 PASS。
+
+### 5.16.3 核查练习：从 source 到验证合同
+
+以 Langmuir current-correction 或 Vay-deposition 变体为对象，写出一页验证合同，至少包含：
+
+1. producer 的输入、old/new `rho` 与半步 `J` 时间层，以及 `SyncCurrentAndRho()` 后的消费点；
+2. 一个 source 一致性 observable、一个 field observable 和各自的 reference/容差；
+3. checksum 在该 case 中作为回归 consumer 的作用；
+4. 该 case 不能证明的 geometry、AMR、implicit 或 particle-shape 结论。
+
+最后用第 5.11 的 old/new shape difference 与 Villasenor crossing 分段解释，为什么公式、源码分派和端到端 Gauss-law case 必须相互补充，而不能互相替代。若你实际执行了测试，记录实际输入、输出时间层和分析命令；若没有执行，则只把这份内容称为验证设计。
+
+### 5.16.4 RZ residual 判读题
+
+对一个 RZ residual 假设，分别写出 axis、off-axis 和 all-cell 的同时间层量；再说明仅切换 axis correction 时，为什么必须分别比较 species `rho`、total `rho`、field operator 和分辨率趋势。根据第 5.14.5.1 与 5.14.7，给出一句最终结论，其措辞必须同时保留“目前的 observable 支持什么”和“尚不能归因为哪个 deposition kernel”。
+
+这题的目标是避免两种相反但同样错误的缩写：axis residual 较大不自动证明 kernel 错误；某一场误差下降或重复 family 一致，也不自动关闭 axis-charge correctness 或建立 formal numerical order。

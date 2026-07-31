@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 3 AMR subcycling validation card yields 269 pages.
-EXPECTED_PDF_PAGES = 269
+# The Chapter 7 load-balance validation card yields 270 pages.
+EXPECTED_PDF_PAGES = 270
 
 
 def image_links(text: str) -> list[str]:
@@ -62,6 +62,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-04-pusher-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-05-deposition-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-06-field-solver-validation-ladder-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-07-load-balance-validation-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-diagnostics-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-validation-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-restart-reader-card-v0.110.md").read_text(encoding="utf-8")
@@ -623,6 +624,17 @@ def main() -> None:
             r"docs/chapter-07-v0-evidence-ledger|contract\.\{json,md\}",
             chapter_7,
         ),
+        "chapter_7_load_balance_validation_reader_card": all(
+            marker in source
+            for marker in (
+                "### 7.8.1 修改 load balance 或 `RemakeLevel()` 后的验证卡：效率、迁移与物理量分开检查",
+                "第一层：先确认 producer 有足够的 boxes、实际生成成本记录",
+                "第二层：用正确的 consumer 判断映射效率",
+                "第三层：把“提议”与“真正迁移的状态”分开",
+                "第四层：按改动对象补上状态或物理 consumer",
+                "SOURCE_GROUNDED_LOAD_BALANCE_VALIDATION_READER_CARD",
+            )
+        ) and (ROOT / "scripts/audit_chapter_07_load_balance_validation_card.py").is_file(),
         "chapter_7_reader_indexes_are_declared": all(
             marker in chapter_7
             for marker in (
@@ -1388,7 +1400,7 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（269 页候选）",
+                "当前增量复核（270 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
@@ -1400,14 +1412,15 @@ def main() -> None:
                 "| 110--111 |",
                 "| 169--170 |",
                 "| 207--208 |",
-                "| 259--260 |",
+                "| 223--224 |",
+                "| 260--261 |",
                 "| 260--262 |",
                 "| 219--254 |",
-                "| 227 |",
-                "| 232 |",
-                "| 261 |",
-                "| 267 |",
-                "262 页基线完整连续阅读 + 第 2、3、3A、4、5、6、8、9 章变更范围与受影响版式的增量复核已记录",
+                "| 228 |",
+                "| 233 |",
+                "| 262 |",
+                "| 268 |",
+                "262 页基线完整连续阅读 + 第 2、3、3A、4、5、6、7、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

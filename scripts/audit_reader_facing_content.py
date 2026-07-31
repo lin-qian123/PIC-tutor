@@ -582,6 +582,18 @@ def main() -> int:
                 "route ledger 才说明每条 route",
             )
         ) and not chapter_7_project_path_markers and not chapter_7_stale_location_markers,
+        "chapter_7_load_balance_validation_reader_card": all(
+            marker in chapter_7
+            for marker in (
+                "### 7.8.1 修改 load balance 或 `RemakeLevel()` 后的验证卡：效率、迁移与物理量分开检查",
+                "每个 subdomain 本身保持不变",
+                "第一层：先确认 producer 有足够的 boxes、实际生成成本记录",
+                "第二层：用正确的 consumer 判断映射效率",
+                "第三层：把“提议”与“真正迁移的状态”分开",
+                "第四层：按改动对象补上状态或物理 consumer",
+                "不能写成“load balance 后的物理结果已经验证”",
+            )
+        ) and not chapter_7_project_path_markers and not chapter_7_stale_location_markers,
         "chapter_8_has_reader_facing_diagnostics_closure": all(
             marker in chapter_8_closure
             for marker in (
@@ -879,7 +891,7 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（269 页候选）",
+                "当前增量复核（270 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
@@ -891,12 +903,13 @@ def main() -> int:
                 "| 110--111 |",
                 "| 169--170 |",
                 "| 207--208 |",
-                "| 259--260 |",
+                "| 223--224 |",
+                "| 260--261 |",
                 "| 260--262 |",
-                "| 227 |",
-                "| 232 |",
-                "| 261 |",
-                "| 267 |",
+                "| 228 |",
+                "| 233 |",
+                "| 262 |",
+                "| 268 |",
             )
         ),
     }
@@ -913,7 +926,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 269-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 270-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -985,7 +998,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 269-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 270-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

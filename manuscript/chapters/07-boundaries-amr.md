@@ -768,6 +768,24 @@ reduced_diags->LoadBalance();
 
 这一阶段的正确性依赖多子系统共同完成迁移；只确认某个 particle count 或 field checksum 保持不变，不能证明 boundary buffer、EB factory 和 diagnostics 的 ownership 也已同步。
 
+### 7.8.1 修改 load balance 或 `RemakeLevel()` 后的验证卡：效率、迁移与物理量分开检查
+
+动态 load balance 要改变的是 **box 的 MPI owner**，不是连续物理模型，也不是网格加密规则。官方参数说明明确：`algo.load_balance_intervals` 命中时，WarpX 尝试重新分配 subdomains；每个 subdomain 本身保持不变。因而首先要把“计划一次重映射”“采纳了新的 `DistributionMapping`”和“迁移后的物理状态仍可解释”分成三层，而不是看到一次性能诊断或末态 checksum 就统称为 load balance 正确。
+
+**第一层：先确认 producer 有足够的 boxes、实际生成成本记录。**官方 `test_3d_reduced_diags_load_balance_costs_{heuristic,timers}` 都是 3D、2-rank case。基础输入设 `amr.n_cell = 128 32 128` 与 `amr.max_grid_size = 32`，所以 level 0 被拆成多个 box；`algo.load_balance_intervals = 2`，并以 overlay 分别选择 heuristic 或 timers 成本。`warpx.reduced_diags_names = LBC`、`LBC.type = LoadBalanceCosts`、`LBC.intervals = 1` 使每步写出 box cost、owner rank、level 和 box 位置。若 box 数不多于 rank，或 `load_balance_intervals = 0`，即使配置了 `LBC`，也不能把静态 rank 布局解释成动态重映射已被检验。
+
+**第二层：用正确的 consumer 判断映射效率。**该 CTest 的 `analysis_reduced_diags_load_balance_costs.py` 从 `LBC.txt` 按 rank 汇总 cost，并定义
+
+$$
+\eta = \frac{\operatorname{mean}_r C_r}{\max_r C_r}.
+$$
+
+它比较 load-balance step 前后的 \(\eta\)，并断言 `efficiency_before < efficiency_after`。这是一条明确的性能/映射 consumer：它说明这个指定 3D、2-rank、固定 box 拓扑、uniform-plasma 输入下，记录的 cost 分布在该次迁移后更均匀。它不比较 \(E/B\)、\(\rho/J\)、粒子相空间、EB scraping buffer 或解析解，也不能推出 wall-clock 总时间必然下降，更不能推出物理误差减小。
+
+**第三层：把“提议”与“真正迁移的状态”分开。**`CheckLoadBalance()` 只有在步号命中 interval 时才进入 `LoadBalance()`；候选 SFC/knapsack mapping 还必须满足 `proposedEfficiency > threshold * currentEfficiency`，才调用 `RemakeLevel()`。后者当前只接受 **相同 `BoxArray`、不同 `DistributionMapping`**；若 patch 拓扑改变会直接拒绝。因此本节说的不是任意 AMR regrid。映射被采纳后，源码重建 field registry、EB factory、PSATD real-space 容器、buffer masks 和 field diagnostic functors；随后才 `Redistribute()` 粒子和 particle boundary buffer，并刷新 reduced diagnostics。普通 full diagnostics 没有在这一处调用 `multi_diags->LoadBalance()`，所以修改 diagnostics 或其 writer 时不能假定性能 consumer 已经检查了所有诊断 ownership。
+
+**第四层：按改动对象补上状态或物理 consumer。**只改 interval、cost model、SFC/knapsack 或效率阈值时，先保留 `LBC` 的 pre/post \(\eta\) 与 mapping 记录；改 `RemakeLevel()` 中的 fields、EB、PSATD、buffer mask、粒子或 boundary-buffer 迁移时，应在一个确实采纳 mapping 的 case 中，对迁移前后同一物理时间的 Full field/particle state、必要的 scraping buffer 和 reduced diagnostic 输出做独立比较；改 coarse-fine topology、regrid tagging 或 transition-zone 时，则回到 7.9 的 route ledger，而不是复用本卡。最终 checksum 只可作为指定输出的回归补充。没有“映射被采纳 + 对应状态比较 + 与问题匹配的 observable”三项，就只能说 producer 或性能分支被检查，不能写成“load balance 后的物理结果已经验证”。
+
 ## 7.9 AMR transition zone：为什么最终 plotfile 不足以证明路由正确
 
 AMR 的 transition zone 同时影响 gather 和 deposition。粒子在细网格 interior 时从 `E/Bfield_aux` gather 并向 `rho_fp/current_fp` deposition；进入 buffer 后，gather 和 deposition 可以分别切换到 coarse `E/Bfield_cax` 与 `rho_buf/current_buf`。这两个分界不必相同，因此“场看起来正常”不能证明粒子经过了正确的 coarse/fine route。

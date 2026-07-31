@@ -63,6 +63,7 @@
 | `chapter_1_2_model_to_loop_handoff` | `PASS` |
 | `chapter_1_continuous_model_reader_route` | `PASS` |
 | `chapter_1_electrostatic_model_validation_reader_card` | `PASS` |
+| `chapter_1_thermal_plasma_energy_validation_reader_card` | `PASS` |
 | `chapter_1_has_no_project_path_narration` | `PASS` |
 | `chapter_3a_current_initialization_route` | `PASS` |
 | `chapter_3a_initialization_two_contract_reader_card` | `PASS` |

@@ -8,7 +8,7 @@
 
 ## 当前可审计候选
 
-当前候选为 `dist/pic-tutor-v0.110.{md,html,pdf}`，PDF 为 `271` 页。候选文件及其 SHA-256 由 `docs/v0.110-release-manifest.{json,md}` 固定；`scripts/audit_public_distribution_boundary.py` 会从实际 PDF 读取页数、重新计算三份候选文件哈希，并验证它们与 manifest 一致。目录、首页、前言、第 1--9 章和附录已在 262 页基线候选完成连续人工阅读；当前候选另完成第 1、2、3、3A、4、5、6、7、8、9 章的读者路线和验证卡增量复核，其中第 1 章的 electrostatic 模型选择与验证卡已在第 13--14 页、第 3 章的 AMR subcycling 验证卡已在第 46--47 页、第 6 章的场求解器验证阶梯已在第 208--209 页、第 7 章的 load-balance 验证卡已在第 224--225 页、第 8 章的诊断修改验证阶梯已在第 261--262 页完成版式复核。读者化审计分类为 `READER_FACING_CORE_CHAPTERS_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED`，构建、结构和 PDF 版式审计均通过。
+当前候选为 `dist/pic-tutor-v0.110.{md,html,pdf}`，PDF 为 `271` 页。候选文件及其 SHA-256 由 `docs/v0.110-release-manifest.{json,md}` 固定；`scripts/audit_public_distribution_boundary.py` 会从实际 PDF 读取页数、重新计算三份候选文件哈希，并验证它们与 manifest 一致。目录、首页、前言、第 1--9 章和附录已在 262 页基线候选完成连续人工阅读；当前候选另完成第 1、2、3、3A、4、5、6、7、8、9 章的读者路线和验证卡增量复核，其中第 1 章的 electrostatic 模型选择与验证卡已在第 13--14 页、thermal-plasma 能量/统计噪声验证卡已在第 15--17 页、第 3 章的 AMR subcycling 验证卡已在第 46--47 页、第 6 章的场求解器验证阶梯已在第 208--209 页、第 7 章的 load-balance 验证卡已在第 224--225 页、第 8 章的诊断修改验证阶梯已在第 261--262 页完成版式复核。读者化审计分类为 `READER_FACING_CORE_CHAPTERS_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED`，构建、结构和 PDF 版式审计均通过。
 
 这表示当前成书可被审阅，不表示公开再分发已经获准。第 5 章的 Vay 配置、RZ implicit Villasenor、RZ 轴线和收敛判读卡，以及第 7 章的 PML、transition-zone 判读卡，均已进入当前连续审读记录；附录也明确 `plotfile` 仅用于 analysis，重启必须配置 `Full` `checkpoint`。这些编辑和验证结果不提供任何第三方材料的版权或再分发授权。
 

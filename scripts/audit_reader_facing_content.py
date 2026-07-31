@@ -835,6 +835,17 @@ def main() -> int:
                 "Poisson 残差小，所以激光传播也正确",
             )
         ) and not chapter_1_project_path_markers,
+        "chapter_1_thermal_plasma_energy_validation_reader_card": all(
+            marker in chapter_1
+            for marker in (
+                "### 1.9.1 统计噪声与能量账本验证卡：能量漂移小不等于热平衡或低噪声",
+                "第一层：先固定它实际产生了什么",
+                "第二层：再核对 consumer 到底比较了什么",
+                "第三层：明确这张账本没有测量什么",
+                "第四层：修改后重新建立两本账",
+                "原来的 `0.003` 已不再是自动有效的合同",
+            )
+        ) and not chapter_1_project_path_markers,
         "chapter_1_has_no_project_path_narration": not chapter_1_project_path_markers,
         "chapter_3a_current_initialization_route": all(
             marker in chapter_3a

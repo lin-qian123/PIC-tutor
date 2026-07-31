@@ -373,6 +373,38 @@ $$
 - 是 alias branch 被压了？
 - 还是只把可见图像平滑了，但守恒与统计量并没有更好？
 
+### 1.9.1 统计噪声与能量账本验证卡：能量漂移小不等于热平衡或低噪声
+
+当修改了宏粒子数、shape、gather、滤波或时间步时，最容易发生的误读是：看到总能量曲线“很平”，便宣称热等离子体保持正确、噪声已经降低。二者回答的不是同一个问题。WarpX 的 `energy_conserving_thermal_plasma` 回归给出了一条很有用、但范围明确的能量账本路线。
+
+**第一层：先固定它实际产生了什么。** 官方 CTest 注册了 1D 和 2D 两个 producer，均使用两个 MPI rank；两份输入都是周期边界、`max_step = 500`、`warpx.do_electrostatic = labframe`、二阶 `algo.particle_shape = 2`、`algo.field_gathering = energy-conserving`，并关闭滤波。电子和质子以相同的常数密度、Gaussian 动量分布和 \(100\,\mathrm{eV}\) 温度初始化。1D 每个 cell 每个方向放 4 个宏粒子，2D 每个方向放 2 个；两者都每 100 步写一次 `ParticleEnergy` 与 `FieldEnergy`。这是一份特定离散设置下的周期、双物种、静电热等离子体账本，不是任意 thermal plasma 的定义。
+
+**第二层：再核对 consumer 到底比较了什么。** `ParticleEnergy` 的第一个能量列是所有物种的加权相对论动能，
+
+$$
+E_p=\sum_i w_i\left(\sqrt{|\mathbf p_i|^2c^2+m_i^2c^4}-m_i c^2\right),
+$$
+
+而 `FieldEnergy` 的第一个能量列是各场分量构成的场能
+
+$$
+E_f=\frac12\sum_{\text{cells}}\left(\epsilon_0|\mathbf E|^2+\frac{|\mathbf B|^2}{\mu_0}\right)\Delta V.
+$$
+
+该 `analysis.py` 读取两张 reduced-diagnostic 表的第 3 列，形成 \(E=E_f+E_p\)，并在**所有已记录的时刻**断言
+
+$$
+\left|E(t)-E(0)\right|/E(0)<0.003.
+$$
+
+这既不是“能量只能增加 0.3%”，也不是“严格守恒”：代码取绝对值，所以正、负漂移都受约束；而阈值只约束 producer 所写出的采样时刻。`energy-conserving` gather 的名字也不能代替这条检查。官方算法说明将它定义为从 grid point 直接 gather，并说明相应的能量守恒性质只在 \(\Delta t\to0\) 的极限成立，有限时间步通常只是具有更好的相应守恒表现。
+
+**第三层：明确这张账本没有测量什么。** 它不计算温度矩、速度分布是否仍为 Maxwellian、密度或电场的 \(k\)-spectrum、alias branch、两点相关或 transport coefficient；也没有让 `momentum-conserving`、不同 particle shape 或不同 particle-per-cell 与当前设置进行对照。因此通过该 consumer 不能推出“噪声更低”“热平衡正确”“每个物种能量正确”“数值严格守恒”，更不能外推到非周期边界、AMR 接口、碰撞、激光传播或其他几何。规则网格上 gather/deposition 的配对性质也不能自动越过网格不规则性；官方 AMR 理论明确指出，规则性或对称性被破坏时，接口附近会出现净的 spurious self-force。
+
+**第四层：修改后重新建立两本账。** 若只改变输出格式或保存位置，先保证 \(E_f\) 与 \(E_p\) 仍在同一物理时刻、同一归一化下被读取，再继续使用能量 consumer。若改动 gather、shape、滤波、\(\Delta t\)、宏粒子数、温度/密度、边界、维度或求解模型，则原来的 `0.003` 已不再是自动有效的合同：应把新的能量漂移包络、\(E_f\) 与 \(E_p\) 的分量曲线作为一份数值账本；再把速度矩/分布、谱或相关函数，或与解析解、收敛研究、实验量的比较作为独立的统计或物理账本。只有两本账分别闭合，才可以分别讨论守恒误差与统计噪声。
+
+这张卡的源码证据由官方 thermal-plasma test 的 CTest 注册、1D/2D 输入与 `analysis.py`，以及 `ParticleEnergy`、`FieldEnergy` reduced diagnostic 和官方参数/算法说明共同组成。精确路径用于定位职责，而不是替代运行。静态核对不会执行该运行；真实改动仍须由读者运行新 producer，并为新 observable 选择 reference 与容差。
+
 ## 1.10 Debye 长度、粒子数与统计时间尺度
 
 `Birdsall 1985` 对 sheet model 的讨论给了一个比教科书定义更适合写进程序书的视角。

@@ -21,7 +21,7 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 1 electrostatic model-validation card yields 271 pages.
+# Updated after each reader-facing rebuild; the thermal-plasma card may repaginate.
 EXPECTED_PDF_PAGES = 271
 
 
@@ -57,6 +57,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-02-first-run-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-01-electrostatic-model-validation-card-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-01-thermal-plasma-energy-validation-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03-lifecycle-trace-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03-subcycling-validation-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03a-initialization-reader-card-v0.110.md").read_text(encoding="utf-8")
@@ -537,6 +538,17 @@ def main() -> None:
                 "SOURCE_GROUNDED_ELECTROSTATIC_MODEL_SELECTION_READER_CARD",
             )
         ) and (ROOT / "scripts/audit_chapter_01_electrostatic_model_validation_card.py").is_file(),
+        "chapter_1_thermal_plasma_energy_validation_reader_card": all(
+            marker in source
+            for marker in (
+                "### 1.9.1 统计噪声与能量账本验证卡：能量漂移小不等于热平衡或低噪声",
+                "第一层：先固定它实际产生了什么",
+                "第二层：再核对 consumer 到底比较了什么",
+                "第三层：明确这张账本没有测量什么",
+                "第四层：修改后重新建立两本账",
+                "SOURCE_GROUNDED_THERMAL_PLASMA_ENERGY_AND_NOISE_READER_CARD",
+            )
+        ) and (ROOT / "scripts/audit_chapter_01_thermal_plasma_energy_validation_card.py").is_file(),
         "chapter_2_math_and_case_closure": all(
             marker in chapter_2
             for marker in (

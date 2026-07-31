@@ -1,10 +1,10 @@
 # PIC-tutor
 
-262 页基线候选已完成目录、首页、前言、第 1--9 章和附录的连续读者审阅。当前 265 页候选在此基础上补入第 2 章的首次运行与受控修改路线、第 3 章输入到 consumer 的生命周期追踪卡、第 8 章三类验证合同和 uniform-plasma restart 判读卡，以及第 9 章三条“论文 -> 实现 -> 输入 -> consumer”证据路线，并完成相应源码核对和受影响页增量复核；这不是一次独立的 265 页全书重读。第 2 章将 1D build、CTest 参考执行和独立目录的手动分析分开，并进一步说明命令行覆盖会改变 producer，原 analysis consumer 不会自动适配；第 3 章进一步区分参数读取、`warpx_used_inputs` 记录点、`Evolve()` 外层上限、diagnostic 写出和 consumer 的证据等级。读者须以实际 diagnostics 和新的 reference/容差确认可支持的结论。第 4、5 章将长源码改为明确声明的阅读伪代码；第 5 章新增 Vay 配置、RZ implicit Villasenor、RZ 轴线与收敛判读卡，分别把 pusher/deposition 输入项、solver initialization 与 particle/source 阶段、离散 axis operator、inverse-volume scaling、species-level 配对读数和多分辨率重复性分开，区分配置接受、pre-physics 停止、可重复趋势、formal numerical order 与 axis-charge correctness；第 6 章修正 Galilean PSATD 的实际源码路径，第 7 章校正 EB 初始化源码路径，并新增 PML 配置与验证卡和 transition-zone 判读卡，明确 gather/deposition 的双 buffer mask、runtime branch activation 与逐 route ledger 之间的证据界线；第 8 章补入诊断记录卡，第 9 章以证据层级和判读卡组织文献路线；附录 A 还明确 `plotfile` 用于分析、`Full` `checkpoint` 才用于 restart，防止把输出文件角色混同。覆盖记录见 `docs/manual-editorial-spotcheck-v0.110.md`。
+262 页基线候选已完成目录、首页、前言、第 1--9 章和附录的连续读者审阅。当前 267 页候选在此基础上补入第 2 章的首次运行与受控修改路线、第 3 章输入到 consumer 的生命周期追踪卡、第 3A 章初始化双合同卡、第 4 章推进器验证阶梯、第 8 章三类验证合同和 uniform-plasma restart 判读卡，以及第 9 章三条“论文 -> 实现 -> 输入 -> consumer”证据路线，并完成相应源码核对和受影响页增量复核；这不是一次独立的 267 页全书重读。第 2 章将 1D build、CTest 参考执行和独立目录的手动分析分开，并进一步说明命令行覆盖会改变 producer，原 analysis consumer 不会自动适配；第 3 章进一步区分参数读取、`warpx_used_inputs` 记录点、`Evolve()` 外层上限、diagnostic 写出和 consumer 的证据等级。读者须以实际 diagnostics 和新的 reference/容差确认可支持的结论。第 4、5 章将长源码改为明确声明的阅读伪代码；第 5 章新增 Vay 配置、RZ implicit Villasenor、RZ 轴线与收敛判读卡，分别把 pusher/deposition 输入项、solver initialization 与 particle/source 阶段、离散 axis operator、inverse-volume scaling、species-level 配对读数和多分辨率重复性分开，区分配置接受、pre-physics 停止、可重复趋势、formal numerical order 与 axis-charge correctness；第 6 章修正 Galilean PSATD 的实际源码路径，第 7 章校正 EB 初始化源码路径，并新增 PML 配置与验证卡和 transition-zone 判读卡，明确 gather/deposition 的双 buffer mask、runtime branch activation 与逐 route ledger 之间的证据界线；第 8 章补入诊断记录卡，第 9 章以证据层级和判读卡组织文献路线；附录 A 还明确 `plotfile` 用于分析、`Full` `checkpoint` 才用于 restart，防止把输出文件角色混同。覆盖记录见 `docs/manual-editorial-spotcheck-v0.110.md`。
 
 第 8 章结尾让 `8.16 延伸验证路线` 与 `8.17 本章结论` 连续收束，避免任一节成为低信息孤页；构建验收要求结论页同时保留“延伸验证路线”和“保留失败与不可外推范围”。基线全书阅读与当前第 8、9 章增量复核共同证明已记录的读者路径和版式范围，但不替代每篇外部文献的再次全文校对、第三方材料许可确认或公开再分发签收。附录中的 auxiliary-field 构造方法名也已更正为源码实际符号 `UpdateAuxiliaryData`。
 
-当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `265` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航、首次运行与受控修改路线、第 3 章生命周期追踪与跨章交接卡、第 3A、4--9 章阅读路线、Vay 配置判读卡、RZ implicit Villasenor 判读卡、RZ 轴线判读卡、收敛判读卡、PML 配置与验证卡、transition-zone 判读卡和末页均已纳入 262 页基线完整阅读；当前第 2、3 章新增路线、第 8 章验证合同与 restart 判读卡、第 9 章证据路线及受影响页已完成增量复核；这些记录不替代第三方材料许可或公开再分发签收。
+当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `267` 页 PDF、Markdown 和自包含 HTML；构建验收、读者化审计、缺口登记和发行元数据审计均通过。目录首页、前言跨章节术语卡、第 1--2 章连续模型到离散循环的交接卡、各一级章节起页、第 2 章源码导航、首次运行与受控修改路线、第 3 章生命周期追踪与跨章交接卡、第 3A、4--9 章阅读路线、Vay 配置判读卡、RZ implicit Villasenor 判读卡、RZ 轴线判读卡、收敛判读卡、PML 配置与验证卡、transition-zone 判读卡和末页均已纳入 262 页基线完整阅读；当前第 2、3、3A、4 章新增路线、第 8 章验证合同与 restart 判读卡、第 9 章证据路线及受影响页已完成增量复核；这些记录不替代第三方材料许可或公开再分发签收。
 
 当前候选可供读者审阅，但**尚未取得公开再分发签收**：public remote 仍跟踪 `references/` 下第三方材料，release manifest 对该目录的排除不会改变已有 public branch 或 Git 历史。当前事实、候选哈希和维护者必须作出的权利/仓库选择见 `docs/public-repo-release-audit.md`、已跟踪的 `docs/public-distribution-risk-register-v0.110.md` 及其生成脚本；在该决定完成前，不将书稿的编辑通过误表述为发布授权。
 
@@ -48,7 +48,7 @@
 
 第 4--5 章现以一张跨章 source 交接卡闭合多物理语义：field ionization 的离化态与 electron product、QED pair 与 photon 的非沉积边界、explicit collision split 的延迟沉积，以及 implicit 收敛后 source 的提交时刻，都统一接到旧/新 `rho` 与半步 `J`。读者不会再把 particle count、optical depth 或一次 trial 当作网格 source 已正确进入场方程的证明。
 
-第 4 章已完成当前源码与读者路径复核：开篇从 Lorentz 方程、Boris/Vay/Higuera--Cary 到 `PushParticlesandDeposit()` 的 tile loop 建立因果链，源码导航统一为文件路径和函数符号。该章校正了 QED 同步下 RR 的 \(\chi\) 门限分支，明确了 gather 后外场插入、位置更新与 momentum push 的顺序，并将输出时间层解释收束为可复用的验证问题；当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
+第 4 章已完成当前源码与读者路径复核：开篇从 Lorentz 方程、Boris/Vay/Higuera--Cary 到 `PushParticlesandDeposit()` 的 tile loop 建立因果链，源码导航统一为文件路径和函数符号。该章校正了 QED 同步下 RR 的 \(\chi\) 门限分支，明确了 gather 后外场插入、位置更新与 momentum push 的顺序，并将输出时间层解释收束为可复用的验证问题。新增验证阶梯按 consumer 分开 Higuera--Cary force-free 位置断言、diagnostics 速度同步、photon 位置/动量与 Larmor checksum-only 回归，明确任一单粒子结果均不能替代 source、连续性、自洽场或 AMR 验证；当前构建与人工版式复核见 `docs/manual-editorial-spotcheck-v0.110.md` 和 release manifest。
 
 第 3A 章现以稳定的“文件路径 + 函数符号”追踪初始化，而不使用会随源码演化的固定行号。fresh-run 路径明确区分 `AmrCore::InitFromScratch()` 对 `MakeNewLevelFromScratch()` 的回调、implicit solver 属性创建、粒子容器、PML 与 `allocdata` callback；外加场部分区分写入主网格场的 grid field 与只供 gather 的 particle field，并明确 file-driven external field 与 moving window 不能组合。初始化验证部分改为“初态、observable、analysis 断言、未覆盖分支”四问，删除重复的回归清单和不可迁移的运行记录。完整重建后的页数、哈希和人工版式复核以当前 manifest 与 `docs/manual-editorial-spotcheck-v0.110.md` 为准。
 
@@ -284,6 +284,7 @@ AMR transition-zone 的下一阶段接口已落成可执行设计合同：`pytho
 
 ## 当前状态
 
+- 2026-07-31：第 4 章补入“推进器修改后的验证阶梯”。它把 Higuera--Cary force-free 轨道、diagnostic 的速度时间层、massless photon 直线传播与 checksum-only Larmor 明确分为四条 consumer 路线，避免将单粒子通过扩大为 deposition、场或 AMR 的正确性证明；对应源码锚点审计和 v0.110 成书验收已同步更新。
 - 2026-07-31：第 3A 章补入“分布统计和初始自场是两份合同”读者验证卡。它以 `initial_distribution` 的零步 `ParticleHistogram`/总电荷 consumer 和 `space_charge_initialization` 的 `Ex/Ey/Ez` 理论场 consumer 为两条独立路线，明确分布统计不能替代初始自场验证；对应源码锚点审计、读者审计和 v0.110 三种成书产物已同步更新。
 - 2026-07-12：完成 RZ `256x512` correction-on/off shape=1/2/3/4 双侧 family：field gate 8/8 全通过；correction-on charge 全为 BOUNDARY，correction-off 中 shape=3/4 通过 `1e-11`，shape=1/2 分别为 `1.639e-11/1.020e-11`，保留为 charge/field tradeoff。汇总见 `runs/stage-c-validation/esirkepov_langmuir_rz_highres_correction-family/`。
 - 2026-07-12：完成 RZ correction-on `256x512` shape=1/2/3/4 high-resolution family：field gate 全通过，charge residual 为 `7.554e-4/8.990e-4/9.289e-4/9.729e-4`，均由 axis cell 主导并保留 BOUNDARY；汇总见 `runs/stage-c-validation/esirkepov_langmuir_rz_highres_shape-family/`。

@@ -580,7 +580,7 @@ implicit 路径的差异更加根本。以 `SemiImplicitEM::OneStep()` 为例，
 所以 implicit 中必须区分三个层次：
 
 1. 物理时间步 $t^n -> t^{n+1}$；
-2. 非线性迭代中的中间场猜测 $E^{n+θ}$；
+2. 非线性迭代中的中间场猜测 $E^{n+\theta}$；
 3. 每次 RHS 或 Jacobian 评估中的粒子/source 重算。
 
 如果把第 3 层误写成“程序又推进了一个物理时间步”，就会错误理解粒子数、能量账本和 `SyncCurrentAndRho()` 的调用次数。相反，如果把 JRhom 的多个 deposit interval 当成 nonlinear iteration，也会把时间积分和求解器迭代混为一谈。

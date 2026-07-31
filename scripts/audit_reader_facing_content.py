@@ -321,6 +321,17 @@ def main() -> int:
                 "不能单独证明宏粒子 source、连续性或自洽场演化正确",
             )
         ) and not chapter_4_project_narration_markers,
+        "chapter_4_pusher_validation_ladder_reader_card": all(
+            marker in chapter_4
+            for marker in (
+                "### 4.13.8.1 推进器修改后的验证阶梯：先选对 consumer，再解释结果",
+                "第一层：带质量粒子的 momentum--position 链。",
+                "第二层：输出时间层，而不是轨道算法。",
+                "第三层：无质量粒子是另一条容器链。",
+                "第四层：checksum 仍有价值，但不是解析 gate。",
+                "单粒子通过不能完成验证",
+            )
+        ) and not chapter_4_project_path_markers,
         "chapter_4_multiphysics_state_reader_route": all(
             marker in chapter_4
             for marker in (
@@ -822,7 +833,7 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（266 页候选）",
+                "当前增量复核（267 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
@@ -831,6 +842,7 @@ def main() -> int:
                 "| 30--31 |",
                 "| 45--47 |",
                 "| 71--73 |",
+                "| 109--110 |",
                 "| 260--262 |",
                 "| 226 |",
                 "| 231 |",
@@ -852,7 +864,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 266-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -924,7 +936,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 266-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 267-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

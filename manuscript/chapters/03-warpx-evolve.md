@@ -740,7 +740,7 @@ for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
 | 顺序 | 源码动作 | 时间层/物理含义 |
 | --- | --- | --- |
 | 1 | `SaveParticlesAtImplicitStepStart()` | 保存 $x^n,p^n$，供非线性迭代和最终提交使用 |
-| 2 | 初始化 $E^{n+θ}$ 猜测、保存 `E_old` | 构造 solver 的中间场未知量，而不是直接写最终 $E^{n+1}$ |
+| 2 | 初始化 $E^{n+\theta}$ 猜测、保存 `E_old` | 构造 solver 的中间场未知量，而不是直接写最终 $E^{n+1}$ |
 | 3 | `EvolveB(Δt/2)` | 先把 WarpX 所有的磁场推进到半步 |
 | 4 | `m_nlsolver->Solve(...)` | 反复调用 `ComputeRHS()`，求粒子和中间电场自洽的离散方程 |
 | 5 | `SetElectricFieldAndApplyBCs()`、`FinishImplicitParticleUpdate()` | 将收敛的中间场写回，并把粒子从半步状态完成到 $t^{n+1}$ |

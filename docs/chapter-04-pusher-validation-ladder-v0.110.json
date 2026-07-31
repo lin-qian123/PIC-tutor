@@ -1,0 +1,25 @@
+{
+  "classification": "SOURCE_GROUNDED_PUSHER_VALIDATION_LADDER_READER_CARD",
+  "passed": true,
+  "checks": {
+    "reader_card_present": [],
+    "massive_pusher_contract": [],
+    "diagnostic_time_contract": [],
+    "photon_contract": [],
+    "source_and_checksum_boundaries": []
+  },
+  "source_routes": [
+    "Source/Particles/Pusher/PushSelector.H",
+    "Source/Particles/Pusher/UpdatePosition.H",
+    "Source/Particles/PhotonParticleContainer.cpp",
+    "Examples/Tests/particle_pusher/{inputs_test_3d_particle_pusher,CMakeLists.txt,analysis.py}",
+    "Examples/Tests/single_particle/{inputs_test_1d_synchronize_velocity,CMakeLists.txt,analysis_synchronize_velocity.py}",
+    "Examples/Tests/photon_pusher/{inputs_test_3d_photon_pusher,CMakeLists.txt,analysis.py}",
+    "Examples/Tests/larmor/CMakeLists.txt"
+  ],
+  "scope": [
+    "No WarpX build or runtime execution is performed by this audit.",
+    "The card separates massive-pusher, diagnostic-time-level, massless-photon, and checksum-only evidence.",
+    "It does not establish a general pusher accuracy ranking, deposition correctness, or self-consistent field validity."
+  ]
+}

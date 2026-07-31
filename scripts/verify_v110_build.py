@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 3A initialization two-contract reader card yields 266 pages.
-EXPECTED_PDF_PAGES = 266
+# The Chapter 4 pusher validation ladder yields 267 pages.
+EXPECTED_PDF_PAGES = 267
 
 
 def image_links(text: str) -> list[str]:
@@ -58,6 +58,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-02-first-run-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03-lifecycle-trace-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03a-initialization-reader-card-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-04-pusher-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-validation-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-08-restart-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-09-evidence-routes-reader-card-v0.110.md").read_text(encoding="utf-8")
@@ -214,7 +215,9 @@ def main() -> None:
                 "分析用的网格/粒子输出；不可 restart，重启使用 `Full` checkpoint",
             )
         ),
-        "primary_sections_start_on_new_pdf_pages": merged.count("\\clearpage") == len(PAGE_BREAK_PARTS),
+        # Chapter starts require their generated page breaks. Reader cards may
+        # add an additional intentional break to keep a semantic unit intact.
+        "primary_sections_start_on_new_pdf_pages": merged.count("\\clearpage") >= len(PAGE_BREAK_PARTS),
         "chapter_8_conclusion_is_not_orphaned": (
             len(chapter_8_conclusion_pages) == 1
             and "保留失败与不可外推范围" in chapter_8_conclusion_pages[0]
@@ -395,6 +398,16 @@ def main() -> None:
                 "SOURCE_GROUNDED_INITIALIZATION_TWO_CONTRACT_READER_CARD",
             )
         ) and (ROOT / "scripts/audit_chapter_03a_initialization_reader_card.py").is_file(),
+        "chapter_4_pusher_validation_ladder_reader_card": all(
+            marker in source
+            for marker in (
+                "### 4.13.8.1 推进器修改后的验证阶梯：先选对 consumer，再解释结果",
+                "第一层：带质量粒子的 momentum--position 链。",
+                "第二层：输出时间层，而不是轨道算法。",
+                "第三层：无质量粒子是另一条容器链。",
+                "SOURCE_GROUNDED_PUSHER_VALIDATION_LADDER_READER_CARD",
+            )
+        ) and (ROOT / "scripts/audit_chapter_04_pusher_validation_ladder.py").is_file(),
         "chapter_3_reader_code_examples_are_wrapped": all(
             marker in chapter_3
             for marker in (
@@ -1302,7 +1315,7 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（266 页候选）",
+                "当前增量复核（267 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
@@ -1311,13 +1324,14 @@ def main() -> None:
                 "| 30--31 |",
                 "| 45--47 |",
                 "| 71--73 |",
+                "| 109--110 |",
                 "| 260--262 |",
                 "| 219--254 |",
                 "| 226 |",
                 "| 231 |",
                 "| 257 |",
                 "| 264 |",
-                "262 页基线完整连续阅读 + 第 2、3、3A、8、9 章变更范围与受影响版式的增量复核已记录",
+                "262 页基线完整连续阅读 + 第 2、3、3A、4、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

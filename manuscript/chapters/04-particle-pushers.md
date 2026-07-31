@@ -1917,6 +1917,34 @@ $$
 
 把它们都叫作“单粒子测试”，会掩盖观察量、源码路径和可支持结论之间最关键的差别。
 
+### 4.13.8.1 推进器修改后的验证阶梯：先选对 consumer，再解释结果
+
+当读者修改 pusher、外部粒子场、位置更新或 diagnostics 选项时，最常见的错误不是没有输出，而是把一个通过的单粒子测试扩张成了不属于它的结论。下面四层不是按“测试难度”排序，而是按被 consumer 实际读取的状态排序。
+
+**第一层：带质量粒子的 momentum--position 链。**若改动的是 `ParticlePusherAlgo::HigueraCary` 分派、`UpdateMomentumHigueraCary()` 或 `UpdatePosition()` 的显式带质量路径，先回到 `test_3d_particle_pusher`。它固定一个 `SingleParticle` positron、`algo.particle_pusher = "higuera"`、常量粒子侧 `E_x/B_z`、`max_step = 10000`，并由 CTest 把 `diags/diag1010000` 交给 `analysis.py`。consumer 只读取末态 `particle_position_x`，断言 `abs(x) < 1e-3`。这个量对应 force-free cancellation：在该输入下 (E_x=-v_yB_z)，横向位置不应出现大的漂移。
+
+通过这层只支持一个窄结论：给定这一个外场、初始动量、10000 步和 Higuera--Cary 分支，动量更新与位置更新保持该 force-free observable。它不能证明 Boris、Vay、任意电磁场、particle deposition、AMR 或自洽场都正确。若只把同一输入的 `algo.particle_pusher` 改成另一种算法，原来的 (x) consumer 仍可作为同一 force-free 问题的比较量，但结果必须标为对照实验，不能把它改写成该算法的官方通用认证。
+
+**第二层：输出时间层，而不是轨道算法。**若改动的是 `warpx.synchronize_velocity_for_diagnostics`、diagnostic 写出时机或速度同步代码，应使用 `test_1d_synchronize_velocity`。它以常量 (E_z) 推进一个电子，在第 5 步写 Full diagnostics；`analysis_synchronize_velocity.py` 从 half-backward、五次 leapfrog 与 half-forward 显式重建同步后的 (u_z)，并比较 `diags/diag1000005` 中的位置与动量，速度相对误差阈值为 `1e-15`。即使它通过，也只能说明 diagnostics 读到的位置与速度时间层相容；它不能证明 Higuera--Cary、Boris 或 Vay 的相对论轨道精度。
+
+\clearpage
+
+**第三层：无质量粒子是另一条容器链。**若改动 `PhotonParticleContainer::PushPX()`、massless 的 `UpdatePosition()` 分支，使用 2-rank `test_3d_photon_pusher`。输入为 16 个 photon species，覆盖轴向/对角方向和两档动量；analysis 在 `diags/diag1000050` 中逐 species 读取末态。
+
+它分别对照直线位置与初始动量：
+
+$$
+\mathbf{x}(t)=\mathbf{x}_0+ct\,\hat{\mathbf u},
+\qquad
+\mathbf p(t)=\mathbf p_0.
+$$
+
+它的 position 与 momentum consumer 分别施加 `1e-14` 和 machine-epsilon 阈值。源码中的 photon 容器在 `PositionPushType::Full` 时调用同一个 `UpdatePosition()`，但又因 photon 不带电而跳过 current deposition；因此它不能替代带质量 pusher 的 Lorentz force 验证，也不能替代第 5 章的 charge/current 合同。
+
+**第四层：checksum 仍有价值，但不是解析 gate。**`test_2d_larmor` 组合了外部粒子磁场、两层网格、PML 与 divergence cleaning，却在 CMake 中把独立 analysis 标为 `OFF`，只保留末态 checksum。它适合发现这组组合输入的输出回归，却没有提供独立半径或回旋频率 consumer。不要因为输入只有电子和正电子，就把 checksum 通过写成“Larmor 轨道已解析验证”。
+
+实际排错可以遵循一个简短顺序：先问被改的是带质量 momentum/position、diagnostic time level、massless position，还是 deposition/field；只对前三类分别选上面对应的 consumer。若 force-free (x) 失败，检查 pusher 选择、常量 external particle fields、初始 (u_y)、步数和末态 diagnostic；若只有 synchronized (u_z) 失败，优先检查 diagnostics 前的速度同步；若 photon 的位置或动量失败，转查 photon container 和 massless position branch。若改动触及 charge/current、field solver 或 AMR，单粒子通过不能完成验证，应转入第 5、6、7 章对应的 source、场和边界 consumer。
+
 ### 4.13.9 粒子诊断与外场：两条不经过主网格场的路径
 
 在“单粒子/推进器”之外，`particle_fields_diags` 与 `plasma_lens` 分别回答两个不同的问题：怎样把粒子属性归约为网格诊断量，以及怎样在不读取主网格场的条件下给粒子施加外场。

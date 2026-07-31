@@ -18,6 +18,7 @@ Result: PASS.
 
 - `reader_route`: PASS
 - `build_contract`: PASS
+- `ctest_subtest_contract`: PASS
 - `run_contract`: PASS
 - `langmuir_ctest_contract`: PASS
 - `override_and_consumer_contract`: PASS

@@ -721,6 +721,9 @@ def main() -> int:
                 "### 2.8.1 第一次运行的读者路线：构建、CTest 与手动分析各自回答什么",
                 "-DWarpX_DIMS=1",
                 "ctest --test-dir",
+                "-N -R '^test_1d_langmuir_multi\\..*'",
+                "零项不是一次通过的 Langmuir 验证",
+                "test_1d_langmuir_multi.checksum",
                 "warpx_used_inputs",
                 "程序退出为零",
                 "### 2.8.2 受控修改路线：一个命令行覆盖会改变哪一份证据",
@@ -923,28 +926,28 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（272 页候选）",
+                "当前增量复核（273 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
                 "| 13--14 |",
                 "| 15--16 |",
                 "| 16--17 |",
-                "| 30 |",
-                "| 31 |",
-                "| 32--33 |",
-                "| 47--50 |",
-                "| 74--76 |",
-                "| 112--113 |",
-                "| 171--172 |",
-                "| 209--210 |",
-                "| 225--226 |",
-                "| 262--263 |",
+                "| 30--31 |",
+                "| 31--32 |",
+                "| 33--34 |",
+                "| 48--51 |",
+                "| 75--77 |",
+                "| 113--114 |",
+                "| 172--173 |",
+                "| 210--211 |",
+                "| 226--227 |",
+                "| 263--264 |",
                 "| 260--262 |",
-                "| 230 |",
-                "| 235 |",
-                "| 264 |",
-                "| 270 |",
+                "| 231 |",
+                "| 236 |",
+                "| 265 |",
+                "| 271 |",
             )
         ),
     }
@@ -961,7 +964,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 272-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 273-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -1033,7 +1036,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 272-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 273-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

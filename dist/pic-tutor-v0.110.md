@@ -1334,15 +1334,32 @@ cmake --build "$WARPX_BUILD" -j 4
 
 不要把这个命令理解为“任意输入都能运行”。WarpX 的可执行文件名会编码编译选项；当前构建逻辑同时为 1D application 建立 `warpx.1d` 链接。因此，在继续前应确认实际二进制与输入的 `geometry.dims` 相容，而不是拿一个 3D、RZ 或旧 build directory 的可执行文件碰运气。
 
-**第二层是 CTest 参考执行。** 在默认 `WarpX_APP` 与 `BUILD_TESTING` 路径中，`Examples/` 会登记测试；`test_1d_langmuir_multi` 的 CMake 条目固定了 1D、2-rank、输入、分析脚本和 checksum。对已经配置好的上述 build，最短的参考调用是：
+**第二层是 CTest 参考执行。** 在默认 `WarpX_APP` 与 `BUILD_TESTING` 路径中，`Examples/` 会登记测试；`test_1d_langmuir_multi` 的 CMake 条目固定了 1D、2-rank、输入、分析脚本和 checksum。**注意：这个名字是 test set，不是 CTest 的单个条目。**
+
+WarpX 的 `add_warpx_test()` 实际创建 `.run`、`.analysis` 和 `.checksum` 三项。因此先用 `-N` 只列出将匹配的项：
 
 ```bash
 ctest --test-dir "$WARPX_BUILD" \
-  -R '^test_1d_langmuir_multi$' \
+  -N -R '^test_1d_langmuir_multi\..*'
+```
+
+正确配置时，这一步应列出：
+
+```text
+test_1d_langmuir_multi.run
+test_1d_langmuir_multi.analysis
+test_1d_langmuir_multi.checksum
+```
+
+若总数为零，应先检查 build 是否启用了测试、是否包含 1D/MPI 能力，以及正则是否保留了字面量点号和后缀；**零项不是一次通过的 Langmuir 验证**。确认列表后，再执行同一组：
+
+```bash
+ctest --test-dir "$WARPX_BUILD" \
+  -R '^test_1d_langmuir_multi\..*' \
   --output-on-failure
 ```
 
-这条命令的价值是让 CTest 负责测试工作目录、两个 MPI rank 和 `analysis_1d.py diags/diag1000080` 的绑定。它通过时，支持的是这一条被登记的输入/consumer 合同；它不等于已经对任意参数覆盖、任意硬件后端或完整 Langmuir 理论完成验证。
+三项的职责和顺序也应分开读：`.run` 在 test working directory 以内按登记的两个 MPI rank 生成 producer 输出；`.analysis` 依赖 `.run`，调用 `analysis_1d.py diags/diag1000080` 检查解析场和离散 Gauss-law；`.checksum` 又依赖 `.analysis`，将指定输出交给默认回归 consumer。于是 `.run` 单独成功只能说明程序按该启动配置完成，不能代替解析场比较；反过来，三项共同通过也只支持这一条被登记的输入/consumer 合同，不等于已经对任意参数覆盖、任意硬件后端或完整 Langmuir 理论完成验证。
 
 **第三层是手动运行与复核。** 只有需要改变输入、保留自己的输出或观察中间 diagnostics 时，才绕开 CTest。应在新的运行目录中复制输入和分析器，而不是把 `diags/` 写进源码案例目录：
 

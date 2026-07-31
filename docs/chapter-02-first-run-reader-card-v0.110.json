@@ -4,6 +4,7 @@
   "checks": {
     "reader_route": [],
     "build_contract": [],
+    "ctest_subtest_contract": [],
     "run_contract": [],
     "langmuir_ctest_contract": [],
     "override_and_consumer_contract": []

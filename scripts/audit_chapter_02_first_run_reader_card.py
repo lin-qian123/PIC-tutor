@@ -28,6 +28,7 @@ def main() -> int:
     run_doc = (warpx / "Docs/source/usage/how_to_run.rst").read_text(encoding="utf-8")
     top_cmake = (warpx / "CMakeLists.txt").read_text(encoding="utf-8")
     functions = (warpx / "cmake/WarpXFunctions.cmake").read_text(encoding="utf-8")
+    examples_cmake = (warpx / "Examples/CMakeLists.txt").read_text(encoding="utf-8")
     langmuir_cmake = (warpx / "Examples/Tests/langmuir/CMakeLists.txt").read_text(
         encoding="utf-8"
     )
@@ -40,6 +41,11 @@ def main() -> int:
                 "-DWarpX_DIMS=1",
                 "ctest --test-dir",
                 "test_1d_langmuir_multi",
+                "-N -R '^test_1d_langmuir_multi\\..*'",
+                "零项不是一次通过的 Langmuir 验证",
+                "test_1d_langmuir_multi.run",
+                "test_1d_langmuir_multi.analysis",
+                "test_1d_langmuir_multi.checksum",
                 '"$WARPX_BUILD/bin/warpx.1d"',
                 "warpx_used_inputs",
                 "程序退出为零",
@@ -68,6 +74,17 @@ def main() -> int:
             ],
         )
         + missing_markers(functions, ["warpx.${SD}", "create_symlink"]),
+        "ctest_subtest_contract": missing_markers(
+            examples_cmake,
+            [
+                "function(add_warpx_test",
+                "NAME ${name}.run",
+                "NAME ${name}.analysis",
+                "NAME ${name}.checksum",
+                'DEPENDS "${name}.run"',
+                'DEPENDS "${name}.analysis"',
+            ],
+        ),
         "run_contract": missing_markers(
             run_doc,
             [

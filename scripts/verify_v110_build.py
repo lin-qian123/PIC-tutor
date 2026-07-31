@@ -22,7 +22,7 @@ PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
 # Updated after each reader-facing rebuild; the thermal-plasma card may repaginate.
-EXPECTED_PDF_PAGES = 272
+EXPECTED_PDF_PAGES = 273
 
 
 def image_links(text: str) -> list[str]:
@@ -357,6 +357,9 @@ def main() -> None:
                 "### 2.8.1 第一次运行的读者路线：构建、CTest 与手动分析各自回答什么",
                 "-DWarpX_DIMS=1",
                 "ctest --test-dir",
+                "-N -R '^test_1d_langmuir_multi\\..*'",
+                "零项不是一次通过的 Langmuir 验证",
+                "test_1d_langmuir_multi.checksum",
                 "warpx_used_inputs",
                 "程序退出为零",
                 "### 2.8.2 受控修改路线：一个命令行覆盖会改变哪一份证据",
@@ -1435,29 +1438,29 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（272 页候选）",
+                "当前增量复核（273 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
                 "| 13--14 |",
                 "| 15--16 |",
                 "| 16--17 |",
-                "| 30 |",
-                "| 31 |",
-                "| 32--33 |",
-                "| 47--50 |",
-                "| 74--76 |",
-                "| 112--113 |",
-                "| 171--172 |",
-                "| 209--210 |",
-                "| 225--226 |",
-                "| 262--263 |",
+                "| 30--31 |",
+                "| 31--32 |",
+                "| 33--34 |",
+                "| 48--51 |",
+                "| 75--77 |",
+                "| 113--114 |",
+                "| 172--173 |",
+                "| 210--211 |",
+                "| 226--227 |",
+                "| 263--264 |",
                 "| 260--262 |",
                 "| 219--254 |",
-                "| 230 |",
-                "| 235 |",
-                "| 264 |",
-                "| 270 |",
+                "| 231 |",
+                "| 236 |",
+                "| 265 |",
+                "| 271 |",
                 "262 页基线完整连续阅读 + 第 1、2、3、3A、4、5、6、7、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )

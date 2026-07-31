@@ -24,6 +24,7 @@ def main() -> int:
     args = parser.parse_args()
 
     root = args.root.resolve()
+    root_readme = (root / "README.md").read_text(encoding="utf-8")
     version = (root / "manuscript/VERSION.md").read_text(encoding="utf-8")
     readme = (root / "manuscript/README.md").read_text(encoding="utf-8")
     preface = (root / "manuscript/chapters/00-preface.md").read_text(encoding="utf-8")
@@ -234,6 +235,26 @@ def main() -> int:
         chapter_9,
     )
     checks = {
+        "root_readme_is_reader_entry": all(
+            marker in root_readme
+            for marker in (
+                "PIC-tutor 是一本中文的 Particle-In-Cell（PIC）教程",
+                "## 阅读书稿",
+                "## 这本书讲什么",
+                "## 准确性约定",
+                "## 构建与检查",
+                "## 当前状态与边界",
+                "## 维护记录",
+                "不是开发日志或测试报告的汇编",
+            )
+        ) and all(
+            marker not in root_readme
+            for marker in (
+                "## 本轮更新",
+                "当前 273 页候选",
+                "当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `273` 页",
+            )
+        ) and "/Volumes/" not in root_readme and "/Users/" not in root_readme,
         "version_is_reader_facing": "不是开发日志" in version and "读者在本版可以学到什么" in version
         and "建议的阅读方式" in version and not front_matter_project_markers,
         "manuscript_readme_is_reader_facing": "PIC 教程" in readme and "阅读路径" in readme

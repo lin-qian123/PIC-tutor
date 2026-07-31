@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1298,
-  "total_bytes": 39435357,
+  "total_bytes": 37874751,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 1568376,
-      "sha256": "721511b4275c245ad05b0db13ac1150b2eece578820cc97173a876ad284b0608"
+      "bytes": 5350,
+      "sha256": "7db33d27136c3722162fcc3963da80c0e23e83b46aa860e597c2f473024ed94d"
     },
     {
       "path": "TODO.md",
-      "bytes": 1467053,
-      "sha256": "4ff6ae915bc05232a0c9b106e5cc7b13b4e7125ac51d0ce8b6e8a6f64163a3db"
+      "bytes": 1467617,
+      "sha256": "531dc21d22bec9a3b627bd487620ef16b2705d428ba1ce524afefe0fe3740523"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
@@ -4812,13 +4812,13 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 57194,
-      "sha256": "1553ca887fb8580832aacae6e0d0b31ec32e011f841de9ae4a5854f0623b0145"
+      "bytes": 58102,
+      "sha256": "7cf54c476ef4b36588aa71e89af57802ab0655a944626dfc030eff86e0050e9f"
     },
     {
       "path": "scripts/audit_release_consistency.py",
-      "bytes": 3145,
-      "sha256": "74b890f99d8c80f058d959316769f9798f4881575ba75cbb4107f582f935123a"
+      "bytes": 3225,
+      "sha256": "8641eaa6f010c43f5549626a7a9cd9d7d27ea6f04010d84523d7c4a575ac24ef"
     },
     {
       "path": "scripts/audit_rz_axis_charge_source_crosswalk.py",
@@ -6212,8 +6212,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 78806,
-      "sha256": "7446fbda4495e848d2649f336ec3f6e494cb8476a55eccba4674143b9f359afa"
+      "bytes": 79674,
+      "sha256": "7a695f1781cfe1084a82eba0e3fb0754acf01d238a8956fb5c5db1af5db33bb0"
     },
     {
       "path": "scripts/verify_v40_build.py",

@@ -44,9 +44,10 @@ def main() -> None:
     parser.add_argument("--build-log", type=Path)
     args = parser.parse_args()
 
+    root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
     source = "\n".join(path.read_text(encoding="utf-8") for path in SOURCE_CHAPTERS)
     source += "\n" + (ROOT / "manuscript" / "VERSION.md").read_text(encoding="utf-8")
-    source += "\n" + (ROOT / "README.md").read_text(encoding="utf-8")
+    source += "\n" + root_readme
     # Historical evidence was deliberately removed from the reader-facing front
     # matter; keep it in the verification surface without putting it back into
     # the tutorial's opening pages.
@@ -206,6 +207,26 @@ def main() -> None:
     ]
 
     checks = {
+        "root_readme_reader_entry": all(
+            marker in root_readme
+            for marker in (
+                "PIC-tutor 是一本中文的 Particle-In-Cell（PIC）教程",
+                "## 阅读书稿",
+                "## 这本书讲什么",
+                "## 准确性约定",
+                "## 构建与检查",
+                "## 当前状态与边界",
+                "## 维护记录",
+                "不是开发日志或测试报告的汇编",
+            )
+        ) and all(
+            marker not in root_readme
+            for marker in (
+                "## 本轮更新",
+                "当前 273 页候选",
+                "当前成书版本为 `v0.110`：2026-07-31 可复现构建生成 `273` 页",
+            )
+        ) and "/Volumes/" not in root_readme and "/Users/" not in root_readme,
         "pdf_pages": len(reader.pages) == EXPECTED_PDF_PAGES,
         "source_image_links": len(image_links(source)) == 15,
         "merged_image_links": len(image_links(merged)) == 14,

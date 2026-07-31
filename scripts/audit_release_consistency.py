@@ -20,8 +20,10 @@ def check(root: Path, relative: str, expected: str) -> dict[str, object]:
 
 def build_report(root: Path) -> dict[str, object]:
     checks = [
-        check(root, "README.md", f"当前成书版本为 `{CURRENT_VERSION}`"),
-        check(root, "README.md", "拒绝 README 中已知的旧当前版本口径"),
+        check(root, "README.md", f"当前可审阅版本为 `{CURRENT_VERSION}`"),
+        check(root, "README.md", "## 阅读书稿"),
+        check(root, "README.md", "## 准确性约定"),
+        check(root, "README.md", "## 维护记录"),
         check(root, "manuscript/README.md", "读者的核查顺序"),
         check(root, "manuscript/VERSION.md", "# PIC-tutor"),
         check(root, "manuscript/VERSION.md", "建议的阅读方式"),

@@ -2,6 +2,7 @@
 
 ## 2026-07-31
 
+- [x] 收束根 README 的读者入口：将 2,884 行阶段记录改为面向读者的书稿说明，固定当前 `v0.110` / 274 页候选、成书入口、三条阅读路线、内容范围、证据层级、构建命令、当前开放边界和目录职责；历史页数、哈希和维护叙事转由 `docs/version-history-v0.110.md`、`TODO.md` 与发行审计承担。`audit_reader_facing_content.py`、`verify_v110_build.py` 和 `audit_release_consistency.py` 新增根 README 合同，防止再次出现阶段标题、273 页旧口径或绝对本机路径。
 - [x] 完成一轮读者路径收束：前言新增“最小 case 解释、源码链阅读、验证合同设计”三条按目标进入的路线；第 5 章将结论内单一核查题扩展为 `5.16` 独立练习路径，分别要求定位 old/new `rho` 与半步 `J` 的 consumer、区分分派接受与数值正确、写出 source/field/checksum 验证合同，并对 RZ residual 保留不可归因边界。`scripts/audit_reader_facing_content.py` 与 `scripts/verify_v110_build.py` 新增对应锚点；重建为 274 页，PDF 第 9、176--177 页视觉复核通过。WarpX runtime 未在本轮执行，第三方材料许可和公开再分发仍未完成。
 - [x] 修正第 2 章 Langmuir 首运行路线中的 CTest selector：`test_1d_langmuir_multi` 在官方 `add_warpx_test()` 中实际展开为 `.run`、`.analysis`、`.checksum`，原来锚定裸名称的 `-R '^test_1d_langmuir_multi$'` 会匹配零项。正文现要求先以 `ctest -N -R '^test_1d_langmuir_multi\..*'` 预览，再执行相同筛选；`build_full` 的只读清单实测为 3 项/0 项。`.run`、解析 analysis 与 checksum 的依赖顺序、可支持结论及不可外推范围均已补齐；`scripts/audit_chapter_02_first_run_reader_card.py` 同步审计 CMake 子项合同。重建为 273 页，PDF 第 30--32 页视觉复核通过。WarpX runtime 未在本轮执行，第三方材料许可和公开再分发仍未完成。
 - [x] 为第 1 章补齐 thermal-plasma 的 Debye 分辨率计算卡：由官方 1D/2D producer 的 `T_e=100 eV`、`d_e=c/omega_pe`、`L=10d_e`、`N=8` 和 `dt=0.2/omega_pe` 推得 `lambda_De/d_e=0.013989`、`lambda_De/dx=0.011191`、`omega_pe dt=0.2`、`v_te dt/dx=0.002238`，明确一步热位移小不能替代空间分辨；能量 consumer 未读取 Debye 长度、谱或温度矩，不能证明屏蔽、色散、阻尼或通用网格阈值。新增 `scripts/audit_chapter_01_thermal_plasma_resolution_card.py`；重建为 272 页，PDF 第 16--17 页视觉复核通过。全书逐页重读、第三方材料许可和公开再分发仍未完成。

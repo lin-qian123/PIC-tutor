@@ -5,7 +5,7 @@
 - tracked reference bytes: `190730587`
 - tracked reference PDFs: `52`
 - tracked reference images: `2259`
-- current candidate: `PIC-tutor v0.110` / `270` PDF pages
+- current candidate: `PIC-tutor v0.110` / `271` PDF pages
 - candidate artifacts match release manifest: `True`
 - release manifest excludes `references/`: `True`
 - root license files: `none`

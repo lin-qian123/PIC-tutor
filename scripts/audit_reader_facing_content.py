@@ -824,6 +824,17 @@ def main() -> int:
                 "看起来近静电",
             )
         ) and not chapter_1_project_path_markers,
+        "chapter_1_electrostatic_model_validation_reader_card": all(
+            marker in chapter_1
+            for marker in (
+                "### 1.5.1 模型选择与验证卡：Poisson 可解不等于完整电磁问题已被解决",
+                "第一层：先判断问题是否仍需传播电磁自由度",
+                "第二层：明确实际解的是什么",
+                "第三层：用一个有解析 reference 的 producer 检查指定对象",
+                "第四层：让 consumer 与所问问题一一对应",
+                "Poisson 残差小，所以激光传播也正确",
+            )
+        ) and not chapter_1_project_path_markers,
         "chapter_1_has_no_project_path_narration": not chapter_1_project_path_markers,
         "chapter_3a_current_initialization_route": all(
             marker in chapter_3a
@@ -891,25 +902,26 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（270 页候选）",
+                "当前增量复核（271 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
-                "| 28 |",
+                "| 13--14 |",
                 "| 29 |",
-                "| 30--31 |",
-                "| 45--48 |",
-                "| 72--74 |",
-                "| 110--111 |",
-                "| 169--170 |",
-                "| 207--208 |",
-                "| 223--224 |",
-                "| 260--261 |",
+                "| 30 |",
+                "| 31--32 |",
+                "| 46--49 |",
+                "| 73--75 |",
+                "| 111--112 |",
+                "| 170--171 |",
+                "| 208--209 |",
+                "| 224--225 |",
+                "| 261--262 |",
                 "| 260--262 |",
-                "| 228 |",
-                "| 233 |",
-                "| 262 |",
-                "| 268 |",
+                "| 229 |",
+                "| 234 |",
+                "| 263 |",
+                "| 269 |",
             )
         ),
     }
@@ -926,7 +938,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 270-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 271-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -998,7 +1010,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 270-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 271-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

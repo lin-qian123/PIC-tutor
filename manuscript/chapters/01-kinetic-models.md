@@ -227,6 +227,35 @@ $$
 - electrostatic sphere、Pierce diode、effective potential 这些例子要和 Poisson 边界条件、势能账本一起讲；
 - `WarpX::OneStep()` 里 electrostatic / hybrid 路线的场解位置会和标准 electromagnetic loop 不同。
 
+### 1.5.1 模型选择与验证卡：Poisson 可解不等于完整电磁问题已被解决
+
+选择 electrostatic 路线时，先把“模型是否适合”与“这一实现是否通过指定验证”分开。下面的四层顺序可防止把一个收敛的 Poisson solve、一次通过的回归或一幅近纵向电场图误读成完整的 Vlasov--Maxwell 验证。
+
+**第一层：先判断问题是否仍需传播电磁自由度。** 若研究对象包含激光注入、辐射传播、波的有限传播时间、横向电磁反馈或与 PML 吸收有关的反射，`warpx.do_electrostatic` 不是近似程度较高的快捷路径，而是模型对象已经变了；应回到完整 electromagnetic 路线。反之，若目标是给定边界势下的空间电荷、静电平衡或 Poisson 边值问题，才继续问 Poisson 解和边界条件是否与目标相符。参数文档的“没有 timestep 限制”只是在说该模式不由 electromagnetic CFL 限制；它既不免除粒子输运、等离子体频率、统计采样或 Poisson 误差的判断，也不授权把过大的步长写成物理上准确。
+
+**第二层：明确实际解的是什么。** `labframe` 以所有物种合成的 \(\rho\) 解
+
+$$
+\nabla^2\phi=-\rho/\epsilon_0,
+\qquad \mathbf{E}=-\nabla\phi.
+$$
+
+`labframe-electromagnetostatic` 还以合成的 \(\mathbf{J}\) 解矢势并构造静磁场；`labframe-effective-potential` 则改写 Poisson 算子以改变大 \(\omega_{pe}\Delta t\) 时的数值行为。它们不是同一个开关的三个拼写。读者若只需 electrostatic 的 \(\phi,\mathbf{E}\)，不能因为输出里出现了 \(B\) 或因为某个模式能稳定运行，就跳过所选模式的方程和适用假设。
+
+**第三层：用一个有解析 reference 的 producer 检查指定对象。** 官方 `test_3d_electrostatic_sphere_eb` 是启用 EB 时的 3D、2-rank 案例：`max_step = 1`、`warpx.do_electrostatic = labframe`、外边界为零电势的 PEC，半径 \(R=0.1\,\mathrm{m}\) 的 embedded sphere 固定为 \(\phi_0=1\,\mathrm{V}\)。它写出 `Ex/Ey/Ez/rho/phi/eb_covered` 的 Full diagnostics，并另写 `ChargeOnEB` 的全球与八分之一球积分。这里的 producer 很窄：它构造的是给定导体势、特定几何、单步、无传播辐射主张的 Poisson/EB 问题，而不是一般带粒子动力学的 plasma benchmark。
+
+**第四层：让 consumer 与所问问题一一对应。** 该案例的 `analysis.py` 比较全嵌入边界电荷
+
+$$
+Q_{\mathrm{th}}=4\pi\epsilon_0\phi_0R
+$$
+
+与 `eb_charge.txt` 中的数值积分，并要求相对误差小于 `0.06`；它还把八分之一权重积分与 \(Q_{\mathrm{th}}/8\) 比较，并检查 `eb_covered` 在 \([0,1]\) 内、球内带与球外带分别为 1 与 0。这三类断言分别约束全局边界电荷、加权表面积分和 EB 几何 mask。CTest 随后的 checksum 只回归指定输出基线，不能替代前三个比较。
+
+从执行次序看，初始化阶段和每个 electrostatic 时间步都会经 `ComputeSpaceChargeField()` 组织 Poisson 场；进入该分支后，演化代码会重置 electrostatic 分量，再在粒子下一次 push 前准备可 gather 的场。与此同时，`OneStep_sub1()` 明确拒绝 electrostatic solver 与 AMR subcycling 的组合。因此下面的句子都不成立：**“Poisson 残差小，所以激光传播也正确”、“sphere 的电荷通过，所以任意 EB 几何的场都正确”、“没有 electromagnetic CFL，所以时间步不再需要物理判断”**，以及“这张单步、固定势测试证明了 electrostatic + subcycling 的路径”。
+
+这张卡的实际交付是一张四行表：模型中保留/删去的自由度、输入 producer、各 consumer 的 reference 与阈值、以及本次结论不能外推的范围。这样才把第 1 章的连续假设接到后续第 3A 章初始化、第 6 章场求解和第 7 章 EB/PML 的不同问题上。
+
 ## 1.6 宏粒子不是假粒子，而是 coarse-grained 分布函数载体
 
 PIC 的核心近似不是把等离子体变成少数真实粒子，而是用有限数量的宏粒子采样分布函数。形式上可写成

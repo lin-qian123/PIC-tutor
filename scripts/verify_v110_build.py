@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 7 load-balance validation card yields 270 pages.
-EXPECTED_PDF_PAGES = 270
+# The Chapter 1 electrostatic model-validation card yields 271 pages.
+EXPECTED_PDF_PAGES = 271
 
 
 def image_links(text: str) -> list[str]:
@@ -56,6 +56,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-06-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-02-first-run-reader-card-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-01-electrostatic-model-validation-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03-lifecycle-trace-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03-subcycling-validation-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03a-initialization-reader-card-v0.110.md").read_text(encoding="utf-8")
@@ -525,6 +526,17 @@ def main() -> None:
                 "看起来近静电",
             )
         ) and not chapter_1_project_markers,
+        "chapter_1_electrostatic_model_validation_reader_card": all(
+            marker in source
+            for marker in (
+                "### 1.5.1 模型选择与验证卡：Poisson 可解不等于完整电磁问题已被解决",
+                "第一层：先判断问题是否仍需传播电磁自由度",
+                "第二层：明确实际解的是什么",
+                "第三层：用一个有解析 reference 的 producer 检查指定对象",
+                "第四层：让 consumer 与所问问题一一对应",
+                "SOURCE_GROUNDED_ELECTROSTATIC_MODEL_SELECTION_READER_CARD",
+            )
+        ) and (ROOT / "scripts/audit_chapter_01_electrostatic_model_validation_card.py").is_file(),
         "chapter_2_math_and_case_closure": all(
             marker in chapter_2
             for marker in (
@@ -1400,27 +1412,28 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（270 页候选）",
+                "当前增量复核（271 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
-                "| 28 |",
+                "| 13--14 |",
                 "| 29 |",
-                "| 30--31 |",
-                "| 45--48 |",
-                "| 72--74 |",
-                "| 110--111 |",
-                "| 169--170 |",
-                "| 207--208 |",
-                "| 223--224 |",
-                "| 260--261 |",
+                "| 30 |",
+                "| 31--32 |",
+                "| 46--49 |",
+                "| 73--75 |",
+                "| 111--112 |",
+                "| 170--171 |",
+                "| 208--209 |",
+                "| 224--225 |",
+                "| 261--262 |",
                 "| 260--262 |",
                 "| 219--254 |",
-                "| 228 |",
-                "| 233 |",
-                "| 262 |",
-                "| 268 |",
-                "262 页基线完整连续阅读 + 第 2、3、3A、4、5、6、7、8、9 章变更范围与受影响版式的增量复核已记录",
+                "| 229 |",
+                "| 234 |",
+                "| 263 |",
+                "| 269 |",
+                "262 页基线完整连续阅读 + 第 1、2、3、3A、4、5、6、7、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )
         ),

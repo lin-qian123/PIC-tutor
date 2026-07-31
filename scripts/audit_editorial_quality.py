@@ -123,22 +123,23 @@ def main() -> int:
 
     manual_review_markers = (
         "基线 262 页快照已完成连续阅读",
-        "当前增量复核（270 页候选）",
+        "当前增量复核（271 页候选）",
         "| 1--6 |",
-        "| 28 |",
+        "| 13--14 |",
         "| 29 |",
-        "| 30--31 |",
-        "| 45--48 |",
-        "| 72--74 |",
-        "| 110--111 |",
-        "| 169--170 |",
-        "| 207--208 |",
-        "| 223--224 |",
-        "| 260--261 |",
-        "| 228 |",
-        "| 233 |",
-        "| 262 |",
-        "| 268 |",
+        "| 30 |",
+        "| 31--32 |",
+        "| 46--49 |",
+        "| 73--75 |",
+        "| 111--112 |",
+        "| 170--171 |",
+        "| 208--209 |",
+        "| 224--225 |",
+        "| 261--262 |",
+        "| 229 |",
+        "| 234 |",
+        "| 263 |",
+        "| 269 |",
     )
     manual_review_recorded = all(marker in manual_spotcheck for marker in manual_review_markers)
     checks = {
@@ -149,9 +150,9 @@ def main() -> int:
         "html_title_and_heading_count": bool(parser_html.headings)
         and parser_html.headings[0] == ("h1", expected_title)
         and len(html_body_headings) == len(headings),
-        "html_key_sections": all(marker in html_normalized for marker in ("如何阅读证据边界", "3.11.3 AMR subcycling 修改后的验证卡", "5.14.2.1 Vay 配置判读卡", "5.14.2.2 RZ implicit Villasenor 判读卡", "5.14.5.1 RZ 轴线判读卡", "收敛研究：描述性趋势不是正式阶数", "6.6.1 先按更新对象", "6.11.10 场求解器修改后的验证阶梯", "7.5.1 用正确的", "7.5.3 PML 配置与验证卡", "7.8.1 修改 load balance", "7.9.1 Transition-zone 判读卡", "8.14.3 修改诊断后的验证阶梯")),
+        "html_key_sections": all(marker in html_normalized for marker in ("如何阅读证据边界", "1.5.1 模型选择与验证卡", "3.11.3 AMR subcycling 修改后的验证卡", "5.14.2.1 Vay 配置判读卡", "5.14.2.2 RZ implicit Villasenor 判读卡", "5.14.5.1 RZ 轴线判读卡", "收敛研究：描述性趋势不是正式阶数", "6.6.1 先按更新对象", "6.11.10 场求解器修改后的验证阶梯", "7.5.1 用正确的", "7.5.3 PML 配置与验证卡", "7.8.1 修改 load balance", "7.9.1 Transition-zone 判读卡", "8.14.3 修改诊断后的验证阶梯")),
         "pdf_page_count_positive": len(pdf_reader.pages) > 0,
-        "pdf_key_sections": all(marker in pdf_text for marker in ("如何阅读证据边界", "AMR subcycling 修改后的验证卡", "Vay 配置判读卡", "RZ implicit Villasenor 判读卡", "RZ 轴线判读卡", "收敛研究：描述性趋势不是正式阶数", "先按更新对象理解 PSATD 系数", "场求解器修改后的验证阶梯", "用正确的 observable 判断 PML", "PML 配置与验证卡", "修改 load balance 或 RemakeLevel", "Transition-zone 判读卡", "修改诊断后的验证阶梯")),
+        "pdf_key_sections": all(marker in pdf_text for marker in ("如何阅读证据边界", "模型选择与验证卡", "AMR subcycling 修改后的验证卡", "Vay 配置判读卡", "RZ implicit Villasenor 判读卡", "RZ 轴线判读卡", "收敛研究：描述性趋势不是正式阶数", "先按更新对象理解 PSATD 系数", "场求解器修改后的验证阶梯", "用正确的 observable 判断 PML", "PML 配置与验证卡", "修改 load balance 或 RemakeLevel", "Transition-zone 判读卡", "修改诊断后的验证阶梯")),
         "no_build_warning_markers": not any(marker in pdf_text for marker in ("Could not fetch resource", "Missing character")),
         "baseline_read_and_current_incremental_review_are_recorded": manual_review_recorded,
     }

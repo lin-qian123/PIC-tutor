@@ -846,6 +846,16 @@ def main() -> int:
                 "原来的 `0.003` 已不再是自动有效的合同",
             )
         ) and not chapter_1_project_path_markers,
+        "chapter_1_thermal_plasma_resolution_reader_card": all(
+            marker in chapter_1
+            for marker in (
+                "### 1.10.1 尺度计算卡：能量回归通过不等于 Debye 屏蔽已分辨",
+                "测试名和物理判据必须分开读",
+                "先读这四个数各自回答的问题",
+                "建立新的分辨率合同",
+                "并不运行 WarpX，也不宣布某个通用的",
+            )
+        ) and not chapter_1_project_path_markers,
         "chapter_1_has_no_project_path_narration": not chapter_1_project_path_markers,
         "chapter_3a_current_initialization_route": all(
             marker in chapter_3a
@@ -913,26 +923,28 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（271 页候选）",
+                "当前增量复核（272 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
                 "| 13--14 |",
-                "| 29 |",
+                "| 15--16 |",
+                "| 16--17 |",
                 "| 30 |",
-                "| 31--32 |",
-                "| 46--49 |",
-                "| 73--75 |",
-                "| 111--112 |",
-                "| 170--171 |",
-                "| 208--209 |",
-                "| 224--225 |",
-                "| 261--262 |",
+                "| 31 |",
+                "| 32--33 |",
+                "| 47--50 |",
+                "| 74--76 |",
+                "| 112--113 |",
+                "| 171--172 |",
+                "| 209--210 |",
+                "| 225--226 |",
+                "| 262--263 |",
                 "| 260--262 |",
-                "| 229 |",
-                "| 234 |",
-                "| 263 |",
-                "| 269 |",
+                "| 230 |",
+                "| 235 |",
+                "| 264 |",
+                "| 270 |",
             )
         ),
     }
@@ -949,7 +961,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 271-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 272-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -1021,7 +1033,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 271-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 272-page candidate has recorded Chapter 1, Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

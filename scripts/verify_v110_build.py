@@ -22,7 +22,7 @@ PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
 # Updated after each reader-facing rebuild; the thermal-plasma card may repaginate.
-EXPECTED_PDF_PAGES = 271
+EXPECTED_PDF_PAGES = 272
 
 
 def image_links(text: str) -> list[str]:
@@ -58,6 +58,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-02-first-run-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-01-electrostatic-model-validation-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-01-thermal-plasma-energy-validation-card-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-01-thermal-plasma-resolution-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03-lifecycle-trace-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03-subcycling-validation-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03a-initialization-reader-card-v0.110.md").read_text(encoding="utf-8")
@@ -549,6 +550,16 @@ def main() -> None:
                 "SOURCE_GROUNDED_THERMAL_PLASMA_ENERGY_AND_NOISE_READER_CARD",
             )
         ) and (ROOT / "scripts/audit_chapter_01_thermal_plasma_energy_validation_card.py").is_file(),
+        "chapter_1_thermal_plasma_resolution_reader_card": all(
+            marker in source
+            for marker in (
+                "### 1.10.1 尺度计算卡：能量回归通过不等于 Debye 屏蔽已分辨",
+                "测试名和物理判据必须分开读",
+                "先读这四个数各自回答的问题",
+                "建立新的分辨率合同",
+                "SOURCE_GROUNDED_THERMAL_PLASMA_DEBYE_RESOLUTION_READER_CARD",
+            )
+        ) and (ROOT / "scripts/audit_chapter_01_thermal_plasma_resolution_card.py").is_file(),
         "chapter_2_math_and_case_closure": all(
             marker in chapter_2
             for marker in (
@@ -1424,27 +1435,29 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（271 页候选）",
+                "当前增量复核（272 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
                 "| 13--14 |",
-                "| 29 |",
+                "| 15--16 |",
+                "| 16--17 |",
                 "| 30 |",
-                "| 31--32 |",
-                "| 46--49 |",
-                "| 73--75 |",
-                "| 111--112 |",
-                "| 170--171 |",
-                "| 208--209 |",
-                "| 224--225 |",
-                "| 261--262 |",
+                "| 31 |",
+                "| 32--33 |",
+                "| 47--50 |",
+                "| 74--76 |",
+                "| 112--113 |",
+                "| 171--172 |",
+                "| 209--210 |",
+                "| 225--226 |",
+                "| 262--263 |",
                 "| 260--262 |",
                 "| 219--254 |",
-                "| 229 |",
-                "| 234 |",
-                "| 263 |",
-                "| 269 |",
+                "| 230 |",
+                "| 235 |",
+                "| 264 |",
+                "| 270 |",
                 "262 页基线完整连续阅读 + 第 1、2、3、3A、4、5、6、7、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )

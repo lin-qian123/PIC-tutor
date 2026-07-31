@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 1292,
-  "total_bytes": 39365559,
+  "entry_count": 1295,
+  "total_bytes": 39391359,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1566978,
-      "sha256": "d0fcfe42dbf3a9ff6243e4ed4f94134d6d04095416e68c2aba33ec12cc60eb8c"
+      "bytes": 1567423,
+      "sha256": "752eb54cd3e8b0ab2cfd9b1e3808a1750827865e5a615f3520405ed3a5e5de3f"
     },
     {
       "path": "TODO.md",
-      "bytes": 1464917,
-      "sha256": "74c3b06b76cf63201d15873a05ceda851b3c50848649eac4647a4ada0fb38545"
+      "bytes": 1465567,
+      "sha256": "cbe93f951037776020396acb78e17498395856e00626c0a142d4f7b6edbc69a2"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 4989228,
-      "sha256": "c0ebaf5dd703e83ab6fc839d93027844b71c38acd791ec1ac0b48083739daffa"
+      "bytes": 4992911,
+      "sha256": "e5c14c505ed3e8c16ffb60938fd6366ea85ec6ec6ea8a7572214082447e5e420"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 919731,
-      "sha256": "bbbcc8c2b2a0af6ebe4498ac301c723890d6c5de6f54e3d09cef12151f3afd37"
+      "bytes": 922536,
+      "sha256": "f27af3a4063ff60fe9ec828b7d260ee5e27a80a17ef1efe718b6585e867bbb7f"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2943650,
-      "sha256": "f5f12dcae1d54d25a8f17d729d4a56564e1d973ed0e4363b9ba264cb46877e63"
+      "bytes": 2948247,
+      "sha256": "96208698e8e6cb766e27df0ea4514f81d47ccd725dd4face3fef3a734468d6c6"
     },
     {
       "path": "docs/chapter-01-electrostatic-model-validation-card-v0.110.json",
@@ -74,6 +74,16 @@
       "path": "docs/chapter-01-electrostatic-model-validation-card-v0.110.md",
       "bytes": 1016,
       "sha256": "cc383fde1174299a1a6a4021f71169ce24f03bf310f663a991959416e923de8b"
+    },
+    {
+      "path": "docs/chapter-01-thermal-plasma-energy-validation-card-v0.110.json",
+      "bytes": 1078,
+      "sha256": "1c7261cd711a2f6eb99004085d2423004f2b62c551fbba8809544bd8ac70fff4"
+    },
+    {
+      "path": "docs/chapter-01-thermal-plasma-energy-validation-card-v0.110.md",
+      "bytes": 1083,
+      "sha256": "f392bb921ec257842495683dbf4be23ed7dde7d79dd8345a3ef3defd38faef3c"
     },
     {
       "path": "docs/chapter-02-first-run-reader-card-v0.110.json",
@@ -328,12 +338,12 @@
     {
       "path": "docs/editorial-quality-audit-v0.110.json",
       "bytes": 1297,
-      "sha256": "3a3b6078cb99edced45aaf553b2cc1922348b11f2f28c01f361cd423170f615d"
+      "sha256": "8d894185a7e63c7734f080c0e4ca6e909c98ac3bac6f7b23bb74a7a6be142058"
     },
     {
       "path": "docs/editorial-quality-audit-v0.110.md",
       "bytes": 928,
-      "sha256": "6abdbaf1fbe63d6d860631255f751aa1bb218307d8f6995b05c7ab0e82700bd6"
+      "sha256": "9e2bd89d8a0bc6b3cbd7ef4d74041ef19b817821e7dc3524b35fd1158f972ab7"
     },
     {
       "path": "docs/editorial-quality-audit-v0.81.json",
@@ -662,8 +672,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 63589,
-      "sha256": "ce21f579f7120207775e4d6a63309a3957695275119434658043b771a481707a"
+      "bytes": 62858,
+      "sha256": "bab180b1dedb533ed1235a582a95f669b60844e2383bae7dbaef71d07a100429"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -808,12 +818,12 @@
     {
       "path": "docs/pdf-layout-audit-v0.110.json",
       "bytes": 698,
-      "sha256": "2209fd3d8ae8543119857a0729a4e8681deecf12a4531ab3de21c2ba43f300e7"
+      "sha256": "afb7e4d385ddfcb6dc519bb5eb06b6e24f9de9dbbd9ddaa600c3d888ab33b01b"
     },
     {
       "path": "docs/pdf-layout-audit-v0.110.md",
       "bytes": 625,
-      "sha256": "ce8f57464bb1b7f77db5f2c4459dee2de25472d405090b6ae6dd3c4ece463929"
+      "sha256": "cafb6c3aa9daec4d19a8259ce155c5f74bead129d5710d8a8c369c9e43199898"
     },
     {
       "path": "docs/pdf-layout-audit-v0.82.json",
@@ -1042,18 +1052,18 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 17109,
-      "sha256": "a485e75f66b215d3f3226d5dccf02503fc28976b78a47c50e5cb079643b19b30"
+      "bytes": 17156,
+      "sha256": "c650f717237c2d3fe2a688f5f696bf4b7f759fa6e85b5e6f8116ccb03e81d332"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
-      "bytes": 5774,
-      "sha256": "401b6e6c993886b331e325c94d37acbb66c7fe49946debb99aee2c84f8dad9f8"
+      "bytes": 5835,
+      "sha256": "cd92b960e254231cb590df72516e3df4b26bae8f3652e2636f17ecf46dcb3b0d"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.md",
-      "bytes": 4494,
-      "sha256": "e25525977d15ea27a93d16862dc89cbfc61e0241da6dc19211c2a04b8810f5e6"
+      "bytes": 4557,
+      "sha256": "db96d1704f01525661c7691ce990c585ed6893708fffcff5edd4636e6172be60"
     },
     {
       "path": "docs/rz-axis-charge-repeat-stability-v0.93.json",
@@ -2432,8 +2442,8 @@
     },
     {
       "path": "manuscript/chapters/01-kinetic-models.md",
-      "bytes": 30823,
-      "sha256": "1f10cc8486eb294aa9944fe74b8b57c327f1ed2afbc76813e36205643fcf6f25"
+      "bytes": 33628,
+      "sha256": "2fef9dfe448cd376f8737ee9f8e8deecf4c7a66d5f6db0797e937c8db689eab7"
     },
     {
       "path": "manuscript/chapters/02-pic-loop.md",
@@ -4456,6 +4466,11 @@
       "sha256": "65e2aed9a1b496b4f857cc43b9eec14ac0aee7144681365e11635895605ec964"
     },
     {
+      "path": "scripts/audit_chapter_01_thermal_plasma_energy_validation_card.py",
+      "bytes": 7763,
+      "sha256": "4b8948eb14ace5eb8b6153359dbb241dd1a01fa77e04f8704754872b7a651ab5"
+    },
+    {
       "path": "scripts/audit_chapter_02_first_run_reader_card.py",
       "bytes": 5616,
       "sha256": "f09c44550e59bf88942d2bcba454997d834a365e1793a0c21a57decea4a2d361"
@@ -4582,8 +4597,8 @@
     },
     {
       "path": "scripts/audit_editorial_quality.py",
-      "bytes": 10032,
-      "sha256": "8d26efa6d5568f6ce3aec49deb9af69c768f721321195049013d38c5d5c6122f"
+      "bytes": 10151,
+      "sha256": "f2a8b7c4a3f57c06236bdeb3892f0162500303e250177425ed3b0f32608b898f"
     },
     {
       "path": "scripts/audit_esirkepov_bounded_compare.py",
@@ -4782,13 +4797,13 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 55057,
-      "sha256": "23161f7ddc12e92bffe66d602ce3344f1c91b3ec99c27ba619f89732cc833baf"
+      "bytes": 55636,
+      "sha256": "6b97a614a24a4fbac539966fa12022999d2d8b12ebb15dddfc026a0c5b81ebb7"
     },
     {
       "path": "scripts/audit_release_consistency.py",
       "bytes": 3145,
-      "sha256": "b13b480e55d48395ddf463ebb2df09597d32846c394ee245fb3cb6fc3db69575"
+      "sha256": "edfc508795c02baa46fc0cb5f760ed4490065618dc201c0b0e2f42409c12bfcc"
     },
     {
       "path": "scripts/audit_rz_axis_charge_source_crosswalk.py",
@@ -6182,8 +6197,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 76519,
-      "sha256": "19d226c8157b12095ed5fbce3c4550545fab60de6c1acc5664f222d4f8fe90eb"
+      "bytes": 77272,
+      "sha256": "2a0bed4e074270b4c94e083ac79e4fd651f266125c669a2747b2973c0d03f322"
     },
     {
       "path": "scripts/verify_v40_build.py",

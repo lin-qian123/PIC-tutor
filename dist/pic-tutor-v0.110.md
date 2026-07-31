@@ -530,6 +530,46 @@ $$
 - reduced diagnostics 应平均多久；
 - 弱效应、弱不稳定和 Landau damping 的 measurement window 多大才可信。
 
+### 1.10.1 尺度计算卡：能量回归通过不等于 Debye 屏蔽已分辨
+
+上一节的官方 `energy_conserving_thermal_plasma` producer 正好说明，**测试名和物理判据必须分开读**。其 1D 输入设定 \(T_e=100\,\mathrm{eV}\)、
+
+$$
+d_{e0}=c/\omega_{pe},\qquad
+\Delta t=0.2/\omega_{pe},\qquad
+L=10d_{e0},\qquad N_x=8.
+$$
+
+同一输入把电子热动量宽度写成 \(u_{\mathrm{th}}=\sqrt{T_e q_e/m_e}/c\)。沿用本节的非相对论热速率约定，便有
+
+$$
+\frac{\lambda_{De}}{d_{e0}}
+=\frac{v_{te}}{c}
+=\sqrt{\frac{T_e}{m_ec^2}}
+=\sqrt{\frac{100}{510998.95}}
+\approx 1.399\times10^{-2}.
+$$
+
+而网格与一步的无量纲尺度分别为
+
+$$
+\frac{\Delta x}{d_{e0}}=\frac{10}{8}=1.25,
+\qquad
+\frac{\lambda_{De}}{\Delta x}\approx1.119\times10^{-2},
+\qquad
+\omega_{pe}\Delta t=0.2,
+\qquad
+\frac{v_{te}\Delta t}{\Delta x}\approx2.24\times10^{-3}.
+$$
+
+**先读这四个数各自回答的问题。** 最后一个数小，只说明一个电子热速率在一步内移动的距离远小于一个 cell；它不能把 \(\lambda_{De}/\Delta x\ll1\) 变成空间分辨。这里的 1D/2D producer 因而可以为其固定 gather、shape、边界和输出 cadence 检查能量账本，却**不**由该 consumer 证明 Debye 屏蔽、Langmuir 色散、Landau damping 或热涨落谱已经按目标物理分辨。`EP`/`EF` 的 `0.003` 断言也没有读取 \(\lambda_D\)、谱峰或温度矩。
+
+这不是对该 regression 的否定。它的可支持结论本来就是“在这份输入和已记录时刻，指定的粒子动能加场能变化不超过阈值”；用一个本来不测空间分辨率的 consumer 去给它附会分辨率结论，才是错误。相反，宏粒子数也要单独解释：1D 的每 cell 4 个、2D 的每 cell \(2\times2\) 个宏粒子是采样设置，不是三维真实 Debye 球内物理粒子数 \(N_D\)。
+
+**若研究目标真的需要 Debye 尺度，建立新的分辨率合同。** 首先从目标物理决定需要比较的 \(\lambda_D/\Delta x\) 与时间窗，而不是机械复用本例的 8 cells；随后在固定物理长度、边界、温度、密度与可观察量定义下进行网格和宏粒子数的独立扫描。consumer 至少应包含与问题匹配的 density/field spectrum、温度或速度分布矩、解析色散/阻尼率、收敛趋势或实验 reference 中的一项；同时继续保留 \(E_f+E_p\) 作为另一条数值账本。只有“尺度分辨”和“能量漂移”分别有证据，才可以讨论计算是否既稳定又回答了原来的热等离子体问题。
+
+这个计算卡只重新计算官方输入已声明的无量纲量，并不运行 WarpX，也不宣布某个通用的 \(\lambda_D/\Delta x\) 通过线。不同几何、模型、可观察量和误差预算需要各自的 reference 与收敛计划。
+
 ## 1.11 从连续模型到 PIC 离散变量
 
 前面的方程还没有直接变成程序里的数组。PIC 的第一步不是把分布函数存成一个高维网格，而是用带权粒子样本代表它，再用网格上的有限差分或谱变量承载场。可以把这条映射写成下面的最小对应关系：

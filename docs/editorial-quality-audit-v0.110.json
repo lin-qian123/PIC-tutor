@@ -16,22 +16,22 @@
   "passed": true,
   "classification": "AUTOMATED_EDITORIAL_AUDIT_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED",
   "scope": "automated structure and artifact consistency; baseline full read and current incremental review are recorded; redistribution approval remains open",
-  "heading_count": 356,
-  "html_heading_count": 356,
-  "pdf_pages": 271,
+  "heading_count": 357,
+  "html_heading_count": 357,
+  "pdf_pages": 272,
   "table_issues": [],
   "artifacts": {
     "pic-tutor-v0.110.md": {
-      "bytes": 919731,
-      "sha256": "bbbcc8c2b2a0af6ebe4498ac301c723890d6c5de6f54e3d09cef12151f3afd37"
+      "bytes": 922536,
+      "sha256": "f27af3a4063ff60fe9ec828b7d260ee5e27a80a17ef1efe718b6585e867bbb7f"
     },
     "pic-tutor-v0.110.html": {
-      "bytes": 4989228,
-      "sha256": "c0ebaf5dd703e83ab6fc839d93027844b71c38acd791ec1ac0b48083739daffa"
+      "bytes": 4992911,
+      "sha256": "e5c14c505ed3e8c16ffb60938fd6366ea85ec6ec6ea8a7572214082447e5e420"
     },
     "pic-tutor-v0.110.pdf": {
-      "bytes": 2943650,
-      "sha256": "f5f12dcae1d54d25a8f17d729d4a56564e1d973ed0e4363b9ba264cb46877e63"
+      "bytes": 2948247,
+      "sha256": "96208698e8e6cb766e27df0ea4514f81d47ccd725dd4face3fef3a734468d6c6"
     }
   }
 }

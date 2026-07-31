@@ -798,6 +798,20 @@ $$
 
 最后，`particle_suborbits` 改变的是粒子响应如何被拆分，而不是外层物理时间步。在线性 Jacobian 阶段，若启用 suborbit，`PreRHSOp()` 可以只推进 suborbit 粒子并用 `ComputeJfromMassMatrices(J_from_MM_only)` 补齐响应；若未启用，则由 mass matrices 直接构造线性阶段的 `J`。这正是 implicit 验证必须同时记录 solver 类型、particle suborbit、mass-matrix 开关和最终 source gate 的原因。
 
+### 3.11.3 AMR subcycling 修改后的验证卡：先分清时间层、source 和回归
+
+AMR subcycling 与碰撞的 `ndt_subcycle`、场求解器的内部循环不是同一个概念。这里讨论的是 `warpx.do_subcycling = 1` 进入 `OneStep_sub1()` 的两级网格时间合同：一个 coarse 物理步内，fine patch 和其粒子走两次小步，coarse patch 与 mother grid 只提交一次大步。官方开发文档也把它列为 `OneStep_nosub()` 之外的 PIC-loop 核心入口。
+
+**第一层：先确认这真的是受支持的两级分支。**`Examples/Tests/subcycling/test_2d_subcycling_mr` 注册为 2D、2-rank case；输入设定 `amr.max_level = 1`、`warpx.do_subcycling = 1`、moving window 和一次 step 250 的 `Full` diagnostics。这里的 `max_level = 1` 表示 level 0 与 level 1 两层，不是“只有一层”；`OneStep_sub1()` 还会在运行时拒绝电静力路径、超过两层的层级，或任何方向 refinement ratio 不为 2 的配置。因而改 AMR 结构、几何或时间步之前，应先把这些分派条件与实际输入逐项核对；仅出现细网格或一个 `diag1000250` 目录，都不能证明进入了这条时间合同。
+
+**第二层：把一个 coarse 步按 source 生命周期阅读。**第一 fine 小步后，代码先 restriction fine `current_fp` 和 `rho`，再完成过滤、边界和该层场推进；随后 coarse 粒子沉积的电流被 `StoreCurrent()` 保存，fine contribution 经 `AddCurrentFromFineLevelandSumBoundary()` 叠入，coarse/fine 场各推进半个 coarse 步。中点的 `UpdateAuxiliaryData()` 为下一次 fine gather 准备跨层辅助场。第二 fine 小步重复 restriction，随后 `RestoreCurrent()` 恢复 coarse 自身的另一半 source，再叠加 fine contribution 并完成第二个 coarse 半步。
+
+这条顺序说明 `current_fp`、`current_cp`、`current_buf` 和 `rho` 在不同阶段不是可互换的同义词；`StoreCurrent()`/`RestoreCurrent()` 也不是可删除的缓存优化。若修改 restriction、buffer、过滤、auxiliary gather 或 half-step 次序，应直接记录每个阶段的 source 与时间标签，才可能判断 coarse source 是否仍对应两个 fine 时间片。单个末态 plotfile 不能替代这份 route-level ledger。
+
+**第三层：正确解读官方测试的 consumer。**该 CTest 的 analysis 槽位是 `OFF`，只调用 `analysis_default_regression.py --path diags/diag1000250`。后者把输出交给 checksum API；因此 PASS 只能说明在这个 2D、2-rank、CKC、PML、moving-window 和指定粒子配置下，最终 Full output 没有偏离已登记的回归基线。它是必要的输出回归，不是解析场、连续性、两级 source 账本或 transition-zone route-count 的物理证明。
+
+**第四层：按改动对象补上缺失的比较。**改分派、level 数或 refinement ratio 时，先用第一层确认入口和拒绝条件；改 current/rho restriction、buffer 或同步时，第二层要求 pre/post restriction、coarsen 与边界后的同一字段比较；改场更新、PML 或 moving window 时，另选与物理问题匹配的解析解、守恒量或独立 reference；改 diagnostics/writer 时，再按第 8 章的 producer/consumer 卡检查采样时间。若没有对应 comparison，结论只能是“分支或回归尚可检查”，不能写成“AMR subcycling 的物理正确性已经验证”。
+
 ## 3.12 参数示例与最小运行闭环
 
 如果把本章压成一个最小、可执行、可回查的演化入口，可从下面的官方回归案例开始：

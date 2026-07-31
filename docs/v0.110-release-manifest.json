@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1283,
-  "total_bytes": 39256923,
+  "total_bytes": 39275204,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,28 +42,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 1565347,
-      "sha256": "e6cb337e53b9987b233e0764528433102d2644e36bfcfa9e81efd75af70226e6"
+      "bytes": 1565678,
+      "sha256": "381cf35a5ca85453cdb3a80025c88fc1b5420aa3b92ab88dd36e7c635ea4c752"
     },
     {
       "path": "TODO.md",
-      "bytes": 1462009,
-      "sha256": "475f961cec3aed59d756a81508c7d659a7243b066be577397e514ada5ad84a76"
+      "bytes": 1462702,
+      "sha256": "8e8663d8c6dc006b78dca4b9a45f0c7e4f80142272cfee6e36464964117a4c6f"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
-      "bytes": 4970309,
-      "sha256": "9585c14c71d7b1630db11b3e44d9e7f0ff7037c66c0ea294f6e702b628f7c3cd"
+      "bytes": 4974419,
+      "sha256": "dc88938155f8e1561872bf47ec9803aae97851a1b13c24d8e7daf5dc9107dbe1"
     },
     {
       "path": "dist/pic-tutor-v0.110.md",
-      "bytes": 904657,
-      "sha256": "f6e05d33dbf3c02ed35b03353748f14386d8ec4eecf01291858d884e22423da8"
+      "bytes": 908065,
+      "sha256": "e6d4377bc8049e2bf5dea9058bd7a23488617c4fe62261795027114910418807"
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2922822,
-      "sha256": "859ad4b36d1b40ad10a9038f1c331df82e5ca9e494e513cf9fa8ecb596cecb06"
+      "bytes": 2926987,
+      "sha256": "b33f585add298658c02e56a44b112952e0409886d9d8bb504c90053e885e77c4"
     },
     {
       "path": "docs/chapter-02-first-run-reader-card-v0.110.json",
@@ -632,8 +632,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 62456,
-      "sha256": "4c437fbccf7257166f8cbacfc1cca236f26fcf3b4a7bfbbe8e3f99434db1b1dd"
+      "bytes": 62701,
+      "sha256": "f661cb7d8d48ea1c386c354d02cab06a923d64e1ef7de86b285602cbb2a56920"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -948,7 +948,7 @@
     {
       "path": "docs/public-distribution-risk-register-v0.110.md",
       "bytes": 1588,
-      "sha256": "59b4cf36c744b2df7b855f8ca6a9e9b6f20398524ca6d2ccc1fdc71c16885ecd"
+      "sha256": "81628af1779b8c5ab7f821835770c1c1944839be01619af27f82482bb481c64b"
     },
     {
       "path": "docs/public-evidence-index.json",
@@ -1012,18 +1012,18 @@
     },
     {
       "path": "docs/public-repo-release-audit.md",
-      "bytes": 16841,
-      "sha256": "c987977f0f779cf26c2e844016e76329ea327b2982d18e48d95b689550b4dc60"
+      "bytes": 16901,
+      "sha256": "bf8e5e8e10ceee00675ef7bac66f388173e2cc02c200f5cfb3a80d058875dfac"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.json",
-      "bytes": 5437,
-      "sha256": "a446bd9655ea147598c52cc67e3445fbe06a0776240f11aa071b74a5fe916494"
+      "bytes": 5559,
+      "sha256": "1fa3b10dac097800d4e7bc0d14a19c1fc96b408a6f781daa1e4538cbe1780661"
     },
     {
       "path": "docs/reader-facing-editorial-audit-v0.110.md",
-      "bytes": 4125,
-      "sha256": "a79da87c72f98896c61023730f2303b66cc415222e04d1dbbab16476c88fda46"
+      "bytes": 4251,
+      "sha256": "291fd49459140414d4fa651e8e32045ff6c80d3e626c35ac1c9fa714c2e146c0"
     },
     {
       "path": "docs/rz-axis-charge-repeat-stability-v0.93.json",
@@ -2412,8 +2412,8 @@
     },
     {
       "path": "manuscript/chapters/03-warpx-evolve.md",
-      "bytes": 54862,
-      "sha256": "73418fc0d75189d7b518241a62c04aa633f7a65ed83cb34cd52e4c6295b476d5"
+      "bytes": 58270,
+      "sha256": "3c122d5a05378cd4330a4d20ed2c867c4dbcc862182efa5f2eee9f06414ba693"
     },
     {
       "path": "manuscript/chapters/03a-warpx-initialization.md",
@@ -4537,8 +4537,8 @@
     },
     {
       "path": "scripts/audit_editorial_quality.py",
-      "bytes": 9661,
-      "sha256": "268f3835a1101c4836dc93d4f3045a39ea3b30735b143dac8d8a091d39bd1b16"
+      "bytes": 9748,
+      "sha256": "701918ed99eb85612aaab584fc711f57d68c45d714f1c01ed84f55adcdd27606"
     },
     {
       "path": "scripts/audit_esirkepov_bounded_compare.py",
@@ -4737,13 +4737,13 @@
     },
     {
       "path": "scripts/audit_reader_facing_content.py",
-      "bytes": 52101,
-      "sha256": "fdc4e303363586b6baddddb787a278662724dbea5a4754922f27043ad28e2fce"
+      "bytes": 52813,
+      "sha256": "149f1d005f3523193c3f704e9a62561705d749df561cdb901241697c82f50201"
     },
     {
       "path": "scripts/audit_release_consistency.py",
       "bytes": 3145,
-      "sha256": "85742766dce6578f6b85694a42a22f07b57018154cc8e85c7f668506bd3fa0b5"
+      "sha256": "5d6cb4db9af5bbad4bdb6883bdd8bdeaa7703743a135e0b35ddcf3ba83dd0f03"
     },
     {
       "path": "scripts/audit_rz_axis_charge_source_crosswalk.py",
@@ -6137,8 +6137,8 @@
     },
     {
       "path": "scripts/verify_v110_build.py",
-      "bytes": 73057,
-      "sha256": "781259fd49df6bfe43b5f67a09dea2c80ba7b2515f6ba89777540c1732e595bb"
+      "bytes": 73871,
+      "sha256": "962e4d134a50cc156e2e316c1440589966b622061faf257a2a7ecbb291be7b83"
     },
     {
       "path": "scripts/verify_v40_build.py",

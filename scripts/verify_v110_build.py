@@ -21,8 +21,8 @@ HTML = ROOT / "dist" / "pic-tutor-v0.110.html"
 PDF = ROOT / "dist" / "pic-tutor-v0.110.pdf"
 MANUAL_SPOTCHECK = ROOT / "docs" / "manual-editorial-spotcheck-v0.110.md"
 # Reader-facing chapter openings, long-chapter navigation, and declared source
-# The Chapter 8 diagnostics validation ladder yields 268 pages.
-EXPECTED_PDF_PAGES = 268
+# The Chapter 3 AMR subcycling validation card yields 269 pages.
+EXPECTED_PDF_PAGES = 269
 
 
 def image_links(text: str) -> list[str]:
@@ -57,6 +57,7 @@ def main() -> None:
     source += "\n" + (ROOT / "docs" / "chapter-07-v0-evidence-ledger.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-02-first-run-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03-lifecycle-trace-reader-card-v0.110.md").read_text(encoding="utf-8")
+    source += "\n" + (ROOT / "docs" / "chapter-03-subcycling-validation-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-03a-initialization-reader-card-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-04-pusher-validation-ladder-v0.110.md").read_text(encoding="utf-8")
     source += "\n" + (ROOT / "docs" / "chapter-05-deposition-validation-ladder-v0.110.md").read_text(encoding="utf-8")
@@ -407,6 +408,17 @@ def main() -> None:
                 "SOURCE_GROUNDED_LIFECYCLE_TRACE_READER_CONTRACT",
             )
         ),
+        "chapter_3_subcycling_validation_reader_card": all(
+            marker in source
+            for marker in (
+                "### 3.11.3 AMR subcycling 修改后的验证卡：先分清时间层、source 和回归",
+                "第一层：先确认这真的是受支持的两级分支",
+                "第二层：把一个 coarse 步按 source 生命周期阅读",
+                "第三层：正确解读官方测试的 consumer",
+                "第四层：按改动对象补上缺失的比较",
+                "SOURCE_GROUNDED_AMR_SUBCYCLING_VALIDATION_READER_CARD",
+            )
+        ) and (ROOT / "scripts/audit_chapter_03_subcycling_validation_card.py").is_file(),
         "chapter_3a_initialization_two_contract_reader_card": all(
             marker in source
             for marker in (
@@ -1376,25 +1388,25 @@ def main() -> None:
             for marker in (
                 "# v0.110 PDF manual editorial spotcheck",
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（268 页候选）",
+                "当前增量复核（269 页候选）",
                 "| 1--6 |",
                 "| 120--168 |",
                 "| 169--203 |",
                 "| 28 |",
                 "| 29 |",
                 "| 30--31 |",
-                "| 45--47 |",
-                "| 71--73 |",
-                "| 109--110 |",
-                "| 168--169 |",
-                "| 206--207 |",
-                "| 258--259 |",
+                "| 45--48 |",
+                "| 72--74 |",
+                "| 110--111 |",
+                "| 169--170 |",
+                "| 207--208 |",
+                "| 259--260 |",
                 "| 260--262 |",
                 "| 219--254 |",
-                "| 226 |",
-                "| 231 |",
-                "| 260 |",
-                "| 266 |",
+                "| 227 |",
+                "| 232 |",
+                "| 261 |",
+                "| 267 |",
                 "262 页基线完整连续阅读 + 第 2、3、3A、4、5、6、8、9 章变更范围与受影响版式的增量复核已记录",
                 "第三方材料许可确认、公开再分发签收",
             )

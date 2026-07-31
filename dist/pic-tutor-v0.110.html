@@ -270,6 +270,8 @@ implicit 分支：一次物理步包含多次试探性 source 重建</a></li>
 <li><a href="#nonlinear-solverjfnk-与-mass-matrixj-的三种构造层" id="toc-nonlinear-solverjfnk-与-mass-matrixj-的三种构造层">3.11.2
 nonlinear solver、JFNK 与 mass-matrix：<code>J</code>
 的三种构造层</a></li>
+<li><a href="#amr-subcycling-修改后的验证卡先分清时间层source-和回归" id="toc-amr-subcycling-修改后的验证卡先分清时间层source-和回归">3.11.3
+AMR subcycling 修改后的验证卡：先分清时间层、source 和回归</a></li>
 </ul></li>
 <li><a href="#参数示例与最小运行闭环" id="toc-参数示例与最小运行闭环">3.12 参数示例与最小运行闭环</a>
 <ul>
@@ -3906,6 +3908,58 @@ matrices；<code>mass_matrices_pc_width</code> 只在非 3D
 补齐响应；若未启用，则由 mass matrices 直接构造线性阶段的
 <code>J</code>。这正是 implicit 验证必须同时记录 solver 类型、particle
 suborbit、mass-matrix 开关和最终 source gate 的原因。</p>
+<h3 id="amr-subcycling-修改后的验证卡先分清时间层source-和回归">3.11.3
+AMR subcycling 修改后的验证卡：先分清时间层、source 和回归</h3>
+<p>AMR subcycling 与碰撞的
+<code>ndt_subcycle</code>、场求解器的内部循环不是同一个概念。这里讨论的是
+<code>warpx.do_subcycling = 1</code> 进入 <code>OneStep_sub1()</code>
+的两级网格时间合同：一个 coarse 物理步内，fine patch
+和其粒子走两次小步，coarse patch 与 mother grid
+只提交一次大步。官方开发文档也把它列为 <code>OneStep_nosub()</code>
+之外的 PIC-loop 核心入口。</p>
+<p><strong>第一层：先确认这真的是受支持的两级分支。</strong><code>Examples/Tests/subcycling/test_2d_subcycling_mr</code>
+注册为 2D、2-rank case；输入设定
+<code>amr.max_level = 1</code>、<code>warpx.do_subcycling = 1</code>、moving
+window 和一次 step 250 的 <code>Full</code> diagnostics。这里的
+<code>max_level = 1</code> 表示 level 0 与 level 1
+两层，不是“只有一层”；<code>OneStep_sub1()</code>
+还会在运行时拒绝电静力路径、超过两层的层级，或任何方向 refinement ratio
+不为 2 的配置。因而改 AMR
+结构、几何或时间步之前，应先把这些分派条件与实际输入逐项核对；仅出现细网格或一个
+<code>diag1000250</code> 目录，都不能证明进入了这条时间合同。</p>
+<p><strong>第二层：把一个 coarse 步按 source 生命周期阅读。</strong>第一
+fine 小步后，代码先 restriction fine <code>current_fp</code> 和
+<code>rho</code>，再完成过滤、边界和该层场推进；随后 coarse
+粒子沉积的电流被 <code>StoreCurrent()</code> 保存，fine contribution 经
+<code>AddCurrentFromFineLevelandSumBoundary()</code> 叠入，coarse/fine
+场各推进半个 coarse 步。中点的 <code>UpdateAuxiliaryData()</code>
+为下一次 fine gather 准备跨层辅助场。第二 fine 小步重复
+restriction，随后 <code>RestoreCurrent()</code> 恢复 coarse 自身的另一半
+source，再叠加 fine contribution 并完成第二个 coarse 半步。</p>
+<p>这条顺序说明
+<code>current_fp</code>、<code>current_cp</code>、<code>current_buf</code>
+和 <code>rho</code>
+在不同阶段不是可互换的同义词；<code>StoreCurrent()</code>/<code>RestoreCurrent()</code>
+也不是可删除的缓存优化。若修改 restriction、buffer、过滤、auxiliary
+gather 或 half-step 次序，应直接记录每个阶段的 source
+与时间标签，才可能判断 coarse source 是否仍对应两个 fine
+时间片。单个末态 plotfile 不能替代这份 route-level ledger。</p>
+<p><strong>第三层：正确解读官方测试的 consumer。</strong>该 CTest 的
+analysis 槽位是 <code>OFF</code>，只调用
+<code>analysis_default_regression.py --path diags/diag1000250</code>。后者把输出交给
+checksum API；因此 PASS 只能说明在这个
+2D、2-rank、CKC、PML、moving-window 和指定粒子配置下，最终 Full output
+没有偏离已登记的回归基线。它是必要的输出回归，不是解析场、连续性、两级
+source 账本或 transition-zone route-count 的物理证明。</p>
+<p><strong>第四层：按改动对象补上缺失的比较。</strong>改分派、level 数或
+refinement ratio 时，先用第一层确认入口和拒绝条件；改 current/rho
+restriction、buffer 或同步时，第二层要求 pre/post restriction、coarsen
+与边界后的同一字段比较；改场更新、PML 或 moving window
+时，另选与物理问题匹配的解析解、守恒量或独立 reference；改
+diagnostics/writer 时，再按第 8 章的 producer/consumer
+卡检查采样时间。若没有对应
+comparison，结论只能是“分支或回归尚可检查”，不能写成“AMR subcycling
+的物理正确性已经验证”。</p>
 <h2 id="参数示例与最小运行闭环">3.12 参数示例与最小运行闭环</h2>
 <p>如果把本章压成一个最小、可执行、可回查的演化入口，可从下面的官方回归案例开始：</p>
 <ul>

@@ -1,7 +1,7 @@
 # Reader-facing content audit
 
 - classification: `READER_FACING_CORE_CHAPTERS_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED`
-- scope: entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters; a 262-page baseline has a complete recorded manual read and the current 268-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews
+- scope: entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters; a 262-page baseline has a complete recorded manual read and the current 269-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews
 - versioned chapter headings remaining: `0`
 
 | check | status |
@@ -49,6 +49,7 @@
 | `chapter_8_application_cases_are_reader_facing` | `PASS` |
 | `chapter_8_validation_contract_reader_card` | `PASS` |
 | `chapter_8_restart_reader_card` | `PASS` |
+| `chapter_8_diagnostics_validation_ladder_reader_card` | `PASS` |
 | `chapter_2_3_have_reader_facing_routes` | `PASS` |
 | `chapter_2_time_contract_reader_route` | `PASS` |
 | `chapter_2_first_run_reader_card` | `PASS` |
@@ -56,6 +57,7 @@
 | `chapter_3_current_source_route` | `PASS` |
 | `chapter_3_lifecycle_reader_route` | `PASS` |
 | `chapter_3_lifecycle_trace_reader_card` | `PASS` |
+| `chapter_3_subcycling_validation_reader_card` | `PASS` |
 | `chapter_3_cross_chapter_handoff` | `PASS` |
 | `chapter_1_2_model_to_loop_handoff` | `PASS` |
 | `chapter_1_continuous_model_reader_route` | `PASS` |
@@ -70,4 +72,4 @@
 
 ## Recorded Manual Review
 
-- A 262-page baseline has a complete recorded manual read; the current 268-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.
+- A 262-page baseline has a complete recorded manual read; the current 269-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.

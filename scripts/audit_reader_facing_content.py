@@ -762,6 +762,17 @@ def main() -> int:
                 "不能统一归因成“参数无效”或“Langmuir 物理失败”",
             )
         ) and not chapter_3_project_narration_markers,
+        "chapter_3_subcycling_validation_reader_card": all(
+            marker in chapter_3
+            for marker in (
+                "### 3.11.3 AMR subcycling 修改后的验证卡：先分清时间层、source 和回归",
+                "第一层：先确认这真的是受支持的两级分支",
+                "第二层：把一个 coarse 步按 source 生命周期阅读",
+                "第三层：正确解读官方测试的 consumer",
+                "第四层：按改动对象补上缺失的比较",
+                "不能写成“AMR subcycling 的物理正确性已经验证”",
+            )
+        ) and not chapter_3_project_narration_markers and not chapter_3_project_path_markers,
         "chapter_3_cross_chapter_handoff": all(
             marker in chapter_3
             for marker in (
@@ -868,24 +879,24 @@ def main() -> int:
             marker in manual_spotcheck
             for marker in (
                 "基线 262 页快照已完成连续阅读",
-                "当前增量复核（268 页候选）",
+                "当前增量复核（269 页候选）",
                 "| 1--6 |",
                 "| 7--8 |",
                 "| 219--254 |",
                 "| 28 |",
                 "| 29 |",
                 "| 30--31 |",
-                "| 45--47 |",
-                "| 71--73 |",
-                "| 109--110 |",
-                "| 168--169 |",
-                "| 206--207 |",
-                "| 258--259 |",
+                "| 45--48 |",
+                "| 72--74 |",
+                "| 110--111 |",
+                "| 169--170 |",
+                "| 207--208 |",
+                "| 259--260 |",
                 "| 260--262 |",
-                "| 226 |",
-                "| 231 |",
-                "| 260 |",
-                "| 266 |",
+                "| 227 |",
+                "| 232 |",
+                "| 261 |",
+                "| 267 |",
             )
         ),
     }
@@ -902,7 +913,7 @@ def main() -> int:
         "scope": (
             "entry-point and learning-path audit; versioned evidence headings have been separated "
             "from core tutorial chapters; a 262-page baseline has a complete recorded manual read and "
-            "the current 268-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews"
+            "the current 269-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews"
             if incremental_review_recorded
             else "entry-point and learning-path audit; versioned evidence headings have been separated from core tutorial chapters"
         ),
@@ -974,7 +985,7 @@ def main() -> int:
             "",
             "## Recorded Manual Review",
             "",
-            "- A 262-page baseline has a complete recorded manual read; the current 268-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
+            "- A 262-page baseline has a complete recorded manual read; the current 269-page candidate has recorded Chapter 2, Chapter 3, Chapter 3A, Chapter 4, Chapter 5, Chapter 6, Chapter 8, and Chapter 9 incremental reviews. External-source and redistribution boundaries remain documented separately.",
         ])
     args.output_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

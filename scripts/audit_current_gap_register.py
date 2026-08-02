@@ -116,9 +116,11 @@ def main() -> int:
                 "runs/stage-c-validation/formal-convergence-preregistration/contract.json",
                 "docs/public-distribution-risk-register-v0.110.md",
                 "scripts/audit_public_distribution_boundary.py",
+                "docs/final-release-readiness-v0.110.md",
+                "scripts/audit_final_release_readiness.py",
             )
         ) and all(marker in register for marker in (
-            "PDF_LAYOUT_AUTOMATED_PASS_MANUAL_SPOTCHECK_RECORDED",
+            "MANUSCRIPT_FINAL_EDITORIAL_REVIEW_PASS_PUBLIC_REDISTRIBUTION_BLOCKED",
             "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN",
             "SOURCE_DIAGNOSTIC_DISCRETIZATION_BOUNDARY",
             "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED",
@@ -126,13 +128,15 @@ def main() -> int:
         )),
         "release_editorial_read_closure": all(marker in register for marker in (
             "READER_FACING_CORE_CHAPTERS_PASS_BASELINE_READ_INCREMENTAL_REVIEW_RECORDED",
-            "262 页基线完整连续阅读与当前增量版式复核已记录",
+            "MANUSCRIPT_FINAL_EDITORIAL_REVIEW_PASS_PUBLIC_REDISTRIBUTION_BLOCKED",
+            "275 页最终全量页面复核已记录",
             "不再以“继续人工通读”替代权利决定",
         )) and all(
             (root / path).is_file()
             for path in (
                 "docs/manual-editorial-spotcheck-v0.110.md",
                 "docs/reader-facing-editorial-audit-v0.110.md",
+                "docs/final-release-readiness-v0.110.md",
             )
         ),
         "classification_boundaries": all(marker in register for marker in (

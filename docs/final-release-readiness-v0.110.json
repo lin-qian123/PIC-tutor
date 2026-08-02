@@ -1,0 +1,42 @@
+{
+  "contract": "final release readiness",
+  "release": "PIC-tutor v0.110",
+  "classification": "MANUSCRIPT_FINAL_EDITORIAL_REVIEW_PASS_PUBLIC_REDISTRIBUTION_BLOCKED",
+  "manuscript_ready_for_reader_review": true,
+  "public_redistribution_approved": false,
+  "checks": {
+    "artifact_present:dist/pic-tutor-v0.110.md": true,
+    "artifact_manifest_match:dist/pic-tutor-v0.110.md": true,
+    "artifact_present:dist/pic-tutor-v0.110.html": true,
+    "artifact_manifest_match:dist/pic-tutor-v0.110.html": true,
+    "artifact_present:dist/pic-tutor-v0.110.pdf": true,
+    "artifact_manifest_match:dist/pic-tutor-v0.110.pdf": true,
+    "expected_pdf_page_count": true,
+    "all_pages_have_extractable_text": true,
+    "no_abnormally_short_pages": true,
+    "no_replacement_characters": true,
+    "no_missing_character_markers": true,
+    "uniform_page_media_box": true,
+    "final_all_page_review_recorded": true,
+    "editorial_and_layout_audits_pass": true,
+    "all_current_gaps_remain_explicit": true,
+    "public_redistribution_remains_explicitly_blocked": true
+  },
+  "pdf_pages": 275,
+  "artifacts": {
+    "dist/pic-tutor-v0.110.md": {
+      "bytes": 932573,
+      "sha256": "760d46111b658e274de15cf92d4789e0001466ce580f5f110ac747f3daeedae2"
+    },
+    "dist/pic-tutor-v0.110.html": {
+      "bytes": 5006340,
+      "sha256": "ed0981c40c02ad5501073a738fe4b9dc7f589ddc40abf898aa8fb7b027561037"
+    },
+    "dist/pic-tutor-v0.110.pdf": {
+      "bytes": 2962254,
+      "sha256": "604c01c016a2ae0e300f38cd2c561b0987ab47f18fb80b6c03b1b9fbbcbbd077"
+    }
+  },
+  "remaining_decision": "A maintainer must decide the rights and public-history path for tracked third-party references, then select an appropriate project license.",
+  "scope": "Confirms the final manuscript artifact and recorded editorial review. It does not grant third-party rights, alter repository visibility, modify Git history, or close runtime and literature gaps."
+}

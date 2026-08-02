@@ -28,7 +28,7 @@
     "dist/pic-tutor-v0.45 and older"
   ],
   "entry_count": 1298,
-  "total_bytes": 37895751,
+  "total_bytes": 37899629,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 5350,
-      "sha256": "0a46208247a713fff9b43c47935ef331e014decf580e6c18bc1e916fc70f417f"
+      "bytes": 5583,
+      "sha256": "ff615bb1a5c3312a0bbc8dbfdb6a6111b544186dfbcc2e07afe1ddba8d2060fa"
     },
     {
       "path": "TODO.md",
-      "bytes": 1468150,
-      "sha256": "54c990805b7d8286ddb7b66f065358c81d375e8bad45a6f53638a93fae1c4644"
+      "bytes": 1469032,
+      "sha256": "26e2b87e256c5c7c0864a53a7022a85a8534ef48cb8e50398383d8b1fec4a348"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2962255,
-      "sha256": "a32aba0d5d3e3ba9303218f6e903aa22b97b157daa2fcd3cb198f6404071fbb6"
+      "bytes": 2962254,
+      "sha256": "604c01c016a2ae0e300f38cd2c561b0987ab47f18fb80b6c03b1b9fbbcbbd077"
     },
     {
       "path": "docs/chapter-01-electrostatic-model-validation-card-v0.110.json",
@@ -242,8 +242,8 @@
     },
     {
       "path": "docs/current-book-gap-register.md",
-      "bytes": 9796,
-      "sha256": "38e46580ca85cb49f51ed2c72081502bfe5dc2da5b3ee714f3ac251d163019c7"
+      "bytes": 9829,
+      "sha256": "3696f44c44b6ae402a15a1c6af5dcf1d640adf8cd4fec37985753204c02785cf"
     },
     {
       "path": "docs/editorial-quality-audit-v0.100.json",
@@ -682,8 +682,8 @@
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.110.md",
-      "bytes": 64023,
-      "sha256": "d115a1ad3c4e93f87dbcb44a69764c00cf83eb0f133b288f7538dda5ec03454e"
+      "bytes": 66504,
+      "sha256": "4583e9ed294f8a007788abcaf480937a38ae37f3dc1942d2af78b9ad119e7dd8"
     },
     {
       "path": "docs/manual-editorial-spotcheck-v0.87.md",
@@ -4562,8 +4562,8 @@
     },
     {
       "path": "scripts/audit_current_gap_register.py",
-      "bytes": 10050,
-      "sha256": "11c386c10183354947beb7b4ad8e915df25ce5f5de073b66ea6d1456114800b6"
+      "bytes": 10300,
+      "sha256": "9957986e1fb9b5e165a43086c2b01882250e8ec0df5af9ed941cb14d001b6513"
     },
     {
       "path": "scripts/audit_deposition_algorithm_selection_contract.py",

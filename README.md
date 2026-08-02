@@ -50,13 +50,16 @@ python scripts/audit_reader_facing_content.py \
   --output-json /tmp/pic-tutor-reader-facing.json \
   --output-md /tmp/pic-tutor-reader-facing.md
 python scripts/audit_release_consistency.py
+python scripts/audit_final_release_readiness.py \
+  --output-json /tmp/pic-tutor-final-readiness.json \
+  --output-md /tmp/pic-tutor-final-readiness.md
 ```
 
 构建会生成 `dist/pic-tutor-v0.110.{md,html,pdf}`。读者化审计、结构/版式审计和 release 一致性检查是编辑回归防线；它们不能替代新物理分支的 runtime 验证或人工判断。
 
 ## 当前状态与边界
 
-- 书稿已完成目录、前言、第 1--9 章和附录的 262 页基线连续阅读，并对当前 275 页候选的受影响内容进行增量版式复核；记录见 [人工审读记录](docs/manual-editorial-spotcheck-v0.110.md)。
+- 书稿已完成目录、前言、第 1--9 章和附录的 275 页最终全量页面复核；基线连续阅读、增量复核和最终页级审校记录见 [人工审读记录](docs/manual-editorial-spotcheck-v0.110.md)，可审阅/发行的分界见 [最终就绪状态](docs/final-release-readiness-v0.110.md)。
 - 当前核心开放问题包括部分 publisher-formatted 论文的访问边界、RZ axis-charge correctness、完整 transition-zone route ledger、若干 geometry/algorithm runtime coverage 和公开发行权利。它们的证据与关闭条件见 [当前缺口登记](docs/current-book-gap-register.md)。
 - 本仓库的公开再分发尚未签收：public branch 已跟踪第三方 `references/` 资产，且尚无项目许可证。发行阻断的事实和维护者决策路径见 [公开发行审计](docs/public-repo-release-audit.md) 与 [风险登记](docs/public-distribution-risk-register-v0.110.md)。书稿可供审阅不等于这些第三方材料已获再分发授权。
 

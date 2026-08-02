@@ -2,6 +2,8 @@
 
 ## 2026-08-02
 
+- [x] 根据当前缺口登记关闭 `RUNTIME-VAY-AMR` 的配置覆盖歧义：以 `vay_deposition` 官方 2D 输入、`amr.max_level=1` 和中心 fine-tag 在 `max_step=0` 进行真实初始化，进程以 exit `6` 命中 `Vay deposition not implemented with mesh refinement`。扩展 `scripts/audit_vay_amr_guard_contract.py`，将运行日志及 SHA-256 保存到 `runs/stage-c-validation/vay-amr-guard/`；分类更新为 `CURRENT_UPSTREAM_RUNTIME_GUARD_CONFIRMED_UNSUPPORTED`。这关闭的是“是否存在未运行的 Vay+AMR 物理验证”这一歧义，不证明 Vay+AMR 的物理正确性。
+- [x] 将 `RUNTIME-RZ-IMPLICIT-VILLASENOR` 从“未安装 PETSc”推进到可复现的 arm64 pre-physics boundary：安装 PETSc `3.25.4`，在 `/tmp` 以 RZ+MPI+`WarpX_PETSC=ON`+`AMReX_PETSC=ON` 构建独立 binary；官方 2-rank input 和 1-rank/1-step control 都已完成 AMReX/PETSc 初始化、DOF 与 KSP wrapper 创建，但都在首步前发生 `SIGILL` 并以 exit `59` 结束。四个 reduced diagnostics 均只写 header；最小两 rank `PetscInitialize/KSPCreate/KSPDestroy` control 成功，故不归因为 PETSc 安装或通用 MPI KSP。证据见 `docs/rz-implicit-villasenor-petsc-boundary.md`；下一步是定位 `KSP_impl::createObjects` 的 arm64 object-setup 路径，缺口保持开放。
 - [x] 完成 `v0.110` 当前候选的最终全量成书审校：对 275 页 PDF 逐页检查可提取文本、页面尺寸、空白/异常短页与字符替换，并以 11 组连续联系表复核目录、正文、公式、代码块、表格、图表、跨页段落、页脚和附录。第 51 页的跨章交接卡经单页复核，确认为说明完整后的受控留白而非截断或孤页。新增 `scripts/audit_final_release_readiness.py` 与 `docs/final-release-readiness-v0.110.md`，使“书稿已可审阅”与“公开再分发仍被第三方材料权利、public 历史策略和项目许可证决定阻断”成为可重复检查的独立结论。未擅自删除 `references/`、改写 Git 历史、修改仓库可见性或选择许可证；publisher 文献、独立 WarpX runtime 和 RZ axis-charge/正式收敛证据仍按缺口登记保持开放。
 
 ## 2026-07-31

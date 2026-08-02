@@ -35,7 +35,10 @@ def main() -> int:
         "runs/stage-c-validation/transition-zone-runtime-activation-v0.98/contract.json",
         "runs/stage-c-validation/transition-zone-source-contract.json",
         "runs/stage-c-validation/rz-implicit-villasenor-build-boundary/contract.json",
-        "runs/stage-c-validation/vay-amr-guard/contract.json",
+        "docs/rz-implicit-villasenor-petsc-boundary.json",
+        "docs/rz-implicit-villasenor-petsc-boundary.md",
+        "docs/vay-amr-runtime-boundary.json",
+        "docs/vay-amr-runtime-boundary.md",
         "runs/stage-c-validation/esirkepov_langmuir_rz-charge-field-tradeoff-summary/contract.json",
         "runs/stage-c-validation/deposition-convergence-readiness/contract.json",
         "runs/stage-c-validation/rz-axis-charge-source-diagnostic-crosswalk-v0.94/contract.json",
@@ -141,7 +144,8 @@ def main() -> int:
         ),
         "classification_boundaries": all(marker in register for marker in (
             "OPEN_EXTERNAL_ACCESS", "RUNTIME_TRANSITION_ZONE_BRANCH_ACTIVATION_OBSERVED_ROUTE_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
-            "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN", "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED", "RELEASE-EDITORIAL",
+            "CURRENT_UPSTREAM_RUNTIME_GUARD_CONFIRMED_UNSUPPORTED", "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN",
+            "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED", "RELEASE-EDITORIAL",
         )),
         "closure_language": all(marker in register for marker in ("关闭条件", "真实 `current_buf/rho_buf`", "publisher PDF")),
         "exercise_renumbering": all(

@@ -1,0 +1,29 @@
+{
+  "contract": "Vay deposition mesh-refinement source guard",
+  "classification": "CURRENT_UPSTREAM_RUNTIME_GUARD_CONFIRMED_UNSUPPORTED",
+  "scope": "read-only WarpX initialization/source guards; no AMR producer is interpreted as a physics runtime failure or pass",
+  "checks": {
+    "source_mesh_refinement_guard": true,
+    "source_guard_message": true,
+    "source_vay_psatd_guard": true,
+    "source_vay_rz_guard": true,
+    "source_vay_1d_guard": true,
+    "chapter_amr_boundary": true,
+    "chapter_vay_configuration_reader_card": true,
+    "gap_register_amr_boundary": true,
+    "no_amr_runtime_pass_claim": true,
+    "runtime_amrex_initialized": true,
+    "runtime_mesh_refinement_assertion": true,
+    "runtime_guard_message": true,
+    "runtime_abort": true,
+    "runtime_exit_code": true
+  },
+  "passed": true,
+  "runtime": {
+    "log_file": null,
+    "log_sha256": "b3ffcbf1a0773418e39b46b1eb5df6c378fc3294cb8f9e379acdbe61069ca911",
+    "exit_code": 6,
+    "raw_log_copied": false,
+    "scope": "AMR-enabled Vay input with max_step=0; the process is expected to stop during initialization before a physics producer or consumer runs"
+  }
+}

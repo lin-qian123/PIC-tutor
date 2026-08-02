@@ -1,0 +1,39 @@
+{
+  "contract": "RZ theta-implicit Villasenor PETSc runtime boundary",
+  "classification": "PETSC_ENABLED_KSP_CONSTRUCTION_SIGILL_PRE_PHYSICS_BOUNDARY",
+  "scope": "A separate read-only-source WarpX build configured for RZ, MPI and PETSc. This record does not claim a successful physics step.",
+  "build": {
+    "WarpX_PETSC": true,
+    "AMReX_PETSC": true,
+    "WarpX_MPI": true,
+    "WarpX_DIMS": "RZ",
+    "WarpX_COMPUTE": "NOACC",
+    "WarpX_FFT": false,
+    "WarpX_OPENPMD": false,
+    "petsc_version": "3.25.4"
+  },
+  "input": "Examples/Tests/implicit/inputs_test_rz_theta_implicit_dynamic_pinch",
+  "attempts": [
+    {
+      "ranks": 2,
+      "exit_code": 59,
+      "log_sha256": "c6bf1c1b4920e1e0e4fd18275341e93a0331540a0c4a65dddf26040f9abe2997",
+      "milestones": ["AMReX initialized", "PETSc initialized", "DOF object defined", "KSP wrapper initialized"],
+      "failure": "PETSc caught SIGILL before a completed time step",
+      "consumer_outputs": "field_energy, particle_energy, poynting_flux and newton_solver files contain headers only"
+    },
+    {
+      "ranks": 1,
+      "exit_code": 59,
+      "log_sha256": "eed8a8ee52ba07cfd8fe2a80959c15060f21a48dd9f02119625652f6d0d0739b",
+      "milestones": ["AMReX initialized", "PETSc initialized", "DOF object defined", "KSP wrapper initialized"],
+      "failure": "same PETSc SIGILL with warpx.numprocs=1 1 and max_step=1",
+      "consumer_outputs": "the same four reduced diagnostics contain headers only"
+    }
+  ],
+  "control": {
+    "description": "A separate two-rank MPI probe completed PetscInitialize, KSPCreate, KSPDestroy and PetscFinalize.",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "next_action": "Instrument or debug WarpX KSP_impl::createObjects and its PETSc object setup on arm64; a successful build or generic KSPCreate control is insufficient."
+}

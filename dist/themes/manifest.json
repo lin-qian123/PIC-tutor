@@ -1,0 +1,29 @@
+{
+  "contract": "PIC-tutor themed PDF renders",
+  "source_edition": "v0.110",
+  "source": "dist/pic-tutor-v0.110.md",
+  "source_sha256": "8f0fd2a2c6f4dddc6fbbd80dbf1f03f5e90412382512e039d00a0cb25b9a2373",
+  "engine": "pandoc + xelatex",
+  "cjk_font": "PingFang SC",
+  "artifacts": [
+    {
+      "theme": "technical",
+      "path": "dist/themes/pic-tutor-v0.110-technical.pdf",
+      "bytes": 3002793,
+      "sha256": "fa796c31687a42e1ad0a5921b043d405504c6c8d947eb368bd93d43055e9ad11"
+    },
+    {
+      "theme": "academic",
+      "path": "dist/themes/pic-tutor-v0.110-academic.pdf",
+      "bytes": 3026317,
+      "sha256": "a42a128f4b8852f7873b0f38d2ae64f9a7f2916bb12ef84d66fb0a93e0ba10bb"
+    },
+    {
+      "theme": "compact",
+      "path": "dist/themes/pic-tutor-v0.110-compact.pdf",
+      "bytes": 2973626,
+      "sha256": "cb0d56f3a50c3e2c953954ec10fdd7078ac13217dfc0107aeaf074bd31b4ecb3"
+    }
+  ],
+  "scope": "Theme renders share one Markdown source and change presentation only."
+}

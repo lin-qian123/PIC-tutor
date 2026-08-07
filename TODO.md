@@ -2,6 +2,9 @@
 
 ## 2026-08-02
 
+- [x] 创建并推送首个语义化标签 `v1.0`：它不可变地指向 `e1faff5`，冻结当前已审阅的 `v0.110` 书稿（PDF/HTML/Markdown）；Release 文案和最小附件清单见 `docs/releases/v1.0.md`。GitHub CLI 本机凭据已失效，实际 GitHub Release 创建待维护者完成 `gh auth login -h github.com` 后执行；不将 `references/`、`runs/`、publisher PDF 或本地审计输出附加到 Release。
+- [x] 建立三套 presentation-only PDF 主题：`technical`（Letter 连续阅读，258 页）、`academic`（A4 注释/装订，274 页）和 `compact`（A4 源码查阅，212 页）。新增 `scripts/build_pdf_themes.py` 与 `scripts/audit_pdf_themes.py`，它们统一读取 `dist/pic-tutor-v0.110.md`，输出文件保留源书稿版本，避免主题副本产生内容分叉；`dist/themes/manifest.json` 固定源哈希和三份输出的 SHA-256。
+
 - [x] 关闭 `LIT-ESIRKEPOV-PUBLISHER` 与 `LIT-LEE-PUBLISHER`：用户已在本机合法取得两份 CPC publisher PDF；分别验证为 10 页和 9 页、记录 SHA-256、放入各论文专属且 Git 忽略的 `publisher/` 目录，并用 MinerU 转换。Esirkepov 完成 title/abstract/section/`Eq.(23)`/二阶 spline 五项对照；Lee--Vay 完成 front matter/abstract/section/high-order-PSTD anchor/reflection/appendix 对照。公开记录仅保留比较结论与审计合同；不重新分发 PDF，也不把论文对照升级为 WarpX runtime 证明。
 - [x] 根据当前缺口登记关闭 `RUNTIME-VAY-AMR` 的配置覆盖歧义：以 `vay_deposition` 官方 2D 输入、`amr.max_level=1` 和中心 fine-tag 在 `max_step=0` 进行真实初始化，进程以 exit `6` 命中 `Vay deposition not implemented with mesh refinement`。扩展 `scripts/audit_vay_amr_guard_contract.py`，将运行日志及 SHA-256 保存到 `runs/stage-c-validation/vay-amr-guard/`；分类更新为 `CURRENT_UPSTREAM_RUNTIME_GUARD_CONFIRMED_UNSUPPORTED`。这关闭的是“是否存在未运行的 Vay+AMR 物理验证”这一歧义，不证明 Vay+AMR 的物理正确性。
 - [x] 将 `RUNTIME-RZ-IMPLICIT-VILLASENOR` 从“未安装 PETSc”推进到可复现的 arm64 pre-physics boundary：安装 PETSc `3.25.4`，在 `/tmp` 以 RZ+MPI+`WarpX_PETSC=ON`+`AMReX_PETSC=ON` 构建独立 binary；官方 2-rank input 和 1-rank/1-step control 都已完成 AMReX/PETSc 初始化、DOF 与 KSP wrapper 创建，但都在首步前发生 `SIGILL` 并以 exit `59` 结束。四个 reduced diagnostics 均只写 header；最小两 rank `PetscInitialize/KSPCreate/KSPDestroy` control 成功，故不归因为 PETSc 安装或通用 MPI KSP。证据见 `docs/rz-implicit-villasenor-petsc-boundary.md`；下一步是定位 `KSP_impl::createObjects` 的 arm64 object-setup 路径，缺口保持开放。

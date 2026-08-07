@@ -1,0 +1,40 @@
+% Academic monograph theme: A4 paper with a calmer, print-first hierarchy.
+\usepackage[a4paper,inner=30mm,outer=24mm,top=25mm,bottom=28mm,headheight=14pt]{geometry}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{fvextra}
+
+\definecolor{PicTutorInk}{HTML}{202A33}
+\definecolor{PicTutorAccent}{HTML}{355C7D}
+\definecolor{PicTutorLink}{HTML}{1D5E86}
+\AtBeginDocument{\hypersetup{colorlinks=true,linkcolor=PicTutorAccent,urlcolor=PicTutorLink,citecolor=PicTutorLink}}
+
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.3em}
+\setlength{\headsep}{12pt}
+\linespread{1.05}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,fontsize=\small,commandchars=\\\{\}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\thepage}
+\fancyhead[RO]{\thepage}
+\fancyhead[LO]{\nouppercase{\leftmark}}
+\fancyhead[RE]{PIC-tutor}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{PicTutorAccent}\leaders\hrule height \headrulewidth\hfill}}
+
+\titleformat{\section}{\LARGE\bfseries\color{PicTutorInk}}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\Large\bfseries\color{PicTutorAccent}}{\thesubsection}{0.7em}{}
+\titleformat{\subsubsection}{\large\bfseries\color{PicTutorInk}}{\thesubsubsection}{0.65em}{}
+\titlespacing*{\section}{0pt}{2.8ex plus .5ex minus .2ex}{1.25ex}
+\titlespacing*{\subsection}{0pt}{2.0ex plus .4ex minus .2ex}{0.9ex}
+
+% Keep the automatic table of contents and the reader-facing opening distinct.
+\let\PicTutorOriginalTableOfContents\tableofcontents
+\renewcommand{\tableofcontents}{\PicTutorOriginalTableOfContents\clearpage}

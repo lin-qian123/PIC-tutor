@@ -2,7 +2,7 @@
 
 PIC-tutor 是一本中文的 Particle-In-Cell（PIC）教程：从 Vlasov--Maxwell 模型和离散算法出发，逐步走到 WarpX 的源码职责、输入设计和可解释的验证。它面向希望读懂 PIC 程序、设计模拟并判断结果证据强度的读者，不是开发日志或测试报告的汇编。
 
-当前可审阅版本为 `v0.110`，包含 275 页 PDF、合订 Markdown 和自包含 HTML。书稿内容、构建产物和当前发行哈希由同一 release manifest 固定。
+当前可审阅版本为 `v0.110`，包含 275 页 PDF、合订 Markdown 和自包含 HTML。Git 标签 `v1.0` 冻结了这套已审阅工件作为首个语义化发布基线；书稿内容、构建产物和当前发行哈希由同一 release manifest 固定。
 
 ## 阅读书稿
 
@@ -10,6 +10,21 @@ PIC-tutor 是一本中文的 Particle-In-Cell（PIC）教程：从 Vlasov--Maxwe
 - [HTML 书稿](dist/pic-tutor-v0.110.html)：适合浏览器检索和跳转。
 - [Markdown 合订稿](dist/pic-tutor-v0.110.md)：适合检索、批注和版本比较。
 - [章节源文件](manuscript/chapters/)：适合按主题阅读或追溯书稿改动。
+
+## PDF 主题
+
+书稿正文只有一份 Markdown 来源；`technical`、`academic` 与 `compact` 三套 XeLaTeX 主题只改变 PDF 呈现。主题用途和纸张规格见 [主题说明](manuscript/assets/themes/README.md)。从仓库根目录运行：
+
+```bash
+python scripts/build_pdf_themes.py
+python scripts/audit_pdf_themes.py --output-dir dist/themes
+```
+
+生成的主题 PDF 位于 `dist/themes/`，文件名保留源书稿版本 `v0.110`，避免与 GitHub 的 `v1.0` 发布标签混淆：
+
+- [technical（Letter，258 页）](dist/themes/pic-tutor-v0.110-technical.pdf)：连续阅读。
+- [academic（A4，274 页）](dist/themes/pic-tutor-v0.110-academic.pdf)：打印、批注和装订。
+- [compact（A4，212 页）](dist/themes/pic-tutor-v0.110-compact.pdf)：源码与参数查阅。
 
 第一次阅读可从 [前言](manuscript/chapters/00-preface.md) 的三条路线中任选一条：
 
@@ -63,12 +78,13 @@ python scripts/audit_final_release_readiness.py \
 - Esirkepov 2001 与 Lee--Vay 2015 的 publisher-formatted PDF 已在本地合法访问、经 MinerU 转换，并完成限定版本对照；原始 PDF 与转换产物不进入 Git。对照记录见 [Esirkepov](docs/esirkepov-publisher-version-compare.md) 和 [Lee--Vay](docs/leecpc2015-publisher-version-compare.md)。
 - 当前核心开放问题包括 RZ axis-charge correctness、完整 transition-zone route ledger、RZ implicit Villasenor 的 PETSc KSP construction SIGILL 和公开发行权利。Vay+AMR 已经通过真实初始化 guard 确认是当前上游不支持的配置边界，不再被误列为待补物理运行覆盖。全部证据与关闭条件见 [当前缺口登记](docs/current-book-gap-register.md)。
 - 本仓库的公开再分发尚未签收：public branch 已跟踪第三方 `references/` 资产，且尚无项目许可证。发行阻断的事实和维护者决策路径见 [公开发行审计](docs/public-repo-release-audit.md) 与 [风险登记](docs/public-distribution-risk-register-v0.110.md)。书稿可供审阅不等于这些第三方材料已获再分发授权。
+- `v1.0` 标签已冻结当前书稿；GitHub Release 仅应上传 `dist/pic-tutor-v0.110.{pdf,html,md}`，发布文案见 [v1.0 Release Notes](docs/releases/v1.0.md)。主题渲染在该标签之后引入，不会反向改写已冻结的 `v1.0` 基线。
 
 ## 目录结构
 
 ```text
 manuscript/     书稿章节、附录与排版资源
-dist/           当前版本的 Markdown、HTML 和 PDF
+dist/           当前版本的 Markdown、HTML、PDF 与主题渲染
 scripts/        构建、内容、版式与发行一致性检查
 docs/           读者审读、版本、缺口和发行边界记录
 notes/          供维护者追溯的源码阅读与证据笔记

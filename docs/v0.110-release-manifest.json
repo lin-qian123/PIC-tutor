@@ -27,8 +27,8 @@
     "*.pyc",
     "dist/pic-tutor-v0.45 and older"
   ],
-  "entry_count": 1308,
-  "total_bytes": 37932667,
+  "entry_count": 1315,
+  "total_bytes": 37948878,
   "entries": [
     {
       "path": ".gitignore",
@@ -42,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 5998,
-      "sha256": "c2e45c29ee44e407ac1b352eb31c9bae323deeb93934d09d4bdd86fe1e7a2e9b"
+      "bytes": 7153,
+      "sha256": "e17e5765e5179a155bea02b2a51f4900ebd3a7cf36ae6df2b619c5def42ed01b"
     },
     {
       "path": "TODO.md",
-      "bytes": 1470914,
-      "sha256": "418783271d3afbe6c9782246d09a1eacd1476184881dfdf953e382d3b54d6b0a"
+      "bytes": 1471802,
+      "sha256": "3129603fa089052a2d7e8ce451f5b6a49a43dbcdeb4689e17d9fb6dc00a347ec"
     },
     {
       "path": "dist/pic-tutor-v0.110.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "dist/pic-tutor-v0.110.pdf",
-      "bytes": 2962906,
-      "sha256": "5849a80a4887bd5d2d862e8d6da2bece82753dd4c3f7e13805c4d4fe5c556b1e"
+      "bytes": 2962899,
+      "sha256": "103a4d512470778a23f9e085c2dfda8b4443b319ae664ceed320285e3e863c09"
     },
     {
       "path": "docs/chapter-01-electrostatic-model-validation-card-v0.110.json",
@@ -1094,6 +1094,11 @@
       "path": "docs/reader-facing-editorial-audit-v0.110.md",
       "bytes": 4557,
       "sha256": "4d5a3c619350e4ccfdf3f483ccee8a46b013990decbbe81f345ea0f8102dbf6a"
+    },
+    {
+      "path": "docs/releases/v1.0.md",
+      "bytes": 1093,
+      "sha256": "7763e9b5a8e6809a5598fac85e6b44a7508ebb636ca314c41dcfd3eb0d9fc150"
     },
     {
       "path": "docs/rz-axis-charge-repeat-stability-v0.93.json",
@@ -2484,6 +2489,26 @@
       "path": "manuscript/assets/pic-tutor-pdf-frontmatter.tex",
       "bytes": 208,
       "sha256": "82d8913fd0960d1ea05fb1eead1f0a046bca08854301c4c3c475427da18b72b0"
+    },
+    {
+      "path": "manuscript/assets/themes/README.md",
+      "bytes": 941,
+      "sha256": "ce595e49b42059224ec3301511152705aa5a4f1307211a0ffcbda63d0dcef086"
+    },
+    {
+      "path": "manuscript/assets/themes/academic.tex",
+      "bytes": 1731,
+      "sha256": "19af59962747dd001b53e9bbdcb58d6a736cf9ef77f9abe6ed58dfbf621cca61"
+    },
+    {
+      "path": "manuscript/assets/themes/compact.tex",
+      "bytes": 1755,
+      "sha256": "2804c54b1d0ef90f104f683d69ace00aaeac0ea645314504c03f882dfcf1b40d"
+    },
+    {
+      "path": "manuscript/assets/themes/technical.tex",
+      "bytes": 1663,
+      "sha256": "83e6681ea44ff1764de3206e5f66d83109f11cae208af175ae73c813a6fdcaf8"
     },
     {
       "path": "manuscript/chapters/00-preface.md",
@@ -4801,6 +4826,11 @@
       "sha256": "b534ecafad70faeaba67283a288f2cb25483c47389f645469f5f5999347259dd"
     },
     {
+      "path": "scripts/audit_pdf_themes.py",
+      "bytes": 2882,
+      "sha256": "22b407b1d3a5de975861947bd156792e597567a9ff12f203080792a7f80721d8"
+    },
+    {
       "path": "scripts/audit_peiravi_birdsall_1978_asset_contract.py",
       "bytes": 4151,
       "sha256": "201dd85168ff00accc3a5bd2aa4d87dca9968a4279652e40e410cb5268a3cb54"
@@ -5004,6 +5034,11 @@
       "path": "scripts/build_comoving_reference_ledger.py",
       "bytes": 11327,
       "sha256": "2406a410ed11022bfb8ce153d6a4e161ce4036ff6b6e8ba81c5102b4b81017f7"
+    },
+    {
+      "path": "scripts/build_pdf_themes.py",
+      "bytes": 4110,
+      "sha256": "fb7d05b6ab5d29704988eb993da5b2ff1884de12e44d1d0afd9ab539eb40dc07"
     },
     {
       "path": "scripts/build_public_evidence_index.py",

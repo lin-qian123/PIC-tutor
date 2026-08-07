@@ -1,0 +1,38 @@
+% Technical reader theme: preserves the current Letter-oriented reading format.
+\usepackage[letterpaper,margin=2cm,headheight=14pt]{geometry}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{fvextra}
+
+\definecolor{PicTutorNavy}{HTML}{17324D}
+\definecolor{PicTutorSlate}{HTML}{4B6278}
+\definecolor{PicTutorLink}{HTML}{005F8C}
+\AtBeginDocument{\hypersetup{colorlinks=true,linkcolor=PicTutorNavy,urlcolor=PicTutorLink,citecolor=PicTutorLink}}
+
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.42em}
+\setlength{\headsep}{10pt}
+\captionsetup{font=small,labelfont=bf,labelsep=quad}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,fontsize=\small,commandchars=\\\{\}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{PIC-tutor}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{PicTutorSlate}\leaders\hrule height \headrulewidth\hfill}}
+
+\titleformat{\section}{\Large\bfseries\color{PicTutorNavy}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{PicTutorNavy}}{\thesubsection}{0.65em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{PicTutorSlate}}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{2.2ex plus .4ex minus .2ex}{1.0ex}
+\titlespacing*{\subsection}{0pt}{1.8ex plus .3ex minus .2ex}{0.8ex}
+
+% Keep the automatic table of contents and the reader-facing opening distinct.
+\let\PicTutorOriginalTableOfContents\tableofcontents
+\renewcommand{\tableofcontents}{\PicTutorOriginalTableOfContents\clearpage}

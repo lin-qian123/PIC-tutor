@@ -1,0 +1,40 @@
+% Compact reference theme: A4 paper optimized for code lookup and local printing.
+\usepackage[a4paper,margin=16mm,headheight=14pt]{geometry}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{fvextra}
+
+\definecolor{PicTutorBlack}{HTML}{161B22}
+\definecolor{PicTutorGreen}{HTML}{276749}
+\definecolor{PicTutorLink}{HTML}{0F6B78}
+\AtBeginDocument{\hypersetup{colorlinks=true,linkcolor=PicTutorGreen,urlcolor=PicTutorLink,citecolor=PicTutorLink}}
+
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0.18em}
+\setlength{\headsep}{8pt}
+\linespread{0.96}
+\captionsetup{font=footnotesize,labelfont=bf,labelsep=space}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,fontsize=\footnotesize,commandchars=\\\{\}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{PIC-tutor reference}
+\fancyfoot[L]{v0.110 theme render}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0.35pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{PicTutorGreen}\leaders\hrule height \headrulewidth\hfill}}
+
+\titleformat{\section}{\large\bfseries\color{PicTutorBlack}}{\thesection}{0.65em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{PicTutorGreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{PicTutorBlack}}{\thesubsubsection}{0.55em}{}
+\titlespacing*{\section}{0pt}{1.7ex plus .3ex minus .2ex}{0.7ex}
+\titlespacing*{\subsection}{0pt}{1.25ex plus .25ex minus .2ex}{0.55ex}
+
+% Keep the automatic table of contents and the reader-facing opening distinct.
+\let\PicTutorOriginalTableOfContents\tableofcontents
+\renewcommand{\tableofcontents}{\PicTutorOriginalTableOfContents\clearpage}

@@ -78,3 +78,9 @@ The 2026-07-12 alternate-index search does not change that decision: CiNii adds 
    - `Eq.(23)` and surrounding density-decomposition formulas;
    - the algorithm section built around second-order spline form-factor.
 3. After that compare is done, upgrade Chapter 5 wording from "preprint-backed + source-grounded" to a cleaner "paper-and-source closed" statement.
+
+## 2026-08-07 publisher-PDF closure
+
+The user locally obtained the publisher-formatted CPC PDF through their authorized access. The file was validated as a 10-page PDF, its SHA-256 recorded as `cb03ca28144aa351ca964bbc8ba5012d4e88f5ba8f3a7a10e4b437c1afb07855`, and it was converted with MinerU in the paper-specific local `publisher/` directory.
+
+The source PDF and the MinerU derivative are Git-ignored. The bounded final-version comparison is recorded in `docs/esirkepov-publisher-version-compare.md`: title, abstract, section architecture, `Eq. (23)`, and the second-order spline algorithm were checked against the local arXiv preprint. This closes the publisher-PDF access and bounded-comparison gap, but does not license redistribution or prove WarpX runtime behavior.

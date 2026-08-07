@@ -52,9 +52,9 @@ CONFIGS = {
             "tag{34}",
         ),
         "note_markers": ("Eq.(23)", "1/3", "1/6", "second-order", "WarpX", "发表版"),
-        "audit_markers": ("publisher PDF status", "arXiv preprint", "line-by-line", "first paper-backed"),
-        "classification": "PREPRINT_SOURCE_GROUNDED_FORMULA_AUDIT_PUBLISHER_CPC_PDF_MISSING",
-        "scope": "author-posted arXiv preprint and MinerU package support a first-round formula/source walkthrough; publisher CPC comparison remains open",
+        "audit_markers": ("publisher PDF status", "arXiv preprint", "publisher-formatted CPC PDF", "bounded final-version comparison"),
+        "classification": "PREPRINT_AND_LOCAL_PUBLISHER_CPC_BOUNDED_COMPARE_SOURCE_GROUNDED",
+        "scope": "author-posted arXiv preprint supports the formula walkthrough, while a local publisher PDF supplies a bounded title/abstract/section/Eq.(23)/spline comparison; no redistribution or runtime claim follows",
     },
 }
 
@@ -127,7 +127,7 @@ def main() -> int:
         "|---|:---:|",
     ]
     lines.extend(f"| `{name}` | `{'PASS' if passed else 'FAIL'}` |" for name, passed in checks.items())
-    lines += ["", "The contract validates the local reading package without upgrading it to publisher-PDF line-by-line evidence."]
+    lines += ["", "The contract validates the preprint reading package and bounded publisher-version evidence; it does not validate redistribution or WarpX runtime behavior."]
     (args.output_dir / "contract.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if result["passed"] else 1

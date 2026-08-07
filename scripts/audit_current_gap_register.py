@@ -30,8 +30,9 @@ def main() -> int:
     register = (root / "docs/current-book-gap-register.md").read_text(encoding="utf-8")
     chapter = (root / "manuscript/chapters/09-literature-roadmap.md").read_text(encoding="utf-8")
     evidence_paths = (
-        "runs/stage-c-validation/esirkepov-publication-boundary/contract.json",
-        "runs/stage-c-validation/leecpc2015-accepted-manuscript-contract/contract.json",
+        "docs/esirkepov-publisher-version-compare.md",
+        "docs/leecpc2015-publisher-version-compare.md",
+        "scripts/audit_publisher_pdf_closure.py",
         "runs/stage-c-validation/transition-zone-runtime-activation-v0.98/contract.json",
         "runs/stage-c-validation/transition-zone-source-contract.json",
         "runs/stage-c-validation/rz-implicit-villasenor-build-boundary/contract.json",
@@ -143,11 +144,11 @@ def main() -> int:
             )
         ),
         "classification_boundaries": all(marker in register for marker in (
-            "OPEN_EXTERNAL_ACCESS", "RUNTIME_TRANSITION_ZONE_BRANCH_ACTIVATION_OBSERVED_ROUTE_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
+            "LOCAL_PUBLISHER_PDF_BOUNDED_COMPARE_CLOSED_NOT_FOR_REDISTRIBUTION", "RUNTIME_TRANSITION_ZONE_BRANCH_ACTIVATION_OBSERVED_ROUTE_LEDGER_UNPROVEN", "PRE_PHYSICS_BOUNDARY",
             "CURRENT_UPSTREAM_RUNTIME_GUARD_CONFIRMED_UNSUPPORTED", "FORMAL_CONVERGENCE_REPEAT_SLOPE_GATE_PASS_CHARGE_CLOSURE_OPEN",
             "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED", "RELEASE-EDITORIAL",
         )),
-        "closure_language": all(marker in register for marker in ("关闭条件", "真实 `current_buf/rho_buf`", "publisher PDF")),
+        "closure_language": all(marker in register for marker in ("关闭条件", "真实 `current_buf/rho_buf`", "LOCAL_PUBLISHER_PDF_BOUNDED_COMPARE_CLOSED_NOT_FOR_REDISTRIBUTION")),
         "exercise_renumbering": all(
             marker in chapter
             for marker in (

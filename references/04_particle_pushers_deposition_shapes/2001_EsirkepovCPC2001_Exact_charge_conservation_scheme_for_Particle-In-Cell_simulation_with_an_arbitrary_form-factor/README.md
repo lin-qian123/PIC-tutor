@@ -11,7 +11,7 @@
 
 This is the primary current-deposition reference cited by WarpX as `Esirkepovcpc01` in `../warpx/Docs/source/refs.bib` and `bibliography/warpx-refs.bib`.
 
-## Access status on 2026-07-13
+## Access status on 2026-08-07
 
 Crossref confirms the title, venue, pages, date, and Elsevier TDM links. The official Elsevier content API returns the publisher metadata and reports `openaccess=0` / `openaccessArticle=false`; an unauthenticated PDF request returns HTTP 406 with a minimized-metadata warning. The direct ScienceDirect PDF endpoint remains unavailable from the current local command-line environment.
 
@@ -54,3 +54,7 @@ But Chapter 5 should still distinguish:
 
 - what is already backed by the arXiv preprint,
 - and what still awaits comparison with the 2001 CPC publication layout and wording.
+
+## Publisher-version closure
+
+The publisher-formatted CPC PDF is now locally available through authorized access. It is stored with its MinerU package in the Git-ignored `publisher/` directory. [The bounded final-version compare](../../../docs/esirkepov-publisher-version-compare.md) checks title, abstract, section structure, `Eq. (23)`, and the second-order spline algorithm against the preprint. The result does not redistribute the PDF or prove WarpX runtime behavior.

@@ -6,6 +6,9 @@ __pycache__/
 *.swp
 *.swo
 runs/
+# Locally accessed publisher PDFs and MinerU derivatives; do not publish without a rights decision.
+references/04_particle_pushers_deposition_shapes/2001_EsirkepovCPC2001_Exact_charge_conservation_scheme_for_Particle-In-Cell_simulation_with_an_arbitrary_form-factor/publisher/
+references/08_boundaries_pml_geometry/2015_LeeCPC2015_Efficiency_of_the_PML_with_high-order_FD_and_pseudo-spectral_Maxwell_solvers/publisher/
 
 # Runtime leftovers accidentally written at repository root by local WarpX runs.
 /Backtrace.*

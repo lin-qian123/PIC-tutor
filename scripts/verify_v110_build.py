@@ -1149,11 +1149,10 @@ def main() -> None:
         "chapter_9_reading_priority_order": all(
             marker in source
             for marker in (
-                "1. `Esirkepov 2001` 的 CPC 定稿 PDF",
-                "2. `Yee 1966`",
-                "3. `LeeCPC2015` 正文 PDF",
-                "4. `Hockney-Eastwood` 或其 article-level fallback",
-                "5. `Boris` 原始文献",
+                "1. `Yee 1966`",
+                "2. `Hockney-Eastwood` 或其 article-level fallback",
+                "3. `Boris` 原始文献",
+                "第 5、7 章的两项 publisher-version access gaps 已关闭",
             )
         ),
         "chapter_9_literature_gap_count": (
@@ -1215,8 +1214,8 @@ def main() -> None:
             marker in source
             for marker in (
                 "发表版证据边界",
-                "预印本公式、当前源码实现和代表性运行案例",
-                "publisher-PDF 的逐行比较仍未完成",
+                "预印本连续论证、CPC 定稿五项锚点、当前源码实现和代表性运行案例",
+                "不把限定对照、源码路径和 runtime consumer 混为同一来源",
             )
         ),
         "andriyash_fourier_bessel_literature_closure": all(
@@ -1230,9 +1229,9 @@ def main() -> None:
         "esirkepov_publisher_abstract_compare": all(
             marker in source
             for marker in (
-                "发表版公开索引摘要与 arXiv 预印本摘要",
-                "这个层级只支持摘要级结论",
-                "仍保留 PDF 缺口",
+                "发表版与 arXiv 预印本在 Cartesian geometry",
+                "`Eq.(23)`、section numbering 与二阶 spline 正文也已作直接 publisher-PDF 锚点核对",
+                "未纳入列表的图表和版式仍不作额外结论",
             )
         ),
         "pml_evidence_gradient": all(

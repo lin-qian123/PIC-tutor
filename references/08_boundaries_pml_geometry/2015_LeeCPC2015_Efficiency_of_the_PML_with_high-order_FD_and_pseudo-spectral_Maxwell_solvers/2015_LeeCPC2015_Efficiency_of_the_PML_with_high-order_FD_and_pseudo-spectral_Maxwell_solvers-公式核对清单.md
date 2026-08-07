@@ -2,9 +2,9 @@
 
 ## 状态边界
 
-本清单建立于 2026-06-29，并于 2026-07-13 根据 eScholarship accepted/submitted manuscript 资产更新。当前已有 7 页 PDF、MinerU Markdown、13 张图片和第一轮中文讲解；仍没有 publisher-formatted CPC PDF，因此这里不把 accepted manuscript 伪称为正式出版定稿，也不把 WarpX 源码公式伪称为论文公式。
+本清单建立于 2026-06-29，并于 2026-08-07 根据本地 publisher-formatted CPC PDF 完成闭环。现有 7 页 accepted/submitted manuscript、9 页 publisher PDF、两套 MinerU 产物和第一轮中文讲解；publisher PDF 仅本地保存且 Git 忽略，不把 accepted manuscript 伪称为正式出版定稿，也不把 WarpX 源码公式伪称为论文公式。
 
-本文件的用途是把后续拿到全文后的核对工作变成可执行表格：每一项都明确“论文应给出的证据”“WarpX 当前源码锚点”“现有 regression 能证明什么”和“正文写作边界”。
+本文件的用途是维持“论文应给出的证据”“WarpX 当前源码锚点”“现有 regression 能证明什么”和“正文写作边界”的分层。已完成的 publisher-version comparison 见 `docs/leecpc2015-publisher-version-compare.md`。
 
 ## 访问复核
 

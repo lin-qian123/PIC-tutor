@@ -53,3 +53,9 @@ The local package is classified as `ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORM
 1. Compare the local eScholarship manuscript with the CPC publisher version when institutional access is available.
 2. Keep the CPC article as the main WarpX citation; treat the AIP conference version as a related record.
 3. Complete the paper-to-source comparison for PML profile, reflection recurrence, PSTD shift factors, and the boundary between paper formulas and WarpX `C1-C25`.
+
+## 2026-08-07 publisher-PDF closure
+
+The user locally obtained the publisher-formatted CPC PDF through their authorized access. The file was validated as a 9-page PDF, its SHA-256 recorded as `920ec7958bdcd45168ac43e60eeb2acdfe4fa63222f671413f0c41c83572a41e`, and it was converted with MinerU in the paper-specific local `publisher/` directory.
+
+The source PDF and MinerU derivative are Git-ignored. `docs/leecpc2015-publisher-version-compare.md` records the bounded comparison with the seven-page accepted/submitted manuscript: final front matter, abstract, section architecture, high-order/PSTD anchors, reflection/results, and appendices. This closes the publisher-PDF access and version-comparison gap; it does not establish redistribution rights or make the paper formulas identical to WarpX `C1`--`C25`, cleaning, Galilean, or RZ code paths.

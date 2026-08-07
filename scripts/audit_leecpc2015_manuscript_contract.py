@@ -36,6 +36,8 @@ def main() -> int:
     audit = (paper_dir / "access-audit.md").read_text(encoding="utf-8")
     source_text = source_md.read_text(encoding="utf-8") if source_md else ""
     note_text = note.read_text(encoding="utf-8") if note else ""
+    publisher_compare = paper_dir.parents[2] / "docs/leecpc2015-publisher-version-compare.md"
+    publisher_compare_text = publisher_compare.read_text(encoding="utf-8") if publisher_compare.is_file() else ""
     images = sorted((paper_dir / "images").glob("*")) if (paper_dir / "images").is_dir() else []
     referenced_images = set(re.findall(r"images/([^\s)]+)", source_text))
     image_names = {path.name for path in images}
@@ -85,7 +87,9 @@ def main() -> int:
             )
         ),
         "publisher_abstract_boundary_recorded": "ScienceDirect indexed" in audit and "abstract-level" in audit,
-        "publisher_pdf_still_missing_recorded": "publisher-formatted CPC PDF is still missing" in audit,
+        "publisher_version_comparison_recorded": publisher_compare.is_file() and all(
+            term in publisher_compare_text for term in ("9-page", "PSTD", "Appendices")
+        ),
         "publisher_boundary_not_overclaimed_in_note": all(
             term in note_text for term in ("不能直接等同于 WarpX", "仍需", "不能")
         ),
@@ -94,8 +98,8 @@ def main() -> int:
         "contract": "LeeCPC2015 accepted-manuscript source-grounded literature contract",
         "checks": checks,
         "passed": all(checks.values()),
-        "classification": "ACCEPTED_MANUSCRIPT_SOURCE_GROUNDED_PML_FORMULAS_PUBLISHER_CPC_PDF_MISSING",
-        "scope": "seven-page accepted/submitted manuscript plus indexed publisher abstract support first-round PML formula and source mapping; publisher-formatted CPC comparison remains open",
+        "classification": "ACCEPTED_MANUSCRIPT_AND_LOCAL_PUBLISHER_CPC_BOUNDED_COMPARE_SOURCE_GROUNDED",
+        "scope": "the seven-page accepted/submitted manuscript supports first-round source mapping, while a locally retained nine-page publisher PDF supplies a bounded version comparison; no redistribution or runtime claim follows",
         "source": ESCHOLARSHIP_URL,
         "published": {"title": TITLE, "doi": DOI, "journal": "Computer Physics Communications 194, 1-9 (2015)"},
         "asset": {
@@ -121,7 +125,7 @@ def main() -> int:
     lines.extend(f"| `{name}` | `{'PASS' if passed else 'FAIL'}` |" for name, passed in checks.items())
     lines += [
         "",
-        "The contract validates the local accepted-manuscript package and keeps the publisher-formatted CPC comparison explicitly open.",
+        "The contract validates the accepted-manuscript package and its bounded publisher-version record; it does not validate redistribution or WarpX runtime behavior.",
     ]
     (args.output_dir / "contract.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2, ensure_ascii=False))

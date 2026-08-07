@@ -109,12 +109,12 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系。它
 |---|---|---|---|
 | `Hockney-Eastwood` 原书 | 仅有书目信息与相关论文线索；尚无可逐段核查的全文 | 第 1、2、5、6 章 | 只能部分由 `Birdsall 1985` 与 `Dawson 1983` 补足 |
 | `Yee 1966` | DOI 已确认；尚无全文 | 第 2、6 章 | 可由源码与后继 FDTD 文献支撑，但缺原始历史入口 |
-| `Esirkepov 2001` | 作者预印本及其公式材料可核查；仍缺 CPC 发表版对照 | 第 5 章 | 可支撑预印本层面的解释，不能宣称 CPC 定稿已核对 |
+| `Esirkepov 2001` | 作者预印本和本地 CPC 定稿的五项限定对照可核查 | 第 5 章 | 可支撑已列 title/abstract/section/`Eq.(23)`/二阶 spline 锚点，不能外推到 runtime |
 | `Villasenor-Buneman 1992` | 论文全文及公式阅读材料可核查 | 第 5 章 | 可支撑公式与源码对照；仍需逐图、逐记号复核 |
 | `Andriyash 2016` | 全文公式材料可核查；主题为 quasi-cylindrical Fourier-Bessel PSATD | 第 6 章 RZ PSATD | 可支撑公式解释；不能推出 PLARES-PIC 与 WarpX 等价或运行复现 |
-| `LeeCPC2015` | accepted manuscript 可核查；仍缺 publisher-formatted CPC PDF | 第 7 章 | 可支撑 accepted-manuscript 与源码的对应，不能宣称发表版逐系数等价 |
+| `LeeCPC2015` | accepted manuscript 与本地 publisher PDF 限定对照可核查 | 第 7 章 | 可支撑 final front matter/abstract/section/PSTD/reflection/appendix 锚点，不能宣称与 WarpX 逐系数等价 |
 
-这六条中，`LeeCPC2015` 的边界最容易被误读：accepted manuscript 已可精读，所以它足以解释文中对应的 PML 思想；但发表版的排版、系数和版本差异尚未逐项核对，因此不能借此宣称已经完成 publisher-formatted CPC PDF 的对照。
+这六条中，`LeeCPC2015` 的边界最容易被误读：accepted manuscript 已可精读，且正式发表版已经完成限定对照；但这不能把论文公式直接升级为 WarpX `C1`--`C25`、cleaning、Galilean 或 RZ 分支的逐系数证明。
 
 ## 9.4 各章的文献覆盖范围
 
@@ -126,9 +126,9 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系。它
 | 第 2 章 PIC 总循环 | 中等 | `Birdsall 1985`、`Dawson 1983` | `Yee 1966` 原始入口 |
 | 第 3/3A 章 主循环与初始化 | 中低 | 以源码为主 | 需要把基础文献和工程论文绑定得更明确 |
 | 第 4 章 粒子推进器 | 中高 | `Boris 1970` 书目信息、`Birdsall 1985`、`Vay 2008`、`Higuera-Cary 2017` | 原始 Boris 1970 会议论文 PDF 仍缺 |
-| 第 5 章 沉积与形函数 | 中等 | Esirkepov 与 Villasenor 的 charge-conserving 方法 | Esirkepov 还缺 CPC 定稿对照；两种构造不能由单一案例互相替代 |
+| 第 5 章 沉积与形函数 | 中等 | Esirkepov 与 Villasenor 的 charge-conserving 方法 | Esirkepov 已完成 CPC 限定对照；两种构造不能由单一案例互相替代 |
 | 第 6 章 场求解器 | 高 | `Vay--Godfrey 2014`、`Godfrey 2014`、`Lehe 2016`、`Kirchen 2016` | 仍需把文献中的离散假设与各个具体求解器配置分别对应 |
-| 第 7 章 边界、PML 与 AMR | 中等偏低 | `Berenger 1994/1996`、WarpX 源码与代表性案例 | `LeeCPC2015` 出版社排版正文仍缺 |
+| 第 7 章 边界、PML 与 AMR | 中等偏低 | `Berenger 1994/1996`、`LeeCPC2015` 定稿、WarpX 源码与代表性案例 | 论文、源码与 runtime consumer 仍需严格分层 |
 | 第 8 章 诊断、验证与案例 | 中等 | `Dawson 1983` 的诊断思路 | 还缺更多 case-specific benchmark papers |
 | 第 9 章 文献路线 | 本章即路线图 | A/B/C/D 证据层级 | 新来源必须先判断证据层级，再进入章节论证 |
 
@@ -138,19 +138,15 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系。它
 
 延伸阅读不应泛泛地“多找一些相关论文”，而应按它能补强哪一章的论证排序：
 
-1. `Esirkepov 2001` 的 CPC 定稿 PDF
-   - 预印本足以支撑本书的公式解释；与 2001 CPC 发表版逐项对齐仍是独立任务。
-2. `Yee 1966`
+1. `Yee 1966`
    - 直接补第 2 / 6 章里的原始 FDTD 入口。
-3. `LeeCPC2015` 正文 PDF
-   - 直接补强第 7 章的 PML 一手文献。
-4. `Hockney-Eastwood` 或其 article-level fallback
+2. `Hockney-Eastwood` 或其 article-level fallback
    - 继续补第 1 / 2 章的 particle-mesh foundations。
-5. `Boris` 原始文献
+3. `Boris` 原始文献
    - 书目信息已核实，但原始 proceedings 全文尚未成为可逐页核查的材料。
    - 在获得合法全文前，不把 Birdsall 的二手推导写成 Boris 原文证据。
 
-该顺序反映了证据分布：第 6 章已有较完整的论文主干，而第 5、7 章的原始文献支撑相对更薄。
+该顺序反映了当前证据分布：第 5、7 章的两项 publisher-version access gaps 已关闭，仍应优先补足第 1/2/6 章的原始历史入口，并把已取得论文、源码与运行证据继续分层。
 
 ## 9.6 用一张文献判读卡连接论文、源码与算例
 
@@ -171,7 +167,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系。它
 
 #### 路线 1：Esirkepov 的守恒构造如何成为一个网格检查
 
-- **先从文献取走什么：** `Esirkepov 2001` 的作者预印本把 old/new form factor 的差分组织为离散连续性方程。这可支撑算法机制，但不等于已逐项核对 CPC 定稿。
+- **先从文献取走什么：** `Esirkepov 2001` 的作者预印本把 old/new form factor 的差分组织为离散连续性方程；CPC 定稿的 title、abstract、section、`Eq.(23)` 与二阶 spline 已作限定对照。这可支撑算法锚点，但不等于 runtime 证明。
 - **再定位什么实现与输入：** 第 5 章的 `Compute_shifted_shape_factor` 将 old/new shape 对齐，`doEsirkepovDepositionShapeN` 写入守恒电流；`Examples/Tests/langmuir/inputs_test_3d_langmuir_multi` 继承显式的 3D Esirkepov 设置。
 - **consumer 实际比较什么：** `analysis_3d.py` 先比较 `Ex/Ey/Ez` 与 Langmuir 解析场，默认最大相对误差 `< 5%`；随后 `analysis_utils.py` 对已启用的 Esirkepov 条件计算归一化的 `divE-rho/epsilon_0` residual，默认容差 `1e-11`。
 - **可以写出的结论与必须保留的边界：** 该 3D Langmuir 配置同时把解析场和指定 Gauss-law residual 接到 Esirkepov 输入上；它并不证明所有 shape、二维或 RZ，也不证明被 analysis 明确排除的 Esirkepov + PSATD 组合。
@@ -185,7 +181,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系。它
 
 #### 路线 3：PSATD-PML 是否在这一入射与边界设置中保持低反射
 
-- **先从文献取走什么：** `LeeCPC2015` 的 accepted manuscript 解释 split-field/PSTD PML 与反射率的依赖；它不等于 publisher-formatted 版本的逐系数核对。
+- **先从文献取走什么：** `LeeCPC2015` 的 accepted manuscript 解释 split-field/PSTD PML 与反射率的依赖，正式发表版已作限定对照；这仍不等于 WarpX 分支的逐系数核对。
 - **再定位什么实现与输入：** `SpectralSolver` 为 PML 区选择 `PsatdAlgorithmPml`，`PushPSATD()` 单独推进 PML 场；`inputs_test_2d_pml_x_psatd` 选择 PSATD、`current_correction = 0`、无 PML divergence cleaning。
 - **consumer 实际比较什么：** `analysis_pml_psatd.py` 先在 iteration 50 复算初始总场能量，再以末态/初态能量给出 reflectivity，并要求 `< 1e-6`。
 - **可以写出的结论与必须保留的边界：** 这证明该 2D Cartesian、指定参数与无 correction/cleaning 的 PML case 满足总场能量反射率 gate；它不是对 LeeCPC2015 所有系数或扫描的复现，也不能外推到 RZ PML、Galilean/cleaning 组合或任意入射谱。
@@ -206,7 +202,7 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系。它
 
 完成标志：
 
-- 能说明为什么预印本公式不能自动证明 CPC 定稿逐式一致；
+- 能说明为什么预印本公式和限定 CPC 对照不能自动证明 WarpX 逐式一致；
 - 能用一个指定 case 的 observable 说明运行通过为什么不等于全部 geometry/order 覆盖。
 
 ### 路线 B：第 7 章 PML 文献
@@ -214,13 +210,13 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系。它
 阅读任务：
 
 - 用 `Berenger 1994/1996` 理解 split-field PML 的吸收机制；
-- 对照 `LeeCPC2015` 的 accepted manuscript，定位高阶有限差分或伪谱 PML 的适用条件；
+- 对照 `LeeCPC2015` 的 accepted manuscript 与 CPC 定稿限定锚点，定位高阶有限差分或伪谱 PML 的适用条件；
 - 再回查 WarpX `PsatdAlgorithmPml.cpp`，区分论文公式、程序分派和指定 regression 的角色。
 
 完成标志：
 
-- 能指出 accepted manuscript 支持的具体论断；
-- 不会把它误写成 publisher-formatted CPC PDF 的逐式核对。
+- 能指出 accepted manuscript 与 publisher-PDF 对照各自支持的具体论断；
+- 不会把它们误写成 WarpX 分支的逐式核对。
 
 第一次做文献深读时，建议先走路线 A：它能直接连接第 5 章的连续性方程、形函数和运行观察量；路线 B 更适合已完成第 6--7 章源码阅读、准备分析 PML 表示与边界条件的读者。
 
@@ -267,8 +263,8 @@ Muraviev 2021 将这条应用线扩展为完整的 resampling 方法谱系。它
 - foundations 线已有 `Birdsall 1985`、`Dawson 1983`、`Tajima-Dawson 1979`
 - pusher 线已有 `Vay 2008`、`Higuera-Cary 2017`
 - PSATD/NCI 线已有 `Godfrey 2014`、`Lehe 2016`、`Kirchen 2016`
-- PML 线有较强源码与案例证据，但缺 `LeeCPC2015` 的出版社排版正文
-- deposition 线的 `Esirkepov 2001` 作者预印本与 `Villasenor-Buneman 1992` 全文可供公式核查；Esirkepov 的 publisher-formatted CPC PDF 仍是明确的访问边界
+- PML 线有较强源码与案例证据，`LeeCPC2015` 的 publisher-version boundary 已完成限定对照
+- deposition 线的 `Esirkepov 2001` 作者预印本与 `Villasenor-Buneman 1992` 全文可供公式核查；Esirkepov 的 publisher-formatted CPC PDF 已完成限定访问与版本对照
 
 因此，这条路线图的核心约束不是“再多下载一些论文”，而是：
 

@@ -1,5 +1,9 @@
 # TODO
 
+## 2026-08-14
+
+- [x] 制定原生 LaTeX 成书迁移计划：新增 `docs/latex-migration-plan.md`，固定 `v1.0` / `v0.110` 为不可变比较基线，定义 Phase 0 inventory、Phase 1 前言与第 1--2 章样章、逐章单向真源切换、全书闭环和发行门槛。计划明确不长期双写 Markdown/LaTeX，也不借排版迁移修改科学结论、WarpX 缺口或第三方再分发边界；下一步为 Phase 0 清单与样章实施。
+
 ## 2026-08-02
 
 - [x] 创建并推送首个语义化标签 `v1.0`：它不可变地指向 `e1faff5`，冻结当前已审阅的 `v0.110` 书稿（PDF/HTML/Markdown）；Release 文案和最小附件清单见 `docs/releases/v1.0.md`。GitHub CLI 本机凭据已失效，实际 GitHub Release 创建待维护者完成 `gh auth login -h github.com` 后执行；不将 `references/`、`runs/`、publisher PDF 或本地审计输出附加到 Release。

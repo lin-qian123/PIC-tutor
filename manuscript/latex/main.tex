@@ -6,10 +6,6 @@
 
 \documentclass[UTF8,11pt,openany]{ctexbook}
 
-% --- Theme switch: academic | technical | compact (see themes/) ---
-\providecommand{\TheTheme}{academic}
-\input{themes/\TheTheme.tex}
-
 % --- Preamble modules ---
 \input{preamble/packages.tex}
 \input{preamble/fonts.tex}
@@ -18,6 +14,11 @@
 \input{preamble/floats-tables.tex}
 \input{preamble/code.tex}
 \input{preamble/links-refs.tex}
+
+% --- Theme switch: academic | technical | compact (see themes/) ---
+% Loaded after the preamble so theme geometry overrides apply.
+\providecommand{\TheTheme}{academic}
+\input{themes/\TheTheme.tex}
 
 \title{PIC-tutor：从动理学模型到 WarpX 源码的 Particle-In-Cell 讲解}
 \author{PIC-tutor 项目}

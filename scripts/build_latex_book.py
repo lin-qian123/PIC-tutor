@@ -33,13 +33,17 @@ def sha256(path: Path) -> str:
 
 def run(cmd: list[str], cwd: Path) -> None:
     print("+", " ".join(cmd))
-    subprocess.run(cmd, cwd=cwd, check=True)
+    env = dict(__import__("os").environ)
+    # Fixed timestamp so clean rebuilds are byte-identical (Phase 4 gate:
+    # reproducible twice from clean output directories).
+    env["SOURCE_DATE_EPOCH"] = "0"
+    subprocess.run(cmd, cwd=cwd, check=True, env=env)
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--theme", default="academic", choices=["academic", "technical", "compact"])
-    ap.add_argument("--edition", default="latex-sample")
+    ap.add_argument("--edition", default="v0.120")
     args = ap.parse_args()
 
     if not SRC.exists():
@@ -73,7 +77,7 @@ def main() -> None:
     git = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT)
     xelatex = subprocess.run(["xelatex", "--version"], capture_output=True, text=True).stdout.splitlines()[0]
     font_cjk = "Songti SC (CJK main); PingFang SC (CJK sans); Menlo (Latin mono)"
-    manifest = {
+    entry = {
         "edition": args.edition,
         "theme": args.theme,
         "pdf": out.relative_to(ROOT).as_posix(),
@@ -81,12 +85,31 @@ def main() -> None:
         "source_commit": git.stdout.strip() if git.returncode == 0 else "unknown",
         "engine": xelatex,
         "fonts": font_cjk,
+        "reproducible": "SOURCE_DATE_EPOCH=0; byte-identical across clean rebuilds",
         "baseline": {"tag": "v1.0", "edition": "v0.110"},
-        "note": "Phase 1 sample; not a release artifact. See docs/latex-migration-plan.md.",
     }
-    (DIST / "manifest.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    # Cumulative manifest: keep entries of other themes.
+    manifest_path = DIST / "manifest.json"
+    manifest = {}
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except Exception:  # pragma: no cover
+            manifest = {}
+    manifest.setdefault("edition", args.edition)
+    manifest.setdefault("source_commit", entry["source_commit"])
+    manifest.setdefault("engine", entry["engine"])
+    manifest.setdefault("fonts", entry["fonts"])
+    manifest.setdefault("reproducible", entry["reproducible"])
+    manifest.setdefault("baseline", entry["baseline"])
+    manifest.setdefault("note", (
+        "Provisional edition identifier; final numbering and any public release "
+        "pending maintainer approval of the Phase 1 decision point and "
+        "redistribution rights. See docs/latex-migration-plan.md."
+    ))
+    manifest["themes"] = manifest.get("themes", {})
+    manifest["themes"][args.theme] = {"pdf": entry["pdf"], "pdf_sha256": entry["pdf_sha256"]}
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"published {out} ({pdf.stat().st_size} bytes)")
     print(f"manifest {DIST / 'manifest.json'}")
 

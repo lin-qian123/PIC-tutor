@@ -1,14 +1,26 @@
 {
-  "edition": "latex-sample",
-  "theme": "academic",
-  "pdf": "dist/latex/pic-tutor-latex-sample-academic.pdf",
-  "pdf_sha256": "f1aff9427751655681c55f26b556726427b754998d34ad2ce9cb2c9657b22879",
-  "source_commit": "393c8280ff47543571c5028a89e035e2454023d3",
+  "edition": "v0.120",
+  "source_commit": "f0a70b3c68bbb7fb77a1bf6865595174789909d2",
   "engine": "XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025)",
   "fonts": "Songti SC (CJK main); PingFang SC (CJK sans); Menlo (Latin mono)",
+  "reproducible": "SOURCE_DATE_EPOCH=0; byte-identical across clean rebuilds",
   "baseline": {
     "tag": "v1.0",
     "edition": "v0.110"
   },
-  "note": "Phase 1 sample; not a release artifact. See docs/latex-migration-plan.md."
+  "note": "Provisional edition identifier; final numbering and any public release pending maintainer approval of the Phase 1 decision point and redistribution rights. See docs/latex-migration-plan.md.",
+  "themes": {
+    "academic": {
+      "pdf": "dist/latex/pic-tutor-v0.120-academic.pdf",
+      "pdf_sha256": "8f9465bef213e990ac156382c44abcc2372cd3c0adeb917aadb2e3795f22f1a6"
+    },
+    "technical": {
+      "pdf": "dist/latex/pic-tutor-v0.120-technical.pdf",
+      "pdf_sha256": "4d1bd441af748115a5471a122c9f446d018f2ceeddc11a20054d7fd6784ec6e6"
+    },
+    "compact": {
+      "pdf": "dist/latex/pic-tutor-v0.120-compact.pdf",
+      "pdf_sha256": "b2cbd77a3d175818719382b953124c67430a301f1af221d54b9884d44338c709"
+    }
+  }
 }

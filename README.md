@@ -26,7 +26,7 @@ python scripts/audit_pdf_themes.py --output-dir dist/themes
 - [academic（A4，274 页）](dist/themes/pic-tutor-v0.110-academic.pdf)：打印、批注和装订。
 - [compact（A4，212 页）](dist/themes/pic-tutor-v0.110-compact.pdf)：源码与参数查阅。
 
-原生 LaTeX 成书将作为后续新版本推进，采用“样章验证后逐章单向切换真源”的方式，不改写已发布的 `v1.0` 基线。Phase 0 已完成（13 个源文件元素清单、MD→.tex 溯源表，见 [Phase 0 清单](docs/latex-phase0-inventory-v0.110.md)）；Phase 1 原生样章（前言 + 第 1–2 章，40 页）已构建并通过自动退出 gate，样章 PDF 见 [dist/latex/pic-tutor-latex-sample-academic.pdf](dist/latex/pic-tutor-latex-sample-academic.pdf)，报告与决策点见 [Phase 1 报告](docs/latex-phase1-sample-report-v0.110.md)。阶段、验收门槛和回滚边界见 [LaTeX 迁移计划](docs/latex-migration-plan.md)。
+原生 LaTeX 成书将作为后续新版本推进，采用“样章验证后逐章单向切换真源”的方式，不改写已发布的 `v1.0` 基线。Phase 0 已完成（13 个源文件元素清单、MD→.tex 溯源表，见 [Phase 0 清单](docs/latex-phase0-inventory-v0.110.md)）；Phase 1 原生样章（前言 + 第 1–2 章）与 Phase 2（第 3、3A 章 + 附录 A）已构建并通过自动退出 gate，当前原生书稿 **115 页**，样章 PDF 见 [dist/latex/pic-tutor-latex-sample-academic.pdf](dist/latex/pic-tutor-latex-sample-academic.pdf)，报告见 [Phase 1](docs/latex-phase1-sample-report-v0.110.md) / [Phase 2](docs/latex-phase2-migration-report-v0.110.md)。阶段、验收门槛和回滚边界见 [LaTeX 迁移计划](docs/latex-migration-plan.md)。
 
 第一次阅读可从 [前言](manuscript/chapters/00-preface.md) 的三条路线中任选一条：
 

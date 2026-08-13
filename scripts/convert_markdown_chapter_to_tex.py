@@ -40,6 +40,7 @@ HEADING_RE = re.compile(r"^\s{0,3}(#{1,4})\s+(.*)$")
 FENCE_RE = re.compile(r"^ {0,3}```(\w*)")
 TABLE_RE = re.compile(r"^\s*\|")
 CODE_SPAN_RE = re.compile(r"`([^`]*)`")
+SINGLE_LINE_DISPLAY_RE = re.compile(r"\$\$[^$]+\$\$")
 MATH_PAREN_RE = re.compile(r"\\\((.+?)\\\)", re.DOTALL)
 MATH_DOLLAR_RE = re.compile(r"(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)")
 BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
@@ -67,6 +68,7 @@ def inline(text: str) -> str:
         return f"\x00{len(tokens) - 1}\x00"
 
     t = CODE_SPAN_RE.sub(stash, text)
+    t = SINGLE_LINE_DISPLAY_RE.sub(stash, t)   # $$...$$ on one line (e.g. in table cells)
     t = MATH_PAREN_RE.sub(stash, t)
     t = MATH_DOLLAR_RE.sub(stash, t)
 
@@ -94,6 +96,8 @@ def inline(text: str) -> str:
             if " " not in inner and inner.isascii():
                 return r"\cpath{" + inner + "}"
             return r"\code{" + inner + "}"
+        if tok.startswith("$$"):
+            return "$" + tok[2:-2] + "$"   # single-line $$..$$ -> inline math
         if tok.startswith("\\("):
             return "$" + tok[2:-2] + "$"
         return "$" + tok[1:-1] + "$"
@@ -151,8 +155,10 @@ def heading_tex(body: str) -> str:
 
 
 def heading(level: int, text: str, name: str) -> list[str]:
-    # LaTeX auto-numbers headings; strip the manual "1.1 " / "2.3.1 " prefixes.
+    # LaTeX auto-numbers headings; strip the manual "1.1 " / "2.3.1 " prefixes
+    # and the "附录 A：" chapter prefix (ctexbook adds its own 附录 numbering).
     text = HEADING_NUM_RE.sub("", text)
+    text = re.sub(r"^附录\s*[A-Za-z]?[：:]\s*", "", text)
     body = heading_tex(inline(text))
     if level == 1:
         if name.startswith("00-"):
@@ -213,17 +219,21 @@ def convert(text: str, name: str) -> list[str]:
     lines = text.splitlines()
     out: list[str] = []
     i = 0
-    in_list: list[tuple[str, int]] = []  # (type, indent)
+    in_list: list[tuple[str, int]] = []  # (type, depth); len = open environments
 
-    def close_lists(keep_depth: int = 0) -> None:
-        while len(in_list) > keep_depth:
+    def close_lists(keep: int = 0) -> None:
+        while len(in_list) > keep:
             typ, _ = in_list.pop()
             out.append(r"\end{" + ("enumerate" if typ == "o" else "itemize") + "}")
 
     def open_list(typ: str, depth: int) -> None:
-        if in_list and in_list[-1] == (typ, depth):
+        # Reuse the open list at this depth when type matches (siblings);
+        # otherwise close back to depth and start a fresh list.
+        if len(in_list) > depth + 1:
+            close_lists(depth + 1)
+        if in_list and len(in_list) == depth + 1 and in_list[-1] == (typ, depth):
             return
-        close_lists(len(in_list))
+        close_lists(depth)
         env = "enumerate" if typ == "o" else "itemize"
         out.append(r"\begin{" + env + "}")
         in_list.append((typ, depth))

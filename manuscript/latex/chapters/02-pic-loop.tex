@@ -503,8 +503,9 @@ FDTD 在实空间用局部 stencil 近似 curl。PSATD 则在谱空间解析积�
 
 所以“主循环能跑”不等于“主循环近似的是对的物理系统”。真正的 PIC loop 要同时满足：
 
-% MANUAL NORMALIZATION (Phase 1): single-line display was 118pt too wide;
+% MANUAL NORMALIZATION (Phase 1/2): single-line display was 118pt too wide;
 % restructured into multline* with visual-only line breaks (no content change).
+% NOTE: re-apply after any converter regeneration.
 \begin{multline*}
 \text{time-layer consistency} + \text{charge/source consistency} \\
 + \text{physical scale resolution} \\
@@ -851,14 +852,12 @@ python analysis_1d.py diags/diag1000080
 \item $\omega_p\Delta t$
 \item $v_t\Delta t/\Delta x$
 \item finite-grid / aliasing / heating 主线
-\begin{itemize}
+\end{itemize}
 \item \code{Dawson 1983}
 \begin{itemize}
 \item electrostatic / full EM 的数值模型边界
 \item full EM 时间步与 light mode / CFL 的关系
 \item Darwin 作为 radiation-free low-frequency route
-\end{itemize}
-\end{itemize}
 \end{itemize}
 \end{itemize}
 

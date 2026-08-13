@@ -26,12 +26,22 @@ from pathlib import Path
 from pypdf import PdfReader
 
 EXPECTED_ANCHORS = [
+    # preface + ch1-2
     "写作说明",
     "动理学模型与 PIC 的基本思想",
     "Vlasov 方程首先是相空间守恒律",
     "PIC 总循环：从 Vlasov-Maxwell 到离散时间推进",
     "leapfrog 时间层",
     "AMR subcycling",
+    # ch3 / ch3a / appendix A (Phase 2)
+    "主演化路径：生命周期、初始化与",
+    "顶层入口",
+    "OneStep_nosub",
+    "参数示例与最小运行闭环",
+    "初始化",
+    "源码文件",
+    "符号、时间层与源码变量",
+    "连续模型符号",
 ]
 
 

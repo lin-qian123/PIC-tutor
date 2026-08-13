@@ -40,6 +40,29 @@
 
 % Lists
 \usepackage{enumitem}
+% The source book nests lists up to 5 levels (03a); extend beyond LaTeX's
+% default 4-level limit and give each level a distinct marker.
+\setlistdepth{9}
+\renewlist{itemize}{itemize}{9}
+\renewlist{enumerate}{enumerate}{9}
+\setlist[itemize,1]{label=\textbullet}
+\setlist[itemize,2]{label=--}
+\setlist[itemize,3]{label=$\ast$}
+\setlist[itemize,4]{label=\textbullet}
+\setlist[itemize,5]{label=--}
+\setlist[itemize,6]{label=$\ast$}
+\setlist[itemize,7]{label=\textbullet}
+\setlist[itemize,8]{label=--}
+\setlist[itemize,9]{label=$\ast$}
+\setlist[enumerate,1]{label=\arabic*.}
+\setlist[enumerate,2]{label=\alph*.}
+\setlist[enumerate,3]{label=\roman*.}
+\setlist[enumerate,4]{label=\arabic*.}
+\setlist[enumerate,5]{label=\alph*.}
+\setlist[enumerate,6]{label=\roman*.}
+\setlist[enumerate,7]{label=\arabic*.}
+\setlist[enumerate,8]{label=\alph*.}
+\setlist[enumerate,9]{label=\roman*.}
 
 % Page styles
 \usepackage{fancyhdr}

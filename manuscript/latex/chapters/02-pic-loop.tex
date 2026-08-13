@@ -148,7 +148,7 @@ q\left(\mathbf{E}_p^n+\bar{\mathbf{v}}\times\mathbf{B}_p^n\right).
 
 其中 $\bar{\mathbf{v}}$ 的具体定义取决于 pusher。Boris、Vay、Higuera-Cary 等 pusher 的差别留到粒子推进章节逐行讲解。本章只强调主循环必须给 pusher 提供正确时间层的 $\mathbf{x}$、$\mathbf{p}$、$\mathbf{E}$、$\mathbf{B}$。
 
-WarpX 的显式无 subcycling 路径在 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{WarpX::OneStep_nosub()} 开头直接把这个时间层写进注释：
+WarpX 的显式无 subcycling 路径在 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{WarpX::OneStep\_nosub()} 开头直接把这个时间层写进注释：
 
 % <-- fenced code (text)
 \begin{codeblock}
@@ -189,7 +189,7 @@ T_p=\frac{2\pi}{\omega_p}.
 v_t\Delta t/\Delta x
 \]
 
-都写成数值健康度的第一层控制量。对 WarpX 来说，这条边界不会自动由 \cpath{ComputeDt()} 替你保证。\cpath{ComputeDt()} 只根据 solver/CFL、\cpath{const_dt}、\cpath{max_dt}、\cpath{maxParticleVelocity()} 和 AMR refinement 给出一个可运行步长；它并不知道你要不要精确分辨 Langmuir 振荡、electrostatic shielding 或弱不稳定增长率。
+都写成数值健康度的第一层控制量。对 WarpX 来说，这条边界不会自动由 \cpath{ComputeDt()} 替你保证。\cpath{ComputeDt()} 只根据 solver/CFL、\cpath{const\_dt}、\cpath{max\_dt}、\cpath{maxParticleVelocity()} 和 AMR refinement 给出一个可运行步长；它并不知道你要不要精确分辨 Langmuir 振荡、electrostatic shielding 或弱不稳定增长率。
 
 所以本章这里先压实一个最重要的判断：
 
@@ -251,7 +251,7 @@ v_t\Delta t/\Delta x
 
 这说明一个电磁 PIC step 的顺序不能随意交换。电场更新需要本步沉积出来的 $\mathbf{J}^{n+1/2}$，所以粒子推进与电流沉积必须在 \cpath{EvolveE(dt)} 之前完成。WarpX 的 FDTD 路径正是这样组织的：
 
-对应的核心源码节选来自 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{WarpX::OneStep_nosub()}，这里保留源项同步和 FDTD 场推进部分；PSATD 分支和 PML 后处理在第 3 章继续展开：
+对应的核心源码节选来自 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{WarpX::OneStep\_nosub()}，这里保留源项同步和 FDTD 场推进部分；PSATD 分支和 PML 后处理在第 3 章继续展开：
 
 % <-- fenced code (cpp)
 \begin{codeblock}
@@ -300,7 +300,7 @@ EvolveB(0.5_rt * dt[0], SubcyclingHalf::SecondHalf, a_cur_time + 0.5_rt * dt[0])
 数学动作 & WarpX 源码位置 \\
 \midrule
 \endhead
-粒子从 $\mathbf{x}^n,\mathbf{p}^{n-1/2}$ 推到 $\mathbf{x}^{n+1},\mathbf{p}^{n+1/2}$，并沉积源项 & \cpath{Source/Evolve/WarpXEvolve.cpp}: \cpath{WarpX::OneStep_nosub()} 对 \cpath{PushParticlesandDeposit()} 的调用 \\
+粒子从 $\mathbf{x}^n,\mathbf{p}^{n-1/2}$ 推到 $\mathbf{x}^{n+1},\mathbf{p}^{n+1/2}$，并沉积源项 & \cpath{Source/Evolve/WarpXEvolve.cpp}: \cpath{WarpX::OneStep\_nosub()} 对 \cpath{PushParticlesandDeposit()} 的调用 \\
 同步 $\rho,\mathbf{J}$：滤波、guard cells、AMR、边界 & 同一函数中的 \cpath{SyncCurrentAndRho()} \\
 $F,G$ 半步、$\mathbf{B}$ 半步 & 同一函数 FDTD 分支中的 \cpath{EvolveF()}、\cpath{EvolveG()}、\cpath{EvolveB(...FirstHalf...)} \\
 $\mathbf{E}$ 整步 & 同一分支中的 \cpath{EvolveE()} 或 \cpath{MacroscopicEvolveE()} \\
@@ -512,14 +512,14 @@ FDTD 在实空间用局部 stencil 近似 curl。PSATD 则在谱空间解析积�
 + \text{solver-dependent stability/dispersion control}.
 \end{multline*}
 
-WarpX 在 \cpath{OneStep_nosub()} 内部把两者清楚分开：
+WarpX 在 \cpath{OneStep\_nosub()} 内部把两者清楚分开：
 
 \begin{itemize}
-\item PSATD 分支在 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{WarpX::OneStep_nosub()} 内，核心是 \cpath{PushPSATD(a_cur_time)}。
+\item PSATD 分支在 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{WarpX::OneStep\_nosub()} 内，核心是 \cpath{PushPSATD(a\_cur\_time)}。
 \item FDTD 分支在同一函数内，核心是 \cpath{EvolveB/EvolveE/EvolveB}。
 \end{itemize}
 
-这意味着本书后续讲 field solver 时不能把“Maxwell solver”写成单一算法。\cpath{algo.maxwell_solver} 的选择会改变主循环内的场推进、同步、边界和可用功能。
+这意味着本书后续讲 field solver 时不能把“Maxwell solver”写成单一算法。\cpath{algo.maxwell\_solver} 的选择会改变主循环内的场推进、同步、边界和可用功能。
 
 \section{一个完整 PIC step 的离散组织}
 
@@ -544,7 +544,7 @@ WarpX 在 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{WarpX::Evolve()} 中�
 
 \subsection{AMR subcycling：两个时间步不是同一个时间步的重复调用}
 
-无 subcycling 时，第 0 层和更细层使用同一个外层时间步，\cpath{OneStep_nosub()} 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。\cpath{OneStep_sub1()} 的这一路径明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
+无 subcycling 时，第 0 层和更细层使用同一个外层时间步，\cpath{OneStep\_nosub()} 可以把粒子推进、source synchronization 和场推进看成一条统一的 $n -> n+1$ 链。打开 subcycling 后，这个图像不再成立。\cpath{OneStep\_sub1()} 的这一路径明确限定：只支持两级 mesh refinement，且每个方向的 refinement ratio 必须为 2。
 
 令粗层时间步为 $Δt_c$，细层时间步为
 
@@ -564,14 +564,14 @@ WarpX 在 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{WarpX::Evolve()} 中�
 阶段 & 细层 & 粗层/母网格 & 源项职责 \\
 \midrule
 \endhead
-第一个半周期 & 推进一次粒子和场，步长 $Δt_f$ & 暂不完成整步 & 将 \cpath{current_fp}、\cpath{rho_fp} 限制到 coarse patch \\
+第一个半周期 & 推进一次粒子和场，步长 $Δt_f$ & 暂不完成整步 & 将 \cpath{current\_fp}、\cpath{rho\_fp} 限制到 coarse patch \\
 中间同步 & 细层已到 $t+Δt_f$ & 粗层推进到相应中间时间 & 合并细层、粗层和 buffer 中的源项 \\
 第二个半周期 & 再推进一次粒子和场，步长 $Δt_f$ & 继续完成粗层剩余半步 & 第二段细层源项限制/合并后参与粗层场更新 \\
 粗层周期末 & 到 $t+Δt_c$ & 到 $t+Δt_c$ & 粗细层的场、源项和 guard cells 重新同步 \\
 \bottomrule
 \end{tabularx}
 
-因此，subcycling 不是简单地把 \cpath{OneStep_nosub()} 调两次。粗层粒子只推进一次，而细层粒子推进两次；粗层场的更新还要消费两个细层时间片上累积并平均/合成后的电流。源码中的调用顺序可以压缩成：
+因此，subcycling 不是简单地把 \cpath{OneStep\_nosub()} 调两次。粗层粒子只推进一次，而细层粒子推进两次；粗层场的更新还要消费两个细层时间片上累积并平均/合成后的电流。源码中的调用顺序可以压缩成：
 
 \[
 \begin{aligned}
@@ -589,9 +589,9 @@ WarpX 在 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{WarpX::Evolve()} 中�
 \end{aligned}
 \]
 
-这里的 \cpath{restrict} 和 \cpath{add} 不能与普通 guard-cell exchange 混为一谈：前者改变的是 coarse/fine source 的层级表示，后者只是同一层相邻 patch 间的数据可见性。对电荷来说，\cpath{rho_buf} 还可能来自 transition-zone 粒子在 coarse 几何上的直接沉积；因此 subcycling 中的 source 合成既不是“把 fine \cpath{rho} 全部平均下来”这么简单，也不是由场求解器自动补齐。
+这里的 \cpath{restrict} 和 \cpath{add} 不能与普通 guard-cell exchange 混为一谈：前者改变的是 coarse/fine source 的层级表示，后者只是同一层相邻 patch 间的数据可见性。对电荷来说，\cpath{rho\_buf} 还可能来自 transition-zone 粒子在 coarse 几何上的直接沉积；因此 subcycling 中的 source 合成既不是“把 fine \cpath{rho} 全部平均下来”这么简单，也不是由场求解器自动补齐。
 
-\cpath{OneStep_sub1()} 开头的断言拒绝 electrostatic solver 与 subcycling 的组合。原因不是 electrostatic 不能使用 AMR，而是这条 subcycling 例程的时间组织只为显式 electromagnetic field advance 编写，不能把 Poisson/electrostatic 路径的源项和场解时序悄悄套进来。
+\cpath{OneStep\_sub1()} 开头的断言拒绝 electrostatic solver 与 subcycling 的组合。原因不是 electrostatic 不能使用 AMR，而是这条 subcycling 例程的时间组织只为显式 electromagnetic field advance 编写，不能把 Poisson/electrostatic 路径的源项和场解时序悄悄套进来。
 
 所以读 AMR PIC loop 时要同时检查四个不变量：
 
@@ -606,31 +606,31 @@ WarpX 在 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{WarpX::Evolve()} 中�
 
 \subsection{JRhom 与 implicit：同一个外层 step 内部也可能有不同的时间合同}
 
-标准 \cpath{OneStep_nosub()}、PSATD-JRhom 和 implicit solver 都可能被外层 \cpath{WarpX::OneStep()} 视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。从 \cpath{WarpX::OneStep()} 的分派和各路径的函数职责看，应按下面三条路径分别阅读：
+标准 \cpath{OneStep\_nosub()}、PSATD-JRhom 和 implicit solver 都可能被外层 \cpath{WarpX::OneStep()} 视为一次迭代，但它们内部对“源项在什么时候被求值”的定义不同。从 \cpath{WarpX::OneStep()} 的分派和各路径的函数职责看，应按下面三条路径分别阅读：
 
 \begin{enumerate}
-\item \textbf{标准显式 electromagnetic PIC。}入口是 \cpath{OneStep_nosub()}；一次粒子推进产生 \cpath{J} 与 \cpath{rho}，随后统一进入 \cpath{SyncCurrentAndRho()}。场端是 FDTD 的 \cpath{B-E-B} 或一次 PSATD 推进；普通显式 collision placement 可以按各自时间层与它组合。
-\item \textbf{PSATD-JRhom。}入口是 \cpath{OneStep_JRhom()}；它先推进粒子但跳过普通沉积，再按 \cpath{rho/J} 的时间依赖在 \code{Δt} 内做多次相对时间沉积。每个 deposit interval 都执行一次谱空间场推进，并可选跨 \code{2Δt} 时间平均；该路径只支持 PSATD，且不支持 \cpath{current_correction} 与 split momentum collision push。
+\item \textbf{标准显式 electromagnetic PIC。}入口是 \cpath{OneStep\_nosub()}；一次粒子推进产生 \cpath{J} 与 \cpath{rho}，随后统一进入 \cpath{SyncCurrentAndRho()}。场端是 FDTD 的 \cpath{B-E-B} 或一次 PSATD 推进；普通显式 collision placement 可以按各自时间层与它组合。
+\item \textbf{PSATD-JRhom。}入口是 \cpath{OneStep\_JRhom()}；它先推进粒子但跳过普通沉积，再按 \cpath{rho/J} 的时间依赖在 \code{Δt} 内做多次相对时间沉积。每个 deposit interval 都执行一次谱空间场推进，并可选跨 \code{2Δt} 时间平均；该路径只支持 PSATD，且不支持 \cpath{current\_correction} 与 split momentum collision push。
 \item \textbf{implicit electromagnetic PIC。}入口是 \cpath{ImplicitSolver::OneStep()}；以 $E^{n+\theta}$ 或中间场为猜测，在非线性/线性 RHS 评估中反复推进粒子并构造 $J^{n+1/2}$。nonlinear solver 先求自洽中间电场，再完成粒子和场的后半步；一次 RHS 评估不是一次物理时间步，mass-matrix/JFNK 也会改变 \cpath{J} 的构造路径。
 \end{enumerate}
 
-JRhom 的关键不是“PSATD 多调用几次”，而是把时间依赖的源项显式建模成一组谱空间可消费的历史量。\cpath{OneStep_JRhom()} 的顺序可以压缩为：
+JRhom 的关键不是“PSATD 多调用几次”，而是把时间依赖的源项显式建模成一组谱空间可消费的历史量。\cpath{OneStep\_JRhom()} 的顺序可以压缩为：
 
 \begin{enumerate}
-\item 以 \cpath{skip_deposition=true} 把粒子从 $x^n,p^{n-1/2}$ 推到 $x^{n+1},p^{n+1/2}$；
+\item 以 \cpath{skip\_deposition=true} 把粒子从 $x^n,p^{n-1/2}$ 推到 $x^{n+1},p^{n+1/2}$；
 \item 把 $E/B$ 以及可选的 divergence-cleaning 场变换到谱空间；
-\item 按 \cpath{time_dependency_rho} 和 \cpath{time_dependency_J} 在相对时间上沉积 \cpath{rho_new} 与 \cpath{J}，每次执行 filter、guard/AMR 同步和 Fourier transform；
+\item 按 \cpath{time\_dependency\_rho} 和 \cpath{time\_dependency\_J} 在相对时间上沉积 \cpath{rho\_new} 与 \cpath{J}，每次执行 filter、guard/AMR 同步和 Fourier transform；
 \item 对每个子区间执行 \cpath{PSATDPushSpectralFields()}，最后把场变回实空间并处理 PML、边界和 guard cells。
 \end{enumerate}
 
-其中 \cpath{m_JRhom_subintervals} 把一个外层步拆成 \code{sub_dt = Δt / n_deposit} 的多个沉积区间；打开 time averaging 时，内部循环还会覆盖两个完整时间步的源/场积分。因而 JRhom 中的 \cpath{rho} 和 \cpath{J} 不是标准显式路径里“本步各沉积一次”的同义词，不能直接用 \cpath{OneStep_nosub()} 的单点时间图解释它。
+其中 \cpath{m\_JRhom\_subintervals} 把一个外层步拆成 \code{sub_dt = Δt / n_deposit} 的多个沉积区间；打开 time averaging 时，内部循环还会覆盖两个完整时间步的源/场积分。因而 JRhom 中的 \cpath{rho} 和 \cpath{J} 不是标准显式路径里“本步各沉积一次”的同义词，不能直接用 \cpath{OneStep\_nosub()} 的单点时间图解释它。
 
 implicit 路径的差异更加根本。以 \cpath{SemiImplicitEM::OneStep()} 为例，程序先保存粒子和旧场，将磁场推进到半步，然后由 nonlinear solver 反复调用 \cpath{ComputeRHS()}；\cpath{ImplicitSolver::PreRHSOp()} 在每次 RHS 构造里：
 
 \begin{itemize}
 \item 用当前猜测的中间电场推进粒子；
 \item 形成半步电流；
-\item 在需要时把 \cpath{current_fp_non_suborbit}、mass matrices 或 JFNK 线性阶段的贡献合并进 \cpath{J}；
+\item 在需要时把 \cpath{current\_fp\_non\_suborbit}、mass matrices 或 JFNK 线性阶段的贡献合并进 \cpath{J}；
 \item 最后调用 \cpath{SyncCurrentAndRho()}，再把同步后的源项交给隐式残差/线性系统。
 \end{itemize}
 
@@ -658,10 +658,10 @@ implicit 路径的差异更加根本。以 \cpath{SemiImplicitEM::OneStep()} 为
 优先判断 & 进入路径 & 这一外层步内部发生什么 \\
 \midrule
 \endhead
-\cpath{m_implicit_solver} 已创建 & \cpath{ImplicitSolver::OneStep()} & 多次 nonlinear iteration/RHS source rebuild，最后才提交一个物理时间步 \\
-\cpath{psatd.JRhom} 开启 & \cpath{OneStep_JRhom()} & 多个相对时间的 \cpath{rho/J} 沉积区间和对应的 PSATD 谱推进 \\
-AMR subcycling 开启 & \cpath{OneStep_sub1()} & 细层做两次 \cpath{dt/2} 推进并限制/合并源项，粗层做一次 \cpath{dt} 推进 \\
-以上均否 & \cpath{OneStep_nosub()} & push/deposit、\cpath{SyncCurrentAndRho()}，再进行 FDTD 或 PSATD 场推进 \\
+\cpath{m\_implicit\_solver} 已创建 & \cpath{ImplicitSolver::OneStep()} & 多次 nonlinear iteration/RHS source rebuild，最后才提交一个物理时间步 \\
+\cpath{psatd.JRhom} 开启 & \cpath{OneStep\_JRhom()} & 多个相对时间的 \cpath{rho/J} 沉积区间和对应的 PSATD 谱推进 \\
+AMR subcycling 开启 & \cpath{OneStep\_sub1()} & 细层做两次 \cpath{dt/2} 推进并限制/合并源项，粗层做一次 \cpath{dt} 推进 \\
+以上均否 & \cpath{OneStep\_nosub()} & push/deposit、\cpath{SyncCurrentAndRho()}，再进行 FDTD 或 PSATD 场推进 \\
 \bottomrule
 \end{tabularx}
 
@@ -682,10 +682,10 @@ AMR subcycling 开启 & \cpath{OneStep_sub1()} & 细层做两次 \cpath{dt/2} �
 \midrule
 \endhead
 看外层时间步如何组织 & \cpath{Source/Evolve/WarpXEvolve.cpp}: \cpath{WarpX::Evolve()} \\
-看显式电磁无 subcycling 的标准 step & \cpath{Source/Evolve/WarpXEvolve.cpp}: \cpath{WarpX::OneStep_nosub()} \\
+看显式电磁无 subcycling 的标准 step & \cpath{Source/Evolve/WarpXEvolve.cpp}: \cpath{WarpX::OneStep\_nosub()} \\
 看主循环如何进入粒子容器 & \cpath{Source/Evolve/WarpXEvolve.cpp}: \cpath{WarpX::PushParticlesandDeposit()} \\
-看两级 AMR subcycling 的细/粗层时间组织 & \cpath{Source/Evolve/WarpXEvolve.cpp}: \cpath{WarpX::OneStep_sub1()} \\
-看 JRhom 的多次相对时间沉积与谱推进 & \cpath{Source/Evolve/WarpXEvolve.cpp}: \cpath{WarpX::OneStep_JRhom()} \\
+看两级 AMR subcycling 的细/粗层时间组织 & \cpath{Source/Evolve/WarpXEvolve.cpp}: \cpath{WarpX::OneStep\_sub1()} \\
+看 JRhom 的多次相对时间沉积与谱推进 & \cpath{Source/Evolve/WarpXEvolve.cpp}: \cpath{WarpX::OneStep\_JRhom()} \\
 看 implicit RHS 中的粒子推进与 source synchronization & \cpath{Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp}: \cpath{ImplicitSolver::PreRHSOp()} \\
 \bottomrule
 \end{tabularx}
@@ -695,7 +695,7 @@ AMR subcycling 开启 & \cpath{OneStep_sub1()} & 细层做两次 \cpath{dt/2} �
 如果把本章压回一个最小、可运行、可验证的输入骨架，可从下面的官方案例开始：
 
 \begin{itemize}
-\item \cpath{Examples/Tests/langmuir/inputs_test_1d_langmuir_multi}
+\item \cpath{Examples/Tests/langmuir/inputs\_test\_1d\_langmuir\_multi}
 \end{itemize}
 
 它把本章真正讨论的五类量都放在同一个最小问题上：
@@ -721,12 +721,12 @@ AMR subcycling 开启 & \cpath{OneStep_sub1()} & 细层做两次 \cpath{dt/2} �
 
 都能在这条最小 Langmuir 主线上落到真实输入。
 
-\cpath{Examples/Tests/langmuir/CMakeLists.txt} 将这张输入卡注册为 \cpath{test_1d_langmuir_multi}：它使用两个 MPI rank，并把末态 plotfile \cpath{diags/diag1000080} 交给 \cpath{analysis_1d.py}。这给出了一条读者可回查的闭环，而不是一串脱离上下文的历史数字：
+\cpath{Examples/Tests/langmuir/CMakeLists.txt} 将这张输入卡注册为 \cpath{test\_1d\_langmuir\_multi}：它使用两个 MPI rank，并把末态 plotfile \cpath{diags/diag1000080} 交给 \cpath{analysis\_1d.py}。这给出了一条读者可回查的闭环，而不是一串脱离上下文的历史数字：
 
 \begin{enumerate}
 \item 输入卡设置 \code{max_step = 80}、周期边界、\cpath{esirkepov} 沉积和第 40/80 步的 full diagnostics；
-\item \cpath{analysis_1d.py} 从传入的末态 plotfile 读取 \cpath{Ez}，按脚本中的解析 Langmuir 解重建同一时刻的场，并要求 \code{error_rel < 0.05}；
-\item 脚本随后调用 \cpath{analysis_utils.py} 的 \cpath{check_charge_conservation(data)}。对这张 \cpath{esirkepov}、非 PSATD、非 RZ 的输入，helper 实际检查
+\item \cpath{analysis\_1d.py} 从传入的末态 plotfile 读取 \cpath{Ez}，按脚本中的解析 Langmuir 解重建同一时刻的场，并要求 \code{error_rel < 0.05}；
+\item 脚本随后调用 \cpath{analysis\_utils.py} 的 \cpath{check\_charge\_conservation(data)}。对这张 \cpath{esirkepov}、非 PSATD、非 RZ 的输入，helper 实际检查
 \end{enumerate}
 
 \[
@@ -756,9 +756,9 @@ cmake --build "$WARPX_BUILD" -j 4
 
 不要把这个命令理解为“任意输入都能运行”。WarpX 的可执行文件名会编码编译选项；当前构建逻辑同时为 1D application 建立 \cpath{warpx.1d} 链接。因此，在继续前应确认实际二进制与输入的 \cpath{geometry.dims} 相容，而不是拿一个 3D、RZ 或旧 build directory 的可执行文件碰运气。
 
-\textbf{第二层是 CTest 参考执行。} 在默认 \cpath{WarpX_APP} 与 \cpath{BUILD_TESTING} 路径中，\cpath{Examples/} 会登记测试；\cpath{test_1d_langmuir_multi} 的 CMake 条目固定了 1D、2-rank、输入、分析脚本和 checksum。\textbf{注意：这个名字是 test set，不是 CTest 的单个条目。}
+\textbf{第二层是 CTest 参考执行。} 在默认 \cpath{WarpX\_APP} 与 \cpath{BUILD\_TESTING} 路径中，\cpath{Examples/} 会登记测试；\cpath{test\_1d\_langmuir\_multi} 的 CMake 条目固定了 1D、2-rank、输入、分析脚本和 checksum。\textbf{注意：这个名字是 test set，不是 CTest 的单个条目。}
 
-WarpX 的 \cpath{add_warpx_test()} 实际创建 \cpath{.run}、\cpath{.analysis} 和 \cpath{.checksum} 三项。因此先用 \cpath{-N} 只列出将匹配的项：
+WarpX 的 \cpath{add\_warpx\_test()} 实际创建 \cpath{.run}、\cpath{.analysis} 和 \cpath{.checksum} 三项。因此先用 \cpath{-N} 只列出将匹配的项：
 
 % <-- fenced code (bash)
 \begin{consoleblock}
@@ -801,13 +801,13 @@ mpirun -np 2 "$WARPX_BUILD/bin/warpx.1d" inputs
 python analysis_1d.py diags/diag1000080
 \end{consoleblock}
 
-最后一行需要可用的 \cpath{yt}、\cpath{numpy}、\cpath{scipy} 和 \cpath{matplotlib} 分析环境；这与 C++ 可执行文件能否启动是两项不同前提。直接运行会生成 \cpath{warpx_used_inputs}，其中包含显式和隐式使用的参数；诊断默认写到 \cpath{diags/}。两者应与终端输出一起保存，才能说明此次运行实际使用了什么输入。若改动过 \cpath{max_step}、diagnostics 名称或输出周期，\cpath{diags/diag1000080} 未必仍存在，分析脚本和 consumer 路径也必须随之重新核对。
+最后一行需要可用的 \cpath{yt}、\cpath{numpy}、\cpath{scipy} 和 \cpath{matplotlib} 分析环境；这与 C++ 可执行文件能否启动是两项不同前提。直接运行会生成 \cpath{warpx\_used\_inputs}，其中包含显式和隐式使用的参数；诊断默认写到 \cpath{diags/}。两者应与终端输出一起保存，才能说明此次运行实际使用了什么输入。若改动过 \cpath{max\_step}、diagnostics 名称或输出周期，\cpath{diags/diag1000080} 未必仍存在，分析脚本和 consumer 路径也必须随之重新核对。
 
 这三层形成一条首运行合同：\textbf{先让编译维度匹配输入，再用 CTest 确认官方注册的 producer/consumer 路径，最后才在独立目录修改输入并重新定义 analysis。} 任何一层成功都不能替代另外两层；尤其是“程序退出为零”既不自动产生解析误差 gate，也不自动证明手动修改后的输入仍满足原测试的结论范围。
 
 \subsection{受控修改路线：一个命令行覆盖会改变哪一份证据}
 
-第一次改输入时，最常见的错误不是参数语法，而是继续把原案例的 analysis 当成新运行的结论。WarpX 允许在命令行覆盖输入项，并把显式和隐式生效的参数写进 \cpath{warpx_used_inputs}；这使覆盖操作可追溯，却不让原来的 consumer 自动适配。
+第一次改输入时，最常见的错误不是参数语法，而是继续把原案例的 analysis 当成新运行的结论。WarpX 允许在命令行覆盖输入项，并把显式和隐式生效的参数写进 \cpath{warpx\_used\_inputs}；这使覆盖操作可追溯，却不让原来的 consumer 自动适配。
 
 以本节 Langmuir 输入为例，\code{max_step = 80} 与 \code{diag1.intervals = 40} 共同产生第 40 与第 80 步的 Full diagnostics；CTest 登记的 \code{analysis_1d.py diags/diag1000080} 明确消费后者。下面的短运行只适合检查“命令行覆盖是否真正进入本次 producer”：
 
@@ -823,23 +823,23 @@ mpirun -np 2 "$WARPX_BUILD/bin/warpx.1d" inputs max_step=10 \
 rg '^max_step' warpx_used_inputs
 \end{consoleblock}
 
-这里 \cpath{warpx_used_inputs} 中的 \code{max_step = 10} 才是“覆盖已被消费”的证据；\cpath{stdout.log} 只能帮助定位启动、MPI 或参数错误。因为步数 10 没有达到这个输入的 40-step 输出间隔，原来注册的 \cpath{diags/diag1000080} 不会由此产生。故而下面这条命令在该 probe 上没有意义：
+这里 \cpath{warpx\_used\_inputs} 中的 \code{max_step = 10} 才是“覆盖已被消费”的证据；\cpath{stdout.log} 只能帮助定位启动、MPI 或参数错误。因为步数 10 没有达到这个输入的 40-step 输出间隔，原来注册的 \cpath{diags/diag1000080} 不会由此产生。故而下面这条命令在该 probe 上没有意义：
 
 % <-- fenced code (bash)
 \begin{consoleblock}
 python analysis_1d.py diags/diag1000080
 \end{consoleblock}
 
-它失败或找不到文件不能说明 Langmuir 物理失败，只说明 consumer 仍指向原 producer 的末态。反过来，若手工预先留下同名旧目录，脚本甚至可能读取旧数据，造成更危险的假阳性。因此每个参数试验应有独立目录，且开始前确认 \cpath{diags/} 的时间步与本次 \cpath{warpx_used_inputs} 相符。
+它失败或找不到文件不能说明 Langmuir 物理失败，只说明 consumer 仍指向原 producer 的末态。反过来，若手工预先留下同名旧目录，脚本甚至可能读取旧数据，造成更危险的假阳性。因此每个参数试验应有独立目录，且开始前确认 \cpath{diags/} 的时间步与本次 \cpath{warpx\_used\_inputs} 相符。
 
 要重新获得一个有物理含义的比较，读者有两条不同的路线：
 
 \begin{enumerate}
-\item \textbf{保持官方合同。} 不改 \cpath{max_step}、\cpath{diag1.intervals}、场字段或解析模型参数，运行到 80 步，再把新生成的 \cpath{diags/diag1000080} 交给原 \cpath{analysis_1d.py}。这能重新检查指定 1D、2-rank 输入的解析场与离散 Gauss-law gate。
-\item \textbf{建立新合同。} 若改动步数、diagnostic 周期、网格、沉积、边界或理论参数，先写明新的 producer 文件、consumer 读取字段、reference、容差与不可外推范围。\cpath{analysis_1d.py} 通过命令行参数取得文件名，并以文件内时间重建理论场；但这不自动证明原来的 \cpath{0.05} 阈值和 \cpath{check_charge_conservation} 的适用条件在修改后仍合理。
+\item \textbf{保持官方合同。} 不改 \cpath{max\_step}、\cpath{diag1.intervals}、场字段或解析模型参数，运行到 80 步，再把新生成的 \cpath{diags/diag1000080} 交给原 \cpath{analysis\_1d.py}。这能重新检查指定 1D、2-rank 输入的解析场与离散 Gauss-law gate。
+\item \textbf{建立新合同。} 若改动步数、diagnostic 周期、网格、沉积、边界或理论参数，先写明新的 producer 文件、consumer 读取字段、reference、容差与不可外推范围。\cpath{analysis\_1d.py} 通过命令行参数取得文件名，并以文件内时间重建理论场；但这不自动证明原来的 \cpath{0.05} 阈值和 \cpath{check\_charge\_conservation} 的适用条件在修改后仍合理。
 \end{enumerate}
 
-因此，一个最小的修改记录至少回答四个问题：\textbf{哪一项输入被覆盖、\cpath{warpx_used_inputs} 如何证实它、这次实际写出了什么 diagnostics、哪个 consumer 因何仍然或不再适用。} 这比保存一串终端输出更接近可重复的数值实验，也把“配置变了”与“物理结论变了”分开。
+因此，一个最小的修改记录至少回答四个问题：\textbf{哪一项输入被覆盖、\cpath{warpx\_used\_inputs} 如何证实它、这次实际写出了什么 diagnostics、哪个 consumer 因何仍然或不再适用。} 这比保存一串终端输出更接近可重复的数值实验，也把“配置变了”与“物理结论变了”分开。
 
 \section{基础文献与证据范围}
 
@@ -885,8 +885,8 @@ python analysis_1d.py diags/diag1000080
 \begin{enumerate}
 \item 解释为什么 \cpath{ComputeDt()} 给出的可运行时间步，不自动保证 $\omega_p\Delta t \ll 1$。
 \item 用本章的 $\lambda_D$ 讨论说明：为什么 $\Delta x \gg \lambda_D$ 时，即使主循环稳定，也可能已经不是同一个物理 plasma。
-\item 结合本章的 Langmuir 案例，指出 \cpath{analysis_1d.py} 的两条核心断言分别对应本章哪两类理论边界。
-\item \textbf{案例闭环题}：依次读取 \cpath{inputs_test_1d_langmuir_multi}、\cpath{langmuir/CMakeLists.txt} 和 \cpath{analysis_1d.py}，交付一张四行表（输入设置、诊断 surface、分析断言、不可外推范围）。表中必须写清 \cpath{test_1d_langmuir_multi} 的两个 rank、\code{analysis_1d.py diags/diag1000080} 的绑定，以及为什么不能只从 \code{max_step = 80} 猜测分析器实际消费的输出路径和检查量。
+\item 结合本章的 Langmuir 案例，指出 \cpath{analysis\_1d.py} 的两条核心断言分别对应本章哪两类理论边界。
+\item \textbf{案例闭环题}：依次读取 \cpath{inputs\_test\_1d\_langmuir\_multi}、\cpath{langmuir/CMakeLists.txt} 和 \cpath{analysis\_1d.py}，交付一张四行表（输入设置、诊断 surface、分析断言、不可外推范围）。表中必须写清 \cpath{test\_1d\_langmuir\_multi} 的两个 rank、\code{analysis_1d.py diags/diag1000080} 的绑定，以及为什么不能只从 \code{max_step = 80} 猜测分析器实际消费的输出路径和检查量。
 \end{enumerate}
 
 \section{本章结论}

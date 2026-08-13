@@ -90,11 +90,22 @@ def inline(text: str) -> str:
         tok = tokens[int(m.group(1))]
         if tok.startswith("`"):
             inner = tok[1:-1]
-            # space-free ASCII tokens use breakable \cpath; anything with
-            # spaces or CJK falls back to literal \code (CJK needs xeCJK's
-            # CJK-mono font, and \path swallows spaces).
-            if " " not in inner and inner.isascii():
-                return r"\cpath{" + inner + "}"
+            # 1) space-free ASCII of URL-safe chars -> \cpath (underscores
+            #    pre-escaped; seqsplit in the macro breaks long identifiers)
+            if re.fullmatch(r"[A-Za-z0-9_./:()\[\]+=*\-<>]+", inner):
+                return r"\cpath{" + inner.replace("_", r"\_") + "}"
+            # 2) token with TeX-special chars that would break a braced
+            #    argument scan (% # & ~ ^ \ { }) -> pre-escaped \codeesc
+            if re.search(r"[%#&~^\\{}$]", inner):
+                esc = (inner.replace("\\", r"\textbackslash{}")
+                            .replace("{", r"\{").replace("}", r"\}")
+                            .replace("%", r"\%").replace("#", r"\#")
+                            .replace("&", r"\&").replace("_", r"\_")
+                            .replace("~", r"\textasciitilde{}")
+                            .replace("^", r"\textasciicircum{}")
+                            .replace("$", r"\$"))
+                return r"\codeesc{" + esc + "}"
+            # 3) otherwise (spaces / CJK, no specials) -> literal \code
             return r"\code{" + inner + "}"
         if tok.startswith("$$"):
             return "$" + tok[2:-2] + "$"   # single-line $$..$$ -> inline math
@@ -141,7 +152,9 @@ def heading_tex(body: str) -> str:
         return r"\texorpdfstring{$" + math + r"$}{" + math_to_text(math) + "}"
 
     def wrap_code(m: re.Match[str]) -> str:
-        inner = m.group(2)
+        cmd, inner = m.group(1), m.group(2)
+        if cmd in ("cpath", "codeesc"):
+            return r"\texttt{" + inner + "}"  # already pre-escaped by restore()
         esc = (inner.replace("\\", r"\textbackslash{}")
                     .replace("_", r"\_")
                     .replace("%", r"\%")
@@ -150,7 +163,7 @@ def heading_tex(body: str) -> str:
         return r"\texttt{" + esc + "}"
 
     body = MATH_DOLLAR_RE.sub(wrap_math, body)
-    body = re.sub(r"\\(cpath|code)\{([^}]*)\}", wrap_code, body)
+    body = re.sub(r"\\(cpath|code|codeesc)\{([^}]*)\}", wrap_code, body)
     return body
 
 
@@ -180,11 +193,62 @@ def card_line(line: str) -> list[str] | None:
     return [rf"\sourceline{{{m.group(1)}}}{{{inline(m.group(2))}}}"]
 
 
+def split_table_row(line: str) -> list[str]:
+    r"""Split a pipe-table row on ``|`` outside inline code/math spans.
+
+    Cells may contain literal ``|`` inside ``$...$``/``$$...$$``/``\\(...\\)``
+    math or backtick code (e.g. ``末态 $\max|x|$``); those must not split.
+    """
+    cells: list[str] = []
+    cur: list[str] = []
+    i, n = 0, len(line)
+    while i < n:
+        ch = line[i]
+        if ch == "`":
+            j = line.find("`", i + 1)
+            j = n - 1 if j == -1 else j
+            cur.append(line[i:j + 1])
+            i = j + 1
+            continue
+        if ch == "$":
+            if line[i:i + 2] == "$$":
+                j = line.find("$$", i + 2)
+                j = n if j == -1 else j
+                cur.append(line[i:j + 2])
+                i = j + 2
+            else:
+                j = line.find("$", i + 1)
+                j = n - 1 if j == -1 else j
+                cur.append(line[i:j + 1])
+                i = j + 1
+            continue
+        if ch == "\\" and i + 1 < n and line[i + 1] == "(":
+            j = line.find("\\)", i + 2)
+            j = n if j == -1 else j
+            cur.append(line[i:j + 2])
+            i = j + 2
+            continue
+        if ch == "|":
+            cells.append("".join(cur))
+            cur = []
+            i += 1
+            continue
+        cur.append(ch)
+        i += 1
+    cells.append("".join(cur))
+    return cells
+
+
 def table_block(lines: list[str], name: str, lineno: int) -> list[str]:
     cells = []
     for raw in lines:
-        parts = [p.strip() for p in raw.strip().strip("|").split("|")]
-        cells.append([inline(p) for p in parts])
+        parts = split_table_row(raw.strip())
+        # drop leading/trailing empty cell from pipe-wrapped rows
+        if parts and parts[0].strip() == "":
+            parts = parts[1:]
+        if parts and parts[-1].strip() == "":
+            parts = parts[:-1]
+        cells.append([inline(p.strip()) for p in parts])
     header = cells[0]
     sep = cells[1] if len(cells) > 1 and all(re.fullmatch(r":?-{2,}:?", c) for c in cells[1]) else None
     body = cells[2:] if sep else cells[1:]

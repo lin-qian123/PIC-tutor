@@ -244,7 +244,7 @@ n_s(\mathbf{x},t)=\int f_s(\mathbf{x},\mathbf{p},t)\,d\mathbf{p}.
 \item 只是“粒子如何给场提供源项、场如何回馈粒子”这一闭合从 Maxwell 变成了 Poisson。
 \end{itemize}
 
-这是一项建模假设，不是看到某一帧电场主要沿一个方向后再补上的解释。WarpX 的 \cpath{warpx.do_electrostatic} 参数说明也明确指出：该模式不在每一步用完整 Maxwell 方程更新场，传播的电磁辐射和激光等效应不被捕获。因此，若研究目标包含传播、辐射、激光注入或横向电磁反馈，就不能用“当前图像看起来近静电”替代模型适用性的论证。
+这是一项建模假设，不是看到某一帧电场主要沿一个方向后再补上的解释。WarpX 的 \cpath{warpx.do\_electrostatic} 参数说明也明确指出：该模式不在每一步用完整 Maxwell 方程更新场，传播的电磁辐射和激光等效应不被捕获。因此，若研究目标包含传播、辐射、激光注入或横向电磁反馈，就不能用“当前图像看起来近静电”替代模型适用性的论证。
 
 这也是为什么：
 
@@ -258,7 +258,7 @@ n_s(\mathbf{x},t)=\int f_s(\mathbf{x},\mathbf{p},t)\,d\mathbf{p}.
 
 选择 electrostatic 路线时，先把“模型是否适合”与“这一实现是否通过指定验证”分开。下面的四层顺序可防止把一个收敛的 Poisson solve、一次通过的回归或一幅近纵向电场图误读成完整的 Vlasov--Maxwell 验证。
 
-\textbf{第一层：先判断问题是否仍需传播电磁自由度。} 若研究对象包含激光注入、辐射传播、波的有限传播时间、横向电磁反馈或与 PML 吸收有关的反射，\cpath{warpx.do_electrostatic} 不是近似程度较高的快捷路径，而是模型对象已经变了；应回到完整 electromagnetic 路线。反之，若目标是给定边界势下的空间电荷、静电平衡或 Poisson 边值问题，才继续问 Poisson 解和边界条件是否与目标相符。参数文档的“没有 timestep 限制”只是在说该模式不由 electromagnetic CFL 限制；它既不免除粒子输运、等离子体频率、统计采样或 Poisson 误差的判断，也不授权把过大的步长写成物理上准确。
+\textbf{第一层：先判断问题是否仍需传播电磁自由度。} 若研究对象包含激光注入、辐射传播、波的有限传播时间、横向电磁反馈或与 PML 吸收有关的反射，\cpath{warpx.do\_electrostatic} 不是近似程度较高的快捷路径，而是模型对象已经变了；应回到完整 electromagnetic 路线。反之，若目标是给定边界势下的空间电荷、静电平衡或 Poisson 边值问题，才继续问 Poisson 解和边界条件是否与目标相符。参数文档的“没有 timestep 限制”只是在说该模式不由 electromagnetic CFL 限制；它既不免除粒子输运、等离子体频率、统计采样或 Poisson 误差的判断，也不授权把过大的步长写成物理上准确。
 
 \textbf{第二层：明确实际解的是什么。} \cpath{labframe} 以所有物种合成的 $\rho$ 解
 
@@ -269,7 +269,7 @@ n_s(\mathbf{x},t)=\int f_s(\mathbf{x},\mathbf{p},t)\,d\mathbf{p}.
 
 \cpath{labframe-electromagnetostatic} 还以合成的 $\mathbf{J}$ 解矢势并构造静磁场；\cpath{labframe-effective-potential} 则改写 Poisson 算子以改变大 $\omega_{pe}\Delta t$ 时的数值行为。它们不是同一个开关的三个拼写。读者若只需 electrostatic 的 $\phi,\mathbf{E}$，不能因为输出里出现了 $B$ 或因为某个模式能稳定运行，就跳过所选模式的方程和适用假设。
 
-\textbf{第三层：用一个有解析 reference 的 producer 检查指定对象。} 官方 \cpath{test_3d_electrostatic_sphere_eb} 是启用 EB 时的 3D、2-rank 案例：\code{max_step = 1}、\code{warpx.do_electrostatic = labframe}、外边界为零电势的 PEC，半径 $R=0.1\,\mathrm{m}$ 的 embedded sphere 固定为 $\phi_0=1\,\mathrm{V}$。它写出 \cpath{Ex/Ey/Ez/rho/phi/eb_covered} 的 Full diagnostics，并另写 \cpath{ChargeOnEB} 的全球与八分之一球积分。这里的 producer 很窄：它构造的是给定导体势、特定几何、单步、无传播辐射主张的 Poisson/EB 问题，而不是一般带粒子动力学的 plasma benchmark。
+\textbf{第三层：用一个有解析 reference 的 producer 检查指定对象。} 官方 \cpath{test\_3d\_electrostatic\_sphere\_eb} 是启用 EB 时的 3D、2-rank 案例：\code{max_step = 1}、\code{warpx.do_electrostatic = labframe}、外边界为零电势的 PEC，半径 $R=0.1\,\mathrm{m}$ 的 embedded sphere 固定为 $\phi_0=1\,\mathrm{V}$。它写出 \cpath{Ex/Ey/Ez/rho/phi/eb\_covered} 的 Full diagnostics，并另写 \cpath{ChargeOnEB} 的全球与八分之一球积分。这里的 producer 很窄：它构造的是给定导体势、特定几何、单步、无传播辐射主张的 Poisson/EB 问题，而不是一般带粒子动力学的 plasma benchmark。
 
 \textbf{第四层：让 consumer 与所问问题一一对应。} 该案例的 \cpath{analysis.py} 比较全嵌入边界电荷
 
@@ -277,9 +277,9 @@ n_s(\mathbf{x},t)=\int f_s(\mathbf{x},\mathbf{p},t)\,d\mathbf{p}.
 Q_{\mathrm{th}}=4\pi\epsilon_0\phi_0R
 \]
 
-与 \cpath{eb_charge.txt} 中的数值积分，并要求相对误差小于 \cpath{0.06}；它还把八分之一权重积分与 $Q_{\mathrm{th}}/8$ 比较，并检查 \cpath{eb_covered} 在 $[0,1]$ 内、球内带与球外带分别为 1 与 0。这三类断言分别约束全局边界电荷、加权表面积分和 EB 几何 mask。CTest 随后的 checksum 只回归指定输出基线，不能替代前三个比较。
+与 \cpath{eb\_charge.txt} 中的数值积分，并要求相对误差小于 \cpath{0.06}；它还把八分之一权重积分与 $Q_{\mathrm{th}}/8$ 比较，并检查 \cpath{eb\_covered} 在 $[0,1]$ 内、球内带与球外带分别为 1 与 0。这三类断言分别约束全局边界电荷、加权表面积分和 EB 几何 mask。CTest 随后的 checksum 只回归指定输出基线，不能替代前三个比较。
 
-从执行次序看，初始化阶段和每个 electrostatic 时间步都会经 \cpath{ComputeSpaceChargeField()} 组织 Poisson 场；进入该分支后，演化代码会重置 electrostatic 分量，再在粒子下一次 push 前准备可 gather 的场。与此同时，\cpath{OneStep_sub1()} 明确拒绝 electrostatic solver 与 AMR subcycling 的组合。因此下面的句子都不成立：\textbf{“Poisson 残差小，所以激光传播也正确”、“sphere 的电荷通过，所以任意 EB 几何的场都正确”、“没有 electromagnetic CFL，所以时间步不再需要物理判断”}，以及“这张单步、固定势测试证明了 electrostatic + subcycling 的路径”。
+从执行次序看，初始化阶段和每个 electrostatic 时间步都会经 \cpath{ComputeSpaceChargeField()} 组织 Poisson 场；进入该分支后，演化代码会重置 electrostatic 分量，再在粒子下一次 push 前准备可 gather 的场。与此同时，\cpath{OneStep\_sub1()} 明确拒绝 electrostatic solver 与 AMR subcycling 的组合。因此下面的句子都不成立：\textbf{“Poisson 残差小，所以激光传播也正确”、“sphere 的电荷通过，所以任意 EB 几何的场都正确”、“没有 electromagnetic CFL，所以时间步不再需要物理判断”}，以及“这张单步、固定势测试证明了 electrostatic + subcycling 的路径”。
 
 这张卡的实际交付是一张四行表：模型中保留/删去的自由度、输入 producer、各 consumer 的 reference 与阈值、以及本次结论不能外推的范围。这样才把第 1 章的连续假设接到后续第 3A 章初始化、第 6 章场求解和第 7 章 EB/PML 的不同问题上。
 
@@ -422,7 +422,7 @@ m_i=\alpha_i m,\qquad
 
 \subsection{统计噪声与能量账本验证卡：能量漂移小不等于热平衡或低噪声}
 
-当修改了宏粒子数、shape、gather、滤波或时间步时，最容易发生的误读是：看到总能量曲线“很平”，便宣称热等离子体保持正确、噪声已经降低。二者回答的不是同一个问题。WarpX 的 \cpath{energy_conserving_thermal_plasma} 回归给出了一条很有用、但范围明确的能量账本路线。
+当修改了宏粒子数、shape、gather、滤波或时间步时，最容易发生的误读是：看到总能量曲线“很平”，便宣称热等离子体保持正确、噪声已经降低。二者回答的不是同一个问题。WarpX 的 \cpath{energy\_conserving\_thermal\_plasma} 回归给出了一条很有用、但范围明确的能量账本路线。
 
 \textbf{第一层：先固定它实际产生了什么。} 官方 CTest 注册了 1D 和 2D 两个 producer，均使用两个 MPI rank；两份输入都是周期边界、\code{max_step = 500}、\code{warpx.do_electrostatic = labframe}、二阶 \code{algo.particle_shape = 2}、\code{algo.field_gathering = energy-conserving}，并关闭滤波。电子和质子以相同的常数密度、Gaussian 动量分布和 $100\,\mathrm{eV}$ 温度初始化。1D 每个 cell 每个方向放 4 个宏粒子，2D 每个方向放 2 个；两者都每 100 步写一次 \cpath{ParticleEnergy} 与 \cpath{FieldEnergy}。这是一份特定离散设置下的周期、双物种、静电热等离子体账本，不是任意 thermal plasma 的定义。
 
@@ -501,7 +501,7 @@ N_D\sim (4\pi/3)n_s\lambda_{Ds}^3.
 
 \subsection{尺度计算卡：能量回归通过不等于 Debye 屏蔽已分辨}
 
-上一节的官方 \cpath{energy_conserving_thermal_plasma} producer 正好说明，\textbf{测试名和物理判据必须分开读}。其 1D 输入设定 $T_e=100\,\mathrm{eV}$、
+上一节的官方 \cpath{energy\_conserving\_thermal\_plasma} producer 正好说明，\textbf{测试名和物理判据必须分开读}。其 1D 输入设定 $T_e=100\,\mathrm{eV}$、
 
 \[
 d_{e0}=c/\omega_{pe},\qquad
@@ -554,9 +554,9 @@ L=10d_{e0},\qquad N_x=8.
 \midrule
 \endhead
 $f_s(x,p,t)$ & 物种粒子的位置、动量、权重集合 & $x_p^n,p_p^{n-1/2},w_p$ & \cpath{ParticleContainer} 中的粒子样本，不是一个逐点存储的分布函数 \\
-$ρ(x,t)$ & shape-weighted charge density & $ρ^n$ 或 $\rho^{n+1/2}$ & 由粒子沉积得到；\cpath{rho_fp} 与 \cpath{rho_buf} 还可能分别属于 fine 与 coarse-buffer 路径 \\
+$ρ(x,t)$ & shape-weighted charge density & $ρ^n$ 或 $\rho^{n+1/2}$ & 由粒子沉积得到；\cpath{rho\_fp} 与 \cpath{rho\_buf} 还可能分别属于 fine 与 coarse-buffer 路径 \\
 $J(x,t)$ & trajectory-based current density & 通常跨越 $n -> n+1$ & Esirkepov/Villasenor 等 current deposition 需要 old/new 轨迹或等价的 crossing 信息 \\
-$E,B$ & staggered/collocated grid fields & 由 solver 规定 & \cpath{Efield_*}、\cpath{Bfield_*} 的后缀表示时间层、网格位置或辅助副本，不能只按变量名猜物理时刻 \\
+$E,B$ & staggered/collocated grid fields & 由 solver 规定 & \cpath{Efield\_*}、\cpath{Bfield\_*} 的后缀表示时间层、网格位置或辅助副本，不能只按变量名猜物理时刻 \\
 连续性方程 & 离散 source synchronization & 每个粒子推进步或 solver stage & \cpath{SyncCurrentAndRho()}、guard exchange、AMR average-down 等共同完成可供场求解器使用的 source \\
 \bottomrule
 \end{tabularx}
@@ -581,7 +581,7 @@ $E,B$ & staggered/collocated grid fields & 由 solver 规定 & \cpath{Efield_*}�
 \item \cpath{SyncCurrentAndRho()} 负责把不同 level、边界和 source buffer 中的结果整理成 solver 可消费的源项。
 \end{itemize}
 
-这三层不能合并成“粒子把电荷写到网格”一句话。后续第 5 章会从 kernel 角度展开，第 6 章则会继续说明不同 field solver 如何消费这些 source。附录 A 给出 \cpath{rho_fp}、\cpath{rho_buf}、\cpath{current_fp}、\cpath{current_buf} 和 \cpath{lev} 等 WarpX 实现变量的速查定义。
+这三层不能合并成“粒子把电荷写到网格”一句话。后续第 5 章会从 kernel 角度展开，第 6 章则会继续说明不同 field solver 如何消费这些 source。附录 A 给出 \cpath{rho\_fp}、\cpath{rho\_buf}、\cpath{current\_fp}、\cpath{current\_buf} 和 \cpath{lev} 等 WarpX 实现变量的速查定义。
 
 \section{这一章对后面源码章节的真正约束}
 
@@ -598,7 +598,7 @@ $E,B$ & staggered/collocated grid fields & 由 solver 规定 & \cpath{Efield_*}�
 如果没有这几层边界，后面源码里的：
 
 \begin{itemize}
-\item \cpath{OneStep_nosub}
+\item \cpath{OneStep\_nosub}
 \item \cpath{PushParticlesandDeposit}
 \item \cpath{SyncCurrentAndRho}
 \item \cpath{PushPSATD}
@@ -652,9 +652,9 @@ $\mathbf{E},\mathbf{B}$ 怎样作用于粒子又被 source 改写 & 网格位置
 \section{练习与源码定位}
 
 \begin{enumerate}
-\item \textbf{变量桥接题}：根据 1.11 的映射表，说明为什么 \cpath{rho_fp/rho_buf} 不能直接当作两个不同物理量，并指出它们分别在哪个 AMR/source-synchronization 场景出现。
+\item \textbf{变量桥接题}：根据 1.11 的映射表，说明为什么 \cpath{rho\_fp/rho\_buf} 不能直接当作两个不同物理量，并指出它们分别在哪个 AMR/source-synchronization 场景出现。
 \item \textbf{尺度判断题}：给定 $\lambda_D/\Delta x=0.5$ 和 $v_t\Delta t/\Delta x=1.2$，列出至少两个可能的数值风险，并说明它们分别属于空间分辨率、粒子跨单元输运还是时间推进约束。
-\item \textbf{源码定位题}：从 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{OneStep_nosub()} 开始，而不是从全局搜索结果中猜入口。完成下列三步，并交付一个三行表格（函数、连续对象、调用后可认为“已准备好”的数据）：
+\item \textbf{源码定位题}：从 \cpath{Source/Evolve/WarpXEvolve.cpp} 的 \cpath{OneStep\_nosub()} 开始，而不是从全局搜索结果中猜入口。完成下列三步，并交付一个三行表格（函数、连续对象、调用后可认为“已准备好”的数据）：
 \begin{itemize}
 \item 记录 \cpath{PushParticlesandDeposit()} 与 \cpath{SyncCurrentAndRho()} 的相对次序；前者对应粒子输运和源项沉积，后者应使场求解前的 \cpath{J/rho} 经滤波、guard-cell/MR 同步和边界处理而可被消费。
 \item 打开 \cpath{WarpX::SyncCurrentAndRho()} 的定义，列出其中至少两项 source 数据准备动作，并说明它们为什么不能由连续方程本身自动保证。

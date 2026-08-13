@@ -5,7 +5,7 @@
 \chapter{符号、时间层与源码变量}
 \label{chap:A-symbols}
 
-本附录服务于正文阅读和源码检索。公式中的符号采用连续模型或离散模型的常用记号；反引号中的名称则优先对应 WarpX 源码、输入文件或 diagnostics 输出中的实际字段。除特别说明外，SI 制单位适用，粒子权重 \cpath{w_p} 表示一个宏粒子代表的真实粒子数。
+本附录服务于正文阅读和源码检索。公式中的符号采用连续模型或离散模型的常用记号；反引号中的名称则优先对应 WarpX 源码、输入文件或 diagnostics 输出中的实际字段。除特别说明外，SI 制单位适用，粒子权重 \cpath{w\_p} 表示一个宏粒子代表的真实粒子数。
 
 使用本附录时，先区分三件事：数学符号描述的物理量、WarpX 内部数组实际保存的量、输入文件或 diagnostics 对同一名称采用的单位。它们常常有关联，但不必完全相同；尤其是 \code{ux, uy, uz} 不能只按变量名猜测单位。
 
@@ -60,7 +60,7 @@ $S$ & 粒子到网格的空间形函数 & 按离散归一化定义 \\
 
 \begin{enumerate}
 \item \cpath{Source/Particles/WarpXParticleContainer.H} 将粒子容器中的 \code{ux, uy, uz} 说明为 proper velocity，即 \cpath{gamma*v}，内部量纲为 m/s。
-\item \cpath{Docs/source/usage/parameters.rst} 将 \cpath{single_particle_u}、\cpath{multiple_particles_u*} 和常见 species momentum distribution 的输入定义为 \cpath{gamma*beta}，即无量纲的 \cpath{gamma*v/c}。初始化时会乘以 \cpath{c}，再写入内部粒子数组；\cpath{PlasmaInjector.cpp} 中的 \cpath{multiple_particles_ux} 转换正是这一边界的例子。
+\item \cpath{Docs/source/usage/parameters.rst} 将 \cpath{single\_particle\_u}、\cpath{multiple\_particles\_u*} 和常见 species momentum distribution 的输入定义为 \cpath{gamma*beta}，即无量纲的 \cpath{gamma*v/c}。初始化时会乘以 \cpath{c}，再写入内部粒子数组；\cpath{PlasmaInjector.cpp} 中的 \cpath{multiple\_particles\_ux} 转换正是这一边界的例子。
 \end{enumerate}
 
 因此，阅读输入文件时把 \code{uz = 10} 理解为 $\gamma\beta_z=10$；阅读粒子容器或以 SI 单位计算能量的 kernel 时，把内部 \cpath{uz} 理解为 $\gamma v_z=10c$。诊断 parser、openPMD 记录和不同输出格式还可能按其文档以 $\gamma v/c$ 暴露动量分量；遇到 \cpath{ux} 时，先确认它来自输入、容器还是输出 metadata，再进行单位换算。
@@ -78,22 +78,22 @@ $S$ & 粒子到网格的空间形函数 & 按离散归一化定义 \\
 \midrule
 \endhead
 $t^n$ & 第 $n$ 个整数时间层 & \cpath{step}、\cpath{istep} \\
-$t^{n+1/2}$ & 半时间层，常用于 leapfrog 电流或磁场 & \cpath{J^{n+1/2}} 等时间层语义 \\
-$\Delta t$ & 时间步长 & \cpath{dt}、\cpath{warpx.const_dt} 或派生时间步长 \\
-$\Delta x,\Delta y,\Delta z$ & 各方向网格间距 & \cpath{amr.n_cell}、几何 \cpath{cell_size} \\
+$t^{n+1/2}$ & 半时间层，常用于 leapfrog 电流或磁场 & \codeesc{J\textasciicircum{}\{n+1/2\}} 等时间层语义 \\
+$\Delta t$ & 时间步长 & \cpath{dt}、\cpath{warpx.const\_dt} 或派生时间步长 \\
+$\Delta x,\Delta y,\Delta z$ & 各方向网格间距 & \cpath{amr.n\_cell}、几何 \cpath{cell\_size} \\
 $i,j,k$ & 网格单元或节点索引 & AMReX \cpath{IntVect} 分量 \\
 $\ell$ & AMR level 索引，$\ell=0$ 为最粗层 & \cpath{lev}、\cpath{level} \\
 $r$ & RZ/cylindrical 几何中的径向坐标 & m \\
 \cpath{rank} 或 $r_\mathrm{MPI}$ & MPI rank 或 rank 索引；不用裸 $r$ 与径向坐标混写 & \cpath{ParallelDescriptor::MyProc()} 等 \\
 $V_i$ & 网格单元体积 & Cartesian 中常为 $\Delta x\Delta y\Delta z$ \\
-$\rho_i^n$ & 单元/节点 $i$ 在时间层 $n$ 的电荷密度 & \cpath{rho}、\cpath{rho_fp}、\cpath{rho_buf} \\
-$\mathbf{J}_i^{n+1/2}$ & 时间层 $n+1/2$ 的电流密度 & \cpath{current_fp}、\cpath{current_buf} \\
+$\rho_i^n$ & 单元/节点 $i$ 在时间层 $n$ 的电荷密度 & \cpath{rho}、\cpath{rho\_fp}、\cpath{rho\_buf} \\
+$\mathbf{J}_i^{n+1/2}$ & 时间层 $n+1/2$ 的电流密度 & \cpath{current\_fp}、\cpath{current\_buf} \\
 $\nabla_h\cdot\mathbf{J}$ & 离散散度 & 由 staggering 和差分 stencil 决定 \\
 $S_i(\mathbf{x}_p)$ & 粒子位置对网格量 $i$ 的形函数值 & \cpath{ShapeFactors} 中的 shape 权重 \\
 \bottomrule
 \end{tabularx}
 
-在 AMR 语境中，\cpath{_fp} 与 \cpath{_cp} 通常分别标记 fine patch 和 coarse patch，\cpath{_aux} 则标记供粒子 gather 使用的辅助场。它们不是同一物理场的任意别名：粗细网格覆盖、guard cell 和同步阶段决定某个数组何时有效。第 3、5 和 7 章中的 \cpath{current_fp/current_buf}、\cpath{rho_fp/rho_buf} 与 \cpath{Efield_aux/Bfield_aux} 都应按这个生命周期来读。
+在 AMR 语境中，\cpath{\_fp} 与 \cpath{\_cp} 通常分别标记 fine patch 和 coarse patch，\cpath{\_aux} 则标记供粒子 gather 使用的辅助场。它们不是同一物理场的任意别名：粗细网格覆盖、guard cell 和同步阶段决定某个数组何时有效。第 3、5 和 7 章中的 \cpath{current\_fp/current\_buf}、\cpath{rho\_fp/rho\_buf} 与 \cpath{Efield\_aux/Bfield\_aux} 都应按这个生命周期来读。
 
 \section{A.3 沉积、推进与场求解记号}
 
@@ -109,15 +109,15 @@ $S_i(\mathbf{x}_p)$ & 粒子位置对网格量 $i$ 的形函数值 & \cpath{Shap
 \endhead
 $\rho^n\rightarrow\mathbf{J}^{n+1/2}\rightarrow\rho^{n+1}$ & 电荷守恒 current-deposition 主线的时间层关系 & 不能把 charge deposition 和 current deposition 当成同一个 kernel \\
 \cpath{old} / \cpath{new} & 粒子在一个推进步或 segment 两端的形函数/位置状态 & Esirkepov、Villasenor kernel 中常见 \\
-\cpath{relative_time} & 在同一步内取样粒子位置的相对时间参数 & 影响 source 的时间层，而不是额外推进粒子 \\
+\cpath{relative\_time} & 在同一步内取样粒子位置的相对时间参数 & 影响 source 的时间层，而不是额外推进粒子 \\
 \cpath{icomp} & charge component 或时间层分量选择 & 需结合调用入口解释，不能只按名字猜测 \\
-\cpath{depos_lev} & charge 沉积目标 AMR level & coarse-buffer 粒子可能直接沉积到 \cpath{lev-1} \\
-\cpath{current_fp} & fine-patch current buffer & 主要对应 fine patch 粒子沉积 \\
-\cpath{current_buf} & coarse-buffer current buffer & 后续还要经过同步/整理 \\
-\cpath{rho_fp} / \cpath{rho_buf} & fine-patch / coarse-buffer charge buffer & 是 source route 的观测面，不等于最终 plotfile 字段 \\
-\cpath{Efield_fp} / \cpath{Bfield_fp} & fine-patch 电场/磁场 & 不能直接假定就是粒子 gather 的数组 \\
-\cpath{Efield_cp} / \cpath{Bfield_cp} & coarse-patch 电场/磁场 & 在 mesh refinement 近边界的 gather/sync 语义要结合 level 与 patch type 判断 \\
-\cpath{Efield_aux} / \cpath{Bfield_aux} & 供粒子 gather 的辅助场 & 由 \cpath{UpdateAuxiliaryData} 等路径从 patch 场构造；只定义 E/B，不把它误认为 current 或 charge 容器 \\
+\cpath{depos\_lev} & charge 沉积目标 AMR level & coarse-buffer 粒子可能直接沉积到 \cpath{lev-1} \\
+\cpath{current\_fp} & fine-patch current buffer & 主要对应 fine patch 粒子沉积 \\
+\cpath{current\_buf} & coarse-buffer current buffer & 后续还要经过同步/整理 \\
+\cpath{rho\_fp} / \cpath{rho\_buf} & fine-patch / coarse-buffer charge buffer & 是 source route 的观测面，不等于最终 plotfile 字段 \\
+\cpath{Efield\_fp} / \cpath{Bfield\_fp} & fine-patch 电场/磁场 & 不能直接假定就是粒子 gather 的数组 \\
+\cpath{Efield\_cp} / \cpath{Bfield\_cp} & coarse-patch 电场/磁场 & 在 mesh refinement 近边界的 gather/sync 语义要结合 level 与 patch type 判断 \\
+\cpath{Efield\_aux} / \cpath{Bfield\_aux} & 供粒子 gather 的辅助场 & 由 \cpath{UpdateAuxiliaryData} 等路径从 patch 场构造；只定义 E/B，不把它误认为 current 或 charge 容器 \\
 \cpath{Direct} & 直接速度加权电流沉积 & 简单但不自动满足离散连续性方程 \\
 \cpath{Esirkepov} & 基于轨迹与形函数差分的 charge-conserving current deposition & 重点看 density decomposition 和 prefix accumulation \\
 \cpath{Villasenor} & 基于 cell crossing segment 的 charge-conserving current deposition & 重点看 crossing、segment 和局部 face flux \\
@@ -144,7 +144,7 @@ $\rho^n\rightarrow\mathbf{J}^{n+1/2}\rightarrow\rho^{n+1}$ & 电荷守恒 curren
 plotfile & 分析用的网格/粒子输出；不可 restart，重启使用 \cpath{Full} checkpoint \\
 openPMD & 粒子、网格或 reduced diagnostics 的结构化输出接口 \\
 \cpath{diagNNNNNNN} & diagnostics 输出的迭代目录，例如 \cpath{diag1000000} \\
-\cpath{reduced_diags} & 不保存完整场/粒子，而输出聚合标量或低维量的 diagnostics \\
+\cpath{reduced\_diags} & 不保存完整场/粒子，而输出聚合标量或低维量的 diagnostics \\
 \cpath{FieldProbe} & 沿指定几何路径采样场并做积分或线探针输出的诊断 \\
 \cpath{BoundaryScrapingDiagnostics} & 记录穿过粒子边界的粒子及其统计量 \\
 producer & 产生字段、粒子或 reduced output 的运行时路径 \\
@@ -185,6 +185,6 @@ LWFA / PWFA & Laser / Plasma Wakefield Acceleration & 激光/束流驱动尾场�
 
 \begin{enumerate}
 \item 看到 \code{ux, uy, uz} 时，先确认它来自输入、内部粒子容器还是 diagnostics；分别按 $\gamma\beta$、$\gamma\mathbf{v}$ 或该输出的 metadata 解释，不能把数值直接混用。
-\item 看到 \cpath{rho}、\cpath{current_fp} 或 \cpath{current_buf} 时，先判断它属于 local kernel、level buffer、同步后场，还是最终 diagnostics 输出；同名物理量可能处于不同生命周期阶段。
-\item 看到上标 $n$、$n+1/2$ 或 \cpath{relative_time} 时，先确认粒子位置、场、current 和 charge 是否处在同一个时间层；不能只根据变量名推断守恒性。
+\item 看到 \cpath{rho}、\cpath{current\_fp} 或 \cpath{current\_buf} 时，先判断它属于 local kernel、level buffer、同步后场，还是最终 diagnostics 输出；同名物理量可能处于不同生命周期阶段。
+\item 看到上标 $n$、$n+1/2$ 或 \cpath{relative\_time} 时，先确认粒子位置、场、current 和 charge 是否处在同一个时间层；不能只根据变量名推断守恒性。
 \end{enumerate}

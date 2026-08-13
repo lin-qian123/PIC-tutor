@@ -144,23 +144,23 @@ const ParmParse pp_psatd("psatd");
 \begin{enumerate}
 \item \cpath{queryWithParser/queryArrWithParser}
 \begin{itemize}
-\item 适合 \cpath{warpx.cfl}、\cpath{const_dt}、\cpath{amr.n_cell} 这类“读入就该变成数值”的参数；
+\item 适合 \cpath{warpx.cfl}、\cpath{const\_dt}、\cpath{amr.n\_cell} 这类“读入就该变成数值”的参数；
 \end{itemize}
 \item \code{Store_parserString + makeParser}
 \begin{itemize}
-\item 适合 \cpath{ref_patch_function(x,y,z)}、外场 parser、diagnostics 过滤函数这类“先保留表达式，再在别处编译执行”的参数；
+\item 适合 \code{ref_patch_function(x,y,z)}、外场 parser、diagnostics 过滤函数这类“先保留表达式，再在别处编译执行”的参数；
 \end{itemize}
 \item \cpath{IntervalsParser}
 \begin{itemize}
-\item 适合 \cpath{sort_intervals}、\cpath{dt_update_interval}、diagnostics \cpath{intervals} 这类切片语法，不应误看成普通整数；
+\item 适合 \cpath{sort\_intervals}、\cpath{dt\_update\_interval}、diagnostics \cpath{intervals} 这类切片语法，不应误看成普通整数；
 \end{itemize}
 \item \code{query_enum_sloppy + AMREX_ENUM}
 \begin{itemize}
-\item 适合 \cpath{algo.evolve_scheme}、\cpath{warpx.do_electrostatic}、\cpath{algo.current_deposition} 这类算法枚举入口。
+\item 适合 \cpath{algo.evolve\_scheme}、\cpath{warpx.do\_electrostatic}、\cpath{algo.current\_deposition} 这类算法枚举入口。
 \end{itemize}
 \end{enumerate}
 
-这层结构解释了为什么同样都出现在 \cpath{parameters.rst} 里，\cpath{max_step}、\cpath{ref_patch_function(x,y,z)} 和 \cpath{algo.evolve_scheme} 在源码中会走三种完全不同的消费链。后续参数索引如果想真正有用，就必须至少区分：
+这层结构解释了为什么同样都出现在 \cpath{parameters.rst} 里，\cpath{max\_step}、\code{ref_patch_function(x,y,z)} 和 \cpath{algo.evolve\_scheme} 在源码中会走三种完全不同的消费链。后续参数索引如果想真正有用，就必须至少区分：
 
 \begin{itemize}
 \item 参数前缀；
@@ -181,23 +181,23 @@ amrex::Initialize(
 );
 \end{codeblock}
 
-这个回调会统一注入常量、改写 \cpath{amrex.abort_on_out_of_gpu_memory}、\cpath{amrex.the_arena_is_managed}、\cpath{amrex.omp_threads}、粒子 tiling 缺省值，以及由 \cpath{boundary.field_*} / \cpath{boundary.particle_*} 反推 \cpath{geometry.is_periodic}。换句话说，WarpX 从程序一启动就已经不是“AMReX 原生默认设置”。
+这个回调会统一注入常量、改写 \cpath{amrex.abort\_on\_out\_of\_gpu\_memory}、\cpath{amrex.the\_arena\_is\_managed}、\cpath{amrex.omp\_threads}、粒子 tiling 缺省值，以及由 \cpath{boundary.field\_*} / \cpath{boundary.particle\_*} 反推 \cpath{geometry.is\_periodic}。换句话说，WarpX 从程序一启动就已经不是“AMReX 原生默认设置”。
 
-同一个文件还会在 AMReX 初始化后立即把 \cpath{geometry.prob_lo/prob_hi}、\cpath{amr.n_cell}、\cpath{max_grid_size*}、\cpath{blocking_factor*} 这类可能带表达式的输入预解析并写回 parser，保证后面的 \cpath{Geometry}、\cpath{warpx_job_info} 和 \cpath{yt} 读到的是数值结果，而不是未展开的表达式字符串。
+同一个文件还会在 AMReX 初始化后立即把 \cpath{geometry.prob\_lo/prob\_hi}、\cpath{amr.n\_cell}、\cpath{max\_grid\_size*}、\cpath{blocking\_factor*} 这类可能带表达式的输入预解析并写回 parser，保证后面的 \cpath{Geometry}、\cpath{warpx\_job\_info} 和 \cpath{yt} 读到的是数值结果，而不是未展开的表达式字符串。
 
 \subsection{3A.2.2 文档 alias、AMReX-owned 参数与 WarpX 自有 parser 不是一回事}
 
 参数索引继续往下清理后，会发现还有一类参数不能简单用“有没有 grep 到同名字符串”来理解。典型例子是：
 
 \begin{itemize}
-\item \cpath{geometry.prob_lo/hi}
-\item \cpath{boundary.field_lo/hi}
-\item \cpath{boundary.potential_lo/hi_x/y/z}
+\item \cpath{geometry.prob\_lo/hi}
+\item \cpath{boundary.field\_lo/hi}
+\item \cpath{boundary.potential\_lo/hi\_x/y/z}
 \item \cpath{psatd.nox/noy/noz}
-\item \cpath{qed_schwinger.xmin/ymin/zmin/xmax/ymax/zmax}
+\item \cpath{qed\_schwinger.xmin/ymin/zmin/xmax/ymax/zmax}
 \end{itemize}
 
-这些名字在文档里是 grouped alias，但源码里真实读取的仍然是拆开的 key。以 \cpath{geometry.prob_lo/hi} 为例，WarpX 真正做的是：
+这些名字在文档里是 grouped alias，但源码里真实读取的仍然是拆开的 key。以 \cpath{geometry.prob\_lo/hi} 为例，WarpX 真正做的是：
 
 % <-- fenced code (cpp)
 \begin{codeblock}
@@ -210,9 +210,9 @@ pp_geometry.addarr("prob_lo", prob_lo);
 pp_geometry.addarr("prob_hi", prob_hi);
 \end{codeblock}
 
-所以 \cpath{geometry.prob_lo/hi} 只是文档层“成对参数”的写法，真正 parser key 仍然是 \cpath{prob_lo} 和 \cpath{prob_hi}。\cpath{boundary.field_lo/hi}、\cpath{boundary.particle_lo/hi}、\cpath{boundary.potential_lo/hi_x/y/z}、\cpath{psatd.nox/noy/noz} 和 Schwinger 区域边界框也都属于这一类。
+所以 \cpath{geometry.prob\_lo/hi} 只是文档层“成对参数”的写法，真正 parser key 仍然是 \cpath{prob\_lo} 和 \cpath{prob\_hi}。\cpath{boundary.field\_lo/hi}、\cpath{boundary.particle\_lo/hi}、\cpath{boundary.potential\_lo/hi\_x/y/z}、\cpath{psatd.nox/noy/noz} 和 Schwinger 区域边界框也都属于这一类。
 
-还要再区分另一类：参数确实出现在 WarpX 手册里，但 WarpX 并不直接读取，而是由 AMReX 自己消费，WarpX 只消费结果。例如 \cpath{amr.ref_ratio} / \cpath{amr.ref_ratio_vect} 和 \cpath{amrex.async_out} / \cpath{amrex.async_out_nfiles}。本书引用的 WarpX 源树没有独立的：
+还要再区分另一类：参数确实出现在 WarpX 手册里，但 WarpX 并不直接读取，而是由 AMReX 自己消费，WarpX 只消费结果。例如 \cpath{amr.ref\_ratio} / \cpath{amr.ref\_ratio\_vect} 和 \cpath{amrex.async\_out} / \cpath{amrex.async\_out\_nfiles}。本书引用的 WarpX 源树没有独立的：
 
 % <-- fenced code (cpp)
 \begin{codeblock}
@@ -220,7 +220,7 @@ ParmParse("amr").query("ref_ratio", ...)
 ParmParse("amrex").query("async_out", ...)
 \end{codeblock}
 
-但后续代码会直接消费已经构造好的 \cpath{ref_ratios}，或者在 plotfile I/O 邻近层继续设置 WarpX 自己的 \cpath{field_io_nfiles} / \cpath{particle_io_nfiles}。因此，参数索引如果要稳定，至少要区分三类：
+但后续代码会直接消费已经构造好的 \cpath{ref\_ratios}，或者在 plotfile I/O 邻近层继续设置 WarpX 自己的 \cpath{field\_io\_nfiles} / \cpath{particle\_io\_nfiles}。因此，参数索引如果要稳定，至少要区分三类：
 
 \begin{enumerate}
 \item WarpX 自身直接 parse；
@@ -250,9 +250,9 @@ m_instance = new WarpX();
 \item RZ spectral 的 gridding 约束是否满足。
 \end{itemize}
 
-例如 \cpath{check_dims()} 直接把编译维度和 \cpath{geometry.dims} 做强一致断言，而 \cpath{read_moving_window_parameters()} 会把输入文件里的 \cpath{moving_window_v} 从“以光速为单位的无量纲参数”转换成真正的物理速度 \code{v = (\cdots)c}，再写进 \cpath{WarpX} 的全局静态状态。
+例如 \cpath{check\_dims()} 直接把编译维度和 \cpath{geometry.dims} 做强一致断言，而 \cpath{read\_moving\_window\_parameters()} 会把输入文件里的 \cpath{moving\_window\_v} 从“以光速为单位的无量纲参数”转换成真正的物理速度 \codeesc{v = (\textbackslash\{\}cdots)c}，再写进 \cpath{WarpX} 的全局静态状态。
 
-这里还要补一层工程来源。\cpath{check_dims()} 能做这种强断言，前提不是“WarpX 在运行时随意切换几何”，而是构建系统已经先把几何变体锁死了。当前主构建链在顶层 \cpath{CMakeLists.txt} 中通过 \cpath{WarpX_DIMS} 生成一组按维度后缀分裂的 \cpath{lib_${SD}} / \cpath{pyWarpX_${SD}} target；旧 GNUmake 链则通过 \cpath{DIM}、\cpath{USE_RZ} 以及 \cpath{-DWARPX_DIM_3D}、\cpath{-DWARPX_DIM_XZ}、\cpath{-DWARPX_DIM_RZ} 这组宏编码几何变体。因此初始化阶段读到的 \cpath{geometry.dims} 实际是在和“当前可执行文件已经按哪一种几何编译出来”做一致性检查，而不是在决定后面要不要临时切换到另一种维度。
+这里还要补一层工程来源。\cpath{check\_dims()} 能做这种强断言，前提不是“WarpX 在运行时随意切换几何”，而是构建系统已经先把几何变体锁死了。当前主构建链在顶层 \cpath{CMakeLists.txt} 中通过 \cpath{WarpX\_DIMS} 生成一组按维度后缀分裂的 \codeesc{lib\_\$\{SD\}} / \codeesc{pyWarpX\_\$\{SD\}} target；旧 GNUmake 链则通过 \cpath{DIM}、\cpath{USE\_RZ} 以及 \cpath{-DWARPX\_DIM\_3D}、\cpath{-DWARPX\_DIM\_XZ}、\cpath{-DWARPX\_DIM\_RZ} 这组宏编码几何变体。因此初始化阶段读到的 \cpath{geometry.dims} 实际是在和“当前可执行文件已经按哪一种几何编译出来”做一致性检查，而不是在决定后面要不要临时切换到另一种维度。
 
 再往下，\cpath{WarpX} 构造函数开头还会调用：
 
@@ -264,27 +264,27 @@ warpx::initialization::initialize_warning_manager();
 也就是在任何 \cpath{ReadParameters()} 和 \cpath{InitData()} 之前，先读入：
 
 \begin{itemize}
-\item \cpath{warpx.always_warn_immediately}
-\item \cpath{warpx.abort_on_warning_threshold}
+\item \cpath{warpx.always\_warn\_immediately}
+\item \cpath{warpx.abort\_on\_warning\_threshold}
 \end{itemize}
 
 这说明 warning manager 在 WarpX 里也是初始化启动层的一部分，而不是后面运行时再临时决定的日志选项。
 
-这一层再往下细分，还要注意 \cpath{MakeWarpX()} 和构造期 \cpath{ReadParameters()} 之间并不是简单前后顺序，而是“前者已经开始改写后者将要读取的参数”。例如 \cpath{ConvertLabParamsToBoost()} 不只是保存 \cpath{gamma_boost}，而是会先把：
+这一层再往下细分，还要注意 \cpath{MakeWarpX()} 和构造期 \cpath{ReadParameters()} 之间并不是简单前后顺序，而是“前者已经开始改写后者将要读取的参数”。例如 \cpath{ConvertLabParamsToBoost()} 不只是保存 \cpath{gamma\_boost}，而是会先把：
 
 \begin{itemize}
-\item \cpath{geometry.prob_lo/prob_hi}
-\item \cpath{warpx.fine_tag_lo/fine_tag_hi}
-\item \cpath{slice.dom_lo/dom_hi}
+\item \cpath{geometry.prob\_lo/prob\_hi}
+\item \cpath{warpx.fine\_tag\_lo/fine\_tag\_hi}
+\item \cpath{slice.dom\_lo/dom\_hi}
 \end{itemize}
 
-按 boosted-frame 规则直接回写进 parser。若同时启用 moving window，它计算的转换系数还会显式依赖 \cpath{moving_window_v/c}。因此 boosted-frame 与 moving-window 的第一次耦合，其实发生在 \cpath{ReadParameters()} 之前，而不是发生在后面的 \cpath{Evolve()}。
+按 boosted-frame 规则直接回写进 parser。若同时启用 moving window，它计算的转换系数还会显式依赖 \cpath{moving\_window\_v/c}。因此 boosted-frame 与 moving-window 的第一次耦合，其实发生在 \cpath{ReadParameters()} 之前，而不是发生在后面的 \cpath{Evolve()}。
 
 同样，\cpath{CheckGriddingForRZSpectral()} 也不是单纯做断言。对 \code{WARPX_DIM_RZ + algo.maxwell_solver = psatd} 这条组合，它会在构造 \cpath{WarpX} 对象之前直接改写：
 
 \begin{itemize}
-\item \cpath{amr.blocking_factor_x/y}
-\item \cpath{amr.max_grid_size_x/y}
+\item \cpath{amr.blocking\_factor\_x/y}
+\item \cpath{amr.max\_grid\_size\_x/y}
 \end{itemize}
 
 并要求 longitudinal 方向至少满足“每个 MPI rank 至少有一个 block，且每个 rank 至少有 8 个 z cells”的约束。也就是说，构造函数里的 \cpath{ReadParameters()} 读到的并不总是用户输入文件里的原始 AMR 分块值，而往往已经是启动层重写过的 spectral-compatible 版本。
@@ -294,16 +294,16 @@ warpx::initialization::initialize_warning_manager();
 \begin{enumerate}
 \item 预初始化与 parser 改写段：
 \begin{itemize}
-\item \cpath{initialize_external_libraries()}
-\item \cpath{amrex_init()}
-\item \cpath{parse_geometry_input()}
-\item \cpath{read_moving_window_parameters()}
+\item \cpath{initialize\_external\_libraries()}
+\item \cpath{amrex\_init()}
+\item \cpath{parse\_geometry\_input()}
+\item \cpath{read\_moving\_window\_parameters()}
 \item \cpath{ConvertLabParamsToBoost()}
 \item \cpath{CheckGriddingForRZSpectral()}
 \end{itemize}
 \item 构造与运行态落地段：
 \begin{itemize}
-\item \cpath{initialize_warning_manager()}
+\item \cpath{initialize\_warning\_manager()}
 \item \cpath{ReadParameters()}
 \item \cpath{BackwardCompatibility()}
 \item \cpath{InitEB()}
@@ -316,10 +316,10 @@ warpx::initialization::initialize_warning_manager();
 再往前走一步，\cpath{ReadParameters()} 还不只是“把输入存进成员”。它已经在替后面的对象图做分叉。例如：
 
 \begin{itemize}
-\item \cpath{do_fluid_species} 先通过 \cpath{fluids.species_names} 决定，随后直接控制是否创建 \cpath{MultiFluidContainer}；
-\item \cpath{electrostatic_solver_id} 与 \cpath{electromagnetic_solver_id} 先在 \cpath{ReadParameters()} 中互相覆盖和约束，随后决定静电 solver 具体实例化成 \cpath{LabFrameExplicitES}、\cpath{EffectivePotentialES} 还是 \cpath{RelativisticExplicitES}；
+\item \cpath{do\_fluid\_species} 先通过 \cpath{fluids.species\_names} 决定，随后直接控制是否创建 \cpath{MultiFluidContainer}；
+\item \cpath{electrostatic\_solver\_id} 与 \cpath{electromagnetic\_solver\_id} 先在 \cpath{ReadParameters()} 中互相覆盖和约束，随后决定静电 solver 具体实例化成 \cpath{LabFrameExplicitES}、\cpath{EffectivePotentialES} 还是 \cpath{RelativisticExplicitES}；
 \item \code{electromagnetic_solver_id == HybridPIC} 时，构造函数后半段才真正创建 \cpath{HybridPICModel}；
-\item \cpath{grid_type}、\cpath{do_current_centering}、\cpath{n_rz_azimuthal_modes} 等参数先在 \cpath{ReadParameters()} 中完成默认值推导和合法组合检查，后面再影响 nodal flags、centering coefficients、fluid 兼容性与容器初始化。
+\item \cpath{grid\_type}、\cpath{do\_current\_centering}、\cpath{n\_rz\_azimuthal\_modes} 等参数先在 \cpath{ReadParameters()} 中完成默认值推导和合法组合检查，后面再影响 nodal flags、centering coefficients、fluid 兼容性与容器初始化。
 \end{itemize}
 
 同样，\cpath{ReadParameters()} 里还有一类“源码先推导默认，再由用户输入覆盖”的派生状态。最典型的是：
@@ -339,7 +339,7 @@ if (!do_divb_cleaning
 pp_warpx.query("do_initial_div_cleaning", m_do_initial_div_cleaning);
 \end{codeblock}
 
-这里 \cpath{do_initial_div_cleaning} 不是单纯从输入文件机械读取，而是先根据外部场类型、grid type 和 solver 组合推导一个默认值，再允许用户显式覆盖。也就是说，后面 \cpath{ProjectionDivCleaner} 是否参与初态构造，不是孤立地由一个布尔开关决定，而是由初始化启动层和 \cpath{ReadParameters()} 主体共同塑造的。
+这里 \cpath{do\_initial\_div\_cleaning} 不是单纯从输入文件机械读取，而是先根据外部场类型、grid type 和 solver 组合推导一个默认值，再允许用户显式覆盖。也就是说，后面 \cpath{ProjectionDivCleaner} 是否参与初态构造，不是孤立地由一个布尔开关决定，而是由初始化启动层和 \cpath{ReadParameters()} 主体共同塑造的。
 
 到这一层为止，初始化阶段已经可以更清楚地压成一条完整链：
 
@@ -355,32 +355,32 @@ pp_warpx.query("do_initial_div_cleaning", m_do_initial_div_cleaning);
 最紧的一组约束是：
 
 \begin{itemize}
-\item \cpath{grid_type=hybrid} 会把 \cpath{do_current_centering} 推成默认真值，并要求 \cpath{algo.field_gathering=momentum-conserving}；
-\item 这又会让 \cpath{AllocLevelData()} 中的 \cpath{aux_is_nodal=true}，从而把 \cpath{Efield_aux/Bfield_aux}、后续 coarse-aux \cpath{cax} 和 gather buffer 路径切到 nodal 版本；
-\item 如果同时显式要求 \cpath{do_current_centering=1}，源码只允许 \cpath{grid_type=hybrid}，并且在 level 分配时额外分配 \cpath{current_fp_nodal}。
+\item \cpath{grid\_type=hybrid} 会把 \cpath{do\_current\_centering} 推成默认真值，并要求 \cpath{algo.field\_gathering=momentum-conserving}；
+\item 这又会让 \cpath{AllocLevelData()} 中的 \cpath{aux\_is\_nodal=true}，从而把 \cpath{Efield\_aux/Bfield\_aux}、后续 coarse-aux \cpath{cax} 和 gather buffer 路径切到 nodal 版本；
+\item 如果同时显式要求 \cpath{do\_current\_centering=1}，源码只允许 \cpath{grid\_type=hybrid}，并且在 level 分配时额外分配 \cpath{current\_fp\_nodal}。
 \end{itemize}
 
-换句话说，\cpath{grid_type}、\cpath{field_gathering_algo}、\cpath{do_current_centering} 在这里并不是三个平行开关，而是一组会继续改写场 index type 和附加存储布局的上游选择器。
+换句话说，\cpath{grid\_type}、\cpath{field\_gathering\_algo}、\cpath{do\_current\_centering} 在这里并不是三个平行开关，而是一组会继续改写场 index type 和附加存储布局的上游选择器。
 
-同样，\cpath{current_deposition_algo} 也不是只影响某个沉积 kernel。源码先把 \cpath{PSATD}、\cpath{HybridPIC} 和 electrostatic 的默认 deposition 拉回 \cpath{Direct}，再对 \cpath{Vay} 加上三重限制：
+同样，\cpath{current\_deposition\_algo} 也不是只影响某个沉积 kernel。源码先把 \cpath{PSATD}、\cpath{HybridPIC} 和 electrostatic 的默认 deposition 拉回 \cpath{Direct}，再对 \cpath{Vay} 加上三重限制：
 
 \begin{itemize}
 \item 只能配 \cpath{PSATD}
 \item 不能配 mesh refinement
-\item 不能配 \cpath{do_current_centering}
+\item 不能配 \cpath{do\_current\_centering}
 \end{itemize}
 
-这条限制后面会直接落成额外字段分配：如果真的选了 \cpath{Vay}，\cpath{AllocLevelMFs()} 会专门分配 \cpath{current_fp_vay}。所以它已经是初始化对象图的一部分，而不只是运行时算法分派。
+这条限制后面会直接落成额外字段分配：如果真的选了 \cpath{Vay}，\cpath{AllocLevelMFs()} 会专门分配 \cpath{current\_fp\_vay}。所以它已经是初始化对象图的一部分，而不只是运行时算法分派。
 
 implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 
 \begin{itemize}
-\item \cpath{semi_implicit_em}
-\item \cpath{theta_implicit_em}
-\item \cpath{strang_implicit_spectral_em}
+\item \cpath{semi\_implicit\_em}
+\item \cpath{theta\_implicit\_em}
+\item \cpath{strang\_implicit\_spectral\_em}
 \end{itemize}
 
-就会立即构造 \cpath{m_implicit_solver}，并同时要求：
+就会立即构造 \cpath{m\_implicit\_solver}，并同时要求：
 
 \begin{itemize}
 \item current deposition 只能是 \cpath{Esirkepov} / \cpath{Villasenor} / \cpath{Direct}
@@ -392,61 +392,61 @@ implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 然后这条链会继续穿到 \cpath{InitFromScratch()} 和 \cpath{AllocLevelMFs()}：
 
 \begin{itemize}
-\item \cpath{InitFromScratch()} 在 \cpath{mypc->InitData()} 之前调用 \cpath{m_implicit_solver->Define()} 和 \cpath{CreateParticleAttributes()}；
-\item \cpath{AllocLevelMFs()} 在 fine patch 上额外分配 \cpath{current_fp_non_suborbit} 与 \cpath{E_old}。
+\item \cpath{InitFromScratch()} 在 \code{mypc->InitData()} 之前调用 \code{m_implicit_solver->Define()} 和 \cpath{CreateParticleAttributes()}；
+\item \cpath{AllocLevelMFs()} 在 fine patch 上额外分配 \cpath{current\_fp\_non\_suborbit} 与 \cpath{E\_old}。
 \end{itemize}
 
 因此 implicit 不是“场求解器章节内部的一个局部话题”，而是在初始化阶段就已经改变粒子属性表和字段分配合同。
 
-\cpath{particle_shape}、filter 和 projection div cleaning 也属于同一种“前置组合约束”。只要存在 particles 或 lasers，\cpath{algo.particle_shape} 就变成强制参数，并直接设定 \cpath{nox=noy=noz}；这反过来继续影响 guard-cell 配额、沉积 stencil 和排序默认值。\cpath{use_filter} 也不是后面可有可无的一步卷积，因为 \cpath{AllocLevelData()} 会先 \cpath{InitFilter()}，再把 filter stencil 长度交给 \cpath{guard_cells.Init(...)}，于是它会继续改写 guard-cell 和 buffer 需求。
+\cpath{particle\_shape}、filter 和 projection div cleaning 也属于同一种“前置组合约束”。只要存在 particles 或 lasers，\cpath{algo.particle\_shape} 就变成强制参数，并直接设定 \cpath{nox=noy=noz}；这反过来继续影响 guard-cell 配额、沉积 stencil 和排序默认值。\cpath{use\_filter} 也不是后面可有可无的一步卷积，因为 \cpath{AllocLevelData()} 会先 \cpath{InitFilter()}，再把 filter stencil 长度交给 \cpath{guard\_cells.Init(...)}，于是它会继续改写 guard-cell 和 buffer 需求。
 
-最后，\cpath{m_do_initial_div_cleaning} 也不是孤立的布尔开关。源码先根据外部 \cpath{B} 场类型、EM solver 组合和是否已经启用 \cpath{do_divb_cleaning} 推导默认值，再允许用户覆盖；而它的下游消费点就在初始化主链里，直接决定 \cpath{ProjectionDivCleaner} 是否参与初始场构造。所以到这一步为止，\cpath{ReadParameters()} 的真实地位可以概括成一句话：
+最后，\cpath{m\_do\_initial\_div\_cleaning} 也不是孤立的布尔开关。源码先根据外部 \cpath{B} 场类型、EM solver 组合和是否已经启用 \cpath{do\_divb\_cleaning} 推导默认值，再允许用户覆盖；而它的下游消费点就在初始化主链里，直接决定 \cpath{ProjectionDivCleaner} 是否参与初始场构造。所以到这一步为止，\cpath{ReadParameters()} 的真实地位可以概括成一句话：
 
 它不是单纯读参数，而是在 \cpath{AllocLevelData()} 和 \cpath{InitFromScratch()} 之前，先把“允许哪种物理-算法-存储组合存在”这件事裁成一个可执行的对象图。
 
 接下来再往下走一步，就会看到 \cpath{AllocLevelMFs()} 真正把这张对象图摊成一组具体字段。这里最容易误判的是 \cpath{rho}、aux、外场、HybridPIC/fluid/macroscopic/EB 这些分支。
 
-先看 \cpath{rho_fp}。它并不是总存在的基础字段，而是只在几类路径下显式分配：
+先看 \cpath{rho\_fp}。它并不是总存在的基础字段，而是只在几类路径下显式分配：
 
 \begin{itemize}
 \item electrostatic / electromagnetostatic / effective-potential
 \item \cpath{HybridPIC}
-\item \cpath{do_dive_cleaning}
-\item PSATD 且启用了 \cpath{update_with_rho} 或 \cpath{current_correction}
+\item \cpath{do\_dive\_cleaning}
+\item PSATD 且启用了 \cpath{update\_with\_rho} 或 \cpath{current\_correction}
 \end{itemize}
 
-而且它的分量数也不是固定值：普通 electrostatic 或 \cpath{HybridPIC} 只需要 \cpath{ncomps}，\cpath{do_dive_cleaning} 一般把它升到 \cpath{2*ncomps}，PSATD 又会根据 \cpath{JRhom} 是否开启在 \cpath{ncomps} 和 \cpath{2*ncomps} 之间切换。也就是说，WarpX 初始化阶段持不持有一份“可演化的 rho 状态”，本身就是 solver contract 的一部分。
+而且它的分量数也不是固定值：普通 electrostatic 或 \cpath{HybridPIC} 只需要 \cpath{ncomps}，\cpath{do\_dive\_cleaning} 一般把它升到 \cpath{2*ncomps}，PSATD 又会根据 \cpath{JRhom} 是否开启在 \cpath{ncomps} 和 \cpath{2*ncomps} 之间切换。也就是说，WarpX 初始化阶段持不持有一份“可演化的 rho 状态”，本身就是 solver contract 的一部分。
 
 与此平行的还有三类不同的辅助标量/约束场：
 
 \begin{itemize}
-\item \cpath{phi_fp}：只属于 electrostatic 系列；
-\item \cpath{F_fp}：只属于 \cpath{div(E)} cleaning；
-\item \cpath{G_fp}：只属于 \cpath{div(B)} cleaning。
+\item \cpath{phi\_fp}：只属于 electrostatic 系列；
+\item \cpath{F\_fp}：只属于 \cpath{div(E)} cleaning；
+\item \cpath{G\_fp}：只属于 \cpath{div(B)} cleaning。
 \end{itemize}
 
-不要把它们混成“又分配了几个标量场”。它们分别服务于 Poisson 势解、电场散度清理和磁场散度清理，而且 \cpath{G} 的 coarse-patch index type 还会继续受 \cpath{grid_type} 控制。
+不要把它们混成“又分配了几个标量场”。它们分别服务于 Poisson 势解、电场散度清理和磁场散度清理，而且 \cpath{G} 的 coarse-patch index type 还会继续受 \cpath{grid\_type} 控制。
 
 再看外场分支。源码实际上维护了两套完全不同的合同：
 
 \begin{enumerate}
 \item grid external fields
 \end{enumerate}
-它们分配成 \cpath{Efield_fp_external/Bfield_fp_external}，index type 必须匹配 \cpath{fp}，后面由 \cpath{AddExternalFields()} 加到主网格场上。
+它们分配成 \cpath{Efield\_fp\_external/Bfield\_fp\_external}，index type 必须匹配 \cpath{fp}，后面由 \cpath{AddExternalFields()} 加到主网格场上。
 \begin{enumerate}
 \item particle external fields
 \end{enumerate}
-它们分配成 \cpath{E_external_particle_field/B_external_particle_field}，index type 必须匹配 \cpath{aux}，而且分量数直接来自外部粒子场元数据。
+它们分配成 \cpath{E\_external\_particle\_field/B\_external\_particle\_field}，index type 必须匹配 \cpath{aux}，而且分量数直接来自外部粒子场元数据。
 
-所以 particle external field 不是 grid external field 的别名；它跟粒子 gather 所看的 \cpath{aux} 路径绑定得更紧。这也解释了为什么只要 \cpath{mypc->m_E_ext_particle_s} 或 \cpath{m_B_ext_particle_s} 是 \cpath{read_from_file}，最常见的 \code{aux -> fp} alias 优化就会被打断，\cpath{Efield_aux/Bfield_aux} 必须改成单独分配。
+所以 particle external field 不是 grid external field 的别名；它跟粒子 gather 所看的 \cpath{aux} 路径绑定得更紧。这也解释了为什么只要 \code{mypc->m_E_ext_particle_s} 或 \cpath{m\_B\_ext\_particle\_s} 是 \cpath{read\_from\_file}，最常见的 \code{aux -> fp} alias 优化就会被打断，\cpath{Efield\_aux/Bfield\_aux} 必须改成单独分配。
 
 剩下几条看似“模块化”的分支，其实也都在 \cpath{AllocLevelMFs()} 里继续扩展 field registry：
 
 \begin{itemize}
-\item \code{electromagnetic_solver_id == HybridPIC} 时，\cpath{m_hybrid_pic_model->AllocateLevelMFs(...)} 会追加 hybrid 自己的 level 字段；
-\item \cpath{do_fluid_species} 时，\cpath{myfl->AllocateLevelMFs(...)} 之后立刻 \cpath{InitData(...)}，说明 fluid 已经进入初始化主链，而不是仅仅挂了个容器；
-\item \code{m_em_solver_medium == Macroscopic} 时，\cpath{m_macroscopic_properties->AllocateLevelMFs(...)} 只允许 \cpath{lev==0}，直接把 mesh refinement 排除在外；
-\item \cpath{EB::enabled()} 时，所有 level 至少都会有 \cpath{distance_to_eb} 与 \cpath{m_eb_reduce_particle_shape}，而 finest level 上又会继续长出 \cpath{m_eb_update_E/B}；如果 solver 还是 \cpath{ECT}，则再额外长出 \cpath{edge_lengths}、\cpath{face_areas}、\cpath{area_mod}、\cpath{Venl}、\cpath{ECTRhofield} 和 \cpath{FaceInfoBox} 借用关系。
+\item \code{electromagnetic_solver_id == HybridPIC} 时，\code{m_hybrid_pic_model->AllocateLevelMFs(...)} 会追加 hybrid 自己的 level 字段；
+\item \cpath{do\_fluid\_species} 时，\code{myfl->AllocateLevelMFs(...)} 之后立刻 \cpath{InitData(...)}，说明 fluid 已经进入初始化主链，而不是仅仅挂了个容器；
+\item \code{m_em_solver_medium == Macroscopic} 时，\code{m_macroscopic_properties->AllocateLevelMFs(...)} 只允许 \cpath{lev==0}，直接把 mesh refinement 排除在外；
+\item \cpath{EB::enabled()} 时，所有 level 至少都会有 \cpath{distance\_to\_eb} 与 \cpath{m\_eb\_reduce\_particle\_shape}，而 finest level 上又会继续长出 \cpath{m\_eb\_update\_E/B}；如果 solver 还是 \cpath{ECT}，则再额外长出 \cpath{edge\_lengths}、\cpath{face\_areas}、\cpath{area\_mod}、\cpath{Venl}、\cpath{ECTRhofield} 和 \cpath{FaceInfoBox} 借用关系。
 \end{itemize}
 
 因此 \cpath{AllocLevelMFs()} 的真实角色不是“机械把 \cpath{MultiFab} 开出来”，而是把前面 \cpath{ReadParameters()} 裁出来的对象图真正展开成可执行状态。
@@ -455,9 +455,9 @@ implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 
 \begin{itemize}
 \item \cpath{BuildBufferMasks()}
-\item \cpath{m_macroscopic_properties->InitData(...)}
-\item \cpath{m_electrostatic_solver->InitData()}
-\item \cpath{m_hybrid_pic_model->InitData(m_fields)}
+\item \code{m_macroscopic_properties->InitData(...)}
+\item \code{m_electrostatic_solver->InitData()}
+\item \code{m_hybrid_pic_model->InitData(m_fields)}
 \item \cpath{ProjectionCleanDivB()}
 \end{itemize}
 
@@ -476,9 +476,9 @@ implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 \item \cpath{ComputePMLFactors()}
 \item 可选 \cpath{InitNCICorrector()}
 \item \cpath{BuildBufferMasks()}
-\item \cpath{m_macroscopic_properties->InitData(...)}
-\item \cpath{m_electrostatic_solver->InitData()}
-\item \cpath{m_hybrid_pic_model->InitData(m_fields)}
+\item \code{m_macroscopic_properties->InitData(...)}
+\item \code{m_electrostatic_solver->InitData()}
+\item \code{m_hybrid_pic_model->InitData(m_fields)}
 \item \cpath{CheckGuardCells()}
 \item \cpath{ProjectionCleanDivB()}
 \end{itemize}
@@ -488,11 +488,11 @@ implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 尤其要区分两步经常被混在一起的电场初始化动作：
 
 \begin{enumerate}
-\item \cpath{m_electrostatic_solver->InitData()}
+\item \code{m_electrostatic_solver->InitData()}
 \end{enumerate}
 这是 solver 对象自身的初始化，fresh run 和 restart 都会走。
 \begin{enumerate}
-\item \cpath{ComputeSpaceChargeField(reset_fields=false)}
+\item \cpath{ComputeSpaceChargeField(reset\_fields=false)}
 \end{enumerate}
 这是 fresh-run 下的初始 self-field / electrostatic solve，只在需要时触发，而且还明确保留网格上已有的用户指定值，不会先把字段清空。
 
@@ -500,13 +500,13 @@ implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 
 \begin{itemize}
 \item 开启 electrostatic solver
-\item 任意 species 打开 \cpath{initialize_self_fields}
+\item 任意 species 打开 \cpath{initialize\_self\_fields}
 \item 指定了 boundary potential
 \end{itemize}
 
 但如果当前走的是 \cpath{HybridPIC}，源码又会显式跳过这条初始 field-solve 路径。
 
-在这之前，若 \cpath{m_do_initial_div_cleaning} 成立，还会先执行 \cpath{ProjectionCleanDivB()}。因此初始 \cpath{B} 场的散度修正顺序其实非常明确：先完成外场读入与对象初始化，再做 \code{div B} cleaning，随后才进入初始 self-field / electrostatic solve。
+在这之前，若 \cpath{m\_do\_initial\_div\_cleaning} 成立，还会先执行 \cpath{ProjectionCleanDivB()}。因此初始 \cpath{B} 场的散度修正顺序其实非常明确：先完成外场读入与对象初始化，再做 \code{div B} cleaning，随后才进入初始 self-field / electrostatic solve。
 
 Python callback 也不是一个统一“初始化结束后调用”的事件，而是被拆成了三类窗口：
 
@@ -521,23 +521,23 @@ Python callback 也不是一个统一“初始化结束后调用”的事件，�
 \begin{enumerate}
 \item \cpath{LoadExternalFields()}
 \end{enumerate}
-先把 external grid fields 装到 \cpath{Efield_fp_external/Bfield_fp_external}，把 particle-only external fields 装到 \cpath{E_external_particle_field/B_external_particle_field}，并在 finest level 给 Python \cpath{loadExternalFields} callback 一个写这些 buffer 的机会。
+先把 external grid fields 装到 \cpath{Efield\_fp\_external/Bfield\_fp\_external}，把 particle-only external fields 装到 \cpath{E\_external\_particle\_field/B\_external\_particle\_field}，并在 finest level 给 Python \cpath{loadExternalFields} callback 一个写这些 buffer 的机会。
 \begin{enumerate}
 \item \cpath{AddExternalFields()}
 \end{enumerate}
-再把 grid external fields 统一加回 \cpath{Efield_fp/Bfield_fp} 主场。
+再把 grid external fields 统一加回 \cpath{Efield\_fp/Bfield\_fp} 主场。
 
 所以第 0 步最终主场不是“纯 self-field 结果”，而是“初始 self-field / electrostatic solve 结果，再叠加 grid external fields”。
 
 这之后才进入第 0 步 diagnostics：
 
 \begin{itemize}
-\item \cpath{multi_diags->FilterComputePackFlush(istep[0]-1)}
-\item \cpath{reduced_diags->ComputeDiags(...)}
-\item \cpath{reduced_diags->WriteToFile(...)}
+\item \code{multi_diags->FilterComputePackFlush(istep[0]-1)}
+\item \code{reduced_diags->ComputeDiags(...)}
+\item \code{reduced_diags->WriteToFile(...)}
 \end{itemize}
 
-因此第 0 步输出的并不是“原始输入快照”，而是“初始化主链已经全部完成后的第一份可运行状态快照”。对于 restart，这一步则取决于 \cpath{write_diagnostics_on_restart}，表示是否要把恢复态也立刻写成一份 diagnostics。
+因此第 0 步输出的并不是“原始输入快照”，而是“初始化主链已经全部完成后的第一份可运行状态快照”。对于 restart，这一步则取决于 \cpath{write\_diagnostics\_on\_restart}，表示是否要把恢复态也立刻写成一份 diagnostics。
 
 \section{3A.3 顶层入口：fresh run 与 restart 分叉}
 
@@ -625,7 +625,7 @@ WarpX::InitFromScratch ()
 \begin{enumerate}
 \item \cpath{AmrCore::InitFromScratch(time)} 驱动 AMReX 创建 AMR level；它会回调 \cpath{WarpX::MakeNewLevelFromScratch()}，后者对每个 level 依次调用 \code{AllocLevelData(lev, ...)} 和 \code{InitLevelData(lev, time)}。因此 \cpath{AllocLevelData} 是这个回调链的一部分，不是 \cpath{InitFromScratch()} 顶层直接调用的无参步骤。
 \item 若启用了 implicit solver，\cpath{Define()} 与 \cpath{CreateParticleAttributes()} 在粒子初始化前建立求解器状态和所需粒子属性。
-\item \cpath{mypc->AllocData()} 为粒子容器准备数据结构，\cpath{mypc->InitData()} 创建初始粒子。
+\item \code{mypc->AllocData()} 为粒子容器准备数据结构，\code{mypc->InitData()} 创建初始粒子。
 \item \cpath{InitPML()} 初始化吸收边界数据结构；随后 \cpath{allocdata} Python callback 才获得已经分配完的初始化对象。
 \end{enumerate}
 
@@ -651,8 +651,8 @@ void PhysicalParticleContainer::InitData ()
 WarpX 支持两类外部场：
 
 \begin{itemize}
-\item grid external field：外部场先放在 \cpath{Efield_fp_external/Bfield_fp_external} 网格 MultiFab 上，随后由 \cpath{AddExternalFields()} 叠加到初始 \cpath{E/B} 网格场并施加 field boundary；
-\item particle external field：外部场保存在 \cpath{E/B_external_particle_field} 中，在 particle gather 时参与粒子受力，并不经 \cpath{AddExternalFields()} 写入主 \cpath{E/B} 场。
+\item grid external field：外部场先放在 \cpath{Efield\_fp\_external/Bfield\_fp\_external} 网格 MultiFab 上，随后由 \cpath{AddExternalFields()} 叠加到初始 \cpath{E/B} 网格场并施加 field boundary；
+\item particle external field：外部场保存在 \cpath{E/B\_external\_particle\_field} 中，在 particle gather 时参与粒子受力，并不经 \cpath{AddExternalFields()} 写入主 \cpath{E/B} 场。
 \end{itemize}
 
 外部场初始化的关键是：外部场可以是常量、parser 函数、openPMD 文件或 Python 回调。读者应避免把“外部场”理解成单一数组。
@@ -670,7 +670,7 @@ if (grid_B_from_file || grid_E_from_file ||
 }
 \end{codeblock}
 
-这里的布尔名是为阅读压缩后的语义名；源码中展开检查 \cpath{B_ext_grid_type/E_ext_grid_type} 与 \cpath{m_B_ext_particle_s/m_E_ext_particle_s}。这个断言覆盖 \textbf{grid 和 particle 两类} file-driven external field：moving window 移动后，文件场的 MultiFab 没有自动重读/平移机制，故当前实现直接拒绝这个组合。
+这里的布尔名是为阅读压缩后的语义名；源码中展开检查 \cpath{B\_ext\_grid\_type/E\_ext\_grid\_type} 与 \cpath{m\_B\_ext\_particle\_s/m\_E\_ext\_particle\_s}。这个断言覆盖 \textbf{grid 和 particle 两类} file-driven external field：moving window 移动后，文件场的 MultiFab 没有自动重读/平移机制，故当前实现直接拒绝这个组合。
 
 断言之后，\cpath{LoadExternalFields()} 分三步处理数据：parser 或文件填充 grid external field；在 finest level 调用 \cpath{loadExternalFields} Python callback；再按 metadata 的每张 map 填充 particle external field。不要把这三步压成一个无参的“读文件函数”：实际的 \code{ReadExternalFieldFromFile(path, MultiFab*, field, component, map_index)} 总是明确写出目标场与分量。
 
@@ -720,17 +720,17 @@ if (injection_style == "singleparticle") {
 % <-- table block (source: 03a-warpx-initialization L589)
 \begin{tabularx}{\textwidth}{LLL}
 \toprule
-\cpath{injection_style} & 含义 & 后续创建路径 \\
+\cpath{injection\_style} & 含义 & 后续创建路径 \\
 \midrule
 \endfirsthead
 \toprule
-\cpath{injection_style} & 含义 & 后续创建路径 \\
+\cpath{injection\_style} & 含义 & 后续创建路径 \\
 \midrule
 \endhead
 \cpath{singleparticle} & 单个手工粒子 & \cpath{AddNParticles()} \\
 \cpath{multipleparticles} & 手工粒子列表 & \cpath{AddNParticles()} \\
-\cpath{gaussian_beam} & 空间高斯束流 & \cpath{AddGaussianBeam()} \\
-\cpath{external_file} & openPMD 粒子文件 & \cpath{AddPlasmaFromFile()} \\
+\cpath{gaussian\_beam} & 空间高斯束流 & \cpath{AddGaussianBeam()} \\
+\cpath{external\_file} & openPMD 粒子文件 & \cpath{AddPlasmaFromFile()} \\
 \cpath{nrandompercell} / \cpath{nuniformpercell} & 体密度注入 & \cpath{AddPlasma()} \\
 \cpath{nfluxpercell} & 面通量注入 & \cpath{AddPlasmaFlux()} \\
 \bottomrule
@@ -773,7 +773,7 @@ if (rho_prof_s == "constant") {
 }
 \end{codeblock}
 
-因此 file profile 不只是一个路径：\cpath{density_mesh_name} 选择文件中的 mesh record（默认 \cpath{density}），\cpath{geom} 提供目标几何，\cpath{read_density_distributed} 决定读取布局。复现实验时应把这四项与文件坐标/单位一起检查，而不应只确认路径可打开。
+因此 file profile 不只是一个路径：\cpath{density\_mesh\_name} 选择文件中的 mesh record（默认 \cpath{density}），\cpath{geom} 提供目标几何，\cpath{read\_density\_distributed} 决定读取布局。复现实验时应把这四项与文件坐标/单位一起检查，而不应只确认路径可打开。
 
 体注入中的宏粒子权重由密度决定：
 
@@ -784,14 +784,14 @@ w_p \approx n(\mathbf{x})\frac{\Delta V}{N_{ppc}}.
 动量解析由 \cpath{SpeciesUtils::parseMomentum()} 完成。常见分支包括：
 
 \begin{itemize}
-\item \cpath{at_rest}：\cpath{u=0}；
+\item \cpath{at\_rest}：\cpath{u=0}；
 \item \cpath{constant}：固定 \cpath{ux/uy/uz}；
 \item \cpath{gaussian}：每个方向正态采样；
 \item \cpath{gaussianflux}：通量注入专用，法向速度按 \code{v_n f(v)} 加权；
 \item \cpath{uniform}：每个方向均匀采样；
-\item \cpath{maxwell_boltzmann}：非相对论 Maxwellian；
-\item \cpath{maxwell_juttner}：相对论热平衡分布；
-\item \cpath{parse_momentum_function}：空间解析函数。
+\item \cpath{maxwell\_boltzmann}：非相对论 Maxwellian；
+\item \cpath{maxwell\_juttner}：相对论热平衡分布；
+\item \cpath{parse\_momentum\_function}：空间解析函数。
 \end{itemize}
 
 \cpath{InjectorMomentum} 的关键工程实现是手写 tagged union。
@@ -895,7 +895,7 @@ PhysicalParticleContainer::AddParticles (int lev)
 
 \section{3A.9 体注入 \texttt{AddPlasma()}：候选粒子、密度、动量和权重}
 
-体注入的核心思想是：先按 cell 和 \cpath{num_particles_per_cell} 创建候选粒子，然后用真实 density/bounds 筛掉无效粒子，并把有效粒子写入 SoA。
+体注入的核心思想是：先按 cell 和 \cpath{num\_particles\_per\_cell} 创建候选粒子，然后用真实 density/bounds 筛掉无效粒子，并把有效粒子写入 SoA。
 
 \sourceline{源码文件}{\cpath{Source/Particles/ParticleCreation/AddParticles.cpp}}
 \sourceline{函数}{\cpath{PhysicalParticleContainer::AddPlasma(...)}}
@@ -1000,7 +1000,7 @@ pa[PIdx::uy][ip] = u.y;
 pa[PIdx::uz][ip] = u.z;
 \end{codeblock}
 
-因此 \cpath{InjectorMomentum} 返回的 \cpath{u} 是无量纲 \cpath{\gamma\beta}，粒子数组中存的是 \code{\gamma v}。
+因此 \cpath{InjectorMomentum} 返回的 \cpath{u} 是无量纲 \codeesc{\textbackslash\{\}gamma\textbackslash\{\}beta}，粒子数组中存的是 \codeesc{\textbackslash\{\}gamma v}。
 
 \section{3A.10 Gaussian beam：显式束流列表注入}
 
@@ -1050,7 +1050,7 @@ Q_{\mathrm{tot}}/(N_p q).
     amrex::Real z = amrex::RandomNormal(z_m, z_rms);
 \end{codeblock}
 
-如果设置 \cpath{focal_distance}，代码用弹道近似从焦平面束斑反推出初始位置。核心公式是：
+如果设置 \cpath{focal\_distance}，代码用弹道近似从焦平面束斑反推出初始位置。核心公式是：
 
 \[
 t = \frac{(\mathbf{x}_f-\mathbf{x})\cdot\mathbf{n}}{\mathbf{v}\cdot\mathbf{n}},
@@ -1078,7 +1078,7 @@ z = z - (v_z - v_dot_n*n_z) * t;
 
 \section{3A.11 openPMD 粒子文件：文件粒子列表注入}
 
-\cpath{external_file} 路径在构造期先打开 openPMD 文件，读取可选 \cpath{charge/mass}。
+\cpath{external\_file} 路径在构造期先打开 openPMD 文件，读取可选 \cpath{charge/mass}。
 \sourceline{源码文件}{\cpath{Source/Initialization/PlasmaInjector.cpp}}
 \sourceline{函数}{\cpath{PlasmaInjector::setupExternalFile()}}
 
@@ -1128,7 +1128,7 @@ for (auto i = decltype(npart){0}; i<npart; ++i){
                  + z_shift;
 \end{codeblock}
 
-openPMD 的 \cpath{position} 和 \cpath{positionOffset} 都乘以各自 \cpath{unitSI}，\cpath{z_shift} 是 WarpX 额外偏移。
+openPMD 的 \cpath{position} 和 \cpath{positionOffset} 都乘以各自 \cpath{unitSI}，\cpath{z\_shift} 是 WarpX 额外偏移。
 
 动量换算：
 
@@ -1147,7 +1147,7 @@ if (plasma_injector.insideBounds(x, y, z)) {
     }
 \end{codeblock}
 
-openPMD 文件中的 momentum 是物理动量 \cpath{p}。除以质量得到 \code{p/m=\gamma v}，这正是 WarpX 粒子数组的 \cpath{ux/uy/uz} 量纲。文件中的 \cpath{weighting} 直接成为宏粒子权重；\cpath{q_tot} 只产生 warning，不会重标定权重。
+openPMD 文件中的 momentum 是物理动量 \cpath{p}。除以质量得到 \codeesc{p/m=\textbackslash\{\}gamma v}，这正是 WarpX 粒子数组的 \cpath{ux/uy/uz} 量纲。文件中的 \cpath{weighting} 直接成为宏粒子权重；\cpath{q\_tot} 只产生 warning，不会重标定权重。
 
 \section{3A.12 Projection divergence cleaning：外部 \texttt{A/B} 场的初始约束修正}
 
@@ -1211,7 +1211,7 @@ By_arr(i,j,k) += T::DownwardDy(sol_arr, coefs_y, n_coefs_y, i, j, k);
 Bz_arr(i,j,k) += T::DownwardDz(sol_arr, coefs_z, n_coefs_z, i, j, k);
 \end{codeblock}
 
-这不是演化阶段的 \cpath{warpx.do_dive_cleaning/do_divb_cleaning}。后者是 Maxwell solver 时间推进中的清理变量或修正方程；本节讲的是初始化或外部场加载后的 Poisson projection。
+这不是演化阶段的 \cpath{warpx.do\_dive\_cleaning/do\_divb\_cleaning}。后者是 Maxwell solver 时间推进中的清理变量或修正方程；本节讲的是初始化或外部场加载后的 Poisson projection。
 
 \subsection{Laser antenna 与 profile 分派：laser 初始化并不走 \texttt{PlasmaInjector}}
 
@@ -1233,7 +1233,7 @@ utils::parser::getArrWithParser(pp_laser_name, "polarization", m_p_X);
 utils::parser::getWithParser(pp_laser_name, "wavelength", m_wavelength);
 \end{codeblock}
 
-然后要求 \cpath{e_max} 和 \cpath{a0} 二选一：
+然后要求 \cpath{e\_max} 和 \cpath{a0} 二选一：
 
 % <-- fenced code (cpp)
 \begin{codeblock}
@@ -1254,7 +1254,7 @@ AMREX_ALWAYS_ASSERT_WITH_MESSAGE(
 E_{\max}=\frac{m_e \omega c}{q_e}a_0
 \]
 
-换算成真实场强 \cpath{e_max}。这说明在 profile 实现层，\cpath{a0} 已经不再存在，剩下的只是规范化后的公共参数。
+换算成真实场强 \cpath{e\_max}。这说明在 profile 实现层，\cpath{a0} 已经不再存在，剩下的只是规范化后的公共参数。
 
 profile 类型分派也不是一串手写 \cpath{if-else}，而是 \cpath{LaserProfiles.H} 中的工厂字典：
 
@@ -1284,8 +1284,8 @@ m_up_laser_profile->init(pp_laser_name, common_params);
 
 \begin{enumerate}
 \item \cpath{gaussian} 走解析包络与聚焦/STC/chirp 公式；
-\item \cpath{parse_field_function} 直接把 \cpath{field_function(X,Y,t)} 编译成 parser；
-\item \cpath{from_file} 则走 \cpath{lasy_file_name} 或 \cpath{binary_file_name}，并用 \cpath{time_chunk_size} / \cpath{delay} 做时间分块读入。
+\item \cpath{parse\_field\_function} 直接把 \code{field_function(X,Y,t)} 编译成 parser；
+\item \cpath{from\_file} 则走 \cpath{lasy\_file\_name} 或 \cpath{binary\_file\_name}，并用 \cpath{time\_chunk\_size} / \cpath{delay} 做时间分块读入。
 \end{enumerate}
 
 更重要的是，laser pulse 不是直接“写入一个初始场数组”，而是通过人工天线粒子实现。\cpath{LaserParticleContainer.H} 的类注释写得很明确：这些粒子均匀分布在一个平面上，按预设位移沉积电流 \cpath{J}，再由 Maxwell solver 在网格上生成真正的激光场。因此 \cpath{LaserParticleContainer} 需要 current deposition，但不走普通 \cpath{FieldGather}，它也正因如此直接继承 \cpath{WarpXParticleContainer}，而不是 \cpath{PhysicalParticleContainer}。
@@ -1300,9 +1300,9 @@ AMREX_ALWAYS_ASSERT_WITH_MESSAGE(
     " if moving window direction and laser propagation direction are the same");
 \end{codeblock}
 
-如果叠加 boosted frame，目前还进一步要求 boost 方向是 \cpath{z}。因此 laser 的 \cpath{do_continuous_injection} 虽然和普通 species 同名，但它的可用组合更窄，实际上是“moving-window / boosted-frame 下天线何时进入域内”的控制开关。
+如果叠加 boosted frame，目前还进一步要求 boost 方向是 \cpath{z}。因此 laser 的 \cpath{do\_continuous\_injection} 虽然和普通 species 同名，但它的可用组合更窄，实际上是“moving-window / boosted-frame 下天线何时进入域内”的控制开关。
 
-这还只是 laser 初始化链的入口。真正运行起来后，WarpX 并不会把解析式或文件 profile 直接写进 \cpath{E/Bfield_fp}。它先把 profile 解释成“天线平面上每个人工粒子的目标发射振幅”，再通过标准 \cpath{J/rho} 沉积把激光交给 Maxwell solver。
+这还只是 laser 初始化链的入口。真正运行起来后，WarpX 并不会把解析式或文件 profile 直接写进 \cpath{E/Bfield\_fp}。它先把 profile 解释成“天线平面上每个人工粒子的目标发射振幅”，再通过标准 \cpath{J/rho} 沉积把激光交给 Maxwell solver。
 
 \cpath{GaussianLaserProfile::init()} 继续在公共参数外读取：
 
@@ -1321,14 +1321,14 @@ utils::parser::queryWithParser(ppl, "phi0", m_params.phi0);
 因此当前 \cpath{gaussian} profile 并不是“只有纵向和横向高斯包络”的最简形式，而是已经直接包含：
 
 \begin{itemize}
-\item 聚焦距离 \cpath{profile_focal_distance}
+\item 聚焦距离 \cpath{profile\_focal\_distance}
 \item carrier-envelope phase \cpath{phi0}
 \item spatial chirp \cpath{zeta}
 \item angular dispersion \cpath{beta}
 \item temporal chirp \cpath{phi2}
 \end{itemize}
 
-WarpX 随后还会把 \cpath{stc_direction} 归一化，并强制要求它与天线法向 \cpath{nvec} 正交：
+WarpX 随后还会把 \cpath{stc\_direction} 归一化，并强制要求它与天线法向 \cpath{nvec} 正交：
 
 % <-- fenced code (cpp)
 \begin{codeblock}
@@ -1336,17 +1336,17 @@ WARPX_ALWAYS_ASSERT_WITH_MESSAGE(std::abs(dp2) < 1.0e-14,
     "stc_direction is not perpendicular to the laser plane vector");
 \end{codeblock}
 
-这说明 \cpath{stc_direction} 的真实语义是“STC 在激光平面内的作用方向”，不是随手附带的一个参考向量。到了 \cpath{fill_amplitude()}，WarpX 再显式构造：
+这说明 \cpath{stc\_direction} 的真实语义是“STC 在激光平面内的作用方向”，不是随手附带的一个参考向量。到了 \cpath{fill\_amplitude()}，WarpX 再显式构造：
 
 \begin{itemize}
-\item \cpath{diffract_factor}
-\item \cpath{inv_complex_waist_2}
-\item \cpath{stretch_factor}
+\item \cpath{diffract\_factor}
+\item \cpath{inv\_complex\_waist\_2}
+\item \cpath{stretch\_factor}
 \end{itemize}
 
 并按 3D/RZ、XZ、1D 分别选不同 prefactor。也就是说，当前 Gaussian 实现已经把 diffraction、Gouy phase、wavefront curvature、spatial chirp、angular dispersion 和 temporal chirp 全都折叠进同一个复 envelope 公式里，而不是后面再给场求解器额外修正。
 
-\cpath{from_file} profile 的合同也比“读一个文件”更具体。源码强制要求：
+\cpath{from\_file} profile 的合同也比“读一个文件”更具体。源码强制要求：
 
 % <-- fenced code (cpp)
 \begin{codeblock}
@@ -1355,38 +1355,38 @@ WARPX_ALWAYS_ASSERT_WITH_MESSAGE (
     "Exactly one of 'binary_file_name' and 'lasy_file_name' has to be specified");
 \end{codeblock}
 
-因此 \cpath{from_file} 不是同时混用两种后端，而是在：
+因此 \cpath{from\_file} 不是同时混用两种后端，而是在：
 
 \begin{itemize}
-\item \cpath{lasy_file_name}
-\item \cpath{binary_file_name}
+\item \cpath{lasy\_file\_name}
+\item \cpath{binary\_file\_name}
 \end{itemize}
 
-之间二选一。并且它不是一次性把整份文件全读进来，而是先把 \cpath{time_chunk_size} 设成默认全时域，再允许用户把它改小，随后只预读第一块；真正运行时由 \cpath{m_up_laser_profile->update(t_lab)} 按需换块。\cpath{delay} 也不是写文件时的预处理，而是在 \cpath{update()} / \cpath{fill_amplitude()} 内统一平移 profile 时间轴。
+之间二选一。并且它不是一次性把整份文件全读进来，而是先把 \cpath{time\_chunk\_size} 设成默认全时域，再允许用户把它改小，随后只预读第一块；真正运行时由 \code{m_up_laser_profile->update(t_lab)} 按需换块。\cpath{delay} 也不是写文件时的预处理，而是在 \cpath{update()} / \cpath{fill\_amplitude()} 内统一平移 profile 时间轴。
 
-更关键的是，\cpath{LaserParticleContainer::InitData()} 的产物不是“初始化场”，而是人工天线粒子。它先按 finest cell 和天线平面方向计算平面 spacing \cpath{S_X/S_Y}，再建立实验室坐标与激光平面坐标之间的 \cpath{Transform/InverseTransform}，最后只在注入盒覆盖的区域生成粒子：
+更关键的是，\cpath{LaserParticleContainer::InitData()} 的产物不是“初始化场”，而是人工天线粒子。它先按 finest cell 和天线平面方向计算平面 spacing \cpath{S\_X/S\_Y}，再建立实验室坐标与激光平面坐标之间的 \cpath{Transform/InverseTransform}，最后只在注入盒覆盖的区域生成粒子：
 
 \begin{itemize}
 \item Cartesian / XZ / 1D：每个平面位置生成一对 \cpath{+w/-w} 粒子
-\item RZ：围绕轴向展开成 spokes，并用 \cpath{2*pi*r/n_spokes} 修正权重
+\item RZ：围绕轴向展开成 spokes，并用 \cpath{2*pi*r/n\_spokes} 修正权重
 \end{itemize}
 
 到了 \cpath{LaserParticleContainer::Evolve()}，运行时主链是：
 
 \begin{enumerate}
-\item 若在 boosted frame，先把数值时间 \cpath{t} 转回实验室系 \cpath{t_lab}
-\item \cpath{m_up_laser_profile->update(t_lab)}，必要时推进 \cpath{from_file} 的时间块缓存
-\item \cpath{calculate_laser_plane_coordinates(...)}，把真实粒子位置映回激光平面坐标
-\item \cpath{fill_amplitude(...)}，为每个天线粒子求目标 \cpath{E} 振幅
-\item \cpath{update_laser_particle(...)}，把振幅变成粒子动量和位置
-\item \cpath{DepositCurrent()} / \cpath{DepositCharge()}，把人工天线粒子写入 \cpath{current_fp/rho_fp}，必要时也写入 coarse-fine \cpath{current_buf/rho_buf}
+\item 若在 boosted frame，先把数值时间 \cpath{t} 转回实验室系 \cpath{t\_lab}
+\item \code{m_up_laser_profile->update(t_lab)}，必要时推进 \cpath{from\_file} 的时间块缓存
+\item \cpath{calculate\_laser\_plane\_coordinates(...)}，把真实粒子位置映回激光平面坐标
+\item \cpath{fill\_amplitude(...)}，为每个天线粒子求目标 \cpath{E} 振幅
+\item \cpath{update\_laser\_particle(...)}，把振幅变成粒子动量和位置
+\item \cpath{DepositCurrent()} / \cpath{DepositCharge()}，把人工天线粒子写入 \cpath{current\_fp/rho\_fp}，必要时也写入 coarse-fine \cpath{current\_buf/rho\_buf}
 \end{enumerate}
 
-所以 WarpX 的 laser antenna 不是“边界直接给定场”，而是“人为构造一层发射粒子，通过普通沉积链把 profile 写成 \cpath{J}，再让 Maxwell solver 自己生成传播场”。这也解释了为什么 laser 在 mesh refinement 下照样要走 \code{fp / buf} 分流，以及为什么 \cpath{lasers.deposit_on_main_grid} 其实属于 AMR/沉积合同，而不只是一个 laser 小选项。
+所以 WarpX 的 laser antenna 不是“边界直接给定场”，而是“人为构造一层发射粒子，通过普通沉积链把 profile 写成 \cpath{J}，再让 Maxwell solver 自己生成传播场”。这也解释了为什么 laser 在 mesh refinement 下照样要走 \code{fp / buf} 分流，以及为什么 \cpath{lasers.deposit\_on\_main\_grid} 其实属于 AMR/沉积合同，而不只是一个 laser 小选项。
 
-最后，laser 的 continuous injection 也应理解得更准确一点。\cpath{ContinuousInjection()} 检查的是更新后的 \cpath{m_updated_position} 是否第一次进入当前 \cpath{injection_box}；一旦进入，就调用一次 \cpath{InitData()} 生成那片天线粒子，之后再由普通 \cpath{Evolve()} 周期性更新它们的发射振幅。它不是每步“重新生成整束激光”，而是在 moving-window / boosted-frame 下决定“天线什么时候进入域内并开始工作”。
+最后，laser 的 continuous injection 也应理解得更准确一点。\cpath{ContinuousInjection()} 检查的是更新后的 \cpath{m\_updated\_position} 是否第一次进入当前 \cpath{injection\_box}；一旦进入，就调用一次 \cpath{InitData()} 生成那片天线粒子，之后再由普通 \cpath{Evolve()} 周期性更新它们的发射振幅。它不是每步“重新生成整束激光”，而是在 moving-window / boosted-frame 下决定“天线什么时候进入域内并开始工作”。
 
-\cpath{parse_field_function} 这条分支也需要单独说明，因为它和前两类 profile 的数学合同并不一样。官方参数文档把它定义成：
+\cpath{parse\_field\_function} 这条分支也需要单独说明，因为它和前两类 profile 的数学合同并不一样。官方参数文档把它定义成：
 
 % <-- fenced code (text)
 \begin{codeblock}
@@ -1402,7 +1402,7 @@ utils::parser::Store_parserString(
 m_parser = utils::parser::makeParser(m_params.field_function,{"X","Y","t"});
 \end{codeblock}
 
-随后 \cpath{fill_amplitude()} 也没有再加任何 envelope、phase 或 geometry 修正，而是直接逐粒子求值：
+随后 \cpath{fill\_amplitude()} 也没有再加任何 envelope、phase 或 geometry 修正，而是直接逐粒子求值：
 
 % <-- fenced code (cpp)
 \begin{codeblock}
@@ -1413,9 +1413,9 @@ amrex::ParallelFor(np, [=] AMREX_GPU_DEVICE (int i) noexcept
 });
 \end{codeblock}
 
-这说明 \cpath{parse_field_function} 的 profile 层是三类实现里最薄的一层：用户写什么场函数，天线平面上就得到什么目标场值；后续所有“把目标场值变成可沉积粒子运动”的责任，都落在 \cpath{LaserParticleContainer} 的更新 kernel 上。
+这说明 \cpath{parse\_field\_function} 的 profile 层是三类实现里最薄的一层：用户写什么场函数，天线平面上就得到什么目标场值；后续所有“把目标场值变成可沉积粒子运动”的责任，都落在 \cpath{LaserParticleContainer} 的更新 kernel 上。
 
-这几个 kernel 里，\cpath{calculate_laser_plane_coordinates(...)} 负责把真实粒子位置减去天线参考点后，投影回 \cpath{m_u_X/m_u_Y} 基底，因此 profile 接口始终统一在激光平面坐标上。\cpath{ComputeWeightMobility()} 则先用固定的峰值速度上限 \code{eps = 0.05} 设定：
+这几个 kernel 里，\cpath{calculate\_laser\_plane\_coordinates(...)} 负责把真实粒子位置减去天线参考点后，投影回 \cpath{m\_u\_X/m\_u\_Y} 基底，因此 profile 接口始终统一在激光平面坐标上。\cpath{ComputeWeightMobility()} 则先用固定的峰值速度上限 \code{eps = 0.05} 设定：
 
 % <-- fenced code (cpp)
 \begin{codeblock}
@@ -1424,22 +1424,22 @@ m_weight = PhysConst::epsilon_0 / m_mobility;
 m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 \end{codeblock}
 
-也就是说，WarpX 不是先任意给天线粒子权重，再让速度自己长出来；而是先要求峰值场下粒子速度不超过 \cpath{0.05c}，再反推单粒子权重。到了 \cpath{update_laser_particle()}，WarpX 再把 \cpath{amplitude[i]} 变成：
+也就是说，WarpX 不是先任意给天线粒子权重，再让速度自己长出来；而是先要求峰值场下粒子速度不超过 \cpath{0.05c}，再反推单粒子权重。到了 \cpath{update\_laser\_particle()}，WarpX 再把 \cpath{amplitude[i]} 变成：
 
 \begin{enumerate}
-\item 沿主偏振方向 \cpath{p_X} 的速度
+\item 沿主偏振方向 \cpath{p\_X} 的速度
 \item boosted-frame 下额外减去沿传播方向 \cpath{nvec} 的平移速度
 \item 相应的 relativistic momentum \cpath{ux/uy/uz}
-\item 显式路径的整步位置推进，或 implicit 路径基于 \cpath{x_n/y_n/z_n} 的半步 time-centered 位置推进
+\item 显式路径的整步位置推进，或 implicit 路径基于 \cpath{x\_n/y\_n/z\_n} 的半步 time-centered 位置推进
 \end{enumerate}
 
 因此 laser 的人工天线粒子并不是一个只服务显式 solver 的简单边界 hack。它同样要遵守 implicit particle-centering 合同，并继续进入普通 \cpath{DepositCurrent()/DepositCharge()} 主链。
 
-在本书引用的 WarpX 源树中，\cpath{parse_field_function} 的最明确真实用例位于：
+在本书引用的 WarpX 源树中，\cpath{parse\_field\_function} 的最明确真实用例位于：
 
 \begin{itemize}
-\item 目录：\cpath{Examples/Tests/particle_absorbing_boundary/}
-\item 输入：\cpath{inputs_test_1d_particle_absorbing_boundary}
+\item 目录：\cpath{Examples/Tests/particle\_absorbing\_boundary/}
+\item 输入：\cpath{inputs\_test\_1d\_particle\_absorbing\_boundary}
 \end{itemize}
 
 这个输入把：
@@ -1449,16 +1449,16 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 \item \code{laser1.field_function(X,Y,t) = ...}
 \end{itemize}
 
-嵌进了吸收边界测试里。但对应 \cpath{analysis.py} 检查的是边界附近的负向高速电子是否被抑制，而不是直接检查激光场本身。这意味着 \cpath{parse_field_function} 目前是“有真实 regression 入口，但没有独立 field-level 解析断言”的状态，书稿里应把这个验证边界明确写出来。
+嵌进了吸收边界测试里。但对应 \cpath{analysis.py} 检查的是边界附近的负向高速电子是否被抑制，而不是直接检查激光场本身。这意味着 \cpath{parse\_field\_function} 目前是“有真实 regression 入口，但没有独立 field-level 解析断言”的状态，书稿里应把这个验证边界明确写出来。
 
-把 laser 模块整体放回 regression 版图后，还能看到另一个重要事实：不同 laser tests 的证据强度差别很大。\cpath{Examples/Tests/laser_injection/} 的 1D/2D analysis 会直接比较 Gaussian 注入场的包络和主频；implicit 1D/2D 变体也继续复用同一组 analysis，因此并不只是“implicit 能跑通”的 checksum test。\cpath{Examples/Tests/laser_injection_from_file/} 则继续给 \cpath{lasy}、legacy binary、boosted-frame 和 RZ \cpath{thetaMode} 文件提供 envelope/frequency 双断言。
+把 laser 模块整体放回 regression 版图后，还能看到另一个重要事实：不同 laser tests 的证据强度差别很大。\cpath{Examples/Tests/laser\_injection/} 的 1D/2D analysis 会直接比较 Gaussian 注入场的包络和主频；implicit 1D/2D 变体也继续复用同一组 analysis，因此并不只是“implicit 能跑通”的 checksum test。\cpath{Examples/Tests/laser\_injection\_from\_file/} 则继续给 \cpath{lasy}、legacy binary、boosted-frame 和 RZ \cpath{thetaMode} 文件提供 envelope/frequency 双断言。
 
-但这一组还必须再分出一层 helper / prepare 边界。两个目录里的 \cpath{analysis_default_regression.py} 都只是 checksum helper：职责是自动识别 plotfile/openPMD 并按测试目录名调用 \cpath{evaluate_checksum(...)}，提供历史输出基线，而不是新增 laser 物理断言。更重要的是，\cpath{laser_injection_from_file/} 里那批 \cpath{inputs_test_*_prepare.py} 并不是“待分析输入”，而是被 \cpath{CMakeLists.txt} 先行注册成 dependency 的外部文件生成阶段：
+但这一组还必须再分出一层 helper / prepare 边界。两个目录里的 \cpath{analysis\_default\_regression.py} 都只是 checksum helper：职责是自动识别 plotfile/openPMD 并按测试目录名调用 \cpath{evaluate\_checksum(...)}，提供历史输出基线，而不是新增 laser 物理断言。更重要的是，\cpath{laser\_injection\_from\_file/} 里那批 \cpath{inputs\_test\_*\_prepare.py} 并不是“待分析输入”，而是被 \cpath{CMakeLists.txt} 先行注册成 dependency 的外部文件生成阶段：
 
 \begin{itemize}
-\item 普通 1D/2D/3D/RZ lasy 变体统一先写 \cpath{gaussian_laser_3d}
-\item legacy binary 变体先手工写 \cpath{gauss_2d}
-\item RZ \cpath{thetaMode} 变体先写 \cpath{laguerre_laser_RZ}
+\item 普通 1D/2D/3D/RZ lasy 变体统一先写 \cpath{gaussian\_laser\_3d}
+\item legacy binary 变体先手工写 \cpath{gauss\_2d}
+\item RZ \cpath{thetaMode} 变体先写 \cpath{laguerre\_laser\_RZ}
 \end{itemize}
 
 因此这组 regression 的正确结构不是单段输入，而是：
@@ -1470,7 +1470,7 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 \end{itemize}
 \item \cpath{inject}
 \begin{itemize}
-\item WarpX 按 \cpath{from_file} / \cpath{binary_file_name} / RZ 路径消费这些文件
+\item WarpX 按 \cpath{from\_file} / \cpath{binary\_file\_name} / RZ 路径消费这些文件
 \end{itemize}
 \item \cpath{analysis}
 \begin{itemize}
@@ -1485,13 +1485,13 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 激光案例不应按目录数量或测试名称判断强弱。读者首先要说明自己想验证的是哪一层：
 
 \begin{enumerate}
-\item \textbf{天线是否给出了预期的场？}选 \cpath{laser_injection/}，用 Gaussian 注入场的包络和主频作为比较量；
-\item \textbf{外部 profile 文件是否被正确消费？}选 \cpath{laser_injection_from_file/}，沿“生成外部文件 -> 注入 -> 包络/频率比较”三段检查；
-\item \textbf{给定几何和驱动下如何搭建尾场加速？}选 \cpath{laser_acceleration/}，先确认驱动、等离子体、moving window、边界和 diagnostics，再为场、相位或能谱另行定义 reference；
-\item \textbf{输出在 boosted frame 和实验室系之间是否一致？}选 \cpath{boosted_diags/}，比较同一 \cpath{Ez} 和粒子采样规则，而不把 writer 对齐误读成激光传播的解析验证。
+\item \textbf{天线是否给出了预期的场？}选 \cpath{laser\_injection/}，用 Gaussian 注入场的包络和主频作为比较量；
+\item \textbf{外部 profile 文件是否被正确消费？}选 \cpath{laser\_injection\_from\_file/}，沿“生成外部文件 -> 注入 -> 包络/频率比较”三段检查；
+\item \textbf{给定几何和驱动下如何搭建尾场加速？}选 \cpath{laser\_acceleration/}，先确认驱动、等离子体、moving window、边界和 diagnostics，再为场、相位或能谱另行定义 reference；
+\item \textbf{输出在 boosted frame 和实验室系之间是否一致？}选 \cpath{boosted\_diags/}，比较同一 \cpath{Ez} 和粒子采样规则，而不把 writer 对齐误读成激光传播的解析验证。
 \end{enumerate}
 
-官方 \cpath{laser_acceleration/README.rst} 把它定位为 LWFA 的 lab/boosted-frame 例子，并明确指出：接近圆柱对称时，RZ 可用较低成本捕捉相关物理；非圆激光或强 hosing 等明显非对称问题则需要 3D。于是读这些输入的第一步是选几何假设，不是从输出文件开始。
+官方 \cpath{laser\_acceleration/README.rst} 把它定位为 LWFA 的 lab/boosted-frame 例子，并明确指出：接近圆柱对称时，RZ 可用较低成本捕捉相关物理；非圆激光或强 hosing 等明显非对称问题则需要 3D。于是读这些输入的第一步是选几何假设，不是从输出文件开始。
 
 四个基础输入把这个选择具体化：
 
@@ -1505,14 +1505,14 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 这四类设置说明如何组装不同维度下的应用问题，却不会自动给出一个共同的尾场幅度、dephasing 或能量增益结论。目录中可直接用于局部比较的脚本只有三类：
 
 \begin{itemize}
-\item \cpath{analysis_1d_fluid_boosted.py}：将 1D boosted fluid WFA 的 \cpath{Ez/Jz/rho/Vz} 与理论 ODE 解比较；
-\item \cpath{analysis_refined_injection.py}：比较细化注入时的总粒子数和 refinement edge 前方 \cpath{rho} 均匀性；
-\item \cpath{analysis_openpmd_rz.py}：比较 RZ openPMD 的 mesh shape、species ordering 与 \cpath{rho_<species>} 的物理中心位置。
+\item \cpath{analysis\_1d\_fluid\_boosted.py}：将 1D boosted fluid WFA 的 \cpath{Ez/Jz/rho/Vz} 与理论 ODE 解比较；
+\item \cpath{analysis\_refined\_injection.py}：比较细化注入时的总粒子数和 refinement edge 前方 \cpath{rho} 均匀性；
+\item \cpath{analysis\_openpmd\_rz.py}：比较 RZ openPMD 的 mesh shape、species ordering 与 \code{rho_<species>} 的物理中心位置。
 \end{itemize}
 
 其余多数输入采用默认输出回归。它适合发现同一输入的输出是否发生意外变化，却不能替代场幅、相位、beam loading 或激光衍射的独立比较。\cpath{README.rst} 仍将 \cpath{Analyze} 保留为 \cpath{TODO}，也正好提醒读者：应用输入提供的是搭建起点，而不是已经完成的物理说明。
 
-\cpath{Examples/Tests/boosted_diags/analysis.py} 对 \cpath{test_3d_laser_acceleration_btd} 检查的是 BTD plotfile 与 BTD openPMD 的 \cpath{Ez} 逐点一致，以及 \cpath{random_fraction} 粒子子采样是否生效。它验证的是诊断重建和采样语义；不能由此推出激光包络、尾场相位或加速器性能。
+\cpath{Examples/Tests/boosted\_diags/analysis.py} 对 \cpath{test\_3d\_laser\_acceleration\_btd} 检查的是 BTD plotfile 与 BTD openPMD 的 \cpath{Ez} 逐点一致，以及 \cpath{random\_fraction} 粒子子采样是否生效。它验证的是诊断重建和采样语义；不能由此推出激光包络、尾场相位或加速器性能。
 
 因此，阅读激光相关输入时应保持一条清楚的证据链：
 
@@ -1524,7 +1524,7 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 -> 只对该 reference 覆盖的 observable 下结论
 \end{codeblock}
 
-这样，\cpath{laser_injection}、\cpath{from_file}、\cpath{parse_field_function}、\cpath{laser_acceleration} 与 BTD 不再是一张测试清单，而是回答不同问题的五类案例入口。
+这样，\cpath{laser\_injection}、\cpath{from\_file}、\cpath{parse\_field\_function}、\cpath{laser\_acceleration} 与 BTD 不再是一张测试清单，而是回答不同问题的五类案例入口。
 
 再往运行态交界看一层，laser 初始化还必须和 moving window、boosted frame、continuous injection、external fields 的更新合同一起理解。\cpath{WarpX::MoveWindow()} 在真正平移网格前，会先做三件互不等价的更新：
 
@@ -1538,16 +1538,16 @@ mypc->UpdateAntennaPosition(dt[0]);
 这里：
 
 \begin{enumerate}
-\item \cpath{moving_window_x} 是窗口几何本身的位置；
-\item \cpath{UpdateInjectionPosition(...)} 更新普通 species 的 \cpath{m_current_injection_position}；
-\item \cpath{UpdateAntennaPosition(dt)} 更新 laser antenna 的 \cpath{m_updated_position}。
+\item \cpath{moving\_window\_x} 是窗口几何本身的位置；
+\item \cpath{UpdateInjectionPosition(...)} 更新普通 species 的 \cpath{m\_current\_injection\_position}；
+\item \cpath{UpdateAntennaPosition(dt)} 更新 laser antenna 的 \cpath{m\_updated\_position}。
 \end{enumerate}
 
-普通 species 的连续注入位置来自 \cpath{PlasmaInjector} 的 bulk momentum，再换成速度并在 boosted frame 下做洛伦兹变换；laser 则完全不走 \cpath{PlasmaInjector}，只在 \cpath{do_continuous_injection=1} 且 \cpath{gamma_boost>1} 时按 boost velocity 平移天线平面。因此两者虽然都叫 continuous injection，但运行态位置更新机制不同。
+普通 species 的连续注入位置来自 \cpath{PlasmaInjector} 的 bulk momentum，再换成速度并在 boosted frame 下做洛伦兹变换；laser 则完全不走 \cpath{PlasmaInjector}，只在 \cpath{do\_continuous\_injection=1} 且 \code{gamma_boost>1} 时按 boost velocity 平移天线平面。因此两者虽然都叫 continuous injection，但运行态位置更新机制不同。
 
-两者的 \cpath{ContinuousInjection()} 语义也不同。普通物理粒子是在 moving window 新扫进来的 level-0 \cpath{particleBox} 中反复调用 \cpath{AddPlasma(...)}；laser 则只在 \cpath{m_updated_position} 第一次进入当前 \cpath{injection_box} 时调用一次 \cpath{InitData()}，之后靠已有人工天线粒子在 \cpath{Evolve()} 中持续更新并沉积 \cpath{J/rho}。AMR 下这两个尺度也不同：species 的 runtime 注入盒按 level-0 cell 对齐，而 \cpath{LaserParticleContainer::InitData()} 仍然按 \cpath{maxLevel()} 的 finest spacing 建立天线粒子。
+两者的 \cpath{ContinuousInjection()} 语义也不同。普通物理粒子是在 moving window 新扫进来的 level-0 \cpath{particleBox} 中反复调用 \cpath{AddPlasma(...)}；laser 则只在 \cpath{m\_updated\_position} 第一次进入当前 \cpath{injection\_box} 时调用一次 \cpath{InitData()}，之后靠已有人工天线粒子在 \cpath{Evolve()} 中持续更新并沉积 \cpath{J/rho}。AMR 下这两个尺度也不同：species 的 runtime 注入盒按 level-0 cell 对齐，而 \cpath{LaserParticleContainer::InitData()} 仍然按 \cpath{maxLevel()} 的 finest spacing 建立天线粒子。
 
-external field 的 moving-window 合同也在这里锁死。\cpath{LoadExternalFields()} 对 \code{B/E_ext_grid_type == read_from_file} 以及 particle external field 的 \cpath{read_from_file} 都直接断言：
+external field 的 moving-window 合同也在这里锁死。\cpath{LoadExternalFields()} 对 \code{B/E_ext_grid_type == read_from_file} 以及 particle external field 的 \cpath{read\_from\_file} 都直接断言：
 
 % <-- fenced code (cpp)
 \begin{codeblock}
@@ -1564,24 +1564,24 @@ srcfab(i,j,k,n) = external_field;
 srcfab(i,j,k,n) = field_parser(x,y,z);
 \end{codeblock}
 
-因此 constant/parser 外场可以跟着 moving window 继续生成，而 \cpath{read_from_file} 缺少“窗口每推进一次就按新的 physical coordinates 增量重读”的实现，所以被源码显式禁止。读者若研究文件外场，应选择固定窗口的 \cpath{load_external_field*} 案例；若问题是激光与 moving window 的交界，则应转向 \cpath{laser_acceleration_boosted}、\cpath{refined_injection} 或 \cpath{subcycling_mr}，再为目标 observable 定义独立比较。
+因此 constant/parser 外场可以跟着 moving window 继续生成，而 \cpath{read\_from\_file} 缺少“窗口每推进一次就按新的 physical coordinates 增量重读”的实现，所以被源码显式禁止。读者若研究文件外场，应选择固定窗口的 \cpath{load\_external\_field*} 案例；若问题是激光与 moving window 的交界，则应转向 \cpath{laser\_acceleration\_boosted}、\cpath{refined\_injection} 或 \cpath{subcycling\_mr}，再为目标 observable 定义独立比较。
 
 \cardstep{激光在应用输入中的四种角色}
 
 同一个 Gaussian laser 在应用输入中可能是驱动、结果量、AMR 对象或表面等离子体的起点。首先分清这个角色，才能选择正确的 observable。
 
 \begin{enumerate}
-\item \textbf{驱动固体靶：\cpath{laser_ion}。}输入把 Gaussian laser、solid-density target、full/time-averaged diagnostics、\cpath{ParticleHistogram}、\cpath{FieldProbe} 与 \cpath{ParticleHistogram2D} 放到同一场景。\cpath{analysis_test_laser_ion.py} 直接比较的是 \cpath{diagInst} 最后 5 个瞬时 \cpath{Ez} 的平均与 \cpath{diagTimeAvg} 的同一点值。因此它验证 time-averaged diagnostics 的定义；并不由此给出 TNSA cutoff energy、RPA threshold 或离子转换效率。
-\item \textbf{把辐射当作结果量：\cpath{free_electron_laser}。}它没有 \cpath{lasers.names}，而以刚性注入电子/正电子束、boosted frame、moving window 和 undulator \cpath{B_y(z)} 产生辐射。\cpath{analysis_fel.py} 用 lab-frame 与 boosted-frame diagnostics 拟合 gain length，并以 FFT 比较 radiation wavelength。这里要解释的是束流辐射，而不是天线注入。
-\item \textbf{检查细化区域中的天线：\cpath{laser_on_fine}。}该输入的关键选择是 \code{max_level = 1}、\cpath{fine_tag_lo/hi}、\cpath{laser1.prob_lo/prob_hi} 与 PML。默认输出回归只能告诉读者这些 AMR/求解器设置下输出没有意外变化；它不是传播、衍射或靶相互作用的独立物理比较。
-\item \textbf{建立过密靶表面等离子体：\cpath{plasma_mirror}。}它组合了 Gaussian laser、solid-density target、前后指数梯度、PML、field filter 和双 species 靶。该输入是研究反射率或高次谐波前的搭建起点；没有独立比较量时，不能把它称作这两类量的 benchmark。
+\item \textbf{驱动固体靶：\cpath{laser\_ion}。}输入把 Gaussian laser、solid-density target、full/time-averaged diagnostics、\cpath{ParticleHistogram}、\cpath{FieldProbe} 与 \cpath{ParticleHistogram2D} 放到同一场景。\cpath{analysis\_test\_laser\_ion.py} 直接比较的是 \cpath{diagInst} 最后 5 个瞬时 \cpath{Ez} 的平均与 \cpath{diagTimeAvg} 的同一点值。因此它验证 time-averaged diagnostics 的定义；并不由此给出 TNSA cutoff energy、RPA threshold 或离子转换效率。
+\item \textbf{把辐射当作结果量：\cpath{free\_electron\_laser}。}它没有 \cpath{lasers.names}，而以刚性注入电子/正电子束、boosted frame、moving window 和 undulator \cpath{B\_y(z)} 产生辐射。\cpath{analysis\_fel.py} 用 lab-frame 与 boosted-frame diagnostics 拟合 gain length，并以 FFT 比较 radiation wavelength。这里要解释的是束流辐射，而不是天线注入。
+\item \textbf{检查细化区域中的天线：\cpath{laser\_on\_fine}。}该输入的关键选择是 \code{max_level = 1}、\cpath{fine\_tag\_lo/hi}、\cpath{laser1.prob\_lo/prob\_hi} 与 PML。默认输出回归只能告诉读者这些 AMR/求解器设置下输出没有意外变化；它不是传播、衍射或靶相互作用的独立物理比较。
+\item \textbf{建立过密靶表面等离子体：\cpath{plasma\_mirror}。}它组合了 Gaussian laser、solid-density target、前后指数梯度、PML、field filter 和双 species 靶。该输入是研究反射率或高次谐波前的搭建起点；没有独立比较量时，不能把它称作这两类量的 benchmark。
 \end{enumerate}
 
-第二项的实现尤其容易被误读。\cpath{free_electron_laser} 由 \cpath{RigidInjectedParticleContainer}、\code{particles.B_ext_particle_init_style = parse_B_ext_particle_function} 与 \cpath{BackTransformed} diagnostics 组成。\cpath{zinject_plane} 和 \cpath{rigid_advance} 决定注入面前束团如何刚体传播；undulator 场不写入主场 \cpath{Bfield_fp}，而是在 gather 时以 particle external field 的 \cpath{B_y(z)} 提供。因此它的解释链是“刚性束流 -> 粒子背景场 -> BTD 恢复实验室系 -> gain length/wavelength”，不是“激光天线 -> 场注入”。
+第二项的实现尤其容易被误读。\cpath{free\_electron\_laser} 由 \cpath{RigidInjectedParticleContainer}、\code{particles.B_ext_particle_init_style = parse_B_ext_particle_function} 与 \cpath{BackTransformed} diagnostics 组成。\cpath{zinject\_plane} 和 \cpath{rigid\_advance} 决定注入面前束团如何刚体传播；undulator 场不写入主场 \cpath{Bfield\_fp}，而是在 gather 时以 particle external field 的 \cpath{B\_y(z)} 提供。因此它的解释链是“刚性束流 -> 粒子背景场 -> BTD 恢复实验室系 -> gain length/wavelength”，不是“激光天线 -> 场注入”。
 
-这条链的三个比较层也不能混用：\cpath{analysis_fel.py} 比较 FEL 的 gain length 和 wavelength；\cpath{rigid_injection} 检查刚性传播以及 plotfile/openPMD 中的束团状态；\cpath{boosted_diags} 检查 BTD writer 对齐和 \cpath{random_fraction} 子采样。每一层只为相应的 producer/consumer 接口提供证据。
+这条链的三个比较层也不能混用：\cpath{analysis\_fel.py} 比较 FEL 的 gain length 和 wavelength；\cpath{rigid\_injection} 检查刚性传播以及 plotfile/openPMD 中的束团状态；\cpath{boosted\_diags} 检查 BTD writer 对齐和 \cpath{random\_fraction} 子采样。每一层只为相应的 producer/consumer 接口提供证据。
 
-最后，不要把 \cpath{laser_ion} 当作“所有多物理同时开启”的总基准。它能作为 laser-target 骨架，field ionization、collisions 与 QED 可从此分叉；但这些模块分别在 \cpath{InitIonizationModule()}、\cpath{CollisionHandler} 与 \cpath{InitQED()} 接入，拥有不同的输入前提和推进时序。研究相应机制时，应到各自的 \cpath{field_ionization/}、\cpath{collision/} 或 \cpath{qed/} 案例定义独立 observable，而不是把 time-averaged \cpath{Ez} 的比较扩大成多物理正确性证明。
+最后，不要把 \cpath{laser\_ion} 当作“所有多物理同时开启”的总基准。它能作为 laser-target 骨架，field ionization、collisions 与 QED 可从此分叉；但这些模块分别在 \cpath{InitIonizationModule()}、\cpath{CollisionHandler} 与 \cpath{InitQED()} 接入，拥有不同的输入前提和推进时序。研究相应机制时，应到各自的 \cpath{field\_ionization/}、\cpath{collision/} 或 \cpath{qed/} 案例定义独立 observable，而不是把 time-averaged \cpath{Ez} 的比较扩大成多物理正确性证明。
 
 \section{3A.13 初始化验证入口：哪些 regressions 真正在兜底}
 
@@ -1594,11 +1594,11 @@ srcfab(i,j,k,n) = field_parser(x,y,z);
 \begin{itemize}
 \item \cpath{NUniformPerCell}
 \item \cpath{profile=constant}
-\item \cpath{parse_momentum_function}
+\item \cpath{parse\_momentum\_function}
 \item 周期边界下的初始粒子/场一致性
 \end{itemize}
 
-例如 \cpath{analysis_1d.py} 的主断言不是 checksum，而是把输出 \cpath{Ez} 与理论 Langmuir 波逐点比较：
+例如 \cpath{analysis\_1d.py} 的主断言不是 checksum，而是把输出 \cpath{Ez} 与理论 Langmuir 波逐点比较：
 
 % <-- fenced code (python)
 \begin{codeblock}
@@ -1611,7 +1611,7 @@ check_charge_conservation(data)
 
 这意味着 \cpath{Langmuir} 不只是“时间推进跑通”，而是在验证 parser 形式的初始扰动确实经过 \cpath{PlasmaInjector}、\cpath{SpeciesUtils} 和 \cpath{AddPlasma()} 正确落到了粒子和场上。
 
-第二组是 \cpath{space_charge_initialization}。它最直接对应 \code{species.initialize_self_fields = 1} 这条初始化支线。输入文件显式打开：
+第二组是 \cpath{space\_charge\_initialization}。它最直接对应 \code{species.initialize_self_fields = 1} 这条初始化支线。输入文件显式打开：
 
 % <-- fenced code (text)
 \begin{codeblock}
@@ -1623,43 +1623,43 @@ beam.momentum_distribution_type = "at_rest"
 而 analysis 脚本把输出 \cpath{Ex/Ey/Ez} 与高斯电荷团理论场直接比较。因此这组 test 实际上在硬验证：
 
 \begin{enumerate}
-\item \cpath{gaussian_beam} 初始粒子云生成正确；
-\item \cpath{InitData()} 检测到 \cpath{has_initialize_self_fields}；
-\item \cpath{ComputeSpaceChargeField(reset_fields=false)} 在第一个时间步前给出了正确的 Coulomb 场。
+\item \cpath{gaussian\_beam} 初始粒子云生成正确；
+\item \cpath{InitData()} 检测到 \cpath{has\_initialize\_self\_fields}；
+\item \cpath{ComputeSpaceChargeField(reset\_fields=false)} 在第一个时间步前给出了正确的 Coulomb 场。
 \end{enumerate}
 
-第三组是 \cpath{dive_cleaning}。它验证的不是 projection cleaner，而是：
+第三组是 \cpath{dive\_cleaning}。它验证的不是 projection cleaner，而是：
 
 \begin{itemize}
 \item 初始 Gaussian beam 状态进入演化后，
-\item \code{warpx.do_dive_cleaning = 1} 与 PML 能否把 \cpath{div(E)-rho/\epsilon_0} 误差传播并吸收掉，
+\item \code{warpx.do_dive_cleaning = 1} 与 PML 能否把 \codeesc{div(E)-rho/\textbackslash\{\}epsilon\_0} 误差传播并吸收掉，
 \item 最终场是否回到理论 Gaussian beam 电场。
 \end{itemize}
 
-第四组是 \cpath{gaussian_beam} / \cpath{external_file}。这里要分两半看：
+第四组是 \cpath{gaussian\_beam} / \cpath{external\_file}。这里要分两半看：
 
 \begin{enumerate}
-\item \cpath{analysis_focusing_beam.py} 和 \cpath{analysis_rotated_beam.py} 分别验证 \cpath{focal_distance}、束斑统计、旋转位置和旋转动量；
-\item \cpath{inputs_test_3d_focusing_gaussian_beam_from_openpmd_prepare.py} + \cpath{inputs_test_3d_focusing_gaussian_beam_from_openpmd} 则覆盖 \cpath{external_file} openPMD 粒子注入合同，包括 \cpath{weighting}、\cpath{mass}、\cpath{charge}、\cpath{positionOffset} 和 \code{momentum.unit_SI = m_e c}。
+\item \cpath{analysis\_focusing\_beam.py} 和 \cpath{analysis\_rotated\_beam.py} 分别验证 \cpath{focal\_distance}、束斑统计、旋转位置和旋转动量；
+\item \cpath{inputs\_test\_3d\_focusing\_gaussian\_beam\_from\_openpmd\_prepare.py} + \cpath{inputs\_test\_3d\_focusing\_gaussian\_beam\_from\_openpmd} 则覆盖 \cpath{external\_file} openPMD 粒子注入合同，包括 \cpath{weighting}、\cpath{mass}、\cpath{charge}、\cpath{positionOffset} 和 \code{momentum.unit_SI = m_e c}。
 \end{enumerate}
 
 这一组现在还能再细一层：
 
 \begin{itemize}
-\item \cpath{inputs_test_3d_focusing_gaussian_beam_photons} 不是新物理 benchmark，而是把同一聚焦束斑统计合同重复到 \code{species_type = photon} 路径；
-\item \cpath{inputs_test_3d_gaussian_beam_picmi.py} 则主要覆盖 PICMI \cpath{GaussianBunchDistribution} 前端到 runtime attributes 的接线，当前主要依赖 checksum，而不是独立理论断言。
+\item \cpath{inputs\_test\_3d\_focusing\_gaussian\_beam\_photons} 不是新物理 benchmark，而是把同一聚焦束斑统计合同重复到 \code{species_type = photon} 路径；
+\item \cpath{inputs\_test\_3d\_gaussian\_beam\_picmi.py} 则主要覆盖 PICMI \cpath{GaussianBunchDistribution} 前端到 runtime attributes 的接线，当前主要依赖 checksum，而不是独立理论断言。
 \end{itemize}
 
-这里还要诚实记录一个源码边界：\cpath{gaussian_beam/CMakeLists.txt} 为 native \cpath{test_3d_focusing_gaussian_beam_from_openpmd} 指定了 \cpath{analysis.py}，但该目录没有这个文件。因而这条 native 路径只能说明 \code{prepare -> external_file inject -> diagnostics} 的输入与输出接口被覆盖，不能被称为官方的束斑物理强验证。相邻的 PICMI 入口复用 \cpath{analysis_focusing_beam.py}，可以用来学习应比较的束斑统计量；它也不能自动补上 native 入口缺失的 analysis。读者若修改 native 输入，应自行对照粒子数、总权重、横向均方根束斑和纵向切片统计，并预先说明容差来自何处。
+这里还要诚实记录一个源码边界：\cpath{gaussian\_beam/CMakeLists.txt} 为 native \cpath{test\_3d\_focusing\_gaussian\_beam\_from\_openpmd} 指定了 \cpath{analysis.py}，但该目录没有这个文件。因而这条 native 路径只能说明 \code{prepare -> external_file inject -> diagnostics} 的输入与输出接口被覆盖，不能被称为官方的束斑物理强验证。相邻的 PICMI 入口复用 \cpath{analysis\_focusing\_beam.py}，可以用来学习应比较的束斑统计量；它也不能自动补上 native 入口缺失的 analysis。读者若修改 native 输入，应自行对照粒子数、总权重、横向均方根束斑和纵向切片统计，并预先说明容差来自何处。
 
 第五组是 electrostatic / EB 初始化：
 
 \begin{itemize}
-\item \cpath{effective_potential_electrostatic} 用电子径向密度和解析 adiabatic expansion 基准比较，验证 effective-potential electrostatic solver；
-\item \cpath{electrostatic_sphere_eb} 则用 \cpath{ChargeOnEB} reduced diag 和 \cpath{eb_covered} 场，验证 \cpath{InitEB()}、Poisson 边界条件和带导体球的初始势问题。
+\item \cpath{effective\_potential\_electrostatic} 用电子径向密度和解析 adiabatic expansion 基准比较，验证 effective-potential electrostatic solver；
+\item \cpath{electrostatic\_sphere\_eb} 则用 \cpath{ChargeOnEB} reduced diag 和 \cpath{eb\_covered} 场，验证 \cpath{InitEB()}、Poisson 边界条件和带导体球的初始势问题。
 \end{itemize}
 
-最后一组是 \cpath{projection_div_cleaner}，它对应 3A.12 的 Poisson projection，而不是演化阶段的 \cpath{do_dive_cleaning}。相关 tests 已覆盖：
+最后一组是 \cpath{projection\_div\_cleaner}，它对应 3A.12 的 Poisson projection，而不是演化阶段的 \cpath{do\_dive\_cleaning}。相关 tests 已覆盖：
 
 \begin{enumerate}
 \item RZ openPMD 文件外场版本；
@@ -1668,41 +1668,41 @@ beam.momentum_distribution_type = "at_rest"
 \item 2D 解析外场版本。
 \end{enumerate}
 
-这些脚本的共同断言都是：初始化完成后，从 \cpath{raw} staggered \cpath{Bx_aux/By_aux/Bz_aux} 重建的离散 \cpath{divB} 必须足够接近零。
+这些脚本的共同断言都是：初始化完成后，从 \cpath{raw} staggered \cpath{Bx\_aux/By\_aux/Bz\_aux} 重建的离散 \cpath{divB} 必须足够接近零。
 
 这里也要区分强断言的位置：
 
 \begin{itemize}
-\item \cpath{test_rz_projection_div_cleaner} 的强断言在独立 \cpath{analysis.py} 里；
-\item \cpath{test_3d_projection_div_cleaner_picmi}、\cpath{test_3d_projection_div_cleaner_callback_picmi} 和 \cpath{test_2d_projection_div_cleaner_initial_analytical_field_picmi} 则都把 \cpath{divB} 断言直接写在输入脚本尾部，所以 \cpath{CMakeLists.txt} 里虽然 \cpath{analysis=OFF}，但并不等于这些条目只是 checksum-only。
+\item \cpath{test\_rz\_projection\_div\_cleaner} 的强断言在独立 \cpath{analysis.py} 里；
+\item \cpath{test\_3d\_projection\_div\_cleaner\_picmi}、\cpath{test\_3d\_projection\_div\_cleaner\_callback\_picmi} 和 \cpath{test\_2d\_projection\_div\_cleaner\_initial\_analytical\_field\_picmi} 则都把 \cpath{divB} 断言直接写在输入脚本尾部，所以 \cpath{CMakeLists.txt} 里虽然 \cpath{analysis=OFF}，但并不等于这些条目只是 checksum-only。
 \end{itemize}
 
-再往 species 入口侧补一组，\cpath{Examples/Tests/flux_injection/} 是直接锚定 \cpath{setupNFluxPerCell()} 的 regression 家族。这组 tests 分三条：
+再往 species 入口侧补一组，\cpath{Examples/Tests/flux\_injection/} 是直接锚定 \cpath{setupNFluxPerCell()} 的 regression 家族。这组 tests 分三条：
 
 \begin{enumerate}
-\item \cpath{analysis_flux_injection_3d.py}
+\item \cpath{analysis\_flux\_injection\_3d.py}
 \begin{itemize}
 \item 对 3D \cpath{NFluxPerCell} 场景同时检查总发射量、法向 Gaussian-flux 分布和切向 Gaussian 分布；
 \end{itemize}
-\item \cpath{analysis_flux_injection_rz.py}
+\item \cpath{analysis\_flux\_injection\_rz.py}
 \begin{itemize}
 \item 对 \code{flux_normal_axis = t} 的 RZ 连续注入检查粒子始终停留在预期 Larmor 半径带，并保持正确总通量；
 \end{itemize}
-\item \cpath{analysis_flux_injection_from_eb.py}
+\item \cpath{analysis\_flux\_injection\_from\_eb.py}
 \begin{itemize}
 \item 对 \code{inject_from_embedded_boundary = 1} 的 2D/3D/RZ 变体检查发射总数、法向/切向速度统计，以及粒子不会落入 EB 内部。
 \end{itemize}
 \end{enumerate}
 
-因此 \cpath{flux_injection} 的意义不是普通 emitter 示例，而是 \cpath{NFluxPerCell}、Gaussian-flux rejection sampling 和 embedded-boundary surface emission 这三条运行态合同的直接验证入口。
+因此 \cpath{flux\_injection} 的意义不是普通 emitter 示例，而是 \cpath{NFluxPerCell}、Gaussian-flux rejection sampling 和 embedded-boundary surface emission 这三条运行态合同的直接验证入口。
 
-第一组是 \cpath{initial_distribution}。它不是普通 smoke test，而是一组多 species、多分布的综合强基准：同一输入里同时覆盖
+第一组是 \cpath{initial\_distribution}。它不是普通 smoke test，而是一组多 species、多分布的综合强基准：同一输入里同时覆盖
 
 \begin{itemize}
 \item \cpath{gaussian}
-\item \cpath{maxwell_boltzmann}
-\item \cpath{maxwell_juttner}
-\item \cpath{gaussian_beam}
+\item \cpath{maxwell\_boltzmann}
+\item \cpath{maxwell\_juttner}
+\item \cpath{gaussian\_beam}
 \item parser 温度
 \item parser bulk velocity
 \item \cpath{uniform}
@@ -1717,11 +1717,11 @@ analysis 脚本把 reduced histogram、束斑统计和解析分布逐条对照�
 
 初态常被一句“束流已经初始化”概括，但这至少混合了两件不同的事：粒子的位置、权重和动量是否来自预期分布；以及这些粒子是否已经在第一步前建立了应有的自场。前者即使完全正确，也不推出 Poisson 或 space-charge 初始化正确；后者即使场形状正确，也不能替代对粒子分布和总电荷的检查。读者应把它们拆成两条 producer -> observable -> consumer 链。
 
-\textbf{合同 A：粒子分布。}\cpath{initial_distribution} 的输入设定 \code{max_step = 0}，并以 \cpath{ParticleHistogram} reduced diagnostics 输出各 species 的动量或位置直方图。例如 \cpath{h1x/h1y/h1z} 对 Gaussian species 统计 \cpath{ux/uy/uz}，\cpath{h4x/h4y/h4z} 对 Gaussian beam 统计空间坐标；同一组还写出 beam 的总电荷。CTest 将 producer 接到 \cpath{analysis.py}，该 consumer 读取这些 reduced diagnostics，将 Gaussian、Maxwellian、Maxwell-Juttner 和 beam 的位置统计分别与解析密度比较，并对归一化误差及相对电荷误差断言容差。
+\textbf{合同 A：粒子分布。}\cpath{initial\_distribution} 的输入设定 \code{max_step = 0}，并以 \cpath{ParticleHistogram} reduced diagnostics 输出各 species 的动量或位置直方图。例如 \cpath{h1x/h1y/h1z} 对 Gaussian species 统计 \cpath{ux/uy/uz}，\cpath{h4x/h4y/h4z} 对 Gaussian beam 统计空间坐标；同一组还写出 beam 的总电荷。CTest 将 producer 接到 \cpath{analysis.py}，该 consumer 读取这些 reduced diagnostics，将 Gaussian、Maxwellian、Maxwell-Juttner 和 beam 的位置统计分别与解析密度比较，并对归一化误差及相对电荷误差断言容差。
 
-这条设计的关键价值在于 \code{max_step = 0}：它把比较对象限定为初始化完成后、尚未由时间推进改变的粒子统计。因此它能支持的结论是“给定输入、采样数、诊断定义和分析容差下，粒子初始化分布与指定解析分布相符”。它不能支持“初始空间电荷场已经正确”或“随后任意步数、任意求解器和任意 MPI 布局的动力学都正确”。若读者修改的是 \cpath{momentum_distribution_type}、parser mean/std、束斑 rms、截断或粒子数，应先复用这一类 histogram/charge observable；不要只看 plotfile 是否写出。
+这条设计的关键价值在于 \code{max_step = 0}：它把比较对象限定为初始化完成后、尚未由时间推进改变的粒子统计。因此它能支持的结论是“给定输入、采样数、诊断定义和分析容差下，粒子初始化分布与指定解析分布相符”。它不能支持“初始空间电荷场已经正确”或“随后任意步数、任意求解器和任意 MPI 布局的动力学都正确”。若读者修改的是 \cpath{momentum\_distribution\_type}、parser mean/std、束斑 rms、截断或粒子数，应先复用这一类 histogram/charge observable；不要只看 plotfile 是否写出。
 
-\textbf{合同 B：初始自场。}\cpath{space_charge_initialization} 选择静止 Gaussian beam，并显式给出：
+\textbf{合同 B：初始自场。}\cpath{space\_charge\_initialization} 选择静止 Gaussian beam，并显式给出：
 
 % <-- fenced code (text)
 \begin{codeblock}
@@ -1730,13 +1730,13 @@ beam.initialize_self_fields = 1
 beam.momentum_distribution_type = "at_rest"
 \end{codeblock}
 
-这时 producer 不止是粒子生成。\cpath{WarpX::InitData()} 的 fresh-run 分支会遍历 species；只要发现任一 \cpath{initialize_self_fields} 为真，便在第一步推进之前调用 \code{ComputeSpaceChargeField(reset_E_field=false, reset_B_field=false)}。输入还请求 Full diagnostics 写出 \cpath{Ex/Ey/Ez}，CTest 将 \cpath{diags/diag1000001} 交给 \cpath{analysis.py}。这个 consumer 按二维或三维 Gaussian charge distribution 构造理论场，再对输出的 \cpath{Ex/Ey}，以及三维时的 \cpath{Ez} 做逐数组 \cpath{allclose} 容差检查。
+这时 producer 不止是粒子生成。\cpath{WarpX::InitData()} 的 fresh-run 分支会遍历 species；只要发现任一 \cpath{initialize\_self\_fields} 为真，便在第一步推进之前调用 \code{ComputeSpaceChargeField(reset_E_field=false, reset_B_field=false)}。输入还请求 Full diagnostics 写出 \cpath{Ex/Ey/Ez}，CTest 将 \cpath{diags/diag1000001} 交给 \cpath{analysis.py}。这个 consumer 按二维或三维 Gaussian charge distribution 构造理论场，再对输出的 \cpath{Ex/Ey}，以及三维时的 \cpath{Ez} 做逐数组 \cpath{allclose} 容差检查。
 
-因此这条合同能支持的结论是“在该静止 Gaussian-beam、边界、网格、shape、两 rank 注册布局和字段比较容差下，初始化自场与该理论场一致”。它不把 \cpath{initial_distribution} 的 histogram 通过自动升级为场求解验证，也不覆盖相对论自场、open-boundary FFT、embedded boundary 或后续 pusher 的正确性；这些问题应分别进入 \cpath{relativistic_space_charge_initialization}、\cpath{open_bc_poisson_solver}、\cpath{magnetostatic_eb} 或 \cpath{repelling_particles} 的 consumer。
+因此这条合同能支持的结论是“在该静止 Gaussian-beam、边界、网格、shape、两 rank 注册布局和字段比较容差下，初始化自场与该理论场一致”。它不把 \cpath{initial\_distribution} 的 histogram 通过自动升级为场求解验证，也不覆盖相对论自场、open-boundary FFT、embedded boundary 或后续 pusher 的正确性；这些问题应分别进入 \cpath{relativistic\_space\_charge\_initialization}、\cpath{open\_bc\_poisson\_solver}、\cpath{magnetostatic\_eb} 或 \cpath{repelling\_particles} 的 consumer。
 
-\textbf{实际操作顺序。}当一个新输入同时改了束流分布和 \cpath{initialize_self_fields} 时，先在零步或等价的初态输出上锁定合同 A，再在明确的初始 field diagnostic 上锁定合同 B；随后才用轨迹、能量或束斑演化回答“该初场被 pusher 消费后会怎样”。若 A 失败，先查 injection style、parser、随机采样、权重和 histogram 定义；若 A 通过而 B 失败，转查边界、solver、field diagnostic、\cpath{initialize_self_fields} 与初始场求解。两类失败的定位入口不同，不能合并成“初始化失败”。
+\textbf{实际操作顺序。}当一个新输入同时改了束流分布和 \cpath{initialize\_self\_fields} 时，先在零步或等价的初态输出上锁定合同 A，再在明确的初始 field diagnostic 上锁定合同 B；随后才用轨迹、能量或束斑演化回答“该初场被 pusher 消费后会怎样”。若 A 失败，先查 injection style、parser、随机采样、权重和 histogram 定义；若 A 通过而 B 失败，转查边界、solver、field diagnostic、\cpath{initialize\_self\_fields} 与初始场求解。两类失败的定位入口不同，不能合并成“初始化失败”。
 
-第二组是 \cpath{initial_plasma_profile}。这组当前没有独立 \cpath{analysis.py}，只有 checksum helper，但输入本身非常明确：
+第二组是 \cpath{initial\_plasma\_profile}。这组当前没有独立 \cpath{analysis.py}，只有 checksum helper，但输入本身非常明确：
 
 \begin{itemize}
 \item \code{injection_style = NUniformPerCell}
@@ -1746,19 +1746,19 @@ beam.momentum_distribution_type = "at_rest"
 并把横向 parabolic channel 与纵向 ramp / plateau / ramp 组合成二维电子密度。所以它更准确地是：
 
 \begin{itemize}
-\item \cpath{parse_density_function} 抛物型通道初始化的 checksum-only 基线
+\item \cpath{parse\_density\_function} 抛物型通道初始化的 checksum-only 基线
 \end{itemize}
 
 而不是应继续留在 \code{general / to classify} 的未知条目。
 
-再往 \cpath{initialize_self_fields} 这一支补一组，\cpath{repelling_particles} 是一个更小但更干净的两体基准。它只放两个同号 \cpath{SingleParticle} species，却同时打开：
+再往 \cpath{initialize\_self\_fields} 这一支补一组，\cpath{repelling\_particles} 是一个更小但更干净的两体基准。它只放两个同号 \cpath{SingleParticle} species，却同时打开：
 
 \begin{itemize}
 \item \code{electron1.initialize_self_fields = 1}
 \item \code{electron2.initialize_self_fields = 1}
 \end{itemize}
 
-analysis 随后从连续 plotfiles 读取两粒子的间距和速度，并用两体排斥的非相对论能量守恒关系构造理论 \cpath{\beta(d)}。因此这组 regression 的真实意义不是“一对粒子大概会分开”，而是：
+analysis 随后从连续 plotfiles 读取两粒子的间距和速度，并用两体排斥的非相对论能量守恒关系构造理论 \codeesc{\textbackslash\{\}beta(d)}。因此这组 regression 的真实意义不是“一对粒子大概会分开”，而是：
 
 \begin{enumerate}
 \item 初始 electrostatic self-field 确实被建立起来；
@@ -1768,33 +1768,33 @@ analysis 随后从连续 plotfiles 读取两粒子的间距和速度，并用两
 
 接着把另外三组容易落单的入口也补上之后，初始化验证图还能再细一层。
 
-第一组是 \cpath{load_external_field}。它不是普通粒子轨道测试，而是在验证两套初始化合同：
+第一组是 \cpath{load\_external\_field}。它不是普通粒子轨道测试，而是在验证两套初始化合同：
 
 \begin{enumerate}
 \item grid external field：
 \begin{itemize}
 \item \cpath{LoadExternalFields()}
 \item \cpath{ReadExternalFieldFromFile()}
-\item \cpath{Bfield_fp_external/Efield_fp_external}
+\item \cpath{Bfield\_fp\_external/Efield\_fp\_external}
 \item \cpath{AddExternalFields()}
 \end{itemize}
 \item particle external field：
 \begin{itemize}
 \item \cpath{Particles/ExternalParticleFields.cpp}
 \item \code{m_B_ext_particle_s / m_E_ext_particle_s}
-\item \cpath{B_external_particle_field/E_external_particle_field}
+\item \cpath{B\_external\_particle\_field/E\_external\_particle\_field}
 \item \cpath{GetExternalFields.cpp}
 \end{itemize}
 \end{enumerate}
 
-\cpath{analysis_3d.py} / \cpath{analysis_rz.py} 通过磁镜中的单粒子最终位置做硬断言，说明这组 regression 同时验证了“初始化写场”和“后续 gather 消费场”的接口契合。时间依赖变体 \cpath{analysis_time_scaling.py} 则不看粒子，而是直接比较两个时刻 plotfile 上 \cpath{B} 分量的缩放比，从而验证 \cpath{read_fields_*_dependency(t)} parser 和多 field map 的时间缩放合同。
+\cpath{analysis\_3d.py} / \cpath{analysis\_rz.py} 通过磁镜中的单粒子最终位置做硬断言，说明这组 regression 同时验证了“初始化写场”和“后续 gather 消费场”的接口契合。时间依赖变体 \cpath{analysis\_time\_scaling.py} 则不看粒子，而是直接比较两个时刻 plotfile 上 \cpath{B} 分量的缩放比，从而验证 \cpath{read\_fields\_*\_dependency(t)} parser 和多 field map 的时间缩放合同。
 
 这组 family 里还要再区分一层 restart 保真。当前活跃的三条最小入口是：
 
 \begin{itemize}
-\item \cpath{test_3d_load_external_field_particle_time_restart}
-\item \cpath{test_rz_load_external_field_grid_restart}
-\item \cpath{test_rz_load_external_field_particles_restart}
+\item \cpath{test\_3d\_load\_external\_field\_particle\_time\_restart}
+\item \cpath{test\_rz\_load\_external\_field\_grid\_restart}
+\item \cpath{test\_rz\_load\_external\_field\_particles\_restart}
 \end{itemize}
 
 它们都只是：
@@ -1802,18 +1802,18 @@ analysis 随后从连续 plotfiles 读取两粒子的间距和速度，并用两
 \begin{itemize}
 \item 先继承对应非 restart 输入
 \item 再通过 \code{amr.restart = ../.../chk000150} 从中间 checkpoint 恢复
-\item 然后复用 \cpath{analysis_default_restart.py} 逐字段比较 restart 与非 restart 输出
+\item 然后复用 \cpath{analysis\_default\_restart.py} 逐字段比较 restart 与非 restart 输出
 \end{itemize}
 
 因此这三条 regression 验证的不是新的外场 physics，而是：
 
 \begin{enumerate}
-\item \cpath{read_from_file} 的 grid external field 状态能否在 restart 后保持一致；
-\item \cpath{read_from_file} / dependency parser 的 particle external field 状态能否在 restart 后保持一致；
+\item \cpath{read\_from\_file} 的 grid external field 状态能否在 restart 后保持一致；
+\item \cpath{read\_from\_file} / dependency parser 的 particle external field 状态能否在 restart 后保持一致；
 \item 初始化阶段构造出的 external-field 寄存器，不会在 checkpoint/restart 边界上丢失或漂移。
 \end{enumerate}
 
-第二组是 \cpath{relativistic_space_charge_initialization}。它的输入和普通 \cpath{space_charge_initialization} 一样也打开了：
+第二组是 \cpath{relativistic\_space\_charge\_initialization}。它的输入和普通 \cpath{space\_charge\_initialization} 一样也打开了：
 
 % <-- fenced code (text)
 \begin{codeblock}
@@ -1828,9 +1828,9 @@ beam.injection_style = "gaussian_beam"
 beam.uz = 100.0
 \end{codeblock}
 
-因此这组 regression 实际验证的是 \cpath{RelativisticExplicitES::ComputeSpaceChargeField()}，而不再只是静止高斯电荷团的 Coulomb 场。analysis 脚本把 \cpath{Ex} 与理论值比较，并检查 \cpath{By} 是否满足相对论束流自场的 \code{By \approx Ex/c} 结构。这说明 \cpath{initialize_self_fields} 在 relativistic solver 分支下对应的是另一份初始化合同。
+因此这组 regression 实际验证的是 \cpath{RelativisticExplicitES::ComputeSpaceChargeField()}，而不再只是静止高斯电荷团的 Coulomb 场。analysis 脚本把 \cpath{Ex} 与理论值比较，并检查 \cpath{By} 是否满足相对论束流自场的 \codeesc{By \textbackslash\{\}approx Ex/c} 结构。这说明 \cpath{initialize\_self\_fields} 在 relativistic solver 分支下对应的是另一份初始化合同。
 
-第三组是 \cpath{open_bc_poisson_solver}。它把四个条件绑在一起：
+第三组是 \cpath{open\_bc\_poisson\_solver}。它把四个条件绑在一起：
 
 % <-- fenced code (text)
 \begin{codeblock}
@@ -1841,7 +1841,7 @@ warpx.poisson_solver = fft
 electron.initialize_self_fields = 1
 \end{codeblock}
 
-同时粒子不是 \cpath{gaussian_beam}，而是 \code{parse_density_function + NUniformPerCell}。analysis 脚本用 Basseti-Erskine 公式逐个 \cpath{z} 截面比较 \cpath{Ex/Ey}，因此它验证的不是一般的 electrostatic 初始化，而是：
+同时粒子不是 \cpath{gaussian\_beam}，而是 \code{parse_density_function + NUniformPerCell}。analysis 脚本用 Basseti-Erskine 公式逐个 \cpath{z} 截面比较 \cpath{Ex/Ey}，因此它验证的不是一般的 electrostatic 初始化，而是：
 
 \begin{itemize}
 \item open boundary
@@ -1854,7 +1854,7 @@ electron.initialize_self_fields = 1
 
 接下来三组补足了文件驱动分布、带嵌入边界的自场，以及 collocated 采样的分支；它们与前面的束流注入和 Poisson 例子不共享同一个可观测量，因而应分别阅读。
 
-第一层是 \cpath{load_density}。这组 regression 的输入明确使用：
+第一层是 \cpath{load\_density}。这组 regression 的输入明确使用：
 
 % <-- fenced code (text)
 \begin{codeblock}
@@ -1864,9 +1864,9 @@ electrons.do_continuous_injection = 1
 warpx.do_moving_window = 1
 \end{codeblock}
 
-源码上它直接对应 \cpath{SpeciesUtils::parseDensity()} 里 \code{profile = read_from_file} 分支，把 openPMD density mesh 装进 \cpath{InjectorDensityFromFile}，然后交给 \cpath{PlasmaInjector} 和连续注入主链消费。analysis 脚本则逐个 iteration 读取 diagnostics 中的 \cpath{rho}，与 prepare 脚本定义的 ramp / parabolic channel profile 比较。因此 \cpath{load_density} 验证的不是一般 I/O，而是“file-driven density profile + moving-window 连续注入”这条初始化合同。
+源码上它直接对应 \cpath{SpeciesUtils::parseDensity()} 里 \code{profile = read_from_file} 分支，把 openPMD density mesh 装进 \cpath{InjectorDensityFromFile}，然后交给 \cpath{PlasmaInjector} 和连续注入主链消费。analysis 脚本则逐个 iteration 读取 diagnostics 中的 \cpath{rho}，与 prepare 脚本定义的 ramp / parabolic channel profile 比较。因此 \cpath{load\_density} 验证的不是一般 I/O，而是“file-driven density profile + moving-window 连续注入”这条初始化合同。
 
-第二层是 \cpath{magnetostatic_eb}。原生 inputs 文件把：
+第二层是 \cpath{magnetostatic\_eb}。原生 inputs 文件把：
 
 % <-- fenced code (text)
 \begin{codeblock}
@@ -1876,9 +1876,9 @@ warpx.eb_implicit_function = "(x**2+y**2-radius**2)"
 warpx.eb_potential(x,y,z,t) = "1."
 \end{codeblock}
 
-绑在一起，而 \cpath{WarpXInitData.cpp} 的 fresh-run 分支会在 \cpath{ComputeSpaceChargeField(reset_fields)} 之后继续调用 \cpath{ComputeMagnetostaticField()}。所以这组 test 验证的是 embedded boundary、边界 potential、初始 self-field 和 magnetostatic solve 在初始化阶段的联动。这里还必须区分两层证据：原生 \cpath{inputs_test_3d_magnetostatic_eb} 目前主要由 checksum 兜底；两个 PICMI 输入文件则在 \cpath{sim.step()} 之后内嵌了解析 \cpath{E_r/B_\theta} 误差断言，因此它们不是简单的 checksum-only regression。
+绑在一起，而 \cpath{WarpXInitData.cpp} 的 fresh-run 分支会在 \cpath{ComputeSpaceChargeField(reset\_fields)} 之后继续调用 \cpath{ComputeMagnetostaticField()}。所以这组 test 验证的是 embedded boundary、边界 potential、初始 self-field 和 magnetostatic solve 在初始化阶段的联动。这里还必须区分两层证据：原生 \cpath{inputs\_test\_3d\_magnetostatic\_eb} 目前主要由 checksum 兜底；两个 PICMI 输入文件则在 \cpath{sim.step()} 之后内嵌了解析 \codeesc{E\_r/B\_\textbackslash\{\}theta} 误差断言，因此它们不是简单的 checksum-only regression。
 
-第三层是 \cpath{nodal_electrostatic}。这组输入把：
+第三层是 \cpath{nodal\_electrostatic}。这组输入把：
 
 % <-- fenced code (text)
 \begin{codeblock}
@@ -1888,9 +1888,9 @@ beam_p.initialize_self_fields = 1
 beam_p.do_qed_quantum_sync = 1
 \end{codeblock}
 
-放在同一条链上。它的 analysis 不直接比较 \cpath{E/B}，而是用 reduced diagnostics 断言 \cpath{ParticleExtrema_beam_p} 给出的最大 \cpath{chi} 极小，且 \cpath{ParticleNumber} 中 photon 数始终为零。也就是说，这组 regression 验证的是 collocated relativistic electrostatic 初始 self-field 没有制造出会假触发 QED 的非物理场，它更准确地是一个“零触发基准”。
+放在同一条链上。它的 analysis 不直接比较 \cpath{E/B}，而是用 reduced diagnostics 断言 \cpath{ParticleExtrema\_beam\_p} 给出的最大 \cpath{chi} 极小，且 \cpath{ParticleNumber} 中 photon 数始终为零。也就是说，这组 regression 验证的是 collocated relativistic electrostatic 初始 self-field 没有制造出会假触发 QED 的非物理场，它更准确地是一个“零触发基准”。
 
-这样 \cpath{nodal_electrostatic}、\cpath{open_bc_poisson_solver} 和 \cpath{relativistic_space_charge_initialization} 就不再需要继续共用一个过粗的 \code{electrostatic / Poisson} 桶。它们分别对应的是：
+这样 \cpath{nodal\_electrostatic}、\cpath{open\_bc\_poisson\_solver} 和 \cpath{relativistic\_space\_charge\_initialization} 就不再需要继续共用一个过粗的 \code{electrostatic / Poisson} 桶。它们分别对应的是：
 
 \begin{itemize}
 \item collocated relativistic electrostatic 零触发基准
@@ -1898,7 +1898,7 @@ beam_p.do_qed_quantum_sync = 1
 \item relativistic Gaussian beam 的初始 self-field
 \end{itemize}
 
-不过还有一组此前仍容易被写得过粗：\cpath{electrostatic_sphere}。它不该和一般 \cpath{Poisson} 条目混成一桶，因为它真正验证的是“一个静止均匀电子球在自身 Coulomb 场下膨胀”这条自场初始化主链。\cpath{analysis_electrostatic_sphere.py} 的第一层断言是解析电场对照：脚本用最终输出时间 \cpath{t_max} 反解球半径 \cpath{r_end}，再构造内外球解析 \cpath{E(r)}，沿坐标轴比较 \cpath{Ex/Ey/Ez} 或 RZ 下的 \cpath{Er/Ez} 的相对 \cpath{L2} 误差。这意味着它验证的不只是 solver 跑通，而是：
+不过还有一组此前仍容易被写得过粗：\cpath{electrostatic\_sphere}。它不该和一般 \cpath{Poisson} 条目混成一桶，因为它真正验证的是“一个静止均匀电子球在自身 Coulomb 场下膨胀”这条自场初始化主链。\cpath{analysis\_electrostatic\_sphere.py} 的第一层断言是解析电场对照：脚本用最终输出时间 \cpath{t\_max} 反解球半径 \cpath{r\_end}，再构造内外球解析 \cpath{E(r)}，沿坐标轴比较 \cpath{Ex/Ey/Ez} 或 RZ 下的 \cpath{Er/Ez} 的相对 \cpath{L2} 误差。这意味着它验证的不只是 solver 跑通，而是：
 
 \begin{enumerate}
 \item 初始电子球几何是否被正确装填；
@@ -1918,44 +1918,44 @@ analysis 才会利用粒子 \cpath{phi} 重建：
 
 \begin{itemize}
 \item 动能
-\item 自场势能 \code{0.5 \sum w q \phi}
+\item 自场势能 \codeesc{0.5 \textbackslash\{\}sum w q \textbackslash\{\}phi}
 \end{itemize}
 
 并检查初末总能量。也就是说：
 
 \begin{itemize}
-\item 所有 \cpath{electrostatic_sphere} 变体都做解析电场对照；
+\item 所有 \cpath{electrostatic\_sphere} 变体都做解析电场对照；
 \item 只有写出 \cpath{phi} 的 lab-frame 版本额外验证能量账本。
 \end{itemize}
 
 各输入变体的角色也不同：
 
 \begin{itemize}
-\item \cpath{inputs_test_3d_electrostatic_sphere}
+\item \cpath{inputs\_test\_3d\_electrostatic\_sphere}
 \begin{itemize}
 \item 3D relativistic electrostatic 自场膨胀基线
 \end{itemize}
-\item \cpath{inputs_test_3d_electrostatic_sphere_lab_frame}
+\item \cpath{inputs\_test\_3d\_electrostatic\_sphere\_lab\_frame}
 \begin{itemize}
 \item lab-frame 自场膨胀 + 能量守恒
 \end{itemize}
-\item \cpath{inputs_test_3d_electrostatic_sphere_lab_frame_mr_emass_10}
+\item \cpath{inputs\_test\_3d\_electrostatic\_sphere\_lab\_frame\_mr\_emass\_10}
 \begin{itemize}
 \item lab-frame + MR；\code{electron.mass = 10} 主要是减慢膨胀，便于短步数比较
 \end{itemize}
-\item \cpath{inputs_test_3d_electrostatic_sphere_rel_nodal}
+\item \cpath{inputs\_test\_3d\_electrostatic\_sphere\_rel\_nodal}
 \begin{itemize}
 \item \code{warpx.grid_type = collocated}，验证 collocated electrostatic 布局
 \end{itemize}
-\item \cpath{inputs_test_3d_electrostatic_sphere_adaptive}
+\item \cpath{inputs\_test\_3d\_electrostatic\_sphere\_adaptive}
 \begin{itemize}
-\item adaptive-dt 变体；analysis 仍用实际 \cpath{t_max} 做强对照
+\item adaptive-dt 变体；analysis 仍用实际 \cpath{t\_max} 做强对照
 \end{itemize}
-\item \cpath{inputs_test_rz_electrostatic_sphere}
+\item \cpath{inputs\_test\_rz\_electrostatic\_sphere}
 \begin{itemize}
 \item RZ 自场膨胀 + 能量守恒
 \end{itemize}
-\item \cpath{inputs_test_rz_electrostatic_sphere_uniform_weighting}
+\item \cpath{inputs\_test\_rz\_electrostatic\_sphere\_uniform\_weighting}
 \begin{itemize}
 \item 再额外覆盖 \code{radial_numpercell_power = 1.} 的 uniform-weighting 粒子装填
 \end{itemize}
@@ -1964,19 +1964,19 @@ analysis 才会利用粒子 \cpath{phi} 重建：
 另外，这组目录下还有两个容易误读的文件：
 
 \begin{itemize}
-\item \cpath{analysis_default_regression.py} 只是通用 checksum helper；
-\item \cpath{catalyst_pipeline.py} 只是 ParaView Catalyst 的可视化脚本。
+\item \cpath{analysis\_default\_regression.py} 只是通用 checksum helper；
+\item \cpath{catalyst\_pipeline.py} 只是 ParaView Catalyst 的可视化脚本。
 \end{itemize}
 
-因此，\cpath{electrostatic_sphere} 在初始化验证图里更准确的位置应单独写成：
+因此，\cpath{electrostatic\_sphere} 在初始化验证图里更准确的位置应单独写成：
 
 \begin{enumerate}
-\item electrostatic self-field expansion：\cpath{electrostatic_sphere*}
+\item electrostatic self-field expansion：\cpath{electrostatic\_sphere*}
 \end{enumerate}
 
-还剩另外两组此前也容易被写得过粗，但它们和 \cpath{electrostatic_sphere} 不是一类问题。
+还剩另外两组此前也容易被写得过粗，但它们和 \cpath{electrostatic\_sphere} 不是一类问题。
 
-第一组是 \cpath{electrostatic_dirichlet_bc}。这组不是带电粒子自场 benchmark，而是纯粹在验证时变边界势是否真正进入 electrostatic 解。输入直接设置：
+第一组是 \cpath{electrostatic\_dirichlet\_bc}。这组不是带电粒子自场 benchmark，而是纯粹在验证时变边界势是否真正进入 electrostatic 解。输入直接设置：
 
 % <-- fenced code (text)
 \begin{codeblock}
@@ -1995,13 +1995,13 @@ analysis 并不读取内部粒子量，而是逐个输出时刻取两侧边界�
 \item diagnostics 中 \cpath{phi} 的边界保真
 \end{itemize}
 
-PICMI 变体只是在 \code{Cartesian2DGrid(..., lower_boundary_conditions=["dirichlet", ...])}、\cpath{warpx_potential_lo_x}、\cpath{warpx_potential_hi_x} 这一层重复同一件事，所以它更准确的归类是：
+PICMI 变体只是在 \code{Cartesian2DGrid(..., lower_boundary_conditions=["dirichlet", ...])}、\cpath{warpx\_potential\_lo\_x}、\cpath{warpx\_potential\_hi\_x} 这一层重复同一件事，所以它更准确的归类是：
 
 \begin{enumerate}
-\item time-dependent electrostatic boundary driving：\cpath{electrostatic_dirichlet_bc*}
+\item time-dependent electrostatic boundary driving：\cpath{electrostatic\_dirichlet\_bc*}
 \end{enumerate}
 
-第二组是 \cpath{effective_potential_electrostatic}。这组当前只有一个 PICMI test，而且它验证的也不是一般意义上的 electrostatic \cpath{phi} 场，而是 \cpath{warpx_effective_potential=True} 这条 solver 分叉是否能在导体球约束下复现绝热膨胀 benchmark。PICMI 输入脚本同时做了三件关键事：
+第二组是 \cpath{effective\_potential\_electrostatic}。这组当前只有一个 PICMI test，而且它验证的也不是一般意义上的 electrostatic \cpath{phi} 场，而是 \cpath{warpx\_effective\_potential=True} 这条 solver 分叉是否能在导体球约束下复现绝热膨胀 benchmark。PICMI 输入脚本同时做了三件关键事：
 
 \begin{enumerate}
 \item 用 \cpath{GaussianBunchDistribution} 初始化电子和离子球团；
@@ -2018,7 +2018,7 @@ picmi.ElectrostaticSolver(
 )
 \end{codeblock}
 
-analysis 则从 \cpath{sim_parameters.dpkl} 读回参数，构造 Connor et al. 风格的绝热膨胀近似电子密度，再把 openPMD 中的 \cpath{rho_electrons} 变成径向密度曲线，与理论值逐个输出时刻比较 RMS 误差。因此它的真实验证对象是：
+analysis 则从 \cpath{sim\_parameters.dpkl} 读回参数，构造 Connor et al. 风格的绝热膨胀近似电子密度，再把 openPMD 中的 \cpath{rho\_electrons} 变成径向密度曲线，与理论值逐个输出时刻比较 RMS 误差。因此它的真实验证对象是：
 
 \begin{itemize}
 \item effective-potential electrostatic solver
@@ -2029,7 +2029,7 @@ analysis 则从 \cpath{sim_parameters.dpkl} 读回参数，构造 Connor et al. 
 更准确的归类应是：
 
 \begin{enumerate}
-\item effective-potential electrostatic：\cpath{effective_potential_electrostatic}
+\item effective-potential electrostatic：\cpath{effective\_potential\_electrostatic}
 \end{enumerate}
 
 \section{3A.14 从 Birdsall \texttt{3A ES1} 到 WarpX：历史最小程序骨架的现代映射}
@@ -2053,7 +2053,7 @@ INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY
 \code{3A ES1} 阶段 & WarpX 的现代映射与不能直接等同的部分 \\
 \midrule
 \endhead
-\cpath{INIT} & 建立网格、粒子、权重、边界和初始参数，对应 \cpath{ReadParameters()}、\cpath{WarpX::InitData()}、\cpath{InitFromScratch()}、\cpath{AllocLevelData()} 与 \cpath{mypc->AllocData()}；WarpX 还要处理 AMR、多几何、solver 分支、PML、外部场、restart 和并行布局。 \\
+\cpath{INIT} & 建立网格、粒子、权重、边界和初始参数，对应 \cpath{ReadParameters()}、\cpath{WarpX::InitData()}、\cpath{InitFromScratch()}、\cpath{AllocLevelData()} 与 \code{mypc->AllocData()}；WarpX 还要处理 AMR、多几何、solver 分支、PML、外部场、restart 和并行布局。 \\
 \cpath{SETRHO} & 用初始位置形成源，对应 \cpath{PlasmaInjector}/\cpath{AddParticles} 后的初始 \cpath{rho} 构造及 field-register 路径；\cpath{rho} 是否直接写入、重新沉积或被 solver 消费，取决于 geometry、solver 和初始化选项。 \\
 \cpath{FIELDS} & 从 \cpath{rho} 求势和场，对应 electrostatic solver 的 \cpath{InitData()}、\cpath{ComputeSpaceChargeField()}、初始场填充和 projection cleaning；不能简化成单一 FFT Poisson 路径，EM、PSATD、RZ、EB 与 external field 会改变对象和约束。 \\
 \cpath{SETV} & 设置热分布和漂移，对应 \cpath{SpeciesUtils}、\cpath{InjectorMomentum}、temperature/velocity functor 与粒子属性创建；WarpX 还可能创建 relativistic、spin、implicit 或 pusher-specific attributes。 \\
@@ -2063,9 +2063,9 @@ INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY
 \bottomrule
 \end{tabularx}
 
-最容易误读的是 \code{SETRHO -> FIELDS -> SETV} 的顺序。对历史 ES1 来说，它表达的是“先由初始位置形成源，再求场，再给粒子速度”；对 WarpX fresh run，实际初始化链还要先完成 AMReX level 和 field data 分配，并根据 solver、外场和 \cpath{initialize_self_fields} 等条件决定哪些源/场对象被创建。因而更可靠的读法是：Birdsall 骨架提供物理阶段的语义，WarpX 源码决定这些语义在现代对象图和分支条件中的落点。
+最容易误读的是 \code{SETRHO -> FIELDS -> SETV} 的顺序。对历史 ES1 来说，它表达的是“先由初始位置形成源，再求场，再给粒子速度”；对 WarpX fresh run，实际初始化链还要先完成 AMReX level 和 field data 分配，并根据 solver、外场和 \cpath{initialize\_self\_fields} 等条件决定哪些源/场对象被创建。因而更可靠的读法是：Birdsall 骨架提供物理阶段的语义，WarpX 源码决定这些语义在现代对象图和分支条件中的落点。
 
-这条映射也解释了为什么 \cpath{Langmuir} regression 可以同时作为初始化和演化入口：它检查的不是某个名为 \cpath{SETRHO} 的函数，而是初始粒子/密度、初始场、后续推进和最终解析频率之间的组合合同。相反，\cpath{initial_distribution}、\cpath{space_charge_initialization}、\cpath{load_external_field} 与 \cpath{projection_div_cleaner} 分别覆盖粒子分布、初始 self-field、外部场装填和初始散度修正的更窄路径。它们共同支撑的是现代 WarpX 初始化链的分层验证，而不是对 \code{3A ES1} 原程序做逐行复现。
+这条映射也解释了为什么 \cpath{Langmuir} regression 可以同时作为初始化和演化入口：它检查的不是某个名为 \cpath{SETRHO} 的函数，而是初始粒子/密度、初始场、后续推进和最终解析频率之间的组合合同。相反，\cpath{initial\_distribution}、\cpath{space\_charge\_initialization}、\cpath{load\_external\_field} 与 \cpath{projection\_div\_cleaner} 分别覆盖粒子分布、初始 self-field、外部场装填和初始散度修正的更窄路径。它们共同支撑的是现代 WarpX 初始化链的分层验证，而不是对 \code{3A ES1} 原程序做逐行复现。
 
 \section{3A.15 本章小结：初始化状态怎样进入第一步推进}
 
@@ -2103,5 +2103,5 @@ inputs
 
 \begin{enumerate}
 \item \textbf{fresh/restart 定位题}：沿 \cpath{WarpXInitData.cpp} 追踪 \cpath{InitData()}，说明 \cpath{ComputeDt()} 为什么只出现在 fresh-run 分支，以及 restart 为什么必须进入 \cpath{PostRestart()}。
-\item \textbf{初始化与复现题}：解释 \cpath{AmrCore::InitFromScratch()}、\cpath{AllocLevelData()}、\cpath{mypc->AllocData()}、\cpath{mypc->InitData()} 和 \cpath{InitPML()} 的先后关系。再在 \cpath{Examples/Tests/initial_distribution/} 选择匹配输入，核对生效输入、首个 diagnostics 和 species 数，并说明输入不匹配导致的 abort 为什么既不构成初始化通过，也不构成其反证。
+\item \textbf{初始化与复现题}：解释 \cpath{AmrCore::InitFromScratch()}、\cpath{AllocLevelData()}、\code{mypc->AllocData()}、\code{mypc->InitData()} 和 \cpath{InitPML()} 的先后关系。再在 \cpath{Examples/Tests/initial\_distribution/} 选择匹配输入，核对生效输入、首个 diagnostics 和 species 数，并说明输入不匹配导致的 abort 为什么既不构成初始化通过，也不构成其反证。
 \end{enumerate}

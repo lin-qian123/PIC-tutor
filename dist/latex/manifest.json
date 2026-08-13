@@ -2,8 +2,8 @@
   "edition": "latex-sample",
   "theme": "academic",
   "pdf": "dist/latex/pic-tutor-latex-sample-academic.pdf",
-  "pdf_sha256": "463a3785bbfe5389fb3e7231ea5a66d69e41987f84ede23d65400e1789911b21",
-  "source_commit": "364f3761035d0a44ec6ff8ad363c810fb79549b7",
+  "pdf_sha256": "f1aff9427751655681c55f26b556726427b754998d34ad2ce9cb2c9657b22879",
+  "source_commit": "393c8280ff47543571c5028a89e035e2454023d3",
   "engine": "XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025)",
   "fonts": "Songti SC (CJK main); PingFang SC (CJK sans); Menlo (Latin mono)",
   "baseline": {

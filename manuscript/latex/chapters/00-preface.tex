@@ -46,7 +46,7 @@
 术语 & 本书中的含义 & 阅读时必须继续追问 & 不能据此直接推出 \\
 \midrule
 \endhead
-source & 被某个场或方程更新实际消费的离散源项或状态，例如同步后的 $\rho$、$\mathbf{J}$ 或谱空间历史量 & 它在哪个时间层、几何位置、AMR level 和同步阶段成立 & 任意名为 \cpath{rho}、\cpath{current_*} 的数组都已可供 solver 消费 \\
+source & 被某个场或方程更新实际消费的离散源项或状态，例如同步后的 $\rho$、$\mathbf{J}$ 或谱空间历史量 & 它在哪个时间层、几何位置、AMR level 和同步阶段成立 & 任意名为 \cpath{rho}、\cpath{current\_*} 的数组都已可供 solver 消费 \\
 producer & 在确定的生命周期阶段创建、推进、沉积、同步或归约某个状态的代码路径 & 它生成什么量、何时写入、是否还需要过滤、通信或边界处理 & 找到一次写入或对象构造就证明物理状态已经完整 \\
 consumer & 读取该状态以更新场、写诊断、作比较或产生后续状态的代码路径 & 它读取的是 producer 的哪一时间层和哪一种表示 & 输出文件成功写出就证明 producer 的物理语义正确 \\
 observable & 为回答一个物理问题而定义、可与解析解、守恒关系、reference 或实验量比较的量 & 它的比较对象、容差、几何和不可外推范围是什么 & 任意已输出字段、checksum 或图像都是物理验证 \\
@@ -63,7 +63,7 @@ observable & 为回答一个物理问题而定义、可与解析解、守恒关�
 
 \subsection{路线 A：先能运行并解释一个最小 PIC case}
 
-适合已经会启动程序、但还不能说明输出为何可信的读者。先读第 1.10--1.14，写出 Debye 长度、时间尺度和一个要保留的 observable；再读第 2.6--2.10，把它放进一个完整 PIC step 和最小输入；接着用第 3.12--3.13 追踪输入、\cpath{warpx_used_inputs}、输出与 analysis 的交接；最后完成第 8.15 的 Langmuir 或 uniform-plasma 练习。终点不是“作业跑完”，而是能写出该 case 的 producer、consumer、比较量、容差以及它不能覆盖的 geometry、算法和物理范围。
+适合已经会启动程序、但还不能说明输出为何可信的读者。先读第 1.10--1.14，写出 Debye 长度、时间尺度和一个要保留的 observable；再读第 2.6--2.10，把它放进一个完整 PIC step 和最小输入；接着用第 3.12--3.13 追踪输入、\cpath{warpx\_used\_inputs}、输出与 analysis 的交接；最后完成第 8.15 的 Langmuir 或 uniform-plasma 练习。终点不是“作业跑完”，而是能写出该 case 的 producer、consumer、比较量、容差以及它不能覆盖的 geometry、算法和物理范围。
 
 \subsection{路线 B：先读懂一条从粒子到场的源码链}
 

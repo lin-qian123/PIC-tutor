@@ -14,7 +14,6 @@
 \usepackage{longtable}
 \usepackage{tabularx}
 \usepackage{ltablex}        % tabularx that keeps longtable pagination
-\keepXColumns
 \usepackage{array}
 \usepackage{ragged2e}
 
@@ -26,6 +25,8 @@
 
 % Code listings (fvextra = fancyvrb + extensions; pygments/minted unavailable)
 \usepackage{fvextra}
+% Breaking long inline tokens inside \texttt (code spans)
+\usepackage{seqsplit}
 
 % Links and references
 \usepackage{url}

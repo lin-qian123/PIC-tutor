@@ -5,12 +5,17 @@
 % is written verbatim; underscores and backslashes inside code stay literal.
 
 % Inline code: `code` in the Markdown source.
-% \code: token may contain spaces; rendered literally (no line breaking).
-% \cpath: token has no spaces; rendered via url's \path so long identifiers
-%         (e.g. WarpX::PushParticlesandDeposit(), test_3d_electrostatic_...)
-%         may break at punctuation instead of overflowing the line.
+% \code: token has no TeX-special chars (no % # & ~ ^ \ { }); rendered via
+%        detokenize so spaces and underscores stay literal.
+% \cpath: space-free ASCII token of URL-safe chars with underscores pre-escaped
+%         by the converter; seqsplit lets long identifiers break anywhere.
+% \codeesc: token contains characters that cannot survive a normal braced
+%         argument scan (%, #, &, ~, ^, \, braces, $); the converter pre-escapes
+%         them and \texttt renders the result literally (seqsplit still breaks
+%         long runs).
 \newcommand{\code}[1]{\texttt{\detokenize{#1}}}
-\newcommand{\cpath}[1]{\path{#1}}
+\newcommand{\cpath}[1]{\texttt{\seqsplit{#1}}}
+\newcommand{\codeesc}[1]{\texttt{\seqsplit{#1}}}
 
 % Fenced code blocks. breakanywhere is risky for CJK but acceptable for the
 % mostly-ASCII code in this book; breaklines alone handles long lines.

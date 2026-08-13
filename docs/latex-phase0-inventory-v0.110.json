@@ -1,0 +1,816 @@
+{
+  "plan": "docs/latex-migration-plan.md",
+  "baseline_tag": "v1.0",
+  "baseline_commit": "e1faff5",
+  "edition": "v0.110",
+  "toolchain": {
+    "xelatex": "XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025)",
+    "latexmk": "Latexmk, John Collins, 27 Dec. 2024. Version 4.86a",
+    "pandoc": "/opt/homebrew/bin/pandoc",
+    "kpsewhich": "kpathsea version 6.4.1",
+    "fc-list": "/opt/homebrew/bin/fc-list",
+    "packages_found": [
+      "ctexbook",
+      "booktabs",
+      "longtable",
+      "caption",
+      "subcaption",
+      "fvextra",
+      "minted",
+      "hyperref",
+      "cleveref",
+      "fontspec",
+      "xeCJK",
+      "unicode-math",
+      "geometry",
+      "fancyhdr",
+      "titlesec",
+      "xcolor",
+      "enumitem"
+    ],
+    "packages_missing": [],
+    "zh_fonts": [
+      ".Hiragino Sans GB Interface,.Hiragino Sans GB Interface W3",
+      ".Hiragino Sans GB Interface,.Hiragino Sans GB Interface W6",
+      ".LastResort",
+      "Apple LiGothic",
+      "Apple LiSung",
+      "Arial Unicode MS",
+      "Hei",
+      "Kai",
+      "LiHei Pro",
+      "LiSong Pro",
+      "STFangsong",
+      "STHeiti",
+      "STKaiti",
+      "STSong",
+      "兰亭黑\\-简,Lantinghei SC,蘭亭黑\\-簡",
+      "兰亭黑\\-繁,Lantinghei TC,蘭亭黑\\-繁",
+      "冬青黑体简体中文,Hiragino Sans GB,冬青黑體簡體中文,ヒラギノ角ゴ 簡体中文,Hiragino Sans GB W3,冬青黑體簡體中文 W3,ヒラギノ角ゴ 簡体中文 W3,冬青黑体简体中文 W3",
+      "冬青黑体简体中文,Hiragino Sans GB,冬青黑體簡體中文,ヒラギノ角ゴ 簡体中文,Hiragino Sans GB W6,冬青黑體簡體中文 W6,ヒラギノ角ゴ 簡体中文 W6,冬青黑体简体中文 W6",
+      "冬青黑体繁体中文,Hiragino Sans TC,冬青黑體繁體中文,ヒラギノ角ゴ 繁体中文,Hiragino Sans TC W3,冬青黑體繁體中文 W3,ヒラギノ角ゴ 繁体中文 W3,冬青黑体繁体中文 W3",
+      "冬青黑体繁体中文,Hiragino Sans TC,冬青黑體繁體中文,ヒラギノ角ゴ 繁体中文,Hiragino Sans TC W6,冬青黑體繁體中文 W6,ヒラギノ角ゴ 繁体中文 W6,冬青黑体繁体中文 W6",
+      "凌慧体\\-简,LingWai SC,凌慧體\\-簡",
+      "凌慧体\\-繁,LingWai TC,凌慧體\\-繁",
+      "圆体\\-简,Yuanti SC,圓體\\-簡",
+      "圆体\\-繁,Yuanti TC,圓體\\-繁",
+      "娃娃体\\-简,Wawati SC,娃娃體\\-簡",
+      "娃娃体\\-繁,Wawati TC,娃娃體\\-繁",
+      "宋体\\-简,Songti SC,宋體\\-簡",
+      "宋体\\-繁,Songti TC,宋體\\-繁",
+      "手札体\\-简,Hannotate SC,手札體\\-簡",
+      "手札体\\-繁,Hannotate TC,手札體\\-繁",
+      "报隶\\-简,Baoli SC,報隸\\-簡",
+      "报隶\\-繁,Baoli TC,報隸\\-繁",
+      "楷体\\-简,Kaiti SC,楷體\\-簡",
+      "楷体\\-繁,Kaiti TC,楷體\\-繁",
+      "標楷體\\-港澳,BiauKaiHK,BiauKaiHK Regular",
+      "標楷體\\-繁,BiauKaiTC,BiauKaiTC Regular",
+      "简宋,SimSong,簡宋",
+      "翩翩体\\-简,HanziPen SC,翩翩體\\-簡,翩翩體 簡",
+      "翩翩体\\-繁,HanziPen TC,翩翩體\\-繁,翩翩體 繁",
+      "苹方\\-港,PingFang HK,蘋方\\-港",
+      "苹方\\-澳,PingFang MO,蘋方\\-澳",
+      "苹方\\-简,PingFang SC,蘋方\\-簡",
+      "苹方\\-繁,PingFang TC,蘋方\\-繁",
+      "行楷\\-简,Xingkai SC,行楷\\-簡",
+      "行楷\\-繁,Xingkai TC",
+      "隶变\\-简,Libian SC,隸變\\-簡",
+      "隶变\\-繁,Libian TC,隸變\\-繁",
+      "雅痞\\-简,Yuppy SC,雅痞\\-簡",
+      "雅痞\\-繁,Yuppy TC",
+      "魏碑\\-简,Weibei SC,魏碑\\-簡",
+      "魏碑\\-繁,Weibei TC,Weibei TC Bold",
+      "黑体\\-简,Heiti SC,黑體\\-簡,黒体\\-簡,Heiti\\-간체",
+      "黑体\\-繁,Heiti TC,黑體\\-繁,黒体\\-繁,Heiti\\-번체"
+    ],
+    "pygments": "MISSING (minted external dependency)"
+  },
+  "totals": {
+    "lines_total": 14565,
+    "lines_nonblank": 10214,
+    "code_blocks": 367,
+    "code_lines": 2629,
+    "table_blocks": 134,
+    "table_rows": 465,
+    "display_equations_blocks": 272,
+    "display_equation_environments": 0,
+    "single_line_display": 1,
+    "inline_math": 562,
+    "inline_math_dollar": 92,
+    "inline_math_paren": 470,
+    "fences_indented": 2,
+    "images": 14,
+    "links_total": 17,
+    "links_internal_markdown": 3,
+    "links_internal_figure": 14,
+    "links_external": 0,
+    "reader_card_labels": 100
+  },
+  "escape_sensitive_prose_total": {
+    "%": 2,
+    "_": 14,
+    "\\": 1
+  },
+  "parts": [
+    {
+      "role": "version-note",
+      "name": "VERSION",
+      "source": "manuscript/VERSION.md",
+      "tex_target": "manuscript/latex/frontmatter/publishing-note.tex",
+      "lines_total": 27,
+      "lines_nonblank": 18,
+      "headings": {
+        "h1": 1,
+        "h2": 3
+      },
+      "code_blocks": 0,
+      "code_lines": 0,
+      "code_langs": {},
+      "fences_indented": 0,
+      "table_blocks": 0,
+      "table_rows": 0,
+      "display_equations_blocks": 0,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 0,
+      "inline_math_paren": 0,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 0,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [],
+      "reader_card_labels": 0,
+      "card_samples": [],
+      "escape_sensitive_prose": {
+        "counts": {},
+        "samples": {},
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "preface",
+      "name": "00-preface",
+      "source": "manuscript/chapters/00-preface.md",
+      "tex_target": "manuscript/latex/chapters/00-preface.tex",
+      "lines_total": 59,
+      "lines_nonblank": 34,
+      "headings": {
+        "h1": 1,
+        "h2": 3,
+        "h3": 4
+      },
+      "code_blocks": 0,
+      "code_lines": 0,
+      "code_langs": {},
+      "fences_indented": 0,
+      "table_blocks": 2,
+      "table_rows": 5,
+      "display_equations_blocks": 0,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 0,
+      "inline_math_paren": 9,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 0,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [],
+      "reader_card_labels": 0,
+      "card_samples": [],
+      "escape_sensitive_prose": {
+        "counts": {},
+        "samples": {},
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "chapter",
+      "name": "01-kinetic-models",
+      "source": "manuscript/chapters/01-kinetic-models.md",
+      "tex_target": "manuscript/latex/chapters/01-kinetic-models.tex",
+      "lines_total": 578,
+      "lines_nonblank": 395,
+      "headings": {
+        "h1": 1,
+        "h2": 14,
+        "h3": 4
+      },
+      "code_blocks": 0,
+      "code_lines": 0,
+      "code_langs": {},
+      "fences_indented": 0,
+      "table_blocks": 4,
+      "table_rows": 11,
+      "display_equations_blocks": 35,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 14,
+      "inline_math_paren": 64,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 0,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [],
+      "reader_card_labels": 0,
+      "card_samples": [],
+      "escape_sensitive_prose": {
+        "counts": {
+          "%": 1
+        },
+        "samples": {
+          "%": [
+            "L400: 这既不是“能量只能增加 0.3%”，也不是“严格守恒”：代码取绝对值，所以正、负漂移都受约束；而阈值只约束 producer 所写出的采样时"
+          ]
+        },
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "chapter",
+      "name": "02-pic-loop",
+      "source": "manuscript/chapters/02-pic-loop.md",
+      "tex_target": "manuscript/latex/chapters/02-pic-loop.tex",
+      "lines_total": 793,
+      "lines_nonblank": 573,
+      "headings": {
+        "h1": 1,
+        "h3": 10,
+        "h2": 11
+      },
+      "code_blocks": 14,
+      "code_lines": 144,
+      "code_langs": {
+        "text": 2,
+        "cpp": 6,
+        "bash": 6
+      },
+      "fences_indented": 0,
+      "table_blocks": 8,
+      "table_rows": 24,
+      "display_equations_blocks": 33,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 44,
+      "inline_math_paren": 44,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 1,
+      "links_internal_markdown": 1,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [
+        [
+          "03-warpx-evolve.md",
+          1
+        ]
+      ],
+      "reader_card_labels": 2,
+      "card_samples": [
+        "L771: 进一步阅读：",
+        "L777: 练习题："
+      ],
+      "escape_sensitive_prose": {
+        "counts": {},
+        "samples": {},
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "chapter",
+      "name": "03-warpx-evolve",
+      "source": "manuscript/chapters/03-warpx-evolve.md",
+      "tex_target": "manuscript/latex/chapters/03-warpx-evolve.tex",
+      "lines_total": 946,
+      "lines_nonblank": 687,
+      "headings": {
+        "h1": 1,
+        "h3": 7,
+        "h2": 16
+      },
+      "code_blocks": 23,
+      "code_lines": 304,
+      "code_langs": {
+        "text": 6,
+        "cpp": 16,
+        "bash": 1
+      },
+      "fences_indented": 0,
+      "table_blocks": 18,
+      "table_rows": 69,
+      "display_equations_blocks": 9,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 20,
+      "inline_math_paren": 24,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 2,
+      "links_internal_markdown": 2,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [
+        [
+          "04-particle-pushers.md",
+          1
+        ],
+        [
+          "05-deposition-shapes.md",
+          1
+        ]
+      ],
+      "reader_card_labels": 4,
+      "card_samples": [
+        "L488: 源码原文：",
+        "L542: 源码原文：",
+        "L902: 进一步阅读：",
+        "L908: 练习题："
+      ],
+      "escape_sensitive_prose": {
+        "counts": {},
+        "samples": {},
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "chapter",
+      "name": "03a-warpx-initialization",
+      "source": "manuscript/chapters/03a-warpx-initialization.md",
+      "tex_target": "manuscript/latex/chapters/03a-warpx-initialization.tex",
+      "lines_total": 1773,
+      "lines_nonblank": 1292,
+      "headings": {
+        "h1": 1,
+        "h3": 5,
+        "h2": 16
+      },
+      "code_blocks": 63,
+      "code_lines": 479,
+      "code_langs": {
+        "cpp": 46,
+        "text": 15,
+        "python": 2
+      },
+      "fences_indented": 0,
+      "table_blocks": 8,
+      "table_rows": 23,
+      "display_equations_blocks": 10,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 1,
+      "inline_math_paren": 0,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 0,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [],
+      "reader_card_labels": 22,
+      "card_samples": [
+        "L434: 源码文件：`Source/Initialization/WarpXInitData.cpp`",
+        "L435: 函数：`WarpX::InitData()`",
+        "L473: 源码文件：`Source/Initialization/WarpXInitData.cpp`",
+        "L474: 函数：`WarpX::InitFromScratch()`",
+        "L509: 源码文件：`Source/Particles/PhysicalParticleContainer.cpp`",
+        "L510: 函数：`PhysicalParticleContainer::InitData()`",
+        "L531: 源码文件：`Source/Initialization/WarpXInitData.cpp`",
+        "L532: 函数：`WarpX::LoadExternalFields(int lev)`"
+      ],
+      "escape_sensitive_prose": {
+        "counts": {},
+        "samples": {},
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "chapter",
+      "name": "04-particle-pushers",
+      "source": "manuscript/chapters/04-particle-pushers.md",
+      "tex_target": "manuscript/latex/chapters/04-particle-pushers.tex",
+      "lines_total": 2846,
+      "lines_nonblank": 2022,
+      "headings": {
+        "h1": 1,
+        "h3": 28,
+        "h2": 16,
+        "h4": 14
+      },
+      "code_blocks": 52,
+      "code_lines": 463,
+      "code_langs": {
+        "cpp": 33,
+        "text": 18,
+        "python": 1
+      },
+      "fences_indented": 0,
+      "table_blocks": 12,
+      "table_rows": 38,
+      "display_equations_blocks": 64,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 3,
+      "inline_math_paren": 106,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 0,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [],
+      "reader_card_labels": 12,
+      "card_samples": [
+        "L119: 源码文件：`Source/Particles/Pusher/UpdateMomentumBoris.H`",
+        "L120: 函数：`UpdateMomentumBoris()`",
+        "L199: 源码文件：`Source/Particles/Pusher/PushSelector.H`",
+        "L200: 函数：`doParticleMomentumPush()`",
+        "L226: 源码文件：`Source/Particles/Pusher/UpdateMomentumVay.H`",
+        "L227: 函数：`UpdateMomentumVay()`",
+        "L383: 源码文件：`Source/Particles/Pusher/UpdateMomentumHigueraCary.H`",
+        "L384: 函数：`UpdateMomentumHigueraCary()`"
+      ],
+      "escape_sensitive_prose": {
+        "counts": {
+          "_": 7,
+          "\\": 1,
+          "%": 1
+        },
+        "samples": {
+          "_": [
+            "L1924: **第一层：带质量粒子的 momentum--position 链。**若改动的是  分派、 或  的显式带质量路径，先回到 。它固定一个 ",
+            "L1928: **第二层：输出时间层，而不是轨道算法。**若改动的是 、diagnostic 写出时机或速度同步代码，应使用 。它以常量 (E_z) 推进",
+            "L1946: 实际排错可以遵循一个简短顺序：先问被改的是带质量 momentum/position、diagnostic time level、massl"
+          ],
+          "\\": [
+            "L1930: \\clearpage"
+          ],
+          "%": [
+            "L2204: - 粒子总能量相对初值偏离不超过 2%"
+          ]
+        },
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "chapter",
+      "name": "05-deposition-shapes",
+      "source": "manuscript/chapters/05-deposition-shapes.md",
+      "tex_target": "manuscript/latex/chapters/05-deposition-shapes.tex",
+      "lines_total": 2437,
+      "lines_nonblank": 1674,
+      "headings": {
+        "h1": 1,
+        "h3": 31,
+        "h2": 16,
+        "h4": 1
+      },
+      "code_blocks": 43,
+      "code_lines": 267,
+      "code_langs": {
+        "text": 14,
+        "cpp": 29
+      },
+      "fences_indented": 2,
+      "table_blocks": 34,
+      "table_rows": 108,
+      "display_equations_blocks": 45,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 5,
+      "inline_math_paren": 107,
+      "images": 3,
+      "image_sources": [
+        "../assets/figures/villasenor-formula-contract.png",
+        "../assets/figures/rz-esirkepov-correction-tradeoff.png",
+        "../assets/figures/deposition-geometry-order-coverage.png"
+      ],
+      "links_total": 3,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 3,
+      "links_external": 0,
+      "link_targets_top": [
+        [
+          "../assets/figures/villasenor-formula-contract.png",
+          1
+        ],
+        [
+          "../assets/figures/rz-esirkepov-correction-tradeoff.png",
+          1
+        ],
+        [
+          "../assets/figures/deposition-geometry-order-coverage.png",
+          1
+        ]
+      ],
+      "reader_card_labels": 15,
+      "card_samples": [
+        "L336: 源码位置：`Source/Particles/PhysicalParticleContainer.cpp`。",
+        "L356: 源码位置：`Source/Particles/PhysicalParticleContainer.cpp`。",
+        "L372: 源码位置：`Source/Particles/PhysicalParticleContainer.cpp`。",
+        "L400: 源码位置：`Source/Particles/PhysicalParticleContainer.cpp`。",
+        "L419: 源码位置：`Source/Particles/WarpXParticleContainer.cpp`。",
+        "L496: 源码位置：`Source/Particles/WarpXParticleContainer.cpp`。",
+        "L522: 源码位置：`Source/Particles/Deposition/CurrentDeposition.H`。",
+        "L530: 源码位置："
+      ],
+      "escape_sensitive_prose": {
+        "counts": {
+          "_": 4
+        },
+        "samples": {
+          "_": [
+            "L1152: Direct current deposition 的核心 kernel 是 。它选择一个时间中心位置，按各分量 staggering 生成",
+            "L1257: 最后的 3D 写回由三个同构的方向 prefix loop 构成。以 (J_x) 为例，等价阅读伪代码为："
+          ]
+        },
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "chapter",
+      "name": "06-field-solvers",
+      "source": "manuscript/chapters/06-field-solvers.md",
+      "tex_target": "manuscript/latex/chapters/06-field-solvers.tex",
+      "lines_total": 2119,
+      "lines_nonblank": 1516,
+      "headings": {
+        "h1": 1,
+        "h3": 31,
+        "h2": 13,
+        "h4": 1
+      },
+      "code_blocks": 101,
+      "code_lines": 648,
+      "code_langs": {
+        "cpp": 80,
+        "text": 3,
+        "python": 17,
+        "ini": 1
+      },
+      "fences_indented": 0,
+      "table_blocks": 10,
+      "table_rows": 28,
+      "display_equations_blocks": 54,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 1,
+      "inline_math_paren": 62,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 0,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [],
+      "reader_card_labels": 0,
+      "card_samples": [],
+      "escape_sensitive_prose": {
+        "counts": {
+          "_": 2
+        },
+        "samples": {
+          "_": [
+            "L686: 源码先按上式把实/虚 component 组合为 (F_p,F_m)，再分别对它们应用 。这是**等价阅读伪代码**："
+          ]
+        },
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "chapter",
+      "name": "07-boundaries-amr",
+      "source": "manuscript/chapters/07-boundaries-amr.md",
+      "tex_target": "manuscript/latex/chapters/07-boundaries-amr.tex",
+      "lines_total": 835,
+      "lines_nonblank": 562,
+      "headings": {
+        "h1": 1,
+        "h2": 13,
+        "h3": 6
+      },
+      "code_blocks": 28,
+      "code_lines": 152,
+      "code_langs": {
+        "text": 3,
+        "cpp": 25
+      },
+      "fences_indented": 0,
+      "table_blocks": 8,
+      "table_rows": 23,
+      "display_equations_blocks": 3,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 0,
+      "inline_math_paren": 4,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 0,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [],
+      "reader_card_labels": 30,
+      "card_samples": [
+        "L100: 源码入口：`Source/WarpX.cpp`。",
+        "L115: 源码入口：`Source/BoundaryConditions/FieldBoundaries.cpp`。",
+        "L126: 源码入口：`Source/Particles/ParticleBoundaries.cpp`。",
+        "L150: 源码入口：`Source/BoundaryConditions/WarpXFieldBoundaries.cpp`。",
+        "L164: 源码入口：`Source/BoundaryConditions/WarpXFieldBoundaries.cpp`。",
+        "L229: 源码入口：`Source/BoundaryConditions/PML.H`。",
+        "L238: 源码入口：`Source/BoundaryConditions/PML.H`。",
+        "L250: 源码入口：`Source/BoundaryConditions/PML.cpp`。"
+      ],
+      "escape_sensitive_prose": {
+        "counts": {},
+        "samples": {},
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "chapter",
+      "name": "08-diagnostics-cases",
+      "source": "manuscript/chapters/08-diagnostics-cases.md",
+      "tex_target": "manuscript/latex/chapters/08-diagnostics-cases.tex",
+      "lines_total": 1728,
+      "lines_nonblank": 1145,
+      "headings": {
+        "h1": 1,
+        "h3": 40,
+        "h2": 18
+      },
+      "code_blocks": 43,
+      "code_lines": 172,
+      "code_langs": {
+        "text": 22,
+        "python": 13,
+        "cpp": 6,
+        "cmake": 1,
+        "bash": 1
+      },
+      "fences_indented": 0,
+      "table_blocks": 10,
+      "table_rows": 29,
+      "display_equations_blocks": 17,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 0,
+      "inline_math_paren": 50,
+      "images": 11,
+      "image_sources": [
+        "../assets/figures/langmuir-field-vs-theory.png",
+        "../assets/figures/field-probe-resolution-comparison.png",
+        "../assets/figures/energy-conserving-thermal-plasma-1d-2d.png",
+        "../assets/figures/reduced-diags-error-layers.png",
+        "../assets/figures/load-balance-efficiency.png",
+        "../assets/figures/collider-dldt-consistency.png",
+        "../assets/figures/diff-lumi-errors.png",
+        "../assets/figures/particle-histogram2d-phase-space.png",
+        "../assets/figures/particle-histogram2d-particle-count.png",
+        "../assets/figures/beam-relevant-contract.png",
+        "../assets/figures/gaussian-beam-focus-contract.png"
+      ],
+      "links_total": 11,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 11,
+      "links_external": 0,
+      "link_targets_top": [
+        [
+          "../assets/figures/langmuir-field-vs-theory.png",
+          1
+        ],
+        [
+          "../assets/figures/field-probe-resolution-comparison.png",
+          1
+        ],
+        [
+          "../assets/figures/energy-conserving-thermal-plasma-1d-2d.png",
+          1
+        ],
+        [
+          "../assets/figures/reduced-diags-error-layers.png",
+          1
+        ],
+        [
+          "../assets/figures/load-balance-efficiency.png",
+          1
+        ],
+        [
+          "../assets/figures/collider-dldt-consistency.png",
+          1
+        ],
+        [
+          "../assets/figures/diff-lumi-errors.png",
+          1
+        ],
+        [
+          "../assets/figures/particle-histogram2d-phase-space.png",
+          1
+        ],
+        [
+          "../assets/figures/particle-histogram2d-particle-count.png",
+          1
+        ],
+        [
+          "../assets/figures/beam-relevant-contract.png",
+          1
+        ],
+        [
+          "../assets/figures/gaussian-beam-focus-contract.png",
+          1
+        ]
+      ],
+      "reader_card_labels": 15,
+      "card_samples": [
+        "L1106: 最小输入片段：",
+        "L1117: 典型目录树：",
+        "L1130: 读取入口：",
+        "L1137: 适用场景：",
+        "L1145: 最小输入片段：",
+        "L1166: 典型目录树：",
+        "L1175: 读取入口：",
+        "L1182: 适用场景："
+      ],
+      "escape_sensitive_prose": {
+        "counts": {
+          "_": 1
+        },
+        "samples": {
+          "_": [
+            "L838: 、、 on particlestmpParticleIO.cppdiag_type = FullBackTransformedBoundar"
+          ]
+        },
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "chapter",
+      "name": "09-literature-roadmap",
+      "source": "manuscript/chapters/09-literature-roadmap.md",
+      "tex_target": "manuscript/latex/chapters/09-literature-roadmap.tex",
+      "lines_total": 293,
+      "lines_nonblank": 188,
+      "headings": {
+        "h1": 1,
+        "h2": 12,
+        "h3": 12,
+        "h4": 3
+      },
+      "code_blocks": 0,
+      "code_lines": 0,
+      "code_langs": {},
+      "fences_indented": 0,
+      "table_blocks": 10,
+      "table_rows": 32,
+      "display_equations_blocks": 0,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 0,
+      "inline_math_paren": 0,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 0,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [],
+      "reader_card_labels": 0,
+      "card_samples": [],
+      "escape_sensitive_prose": {
+        "counts": {},
+        "samples": {},
+        "single_line_display": 0
+      }
+    },
+    {
+      "role": "appendix",
+      "name": "A-symbols",
+      "source": "manuscript/appendices/A-symbols.md",
+      "tex_target": "manuscript/latex/appendices/A-symbols.tex",
+      "lines_total": 131,
+      "lines_nonblank": 108,
+      "headings": {
+        "h1": 1,
+        "h2": 6,
+        "h3": 1
+      },
+      "code_blocks": 0,
+      "code_lines": 0,
+      "code_langs": {},
+      "fences_indented": 0,
+      "table_blocks": 10,
+      "table_rows": 75,
+      "display_equations_blocks": 2,
+      "display_equation_environments": 0,
+      "inline_math_dollar": 4,
+      "inline_math_paren": 0,
+      "images": 0,
+      "image_sources": [],
+      "links_total": 0,
+      "links_internal_markdown": 0,
+      "links_internal_figure": 0,
+      "links_external": 0,
+      "link_targets_top": [],
+      "reader_card_labels": 0,
+      "card_samples": [],
+      "escape_sensitive_prose": {
+        "counts": {},
+        "samples": {},
+        "single_line_display": 1
+      }
+    }
+  ]
+}

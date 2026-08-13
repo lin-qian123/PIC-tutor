@@ -3,6 +3,7 @@
 ## 2026-08-14
 
 - [x] 制定原生 LaTeX 成书迁移计划：新增 `docs/latex-migration-plan.md`，固定 `v1.0` / `v0.110` 为不可变比较基线，定义 Phase 0 inventory、Phase 1 前言与第 1--2 章样章、逐章单向真源切换、全书闭环和发行门槛。计划明确不长期双写 Markdown/LaTeX，也不借排版迁移修改科学结论、WarpX 缺口或第三方再分发边界；下一步为 Phase 0 清单与样章实施。
+- [x] 完成 LaTeX 迁移 Phase 0：新增 `scripts/inventory_latex_phase0.py`（纯标准库、可重复运行），对 13 个源文件（VERSION + 前言 + 第 1--9 章含 03a + 附录 A）逐文件统计行数（14,565）、标题层级、367 个代码块、134 个表格块、272 个 `$$` 显示公式块、562 处行内公式（`$...$` 92 + `\(...\)` 470）、14 张图、17 条链接（含 3 条章节内链）、100 行读者卡片标签，并输出正文（代码/数学/表格/标题之外）待转义字符清单（`_` 14、`%` 2、裸 `\clearpage` 1，后者为 Pandoc 时代遗迹需逐章决策）。修正迁移计划中「约 43,800 行」「九章」两处事实错误（实测 14,565 行、十章含 03a），补充链接→label 映射、双语法行内公式、缩进围栏识别、minted 依赖缺失（pygments 未装，推荐 fvextra）与 `assets/themes` Pandoc 模板关系说明。Phase 0 退出 gate 通过：`verify_v110_build.py` 全 PASS、release-consistency `passed:true`，基线 275 页 PDF 未被改动。产物见 `docs/latex-phase0-inventory-v0.110.{md,json}`；下一步为 Phase 1 前言与第 1--2 章原生样章。
 
 ## 2026-08-02
 

@@ -26,7 +26,7 @@ python scripts/audit_pdf_themes.py --output-dir dist/themes
 - [academic（A4，274 页）](dist/themes/pic-tutor-v0.110-academic.pdf)：打印、批注和装订。
 - [compact（A4，212 页）](dist/themes/pic-tutor-v0.110-compact.pdf)：源码与参数查阅。
 
-原生 LaTeX 成书将作为后续新版本推进，采用“样章验证后逐章单向切换真源”的方式，不改写已发布的 `v1.0` 基线。阶段、验收门槛和回滚边界见 [LaTeX 迁移计划](docs/latex-migration-plan.md)。
+原生 LaTeX 成书将作为后续新版本推进，采用“样章验证后逐章单向切换真源”的方式，不改写已发布的 `v1.0` 基线。Phase 0 已完成：13 个源文件的元素清单、MD→.tex 溯源表和工具链/字体记录见 [Phase 0 清单](docs/latex-phase0-inventory-v0.110.md)，基线回归通过；阶段、验收门槛和回滚边界见 [LaTeX 迁移计划](docs/latex-migration-plan.md)。
 
 第一次阅读可从 [前言](manuscript/chapters/00-preface.md) 的三条路线中任选一条：
 

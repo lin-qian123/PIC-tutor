@@ -1,0 +1,49 @@
+% PIC-tutor native LaTeX book — package loading and compatibility pins.
+% Phase 1 sample (docs/latex-migration-plan.md). XeLaTeX + ctexbook, TeX Live 2025.
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Math: unicode-math drives the font; amsmath features remain available.
+\usepackage{unicode-math}
+\setmathfont{latinmodern-math.otf}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{ltablex}        % tabularx that keeps longtable pagination
+\keepXColumns
+\usepackage{array}
+\usepackage{ragged2e}
+
+% Floats and captions
+\usepackage{graphicx}
+\graphicspath{{../../assets/figures/}}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Code listings (fvextra = fancyvrb + extensions; pygments/minted unavailable)
+\usepackage{fvextra}
+
+% Links and references
+\usepackage{url}
+\usepackage{xurl}           % \url/\path may break at any character
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+% Colors and boxes
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% Lists
+\usepackage{enumitem}
+
+% Page styles
+\usepackage{fancyhdr}
+\usepackage{geometry}
+
+% Micro typography
+\usepackage{microtype}

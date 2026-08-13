@@ -13,3 +13,6 @@ references/08_boundaries_pml_geometry/2015_LeeCPC2015_Efficiency_of_the_PML_with
 # Runtime leftovers accidentally written at repository root by local WarpX runs.
 /Backtrace.*
 /bmmntr.txt
+
+# LaTeX migration build tree (disposable intermediates)
+build/

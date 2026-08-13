@@ -1,0 +1,36 @@
+% PIC-tutor front matter — publishing/version note (from manuscript/VERSION.md).
+% Phase 1 version: verbatim content of the v0.110 version note, manually
+% normalized to native LaTeX. Traceable to manuscript/VERSION.md.
+
+\chapter*{出版说明}
+\addcontentsline{toc}{chapter}{出版说明}
+
+这是面向读者的 PIC 教程开篇，不是开发日志。书稿从连续的 Vlasov-Maxwell 模型出发，逐步建立宏粒子、网格、时间推进、粒子推进器、沉积、场求解器、边界、AMR 与诊断之间的关系，最后用 WarpX 的源码和可运行案例把这些概念落到程序行为上。
+
+\section*{读者在本版可以学到什么}
+
+\begin{itemize}
+  \item 用 Vlasov-Maxwell 方程解释 PIC 中粒子与场为什么必须相互交换源项。
+  \item 从 leapfrog 时间层读懂一个显式 PIC step，而不是把 \code{Evolve()} 看成黑盒。
+  \item 区分 Boris、Vay 与 Higuera-Cary 等粒子推进器的物理假设、离散结构和适用边界。
+  \item 解释 shape factor、charge/current deposition、current correction、guard cell 与 AMR 同步如何共同影响守恒和噪声。
+  \item 根据 CFL、Debye 长度、plasma frequency、边界和诊断量选择一个可解释的输入案例。
+  \item 用源码路径、输入参数、输出量和回归分析共同判断“程序运行了”是否等于“物理结果可信”。
+\end{itemize}
+
+\section*{如何判断一个结论}
+
+每一项重要结论都应先问它属于哪一层证据：
+
+\begin{enumerate}
+  \item \textbf{数学和文献}说明连续模型、离散近似和适用假设；
+  \item \textbf{源码映射}说明程序实际在哪个对象或函数中实现这一近似；
+  \item \textbf{输入和诊断}说明某个案例究竟比较了什么 observable；
+  \item \textbf{运行结果}只能支持该输入、几何、算法与容差下的结论，不能自动推广到其他分支。
+\end{enumerate}
+
+因此，case 通过 regression 并不等于任意配置都正确；公式成立也不等于每条实现路径都已覆盖。书中出现“边界”“未覆盖”或“不能外推”时，指的是证据强度的范围，而不是回避结论。
+
+\section*{建议的阅读方式}
+
+第一次阅读时，沿着每章的“问题 -> 方程或离散规则 -> 源码职责 -> 最小案例 -> 练习”完成主线。遇到函数名或测试名时，不必先记住它们；先回答它消费什么数据、产出什么数据、处在哪个时间层，以及应由哪个 observable 检验。第二次阅读再沿源码文件和输入案例回查细节。

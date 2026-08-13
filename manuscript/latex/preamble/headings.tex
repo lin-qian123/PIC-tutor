@@ -1,0 +1,12 @@
+% PIC-tutor native LaTeX book — chapter/section hierarchy and ToC rules.
+%
+% ctexbook provides the chapter/part hierarchy and Chinese numbering
+% ("第一章", "1.1", ...). This module only tunes ToC depth and heading
+% spacing; a full visual restyle of chapter openers is a Phase 1 decision
+% point and intentionally not baked in yet.
+
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+% Loosen spacing around headings slightly for CJK reading.
+\setlength{\headsep}{12pt}

@@ -207,9 +207,8 @@ def scan_part(role: str, name: str, path: Path) -> dict[str, object]:
             headings[f"h{len(m.group(1))}"] += 1
             continue
         if TABLE_LINE_RE.match(line):
-            if TABLE_SEP_RE.match(line) and in_table and table_rows > 0:
-                in_table = False
-                continue
+            if TABLE_SEP_RE.match(line) and in_table:
+                continue  # separator row belongs to the current block
             if not in_table:
                 table_blocks += 1
                 in_table = True

@@ -1,0 +1,29 @@
+% PIC-tutor native LaTeX book — paper, margins, headers, page styles.
+% Default theme is academic (A4, print-first); themes/ can override via \TheTheme.
+
+\geometry{a4paper,inner=30mm,outer=24mm,top=25mm,bottom=28mm,headheight=14pt}
+
+% Reading comfort for CJK prose.
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.3em}
+\linespread{1.05}
+% Avoid overfull paragraphs from long code tokens/URLs in prose.
+\emergencystretch=3em
+\sloppy
+
+% Running heads.
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\thepage}
+\fancyhead[RO]{\thepage}
+\fancyhead[LO]{\nouppercase{\leftmark}}
+\fancyhead[RE]{PIC-tutor}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{PicTutorAccent}\leaders\hrule height \headrulewidth\hfill}}
+
+% Plain pages (chapter openers) keep page number only.
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+}

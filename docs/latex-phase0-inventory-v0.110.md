@@ -7,7 +7,7 @@
 
 - 源行数：**14,565**（非空 10,214）
 - 代码块：**367**（2,629 行；缩进围栏定界行 2）
-- 表格：**134** 块 / 465 行
+- 表格：**68** 块 / 465 行
 - 显示公式：**272**（$$ 块 272 + equation 环境 0）；行内公式 **562**（`$...$` 92 + `\(...\)` 470）；段内单行 $$..$$ 1
 - 图片：**14**
 - 链接：**17**（章节内链 3、图内链 14、外链 0）
@@ -18,18 +18,18 @@
 | 源文件 | 角色 | 行数 | 代码块 | 表格块 | 显示公式 | 行内公式 | 图片 | 链接 | 卡片标签 | 目标 .tex |
 |---|---|---|---|---|---|---|---|---|---|---|
 | VERSION | version-note | 27 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | `manuscript/latex/frontmatter/publishing-note.tex` |
-| 00-preface | preface | 59 | 0 | 2 | 0 | 9 | 0 | 0 | 0 | `manuscript/latex/chapters/00-preface.tex` |
-| 01-kinetic-models | chapter | 578 | 0 | 4 | 35 | 78 | 0 | 0 | 0 | `manuscript/latex/chapters/01-kinetic-models.tex` |
-| 02-pic-loop | chapter | 793 | 14 | 8 | 33 | 88 | 0 | 1 | 2 | `manuscript/latex/chapters/02-pic-loop.tex` |
-| 03-warpx-evolve | chapter | 946 | 23 | 18 | 9 | 44 | 0 | 2 | 4 | `manuscript/latex/chapters/03-warpx-evolve.tex` |
-| 03a-warpx-initialization | chapter | 1773 | 63 | 8 | 10 | 1 | 0 | 0 | 22 | `manuscript/latex/chapters/03a-warpx-initialization.tex` |
-| 04-particle-pushers | chapter | 2846 | 52 | 12 | 64 | 109 | 0 | 0 | 12 | `manuscript/latex/chapters/04-particle-pushers.tex` |
-| 05-deposition-shapes | chapter | 2437 | 43 | 34 | 45 | 112 | 3 | 3 | 15 | `manuscript/latex/chapters/05-deposition-shapes.tex` |
-| 06-field-solvers | chapter | 2119 | 101 | 10 | 54 | 63 | 0 | 0 | 0 | `manuscript/latex/chapters/06-field-solvers.tex` |
-| 07-boundaries-amr | chapter | 835 | 28 | 8 | 3 | 4 | 0 | 0 | 30 | `manuscript/latex/chapters/07-boundaries-amr.tex` |
-| 08-diagnostics-cases | chapter | 1728 | 43 | 10 | 17 | 50 | 11 | 11 | 15 | `manuscript/latex/chapters/08-diagnostics-cases.tex` |
-| 09-literature-roadmap | chapter | 293 | 0 | 10 | 0 | 0 | 0 | 0 | 0 | `manuscript/latex/chapters/09-literature-roadmap.tex` |
-| A-symbols | appendix | 131 | 0 | 10 | 2 | 4 | 0 | 0 | 0 | `manuscript/latex/appendices/A-symbols.tex` |
+| 00-preface | preface | 59 | 0 | 1 | 0 | 9 | 0 | 0 | 0 | `manuscript/latex/chapters/00-preface.tex` |
+| 01-kinetic-models | chapter | 578 | 0 | 2 | 35 | 78 | 0 | 0 | 0 | `manuscript/latex/chapters/01-kinetic-models.tex` |
+| 02-pic-loop | chapter | 793 | 14 | 4 | 33 | 88 | 0 | 1 | 2 | `manuscript/latex/chapters/02-pic-loop.tex` |
+| 03-warpx-evolve | chapter | 946 | 23 | 9 | 9 | 44 | 0 | 2 | 4 | `manuscript/latex/chapters/03-warpx-evolve.tex` |
+| 03a-warpx-initialization | chapter | 1773 | 63 | 4 | 10 | 1 | 0 | 0 | 22 | `manuscript/latex/chapters/03a-warpx-initialization.tex` |
+| 04-particle-pushers | chapter | 2846 | 52 | 6 | 64 | 109 | 0 | 0 | 12 | `manuscript/latex/chapters/04-particle-pushers.tex` |
+| 05-deposition-shapes | chapter | 2437 | 43 | 17 | 45 | 112 | 3 | 3 | 15 | `manuscript/latex/chapters/05-deposition-shapes.tex` |
+| 06-field-solvers | chapter | 2119 | 101 | 5 | 54 | 63 | 0 | 0 | 0 | `manuscript/latex/chapters/06-field-solvers.tex` |
+| 07-boundaries-amr | chapter | 835 | 28 | 5 | 3 | 4 | 0 | 0 | 30 | `manuscript/latex/chapters/07-boundaries-amr.tex` |
+| 08-diagnostics-cases | chapter | 1728 | 43 | 5 | 17 | 50 | 11 | 11 | 15 | `manuscript/latex/chapters/08-diagnostics-cases.tex` |
+| 09-literature-roadmap | chapter | 293 | 0 | 5 | 0 | 0 | 0 | 0 | 0 | `manuscript/latex/chapters/09-literature-roadmap.tex` |
+| A-symbols | appendix | 131 | 0 | 5 | 2 | 4 | 0 | 0 | 0 | `manuscript/latex/appendices/A-symbols.tex` |
 
 ## 工具链与字体记录（本机）
 

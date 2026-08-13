@@ -1,0 +1,34 @@
+% PIC-tutor native LaTeX book — listings, line wrapping, source-path notation.
+%
+% pygments is not installed on the reference machine (Phase 0 record), so
+% code is set with fvextra Verbatim (breaklines) instead of minted. Raw code
+% is written verbatim; underscores and backslashes inside code stay literal.
+
+% Inline code: `code` in the Markdown source.
+% \code: token may contain spaces; rendered literally (no line breaking).
+% \cpath: token has no spaces; rendered via url's \path so long identifiers
+%         (e.g. WarpX::PushParticlesandDeposit(), test_3d_electrostatic_...)
+%         may break at punctuation instead of overflowing the line.
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\cpath}[1]{\path{#1}}
+
+% Fenced code blocks. breakanywhere is risky for CJK but acceptable for the
+% mostly-ASCII code in this book; breaklines alone handles long lines.
+\DefineVerbatimEnvironment{codeblock}{Verbatim}{%
+  breaklines,breakanywhere,
+  fontsize=\small,
+  frame=single,
+  rulecolor=\color{PicTutorCodeBorder},
+  framesep=4pt,
+  baselinestretch=0.95,
+}
+
+% Bash console blocks: same body, visually marked as shell input/output.
+\DefineVerbatimEnvironment{consoleblock}{Verbatim}{%
+  breaklines,breakanywhere,
+  fontsize=\small,
+  frame=single,
+  rulecolor=\color{PicTutorCodeBorder},
+  framesep=4pt,
+  baselinestretch=0.95,
+}

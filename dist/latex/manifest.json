@@ -1,0 +1,14 @@
+{
+  "edition": "latex-sample",
+  "theme": "academic",
+  "pdf": "dist/latex/pic-tutor-latex-sample-academic.pdf",
+  "pdf_sha256": "4ef4fde6b43bf82121af6b3bf27d876a65aa714b047f00f92bdb22c292cd29ec",
+  "source_commit": "6e484d1d20e8dd2ab1f2ac4ec354c2df65a844d9",
+  "engine": "XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025)",
+  "fonts": "Songti SC (CJK main); PingFang SC (CJK sans); Menlo (Latin mono)",
+  "baseline": {
+    "tag": "v1.0",
+    "edition": "v0.110"
+  },
+  "note": "Phase 1 sample; not a release artifact. See docs/latex-migration-plan.md."
+}

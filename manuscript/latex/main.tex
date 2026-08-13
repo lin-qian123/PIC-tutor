@@ -1,0 +1,39 @@
+% PIC-tutor native LaTeX book — main entrypoint and document metadata.
+% Phase 1 sample: preface + Chapters 1--2 (docs/latex-migration-plan.md).
+%
+% Build: latexmk -xelatex -outdir=<build> main.tex
+%   or:  python scripts/build_latex_book.py [--theme academic]
+
+\documentclass[UTF8,11pt,openany]{ctexbook}
+
+% --- Theme switch: academic | technical | compact (see themes/) ---
+\providecommand{\TheTheme}{academic}
+\input{themes/\TheTheme.tex}
+
+% --- Preamble modules ---
+\input{preamble/packages.tex}
+\input{preamble/fonts.tex}
+\input{preamble/layout.tex}
+\input{preamble/headings.tex}
+\input{preamble/floats-tables.tex}
+\input{preamble/code.tex}
+\input{preamble/links-refs.tex}
+
+\title{PIC-tutor：从动理学模型到 WarpX 源码的 Particle-In-Cell 讲解}
+\author{PIC-tutor 项目}
+\date{v0.110 之后的原生 LaTeX 版本（Phase 1 样章）}
+
+\begin{document}
+
+\frontmatter
+\input{frontmatter/title.tex}
+\tableofcontents
+
+\mainmatter
+\input{chapters/00-preface.tex}
+\input{chapters/01-kinetic-models.tex}
+\input{chapters/02-pic-loop.tex}
+
+% Phase 2 will append: 03, 03a, appendix A, then Phase 3: 04--09.
+
+\end{document}

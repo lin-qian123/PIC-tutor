@@ -1,0 +1,41 @@
+% PIC-tutor native LaTeX book — hyperlinks, labels, bibliography configuration,
+% and the semantic reader-element macros (Phase 1 set).
+
+% --- Colors (reused from the Pandoc-era theme palette for continuity) ---
+\definecolor{PicTutorInk}{HTML}{202A33}
+\definecolor{PicTutorAccent}{HTML}{355C7D}
+\definecolor{PicTutorLink}{HTML}{1D5E86}
+\definecolor{PicTutorCodeBorder}{HTML}{B8C4CE}
+
+% --- hyperref / cleveref ---
+\hypersetup{
+  colorlinks=true,
+  linkcolor=PicTutorAccent,
+  urlcolor=PicTutorLink,
+  citecolor=PicTutorLink,
+  bookmarksnumbered=true,
+  bookmarksopen=true,
+  pdftitle={PIC-tutor},
+}
+\crefname{chapter}{第}{章}
+\crefname{section}{第}{节}
+\crefname{figure}{图}{}
+\crefname{table}{表}{}
+\crefname{equation}{式}{}
+
+% --- Semantic reader-element macros (Phase 1 minimal set) ---
+% Source-path label lines used throughout the book, e.g.
+%   源码入口：`Source/WarpX.cpp`
+%   源码文件：`Source/Particles/Pusher/UpdateMomentumBoris.H`
+%   函数：`UpdateMomentumBoris()`
+\newcommand{\sourceline}[2]{\par\noindent\textbf{#1：}#2\par}
+
+% Standalone bold card labels, e.g. "**本章的读者路线**", "**读者的时间层判断卡**".
+\newcommand{\cardlabel}[1]{\par\noindent\textbf{#1}\par}
+
+% Card step paragraphs inside validation cards, e.g. "**第一层：...**".
+\newcommand{\cardstep}[1]{\par\noindent\textbf{#1}\par}
+
+% Internal chapter reference by canonical label (see converter label scheme).
+% Falls back to plain text while the target chapter is not yet in the book.
+\newcommand{\chref}[2]{\hyperref[#1]{#2}}

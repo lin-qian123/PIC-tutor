@@ -1,0 +1,25 @@
+% PIC-tutor native LaTeX book — figures, captions, long tables, landscape tables.
+
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\captionsetup[sub]{font=footnotesize}
+
+% CJK-friendly X column: ragged-right paragraph cell, width auto-fit.
+% Used with tabularx (ltablex keeps longtable pagination + repeated headers).
+\newcolumntype{L}{>{\RaggedRight\arraybackslash}X}
+
+% Long tables always break across pages; booktabs rules with a repeated header.
+\newcommand{\ltable}[4]{%
+  \begin{longtable}{#1}
+  \caption{#2}\label{#3}\\
+  \toprule
+  #4
+  \midrule
+  \endfirsthead
+  \multicolumn{\LT@cols}{l}{\footnotesize\itshape （续表）}\\
+  \toprule
+  #4
+  \midrule
+  \endhead
+  \bottomrule
+  \endlastfoot
+}

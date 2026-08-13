@@ -1,0 +1,19 @@
+% PIC-tutor native LaTeX book — Chinese, Latin, math, and monospace fonts.
+% Recorded in docs/latex-phase0-inventory-v0.110.md (toolchain section).
+%
+% Selected for this machine (macOS system fonts, TeX Live 2025):
+%   CJK serif   : Songti SC   (book body)
+%   CJK sans    : PingFang SC (headings, captions can opt into it)
+%   CJK mono    : PingFang SC
+%   Latin mono  : Menlo
+%   Math        : Latin Modern Math
+%
+% Font choice is a Phase 1 decision point; pin it in the build manifest.
+
+\setCJKmainfont{Songti SC}
+\setCJKsansfont{PingFang SC}
+\setCJKmonofont{PingFang SC}
+
+\setmainfont{Times New Roman}      % Latin serif for body
+\setsansfont{Helvetica Neue}       % Latin sans
+\setmonofont{Menlo}                % Latin mono for code

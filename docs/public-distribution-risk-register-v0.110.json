@@ -1,0 +1,38 @@
+{
+  "contract": "public distribution boundary",
+  "classification": "PUBLIC_REPOSITORY_THIRD_PARTY_ASSETS_TRACKED_REMEDIATION_REQUIRED",
+  "tracked_references": {
+    "file_count": 2425,
+    "bytes": 190730587,
+    "pdf_count": 52,
+    "image_count": 2259
+  },
+  "release_candidate": {
+    "version": "v0.110",
+    "pdf_pages": 266,
+    "artifacts": {
+      "dist/pic-tutor-v0.110.md": {
+        "bytes": 889170,
+        "sha256": "f66a6694b5d0daabd16c1f51c09518e57d0164a23fe2ecc1e519e3091290487f",
+        "manifest_match": false
+      },
+      "dist/pic-tutor-v0.110.html": {
+        "bytes": 4951592,
+        "sha256": "0cb05f64b63cb8f431ba5619a4b53834d560ab42d7458387b26c22e9efb0c6ec",
+        "manifest_match": false
+      },
+      "dist/pic-tutor-v0.110.pdf": {
+        "bytes": 2903732,
+        "sha256": "b55648520c884665046c9840c7c6b6a64237a7322f6b1c09d0edfc88ceb082ce",
+        "manifest_match": false
+      }
+    }
+  },
+  "release_manifest_excludes_references": true,
+  "artifact_integrity_verified": false,
+  "root_license_files": [],
+  "remediation_open": true,
+  "scope": "Local Git inventory only. A release manifest does not remove files already tracked by Git or control distribution through public repository history.",
+  "required_maintainer_decision": "Confirm redistribution rights per tracked third-party item, or remove the items from the public branch and decide whether public history must be rewritten.",
+  "signoff_state": "BLOCKED_PENDING_MAINTAINER_RIGHTS_AND_REPOSITORY_DECISION"
+}

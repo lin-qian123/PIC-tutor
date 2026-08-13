@@ -1,0 +1,207 @@
+# PIC-tutor LaTeX Migration Plan
+
+## Status
+
+- plan status: `APPROVED_FOR_PHASE_0_AND_PHASE_1`
+- current reader baseline: Git tag `v1.0`, frozen at commit `e1faff5`
+- current source edition: `v0.110` Markdown, with 275-page canonical PDF
+- target: a native XeLaTeX book source with reproducible PDF builds and controlled chapter-by-chapter source ownership
+
+This plan improves typography and production control. It does not alter factual claims, close runtime/literature gaps, grant third-party redistribution rights, or rewrite the `v1.0` tag.
+
+## Why Migrate
+
+The current pipeline joins Markdown chapters and asks Pandoc to generate a default LaTeX document. The PDF header only controls the table-of-contents page break, so book-level choices such as document class, running heads, chapter openers, float placement, long tables, code listings, bibliography, indexes, and front/back matter remain constrained by Pandoc defaults.
+
+The book contains about 43,800 source lines across the version note, nine chapters, preface, and appendix. It already uses TeX mathematics, so equations can migrate with relatively low semantic risk. Tables, code blocks, images, links, and cross-references require explicit conversion and review.
+
+## Source Ownership Decision
+
+The migration has two distinct states. They must not be mixed within a chapter.
+
+| State | Canonical editable source | Purpose |
+|---|---|---|
+| Transitional typesetting layer | Existing Markdown | Prove the LaTeX class, typography, and build contracts without changing content ownership |
+| Native-book state | Chapter-local `.tex` files | Control professional typesetting and eliminate Pandoc-default constraints |
+
+During the transition, generated `.tex` files are disposable build intermediates and must not be edited manually. After a chapter passes native migration review, its `.tex` file becomes authoritative; its Markdown counterpart is frozen as a migration record and is no longer edited. There must be no long-lived dual-write workflow.
+
+The existing `v0.110` Markdown/HTML/PDF remains a preserved reader baseline. The new LaTeX book is a post-`v1.0` edition and must receive a new source-edition identifier before it is released.
+
+## Target Layout
+
+```text
+manuscript/latex/
+  main.tex                         book entrypoint and document metadata
+  preamble/
+    packages.tex                   package loading and compatibility pins
+    fonts.tex                      Chinese, Latin, math, and monospace fonts
+    layout.tex                     paper, margins, headers, page styles
+    headings.tex                   chapter/section hierarchy and ToC rules
+    floats-tables.tex              figures, captions, long tables, landscape tables
+    code.tex                       listings, line wrapping, source-path notation
+    links-refs.tex                 hyperlinks, labels, bibliography configuration
+  frontmatter/
+    title.tex
+    publishing-note.tex
+  chapters/
+    00-preface.tex
+    01-kinetic-models.tex
+    ...
+    09-literature-roadmap.tex
+  appendices/
+    A-symbols.tex
+  bibliography/
+    pic-tutor.bib
+  themes/
+    technical.tex
+    academic.tex
+    compact.tex
+  latexmkrc
+scripts/
+  build_latex_book.py
+  audit_latex_book.py
+  convert_markdown_chapter_to_tex.py
+dist/latex/
+  pic-tutor-<edition>-<theme>.pdf
+  manifest.json
+```
+
+`manuscript/assets/figures/` remains the shared location for figures. The migration does not copy figures into chapter directories or modify the adjacent read-only `../warpx` checkout.
+
+## Production Rules
+
+1. Use XeLaTeX through `latexmk`, pinned by the local TeX Live installation. Build logs and temporary auxiliary files stay outside tracked source directories.
+2. Use `ctexbook` or a reviewed equivalent Chinese-capable book class. The final choice is made by the Phase 1 sample evaluation, not by an untested global replacement.
+3. Define semantic macros for recurring reader elements, such as source/producer/consumer/observable cards, evidence boundaries, exercises, code-path references, and warning boxes. Do not spread raw visual commands through chapters.
+4. Use `booktabs`/`longtable` for tables, `caption`/`subcaption` for figures, `fvextra` or `minted` only if its external dependency can be made reproducible, and `hyperref`/`cleveref` for labels and links.
+5. Keep mathematical meaning unchanged. Formula conversion must preserve notation, equation labels, assumptions, and source-boundary wording.
+6. No publisher PDF, MinerU conversion, `references/` material, local runtime output, or local audit output is introduced by the LaTeX work.
+
+## Phases and Gates
+
+### Phase 0: Freeze and Inventory
+
+Deliverables:
+
+- Record `v1.0` / `v0.110` as the immutable comparison baseline.
+- Generate a chapter inventory: lines, images, tables, code blocks, display equations, raw TeX, links, and unsupported Pandoc constructs.
+- Define a traceability table from each Markdown chapter to its future `.tex` chapter.
+- Record available fonts and required XeLaTeX packages.
+
+Exit gate:
+
+- The inventory accounts for every source chapter and appendix.
+- The baseline PDF still passes existing `verify_v110_build.py` and release-consistency checks.
+
+### Phase 1: Native LaTeX Sample Book
+
+Scope: preface plus Chapters 1 and 2. This sample includes Chinese prose, display mathematics, code blocks, tables, links, figures, exercises, and reader-routing cards.
+
+Deliverables:
+
+- `main.tex` and the modular preamble structure.
+- A formal title page, contents page, chapter opening, running heads, page numbering, hyperlinks, code and table styles.
+- A conversion helper that produces a reviewable initial `.tex` draft from one Markdown chapter, followed by manual native cleanup.
+- `build_latex_book.py` and `audit_latex_book.py`.
+
+Exit gate:
+
+- `latexmk -xelatex` succeeds from a clean build directory.
+- The sample PDF has no missing characters, overflowing boxes that affect readable content, broken links, missing figures, or empty pages.
+- A manual visual review covers title/front matter, contents, equations, a code-heavy page, a long-table page, and chapter boundaries.
+- The sample retains all source content and produces a documented Markdown-to-LaTeX traceability report.
+
+Decision point:
+
+- Approve the document class, font family, three existing themes, code strategy, table strategy, and float policy before converting additional chapters.
+
+### Phase 2: Foundation and Lifecycle Migration
+
+Migration order:
+
+1. `00-preface`
+2. `01-kinetic-models`
+3. `02-pic-loop`
+4. `03-warpx-evolve`
+5. `03a-warpx-initialization`
+6. Appendix A
+
+Each chapter is converted, manually normalized, cross-linked, compiled, and visually reviewed before its source ownership changes. This order establishes the book's terminology, cross-reference scheme, and reader-card macros before the algorithmically dense chapters.
+
+Exit gate per chapter:
+
+- Chapter heading hierarchy, figures, tables, code blocks, equations, URLs, and internal references compile without placeholders.
+- Paragraph-level content comparison records additions, removals, and wording changes; no unrecorded factual change is permitted.
+- The chapter's existing source/evidence boundaries remain explicit.
+
+### Phase 3: Algorithm and Evidence-Dense Chapters
+
+Migration order:
+
+1. `04-particle-pushers`
+2. `05-deposition-shapes`
+3. `06-field-solvers`
+4. `07-boundaries-amr`
+5. `08-diagnostics-cases`
+6. `09-literature-roadmap`
+
+These chapters contain the largest concentration of long code blocks, dense tables, source paths, equations, and evidence matrices. They are migrated one at a time; no bulk auto-conversion is accepted as a finished chapter.
+
+Additional exit gate:
+
+- Long tables have an intentional strategy: break across pages, rotate, split by concept, or move supporting detail to an appendix. No unreadable auto-shrinking table is accepted.
+- Long code blocks wrap or break at semantically safe points; code must not run into margins or be silently truncated.
+- Evidence matrices retain their distinction between formula, source, runtime, and publication boundaries.
+
+### Phase 4: Full-Book Closure and Edition Release
+
+Deliverables:
+
+- Full native-LaTeX PDF for every supported theme.
+- A new source edition identifier and release manifest; do not overwrite `v0.110` artifacts.
+- Updated README, TODO, build instructions, layout audit, release readiness audit, and public-distribution risk record.
+- A migration report listing Markdown files frozen or retired and their corresponding LaTeX sources.
+
+Exit gate:
+
+- Full-book build is reproducible twice from clean output directories with the same source revision and documented engine/font versions.
+- All chapters pass content-traceability review, automated PDF health checks, and manual page-level review.
+- Release assets contain only the approved book artifacts. Existing third-party redistribution restrictions remain explicit.
+
+## Validation Matrix
+
+| Concern | Automated check | Manual check |
+|---|---|---|
+| Build reproducibility | clean `latexmk -xelatex` build twice | compare build manifests and logs |
+| Content preservation | chapter headings, figures, equations, code fences, URLs, and table counts | paragraph-level review of each migrated chapter |
+| PDF health | page count, extractable text, replacement characters, media boxes, missing assets | title, ToC, chapter openers, tables, code, figures, references |
+| Typography | overfull/underfull warning policy, broken-link scan | line breaks, Chinese punctuation, table readability, float placement |
+| Evidence boundaries | existing chapter contract scripts and gap-register audit | verify that conditional/runtime/rights boundaries were not softened |
+| Release integrity | source/asset manifest and public-path hygiene | inspect Release attachment list and release notes |
+
+## Risks and Controls
+
+| Risk | Control |
+|---|---|
+| Markdown and LaTeX diverge | single-source ownership per chapter; no manual edits to generated `.tex` |
+| Pandoc conversion damages complex tables or code | use conversion only as a draft; manually normalize every completed chapter |
+| Chinese font changes alter pagination across machines | record selected font and engine version in the build manifest; ship source, not only PDF |
+| LaTeX package drift breaks builds | centralize packages and compile through `latexmk`; pin/document TeX Live environment |
+| Visual polish hides a factual regression | retain existing source, gap, and release audits; run them alongside layout checks |
+| Huge all-at-once migration becomes unreviewable | enforce chapter-level gates and commit boundaries |
+| `v1.0` baseline is accidentally changed | treat tag and attached assets as immutable; publish new artifacts under a new edition identifier |
+
+## Immediate Next Actions
+
+1. Implement Phase 0 inventory and a source-to-target traceability table.
+2. Build the Phase 1 LaTeX sample using the preface and Chapters 1--2 only.
+3. Compare the sample against the current `academic` theme PDF and decide whether the native-LaTeX result justifies full migration.
+4. After explicit sample approval, begin the chapter-by-chapter ownership cutover in Phase 2.
+
+## Out of Scope
+
+- Rewriting scientific content while changing format.
+- Retagging or replacing the published `v1.0` Release.
+- Resolving current WarpX runtime, literature-acquisition, or public-redistribution gaps.
+- Modifying the adjacent `../warpx` repository.

@@ -1,0 +1,20 @@
+{
+  "contract": "current book gap register",
+  "checks": {
+    "register_heading": true,
+    "all_ids_present": true,
+    "evidence_paths_present": true,
+    "chapter_section": true,
+    "chapter_boundary_summary": true,
+    "rz_axis_stencil_evidence": true,
+    "editorial_audit_evidence": true,
+    "release_editorial_read_closure": true,
+    "classification_boundaries": true,
+    "closure_language": true,
+    "exercise_renumbering": true
+  },
+  "passed": true,
+  "classification": "CURRENT_BOOK_GAP_REGISTER_WITH_EVIDENCE_AND_CLOSURE_CRITERIA",
+  "scope": "project-level gap inventory; does not close any listed gap",
+  "gap_count": 8
+}

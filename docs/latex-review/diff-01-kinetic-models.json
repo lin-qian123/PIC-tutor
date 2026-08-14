@@ -1,0 +1,23 @@
+{
+ "name": "01-kinetic-models",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/01-kinetic-models.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/chapters/01-kinetic-models.tex",
+ "md_atoms": 253,
+ "tex_atoms": 253,
+ "kind_counts_md": {
+  "H": 19,
+  "P": 197,
+  "M": 35,
+  "T": 2
+ },
+ "kind_counts_tex": {
+  "H": 19,
+  "P": 197,
+  "M": 35,
+  "T": 2
+ },
+ "hunks": [],
+ "missing_atoms": [],
+ "extra_atoms": [],
+ "clean": true
+}

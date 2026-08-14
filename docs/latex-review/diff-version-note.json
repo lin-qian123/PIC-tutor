@@ -1,0 +1,47 @@
+{
+ "name": "version-note",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/VERSION.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/frontmatter/publishing-note.tex",
+ "md_atoms": 18,
+ "tex_atoms": 18,
+ "kind_counts_md": {
+  "H": 4,
+  "P": 14
+ },
+ "kind_counts_tex": {
+  "H": 4,
+  "P": 14
+ },
+ "hunks": [
+  {
+   "tag": "replace",
+   "md": [
+    {
+     "key": "H|1|PIC-tutor",
+     "line": 1
+    }
+   ],
+   "tex": [
+    {
+     "key": "H|1|出版说明",
+     "line": 5
+    }
+   ]
+  }
+ ],
+ "missing_atoms": [
+  {
+   "key": "H|1|PIC-tutor",
+   "md_count": 1,
+   "tex_count": 0
+  }
+ ],
+ "extra_atoms": [
+  {
+   "key": "H|1|出版说明",
+   "tex_count": 1,
+   "md_count": 0
+  }
+ ],
+ "clean": false
+}

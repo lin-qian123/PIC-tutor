@@ -1,0 +1,25 @@
+{
+ "name": "03a-warpx-initialization",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/03a-warpx-initialization.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/chapters/03a-warpx-initialization.tex",
+ "md_atoms": 700,
+ "tex_atoms": 700,
+ "kind_counts_md": {
+  "H": 22,
+  "P": 601,
+  "T": 4,
+  "M": 10,
+  "C": 63
+ },
+ "kind_counts_tex": {
+  "H": 22,
+  "P": 601,
+  "T": 4,
+  "M": 10,
+  "C": 63
+ },
+ "hunks": [],
+ "missing_atoms": [],
+ "extra_atoms": [],
+ "clean": true
+}

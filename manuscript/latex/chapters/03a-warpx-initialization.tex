@@ -392,7 +392,7 @@ implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 然后这条链会继续穿到 \cpath{InitFromScratch()} 和 \cpath{AllocLevelMFs()}：
 
 \begin{itemize}
-\item \cpath{InitFromScratch()} 在 \code{mypc->InitData()} 之前调用 \code{m_implicit_solver->Define()} 和 \cpath{CreateParticleAttributes()}；
+\item \cpath{InitFromScratch()} 在 \cpath{mypc->InitData()} 之前调用 \cpath{m\_implicit\_solver->Define()} 和 \cpath{CreateParticleAttributes()}；
 \item \cpath{AllocLevelMFs()} 在 fine patch 上额外分配 \cpath{current\_fp\_non\_suborbit} 与 \cpath{E\_old}。
 \end{itemize}
 
@@ -438,14 +438,14 @@ implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 \end{enumerate}
 它们分配成 \cpath{E\_external\_particle\_field/B\_external\_particle\_field}，index type 必须匹配 \cpath{aux}，而且分量数直接来自外部粒子场元数据。
 
-所以 particle external field 不是 grid external field 的别名；它跟粒子 gather 所看的 \cpath{aux} 路径绑定得更紧。这也解释了为什么只要 \code{mypc->m_E_ext_particle_s} 或 \cpath{m\_B\_ext\_particle\_s} 是 \cpath{read\_from\_file}，最常见的 \code{aux -> fp} alias 优化就会被打断，\cpath{Efield\_aux/Bfield\_aux} 必须改成单独分配。
+所以 particle external field 不是 grid external field 的别名；它跟粒子 gather 所看的 \cpath{aux} 路径绑定得更紧。这也解释了为什么只要 \cpath{mypc->m\_E\_ext\_particle\_s} 或 \cpath{m\_B\_ext\_particle\_s} 是 \cpath{read\_from\_file}，最常见的 \code{aux -> fp} alias 优化就会被打断，\cpath{Efield\_aux/Bfield\_aux} 必须改成单独分配。
 
 剩下几条看似“模块化”的分支，其实也都在 \cpath{AllocLevelMFs()} 里继续扩展 field registry：
 
 \begin{itemize}
-\item \code{electromagnetic_solver_id == HybridPIC} 时，\code{m_hybrid_pic_model->AllocateLevelMFs(...)} 会追加 hybrid 自己的 level 字段；
-\item \cpath{do\_fluid\_species} 时，\code{myfl->AllocateLevelMFs(...)} 之后立刻 \cpath{InitData(...)}，说明 fluid 已经进入初始化主链，而不是仅仅挂了个容器；
-\item \code{m_em_solver_medium == Macroscopic} 时，\code{m_macroscopic_properties->AllocateLevelMFs(...)} 只允许 \cpath{lev==0}，直接把 mesh refinement 排除在外；
+\item \code{electromagnetic_solver_id == HybridPIC} 时，\cpath{m\_hybrid\_pic\_model->AllocateLevelMFs(...)} 会追加 hybrid 自己的 level 字段；
+\item \cpath{do\_fluid\_species} 时，\cpath{myfl->AllocateLevelMFs(...)} 之后立刻 \cpath{InitData(...)}，说明 fluid 已经进入初始化主链，而不是仅仅挂了个容器；
+\item \code{m_em_solver_medium == Macroscopic} 时，\cpath{m\_macroscopic\_properties->AllocateLevelMFs(...)} 只允许 \cpath{lev==0}，直接把 mesh refinement 排除在外；
 \item \cpath{EB::enabled()} 时，所有 level 至少都会有 \cpath{distance\_to\_eb} 与 \cpath{m\_eb\_reduce\_particle\_shape}，而 finest level 上又会继续长出 \cpath{m\_eb\_update\_E/B}；如果 solver 还是 \cpath{ECT}，则再额外长出 \cpath{edge\_lengths}、\cpath{face\_areas}、\cpath{area\_mod}、\cpath{Venl}、\cpath{ECTRhofield} 和 \cpath{FaceInfoBox} 借用关系。
 \end{itemize}
 
@@ -455,9 +455,9 @@ implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 
 \begin{itemize}
 \item \cpath{BuildBufferMasks()}
-\item \code{m_macroscopic_properties->InitData(...)}
-\item \code{m_electrostatic_solver->InitData()}
-\item \code{m_hybrid_pic_model->InitData(m_fields)}
+\item \cpath{m\_macroscopic\_properties->InitData(...)}
+\item \cpath{m\_electrostatic\_solver->InitData()}
+\item \cpath{m\_hybrid\_pic\_model->InitData(m\_fields)}
 \item \cpath{ProjectionCleanDivB()}
 \end{itemize}
 
@@ -476,9 +476,9 @@ implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 \item \cpath{ComputePMLFactors()}
 \item 可选 \cpath{InitNCICorrector()}
 \item \cpath{BuildBufferMasks()}
-\item \code{m_macroscopic_properties->InitData(...)}
-\item \code{m_electrostatic_solver->InitData()}
-\item \code{m_hybrid_pic_model->InitData(m_fields)}
+\item \cpath{m\_macroscopic\_properties->InitData(...)}
+\item \cpath{m\_electrostatic\_solver->InitData()}
+\item \cpath{m\_hybrid\_pic\_model->InitData(m\_fields)}
 \item \cpath{CheckGuardCells()}
 \item \cpath{ProjectionCleanDivB()}
 \end{itemize}
@@ -488,7 +488,7 @@ implicit 系列更明显。\cpath{ReadParameters()} 一旦看到
 尤其要区分两步经常被混在一起的电场初始化动作：
 
 \begin{enumerate}
-\item \code{m_electrostatic_solver->InitData()}
+\item \cpath{m\_electrostatic\_solver->InitData()}
 \end{enumerate}
 这是 solver 对象自身的初始化，fresh run 和 restart 都会走。
 \begin{enumerate}
@@ -532,9 +532,9 @@ Python callback 也不是一个统一“初始化结束后调用”的事件，�
 这之后才进入第 0 步 diagnostics：
 
 \begin{itemize}
-\item \code{multi_diags->FilterComputePackFlush(istep[0]-1)}
-\item \code{reduced_diags->ComputeDiags(...)}
-\item \code{reduced_diags->WriteToFile(...)}
+\item \cpath{multi\_diags->FilterComputePackFlush(istep[0]-1)}
+\item \cpath{reduced\_diags->ComputeDiags(...)}
+\item \cpath{reduced\_diags->WriteToFile(...)}
 \end{itemize}
 
 因此第 0 步输出的并不是“原始输入快照”，而是“初始化主链已经全部完成后的第一份可运行状态快照”。对于 restart，这一步则取决于 \cpath{write\_diagnostics\_on\_restart}，表示是否要把恢复态也立刻写成一份 diagnostics。
@@ -625,7 +625,7 @@ WarpX::InitFromScratch ()
 \begin{enumerate}
 \item \cpath{AmrCore::InitFromScratch(time)} 驱动 AMReX 创建 AMR level；它会回调 \cpath{WarpX::MakeNewLevelFromScratch()}，后者对每个 level 依次调用 \code{AllocLevelData(lev, ...)} 和 \code{InitLevelData(lev, time)}。因此 \cpath{AllocLevelData} 是这个回调链的一部分，不是 \cpath{InitFromScratch()} 顶层直接调用的无参步骤。
 \item 若启用了 implicit solver，\cpath{Define()} 与 \cpath{CreateParticleAttributes()} 在粒子初始化前建立求解器状态和所需粒子属性。
-\item \code{mypc->AllocData()} 为粒子容器准备数据结构，\code{mypc->InitData()} 创建初始粒子。
+\item \cpath{mypc->AllocData()} 为粒子容器准备数据结构，\cpath{mypc->InitData()} 创建初始粒子。
 \item \cpath{InitPML()} 初始化吸收边界数据结构；随后 \cpath{allocdata} Python callback 才获得已经分配完的初始化对象。
 \end{enumerate}
 
@@ -1362,7 +1362,7 @@ WARPX_ALWAYS_ASSERT_WITH_MESSAGE (
 \item \cpath{binary\_file\_name}
 \end{itemize}
 
-之间二选一。并且它不是一次性把整份文件全读进来，而是先把 \cpath{time\_chunk\_size} 设成默认全时域，再允许用户把它改小，随后只预读第一块；真正运行时由 \code{m_up_laser_profile->update(t_lab)} 按需换块。\cpath{delay} 也不是写文件时的预处理，而是在 \cpath{update()} / \cpath{fill\_amplitude()} 内统一平移 profile 时间轴。
+之间二选一。并且它不是一次性把整份文件全读进来，而是先把 \cpath{time\_chunk\_size} 设成默认全时域，再允许用户把它改小，随后只预读第一块；真正运行时由 \cpath{m\_up\_laser\_profile->update(t\_lab)} 按需换块。\cpath{delay} 也不是写文件时的预处理，而是在 \cpath{update()} / \cpath{fill\_amplitude()} 内统一平移 profile 时间轴。
 
 更关键的是，\cpath{LaserParticleContainer::InitData()} 的产物不是“初始化场”，而是人工天线粒子。它先按 finest cell 和天线平面方向计算平面 spacing \cpath{S\_X/S\_Y}，再建立实验室坐标与激光平面坐标之间的 \cpath{Transform/InverseTransform}，最后只在注入盒覆盖的区域生成粒子：
 
@@ -1375,7 +1375,7 @@ WARPX_ALWAYS_ASSERT_WITH_MESSAGE (
 
 \begin{enumerate}
 \item 若在 boosted frame，先把数值时间 \cpath{t} 转回实验室系 \cpath{t\_lab}
-\item \code{m_up_laser_profile->update(t_lab)}，必要时推进 \cpath{from\_file} 的时间块缓存
+\item \cpath{m\_up\_laser\_profile->update(t\_lab)}，必要时推进 \cpath{from\_file} 的时间块缓存
 \item \cpath{calculate\_laser\_plane\_coordinates(...)}，把真实粒子位置映回激光平面坐标
 \item \cpath{fill\_amplitude(...)}，为每个天线粒子求目标 \cpath{E} 振幅
 \item \cpath{update\_laser\_particle(...)}，把振幅变成粒子动量和位置
@@ -1507,7 +1507,7 @@ m_weight *= AMREX_D_TERM(1._rt, * Sx, * Sy);
 \begin{itemize}
 \item \cpath{analysis\_1d\_fluid\_boosted.py}：将 1D boosted fluid WFA 的 \cpath{Ez/Jz/rho/Vz} 与理论 ODE 解比较；
 \item \cpath{analysis\_refined\_injection.py}：比较细化注入时的总粒子数和 refinement edge 前方 \cpath{rho} 均匀性；
-\item \cpath{analysis\_openpmd\_rz.py}：比较 RZ openPMD 的 mesh shape、species ordering 与 \code{rho_<species>} 的物理中心位置。
+\item \cpath{analysis\_openpmd\_rz.py}：比较 RZ openPMD 的 mesh shape、species ordering 与 \cpath{rho\_<species>} 的物理中心位置。
 \end{itemize}
 
 其余多数输入采用默认输出回归。它适合发现同一输入的输出是否发生意外变化，却不能替代场幅、相位、beam loading 或激光衍射的独立比较。\cpath{README.rst} 仍将 \cpath{Analyze} 保留为 \cpath{TODO}，也正好提醒读者：应用输入提供的是搭建起点，而不是已经完成的物理说明。
@@ -1543,7 +1543,7 @@ mypc->UpdateAntennaPosition(dt[0]);
 \item \cpath{UpdateAntennaPosition(dt)} 更新 laser antenna 的 \cpath{m\_updated\_position}。
 \end{enumerate}
 
-普通 species 的连续注入位置来自 \cpath{PlasmaInjector} 的 bulk momentum，再换成速度并在 boosted frame 下做洛伦兹变换；laser 则完全不走 \cpath{PlasmaInjector}，只在 \cpath{do\_continuous\_injection=1} 且 \code{gamma_boost>1} 时按 boost velocity 平移天线平面。因此两者虽然都叫 continuous injection，但运行态位置更新机制不同。
+普通 species 的连续注入位置来自 \cpath{PlasmaInjector} 的 bulk momentum，再换成速度并在 boosted frame 下做洛伦兹变换；laser 则完全不走 \cpath{PlasmaInjector}，只在 \cpath{do\_continuous\_injection=1} 且 \cpath{gamma\_boost>1} 时按 boost velocity 平移天线平面。因此两者虽然都叫 continuous injection，但运行态位置更新机制不同。
 
 两者的 \cpath{ContinuousInjection()} 语义也不同。普通物理粒子是在 moving window 新扫进来的 level-0 \cpath{particleBox} 中反复调用 \cpath{AddPlasma(...)}；laser 则只在 \cpath{m\_updated\_position} 第一次进入当前 \cpath{injection\_box} 时调用一次 \cpath{InitData()}，之后靠已有人工天线粒子在 \cpath{Evolve()} 中持续更新并沉积 \cpath{J/rho}。AMR 下这两个尺度也不同：species 的 runtime 注入盒按 level-0 cell 对齐，而 \cpath{LaserParticleContainer::InitData()} 仍然按 \cpath{maxLevel()} 的 finest spacing 建立天线粒子。
 
@@ -2041,7 +2041,7 @@ Birdsall and Langdon 的 \code{3A ES1} 是一份很好的历史参照，因为�
 INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY
 \end{codeblock}
 
-这条链可以帮助读者理解“初始化结束后第一步推进究竟从哪里开始”，但不能把旧程序的子程序名直接当成 WarpX 的函数名。历史参照见 Birdsall 与 Langdon 的 *Plasma Physics via Computer Simulation*；现代实现应从 \cpath{Source/Initialization/WarpXInitData.cpp}、\cpath{Source/Particles/} 和 \cpath{Source/FieldSolver/} 的对应职责回查。
+这条链可以帮助读者理解“初始化结束后第一步推进究竟从哪里开始”，但不能把旧程序的子程序名直接当成 WarpX 的函数名。历史参照见 Birdsall 与 Langdon 的 \emph{Plasma Physics via Computer Simulation}；现代实现应从 \cpath{Source/Initialization/WarpXInitData.cpp}、\cpath{Source/Particles/} 和 \cpath{Source/FieldSolver/} 的对应职责回查。
 
 % <-- table block (source: 03a-warpx-initialization L1727)
 \begin{tabularx}{\textwidth}{LL}
@@ -2053,7 +2053,7 @@ INIT -> SETRHO -> FIELDS -> SETV -> ACCEL -> MOVE -> HISTRY
 \code{3A ES1} 阶段 & WarpX 的现代映射与不能直接等同的部分 \\
 \midrule
 \endhead
-\cpath{INIT} & 建立网格、粒子、权重、边界和初始参数，对应 \cpath{ReadParameters()}、\cpath{WarpX::InitData()}、\cpath{InitFromScratch()}、\cpath{AllocLevelData()} 与 \code{mypc->AllocData()}；WarpX 还要处理 AMR、多几何、solver 分支、PML、外部场、restart 和并行布局。 \\
+\cpath{INIT} & 建立网格、粒子、权重、边界和初始参数，对应 \cpath{ReadParameters()}、\cpath{WarpX::InitData()}、\cpath{InitFromScratch()}、\cpath{AllocLevelData()} 与 \cpath{mypc->AllocData()}；WarpX 还要处理 AMR、多几何、solver 分支、PML、外部场、restart 和并行布局。 \\
 \cpath{SETRHO} & 用初始位置形成源，对应 \cpath{PlasmaInjector}/\cpath{AddParticles} 后的初始 \cpath{rho} 构造及 field-register 路径；\cpath{rho} 是否直接写入、重新沉积或被 solver 消费，取决于 geometry、solver 和初始化选项。 \\
 \cpath{FIELDS} & 从 \cpath{rho} 求势和场，对应 electrostatic solver 的 \cpath{InitData()}、\cpath{ComputeSpaceChargeField()}、初始场填充和 projection cleaning；不能简化成单一 FFT Poisson 路径，EM、PSATD、RZ、EB 与 external field 会改变对象和约束。 \\
 \cpath{SETV} & 设置热分布和漂移，对应 \cpath{SpeciesUtils}、\cpath{InjectorMomentum}、temperature/velocity functor 与粒子属性创建；WarpX 还可能创建 relativistic、spin、implicit 或 pusher-specific attributes。 \\
@@ -2103,5 +2103,5 @@ inputs
 
 \begin{enumerate}
 \item \textbf{fresh/restart 定位题}：沿 \cpath{WarpXInitData.cpp} 追踪 \cpath{InitData()}，说明 \cpath{ComputeDt()} 为什么只出现在 fresh-run 分支，以及 restart 为什么必须进入 \cpath{PostRestart()}。
-\item \textbf{初始化与复现题}：解释 \cpath{AmrCore::InitFromScratch()}、\cpath{AllocLevelData()}、\code{mypc->AllocData()}、\code{mypc->InitData()} 和 \cpath{InitPML()} 的先后关系。再在 \cpath{Examples/Tests/initial\_distribution/} 选择匹配输入，核对生效输入、首个 diagnostics 和 species 数，并说明输入不匹配导致的 abort 为什么既不构成初始化通过，也不构成其反证。
+\item \textbf{初始化与复现题}：解释 \cpath{AmrCore::InitFromScratch()}、\cpath{AllocLevelData()}、\cpath{mypc->AllocData()}、\cpath{mypc->InitData()} 和 \cpath{InitPML()} 的先后关系。再在 \cpath{Examples/Tests/initial\_distribution/} 选择匹配输入，核对生效输入、首个 diagnostics 和 species 数，并说明输入不匹配导致的 abort 为什么既不构成初始化通过，也不构成其反证。
 \end{enumerate}

@@ -12,7 +12,7 @@
   "themes": {
     "academic": {
       "pdf": "dist/latex/pic-tutor-v0.120-academic.pdf",
-      "pdf_sha256": "8f9465bef213e990ac156382c44abcc2372cd3c0adeb917aadb2e3795f22f1a6"
+      "pdf_sha256": "dc2b3b18f6bd336b5b21345bf78fbffe034a7ef07cad1e969b0e29a26d2badc1"
     },
     "technical": {
       "pdf": "dist/latex/pic-tutor-v0.120-technical.pdf",

@@ -317,7 +317,7 @@ restart：\cpath{InitFromCheckpoint()}、打印步长网格、\cpath{PostRestart
 \bottomrule
 \end{tabularx}
 
-\cpath{InitFromScratch()} 调用 \cpath{AmrCore::InitFromScratch(time)} 建立 AMR level，然后让 \code{mypc->AllocData()} 和 \code{mypc->InitData()} 初始化粒子，最后初始化 PML。
+\cpath{InitFromScratch()} 调用 \cpath{AmrCore::InitFromScratch(time)} 建立 AMR level，然后让 \cpath{mypc->AllocData()} 和 \cpath{mypc->InitData()} 初始化粒子，最后初始化 PML。
 
 \section{\texttt{ComputeDt()}：步长不是一个固定常数}
 
@@ -345,7 +345,7 @@ restart：\cpath{InitFromCheckpoint()}、打印步长网格、\cpath{PostRestart
 
 因此，\cpath{ComputeDt()} 不只是“取最小网格长度除以光速”，而是在参数层先决定有没有用户强制时间步，再按 solver 家族和几何去选真正的稳定上限公式。
 
-运行中自适应步长由 \cpath{WarpX::ApplyDtLimiters()} 处理。它首先经 \cpath{ParticleGridSpeedMax()} 从 \code{mypc->maxParticleVelocity()} 计算最大粒子跨网格速度，再与可选的等离子体频率、回旋频率和 \cpath{max\_dt} 限制一起取最严格的步长。仅考虑粒子跨网格限制时，公式是
+运行中自适应步长由 \cpath{WarpX::ApplyDtLimiters()} 处理。它首先经 \cpath{ParticleGridSpeedMax()} 从 \cpath{mypc->maxParticleVelocity()} 计算最大粒子跨网格速度，再与可选的等离子体频率、回旋频率和 \cpath{max\_dt} 限制一起取最严格的步长。仅考虑粒子跨网格限制时，公式是
 
 \[
 \Delta t_{\mathrm{new}}=\mathrm{CFL}\frac{\Delta x_{\min}}{v_{\max}}
@@ -556,7 +556,7 @@ else:
 分支 & 源码锚点 & 含义 \\
 \midrule
 \endhead
-implicit solver & \code{m_implicit_solver->OneStep(...)} & 交给隐式 solver 自己推进一整步。 \\
+implicit solver & \cpath{m\_implicit\_solver->OneStep(...)} & 交给隐式 solver 自己推进一整步。 \\
 electrostatic / HybridPIC & \code{electromagnetic_solver_id == None/HybridPIC} & 粒子推进但跳过标准电磁沉积路径，场解在外层后处理。 \\
 标准电磁无 MR & \code{finest_level == 0} & 进入 \cpath{OneStep\_nosub()} 或 PSATD-JRhom。 \\
 有 MR 无 subcycling & \code{!m_do_subcycling} & 仍进入 \cpath{OneStep\_nosub()}，所有 level 使用同一步长推进。 \\
@@ -739,11 +739,11 @@ FDTD 分支的核心源码如下：
 
 \begin{enumerate}
 \item 根据 \cpath{do\_current\_centering} 和 \code{current_deposition_algo == Vay} 选择当前沉积字段名。
-\item 调用 \code{mypc->Evolve(...)}，把 field register、level、字段名、时间、\cpath{dt[lev]}、subcycling half、是否跳过沉积、位置/动量 push 类型传入粒子容器。
+\item 调用 \cpath{mypc->Evolve(...)}，把 field register、level、字段名、时间、\cpath{dt[lev]}、subcycling half、是否跳过沉积、位置/动量 push 类型传入粒子容器。
 \item 对 RZ/柱/球几何做逆体积缩放，并在有流体物种时调用流体容器演化。
 \end{enumerate}
 
-因此，下一阶段逐行阅读必须从 \code{mypc->Evolve()} 继续进入 \cpath{Source/Particles}。\cpath{PushParticlesandDeposit()} 是主循环到粒子模块的接口，不是粒子 pusher 本身。
+因此，下一阶段逐行阅读必须从 \cpath{mypc->Evolve()} 继续进入 \cpath{Source/Particles}。\cpath{PushParticlesandDeposit()} 是主循环到粒子模块的接口，不是粒子 pusher 本身。
 
 \section{\texttt{OneStep\_sub1()} 与 JRhom 的位置}
 
@@ -861,7 +861,7 @@ for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
 
 \subsection{implicit 分支：一次物理步包含多次试探性 source 重建}
 
-在 \cpath{WarpX::OneStep()} 中，只要 \cpath{m\_implicit\_solver} 非空，程序就不会进入 \cpath{OneStep\_nosub()}、\cpath{OneStep\_sub1()} 或 \cpath{OneStep\_JRhom()}，而是把整步交给 \code{m_implicit_solver->OneStep(...)}。
+在 \cpath{WarpX::OneStep()} 中，只要 \cpath{m\_implicit\_solver} 非空，程序就不会进入 \cpath{OneStep\_nosub()}、\cpath{OneStep\_sub1()} 或 \cpath{OneStep\_JRhom()}，而是把整步交给 \cpath{m\_implicit\_solver->OneStep(...)}。
 
 以 \cpath{SemiImplicitEM::OneStep()} 为代表，隐式电磁步的控制流是：
 
@@ -878,13 +878,13 @@ for (int i_deposit = 0; i_deposit < n_loop; i_deposit++)
 1 & \cpath{SaveParticlesAtImplicitStepStart()} & 保存 $x^n,p^n$，供非线性迭代和最终提交使用 \\
 2 & 初始化 $E^{n+\theta}$ 猜测、保存 \cpath{E\_old} & 构造 solver 的中间场未知量，而不是直接写最终 $E^{n+1}$ \\
 3 & \code{EvolveB(Δt/2)} & 先把 WarpX 所有的磁场推进到半步 \\
-4 & \code{m_nlsolver->Solve(...)} & 反复调用 \cpath{ComputeRHS()}，求粒子和中间电场自洽的离散方程 \\
+4 & \cpath{m\_nlsolver->Solve(...)} & 反复调用 \cpath{ComputeRHS()}，求粒子和中间电场自洽的离散方程 \\
 5 & \cpath{SetElectricFieldAndApplyBCs()}、\cpath{FinishImplicitParticleUpdate()} & 将收敛的中间场写回，并把粒子从半步状态完成到 $t^{n+1}$ \\
 6 & 第二个 \code{EvolveB(Δt/2)} & 完成磁场后半步，物理时间步才真正结束 \\
 \bottomrule
 \end{tabularx}
 
-因此 \code{m_nlsolver->Solve()} 不是一个普通的函数调用包装，而是这条路径的核心时间组织。\cpath{SemiImplicitEM::ComputeRHS()} 会先用当前猜测的 $E^{n+1/2}$ 更新 WarpX 持有的电场，然后调用 \cpath{PreRHSOp()}；后者定义在 \cpath{Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp}，完成：
+因此 \cpath{m\_nlsolver->Solve()} 不是一个普通的函数调用包装，而是这条路径的核心时间组织。\cpath{SemiImplicitEM::ComputeRHS()} 会先用当前猜测的 $E^{n+1/2}$ 更新 WarpX 持有的电场，然后调用 \cpath{PreRHSOp()}；后者定义在 \cpath{Source/FieldSolver/ImplicitSolvers/ImplicitSolver.cpp}，完成：
 
 \begin{enumerate}
 \item 以当前中间场推进粒子位置和速度；
@@ -1067,7 +1067,7 @@ inputs 中的 max_step
 进一步阅读：
 
 \begin{enumerate}
-\item \chref{chap:04-particle-pushers}{第 4 章：粒子推进器}：继续从 \cpath{PushParticlesandDeposit()} 进入 \code{mypc->Evolve()} 和粒子推进器。
+\item \chref{chap:04-particle-pushers}{第 4 章：粒子推进器}：继续从 \cpath{PushParticlesandDeposit()} 进入 \cpath{mypc->Evolve()} 和粒子推进器。
 \item \chref{chap:05-deposition-shapes}{第 5 章：沉积与形函数}：继续展开 \cpath{SyncCurrentAndRho()}、沉积、guard/source synchronization。
 \item 对 lifecycle、subcycling/JRhom 与 moving window 三条分支，继续分别追问：状态在哪个时间层更新、哪些网格层参与、以及结果应通过哪个 observable 判断。
 \end{enumerate}
@@ -1109,7 +1109,7 @@ inputs 中的 max_step
 \endhead
 输入动量在什么单位下被解释？ & \cpath{ReadParameters()}、species/injector 配置 & 输入中的 \cpath{gamma*beta}、容器中的 \cpath{gamma*v} 与 diagnostics metadata 的差异，见附录 A & 同一个 \cpath{ux/uy/uz} 数值在输入、粒子数组和输出中可直接互换 \\
 第一个物理时间步前有哪些状态？ & \cpath{InitData()}、\cpath{InitFromScratch()} / \cpath{InitFromCheckpoint()} & 第 3A 章中的 level、field、PML、external field、species 与 diagnostics 初始化顺序 & 一次对象分配或 writer 创建就证明初态的物理约束已满足 \\
-显式粒子轨迹怎样变成 solver source？ & \cpath{PushParticlesandDeposit()}、\code{mypc->Evolve()}、\cpath{SyncCurrentAndRho()} & 第 4、5 章中的 $\mathbf{x}^n$、$\mathbf{u}^{n-1/2}$、$\mathbf{J}^{n+1/2}$、old/new $\rho$ 以及 AMR/边界同步 & 任意 \cpath{rho} 或 \cpath{current\_*} 数组都已经是场求解器消费的最终源项 \\
+显式粒子轨迹怎样变成 solver source？ & \cpath{PushParticlesandDeposit()}、\cpath{mypc->Evolve()}、\cpath{SyncCurrentAndRho()} & 第 4、5 章中的 $\mathbf{x}^n$、$\mathbf{u}^{n-1/2}$、$\mathbf{J}^{n+1/2}$、old/new $\rho$ 以及 AMR/边界同步 & 任意 \cpath{rho} 或 \cpath{current\_*} 数组都已经是场求解器消费的最终源项 \\
 怎样判断这条路径可信？ & \cpath{Evolve()}、\cpath{OneStep()} 与 diagnostics 调度 & 第 6--8 章中的 solver 前提、边界条件、producer/consumer、reference 和 observable & 程序完成、文件写出或 checksum 一致就证明物理结论 \\
 \bottomrule
 \end{tabularx}

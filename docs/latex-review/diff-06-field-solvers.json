@@ -1,0 +1,25 @@
+{
+ "name": "06-field-solvers",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/06-field-solvers.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/chapters/06-field-solvers.tex",
+ "md_atoms": 629,
+ "tex_atoms": 629,
+ "kind_counts_md": {
+  "H": 46,
+  "P": 423,
+  "T": 5,
+  "M": 54,
+  "C": 101
+ },
+ "kind_counts_tex": {
+  "H": 46,
+  "P": 423,
+  "T": 5,
+  "M": 54,
+  "C": 101
+ },
+ "hunks": [],
+ "missing_atoms": [],
+ "extra_atoms": [],
+ "clean": true
+}

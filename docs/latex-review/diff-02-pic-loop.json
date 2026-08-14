@@ -1,0 +1,25 @@
+{
+ "name": "02-pic-loop",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/02-pic-loop.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/chapters/02-pic-loop.tex",
+ "md_atoms": 275,
+ "tex_atoms": 275,
+ "kind_counts_md": {
+  "H": 22,
+  "P": 202,
+  "M": 33,
+  "C": 14,
+  "T": 4
+ },
+ "kind_counts_tex": {
+  "H": 22,
+  "P": 202,
+  "M": 33,
+  "C": 14,
+  "T": 4
+ },
+ "hunks": [],
+ "missing_atoms": [],
+ "extra_atoms": [],
+ "clean": true
+}

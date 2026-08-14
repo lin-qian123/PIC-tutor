@@ -1,0 +1,27 @@
+{
+ "name": "05-deposition-shapes",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/05-deposition-shapes.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/chapters/05-deposition-shapes.tex",
+ "md_atoms": 1111,
+ "tex_atoms": 1111,
+ "kind_counts_md": {
+  "H": 49,
+  "P": 954,
+  "M": 45,
+  "T": 17,
+  "C": 43,
+  "I": 3
+ },
+ "kind_counts_tex": {
+  "H": 49,
+  "P": 954,
+  "M": 45,
+  "T": 17,
+  "C": 43,
+  "I": 3
+ },
+ "hunks": [],
+ "missing_atoms": [],
+ "extra_atoms": [],
+ "clean": true
+}

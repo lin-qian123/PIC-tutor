@@ -44,6 +44,7 @@ SINGLE_LINE_DISPLAY_RE = re.compile(r"\$\$[^$]+\$\$")
 MATH_PAREN_RE = re.compile(r"\\\((.+?)\\\)", re.DOTALL)
 MATH_DOLLAR_RE = re.compile(r"(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)")
 BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
+EMPH_RE = re.compile(r"(?<!\*)\*(?!\*)([^*\n]+?)(?<!\*)\*(?!\*)")
 IMAGE_RE = re.compile(r"^!\[([^\]]*)\]\(([^)]+)\)\s*$")
 LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 CARD_LABELS = ["源码入口", "源码文件", "源码位置", "源码原文", "读取入口",
@@ -83,6 +84,7 @@ def inline(text: str) -> str:
 
     t = LINK_RE.sub(link, t)
     t = BOLD_RE.sub(lambda m: r"\textbf{" + m.group(1) + "}", t)
+    t = EMPH_RE.sub(lambda m: r"\emph{" + m.group(1) + "}", t)
     # escape dangerous characters in plain prose (placeholders are \x00 digits)
     t = ESCAPE_RE.sub(r"\\\1", t)
 

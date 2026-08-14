@@ -1,0 +1,25 @@
+{
+ "name": "03-warpx-evolve",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/03-warpx-evolve.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/chapters/03-warpx-evolve.tex",
+ "md_atoms": 303,
+ "tex_atoms": 303,
+ "kind_counts_md": {
+  "H": 24,
+  "P": 238,
+  "C": 23,
+  "T": 9,
+  "M": 9
+ },
+ "kind_counts_tex": {
+  "H": 24,
+  "P": 238,
+  "C": 23,
+  "T": 9,
+  "M": 9
+ },
+ "hunks": [],
+ "missing_atoms": [],
+ "extra_atoms": [],
+ "clean": true
+}

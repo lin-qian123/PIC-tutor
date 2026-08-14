@@ -1,0 +1,25 @@
+{
+ "name": "07-boundaries-amr",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/07-boundaries-amr.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/chapters/07-boundaries-amr.tex",
+ "md_atoms": 362,
+ "tex_atoms": 362,
+ "kind_counts_md": {
+  "H": 20,
+  "P": 308,
+  "C": 28,
+  "T": 3,
+  "M": 3
+ },
+ "kind_counts_tex": {
+  "H": 20,
+  "P": 308,
+  "C": 28,
+  "T": 3,
+  "M": 3
+ },
+ "hunks": [],
+ "missing_atoms": [],
+ "extra_atoms": [],
+ "clean": true
+}

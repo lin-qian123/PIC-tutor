@@ -1,0 +1,21 @@
+{
+ "name": "00-preface",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/00-preface.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/chapters/00-preface.tex",
+ "md_atoms": 29,
+ "tex_atoms": 29,
+ "kind_counts_md": {
+  "H": 8,
+  "P": 20,
+  "T": 1
+ },
+ "kind_counts_tex": {
+  "H": 8,
+  "P": 20,
+  "T": 1
+ },
+ "hunks": [],
+ "missing_atoms": [],
+ "extra_atoms": [],
+ "clean": true
+}

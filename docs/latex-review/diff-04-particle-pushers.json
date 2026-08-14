@@ -1,0 +1,25 @@
+{
+ "name": "04-particle-pushers",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/04-particle-pushers.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/chapters/04-particle-pushers.tex",
+ "md_atoms": 1256,
+ "tex_atoms": 1256,
+ "kind_counts_md": {
+  "H": 59,
+  "P": 1075,
+  "M": 64,
+  "C": 52,
+  "T": 6
+ },
+ "kind_counts_tex": {
+  "H": 59,
+  "P": 1075,
+  "M": 64,
+  "C": 52,
+  "T": 6
+ },
+ "hunks": [],
+ "missing_atoms": [],
+ "extra_atoms": [],
+ "clean": true
+}

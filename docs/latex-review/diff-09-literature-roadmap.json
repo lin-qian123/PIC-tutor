@@ -1,0 +1,21 @@
+{
+ "name": "09-literature-roadmap",
+ "md": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/chapters/09-literature-roadmap.md",
+ "tex": "/Volumes/PHILIPS/programs/PIC/PIC-tutor/manuscript/latex/chapters/09-literature-roadmap.tex",
+ "md_atoms": 156,
+ "tex_atoms": 156,
+ "kind_counts_md": {
+  "H": 28,
+  "P": 123,
+  "T": 5
+ },
+ "kind_counts_tex": {
+  "H": 28,
+  "P": 123,
+  "T": 5
+ },
+ "hunks": [],
+ "missing_atoms": [],
+ "extra_atoms": [],
+ "clean": true
+}
